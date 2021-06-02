@@ -99,12 +99,12 @@ export type ListAssessmentResultItem = NonNullable<ListAssessmentResult["items"]
 export type GetAssessmentRequest = Parameters<typeof api.assessments.getAssessment>[0];
 export type GetAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
 export type GetAssessmentResultAttendance = NonNullable<GetAssessmentResult["students"]>[0];
-export type GetAssessmentResultOutcomeAttendanceMap = NonNullable<GetAssessmentResult["outcome_attendances"]>[0];
+export type GetAssessmentResultOutcomeAttendanceMap = NonNullable<GetAssessmentResult["outcomes"]>[0];
 
 export type UpdateAssessmentRequestId = Parameters<typeof api.assessments.updateAssessment>[0];
 export type UpdateAssessmentRequestData = Parameters<typeof api.assessments.updateAssessment>[1];
 export type UpdateAssessmentRequestDatAattendanceIds = NonNullable<UpdateAssessmentRequestData>["attendance_ids"];
-export type UpdateAssessmentRequestDataLessonMaterials = NonNullable<UpdateAssessmentRequestData>["materials"];
+export type UpdateAssessmentRequestDataLessonMaterials = NonNullable<UpdateAssessmentRequestData>["lesson_materials"];
 
 export enum SearchContentsRequestContentType {
   material = "1",
@@ -187,11 +187,11 @@ export enum StudyAssessmentOrderBy {
   _complete_at = "-complete_time",
 }
 
-export type ListStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"];
+export type ListStudyAssessment = AsyncReturnType<typeof api.studyAssessments.listStudyAssessments>["items"];
 export type ListStudyAssessmentItem = NonNullable<ListStudyAssessment>[0];
-export type DetailStudyAssessment = AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
+export type DetailStudyAssessment = AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>;
 
-export type UpdataStudyAssessmentRequestData = Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
+export type UpdataStudyAssessmentRequestData = Parameters<typeof api.studyAssessments.updateStudyAssessment>[1];
 export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentRequestData["student_ids"]>;
 export enum ExectSeachType {
   all = "all",

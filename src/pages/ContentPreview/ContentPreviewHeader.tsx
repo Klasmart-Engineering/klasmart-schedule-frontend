@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: "24px",
     fontWeight: 700,
     marginRight: "10px",
+    wordBreak: "break-word",
     [theme.breakpoints.down("lg")]: {
       fontSize: "20px",
     },

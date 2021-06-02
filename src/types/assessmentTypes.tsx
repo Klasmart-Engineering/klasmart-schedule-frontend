@@ -1,5 +1,3 @@
-export type scheduleId = string;
-
 export type AssesmentPopType = "ViewComment" | "AddComment" | "DetailView" | "Notice" | "";
 
 export interface ElasticLayerControl {
@@ -10,3 +8,5 @@ export interface ElasticLayerControl {
   contentText?: string;
   title?: string;
 }
+
+export type dynamicTableName = "student_view_items";

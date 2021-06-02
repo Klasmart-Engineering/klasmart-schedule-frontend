@@ -6,7 +6,7 @@ type NonNullRecordValue<T> = {
 };
 
 export type StudyAssessmentQueryCondition = NonNullRecordValue<
-  NonNullable<Parameters<typeof api.h5PAssessments.listH5PAssessments>[0]>
+  NonNullable<Parameters<typeof api.studyAssessments.listStudyAssessments>[0]>
 >;
 export type StudyAssessmentQueryConditionChangeHandler = (value: StudyAssessmentQueryCondition) => any;
 export type StudyAssessmentQueryConditionBaseProps = {
@@ -19,6 +19,6 @@ export enum SearchListFormKey {
   SEARCH_TEXT = "SEARCH_TEXT",
 }
 export interface SearchListForm {
-  [SearchListFormKey.EXECT_SEARCH]: NonNullable<StudyAssessmentQueryCondition["query_type"]>,
-  [SearchListFormKey.SEARCH_TEXT]: NonNullable<StudyAssessmentQueryCondition["query"]>,
+  [SearchListFormKey.EXECT_SEARCH]: NonNullable<StudyAssessmentQueryCondition["query_type"]>;
+  [SearchListFormKey.SEARCH_TEXT]: NonNullable<StudyAssessmentQueryCondition["query"]>;
 }

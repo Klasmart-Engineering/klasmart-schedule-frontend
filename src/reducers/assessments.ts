@@ -25,8 +25,8 @@ export interface IAssessmentState {
   homefunFeedbacks: EntityScheduleFeedbackView[];
   hasPermissionOfHomefun: boolean;
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
-  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>["items"]>;
-  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>>;
+  studyAssessmentList: NonNullable<AsyncReturnType<typeof api.studyAssessments.listStudyAssessments>["items"]>;
+  studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>>;
 }
 
 interface RootState {
@@ -38,17 +38,298 @@ const initialState: IAssessmentState = {
   assessmentList: [],
   homeFunAssessmentList: [],
   assessmentDetail: {
-    id: "",
-    title: "",
-    students: [],
-    subjects: [],
-    teachers: [],
-    class_end_time: 0,
-    class_length: 0,
-    // number_of_activities: 0,
-    // number_of_outcomes: 0,
+    class: { id: "b43e2967-7671-4dbc-9302-95951c560d65", name: "CLASSBG" },
+    class_end_time: 1619074227,
+    class_length: 60,
     complete_time: 0,
-    outcome_attendances: [],
+    due_at: 1619074227,
+    id: "60811da7e364b2590bbe4e38",
+    lesson_materials: [
+      {
+        checked: true,
+        comment: "",
+        id: "6018f9a24f324bfb6886ac9f",
+        name: "image11",
+        outcome_ids: ["606c30f7b1390c1813cde871"],
+      },
+      {
+        checked: true,
+        comment: "",
+        id: "6018f9dd4f324bfb6886acab",
+        name: "mp311",
+        outcome_ids: ["606d2dea3732b97af0e95c6c"],
+      },
+      {
+        checked: true,
+        comment: "",
+        id: "6018fa2f474370357158801e",
+        name: "mp4",
+        outcome_ids: ["606d2c9a4f0d99636336317c"],
+      },
+    ],
+    lesson_plan: {
+      comment: "",
+      id: "601a4522c788dd7cfa4998ff",
+      name: "pl020300",
+      outcome_ids: undefined,
+    },
+    outcomes: [
+      {
+        assumed: true,
+        checked: true,
+        none_achieved: false,
+        outcome_id: "606c30f7b1390c1813cde871",
+        outcome_name: "ESLSPuuu",
+        skip: false,
+        attendance_ids: [
+          "03fff878-ffb3-5e5d-acbc-1d517bbdb12e",
+          "b8737032-6ac8-5fd7-817a-dfd323aa8289",
+          "38c81b12-e0bf-5e57-9035-466db7144b53",
+          "3e00257f-c53b-5e26-8753-f2168d6fb5fd",
+        ],
+      },
+      {
+        assumed: true,
+        checked: false,
+        none_achieved: false,
+        outcome_id: "606d2dea3732b97af0e95c6c",
+        outcome_name: "ggg",
+        skip: false,
+        attendance_ids: [
+          "03fff878-ffb3-5e5d-acbc-1d517bbdb12e",
+          "b8737032-6ac8-5fd7-817a-dfd323aa8289",
+          "38c81b12-e0bf-5e57-9035-466db7144b53",
+          "3e00257f-c53b-5e26-8753-f2168d6fb5fd",
+        ],
+      },
+      {
+        assumed: false,
+        attendance_ids: undefined,
+        checked: false,
+        none_achieved: false,
+        outcome_id: "606d2c9a4f0d99636336317c",
+        outcome_name: "LO111",
+        skip: false,
+      },
+    ],
+    program: { id: "7565ae11-8130-4b7d-ac24-1d9dd6f792f2", name: "None Specified" },
+    remaining_time: 0,
+    room_id: "60811d8727ad4df38d2bf31e",
+    schedule_id: "60811d8727ad4df38d2bf31e",
+    status: "in_progress",
+    student_view_items: [
+      {
+        comment: "",
+        student_id: "b8737032-6ac8-5fd7-817a-dfd323aa8289",
+        student_name: "stbg001 BG",
+        lesson_materials: [
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9a24f324bfb6886ac9f",
+            lesson_material_name: "image11",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9dd4f324bfb6886acab",
+            lesson_material_name: "mp311",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018fa2f474370357158801e",
+            lesson_material_name: "mp4",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+        ],
+      },
+      {
+        comment: "",
+        lesson_materials: [
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9a24f324bfb6886ac9f",
+            lesson_material_name: "image11",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9dd4f324bfb6886acab",
+            lesson_material_name: "mp311",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018fa2f474370357158801e",
+            lesson_material_name: "mp4",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+        ],
+        student_id: "38c81b12-e0bf-5e57-9035-466db7144b53",
+        student_name: "stbg002 BG",
+      },
+      {
+        comment: "",
+        lesson_materials: [
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9a24f324bfb6886ac9f",
+            lesson_material_name: "image11",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9dd4f324bfb6886acab",
+            lesson_material_name: "mp311",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018fa2f474370357158801e",
+            lesson_material_name: "mp4",
+            lesson_material_type: "",
+            max_score: 0,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+        ],
+        student_id: "3e00257f-c53b-5e26-8753-f2168d6fb5fd",
+        student_name: "stbg003 BG",
+      },
+      {
+        comment: "",
+        student_id: "03fff878-ffb3-5e5d-acbc-1d517bbdb12e",
+        student_name: "stu20210106 BG",
+        lesson_materials: [
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9a24f324bfb6886ac9f",
+            lesson_material_name: "image11",
+            lesson_material_type: "",
+            max_score: 0,
+          },
+          {
+            achieved_score: 0,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018f9dd4f324bfb6886acab",
+            lesson_material_name: "mp311",
+            lesson_material_type: "",
+            max_score: 0,
+          },
+          {
+            achieved_score: 20,
+            answer: "",
+            attempted: false,
+            is_h5p: false,
+            lesson_material_id: "6018fa2f474370357158801e",
+            lesson_material_name: "mp4",
+            lesson_material_type: "",
+            max_score: 100,
+            outcome_names: [
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+              "Able to review all assessment features",
+            ],
+          },
+        ],
+      },
+    ],
+    students: [
+      { id: "b8737032-6ac8-5fd7-817a-dfd323aa8289", name: "stbg001 BG", checked: true },
+      { id: "3e00257f-c53b-5e26-8753-f2168d6fb5fd", name: "stbg003 BG", checked: true },
+      { id: "38c81b12-e0bf-5e57-9035-466db7144b53", name: "stbg002 BG", checked: true },
+      { id: "03fff878-ffb3-5e5d-acbc-1d517bbdb12e", name: "stu20210106 BG", checked: true },
+    ],
+    subjects: [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }],
+    teachers: [
+      { id: "f0503625-6a97-5e7f-9bdd-03f3da64c6d0", name: "sch00l BG" },
+      { id: "ed43b8c3-d5c0-52af-ae10-402f1fe2ea46", name: "tebg001 BG" },
+      { id: "1a7aea42-7c4f-514b-8f77-ebbe2de32c66", name: "ziyou bg" },
+    ],
+    title: "20210422-CLASSBG-livedfgf",
   },
   homefunDetail: {
     assess_comment: "",
@@ -70,7 +351,7 @@ const initialState: IAssessmentState = {
   hasPermissionOfHomefun: false,
   studyAssessmentList: [],
   studyAssessmentDetail: {},
-  my_id: "teacherid_1",
+  my_id: "ed43b8c3-d5c0-52af-ae10-402f1fe2ea46",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -179,17 +460,17 @@ export const updateHomefun = createAsyncThunk<string, UpdateHomefunParams, { sta
   }
 );
 
-type IQueryStudyAssessmentListParams = Parameters<typeof api.h5PAssessments.listH5PAssessments>[0] & LoadingMetaPayload;
-type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.h5PAssessments.listH5PAssessments>;
+type IQueryStudyAssessmentListParams = Parameters<typeof api.studyAssessments.listStudyAssessments>[0] & LoadingMetaPayload;
+type IQueryStudtAssessmentListResult = AsyncReturnType<typeof api.studyAssessments.listStudyAssessments>;
 export const getStudyAssessmentList = createAsyncThunk<IQueryStudtAssessmentListResult, IQueryStudyAssessmentListParams>(
   "assessments/getStudyAssessmentList",
   async ({ metaLoading, ...query }) => {
-    const { items, total } = await api.h5PAssessments.listH5PAssessments({ ...query, page_size: 20 });
+    const { items, total } = await api.studyAssessments.listStudyAssessments({ ...query, page_size: 20 });
     return { items, total };
   }
 );
 type IQueryStudyAssessmentDetailResult = {
-  detail: AsyncReturnType<typeof api.h5PAssessments.getH5PAssessmentDetail>;
+  detail: AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>;
   my_id: string;
 };
 export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
@@ -204,21 +485,21 @@ export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDe
       },
     });
     const my_id = meInfo.me?.user_id || "";
-    const detail = await api.h5PAssessments.getH5PAssessmentDetail(id);
+    const detail = await api.studyAssessments.getStudyAssessmentDetail(id);
     return { detail, my_id };
   }
 );
 
 type IQueryUpdateStudyAssessmentParams = {
-  id: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[0];
-  data: Parameters<typeof api.h5PAssessments.updateH5PAssessment>[1];
+  id: Parameters<typeof api.studyAssessments.updateStudyAssessment>[0];
+  data: Parameters<typeof api.studyAssessments.updateStudyAssessment>[1];
   filter_student_view_items?: IQueryStudyAssessmentDetailResult["detail"]["student_view_items"];
 };
 
 export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/updateStudyAssessment",
   async ({ id, data }) => {
-    await api.h5PAssessments.updateH5PAssessment(id, data);
+    await api.studyAssessments.updateStudyAssessment(id, data);
     return id;
   }
 );
@@ -234,7 +515,7 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
       const content = d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete");
       const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
       if (!isConfirmed) return Promise.reject();
-      const res = await api.h5PAssessments.updateH5PAssessment(id, data);
+      const res = await api.studyAssessments.updateStudyAssessment(id, data);
       return res;
     }
     const content = d(
@@ -242,7 +523,7 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
     ).t("assess_popup_students_not_started");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     if (!isConfirmed) return Promise.reject();
-    const res = await api.h5PAssessments.updateH5PAssessment(id, data);
+    const res = await api.studyAssessments.updateStudyAssessment(id, data);
     return res;
   }
 );
