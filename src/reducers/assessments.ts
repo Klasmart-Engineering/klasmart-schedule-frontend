@@ -48,17 +48,30 @@ const initialState: IAssessmentState = {
       {
         checked: true,
         comment: "",
-        id: "6077b56b42cb59b4e9ca1b23",
-        name: "material2",
-        outcome_ids: ["606d2c9a4f0d99636336317c", "606d2dea3732b97af0e95c6c"],
+        id: "6018f9a24f324bfb6886ac9f",
+        name: "image11",
+        outcome_ids: ["606c30f7b1390c1813cde871"],
+      },
+      {
+        checked: true,
+        comment: "",
+        id: "6018f9dd4f324bfb6886acab",
+        name: "mp311",
+        outcome_ids: ["606d2dea3732b97af0e95c6c"],
+      },
+      {
+        checked: true,
+        comment: "",
+        id: "6018fa2f474370357158801e",
+        name: "mp4",
+        outcome_ids: ["606d2c9a4f0d99636336317c"],
       },
     ],
     lesson_plan: {
-      checked: true,
       comment: "",
-      id: "6077e26033c32004ef2c7ab5",
-      name: "plan 2",
-      outcome_ids: ["606c30f7b1390c1813cde871"],
+      id: "601a4522c788dd7cfa4998ff",
+      name: "pl020300",
+      outcome_ids: undefined,
     },
     outcomes: [
       {
@@ -338,7 +351,7 @@ const initialState: IAssessmentState = {
   hasPermissionOfHomefun: false,
   studyAssessmentList: [],
   studyAssessmentDetail: {},
-  my_id: "teacherid_1",
+  my_id: "ed43b8c3-d5c0-52af-ae10-402f1fe2ea46",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;

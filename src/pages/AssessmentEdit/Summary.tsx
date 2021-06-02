@@ -336,27 +336,27 @@ export const MaterialInput = (props: MaterialInputProps) => {
           <div key={item.id}>
             <Controller
               style={{ display: "none" }}
-              name={`materials[${index}].id`}
+              name={`lesson_materials[${index}].id`}
               control={control}
               as={TextField}
               defaultValue={item.id}
             />
             <Controller
               style={{ display: "none" }}
-              name={`materials[${index}].name`}
+              name={`lesson_materials[${index}].name`}
               control={control}
               as={TextField}
               defaultValue={item.name}
             />
             <Controller
               style={{ display: "none" }}
-              name={`materials[${index}].outcome_ids`}
+              name={`lesson_materials[${index}].outcome_ids`}
               control={control}
               as={TextField}
               defaultValue={item.outcome_ids || []}
             />
             <Controller
-              name={`materials[${index}].checked`}
+              name={`lesson_materials[${index}].checked`}
               defaultValue={defaultValue ? defaultValue[index].checked : item.checked}
               render={(props) => (
                 <FormControlLabel
@@ -376,7 +376,7 @@ export const MaterialInput = (props: MaterialInputProps) => {
             />
             <div>
               <Controller
-                name={`materials[${index}].comment`}
+                name={`lesson_materials[${index}].comment`}
                 control={control}
                 as={TextField}
                 multiline
@@ -638,7 +638,7 @@ export function Summary(props: SummaryProps) {
               <Collapse {...expand.collapse} unmountOnExit>
                 <Controller
                   as={PopupLessonMaterial}
-                  name="materials"
+                  name="lesson_materials"
                   defaultValue={materials}
                   value={materials}
                   assessmentDetail={assessmentDetail}

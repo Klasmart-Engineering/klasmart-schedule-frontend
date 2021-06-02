@@ -48,7 +48,7 @@ function AssessmentsEditIner() {
       return outcome;
     } else {
       const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, assessmentDetail.lesson_materials);
-      setTimeout(() => setValue("outcome_attendances", outcome), 100);
+      setTimeout(() => setValue("outcomes", outcome), 100);
       return outcome;
     }
   }, [assessmentDetail, lesson_materials, setValue]);
@@ -56,11 +56,9 @@ function AssessmentsEditIner() {
     const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials);
     return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
   }, [assessmentDetail, attendance_ids, lesson_materials, student_view_items]);
-  console.log(filter_student_view_items);
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
-
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
