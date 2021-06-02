@@ -1,6 +1,5 @@
 import {
   Active,
-  CollisionDetection,
   DndContext,
   DragEndEvent,
   DragMoveEvent,
@@ -11,7 +10,8 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import debounce from "lodash/debounce";
+import React, { Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
@@ -52,7 +52,6 @@ import { Outcomes, OutcomesProps } from "./Outcomes";
 import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import { Regulation } from "./type";
-
 const SCROLL_DETECT_INTERVAL = 100;
 interface RouteParams {
   lesson: "assets" | "material" | "plan";
@@ -74,26 +73,6 @@ export const useQueryCms = () => {
   return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch };
 };
 
-const useScrollTop = () => {
-  const [scrollTop, setScrollTop] = useState(0);
-  useEffect(() => {
-    let timer: number;
-    const handleScroll = () => {
-      clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        const offset = window.pageYOffset;
-        if (offset === scrollTop) return;
-        setScrollTop(offset);
-      }, SCROLL_DETECT_INTERVAL);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollTop]);
-  return { scrollTop: Math.floor(scrollTop) };
-};
-
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
   const query = new URLSearchParams(search);
   Object.keys(hash).forEach((key) => query.set(key, String(hash[key])));
@@ -111,7 +90,7 @@ const parseRightside = (rightside: RouteParams["rightside"]) => ({
 function ContentEditForm() {
   const dispatch = useDispatch();
   const formMethods = useForm<ContentDetailForm>();
-  const { scrollTop } = useScrollTop();
+  const [scrollTop, setScrollTop] = useState(0);
   const { handleSubmit, control, watch, errors } = formMethods;
   const { contentDetail, mediaList, mediaListTotal, OutcomesListTotal, outcomeList, linkedMockOptions, visibility_settings, lesson_types } =
     useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -120,6 +99,7 @@ function ContentEditForm() {
   const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
   const history = useHistory();
+  const offsetRef = useRef(0);
   const [mediaPage, setMediaPage] = React.useState(1);
   const [outcomePage, setOutcomePage] = React.useState(1);
   const mouseSensor = useSensor(MouseSensor);
@@ -132,8 +112,9 @@ function ContentEditForm() {
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
   const activeRectRef = useRef<Active["rect"]>();
-  const adapteredRectIntersection: CollisionDetection = (entries, target) => {
-    const top = (activeRectRef.current?.current.translated?.top as number) + scrollTop;
+  const unmountRef = useRef<Function>();
+  const adapteredRectIntersection = (entries: any, target: any) => {
+    const top = (activeRectRef.current?.current.translated?.top as number) + scrollTop + offsetRef.current;
     const offsetTop = top + scrollTop;
     return rectIntersection(entries, { ...target, top, offsetTop });
   };
@@ -152,6 +133,12 @@ function ContentEditForm() {
   // 兼容现在的国际版专用变量
   const isEnableNewH5p = apiIsEnableNewH5p();
   const isOldH5p = formLiteFileType(id, allDefaultValueAndKey["data.file_type"]?.value, inputSource)?.isOldH5p;
+  const nodeRef: LegacyRef<HTMLElement> = (node) => {
+    unmountRef.current?.();
+    const update = debounce(() => void (offsetRef.current = node?.scrollTop ?? 0), 200);
+    node?.addEventListener("scroll", update);
+    unmountRef.current = () => node?.removeEventListener("scroll", update);
+  };
   const handleChangeLesson = useMemo(
     () => (lesson: string) => {
       const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
@@ -333,6 +320,21 @@ function ContentEditForm() {
     },
     [dispatch, program, subject]
   );
+  useEffect(() => {
+    let timer: number;
+    const handleScroll = () => {
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const offset = window.pageYOffset;
+        if (offset === scrollTop) return;
+        setScrollTop(Math.floor(offset));
+      }, SCROLL_DETECT_INTERVAL);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollTop]);
   useEffect(() => {
     dispatch(
       onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "badanamu" })
@@ -554,6 +556,7 @@ function ContentEditForm() {
           defaultValue={ModelLessonPlan.toSegment(contentDetail.data || "{}")}
           key={allDefaultValueAndKey.data?.key}
           control={control}
+          nodeRef={nodeRef}
         />
       )}
       {includePlanComposeText && <PlanComposeText plan={mockLessonPlan as SegmentText} droppableType="material" />}
