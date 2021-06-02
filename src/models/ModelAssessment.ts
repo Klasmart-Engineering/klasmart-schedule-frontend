@@ -88,8 +88,8 @@ export const ModelAssessment = {
     if (draft && draft.length && value && value.length) {
       return draft.map((item, index) => {
         return {
-          checked: value[index].checked,
-          comment: value[index].comment,
+          checked: value[index] ? value[index].checked : item.checked,
+          comment: value[index] ? value[index].comment : item.comment,
           id: item.id,
           name: item.name,
           outcome_ids: item.outcome_ids,

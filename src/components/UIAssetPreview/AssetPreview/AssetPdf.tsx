@@ -8,11 +8,17 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "90%",
     overflowY: "scroll",
+    overflowX: "hidden",
   },
-  pdfCon: {
+  pageCon: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    backgroundColor: "rgb(82, 86, 89)",
     "& .react-pdf__Page__canvas": {
-      width: "99.9% !important",
-      height: "aut0 !important",
+      marginTop: 10,
+      maxWidth: "100%",
+      height: "auto !important",
     },
   },
 }));
@@ -32,7 +38,7 @@ export default function AssetPdf(props: file) {
       <Document file={props.src} onLoadSuccess={onDocumentLoadSuccess}>
         {/* <Page pageNumber={1}/> */}
         {Array.from(new Array(numPages), (el, index) => (
-          <Page className={css.pdfCon} key={`page_${index + 1}`} pageNumber={index + 1} />
+          <Page className={css.pageCon} key={`page_${index + 1}`} pageNumber={index + 1} />
         ))}
       </Document>
     </div>
