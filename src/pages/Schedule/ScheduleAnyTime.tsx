@@ -178,9 +178,9 @@ function AnyTimeSchedule(props: SearchListProps) {
       await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
       );
-      const { payload } = (await dispatch(
+      const { payload } = ((await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
-      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
+      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
       if (payload) {
         dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
@@ -379,7 +379,7 @@ function AnyTimeSchedule(props: SearchListProps) {
 
   const buttonGroup = (type: string, scheduleInfo: EntityScheduleListView, showDeleteButto: boolean) => {
     const isScheduleExpiredMulti = (): boolean => {
-      return scheduleInfo.id ? scheduleInfo.status !== "NotStart" || privilegedMembers("Student") : false;
+      return scheduleInfo.id ? (!scheduleInfo.is_home_fun && scheduleInfo.status !== "NotStart") || privilegedMembers("Student") : false;
     };
     return (
       <span>
@@ -410,6 +410,7 @@ function AnyTimeSchedule(props: SearchListProps) {
                   onClick={() => {
                     deleteHandle(scheduleInfo);
                   }}
+                  disabled={scheduleInfo.is_home_fun && scheduleInfo.exist_assessment}
                 >
                   {d("Delete").t("assess_label_delete")}
                 </Button>

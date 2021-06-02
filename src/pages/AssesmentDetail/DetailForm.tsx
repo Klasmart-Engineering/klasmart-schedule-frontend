@@ -519,7 +519,7 @@ export default function DetailForm(props: DetailFormProps) {
         <Box className={css.classSummaryHeader} boxShadow={3}>
           <Typography variant="h6">{d("Class Summary").t("assess_class_summary")}</Typography>
           <div className={css.roomId}>
-            {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.id}
+            {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.schedule_id}
           </div>
         </Box>
         <Box px={5} py={5}>

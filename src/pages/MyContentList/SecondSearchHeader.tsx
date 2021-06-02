@@ -215,23 +215,25 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
         <Hidden only={["md", "lg", "xl"]}>
           <Grid container spacing={3}>
             <Grid item xs={8} sm={8}>
-              <PermissionOr
-                value={[
-                  PermissionType.create_content_page_201,
-                  PermissionType.create_lesson_material_220,
-                  PermissionType.create_lesson_plan_221,
-                ]}
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.createBtn}
-                  onClick={handleClickCreate}
-                  endIcon={<ArrowDropDownOutlinedIcon />}
+              {!value.program_group && (
+                <PermissionOr
+                  value={[
+                    PermissionType.create_content_page_201,
+                    PermissionType.create_lesson_material_220,
+                    PermissionType.create_lesson_plan_221,
+                  ]}
                 >
-                  {d("Create").t("library_label_create")}
-                </Button>
-              </PermissionOr>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.createBtn}
+                    onClick={handleClickCreate}
+                    endIcon={<ArrowDropDownOutlinedIcon />}
+                  >
+                    {d("Create").t("library_label_create")}
+                  </Button>
+                </PermissionOr>
+              )}
               <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
                 <MenuItem onClick={onCreateContent}>{d("New Content").t("library_label_new_content")}</MenuItem>
                 {(value.publish_status === PublishStatus.published ||
