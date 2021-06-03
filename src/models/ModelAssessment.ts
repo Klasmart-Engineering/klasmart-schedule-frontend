@@ -248,9 +248,9 @@ export const ModelAssessment = {
           item.lesson_materials.forEach((v) => {
             if (v.is_h5p) {
               all += 1;
-            }
-            if (v.attempted) {
-              attempt += 1;
+              if (v.attempted) {
+                attempt += 1;
+              }
             }
           });
         }
