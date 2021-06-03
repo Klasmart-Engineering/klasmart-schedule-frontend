@@ -54,7 +54,8 @@ function AssessmentsEditIner() {
     }
   }, [assessmentDetail, lesson_materials, setValue]);
   const filter_student_view_items = useMemo(() => {
-    const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials);
+    const new_lesson_materials = lesson_materials ? lesson_materials : assessmentDetail.lesson_materials;
+    const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, new_lesson_materials);
     return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
   }, [assessmentDetail, attendance_ids, lesson_materials, student_view_items]);
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
