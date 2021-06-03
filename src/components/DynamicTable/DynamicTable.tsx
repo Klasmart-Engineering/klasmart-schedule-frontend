@@ -137,6 +137,7 @@ function BasicTable(props: BasicTableProps) {
     isComplete,
     tableCellData,
     name,
+    tableType,
   } = props;
 
   const handleChangeComment = (commentText: string) => {
@@ -292,10 +293,8 @@ function BasicTable(props: BasicTableProps) {
                         />
                       </TableCell>
                       <TableCell align="center">
-                        {!("outcome_names" in row) && (
-                          <>{row?.max_score! === 0 ? "" : (row?.achieved_score! / row?.max_score!) * 100 + "%"}</>
-                        )}
-                        {"outcome_names" in row && (
+                        {tableType === "study" && <>{row?.max_score! === 0 ? "" : (row?.achieved_score! / row?.max_score!) * 100 + "%"}</>}
+                        {tableType === "live" && (
                           <ul className={classes.outcomesBox}>
                             {row?.outcome_names?.map((name) => (
                               <li>{name}</li>
@@ -323,10 +322,11 @@ interface tableProps {
   isComplete: boolean;
   tableCellData: string[];
   name: dynamicTableName;
+  tableType: "live" | "study";
 }
 
 export function DynamicTable(props: tableProps) {
-  const { studentViewItems, formMethods, formValue, editable, isComplete, tableCellData, name } = props;
+  const { studentViewItems, formMethods, formValue, editable, isComplete, tableCellData, name, tableType } = props;
   const [elasticLayerControlData, setElasticLayerControlData] = React.useState<ElasticLayerControl>({
     openStatus: false,
     type: "",
@@ -350,6 +350,7 @@ export function DynamicTable(props: tableProps) {
             isComplete={isComplete}
             tableCellData={tableCellData}
             name={name}
+            tableType={tableType}
           />
         );
       })}

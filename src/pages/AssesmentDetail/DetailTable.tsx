@@ -31,6 +31,7 @@ export function DetailTable(props: tableProps) {
       isComplete={isComplete}
       editable={editable}
       name="student_view_items"
+      tableType="study"
     />
   );
 }
