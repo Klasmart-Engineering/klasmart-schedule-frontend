@@ -400,7 +400,7 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
   const canDropCondition = Boolean(active?.data.current?.type === "LIBRARY_ITEM");
   const canDropMaterial = Boolean(active?.data.current?.type === "condition");
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
+  const archerRepaintKey = useMemo(() => Date.now(), [canDropCondition, canDropMaterial, plan]);
   const startRelations: Relation[] = [{ sourceAnchor: "bottom", targetAnchor: "top", targetId: "startTarget", style: { strokeWidth: 1 } }];
   return (
     <div ref={forwardedref}>
@@ -445,7 +445,7 @@ export const PlanComposeGraphic = forwardRef<HTMLDivElement, PlanComposeGraphicP
             arrowThickness={9}
             arrowLength={9}
             noCurves
-            // key={archerRepaintKey}
+            key={archerRepaintKey}
           >
             <Box className="Box1" display="flex" flexDirection="column" alignItems="center">
               <ArcherElement id="start" relations={startRelations}>

@@ -113,6 +113,7 @@ function ContentEditForm() {
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
   const activeRectRef = useRef<Active["rect"]>();
   const unmountRef = useRef<Function>();
+  const isTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   const adapteredRectIntersection = (entries: any, target: any) => {
     const top = (activeRectRef.current?.current.translated?.top as number) + scrollTop + offsetRef.current;
     const offsetTop = top + scrollTop;
@@ -566,7 +567,7 @@ function ContentEditForm() {
   return (
     <DndContext
       sensors={sensors}
-      autoScroll={false}
+      autoScroll={isTouch}
       onDragEnd={handleDropEnd}
       onDragStart={handleDragStart}
       collisionDetection={adapteredRectIntersection}
