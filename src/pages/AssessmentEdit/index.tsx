@@ -63,7 +63,9 @@ function AssessmentsEditIner() {
     () =>
       handleSubmit(async (value) => {
         if (id) {
-          const data: UpdateAssessmentRequestData = { ...value, action: "save" };
+          const student_view_items = ModelAssessment.toUpdateH5pStudentView(value.student_view_items);
+          const formValue = { ...value, student_view_items };
+          const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
@@ -81,7 +83,9 @@ function AssessmentsEditIner() {
     () =>
       handleSubmit(async (value) => {
         if (id) {
-          const data: UpdateAssessmentRequestData = { ...value, action: "complete" };
+          const student_view_items = ModelAssessment.toUpdateH5pStudentView(value.student_view_items);
+          const formValue = { ...value, student_view_items };
+          const data: UpdateAssessmentRequestData = { ...formValue, action: "complete" };
           const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
             data.outcomes &&
             data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
