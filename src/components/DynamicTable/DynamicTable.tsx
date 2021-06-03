@@ -245,8 +245,10 @@ function BasicTable(props: BasicTableProps) {
               <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    {tableCellData.map((cell) => (
-                      <TableCell align="center">{cell}</TableCell>
+                    {tableCellData.map((cell, index) => (
+                      <TableCell align="center" key={index}>
+                        {cell}
+                      </TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
