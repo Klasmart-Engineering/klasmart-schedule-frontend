@@ -66,7 +66,11 @@ function RouterButton(props: ButtonProps) {
               ? "none"
               : "block",
         }}
-        disabled={(scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") || !scheduleInfo.lesson_plan_id}
+        disabled={
+          (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
+          (scheduleInfo.role_type === "Student" && scheduleInfo.exist_assessment) ||
+          !scheduleInfo.lesson_plan_id
+        }
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
         {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
