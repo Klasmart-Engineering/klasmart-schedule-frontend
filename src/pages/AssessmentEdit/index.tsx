@@ -44,7 +44,8 @@ function AssessmentsEditIner() {
   // const filteredOutcomelist = assessmentDetail.outcome_attendances;
   const filteredOutcomelist = useMemo(() => {
     if (lesson_materials) {
-      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, lesson_materials);
+      const new_lesson_materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, lesson_materials);
+      const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, new_lesson_materials);
       return outcome;
     } else {
       const outcome = ModelAssessment.filterOutcomeList(assessmentDetail, assessmentDetail.lesson_materials);
