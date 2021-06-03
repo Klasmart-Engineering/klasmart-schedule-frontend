@@ -166,7 +166,7 @@ function BasicTable(props: BasicTableProps) {
   };
 
   const subjectiveActivity = (type?: string) => {
-    return ["essay"].includes(type ?? "");
+    return ["Essay"].includes(type ?? "");
   };
 
   const reBytesStr = (str: string, len: number) => {
