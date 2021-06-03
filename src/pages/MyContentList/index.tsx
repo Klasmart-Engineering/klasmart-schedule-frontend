@@ -362,7 +362,12 @@ export default function MyContentList() {
     })();
   }, [condition, reset, dispatch, refreshKey]);
   return (
-    <div>
+    <div
+      onContextMenu={(e) => {
+        e.preventDefault();
+        return false;
+      }}
+    >
       {condition.program_group && condition.program_group !== ProgramGroup.moreFeaturedContent && (
         <ProgramSearchHeader value={condition} onChange={handleChangeTab} />
       )}

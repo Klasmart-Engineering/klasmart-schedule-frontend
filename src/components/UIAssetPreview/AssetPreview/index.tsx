@@ -20,7 +20,18 @@ export function AssetPreview(props: PreviewProps) {
   const path = apiResourcePathById(source);
   const isHeight = fileFormat.document.indexOf(`.${getSuffix(source)}`) >= 0 || fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0;
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" className={className} width="100%" height={isHeight ? "100vh" : "100%"}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      className={className}
+      width="100%"
+      height={isHeight ? "100vh" : "100%"}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        return false;
+      }}
+    >
       {fileFormat.image.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetImg key={source} src={path} />}
       {fileFormat.video.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetVideo key={source} src={path} />}
       {fileFormat.audio.indexOf(`.${getSuffix(source)}`) >= 0 && <AssetAudio key={source} src={path} />}

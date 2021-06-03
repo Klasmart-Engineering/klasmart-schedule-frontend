@@ -761,8 +761,12 @@ function EditBox(props: CalendarStateProps) {
 
   const validatorFun = () => {
     let verificaPath = true;
-
-    const validator = scheduleList.class_type === "Task" || checkedStatus.homeFunCheck ? taskValidator : isValidator;
+    const validator =
+      scheduleList.class_type === "Task"
+        ? taskValidator
+        : checkedStatus.homeFunCheck
+        ? { ...taskValidator, program_id: false }
+        : isValidator;
 
     for (let name in scheduleList) {
       if (validator.hasOwnProperty(name)) {
@@ -779,6 +783,7 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleList.class_type === "Homework") {
       validator.start_at = validator.end_at = false;
     }
+    console.log(validator);
     setValidator({ ...validator });
     return verificaPath;
   };

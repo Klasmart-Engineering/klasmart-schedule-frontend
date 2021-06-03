@@ -17,7 +17,14 @@ export function Loading() {
   const { loading } = useSelector<RootState, RootState["loading"]>((state) => state.loading);
   if (!loading) return null;
   return (
-    <Backdrop className={css.backdrop} open>
+    <Backdrop
+      className={css.backdrop}
+      open
+      onContextMenu={(e) => {
+        e.preventDefault();
+        return false;
+      }}
+    >
       <CircularProgress color="inherit" />
     </Backdrop>
   );
