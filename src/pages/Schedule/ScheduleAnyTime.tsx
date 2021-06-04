@@ -84,6 +84,14 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
+    deleteButton: {
+      border: "1px solid red",
+      color: "red",
+    },
+    deleteDisabledButton: {
+      border: "1px solid gray",
+      color: "gray",
+    },
   })
 );
 
@@ -318,6 +326,29 @@ function AnyTimeSchedule(props: SearchListProps) {
   const handleEditSchedule = (scheduleInfo: EntityScheduleListView): void => {
     const currentTime = Math.floor(new Date().getTime());
     if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
+      if (scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
+        changeModalDate({
+          title: "",
+          // text: "You cannot edit this event after the due date",
+          text: d("This event cannot be edited because some students already made progress for Study activities.").t(
+            "schedule_msg_cannot_edit_study"
+          ),
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+        return;
+      }
       if (scheduleInfo.due_at !== 0 && (scheduleInfo.due_at as number) * 1000 < currentTime) {
         changeModalDate({
           title: "",
@@ -344,6 +375,29 @@ function AnyTimeSchedule(props: SearchListProps) {
   };
 
   const deleteHandle = (scheduleInfo: EntityScheduleListView) => {
+    if (scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
+      changeModalDate({
+        title: "",
+        // text: "You cannot edit this event after the due date",
+        text: d("This event cannot be deleted because some students already made progress for Study activities.").t(
+          "schedule_msg_cannot_delete_study"
+        ),
+        openStatus: true,
+        enableCustomization: false,
+        buttons: [
+          {
+            label: d("OK").t("schedule_button_ok"),
+            event: () => {
+              changeModalDate({ openStatus: false, enableCustomization: false });
+            },
+          },
+        ],
+        handleClose: () => {
+          changeModalDate({ openStatus: false, enableCustomization: false });
+        },
+      });
+      return;
+    }
     if (scheduleInfo.exist_feedback) {
       changeModalDate({
         title: "",
@@ -408,7 +462,10 @@ function AnyTimeSchedule(props: SearchListProps) {
             render={(value) =>
               value && (
                 <Button
-                  style={{ marginLeft: "20px", border: "1px solid red", color: "red" }}
+                  className={
+                    !scheduleInfo.is_home_fun && scheduleInfo.exist_assessment ? classes.deleteDisabledButton : classes.deleteButton
+                  }
+                  style={{ marginLeft: "20px" }}
                   variant="outlined"
                   color="secondary"
                   onClick={() => {
@@ -451,7 +508,7 @@ function AnyTimeSchedule(props: SearchListProps) {
           <Box className={classes.scrollBox}>
             {anyTimeData.study.map((view: EntityScheduleListView) => {
               return (
-                <div>
+                <div key={view.id}>
                   <span>{view.title} </span>
                   {buttonGroup("study", view, !privilegedMembers("Student"))}
                 </div>
@@ -468,7 +525,7 @@ function AnyTimeSchedule(props: SearchListProps) {
           <Box className={classes.scrollBox}>
             {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
               return (
-                <div>
+                <div key={view.id}>
                   <span>
                     {view.title}{" "}
                     {view.exist_feedback && view.is_hidden && (

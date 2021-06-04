@@ -81,10 +81,11 @@ interface EditScoreProps {
   maxScore?: number;
   attempted?: boolean;
   isComplete?: boolean;
+  is_h5p?: boolean;
 }
 
 function EditScore(props: EditScoreProps) {
-  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore, attempted, isComplete } = props;
+  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore, attempted, isComplete, is_h5p } = props;
   const [scoreNum, setScoreNum] = React.useState(score);
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
@@ -104,21 +105,21 @@ function EditScore(props: EditScoreProps) {
                   if (value! > maxScore!) {
                     dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
                   } else if (Number(value) + "" !== NaN + "") {
-                    handleChangeScore(Number(value), index);
-                    setScoreNum(value);
+                    handleChangeScore(Number(value.toFixed(1)), index);
+                    setScoreNum(Number(value.toFixed(1)));
                   }
                 }}
               />{" "}
               / {maxScore}
             </>
           ) : (
-            <>
-              {scoreNum} / {maxScore}
-            </>
+            <>{Math.ceil(scoreNum! / maxScore!)}</>
           )}
         </>
-      ) : (
+      ) : is_h5p ? (
         d("Not Attempted").t("assess_option_not_attempted")
+      ) : (
+        ""
       )}
     </div>
   );
@@ -182,7 +183,7 @@ function BasicTable(props: BasicTableProps) {
   };
 
   const textEllipsis = (value?: string) => {
-    const CharacterCount = 12;
+    const CharacterCount = 36;
     return value ? reBytesStr(value, CharacterCount) : "";
   };
 
@@ -292,6 +293,7 @@ function BasicTable(props: BasicTableProps) {
                           editable={editable}
                           isSubjectiveActivity={subjectiveActivity(row.lesson_material_type)}
                           attempted={row.attempted}
+                          is_h5p={row.is_h5p}
                         />
                       </TableCell>
                       <TableCell align="center">
