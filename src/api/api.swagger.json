@@ -10328,6 +10328,9 @@
           "type": "string",
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
+        "complete_assessment": {
+          "type": "boolean"
+        },
         "due_at": {
           "type": "integer"
         },

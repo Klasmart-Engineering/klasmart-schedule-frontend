@@ -58,7 +58,7 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   outcomesBox: {
-    width: "260px",
+    maxWidth: "260px",
     "& li": {
       textAlign: "left",
       marginTop: "10px",
@@ -86,7 +86,7 @@ interface EditScoreProps {
 
 function EditScore(props: EditScoreProps) {
   const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore, attempted, isComplete, is_h5p } = props;
-  const [scoreNum, setScoreNum] = React.useState(score);
+  const [scoreNum, setScoreNum] = React.useState<number | string | undefined>(score);
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   return (
@@ -96,7 +96,7 @@ function EditScore(props: EditScoreProps) {
           {editable && !isComplete && isSubjectiveActivity ? (
             <>
               <TextField
-                style={{ width: "54px", transform: "scale(0.8)" }}
+                style={{ width: "59px", transform: "scale(0.8)" }}
                 value={scoreNum}
                 id="standard-size-small"
                 size="small"
@@ -105,15 +105,18 @@ function EditScore(props: EditScoreProps) {
                   if (value! > maxScore!) {
                     dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
                   } else if (Number(value) + "" !== NaN + "") {
-                    handleChangeScore(Number(value.toFixed(1)), index);
-                    setScoreNum(Number(value.toFixed(1)));
+                    const computerValue = String(value).replace(/^(.*\..{1}).*$/, "$1");
+                    handleChangeScore(Number(computerValue), index);
+                    setScoreNum(computerValue);
                   }
                 }}
               />{" "}
               / {maxScore}
             </>
           ) : (
-            <>{Math.ceil(scoreNum! / maxScore!)}</>
+            <>
+              {scoreNum} / {maxScore}
+            </>
           )}
         </>
       ) : is_h5p ? (
@@ -168,7 +171,7 @@ function BasicTable(props: BasicTableProps) {
   };
 
   const subjectiveActivity = (type?: string) => {
-    return ["Essay"].includes(type ?? "");
+    return ["Essay", "Column"].includes(type ?? "");
   };
 
   const reBytesStr = (str: string, len: number) => {
@@ -297,7 +300,9 @@ function BasicTable(props: BasicTableProps) {
                         />
                       </TableCell>
                       <TableCell align="center">
-                        {tableType === "study" && <>{row?.max_score! === 0 ? "" : (row?.achieved_score! / row?.max_score!) * 100 + "%"}</>}
+                        {tableType === "study" && (
+                          <>{row?.max_score! === 0 ? "" : Math.ceil((row?.achieved_score! / row?.max_score!) * 100) + "%"}</>
+                        )}
                         {tableType === "live" && (
                           <ul className={classes.outcomesBox}>
                             {row?.outcome_names?.map((name) => (

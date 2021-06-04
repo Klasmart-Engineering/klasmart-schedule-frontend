@@ -1035,6 +1035,7 @@ export interface EntityScheduleLessonPlanMaterial {
 export interface EntityScheduleListView {
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  complete_assessment?: boolean;
   due_at?: number;
   end_at?: number;
   exist_assessment?: boolean;
