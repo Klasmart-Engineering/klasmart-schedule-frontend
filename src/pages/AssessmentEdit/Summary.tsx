@@ -419,7 +419,6 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
 
   const handleOk = useCallback(() => {
     const value = getValues()["lesson_materials"];
-    console.log(value);
     if (value && value.length) {
       const newValue = value?.filter((item) => !item.checked);
       onChangeOA(value);
