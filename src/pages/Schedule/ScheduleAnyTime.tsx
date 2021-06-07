@@ -88,9 +88,13 @@ const useStyles = makeStyles((theme: Theme) =>
       border: "1px solid red",
       color: "red",
     },
-    deleteDisabledButton: {
+    disabledButton: {
       border: "1px solid gray",
       color: "gray",
+    },
+    editButton: {
+      border: "1px solid #009688",
+      color: "#009688",
     },
   })
 );
@@ -448,10 +452,11 @@ function AnyTimeSchedule(props: SearchListProps) {
         )}
         {showDeleteButto && (
           <Button
-            style={{ border: "1px solid #009688", color: "#009688" }}
+            className={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment ? classes.disabledButton : classes.editButton}
             onClick={() => handleEditSchedule(scheduleInfo)}
             variant="outlined"
             color="inherit"
+            disabled={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment}
           >
             {d("Edit").t("schedule_button_edit")}
           </Button>
@@ -462,12 +467,14 @@ function AnyTimeSchedule(props: SearchListProps) {
             render={(value) =>
               value && (
                 <Button
-                  style={{ marginLeft: "20px", border: "1px solid red", color: "red" }}
+                  className={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment ? classes.disabledButton : classes.deleteButton}
+                  style={{ marginLeft: "20px" }}
                   variant="outlined"
                   color="secondary"
                   onClick={() => {
                     deleteHandle(scheduleInfo);
                   }}
+                  disabled={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment}
                 >
                   {d("Delete").t("assess_label_delete")}
                 </Button>
