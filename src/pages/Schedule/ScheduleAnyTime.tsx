@@ -462,16 +462,12 @@ function AnyTimeSchedule(props: SearchListProps) {
             render={(value) =>
               value && (
                 <Button
-                  className={
-                    !scheduleInfo.is_home_fun && scheduleInfo.exist_assessment ? classes.deleteDisabledButton : classes.deleteButton
-                  }
-                  style={{ marginLeft: "20px" }}
+                  style={{ marginLeft: "20px", border: "1px solid red", color: "red" }}
                   variant="outlined"
                   color="secondary"
                   onClick={() => {
                     deleteHandle(scheduleInfo);
                   }}
-                  disabled={!scheduleInfo.is_home_fun && scheduleInfo.exist_assessment}
                 >
                   {d("Delete").t("assess_label_delete")}
                 </Button>

@@ -67,7 +67,7 @@ function RouterButton(props: ButtonProps) {
         }}
         disabled={
           (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
-          (scheduleInfo.role_type === "Student" && (scheduleInfo.exist_assessment || scheduleInfo.complete_assessment)) ||
+          (scheduleInfo.role_type === "Student" && scheduleInfo.complete_assessment) ||
           !scheduleInfo.lesson_plan_id ||
           scheduleInfo.lesson_plan?.is_auth
         }
