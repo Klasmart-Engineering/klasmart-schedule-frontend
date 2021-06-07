@@ -69,7 +69,7 @@ function RouterButton(props: ButtonProps) {
           (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
           (scheduleInfo.role_type === "Student" && scheduleInfo.complete_assessment) ||
           !scheduleInfo.lesson_plan_id ||
-          scheduleInfo.lesson_plan?.is_auth
+          !scheduleInfo.lesson_plan?.is_auth
         }
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
