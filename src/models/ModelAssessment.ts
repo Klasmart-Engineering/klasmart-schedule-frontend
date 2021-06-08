@@ -211,7 +211,7 @@ export const ModelAssessment = {
           (v, idx) => v.achieved_score !== currentLessonMaterials[idx].achieved_score
         );
         return {
-          comment: item.comment === currentInit.comment ? "" : item.comment,
+          comment: item.comment,
           student_id: item.student_id,
           lesson_materials: changed_lesson_materials?.map((v) => {
             return {
