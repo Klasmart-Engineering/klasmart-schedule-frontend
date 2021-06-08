@@ -208,7 +208,7 @@ export const ModelAssessment = {
         const currentInit = initValue[index];
         const currentLessonMaterials = currentInit.lesson_materials ? currentInit.lesson_materials : [];
         const changed_lesson_materials = item.lesson_materials?.filter(
-          (v, idx) => v.achieved_score === currentLessonMaterials[idx].achieved_score
+          (v, idx) => v.achieved_score !== currentLessonMaterials[idx].achieved_score
         );
         return {
           comment: item.comment === currentInit.comment ? "" : item.comment,
