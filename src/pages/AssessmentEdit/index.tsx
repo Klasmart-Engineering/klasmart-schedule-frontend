@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
+import { AssessmentStatus, GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
 import { DynamicTable } from "../../components/DynamicTable";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -65,6 +65,7 @@ function AssessmentsEditIner() {
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
+  const isComplete = assessmentDetail.status === AssessmentStatus.complete;
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
@@ -172,7 +173,7 @@ function AssessmentsEditIner() {
             studentViewItems={filter_student_view_items}
             tableCellData={TableCellData}
             formMethods={formMethods}
-            isComplete={false}
+            isComplete={isComplete}
             editable={editable}
             name="student_view_items"
             tableType="live"

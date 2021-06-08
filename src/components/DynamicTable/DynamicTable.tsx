@@ -171,7 +171,7 @@ function BasicTable(props: BasicTableProps) {
   };
 
   const subjectiveActivity = (type?: string) => {
-    return ["Essay", "Column"].includes(type ?? "");
+    return ["Essay"].includes(type ?? "");
   };
 
   const reBytesStr = (str: string, len: number) => {
