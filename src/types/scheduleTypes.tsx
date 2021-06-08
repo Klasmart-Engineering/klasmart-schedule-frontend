@@ -183,7 +183,7 @@ export interface scheduleInfoViewProps {
   is_repeat: boolean;
   lesson_plan_id: string;
   status: string;
-  class_type: EntityScheduleShortInfo;
+  class_type: string;
   class_id: string;
   due_at: number;
   exist_feedback: boolean;
@@ -193,6 +193,7 @@ export interface scheduleInfoViewProps {
   exist_assessment: boolean;
   complete_assessment: boolean;
   lesson_plan: EntityScheduleLessonPlan;
+  class_type_label: EntityScheduleShortInfo;
 }
 
 export interface FilterDataItemsProps {

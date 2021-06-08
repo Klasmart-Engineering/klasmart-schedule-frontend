@@ -190,6 +190,10 @@ function BasicTable(props: BasicTableProps) {
     return value ? reBytesStr(value, CharacterCount) : "";
   };
 
+  const showCommentsElement = () => {
+    return studentViewItem.lesson_materials?.some((lesson) => lesson.lesson_material_type !== "");
+  };
+
   return (
     <Controller
       name={`${name}[${index}]`}
@@ -207,7 +211,7 @@ function BasicTable(props: BasicTableProps) {
             <div style={{ color: checked ? "black" : "#666666" }}>
               <AccountCircleIcon />
               <span style={{ padding: "0 18px 0 18px" }}>{studentViewItem.student_name}</span>
-              {editable && !isComplete && (
+              {editable && !isComplete && showCommentsElement() && (
                 <span
                   onClick={(e) => {
                     e.stopPropagation();

@@ -172,7 +172,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleEditSchedule = (scheduleInfo: scheduleInfoViewProps): void => {
     const currentTime = Math.floor(new Date().getTime());
-    if (scheduleInfo.class_type.id === "Homework" || scheduleInfo.class_type.id === "Task") {
+    if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
       if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
         changeModalDate({
           title: "",
@@ -201,7 +201,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleGoLive = (scheduleInfos: ScheduleEditExtend) => {
     const currentTime = Math.floor(new Date().getTime());
-    if (permissionShowLive && scheduleInfo.class_type.id === "Homework") {
+    if (permissionShowLive && scheduleInfo.class_type_label?.id === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
       window.open(apiLivePath(liveToken));
@@ -260,7 +260,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const deleteHandle = () => {
-    if (scheduleInfo.class_type.id === "Homework" && scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
+    if (scheduleInfo.class_type_label?.id === "Homework" && scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
       changeModalDate({
         title: "",
         // text: "You cannot edit this event after the due date",
@@ -341,7 +341,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const disableDelete = () => {
-    if (!scheduleInfo.is_home_fun && scheduleInfo.class_type.id === "Homework") {
+    if (!scheduleInfo.is_home_fun && scheduleInfo.class_type_label?.id === "Homework") {
       return scheduleInfo.complete_assessment;
     } else {
       return scheduleInfo.status !== "NotStart";
@@ -349,7 +349,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const showDelete = () => {
-    return !scheduleInfo.is_home_fun && scheduleInfo.class_type.id === "Homework" ? true : scheduleInfo.status === "NotStart";
+    return !scheduleInfo.is_home_fun && scheduleInfo.class_type_label?.id === "Homework" ? true : scheduleInfo.status === "NotStart";
   };
 
   return (
@@ -380,7 +380,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         </div>
       </div>
       {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
-        scheduleInfo.class_type.id !== "Task" &&
+        scheduleInfo.class_type_label?.id !== "Task" &&
         !scheduleInfo.is_home_fun && (
           <p className={classes.checkPlan}>
             {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
@@ -395,7 +395,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span className={classes.row}>{d("Room ID").t("schedule_popup_room_id")}</span>
           <span className={classes.row2}>{ScheduleViewInfo.room_id}</span>
         </p>
-        {ScheduleViewInfo.class_type?.id !== "Homework" && (
+        {ScheduleViewInfo.class_type_label?.id !== "Homework" && (
           <>
             <p className={classes.contentRow}>
               <span className={classes.row}>{d("Start Time").t("schedule_detail_start_time")}</span>
@@ -451,7 +451,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           </span>
         </p>
       </div>
-      {ScheduleViewInfo.class_type?.id !== "Task" && !ScheduleViewInfo.is_home_fun && (
+      {ScheduleViewInfo.class_type_label?.id !== "Task" && !ScheduleViewInfo.is_home_fun && (
         <div className={classes.buttonPart}>
           <ScheduleButton scheduleInfo={ScheduleViewInfo} templateType="schedulePopup" handleGoLive={handleGoLive} />
         </div>

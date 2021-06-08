@@ -249,7 +249,7 @@ function MyCalendar(props: CalendarProps) {
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoViewProps) => {
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.class_type.id === "Homework" || scheduleInfo.class_type.id === "Task") {
+      if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
         if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
           changeModalDate({
             title: "",
@@ -342,7 +342,7 @@ function MyCalendar(props: CalendarProps) {
     const currentTime = Math.floor(new Date().getTime());
     if (
       ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
-      (permissionShowLive && event.class_type.id === "Homework")
+      (permissionShowLive && event.class_type_label?.id === "Homework")
     ) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
