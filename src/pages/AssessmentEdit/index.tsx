@@ -53,6 +53,10 @@ function AssessmentsEditIner() {
       return outcome;
     }
   }, [assessmentDetail, lesson_materials, setValue]);
+  const init_student_view_items = useMemo(() => {
+    const new_lesson_materials = lesson_materials ? lesson_materials : assessmentDetail.lesson_materials;
+    return ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, new_lesson_materials);
+  }, [assessmentDetail, attendance_ids, lesson_materials]);
   const filter_student_view_items = useMemo(() => {
     const new_lesson_materials = lesson_materials ? lesson_materials : assessmentDetail.lesson_materials;
     const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, new_lesson_materials);
@@ -65,7 +69,7 @@ function AssessmentsEditIner() {
     () =>
       handleSubmit(async (value) => {
         if (id) {
-          const student_view_items = ModelAssessment.toUpdateH5pStudentView(value.student_view_items);
+          const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, value.student_view_items);
           const formValue = { ...value, student_view_items };
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
@@ -79,13 +83,13 @@ function AssessmentsEditIner() {
           }
         }
       }),
-    [handleSubmit, id, dispatch, history, editindex]
+    [handleSubmit, id, init_student_view_items, dispatch, history, editindex]
   );
   const handleAssessmentComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
         if (id) {
-          const student_view_items = ModelAssessment.toUpdateH5pStudentView(value.student_view_items);
+          const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, value.student_view_items);
           const formValue = { ...value, student_view_items };
           const data: UpdateAssessmentRequestData = { ...formValue, action: "complete" };
           const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
@@ -104,7 +108,7 @@ function AssessmentsEditIner() {
           }
         }
       }),
-    [handleSubmit, id, dispatch, history, editindex]
+    [handleSubmit, id, init_student_view_items, dispatch, history, editindex]
   );
   const handleGoBack = useCallback(() => {
     history.goBack();
