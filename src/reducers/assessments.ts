@@ -215,8 +215,16 @@ export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyA
 export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/completeStudyAssessment",
   async ({ id, data, filter_student_view_items }, { dispatch }) => {
-    const { all, attempt } = ModelAssessment.toGetCompleteRate(filter_student_view_items);
-    if (all === 0 || (all && attempt)) {
+    let hasNotAttempt = false;
+    filter_student_view_items?.forEach((item) => {
+      const { all, attempt } = ModelAssessment.toGetCompleteRate([item]);
+      if (all && attempt === 0) {
+        if (!hasNotAttempt) {
+          hasNotAttempt = true;
+        }
+      }
+    });
+    if (!hasNotAttempt) {
       const content = d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete");
       const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
       if (!isConfirmed) return Promise.reject();
