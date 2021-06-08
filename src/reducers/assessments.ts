@@ -12,6 +12,7 @@ import { apiWaitForOrganizationOfPage } from "../api/extra";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
+import { ModelAssessment } from "../models/ModelAssessment";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actInfo } from "./notify";
@@ -214,11 +215,8 @@ export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyA
 export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/completeStudyAssessment",
   async ({ id, data, filter_student_view_items }, { dispatch }) => {
-    const item =
-      filter_student_view_items && filter_student_view_items.length
-        ? filter_student_view_items.find((item) => item.lesson_materials?.some((m) => m.attempted))
-        : undefined;
-    if (item) {
+    const { all, attempt } = ModelAssessment.toGetCompleteRate(filter_student_view_items);
+    if (all === 0 || (all && attempt)) {
       const content = d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete");
       const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
       if (!isConfirmed) return Promise.reject();
