@@ -205,7 +205,7 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
         defaultValue={defaultValue}
         rules={{ required: true }}
         error={errors.attendance_ids}
-        render={(props: any) => {
+        render={({ ref, ...props }) => {
           return (
             <CheckboxGroup
               {...props}
@@ -214,6 +214,7 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
                   {assessmentDetail.students &&
                     assessmentDetail.students.map((item) => (
                       <FormControlLabel
+                        ref={ref}
                         control={
                           <Checkbox
                             color="primary"
