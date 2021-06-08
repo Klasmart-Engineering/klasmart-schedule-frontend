@@ -327,12 +327,6 @@
             "description": "teacher name fuzzy search",
             "name": "teacher_name",
             "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "class type",
-            "name": "class_type",
-            "in": "query"
           }
         ],
         "responses": {
@@ -8073,6 +8067,40 @@
         }
       }
     },
+    "entity.AssessmentLessonMaterial": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "file_type": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentLessonPlan": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.AssessmentProgram": {
       "type": "object",
       "properties": {
@@ -9259,12 +9287,12 @@
         "lesson_materials": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.StudyAssessmentLessonMaterial"
+            "$ref": "#/definitions/entity.AssessmentLessonMaterial"
           }
         },
         "lesson_plan": {
           "type": "object",
-          "$ref": "#/definitions/entity.StudyAssessmentLessonPlan"
+          "$ref": "#/definitions/entity.AssessmentLessonPlan"
         },
         "remaining_time": {
           "type": "integer"
@@ -10120,8 +10148,8 @@
           }
         },
         "class_type": {
-          "type": "string",
-          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "description": {
           "type": "string"
@@ -10325,8 +10353,8 @@
           "type": "string"
         },
         "class_type": {
-          "type": "string",
-          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+          "type": "object",
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "complete_assessment": {
           "type": "boolean"
@@ -10637,6 +10665,9 @@
         "class_type": {
           "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "complete_assessment": {
+          "type": "boolean"
         },
         "due_at": {
           "type": "integer"
@@ -10954,37 +10985,6 @@
         }
       }
     },
-    "entity.StudyAssessmentLessonMaterial": {
-      "type": "object",
-      "properties": {
-        "checked": {
-          "type": "boolean"
-        },
-        "comment": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.StudyAssessmentLessonPlan": {
-      "type": "object",
-      "properties": {
-        "comment": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "entity.TeacherManualFile": {
       "type": "object",
       "properties": {
@@ -11052,7 +11052,7 @@
         "student_view_items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.UpdateStudyAssessmentStudentViewItem"
+            "$ref": "#/definitions/entity.UpdateAssessmentH5PStudent"
           }
         }
       }
@@ -11067,6 +11067,34 @@
           "type": "string"
         },
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.UpdateAssessmentH5PLessonMaterial": {
+      "type": "object",
+      "properties": {
+        "achieved_score": {
+          "type": "number"
+        },
+        "lesson_material_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.UpdateAssessmentH5PStudent": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "lesson_materials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateAssessmentH5PLessonMaterial"
+          }
+        },
+        "student_id": {
           "type": "string"
         }
       }
@@ -11136,36 +11164,8 @@
         "student_view_items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.UpdateStudyAssessmentStudentViewItem"
+            "$ref": "#/definitions/entity.UpdateAssessmentH5PStudent"
           }
-        }
-      }
-    },
-    "entity.UpdateStudyAssessmentStudentViewItem": {
-      "type": "object",
-      "properties": {
-        "comment": {
-          "type": "string"
-        },
-        "lesson_materials": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.UpdateStudyAssessmentStudentViewMaterialItem"
-          }
-        },
-        "student_id": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.UpdateStudyAssessmentStudentViewMaterialItem": {
-      "type": "object",
-      "properties": {
-        "achieved_score": {
-          "type": "number"
-        },
-        "lesson_material_id": {
-          "type": "string"
         }
       }
     },

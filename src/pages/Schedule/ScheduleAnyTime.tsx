@@ -177,7 +177,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true })
     );
     if (resultInfo.payload.token) {
-      if (privilegedMembers("Student") && scheduleDetial.class_type === "Homework") {
+      if (privilegedMembers("Student") && scheduleDetial.class_type?.id === "Homework") {
         toLive(scheduleDetial.id, resultInfo.payload.token);
         return;
       }
@@ -216,7 +216,7 @@ function AnyTimeSchedule(props: SearchListProps) {
   const handleDelete = useCallback(
     (scheduleInfo: EntityScheduleListView) => {
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
+      if (scheduleInfo.class_type?.id === "Homework" || scheduleInfo.class_type?.id === "Task") {
         if (scheduleInfo.due_at !== 0 && (scheduleInfo.due_at as number) * 1000 < currentTime) {
           changeModalDate({
             title: "",
@@ -329,7 +329,7 @@ function AnyTimeSchedule(props: SearchListProps) {
 
   const handleEditSchedule = (scheduleInfo: EntityScheduleListView): void => {
     const currentTime = Math.floor(new Date().getTime());
-    if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
+    if (scheduleInfo.class_type?.id === "Homework" || scheduleInfo.class_type?.id === "Task") {
       if (scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
         changeModalDate({
           title: "",

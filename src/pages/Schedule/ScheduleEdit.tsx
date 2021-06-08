@@ -495,7 +495,7 @@ function EditBox(props: CalendarStateProps) {
       const newData: EntityScheduleAddView = {
         attachment: scheduleDetial.attachment,
         class_id: scheduleDetial.class?.id || "",
-        class_type: scheduleDetial.class_type,
+        class_type: (scheduleDetial.class_type?.id as "Task" | "OnlineClass" | "OfflineClass" | "Homework") || "",
         description: scheduleDetial.description,
         due_at: scheduleDetial.due_at,
         end_at: scheduleDetial.end_at || (scheduleDetial.due_at as number),
