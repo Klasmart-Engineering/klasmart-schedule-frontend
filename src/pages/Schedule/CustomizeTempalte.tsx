@@ -340,6 +340,18 @@ export default function CustomizeTempalte(props: InfoProps) {
     });
   };
 
+  const disableDelete = () => {
+    if (!scheduleInfo.is_home_fun && scheduleInfo.class_type.id === "Homework") {
+      return scheduleInfo.complete_assessment;
+    } else {
+      return scheduleInfo.status !== "NotStart";
+    }
+  };
+
+  const showDelete = () => {
+    return !scheduleInfo.is_home_fun && scheduleInfo.class_type.id === "Homework" ? true : scheduleInfo.status === "NotStart";
+  };
+
   return (
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
@@ -349,25 +361,22 @@ export default function CustomizeTempalte(props: InfoProps) {
           {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
-          {((!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment && scheduleInfo.class_type.id === "Homework") ||
-            (!scheduleInfo.is_hidden && scheduleInfo.status !== "NotStart")) && <DeleteOutlined className={classes.disableLastIcon} />}
-          {!(!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment && scheduleInfo.class_type.id === "Homework") &&
-            !scheduleInfo.is_hidden &&
-            scheduleInfo.status === "NotStart" && (
-              <Permission
-                value={PermissionType.delete_event_540}
-                render={(value) =>
-                  value && (
-                    <DeleteOutlined
-                      className={classes.lastIcon}
-                      onClick={() => {
-                        deleteHandle();
-                      }}
-                    />
-                  )
-                }
-              />
-            )}
+          {!scheduleInfo.is_hidden && disableDelete() && <DeleteOutlined className={classes.disableLastIcon} />}
+          {!scheduleInfo.is_hidden && showDelete() && (
+            <Permission
+              value={PermissionType.delete_event_540}
+              render={(value) =>
+                value && (
+                  <DeleteOutlined
+                    className={classes.lastIcon}
+                    onClick={() => {
+                      deleteHandle();
+                    }}
+                  />
+                )
+              }
+            />
+          )}
         </div>
       </div>
       {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
