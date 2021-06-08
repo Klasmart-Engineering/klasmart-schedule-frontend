@@ -228,7 +228,7 @@ function BasicTable(props: BasicTableProps) {
                   {d("Click to add comments").t("assess_detail_click_to_add_comments")}
                 </span>
               )}
-              {isComplete && (
+              {isComplete && showCommentsElement() && studentViewItem.comment && (
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
