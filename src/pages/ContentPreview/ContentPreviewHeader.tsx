@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   nameCon: {
     display: "flex",
     alignItems: "center",
+    marginTop: 30,
   },
   imgCon: {
     width: "100%",
@@ -61,7 +62,6 @@ export function ContentPreviewHeader(props: ContentPreviewProps) {
       <Box className={css.closeIconCon}>
         <CloseIcon style={{ cursor: "pointer" }} onClick={onClose} />
       </Box>
-      <Typography className={css.text}>{d("Name").t("library_label_name")}</Typography>
       <Box className={css.nameCon}>
         <Typography className={css.text}>{contentPreview.name}</Typography>
         <Chip
