@@ -33,6 +33,9 @@ const useStyles = makeStyles(({ breakpoints, shadows }) => ({
     marginTop: 5,
     maxHeight: 700,
     marginBottom: 20,
+    [breakpoints.down('md')]: {
+      maxHeight: 'fit-content',
+    }
   },
   table: {
     minWidth: 700 - 162,

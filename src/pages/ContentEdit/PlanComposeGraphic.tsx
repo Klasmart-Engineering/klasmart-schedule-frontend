@@ -19,8 +19,8 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
     flexDirection: "column",
     overflow: "scroll",
     [breakpoints.down("md")]: {
-      width: "84%",
-      marginLeft: "8%",
+      maxHeight: 'fit-content',
+      overflow: "visible",
     },
   },
   bgImage: {
