@@ -18,6 +18,10 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
     display: "flex",
     flexDirection: "column",
     overflow: "scroll",
+    [breakpoints.down("md")]: {
+      width: "84%",
+      marginLeft: "8%",
+    },
   },
   bgImage: {
     background: `url(${lessonPlanBgUrl}) center repeat`,
