@@ -20,7 +20,7 @@ import { d } from "../../locale/LocaleManager";
 import { UpdateAssessmentRequestDataOmitAction, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { AppDispatch } from "../../reducers";
 import { actWarning } from "../../reducers/notify";
-import { ElasticLayerControl, dynamicTableName } from "../../types/assessmentTypes";
+import { dynamicTableName, ElasticLayerControl } from "../../types/assessmentTypes";
 import ResourcesView from "./ResourcesView";
 
 const useStyles = makeStyles({
@@ -223,7 +223,7 @@ function BasicTable(props: BasicTableProps) {
                       title: d("Add Comments").t("assess_popup_add_comments"),
                     });
                   }}
-                  style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
+                  style={{ display: checked ? "block" : "none", color: "rgb(0, 108, 207)" }}
                 >
                   {d("Click to add comments").t("assess_detail_click_to_add_comments")}
                 </span>
@@ -239,7 +239,7 @@ function BasicTable(props: BasicTableProps) {
                       title: d("View Comments").t("assess_popup_view_comments"),
                     });
                   }}
-                  style={{ visibility: checked ? "visible" : "hidden", color: "rgb(0, 108, 207)" }}
+                  style={{ display: checked ? "block" : "none", color: "rgb(0, 108, 207)" }}
                 >
                   {d("Click to view comments").t("assess_detail_click_to_view_comments")}
                 </span>
@@ -262,7 +262,7 @@ function BasicTable(props: BasicTableProps) {
                 </TableHead>
                 <TableBody>
                   {studentViewItem?.lesson_materials?.map((row, index) => (
-                    <TableRow key={index}>
+                    <TableRow key={row.lesson_material_id}>
                       <TableCell component="th" scope="row" align="center">
                         {index + 1}
                       </TableCell>
@@ -277,7 +277,7 @@ function BasicTable(props: BasicTableProps) {
                           style={{
                             color: "#006CCF",
                             cursor: "pointer",
-                            visibility: subjectiveActivity(row.lesson_material_type) ? "visible" : "hidden",
+                            display: subjectiveActivity(row.lesson_material_type) ? "block" : "none",
                           }}
                           onClick={() => {
                             handleElasticLayerControl({

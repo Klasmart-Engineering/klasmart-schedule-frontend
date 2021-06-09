@@ -349,7 +349,9 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const showDelete = () => {
-    return !scheduleInfo.is_home_fun && scheduleInfo.class_type_label?.id === "Homework" ? true : scheduleInfo.status === "NotStart";
+    return !scheduleInfo.is_home_fun && scheduleInfo.class_type_label?.id === "Homework"
+      ? scheduleInfo.status !== "Closed"
+      : scheduleInfo.status === "NotStart";
   };
 
   return (
