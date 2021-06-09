@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -25,14 +25,14 @@ const useQuery = () => {
   const id = query.get("id");
   const editindex: number = Number(query.get("editindex") || 0);
   const filterOutcomes = query.get("filterOutcomes") || "all";
-  const radioValue = query.get("radioValue") || RadioValue.lessonPlan;
-  return { id, filterOutcomes, editindex, radioValue };
+  return { id, filterOutcomes, editindex };
 };
 
 function AssessmentsEditIner() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { filterOutcomes, id, editindex, radioValue } = useQuery();
+  const { filterOutcomes, id, editindex } = useQuery();
+  const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
@@ -70,7 +70,7 @@ function AssessmentsEditIner() {
     () =>
       handleSubmit(async (value) => {
         if (id) {
-          const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, value.student_view_items);
+          const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
           const formValue = { ...value, student_view_items };
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
@@ -84,13 +84,13 @@ function AssessmentsEditIner() {
           }
         }
       }),
-    [handleSubmit, id, init_student_view_items, dispatch, history, editindex]
+    [handleSubmit, id, init_student_view_items, filter_student_view_items, dispatch, history, editindex]
   );
   const handleAssessmentComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
         if (id) {
-          const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, value.student_view_items);
+          const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
           const formValue = { ...value, student_view_items };
           const data: UpdateAssessmentRequestData = { ...formValue, action: "complete" };
           const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
@@ -109,7 +109,7 @@ function AssessmentsEditIner() {
           }
         }
       }),
-    [handleSubmit, id, init_student_view_items, dispatch, history, editindex]
+    [handleSubmit, id, init_student_view_items, filter_student_view_items, dispatch, history, editindex]
   );
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -123,9 +123,10 @@ function AssessmentsEditIner() {
     [history]
   );
   const handleChangeRadio = (value: RadioValue) => {
-    history.replace({
-      search: setQuery(history.location.search, { radioValue: value }),
-    });
+    // history.replace({
+    //   search: setQuery(history.location.search, { radioValue: value }),
+    // });
+    setRadioValue(value);
   };
   useEffect(() => {
     if (id) {
@@ -148,39 +149,35 @@ function AssessmentsEditIner() {
   ];
 
   const rightsideArea = (
-    <>
+    <div>
       <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
-      {radioValue === RadioValue.lessonPlan && (
-        <>
-          <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-          {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-            <OutcomesTable
-              outcomesList={filteredOutcomelist}
-              attendanceList={students}
-              formMethods={formMethods}
-              formValue={formValue}
-              filterOutcomes={filterOutcomes}
-              editable={editable}
-            />
-          ) : (
-            <NoOutComesList />
-          )}
-        </>
-      )}
-      {radioValue === RadioValue.score && (
-        <>
-          <DynamicTable
-            studentViewItems={filter_student_view_items}
-            tableCellData={TableCellData}
+      <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden" }}>
+        <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
+        {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+          <OutcomesTable
+            outcomesList={filteredOutcomelist}
+            attendanceList={students}
             formMethods={formMethods}
-            isComplete={isComplete}
+            formValue={formValue}
+            filterOutcomes={filterOutcomes}
             editable={editable}
-            name="student_view_items"
-            tableType="live"
           />
-        </>
-      )}
-    </>
+        ) : (
+          <NoOutComesList />
+        )}
+      </div>
+      <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden" }}>
+        <DynamicTable
+          studentViewItems={filter_student_view_items}
+          tableCellData={TableCellData}
+          formMethods={formMethods}
+          isComplete={isComplete}
+          editable={editable}
+          name="student_view_items"
+          tableType="live"
+        />
+      </div>
+    </div>
   );
 
   return (

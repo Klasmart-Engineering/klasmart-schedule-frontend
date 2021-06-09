@@ -62,7 +62,7 @@ export function AssessmentDetail() {
   const handleDetailSave = useMemo(
     () =>
       handleSubmit(async (value) => {
-        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, value.student_view_items);
+        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
@@ -77,13 +77,13 @@ export function AssessmentDetail() {
           }
         }
       }),
-    [handleSubmit, init_student_view_items, id, dispatch, history, editindex]
+    [handleSubmit, init_student_view_items, filter_student_view_items, id, dispatch, history, editindex]
   );
   const handleDetailComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
         // if (id) {
-        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, value.student_view_items);
+        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
         const formValue = { ...value, student_view_items };
         const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
         const { payload } = ((await dispatch(
@@ -96,7 +96,7 @@ export function AssessmentDetail() {
           });
         }
       }),
-    [handleSubmit, init_student_view_items, dispatch, id, filter_student_view_items, history, editindex]
+    [handleSubmit, init_student_view_items, filter_student_view_items, dispatch, id, history, editindex]
   );
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
