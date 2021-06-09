@@ -1,5 +1,6 @@
 import { FormControlLabel, makeStyles, Radio, RadioGroup, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import React from "react";
+import { d } from "../../locale/LocaleManager";
 const useStyles = makeStyles(({ palette, breakpoints }) => ({
   radioGroup: {
     flexDirection: "row",
@@ -45,7 +46,7 @@ export default function RadioHeader(props: RadioHeaderProps) {
           control={<Radio size={size} color="primary" value={RadioValue.lessonPlan} />}
           label={
             <Typography variant={radioTypography} className={css.h5pRadio}>
-              {"Lesson Plan Assessment"}
+              {d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")}
             </Typography>
           }
         />
@@ -55,11 +56,12 @@ export default function RadioHeader(props: RadioHeaderProps) {
           control={<Radio size={size} color="primary" value={RadioValue.score} />}
           label={
             <Typography variant={radioTypography} className={css.h5pRadio}>
-              {"Score Assessment"}
+              {d("Score Assessment").t("assess_detail_score_assessment")}
             </Typography>
           }
         />
       </RadioGroup>
+      <div style={{ height: "30px" }}></div>
     </div>
   );
 }

@@ -205,7 +205,7 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
         defaultValue={defaultValue}
         rules={{ required: true }}
         error={errors.attendance_ids}
-        render={(props: any) => {
+        render={({ ref, ...props }) => {
           return (
             <CheckboxGroup
               {...props}
@@ -214,6 +214,7 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
                   {assessmentDetail.students &&
                     assessmentDetail.students.map((item) => (
                       <FormControlLabel
+                        ref={ref}
                         control={
                           <Checkbox
                             color="primary"
@@ -419,7 +420,6 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
 
   const handleOk = useCallback(() => {
     const value = getValues()["lesson_materials"];
-    console.log(value);
     if (value && value.length) {
       const newValue = value?.filter((item) => !item.checked);
       onChangeOA(value);
@@ -567,7 +567,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="title"
-            value={assessmentDetail.title?.split("-").pop() || ""}
+            value={assessmentDetail.schedule_title || ""}
             className={css.fieldset}
             label={d("Lesson Name").t("assess_detail_lesson_name")}
           />

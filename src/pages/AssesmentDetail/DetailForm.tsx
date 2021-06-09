@@ -517,7 +517,7 @@ export default function DetailForm(props: DetailFormProps) {
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
-          <Typography variant="h6">{d("Class Summary").t("assess_class_summary")}</Typography>
+          <Typography variant="h6">{d("Study Summary").t("assess_study_summary")}</Typography>
           <div className={css.roomId}>
             {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.schedule_id}
           </div>

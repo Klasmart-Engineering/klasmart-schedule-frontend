@@ -338,6 +338,10 @@ type LangRecord<T = string> =
       description: "There are still students not start their Study activities. You cannot change the assessment after clicking Complete. ";
       values: undefined;
     }
+  | { id: "assess_detail_lesson_plan_assessment"; description: "Lesson Plan Assessment"; values: undefined }
+  | { id: "assess_detail_score_assessment"; description: "Score Assessment"; values: undefined }
+  | { id: "assess_detail_score_full_marks"; description: "Score / Full Marks"; values: undefined }
+  | { id: "assess_study_summary"; description: "Study Summary"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }

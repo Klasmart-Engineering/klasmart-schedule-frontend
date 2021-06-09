@@ -1,5 +1,5 @@
 import { MockOptionsItem } from "../api/extra";
-import { EntityScheduleDetailsView } from "../api/api.auto";
+import { EntityScheduleDetailsView, EntityScheduleLessonPlan, EntityScheduleListView, EntityScheduleViewDetail } from "../api/api.auto";
 
 export type timestampType = {
   start: number;
@@ -191,6 +191,9 @@ export interface scheduleInfoViewProps {
   is_hidden: boolean;
   role_type: string;
   exist_assessment: boolean;
+  complete_assessment: boolean;
+  lesson_plan: EntityScheduleLessonPlan;
+  class_type_label: EntityScheduleShortInfo;
 }
 
 export interface FilterDataItemsProps {
@@ -208,6 +211,16 @@ export interface FilterDataItemsProps {
 export interface ScheduleEditExtend extends EntityScheduleDetailsView {
   class_id: string;
   lesson_plan_id: string;
+  complete_assessment: boolean;
+  lesson_plan: EntityScheduleLessonPlan;
+}
+
+export interface EntityScheduleViewDetailExtend extends EntityScheduleViewDetail {
+  complete_assessment?: boolean;
+}
+
+export interface EntityScheduleListViewExtend extends EntityScheduleListView {
+  lesson_plan?: EntityScheduleLessonPlan;
 }
 
 export interface FilterItemInfo {

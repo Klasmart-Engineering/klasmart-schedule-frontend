@@ -41,6 +41,9 @@ export function AssessmentDetail() {
   const { handleSubmit, watch, reset } = formMethods;
   const formValue = watch();
   const { student_ids, lesson_materials, student_view_items } = formValue;
+  const init_student_view_items = useMemo(() => {
+    return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
+  }, [lesson_materials, student_ids, studyAssessmentDetail]);
   const filter_student_view_items = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
     return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
@@ -59,7 +62,7 @@ export function AssessmentDetail() {
   const handleDetailSave = useMemo(
     () =>
       handleSubmit(async (value) => {
-        const student_view_items = ModelAssessment.toUpdateH5pStudentView(value.student_view_items);
+        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
@@ -74,13 +77,13 @@ export function AssessmentDetail() {
           }
         }
       }),
-    [handleSubmit, id, dispatch, history, editindex]
+    [handleSubmit, init_student_view_items, filter_student_view_items, id, dispatch, history, editindex]
   );
   const handleDetailComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
         // if (id) {
-        const student_view_items = ModelAssessment.toUpdateH5pStudentView(value.student_view_items);
+        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
         const formValue = { ...value, student_view_items };
         const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
         const { payload } = ((await dispatch(
@@ -93,7 +96,7 @@ export function AssessmentDetail() {
           });
         }
       }),
-    [handleSubmit, dispatch, id, filter_student_view_items, history, editindex]
+    [handleSubmit, init_student_view_items, filter_student_view_items, dispatch, id, history, editindex]
   );
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));

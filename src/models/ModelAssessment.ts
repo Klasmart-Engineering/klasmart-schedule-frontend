@@ -200,31 +200,36 @@ export const ModelAssessment = {
     }) as UpdataStudyAssessmentRequestData["student_view_items"];
   },
   toUpdateH5pStudentView(
+    initValue: DetailStudyAssessment["student_view_items"],
     student_view_items: DetailStudyAssessment["student_view_items"]
   ): UpdataStudyAssessmentRequestData["student_view_items"] {
-    return student_view_items && student_view_items.length
-      ? student_view_items.map((item) => {
-          return {
-            comment: item.comment,
-            student_id: item.student_id,
-            lesson_materials:
-              item.lesson_materials && item.lesson_materials.length
-                ? item.lesson_materials.map((v) => {
-                    return {
-                      achieved_score: v.achieved_score,
-                      lesson_material_id: v.lesson_material_id,
-                    };
-                  })
-                : [],
-          };
-        })
-      : [];
+    if (initValue && initValue.length && student_view_items && student_view_items.length) {
+      return student_view_items?.map((item, index) => {
+        const currentInit = initValue[index];
+        const currentLessonMaterials = currentInit.lesson_materials ? currentInit.lesson_materials : [];
+        const changed_lesson_materials = item.lesson_materials?.filter(
+          (v, idx) => v.achieved_score !== currentLessonMaterials[idx].achieved_score
+        );
+        return {
+          comment: item.comment,
+          student_id: item.student_id,
+          lesson_materials: changed_lesson_materials?.length
+            ? changed_lesson_materials?.map((v) => {
+                return {
+                  achieved_score: v.achieved_score,
+                  lesson_material_id: v.lesson_material_id,
+                };
+              })
+            : [],
+        };
+      });
+    } else {
+      return [];
+    }
   },
   toGetInitStudentIds(defaultDetail: DetailStudyAssessment, value: UpdateStudyAssessmentDataOmitAction): DetailStudyAssessment {
     const draft = cloneDeep(defaultDetail);
-    // console.log(defaultDetail.students)
     const attendanceHash = toHash(defaultDetail.students || []);
-    // console.log(attendanceHash)
     draft.students = value.student_ids?.map((id) => attendanceHash[id]) || [];
     // const list = cloneDeep(draft.students);
     // const bb = list.filter((item) => item === undefined);

@@ -228,7 +228,7 @@ export interface EntityAddAssessmentArgs {
 }
 
 export interface EntityAddAssessmentResult {
-  id?: string[];
+  id?: string;
 }
 
 export interface EntityAddAuthedContentRequest {
@@ -264,6 +264,7 @@ export interface EntityAssessmentDetail {
   remaining_time?: number;
   room_id?: string;
   schedule_id?: string;
+  schedule_title?: string;
   status?: string;
   student_view_items?: EntityAssessmentStudentViewH5PItem[];
   students?: EntityAssessmentStudent[];
@@ -299,6 +300,20 @@ export interface EntityAssessmentItem {
   subjects?: EntityAssessmentSubject[];
   teachers?: EntityAssessmentTeacher[];
   title?: string;
+}
+
+export interface EntityAssessmentLessonMaterial {
+  checked?: boolean;
+  comment?: string;
+  file_type?: number;
+  id?: string;
+  name?: string;
+  source?: string;
+}
+
+export interface EntityAssessmentLessonPlan {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityAssessmentProgram {
@@ -694,8 +709,8 @@ export interface EntityGetStudyAssessmentDetailResult {
   complete_at?: number;
   due_at?: number;
   id?: string;
-  lesson_materials?: EntityStudyAssessmentLessonMaterial[];
-  lesson_plan?: EntityStudyAssessmentLessonPlan;
+  lesson_materials?: EntityAssessmentLessonMaterial[];
+  lesson_plan?: EntityAssessmentLessonPlan;
   remaining_time?: number;
 
   /** debug */
@@ -982,6 +997,7 @@ export interface EntityScheduleDetailsView {
   class_roster_students?: EntityScheduleAccessibleUserView[];
   class_roster_teachers?: EntityScheduleAccessibleUserView[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  class_type_label?: EntityScheduleShortInfo;
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -1050,8 +1066,11 @@ export interface EntityScheduleLessonPlanMaterial {
 export interface EntityScheduleListView {
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  class_type_label?: EntityScheduleShortInfo;
+  complete_assessment?: boolean;
   due_at?: number;
   end_at?: number;
+  exist_assessment?: boolean;
   exist_feedback?: boolean;
   id?: string;
   is_hidden?: boolean;
@@ -1062,7 +1081,6 @@ export interface EntityScheduleListView {
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   title?: string;
-  exist_assessment?: boolean;
 }
 
 export interface EntitySchedulePageView {
@@ -1143,6 +1161,8 @@ export interface EntityScheduleViewDetail {
   class?: EntityScheduleShortInfo;
   class_id?: string;
   class_type?: EntityScheduleShortInfo;
+  class_type_label?: EntityScheduleShortInfo;
+  complete_assessment?: boolean;
   due_at?: number;
   end_at?: number;
 
@@ -1245,19 +1265,6 @@ export interface EntityStudentsPerformanceReportItem {
   student_name?: string;
 }
 
-export interface EntityStudyAssessmentLessonMaterial {
-  checked?: boolean;
-  comment?: string;
-  id?: string;
-  name?: string;
-}
-
-export interface EntityStudyAssessmentLessonPlan {
-  comment?: string;
-  id?: string;
-  name?: string;
-}
-
 export interface EntityTeacherManualFile {
   id?: string;
   name?: string;
@@ -1278,13 +1285,24 @@ export interface EntityUpdateAssessmentArgs {
   id?: string;
   lesson_materials?: EntityUpdateAssessmentContentArgs[];
   outcomes?: EntityUpdateAssessmentOutcomeArgs[];
-  student_view_items?: EntityUpdateStudyAssessmentStudentViewItem[];
+  student_view_items?: EntityUpdateAssessmentH5PStudent[];
 }
 
 export interface EntityUpdateAssessmentContentArgs {
   checked?: boolean;
   comment?: string;
   id?: string;
+}
+
+export interface EntityUpdateAssessmentH5PLessonMaterial {
+  achieved_score?: number;
+  lesson_material_id?: string;
+}
+
+export interface EntityUpdateAssessmentH5PStudent {
+  comment?: string;
+  lesson_materials?: EntityUpdateAssessmentH5PLessonMaterial[];
+  student_id?: string;
 }
 
 export interface EntityUpdateAssessmentOutcomeArgs {
@@ -1306,18 +1324,7 @@ export interface EntityUpdateStudyAssessmentArgs {
   id?: string;
   lesson_materials?: EntityUpdateAssessmentContentArgs[];
   student_ids?: string[];
-  student_view_items?: EntityUpdateStudyAssessmentStudentViewItem[];
-}
-
-export interface EntityUpdateStudyAssessmentStudentViewItem {
-  comment?: string;
-  lesson_materials?: EntityUpdateStudyAssessmentStudentViewMaterialItem[];
-  student_id?: string;
-}
-
-export interface EntityUpdateStudyAssessmentStudentViewMaterialItem {
-  achieved_score?: number;
-  lesson_material_id?: string;
+  student_view_items?: EntityUpdateAssessmentH5PStudent[];
 }
 
 export interface EntityUserSettingJsonContent {
@@ -1790,7 +1797,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/assessments_summary
      * @description get assessments summary
      */
-    getAssessmentsSummary: (query?: { status?: string; teacher_name?: string; class_type?: string }, params?: RequestParams) =>
+    getAssessmentsSummary: (query?: { status?: string; teacher_name?: string }, params?: RequestParams) =>
       this.request<EntityAssessmentsSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments_summary${this.addQueryParams(query)}`,
         "GET",

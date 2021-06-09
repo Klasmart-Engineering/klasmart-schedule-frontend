@@ -1,8 +1,12 @@
 import { Button, createStyles, makeStyles, Theme } from "@material-ui/core";
 import React from "react";
-import { EntityScheduleListView } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
-import { ScheduleEditExtend, scheduleInfoViewProps } from "../../types/scheduleTypes";
+import {
+  ScheduleEditExtend,
+  scheduleInfoViewProps,
+  EntityScheduleListViewExtend,
+  EntityScheduleViewDetailExtend,
+} from "../../types/scheduleTypes";
 import ContentPreview from "../ContentPreview";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ButtonProps {
-  scheduleInfo: scheduleInfoViewProps | ScheduleEditExtend | EntityScheduleListView;
+  scheduleInfo: scheduleInfoViewProps | ScheduleEditExtend | EntityScheduleListViewExtend | EntityScheduleViewDetailExtend;
   templateType: "scheduleEdit" | "schedulePopup" | "scheduleAnyTime";
   handleGoLive: (scheduleDetial: ScheduleEditExtend) => void;
 }
@@ -42,11 +46,16 @@ function RouterButton(props: ButtonProps) {
         color="primary"
         variant="contained"
         className={buttonClass[templateType]}
-        disabled={!scheduleInfo.lesson_plan_id || scheduleInfo.role_type === "Student" || scheduleInfo.class_type === "Task"}
+        disabled={
+          !scheduleInfo.lesson_plan_id ||
+          scheduleInfo.lesson_plan?.is_auth === false ||
+          scheduleInfo.role_type === "Student" ||
+          scheduleInfo.class_type_label?.id === "Task"
+        }
         style={{
           display:
-            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "Homework") ||
-            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
+            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "Homework") ||
+            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "OfflineClass")
               ? "none"
               : "block",
         }}
@@ -61,21 +70,22 @@ function RouterButton(props: ButtonProps) {
         className={buttonClass[templateType]}
         style={{
           display:
-            (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type === "Homework") ||
-            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type === "OfflineClass")
+            (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type_label?.id === "Homework") ||
+            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "OfflineClass")
               ? "none"
               : "block",
         }}
         disabled={
           (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
-          (scheduleInfo.role_type === "Student" && scheduleInfo.exist_assessment) ||
-          !scheduleInfo.lesson_plan_id
+          (scheduleInfo.role_type === "Student" && scheduleInfo.complete_assessment) ||
+          !scheduleInfo.lesson_plan_id ||
+          scheduleInfo.lesson_plan?.is_auth === false
         }
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
-        {scheduleInfo.class_type === "Homework" && d("Go Study").t("schedule_button_go_study")}
-        {scheduleInfo.class_type === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
-        {scheduleInfo.class_type === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
+        {scheduleInfo.class_type_label?.id === "Homework" && d("Go Study").t("schedule_button_go_study")}
+        {scheduleInfo.class_type_label?.id === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
+        {scheduleInfo.class_type_label?.id === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
       </Button>
     </>
   );

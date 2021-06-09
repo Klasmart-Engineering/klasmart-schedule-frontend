@@ -131,6 +131,7 @@ export const initScheduleDetial: EntityScheduleDetailsView = {
   subjects: [],
   program: {},
   class_type: "OnlineClass",
+  class_type_label: {},
   due_at: 0,
   description: "",
   attachment: {},

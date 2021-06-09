@@ -58,7 +58,7 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   outcomesBox: {
-    width: "260px",
+    maxWidth: "260px",
     "& li": {
       textAlign: "left",
       marginTop: "10px",
@@ -81,11 +81,12 @@ interface EditScoreProps {
   maxScore?: number;
   attempted?: boolean;
   isComplete?: boolean;
+  is_h5p?: boolean;
 }
 
 function EditScore(props: EditScoreProps) {
-  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore, attempted, isComplete } = props;
-  const [scoreNum, setScoreNum] = React.useState(score);
+  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore, attempted, isComplete, is_h5p } = props;
+  const [scoreNum, setScoreNum] = React.useState<number | string | undefined>(score);
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   return (
@@ -95,7 +96,7 @@ function EditScore(props: EditScoreProps) {
           {editable && !isComplete && isSubjectiveActivity ? (
             <>
               <TextField
-                style={{ width: "54px", transform: "scale(0.8)" }}
+                style={{ width: "59px", transform: "scale(0.8)" }}
                 value={scoreNum}
                 id="standard-size-small"
                 size="small"
@@ -104,8 +105,9 @@ function EditScore(props: EditScoreProps) {
                   if (value! > maxScore!) {
                     dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
                   } else if (Number(value) + "" !== NaN + "") {
-                    handleChangeScore(Number(value), index);
-                    setScoreNum(value);
+                    const computerValue = String(value).replace(/^(.*\..{1}).*$/, "$1");
+                    handleChangeScore(Number(computerValue), index);
+                    setScoreNum(computerValue);
                   }
                 }}
               />{" "}
@@ -117,8 +119,10 @@ function EditScore(props: EditScoreProps) {
             </>
           )}
         </>
-      ) : (
+      ) : is_h5p ? (
         d("Not Attempted").t("assess_option_not_attempted")
+      ) : (
+        ""
       )}
     </div>
   );
@@ -137,6 +141,7 @@ function BasicTable(props: BasicTableProps) {
     isComplete,
     tableCellData,
     name,
+    tableType,
   } = props;
 
   const handleChangeComment = (commentText: string) => {
@@ -181,8 +186,12 @@ function BasicTable(props: BasicTableProps) {
   };
 
   const textEllipsis = (value?: string) => {
-    const CharacterCount = 12;
+    const CharacterCount = 36;
     return value ? reBytesStr(value, CharacterCount) : "";
+  };
+
+  const showCommentsElement = () => {
+    return studentViewItem.lesson_materials?.some((lesson) => lesson.lesson_material_type !== "");
   };
 
   return (
@@ -202,7 +211,7 @@ function BasicTable(props: BasicTableProps) {
             <div style={{ color: checked ? "black" : "#666666" }}>
               <AccountCircleIcon />
               <span style={{ padding: "0 18px 0 18px" }}>{studentViewItem.student_name}</span>
-              {editable && !isComplete && (
+              {editable && !isComplete && showCommentsElement() && (
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -219,7 +228,7 @@ function BasicTable(props: BasicTableProps) {
                   {d("Click to add comments").t("assess_detail_click_to_add_comments")}
                 </span>
               )}
-              {isComplete && (
+              {isComplete && showCommentsElement() && studentViewItem.comment && (
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -244,8 +253,10 @@ function BasicTable(props: BasicTableProps) {
               <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    {tableCellData.map((cell) => (
-                      <TableCell align="center">{cell}</TableCell>
+                    {tableCellData.map((cell, index) => (
+                      <TableCell align="center" key={index}>
+                        {cell}
+                      </TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
@@ -289,13 +300,14 @@ function BasicTable(props: BasicTableProps) {
                           editable={editable}
                           isSubjectiveActivity={subjectiveActivity(row.lesson_material_type)}
                           attempted={row.attempted}
+                          is_h5p={row.is_h5p}
                         />
                       </TableCell>
                       <TableCell align="center">
-                        {!("outcome_names" in row) && (
-                          <>{row?.max_score! === 0 ? "" : (row?.achieved_score! / row?.max_score!) * 100 + "%"}</>
+                        {tableType === "study" && (
+                          <>{row?.max_score! === 0 ? "" : Math.ceil((row?.achieved_score! / row?.max_score!) * 100) + "%"}</>
                         )}
-                        {"outcome_names" in row && (
+                        {tableType === "live" && (
                           <ul className={classes.outcomesBox}>
                             {row?.outcome_names?.map((name) => (
                               <li>{name}</li>
@@ -323,10 +335,11 @@ interface tableProps {
   isComplete: boolean;
   tableCellData: string[];
   name: dynamicTableName;
+  tableType: "live" | "study";
 }
 
 export function DynamicTable(props: tableProps) {
-  const { studentViewItems, formMethods, formValue, editable, isComplete, tableCellData, name } = props;
+  const { studentViewItems, formMethods, formValue, editable, isComplete, tableCellData, name, tableType } = props;
   const [elasticLayerControlData, setElasticLayerControlData] = React.useState<ElasticLayerControl>({
     openStatus: false,
     type: "",
@@ -350,6 +363,7 @@ export function DynamicTable(props: tableProps) {
             isComplete={isComplete}
             tableCellData={tableCellData}
             name={name}
+            tableType={tableType}
           />
         );
       })}

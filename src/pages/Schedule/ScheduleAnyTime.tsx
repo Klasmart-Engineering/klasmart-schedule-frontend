@@ -84,6 +84,18 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
+    deleteButton: {
+      border: "1px solid red",
+      color: "red",
+    },
+    disabledButton: {
+      border: "1px solid gray",
+      color: "gray",
+    },
+    editButton: {
+      border: "1px solid #009688",
+      color: "#009688",
+    },
   })
 );
 
@@ -165,7 +177,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true })
     );
     if (resultInfo.payload.token) {
-      if (privilegedMembers("Student") && scheduleDetial.class_type === "Homework") {
+      if (privilegedMembers("Student") && scheduleDetial.class_type_label?.id === "Homework") {
         toLive(scheduleDetial.id, resultInfo.payload.token);
         return;
       }
@@ -204,7 +216,7 @@ function AnyTimeSchedule(props: SearchListProps) {
   const handleDelete = useCallback(
     (scheduleInfo: EntityScheduleListView) => {
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
+      if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
         if (scheduleInfo.due_at !== 0 && (scheduleInfo.due_at as number) * 1000 < currentTime) {
           changeModalDate({
             title: "",
@@ -317,7 +329,30 @@ function AnyTimeSchedule(props: SearchListProps) {
 
   const handleEditSchedule = (scheduleInfo: EntityScheduleListView): void => {
     const currentTime = Math.floor(new Date().getTime());
-    if (scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task") {
+    if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
+      if (scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
+        changeModalDate({
+          title: "",
+          // text: "You cannot edit this event after the due date",
+          text: d("This event cannot be edited because some students already made progress for Study activities.").t(
+            "schedule_msg_cannot_edit_study"
+          ),
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+        return;
+      }
       if (scheduleInfo.due_at !== 0 && (scheduleInfo.due_at as number) * 1000 < currentTime) {
         changeModalDate({
           title: "",
@@ -344,6 +379,29 @@ function AnyTimeSchedule(props: SearchListProps) {
   };
 
   const deleteHandle = (scheduleInfo: EntityScheduleListView) => {
+    if (scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
+      changeModalDate({
+        title: "",
+        // text: "You cannot edit this event after the due date",
+        text: d("This event cannot be deleted because some students already made progress for Study activities.").t(
+          "schedule_msg_cannot_delete_study"
+        ),
+        openStatus: true,
+        enableCustomization: false,
+        buttons: [
+          {
+            label: d("OK").t("schedule_button_ok"),
+            event: () => {
+              changeModalDate({ openStatus: false, enableCustomization: false });
+            },
+          },
+        ],
+        handleClose: () => {
+          changeModalDate({ openStatus: false, enableCustomization: false });
+        },
+      });
+      return;
+    }
     if (scheduleInfo.exist_feedback) {
       changeModalDate({
         title: "",
@@ -394,10 +452,11 @@ function AnyTimeSchedule(props: SearchListProps) {
         )}
         {showDeleteButto && (
           <Button
-            style={{ border: "1px solid #009688", color: "#009688" }}
+            className={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment ? classes.disabledButton : classes.editButton}
             onClick={() => handleEditSchedule(scheduleInfo)}
             variant="outlined"
             color="inherit"
+            disabled={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment}
           >
             {d("Edit").t("schedule_button_edit")}
           </Button>
@@ -408,13 +467,14 @@ function AnyTimeSchedule(props: SearchListProps) {
             render={(value) =>
               value && (
                 <Button
-                  style={{ marginLeft: "20px", border: "1px solid red", color: "red" }}
+                  className={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment ? classes.disabledButton : classes.deleteButton}
+                  style={{ marginLeft: "20px" }}
                   variant="outlined"
                   color="secondary"
                   onClick={() => {
                     deleteHandle(scheduleInfo);
                   }}
-                  disabled={!scheduleInfo.is_home_fun && scheduleInfo.exist_assessment}
+                  disabled={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment}
                 >
                   {d("Delete").t("assess_label_delete")}
                 </Button>
@@ -451,7 +511,7 @@ function AnyTimeSchedule(props: SearchListProps) {
           <Box className={classes.scrollBox}>
             {anyTimeData.study.map((view: EntityScheduleListView) => {
               return (
-                <div>
+                <div key={view.id}>
                   <span>{view.title} </span>
                   {buttonGroup("study", view, !privilegedMembers("Student"))}
                 </div>
@@ -468,7 +528,7 @@ function AnyTimeSchedule(props: SearchListProps) {
           <Box className={classes.scrollBox}>
             {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
               return (
-                <div>
+                <div key={view.id}>
                   <span>
                     {view.title}{" "}
                     {view.exist_feedback && view.is_hidden && (
