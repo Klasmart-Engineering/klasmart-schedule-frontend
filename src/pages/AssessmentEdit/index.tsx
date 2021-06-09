@@ -149,9 +149,9 @@ function AssessmentsEditIner() {
   ];
 
   const rightsideArea = (
-    <div>
+    <div style={{ position: "relative" }}>
       <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
-      <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden" }}>
+      <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
         <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
         {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
           <OutcomesTable
@@ -166,7 +166,7 @@ function AssessmentsEditIner() {
           <NoOutComesList />
         )}
       </div>
-      <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden" }}>
+      <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
         <DynamicTable
           studentViewItems={filter_student_view_items}
           tableCellData={TableCellData}
