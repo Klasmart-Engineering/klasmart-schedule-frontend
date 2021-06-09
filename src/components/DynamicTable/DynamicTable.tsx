@@ -262,7 +262,7 @@ function BasicTable(props: BasicTableProps) {
                 </TableHead>
                 <TableBody>
                   {studentViewItem?.lesson_materials?.map((row, index) => (
-                    <TableRow key={index}>
+                    <TableRow key={row.lesson_material_id}>
                       <TableCell component="th" scope="row" align="center">
                         {index + 1}
                       </TableCell>
