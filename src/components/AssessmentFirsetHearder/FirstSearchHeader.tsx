@@ -190,7 +190,7 @@ export function FirstSearchHeaderMb() {
                   <Tab
                     component={Button}
                     value={OutcomeList.routeBasePath}
-                    label={d("Learning Outcome").t("assess_label_learning_outcome")}
+                    label={d("Learning Outcomes").t("assess_column_lo")}
                     className={classes.capitalize}
                     onClick={() => history.push(OutcomeList.routeRedirectDefault)}
                   />
@@ -204,7 +204,16 @@ export function FirstSearchHeaderMb() {
                     onClick={() => history.push(MilestonesList.routeBasePath)}
                   />
                 )}
-                {/* <Tab value={HeaderCategory.standards} label={"Standard"} className={classes.capitalize} /> */}
+                {/* <Tab value={StandardList.routeBasePath} label={"Standards"} className={classes.capitalize} /> */}
+                {perm.assessments_page_406 && !isLiveList && !isStudyList && !isHomeFunList && (
+                  <Tab
+                    component={Button}
+                    value={AssessmentList.routeBasePath}
+                    label={d("Assessments").t("assess_label_assessments")}
+                    className={classes.capitalize}
+                    onClick={() => history.push(AssessmentList.routeRedirectDefault)}
+                  />
+                )}
                 {isLiveList && perm.assessments_page_406 && (
                   <Tab
                     component={Button}
