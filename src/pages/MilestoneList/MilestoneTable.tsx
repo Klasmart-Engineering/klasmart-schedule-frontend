@@ -90,26 +90,31 @@ function MilestoneRow(props: MilestoneProps) {
     }
     registerChange(e);
   };
+  const isGeneralMilestone = milestone.type === GENERALMILESTONE;
   return (
     <TableRow onClick={(e) => onClickMilestone(milestone.milestone_id)}>
       <TableCell align="center" padding="checkbox">
-        <Checkbox
-          icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-          checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-          size="small"
-          className={css.checkbox}
-          color="secondary"
-          value={milestone.milestone_id}
-          checked={hashValue[milestone.milestone_id as string] || false}
-          onClick={stopPropagation()}
-          onChange={handleChangeCheckbox}
-          disabled={isDisable}
-        ></Checkbox>
+        {!isGeneralMilestone && (
+          <Checkbox
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+            size="small"
+            className={css.checkbox}
+            color="secondary"
+            value={milestone.milestone_id}
+            checked={hashValue[milestone.milestone_id as string] || false}
+            onClick={stopPropagation()}
+            onChange={handleChangeCheckbox}
+            disabled={isDisable}
+          ></Checkbox>
+        )}
       </TableCell>
       <TableCell className={clsx(css.tableCell)}>{milestone.milestone_name}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{milestone.shortcode}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{isGeneralMilestone ? d("N/A").t("assess_column_n_a") : milestone.shortcode}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{milestone.outcome_count}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>{milestone.program?.map((item) => item.program_name).join(",")}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>
+        {isGeneralMilestone ? d("N/A").t("assess_column_n_a") : milestone.program?.map((item) => item.program_name).join(",")}
+      </TableCell>
       <TableCell className={clsx(css.tableCell)}>{milestone.category?.map((item) => item.category_name).join(",")}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(milestone.create_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
@@ -172,8 +177,12 @@ export function MilestoneTable(props: MilestoneTableProps) {
   // const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const allValue = useMemo(() => {
     if (list && list[0]) {
-      return list.map((milestone) => (milestone.locked_by && milestone.locked_by !== "-" ? "" : (milestone.milestone_id as string)));
-      // return list.filter(milestone => (!milestone.locked_by && milestone.locked_by === "-")).map(item => item.milestone_id as string);
+      const newList = list.map((milestone) =>
+        milestone.type === GENERALMILESTONE || (milestone.locked_by && milestone.locked_by !== "-")
+          ? ""
+          : (milestone.milestone_id as string)
+      );
+      return newList.filter((id) => id);
     } else {
       return [];
     }

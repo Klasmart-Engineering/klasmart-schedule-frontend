@@ -7,6 +7,7 @@ import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { CreateDefaultValueAndKeyResult } from "../../models/ModelMilestone";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/milestone";
+import { GENERALMILESTONE } from "../MilestoneList/MilestoneTable";
 const useStyles = makeStyles(({ palette }) => ({
   fieldset: {
     marginTop: 32,
@@ -44,6 +45,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
     canEdit,
     initDefaultValue,
   } = props;
+  const isGeneralMilestone = milestoneDetail.type === GENERALMILESTONE;
   const shortCodeValidate = (value: string) => {
     const re = /^[0-9A-Z]+$/;
     const newValue = value.trim();
@@ -81,21 +83,36 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         error={errors.milestone_name ? true : false}
         disabled={!canEdit}
       />
-      <Controller
-        name="shortcode"
-        as={TextField}
-        control={control}
-        defaultValue={milestone_id ? initDefaultValue.shortcode?.value : shortCode}
-        key={milestone_id ? initDefaultValue.shortcode?.key : shortCode}
-        fullWidth
-        className={css.fieldset}
-        disabled={!canEdit}
-        label={d("Short Code").t("assess_label_short_code")}
-        inputProps={{ maxLength: 5 }}
-        error={!!errors["shortcode"]}
-        rules={{ validate: shortCodeValidate }}
-        helperText={d("5 characters long, number 0-9 & letter A-Z only").t("assess_milestone_code_requirement")}
-      />
+      {isGeneralMilestone ? (
+        <TextField
+          label={d("Short Code").t("assess_label_short_code")}
+          fullWidth
+          className={css.fieldset}
+          disabled
+          variant="outlined"
+          InputProps={{
+            readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
+          }}
+          value={d("N/A").t("assess_column_n_a")}
+        />
+      ) : (
+        <Controller
+          name="shortcode"
+          as={TextField}
+          control={control}
+          defaultValue={milestone_id ? initDefaultValue.shortcode?.value : shortCode}
+          key={milestone_id ? initDefaultValue.shortcode?.key : shortCode}
+          fullWidth
+          className={css.fieldset}
+          disabled={!canEdit}
+          label={d("Short Code").t("assess_label_short_code")}
+          inputProps={{ maxLength: 5 }}
+          error={!!errors["shortcode"]}
+          rules={{ validate: shortCodeValidate }}
+          helperText={d("5 characters long, number 0-9 & letter A-Z only").t("assess_milestone_code_requirement")}
+        />
+      )}
       {milestone_id && (
         <>
           <TextField
@@ -132,153 +149,259 @@ export default function MilestoneForm(props: MilestoneFormProps) {
               readOnly: true,
               style: { color: "rgba(0,0,0,1)" },
             }}
-            value={milestoneDetail.author?.author_name || ""}
+            value={isGeneralMilestone ? d("N/A").t("assess_column_n_a") : milestoneDetail.author?.author_name || ""}
           />
         </>
       )}
-      <Controller
-        name={"program_ids"}
-        defaultValue={initDefaultValue.program?.value || []}
-        key={initDefaultValue.program?.key}
-        control={control}
-        render={(props) => (
-          <FormattedTextField
-            select
-            label={d("Program").t("assess_label_program")}
-            encode={encodeOneItemArray}
-            decode={decodeOneItemArray}
-            {...props}
-            onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
-              onChangeProgram(value);
-              props.onChange(value);
-            }}
-            required
-            fullWidth
-            className={css.fieldset}
-            disabled={!canEdit}
-          >
-            {menuItemList(linkedMockOptions.program)}
-          </FormattedTextField>
-        )}
-      />
-      <Controller
-        name={"subject_ids"}
-        defaultValue={initDefaultValue.subject?.value || []}
-        key={initDefaultValue.subject?.key}
-        control={control}
-        render={(props) => (
-          <TextField
-            select
-            label={d("Subject").t("assess_label_subject")}
-            {...props}
-            onChange={(e) => {
-              const value = (e.target.value as unknown) as string[];
-              value.length > 0 && onChangeSubject(value);
-              value.length > 0 && props.onChange(value);
-            }}
-            fullWidth
-            className={css.fieldset}
-            SelectProps={{ multiple: true }}
-            required
-            disabled={!canEdit}
-          >
-            {menuItemList(linkedMockOptions.subject)}
-          </TextField>
-        )}
-      />
-      <Controller
-        name={"category_ids"}
-        defaultValue={initDefaultValue.category?.value || []}
-        key={initDefaultValue.category?.key}
-        control={control}
-        render={(props) => (
-          <FormattedTextField
-            select
-            label={d("Category").t("library_label_category")}
-            encode={encodeOneItemArray}
-            decode={decodeOneItemArray}
-            {...props}
-            onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
-              onChangeCategory(value);
-              props.onChange(value);
-            }}
-            fullWidth
-            required
-            className={css.fieldset}
-            disabled={!canEdit}
-          >
-            {menuItemList(linkedMockOptions.developmental)}
-          </FormattedTextField>
-        )}
-      />
-      <Controller
-        disabled={!canEdit}
-        as={TextField}
-        select
-        SelectProps={{ multiple: true }}
-        label={d("Subcategory").t("library_label_subcategory")}
-        name={"subcategory_ids"}
-        defaultValue={initDefaultValue.sub_category?.value || []}
-        key={initDefaultValue.sub_category?.key || "subcategory_ids"}
-        control={control}
-        fullWidth
-        className={css.fieldset}
-      >
-        {menuItemList(linkedMockOptions.skills)}
-      </Controller>
+      {isGeneralMilestone ? (
+        <TextField
+          label={d("Program").t("assess_label_program")}
+          fullWidth
+          className={css.fieldset}
+          disabled
+          variant="outlined"
+          InputProps={{
+            readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
+          }}
+          value={d("N/A").t("assess_column_n_a")}
+        />
+      ) : (
+        <Controller
+          name={"program_ids"}
+          defaultValue={initDefaultValue.program?.value || []}
+          key={initDefaultValue.program?.key}
+          control={control}
+          render={(props) => (
+            <FormattedTextField
+              select
+              label={d("Program").t("assess_label_program")}
+              encode={encodeOneItemArray}
+              decode={decodeOneItemArray}
+              {...props}
+              onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                onChangeProgram(value);
+                props.onChange(value);
+              }}
+              required
+              fullWidth
+              className={css.fieldset}
+              disabled={!canEdit}
+            >
+              {menuItemList(linkedMockOptions.program)}
+            </FormattedTextField>
+          )}
+        />
+      )}
+      {isGeneralMilestone ? (
+        <TextField
+          label={d("Subject").t("assess_label_subject")}
+          fullWidth
+          className={css.fieldset}
+          disabled
+          variant="outlined"
+          InputProps={{
+            readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
+          }}
+          value={d("N/A").t("assess_column_n_a")}
+        />
+      ) : (
+        <Controller
+          name={"subject_ids"}
+          defaultValue={initDefaultValue.subject?.value || []}
+          key={initDefaultValue.subject?.key}
+          control={control}
+          render={(props) => (
+            <TextField
+              select
+              label={d("Subject").t("assess_label_subject")}
+              {...props}
+              onChange={(e) => {
+                const value = (e.target.value as unknown) as string[];
+                value.length > 0 && onChangeSubject(value);
+                value.length > 0 && props.onChange(value);
+              }}
+              fullWidth
+              className={css.fieldset}
+              SelectProps={{ multiple: true }}
+              required
+              disabled={!canEdit}
+            >
+              {menuItemList(linkedMockOptions.subject)}
+            </TextField>
+          )}
+        />
+      )}
+      {isGeneralMilestone ? (
+        <TextField
+          label={d("Category").t("library_label_category")}
+          fullWidth
+          className={css.fieldset}
+          disabled
+          variant="outlined"
+          InputProps={{
+            readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
+          }}
+          value={d("N/A").t("assess_column_n_a")}
+        />
+      ) : (
+        <Controller
+          name={"category_ids"}
+          defaultValue={initDefaultValue.category?.value || []}
+          key={initDefaultValue.category?.key}
+          control={control}
+          render={(props) => (
+            <FormattedTextField
+              select
+              label={d("Category").t("library_label_category")}
+              encode={encodeOneItemArray}
+              decode={decodeOneItemArray}
+              {...props}
+              onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                onChangeCategory(value);
+                props.onChange(value);
+              }}
+              fullWidth
+              required
+              className={css.fieldset}
+              disabled={!canEdit}
+            >
+              {menuItemList(linkedMockOptions.developmental)}
+            </FormattedTextField>
+          )}
+        />
+      )}
+      {isGeneralMilestone ? (
+        <TextField
+          label={d("Subcategory").t("library_label_subcategory")}
+          fullWidth
+          className={css.fieldset}
+          disabled
+          variant="outlined"
+          InputProps={{
+            readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
+          }}
+          value={d("N/A").t("assess_column_n_a")}
+        />
+      ) : (
+        <Controller
+          disabled={!canEdit}
+          as={TextField}
+          select
+          SelectProps={{ multiple: true }}
+          label={d("Subcategory").t("library_label_subcategory")}
+          name={"subcategory_ids"}
+          defaultValue={initDefaultValue.sub_category?.value || []}
+          key={initDefaultValue.sub_category?.key || "subcategory_ids"}
+          control={control}
+          fullWidth
+          className={css.fieldset}
+        >
+          {menuItemList(linkedMockOptions.skills)}
+        </Controller>
+      )}
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
-          <Controller
-            disabled={!canEdit}
-            as={TextField}
-            name={"age_ids"}
-            defaultValue={initDefaultValue.age?.value || []}
-            key={initDefaultValue.age?.key}
-            control={control}
-            select
-            SelectProps={{ multiple: true }}
-            // className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth
-            className={css.fieldset}
-            label={d("Age").t("assess_label_age")}
-          >
-            {menuItemList(linkedMockOptions.age || [])}
-          </Controller>
+          {isGeneralMilestone ? (
+            <TextField
+              label={d("Age").t("assess_label_age")}
+              fullWidth
+              className={css.fieldset}
+              disabled
+              variant="outlined"
+              InputProps={{
+                readOnly: true,
+                style: { color: "rgba(0,0,0,1)" },
+              }}
+              value={d("N/A").t("assess_column_n_a")}
+            />
+          ) : (
+            <Controller
+              disabled={!canEdit}
+              as={TextField}
+              name={"age_ids"}
+              defaultValue={initDefaultValue.age?.value || []}
+              key={initDefaultValue.age?.key}
+              control={control}
+              select
+              SelectProps={{ multiple: true }}
+              // className={sm ? css.fieldset : css.halfFieldset}
+              fullWidth
+              className={css.fieldset}
+              label={d("Age").t("assess_label_age")}
+            >
+              {menuItemList(linkedMockOptions.age || [])}
+            </Controller>
+          )}
         </Grid>
         <Grid item xs={12} sm={6}>
-          <Controller
-            disabled={!canEdit}
-            as={TextField}
-            name={"grade_ids"}
-            defaultValue={initDefaultValue.grade?.value || []}
-            key={initDefaultValue.grade?.key}
-            control={control}
-            select
-            SelectProps={{ multiple: true }}
-            // className={sm ? css.fieldset : css.halfFieldset}
-            fullWidth
-            className={css.fieldset}
-            label={d("Grade").t("assess_label_grade")}
-            // disabled={permission}
-          >
-            {menuItemList(linkedMockOptions.grade || [])}
-          </Controller>
+          {isGeneralMilestone ? (
+            <TextField
+              label={d("Grade").t("assess_label_grade")}
+              fullWidth
+              className={css.fieldset}
+              disabled
+              variant="outlined"
+              InputProps={{
+                readOnly: true,
+                style: { color: "rgba(0,0,0,1)" },
+              }}
+              value={d("N/A").t("assess_column_n_a")}
+            />
+          ) : (
+            <Controller
+              disabled={!canEdit}
+              as={TextField}
+              name={"grade_ids"}
+              defaultValue={initDefaultValue.grade?.value || []}
+              key={initDefaultValue.grade?.key}
+              control={control}
+              select
+              SelectProps={{ multiple: true }}
+              // className={sm ? css.fieldset : css.halfFieldset}
+              fullWidth
+              className={css.fieldset}
+              label={d("Grade").t("assess_label_grade")}
+              // disabled={permission}
+            >
+              {menuItemList(linkedMockOptions.grade || [])}
+            </Controller>
+          )}
         </Grid>
       </Grid>
-      <Controller
-        name="description"
-        as={TextField}
-        control={control}
-        defaultValue={initDefaultValue.description?.value}
-        key={initDefaultValue.description?.key}
-        label={d("Description").t("assess_label_description")}
-        fullWidth
-        className={css.fieldset}
-        multiline
-        rows={4}
-        inputProps={{ maxLength: 200 }}
-        disabled={!canEdit}
-      />
+      {isGeneralMilestone ? (
+        <TextField
+          label={d("Description").t("assess_label_description")}
+          fullWidth
+          className={css.fieldset}
+          disabled
+          rows={4}
+          variant="outlined"
+          InputProps={{
+            readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
+          }}
+          value={d("N/A").t("assess_column_n_a")}
+        />
+      ) : (
+        <Controller
+          name="description"
+          as={TextField}
+          control={control}
+          defaultValue={initDefaultValue.description?.value}
+          key={initDefaultValue.description?.key}
+          label={d("Description").t("assess_label_description")}
+          fullWidth
+          className={css.fieldset}
+          multiline
+          rows={4}
+          inputProps={{ maxLength: 200 }}
+          disabled={!canEdit}
+        />
+      )}
       <Controller style={{ display: "none" }} name="with_publish" control={control} as={TextField} defaultValue={false} />
       <Controller style={{ display: "none" }} name="type" control={control} as={TextField} defaultValue={"normal"} />
     </Box>
