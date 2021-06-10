@@ -582,8 +582,8 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
                 value={PermissionType.approve_pending_learning_outcome_481}
                 render={(value) =>
                   value && (
-                    <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={handelReject}>
-                      <ClearSharp fontSize="small" />
+                    <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={handleApprove}>
+                      <Check fontSize="small" />
                     </IconButton>
                   )
                 }
