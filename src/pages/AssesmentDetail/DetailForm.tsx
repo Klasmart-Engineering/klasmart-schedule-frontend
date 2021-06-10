@@ -537,7 +537,7 @@ export default function DetailForm(props: DetailFormProps) {
             fullWidth
             disabled
             name="class_name"
-            value={assessmentDetail?.class_name || d("N/A").t("assess_column_n_a")}
+            value={assessmentDetail?.class?.name || d("N/A").t("assess_column_n_a")}
             className={css.fieldset}
             label={d("Class Name").t("assess_detail_class_name")}
           />

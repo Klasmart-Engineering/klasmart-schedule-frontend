@@ -10,10 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiBadRequestResponse = ApiResponse;
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -24,10 +21,7 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -50,10 +44,7 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiResponse;
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -71,10 +62,7 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiResponse;
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -86,10 +74,7 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiNotFoundResponse = ApiResponse;
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -133,6 +118,11 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
+export interface ApiResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -150,19 +140,13 @@ export interface ApiSignatureResponse {
   url?: string;
 }
 
-export interface ApiSuccessRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiSuccessRequestResponse = ApiResponse;
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export interface ApiUnAuthorizedResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiUnAuthorizedResponse = ApiResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -300,20 +284,6 @@ export interface EntityAssessmentItem {
   subjects?: EntityAssessmentSubject[];
   teachers?: EntityAssessmentTeacher[];
   title?: string;
-}
-
-export interface EntityAssessmentLessonMaterial {
-  checked?: boolean;
-  comment?: string;
-  file_type?: number;
-  id?: string;
-  name?: string;
-  source?: string;
-}
-
-export interface EntityAssessmentLessonPlan {
-  id?: string;
-  name?: string;
 }
 
 export interface EntityAssessmentProgram {
@@ -702,24 +672,6 @@ export interface EntityGetStudentPerformanceH5PReportResponse {
 export interface EntityGetStudentPerformanceReportResponse {
   assessment_ids?: string[];
   items?: EntityStudentPerformanceReportItem[];
-}
-
-export interface EntityGetStudyAssessmentDetailResult {
-  class_name?: string;
-  complete_at?: number;
-  due_at?: number;
-  id?: string;
-  lesson_materials?: EntityAssessmentLessonMaterial[];
-  lesson_plan?: EntityAssessmentLessonPlan;
-  remaining_time?: number;
-
-  /** debug */
-  schedule_id?: string;
-  status?: string;
-  student_view_items?: EntityAssessmentStudentViewH5PItem[];
-  students?: EntityAssessmentStudent[];
-  teachers?: EntityAssessmentTeacher[];
-  title?: string;
 }
 
 export interface EntityLessonType {
@@ -1317,14 +1269,6 @@ export interface EntityUpdateFolderRequest {
   keywords?: string[];
   name?: string;
   thumbnail?: string;
-}
-
-export interface EntityUpdateStudyAssessmentArgs {
-  action?: "save" | "complete";
-  id?: string;
-  lesson_materials?: EntityUpdateAssessmentContentArgs[];
-  student_ids?: string[];
-  student_view_items?: EntityUpdateAssessmentH5PStudent[];
 }
 
 export interface EntityUserSettingJsonContent {
@@ -3696,7 +3640,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getStudyAssessmentDetail: (id: string, params?: RequestParams) =>
       this.request<
-        EntityGetStudyAssessmentDetailResult,
+        EntityAssessmentDetail,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/study_assessments/${id}`, "GET", params),
 
@@ -3706,12 +3650,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request PUT:/study_assessments/{id}
      * @description update study assessment
      */
-    updateStudyAssessment: (id: string, update_study_assessment_args: EntityUpdateStudyAssessmentArgs, params?: RequestParams) =>
+    updateStudyAssessment: (id: string, update_assessment_args: EntityUpdateAssessmentArgs, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/study_assessments/${id}`,
         "PUT",
         params,
-        update_study_assessment_args
+        update_assessment_args
       ),
   };
   subjects = {
