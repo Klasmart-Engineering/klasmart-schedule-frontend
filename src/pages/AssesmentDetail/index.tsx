@@ -40,22 +40,22 @@ export function AssessmentDetail() {
   const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
   const { handleSubmit, watch, reset } = formMethods;
   const formValue = watch();
-  const { student_ids, lesson_materials, student_view_items } = formValue;
+  const { attendance_ids, lesson_materials, student_view_items } = formValue;
   const init_student_view_items = useMemo(() => {
-    return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
-  }, [lesson_materials, student_ids, studyAssessmentDetail]);
+    return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
+  }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
   const filter_student_view_items = useMemo(() => {
-    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
+    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
     return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
-  }, [studyAssessmentDetail, student_ids, lesson_materials, student_view_items]);
+  }, [studyAssessmentDetail, attendance_ids, lesson_materials, student_view_items]);
 
   const complete_rate = useMemo(() => {
-    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, student_ids, lesson_materials);
+    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
     const { all, attempt } = ModelAssessment.toGetCompleteRate(res);
     if (all === 0) return d("N/A").t("assess_column_n_a");
     if (attempt === 0) return "0";
     return `${Math.round((attempt / all) * 100)}%`;
-  }, [lesson_materials, student_ids, studyAssessmentDetail]);
+  }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
   const handleGoBack = useCallback(async () => {
     history.goBack();
   }, [history]);

@@ -131,8 +131,8 @@ export const ModelAssessment = {
   },
   toGetStudentIds(detail: DetailStudyAssessment) {
     const draft = cloneDeep(detail);
-    const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
-    return { student_ids };
+    const attendance_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
+    return { attendance_ids };
   },
   toGetStudentViewItems(
     detail: DetailStudyAssessment,

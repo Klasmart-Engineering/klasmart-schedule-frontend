@@ -503,7 +503,7 @@ export default function DetailForm(props: DetailFormProps) {
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const { student_ids } = useMemo(() => ModelAssessment.toGetStudentIds(assessmentDetail), [assessmentDetail]);
+  const { attendance_ids } = useMemo(() => ModelAssessment.toGetStudentIds(assessmentDetail), [assessmentDetail]);
   const m = getValues()["lesson_materials"];
   const materials = useMemo(() => ModelAssessment.toStudyAssessment(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
@@ -553,7 +553,7 @@ export default function DetailForm(props: DetailFormProps) {
           <Controller
             as={PopupInput}
             name="attendance_ids"
-            defaultValue={student_ids ?? []}
+            defaultValue={attendance_ids ?? []}
             assessmentDetail={assessmentDetail}
             control={control}
             isMyAssessment={isMyAssessment}
