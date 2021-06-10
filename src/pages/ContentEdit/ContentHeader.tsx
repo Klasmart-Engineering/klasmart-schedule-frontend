@@ -27,7 +27,6 @@ import React, { forwardRef, Fragment, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentInputSourceType, ContentType } from "../../api/type";
-import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -171,9 +170,9 @@ export function ContentHeader(props: HeaderProps) {
         <IconButton size="small" className={css.arrowBack} onClick={onBack}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
-        <Hidden smDown>
+        {/* <Hidden smDown>
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
-        </Hidden>
+        </Hidden> */}
         <Typography variant="h6" className={css.title}>
           {sm ? d("Create New Content").t("library_label_create_new_content") : d("For Organizations").t("library_label_for_organizations")}
         </Typography>

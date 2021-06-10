@@ -4,7 +4,6 @@ import { ArrowBack, Cancel, CancelOutlined, Check, Clear, ClearSharp, Create, De
 import clsx from "clsx";
 import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
-import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionOr, PermissionType } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -666,9 +665,9 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
         <Button size="small" className={css.arrowBack} onClick={goBack}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </Button>
-        <Hidden smDown>
+        {/* <Hidden smDown>
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
-        </Hidden>
+        </Hidden> */}
         <Typography variant="h6" className={css.title}>
           {sm
             ? d("Create New Learning Outcome").t("assess_label_create_new_learning_outcome")

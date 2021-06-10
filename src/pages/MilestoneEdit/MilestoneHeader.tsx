@@ -11,7 +11,6 @@ import React from "react";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { MilestoneDetailResult, MilestoneStatus } from "../../api/type";
-import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
@@ -255,9 +254,9 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
         <Button size="small" className={css.arrowBack} onClick={goBack}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </Button>
-        <Hidden smDown>
+        {/* <Hidden smDown>
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
-        </Hidden>
+        </Hidden> */}
         <Typography variant="h6" className={css.title}>
           {sm ? d("Create New Milestone").t("assess_create_new_milestone") : d("For Organizations").t("assess_label_for_organizations")}
         </Typography>

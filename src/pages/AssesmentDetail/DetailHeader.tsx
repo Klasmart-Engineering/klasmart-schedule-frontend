@@ -17,7 +17,6 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { Fragment, useCallback, useReducer } from "react";
-import KidsloopLogo from "../../assets/icons/kidsloop-logo.svg";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
 
@@ -107,9 +106,9 @@ export function DetailHeader(props: AssessmentHeaderProps) {
         <IconButton size="small" className={css.arrowBack} onClick={onBack}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
-        <Hidden smDown>
+        {/* <Hidden smDown>
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
-        </Hidden>
+        </Hidden> */}
         <Typography variant="h6" className={css.title}>
           {sm ? name : d("For Organizations").t("library_label_for_organizations")}
         </Typography>
