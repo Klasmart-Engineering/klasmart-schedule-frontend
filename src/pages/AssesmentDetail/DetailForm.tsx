@@ -186,18 +186,18 @@ export const AttendanceInput = (props: AttendanceInputProps) => {
     assessmentDetail,
     formMethods: { control, errors, watch },
   } = props;
-  const student_ids = watch("student_ids") || defaultValue || [];
+  const attendance_ids = watch("attendance_ids") || defaultValue || [];
   return (
     <Box>
       <Typography className={css.subTitle}>
-        {d("Students").t("assess_detail_students")}({student_ids.length})
+        {d("Students").t("assess_detail_students")}({attendance_ids.length})
       </Typography>
       <Controller
-        name="student_ids"
+        name="attendance_ids"
         control={control}
         defaultValue={defaultValue}
         rules={{ required: true }}
-        error={errors.student_ids}
+        error={errors.attendance_ids}
         render={({ ref, ...props }) => {
           return (
             <CheckboxGroup
@@ -250,11 +250,11 @@ const PopupInput = forwardRef<HTMLDivElement, PopupInputProps>((props, ref) => {
     return students && students[0] ? `${students?.map((item) => item.name).join(", ")} (${students.length})` : "";
   }, [assessmentDetail, value]);
   const handleOk = useCallback(() => {
-    const { student_ids } = formMethods.getValues();
-    if (!student_ids?.length)
+    const { attendance_ids } = formMethods.getValues();
+    if (!attendance_ids?.length)
       return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
     toggle();
-    if (onChange) return onChange(student_ids || []);
+    if (onChange) return onChange(attendance_ids || []);
   }, [dispatch, formMethods, onChange]);
   return (
     <Box className={css.editBox} {...{ ref }}>
@@ -552,7 +552,7 @@ export default function DetailForm(props: DetailFormProps) {
           />
           <Controller
             as={PopupInput}
-            name="student_ids"
+            name="attendance_ids"
             defaultValue={student_ids ?? []}
             assessmentDetail={assessmentDetail}
             control={control}
@@ -620,8 +620,8 @@ export default function DetailForm(props: DetailFormProps) {
           <TextField
             fullWidth
             disabled
-            name="complete_at"
-            value={formattedTime(assessmentDetail.complete_at) || 0}
+            name="complete_time"
+            value={formattedTime(assessmentDetail.complete_time) || 0}
             className={css.fieldset}
             label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
           />

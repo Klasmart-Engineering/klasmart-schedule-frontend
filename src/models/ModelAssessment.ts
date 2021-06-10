@@ -136,7 +136,7 @@ export const ModelAssessment = {
   },
   toGetStudentViewItems(
     detail: DetailStudyAssessment,
-    student_ids: UpdataStudyAssessmentRequestData["student_ids"],
+    student_ids: UpdataStudyAssessmentRequestData["attendance_ids"],
     lesson_materials: UpdataStudyAssessmentRequestData["lesson_materials"]
   ): DetailStudyAssessment["student_view_items"] {
     const { student_view_items } = detail;
@@ -230,7 +230,7 @@ export const ModelAssessment = {
   toGetInitStudentIds(defaultDetail: DetailStudyAssessment, value: UpdateStudyAssessmentDataOmitAction): DetailStudyAssessment {
     const draft = cloneDeep(defaultDetail);
     const attendanceHash = toHash(defaultDetail.students || []);
-    draft.students = value.student_ids?.map((id) => attendanceHash[id]) || [];
+    draft.students = value.attendance_ids?.map((id) => attendanceHash[id]) || [];
     // const list = cloneDeep(draft.students);
     // const bb = list.filter((item) => item === undefined);
     // if (bb.length > 0) {
@@ -240,9 +240,9 @@ export const ModelAssessment = {
   },
   toStudyRequest(detail: DetailStudyAssessment): UpdateStudyAssessmentDataOmitAction {
     const draft = cloneDeep(detail);
-    const student_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
+    const attendance_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
     const lesson_materials = draft.lesson_materials;
-    return { student_ids, lesson_materials };
+    return { attendance_ids, lesson_materials };
   },
   toGetCompleteRate(student_view_items: DetailStudyAssessment["student_view_items"]) {
     let all: number = 0;

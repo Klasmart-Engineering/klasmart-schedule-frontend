@@ -671,7 +671,7 @@ export function Summary(props: SummaryProps) {
           <TextField
             fullWidth
             disabled
-            name="completeTime"
+            name="complete_time"
             value={formattedTime(assessmentDetail.complete_time) || ""}
             className={css.fieldset}
             label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
