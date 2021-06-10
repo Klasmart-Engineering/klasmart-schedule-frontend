@@ -192,7 +192,7 @@ export type ListStudyAssessmentItem = NonNullable<ListStudyAssessment>[0];
 export type DetailStudyAssessment = AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>;
 
 export type UpdataStudyAssessmentRequestData = Parameters<typeof api.studyAssessments.updateStudyAssessment>[1];
-export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentRequestData["student_ids"]>;
+export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentRequestData["attendance_ids"]>;
 export enum ExectSeachType {
   all = "all",
   class_name = "class_name",
