@@ -6,6 +6,7 @@ import {
   UpdateAssessmentRequestData,
   UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
+import { EntityAssessmentDetailContent, EntityAssessmentStudent } from "../api/api.auto";
 
 interface ObjContainId {
   id?: string;
@@ -280,6 +281,26 @@ export const ModelAssessment = {
     } else {
       return draft;
     }
+  },
+  MultipleSelectSet(
+    students: EntityAssessmentStudent[] | undefined,
+    materials: EntityAssessmentDetailContent[] | undefined
+  ): {
+    label: string;
+    data: { id: string | number; title: string }[];
+  }[] {
+    const studentsSet = students?.map((student) => {
+      return { id: student.id, title: student.name };
+    }) as { id: string | number; title: string }[];
+    const materialsSet = materials
+      ?.filter((material) => material.checked)
+      ?.map((material) => {
+        return { id: material.id, title: material.name };
+      }) as { id: string | number; title: string }[];
+    return [
+      { label: "View by Student", data: studentsSet },
+      { label: "View by Lesson Material", data: materialsSet },
+    ];
   },
 };
 

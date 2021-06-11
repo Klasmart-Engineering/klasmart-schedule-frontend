@@ -18,6 +18,7 @@ import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOut
 import { OutcomesTable } from "./OutcomesTable";
 import RadioHeader, { RadioValue } from "./RadioHeader";
 import { Summary } from "./Summary";
+import MultipleSelectGroup from "../../components/MultipleSelectGroup";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -148,9 +149,29 @@ function AssessmentsEditIner() {
     d("Learning Outcomes").t("library_label_learning_outcomes"),
   ];
 
+  const changeAutocompleteValue = (
+    value: {
+      id: string | number;
+      title: string;
+    }[]
+  ) => {
+    console.log(value);
+  };
+
+  const changeAutocompleteDimensionValue = (label: string) => {
+    console.log(label);
+  };
+
   const rightsideArea = (
     <div style={{ position: "relative" }}>
       <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
+      {radioValue === RadioValue.score && (
+        <MultipleSelectGroup
+          groupCollect={ModelAssessment.MultipleSelectSet(students, lesson_materials ?? assessmentDetail.lesson_materials)}
+          changeAutocompleteValue={changeAutocompleteValue}
+          changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
+        />
+      )}
       <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
         <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
         {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
