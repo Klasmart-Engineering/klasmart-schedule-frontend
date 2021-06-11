@@ -106,18 +106,18 @@ export function OutcomeList() {
   const { addSetActive, openAddSet, closeAddSet } = useAddSet();
   const dispatch = useDispatch<AppDispatch>();
   const handlePublish: OutcomeTableProps["onPublish"] = (id) => {
-    return refreshWithDispatch(dispatch(publishOutcome(id)));
+    return refreshWithDispatch(dispatch(publishOutcome(id)).then(unwrapResult));
   };
   const handleBulkPublish: ThirdSearchHeaderProps["onBulkPublish"] = () => {
     // const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
-    return refreshWithDispatch(dispatch(bulkPublishOutcome(ids)));
+    return refreshWithDispatch(dispatch(bulkPublishOutcome(ids)).then(unwrapResult));
   };
   const handleDelete: OutcomeTableProps["onDelete"] = (id) => {
-    return refreshWithDispatch(dispatch(deleteOutcome(id)));
+    return refreshWithDispatch(dispatch(deleteOutcome(id)).then(unwrapResult));
   };
   const handleBulkDelete: ThirdSearchHeaderProps["onBulkDelete"] = () => {
     // const ids = getValues()[BulkListFormKey.CHECKED_BULK_IDS];
-    return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)));
+    return refreshWithDispatch(dispatch(bulkDeleteOutcome(ids)).then(unwrapResult));
   };
   const handleChangePage: OutcomeTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickOutcome: OutcomeTableProps["onClickOutcome"] = (outcome_id) =>
@@ -136,16 +136,16 @@ export function OutcomeList() {
   };
 
   const handleBulkApprove: ThirdSearchHeaderProps["onBulkApprove"] = () => {
-    return refreshWithDispatch(dispatch(bulkApprove(ids)));
+    return refreshWithDispatch(dispatch(bulkApprove(ids)).then(unwrapResult));
   };
   const handleBulkReject: ThirdSearchHeaderProps["onBulkReject"] = () => {
-    return refreshWithDispatch(dispatch(bulkReject(ids)));
+    return refreshWithDispatch(dispatch(bulkReject(ids)).then(unwrapResult));
   };
   const handleApprove: OutcomeTableProps["onApprove"] = (id) => {
-    return refreshWithDispatch(dispatch(approve(id)));
+    return refreshWithDispatch(dispatch(approve(id)).then(unwrapResult));
   };
   const handleReject: OutcomeTableProps["onReject"] = (id) => {
-    return refreshWithDispatch(dispatch(newReject({ id: id })));
+    return refreshWithDispatch(dispatch(newReject({ id: id })).then(unwrapResult));
   };
   const handleBulkAddSet: ThirdSearchHeaderProps["onBulkAddSet"] = () => {
     if (!ids || !ids.length)

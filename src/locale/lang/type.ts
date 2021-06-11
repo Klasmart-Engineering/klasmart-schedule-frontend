@@ -81,7 +81,7 @@ type LangRecord<T = string> =
   | { id: "library_label_author"; description: "Author"; values: undefined }
   | { id: "library_label_edit"; description: "Edit"; values: undefined }
   | { id: "library_label_view_in"; description: "View in"; values: undefined }
-  | { id: "library_label_kidsloop_live"; description: "KidsLoop Live"; values: undefined }
+  | { id: "library_label_kidsloop_live"; description: "Live Class"; values: undefined }
   | { id: "library_label_approve"; description: "Approve"; values: undefined }
   | { id: "library_msg_approve_content"; description: "Are you sure you want to approve these contents?"; values: undefined }
   | { id: "library_label_reject"; description: "Reject"; values: undefined }
@@ -342,6 +342,10 @@ type LangRecord<T = string> =
   | { id: "assess_detail_score_assessment"; description: "Score Assessment"; values: undefined }
   | { id: "assess_detail_score_full_marks"; description: "Score / Full Marks"; values: undefined }
   | { id: "assess_study_summary"; description: "Study Summary"; values: undefined }
+  | { id: "assess_detail_all_students"; description: "All Students"; values: undefined }
+  | { id: "assess_detail_view_by_students"; description: "View by Students"; values: undefined }
+  | { id: "assess_detail_view_by_lesson_material"; description: "View by Lesson Material"; values: undefined }
+  | { id: "assess_detail_all_lesson_materials"; description: "All Lesson Materials"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -442,6 +446,7 @@ type LangRecord<T = string> =
       description: "This content has been republished with a new version, please refresh. ";
       values: undefined;
     }
+  | { id: "assess_approved_successfully"; description: "Approved Successfully"; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }

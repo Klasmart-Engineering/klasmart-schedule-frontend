@@ -11,7 +11,7 @@ import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeL
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { actWarning } from "./notify";
+import { actSuccess, actWarning } from "./notify";
 import { IPermissionState } from "./type";
 
 interface IOutcomeState extends IPermissionState {
@@ -278,7 +278,11 @@ export const deleteOutcome = createAsyncThunk<string, ParamDeleteLearningOutcome
   const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
   const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
   if (!isConfirmed) return Promise.reject();
-  return api.learningOutcomes.deleteLearningOutcome(id);
+  const res = await api.learningOutcomes.deleteLearningOutcome(id);
+  if (res === "ok") {
+    dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
+  }
+  return res;
 });
 
 type publishOutcomeResponse = AsyncReturnType<typeof api.learningOutcomes.publishLearningOutcomes>;
@@ -304,7 +308,11 @@ export const bulkDeleteOutcome = createAsyncThunk<string, BulkDeleteOutcomeParam
     const content = d("Are you sure you want to delete this learning outcome?").t("assess_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
-    return api.bulk.deleteOutcomeBulk({ outcome_ids: ids });
+    const res = await api.bulk.deleteOutcomeBulk({ outcome_ids: ids });
+    if (res === "ok") {
+      dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
+    }
+    return res;
   }
 );
 type BulkPublishutcomeParams = Parameters<typeof api.bulkPublish.publishLearningOutcomesBulk>[0];
@@ -393,7 +401,11 @@ export const bulkApprove = createAsyncThunk<IQueryBulkRejectResult, IQueryBulkAp
     const content = d("Are you sure you want to approve these learning outcomes?").t("assess_bulk_approval");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
-    return api.bulkApprove.approveLearningOutcomesBulk({ outcome_ids: ids });
+    const res = await api.bulkApprove.approveLearningOutcomesBulk({ outcome_ids: ids });
+    if (res === "ok") {
+      dispatch(actSuccess("Approved Successfully"));
+    }
+    return res;
   }
 );
 
@@ -439,7 +451,11 @@ export const bulkBindOutcomeSet = createAsyncThunk<IQueryBulkBindOutcomeSetResul
   async ({ outcome_ids, set_ids }, { dispatch }) => {
     if (!set_ids || !set_ids.length)
       return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
-    return api.sets.bulkBindOutcomeSet({ outcome_ids, set_ids });
+    const res = await api.sets.bulkBindOutcomeSet({ outcome_ids, set_ids });
+    if (res === "ok") {
+      dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
+    }
+    return res;
   }
 );
 
