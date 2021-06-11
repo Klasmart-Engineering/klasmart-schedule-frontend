@@ -4,13 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
+import { AssessmentTypeValues } from "../../components/AssessmentType";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
 import { AssessmentsEdit } from "../AssessmentEdit";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
-import { AssessmentType, SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
+import { SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { AssessmentQueryCondition } from "./types";
 
@@ -31,7 +32,8 @@ const useQuery = (): AssessmentQueryCondition => {
     const status = query.get("status");
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as AssessmentOrderBy | null) || undefined;
-    return clearNull({ teacher_name, status, page, order_by });
+    const class_type = query.get("class_type") || "OfflineClass";
+    return clearNull({ teacher_name, status, page, order_by, class_type });
   }, [search]);
 };
 
@@ -61,15 +63,16 @@ export function AssessmentList() {
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) =>
     history.push({ pathname: AssessmentsEdit.routeBasePath, search: toQueryString({ id }) });
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
-  const handleChangeAssessmentType = (assessmentType: AssessmentType) => {
-    // history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
-    if (assessmentType === AssessmentType.classLive) {
-      history.push(`/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`);
+  const handleChangeAssessmentType = (assessmentType: AssessmentTypeValues) => {
+    if (assessmentType === AssessmentTypeValues.live || assessmentType === AssessmentTypeValues.class) {
+      history.push(
+        `/assessments/assessment-list?class_type=${assessmentType}&status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`
+      );
     }
-    if (assessmentType === AssessmentType.homeFun) {
+    if (assessmentType === AssessmentTypeValues.homeFun) {
       history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
     }
-    if (assessmentType === AssessmentType.study) {
+    if (assessmentType === AssessmentTypeValues.study) {
       history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
     }
   };
@@ -119,4 +122,4 @@ export function AssessmentList() {
 }
 
 AssessmentList.routeBasePath = "/assessments/assessment-list";
-AssessmentList.routeRedirectDefault = `/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`;
+AssessmentList.routeRedirectDefault = `/assessments/assessment-list?class_type=${AssessmentTypeValues.class}&status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`;

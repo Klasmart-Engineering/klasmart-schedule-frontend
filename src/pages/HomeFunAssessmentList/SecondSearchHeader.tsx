@@ -1,4 +1,4 @@
-import { Grid, InputAdornment, MenuItem } from "@material-ui/core";
+import { Grid, InputAdornment } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
@@ -6,6 +6,7 @@ import TextField, { TextFieldProps } from "@material-ui/core/TextField/TextField
 import { Search } from "@material-ui/icons";
 import produce from "immer";
 import React, { ChangeEvent, useState } from "react";
+import { AssessmentType, AssessmentTypeValues } from "../../components/AssessmentType";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { HomeFunAssessmentQueryCondition, HomeFunAssessmentQueryConditionBaseProps } from "./types";
@@ -73,28 +74,28 @@ const useStyles = makeStyles((theme) => ({
     height: "42px",
   },
 }));
-export enum AssessmentType {
-  classLive = "classLive",
-  homeFun = "homeFun",
-  study = "study",
-}
-export interface options {
-  label?: string;
-  value?: string;
-}
-export const assessmentTypes = () => {
-  return [
-    { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
-    { label: d("Study").t("assess_study_list_study"), value: AssessmentType.study },
-    { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
-  ];
-};
-const menuItemList = (list: options[]) =>
-  list.map((item) => (
-    <MenuItem key={item.label} value={item.value}>
-      {item.label}
-    </MenuItem>
-  ));
+// export enum AssessmentType {
+//   classLive = "classLive",
+//   homeFun = "homeFun",
+//   study = "study",
+// }
+// export interface options {
+//   label?: string;
+//   value?: string;
+// }
+// export const assessmentTypes = () => {
+//   return [
+//     { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
+//     { label: d("Study").t("assess_study_list_study"), value: AssessmentType.study },
+//     { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
+//   ];
+// };
+// const menuItemList = (list: options[]) =>
+//   list.map((item) => (
+//     <MenuItem key={item.label} value={item.value}>
+//       {item.label}
+//     </MenuItem>
+//   ));
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
@@ -139,7 +140,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
 }
 
 export interface SecondSearchHeaderProps extends HomeFunAssessmentQueryConditionBaseProps {
-  onChangeAssessmentType: (assessmentType: AssessmentType) => any;
+  onChangeAssessmentType: (assessmentType: AssessmentTypeValues) => any;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
@@ -157,9 +158,9 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
-  const handleChangeAssessmentType = (event: ChangeEvent<HTMLInputElement>) => {
-    onChangeAssessmentType(event.target.value as AssessmentType);
-  };
+  // const handleChangeAssessmentType = (event: ChangeEvent<HTMLInputElement>) => {
+  //   onChangeAssessmentType(event.target.value as AssessmentType);
+  // };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -177,7 +178,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("assess_label_search")}
               </Button>
-              <TextField
+              {/* <TextField
                 style={{ width: 160, marginLeft: 10 }}
                 size="small"
                 onChange={handleChangeAssessmentType}
@@ -187,7 +188,8 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
                 {menuItemList(assessmentTypes())}
-              </TextField>
+              </TextField> */}
+              <AssessmentType type={AssessmentTypeValues.homeFun} onChangeAssessmentType={onChangeAssessmentType} />
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}></Grid>
           </Grid>

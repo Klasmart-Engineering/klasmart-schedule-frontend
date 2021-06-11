@@ -1,10 +1,10 @@
-import { Grid, MenuItem } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField/TextField";
-import React, { ChangeEvent } from "react";
+import React from "react";
 import { UseFormMethods } from "react-hook-form";
 import { ExectSeachType } from "../../api/type";
+import { AssessmentType, AssessmentTypeValues } from "../../components/AssessmentType";
 import LayoutBox from "../../components/LayoutBox";
 import { ListSearch } from "../../components/ListSearch";
 import { d } from "../../locale/LocaleManager";
@@ -61,28 +61,7 @@ const useStyles = makeStyles((theme) => ({
     height: "42px",
   },
 }));
-export enum AssessmentType {
-  classLive = "classLive",
-  homeFun = "homeFun",
-  study = "study",
-}
-export interface options {
-  label?: string;
-  value?: string;
-}
-export const assessmentTypes = () => {
-  return [
-    { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
-    { label: d("Study").t("assess_study_list_study"), value: AssessmentType.study },
-    { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
-  ];
-};
-const menuItemList = (list: options[]) =>
-  list.map((item) => (
-    <MenuItem key={item.label} value={item.value}>
-      {item.label}
-    </MenuItem>
-  ));
+
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, formMethods } = props;
@@ -118,7 +97,7 @@ const searchFieldList = () => {
   ];
 };
 export interface SecondSearchHeaderProps extends StudyAssessmentQueryConditionBaseProps {
-  onChangeAssessmentType: (assessmentType: AssessmentType) => any;
+  onChangeAssessmentType: (assessmentType: AssessmentTypeValues) => any;
   formMethods: UseFormMethods<SearchListForm>;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
@@ -133,9 +112,6 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   // const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
   //   if (event.key === "Enter") handleClickSearch();
   // };
-  const handleChangeAssessmentType = (event: ChangeEvent<HTMLInputElement>) => {
-    onChangeAssessmentType(event.target.value as AssessmentType);
-  };
   return (
     <div className={classes.root}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -186,17 +162,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onSearch={handleClickSearch}
                 formMethods={formMethods}
               />
-              <TextField
-                style={{ width: 160, marginLeft: 10 }}
-                size="small"
-                onChange={handleChangeAssessmentType}
-                // label={d("Content Type").t("library")}
-                defaultValue={AssessmentType.study}
-                select
-                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              >
-                {menuItemList(assessmentTypes())}
-              </TextField>
+              <AssessmentType type={AssessmentTypeValues.study} onChangeAssessmentType={onChangeAssessmentType} />
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}></Grid>
           </Grid>

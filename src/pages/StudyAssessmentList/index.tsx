@@ -5,13 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { AssessmentOrderBy, AssessmentStatus, ExectSeachType, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
+import { AssessmentTypeValues } from "../../components/AssessmentType";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { getStudyAssessmentList } from "../../reducers/assessments";
 import { AssessmentDetail } from "../AssesmentDetail";
 import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
-import { AssessmentType, SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHearder";
+import { SecondSearchHeader, SecondSearchHeaderMb, SecondSearchHeaderProps } from "./SecondSearchHearder";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHearder";
 import { SearchListForm, SearchListFormKey, StudyAssessmentQueryCondition } from "./types";
 
@@ -64,15 +65,17 @@ export function StudyAssessmentList() {
     });
     history.push({ search: toQueryString(newValue) });
   };
-  const handleChangeAssessmentType = (assessmentType: AssessmentType) => {
-    if (assessmentType === AssessmentType.classLive) {
-      history.push(`/assessments/assessment-list?status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`);
+  const handleChangeAssessmentType = (assessmentType: AssessmentTypeValues) => {
+    if (assessmentType === AssessmentTypeValues.live || assessmentType === AssessmentTypeValues.class) {
+      history.push(
+        `/assessments/assessment-list?class_type=${assessmentType}&status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`
+      );
     }
-    if (assessmentType === AssessmentType.homeFun) {
+    if (assessmentType === AssessmentTypeValues.homeFun) {
       history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
     }
-    if (assessmentType === AssessmentType.study) {
-      history.push(`/assessment/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
+    if (assessmentType === AssessmentTypeValues.study) {
+      history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
     }
   };
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });

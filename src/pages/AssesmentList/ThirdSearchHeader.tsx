@@ -7,10 +7,10 @@ import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { AssessmentOrderBy, AssessmentStatus } from "../../api/type";
 import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
+import { assessmentTypes, AssessmentTypeValues } from "../../components/AssessmentType";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { AssessmentType } from "./SecondSearchHeader";
 import { AssessmentQueryConditionBaseProps } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -89,15 +89,8 @@ const assessmentStatusOptions = () => [
   { label: d("Complete").t("assess_filter_complete"), value: AssessmentStatus.complete },
   { label: d("Incomplete").t("assess_filter_in_progress"), value: AssessmentStatus.in_progress },
 ];
-export const assessmentTypes = () => {
-  return [
-    { label: d("Class / Live").t("assess_class_type_class_live"), value: AssessmentType.classLive },
-    { label: d("Study").t("assess_study_list_study"), value: AssessmentType.study },
-    { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentType.homeFun },
-  ];
-};
 export interface ThirdSearchHeaderProps extends AssessmentQueryConditionBaseProps {
-  onChangeAssessmentType?: (assessmentType: AssessmentType) => any;
+  onChangeAssessmentType?: (assessmentType: AssessmentTypeValues) => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
@@ -217,7 +210,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
       })
     );
   };
-  const handleClickTypebyItem = (event: any, assessmentType: AssessmentType) => {
+  const handleClickTypebyItem = (event: any, assessmentType: AssessmentTypeValues) => {
     setAnchorSortEl(null);
     if (onChangeAssessmentType) {
       onChangeAssessmentType(assessmentType);
@@ -245,7 +238,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
                 {assessmentTypes().map((item, index) => (
                   <MenuItem
                     key={item.label}
-                    selected={item.value === AssessmentType.classLive}
+                    selected={item.value === AssessmentTypeValues.class}
                     onClick={(e) => handleClickTypebyItem(e, item.value)}
                   >
                     {item.label}
