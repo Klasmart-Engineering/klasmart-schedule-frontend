@@ -342,7 +342,7 @@ export function H5pPreview(props: H5pPreview) {
               <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
             )}
             {classType === "OnlineClass" && (
-              <Typography className={css.btnFontSize}>{d("KidsLoop Live").t("library_label_kidsloop_live")}</Typography>
+              <Typography className={css.btnFontSize}>{d("Live Class").t("library_label_kidsloop_live")}</Typography>
             )}
             {classType === "OfflineClass" && (
               <Typography className={css.btnFontSize}>{d("KidsLoop Class").t("schedule_preview_class")}</Typography>
