@@ -2,8 +2,8 @@ import { MenuItem, TextField } from "@material-ui/core";
 import React, { ChangeEvent } from "react";
 import { d } from "../../locale/LocaleManager";
 export enum AssessmentTypeValues {
-  class = "OnlineClass",
-  live = "OfflineClass",
+  class = "OfflineClass",
+  live = "OnlineClass",
   homeFun = "homeFun",
   study = "study",
 }
@@ -39,8 +39,7 @@ export function AssessmentType(props: AssessmentTypeProps) {
       style={{ width: 160, marginLeft: 10 }}
       size="small"
       onChange={handleChangeAssessmentType}
-      // label={d("Content Type").t("library")}
-      defaultValue={type}
+      value={type}
       select
       SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
     >

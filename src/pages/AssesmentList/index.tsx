@@ -32,7 +32,7 @@ const useQuery = (): AssessmentQueryCondition => {
     const status = query.get("status");
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as AssessmentOrderBy | null) || undefined;
-    const class_type = query.get("class_type") || "OfflineClass";
+    const class_type = query.get("class_type") || AssessmentTypeValues.class;
     return clearNull({ teacher_name, status, page, order_by, class_type });
   }, [search]);
 };
