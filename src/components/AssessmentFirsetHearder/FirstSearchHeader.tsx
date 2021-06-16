@@ -7,7 +7,6 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import FlagOutlinedIcon from "@material-ui/icons/FlagOutlined";
 import TimelineOutlinedIcon from "@material-ui/icons/TimelineOutlined";
-import TuneOutlinedIcon from "@material-ui/icons/TuneOutlined";
 import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
@@ -138,11 +137,11 @@ export function FirstSearchHeader() {
                   {d("Milestones").t("assess_label_milestone")}
                 </Button>
               </Permission>
-              <Permission value={PermissionType.milestones_page_405}>
+              {/* <Permission value={PermissionType.milestones_page_405}>
                 <Button className={clsx(css.nav, { [css.actives]: false })} startIcon={<TuneOutlinedIcon />}>
                   {"Standards"}
                 </Button>
-              </Permission>
+              </Permission> */}
               <Permission value={PermissionType.assessments_page_406}>
                 <Button
                   onClick={() => history.push(AssessmentList.routeRedirectDefault)}
