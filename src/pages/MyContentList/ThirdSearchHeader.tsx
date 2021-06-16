@@ -111,6 +111,17 @@ const useStyles = makeStyles((theme) => ({
     padding: "12px",
     boxSizing: "border-box",
   },
+  bulkActionCon: {
+    "& .MuiInputLabel-outlined.MuiInputLabel-marginDense": {
+      width: "calc(100% - 46px)",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+    },
+    "& .MuiInputLabel-outlined.MuiInputLabel-shrink": {
+      width: "100%",
+    },
+  },
 }));
 
 function SubUnpublished(props: QueryConditionBaseProps) {
@@ -545,8 +556,9 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
               <span className={classes.selectAll}>{t("library_label_files_selected", { value: ids.length.toString() })}</span>
               {bulkOptions.length > 0 && (
                 <TextField
+                  className={classes.bulkActionCon}
                   style={{
-                    width: 160,
+                    width: 170,
                   }}
                   size="small"
                   onChange={handleChangeBulkAction}
