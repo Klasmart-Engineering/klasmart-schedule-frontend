@@ -30,7 +30,7 @@ import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { EntityFolderContentData, EntityFolderItemInfo, EntityOrganizationProperty } from "../../api/api.auto";
-import { Author, ContentType, PublishStatus } from "../../api/type";
+import { Author, ContentType, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton, LButtonProps } from "../../components/LButton";
@@ -409,6 +409,8 @@ function ContentCard(props: ContentProps) {
             content?.publish_status === PublishStatus.published &&
             content?.content_type === ContentType.folder &&
             orgProperty.type === OrgType.headquarters &&
+            (queryCondition.content_type === SearchContentsRequestContentType.materialandplan ||
+              queryCondition.content_type === SearchContentsRequestContentType.folder) &&
             (!queryCondition.path || (queryCondition.path && queryCondition.path === "/")) &&
             isShowShareButton && (
               <LButton
