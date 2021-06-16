@@ -39,10 +39,6 @@ export default function ContentH5p(props: ContentH5pProps) {
   const css = useStyles();
   const src = useH5pSrc(sub, valueSource);
   useEffect(() => {
-    document.addEventListener("contextmenu", (event) => event.preventDefault());
-    document.addEventListener("contextmenu", function (event) {
-      event.preventDefault();
-    });
     const handleMessage = (event: MessageEvent) => {
       const { contentId } = event.data;
       const source_type = event.data.source_type ?? "";
