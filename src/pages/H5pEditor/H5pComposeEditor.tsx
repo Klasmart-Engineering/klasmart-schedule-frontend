@@ -128,12 +128,6 @@ export function H5pComposeEditor(props: H5pComposeEditorProps) {
     const { result } = validateContent({ content, semantics: rootLibrarySchema, path: "" }, schema);
     return Object.keys(result).length === 0 ? true : JSON.stringify(result);
   };
-  useEffect(() => {
-    document.addEventListener("contextmenu", (event) => event.preventDefault());
-    document.addEventListener("contextmenu", function (event) {
-      event.preventDefault();
-    });
-  });
   return (
     <Fragment>
       <ExpandContent
