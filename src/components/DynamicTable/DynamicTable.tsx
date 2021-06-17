@@ -46,8 +46,7 @@ const useStyles = makeStyles({
   emptyBox: {
     textAlign: "center",
     "& img": {
-      width: "60%",
-      marginTop: "6%",
+      marginTop: "10%",
     },
   },
   scoreEditBox: {
