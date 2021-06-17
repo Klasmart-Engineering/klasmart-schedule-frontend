@@ -3,9 +3,12 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 import { AssessmentStatus, GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
 import { DynamicTable } from "../../components/DynamicTable";
+import MultipleSelectGroup from "../../components/MultipleSelectGroup";
 import { PermissionType, usePermission } from "../../components/Permission";
+import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
@@ -14,12 +17,10 @@ import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reduc
 import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
-import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
+import { OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
 import { OutcomesTable } from "./OutcomesTable";
 import RadioHeader, { RadioValue } from "./RadioHeader";
 import { Summary } from "./Summary";
-import MultipleSelectGroup from "../../components/MultipleSelectGroup";
-import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -205,7 +206,7 @@ function AssessmentsEditIner() {
             editable={editable}
           />
         ) : (
-          <NoOutComesList />
+          <NoOutcome />
         )}
       </div>
       <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>

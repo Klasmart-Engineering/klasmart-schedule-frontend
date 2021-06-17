@@ -3,22 +3,23 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
+import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 import { AssessmentStatus, UpdataStudyAssessmentRequestData } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
+import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { AsyncTrunkReturned, completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
 import { actSuccess } from "../../reducers/notify";
-import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "../AssessmentEdit/filterOutcomes";
+import { OutcomesFilter, OutcomesFilterProps } from "../AssessmentEdit/filterOutcomes";
 import { OutcomesTable } from "../AssessmentEdit/OutcomesTable";
 import RadioHeader, { RadioValue } from "../AssessmentEdit/RadioHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";
 import { DetailTable } from "./DetailTable";
-import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 
 export const useQueryDetail = () => {
   const { search } = useLocation();
@@ -211,7 +212,7 @@ export function AssessmentDetail() {
                 editable={editable}
               />
             ) : (
-              <NoOutComesList />
+              <NoOutcome />
             )}
           </div>
         </div>
