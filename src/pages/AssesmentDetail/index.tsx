@@ -183,26 +183,20 @@ export function AssessmentDetail() {
           editable={editable}
           complete_rate={complete_rate}
         />
-        <DetailTable
-          autocompleteLabel={autocompleteLabel}
-          studentViewItems={filter_student_view_items}
-          isComplete={isComplete}
-          editable={editable}
-          changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
-          changeAutocompleteValue={changeAutocompleteValue}
-          lesson_materials={lesson_materials}
-          students={students}
-          studyAssessmentDetail={studyAssessmentDetail}
-          changeAssessmentTableDetail={changeAssessmentTableDetail}
-        />
         <div style={{ position: "relative" }}>
           <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
           <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
             <DetailTable
+              autocompleteLabel={autocompleteLabel}
               studentViewItems={filter_student_view_items}
-              formMethods={formMethods}
               isComplete={isComplete}
               editable={editable}
+              changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
+              changeAutocompleteValue={changeAutocompleteValue}
+              lesson_materials={lesson_materials}
+              students={students}
+              studyAssessmentDetail={studyAssessmentDetail}
+              changeAssessmentTableDetail={changeAssessmentTableDetail}
             />
           </div>
           <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
