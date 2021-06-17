@@ -193,7 +193,6 @@ export default function CreateOutcomings() {
           >;
           setOpenStatus(false);
           if (payload === "ok") {
-            dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
             history.go(-1);
           }
         },
@@ -207,7 +206,6 @@ export default function CreateOutcomings() {
     const { payload } = ((await dispatch(deleteOutcome(outcome_id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteOutcome>>;
     setOpenStatus(false);
     if (payload === "ok") {
-      dispatch(actSuccess(d("Deleted Successfully").t("assess_msg_deleted_successfully")));
       history.go(-1);
     }
   };
