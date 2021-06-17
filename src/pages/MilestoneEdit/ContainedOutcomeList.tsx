@@ -102,7 +102,9 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
     ));
   return (
     <>
-      <h1 style={{ marginLeft: 10 }}>{d("Contained Learning Outcomes").t("assess_milestone_contained_lo")}</h1>
+      <h1 style={{ marginLeft: 10 }}>
+        {d("Contained Learning Outcomes").t("assess_milestone_contained_lo")} {`(${outcomeList.length})`}
+      </h1>
       <TableContainer className={css.tableContainer}>
         <Table className={css.table} stickyHeader>
           <TableHead className={css.tableHead}>

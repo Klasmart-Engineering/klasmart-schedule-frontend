@@ -113,9 +113,11 @@ function MilestoneRow(props: MilestoneProps) {
       <TableCell className={clsx(css.tableCell)}>{isGeneralMilestone ? d("N/A").t("assess_column_n_a") : milestone.shortcode}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{milestone.outcome_count}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
-        {isGeneralMilestone ? d("N/A").t("assess_column_n_a") : milestone.program?.map((item) => item.program_name).join(",")}
+        {isGeneralMilestone ? "None Specified" : milestone.program?.map((item) => item.program_name).join(",")}
       </TableCell>
-      <TableCell className={clsx(css.tableCell)}>{milestone.category?.map((item) => item.category_name).join(",")}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>
+        {isGeneralMilestone ? "None Specified" : milestone.category?.map((item) => item.category_name).join(",")}
+      </TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(milestone.create_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>
         {milestone.type !== GENERALMILESTONE && milestone.status === MilestoneStatus.published && (
