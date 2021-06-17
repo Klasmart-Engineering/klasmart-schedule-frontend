@@ -208,20 +208,20 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
   switch (condition.publish_status) {
     case OutcomePublishStatus.published:
       const res1 = [];
-      if (perm.delete_published_learning_outcome_448) {
-        res1.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
-      }
       if (perm.edit_published_learning_outcome_436) {
         res1.push({ label: d("Add to Set").t("assess_set_add_to_set"), value: BulkAction.addSet });
+      }
+      if (perm.delete_published_learning_outcome_448) {
+        res1.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
       }
       return res1;
     case OutcomePublishStatus.pending:
       const res2 = [];
-      if (perm.delete_org_pending_learning_outcome_447 || perm.delete_my_pending_learning_outcome_446) {
-        res2.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
-      }
       if (perm.approve_pending_learning_outcome_481 && !isUnpublish(condition)) {
         res2.push({ label: d("Approve").t("assess_label_approve"), value: BulkAction.approve });
+      }
+      if (perm.delete_org_pending_learning_outcome_447 || perm.delete_my_pending_learning_outcome_446) {
+        res2.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
       }
       if (perm.reject_pending_learning_outcome_482 && !isUnpublish(condition)) {
         res2.push({ label: d("Reject").t("assess_label_reject"), value: BulkAction.reject });
@@ -229,11 +229,11 @@ function getBulkAction(condition: OutcomeQueryCondition, perm: PermissionResult<
       return res2;
     default:
       const res3 = [];
-      if (perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learning_outcome_444) {
-        res3.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
-      }
       if (perm.edit_my_unpublished_learning_outcome_430) {
         res3.push({ label: d("Add to Set").t("assess_set_add_to_set"), value: BulkAction.addSet });
+      }
+      if (perm.delete_org_unpublished_learning_outcome_445 || perm.delete_my_unpublished_learning_outcome_444) {
+        res3.push({ label: d("Delete").t("assess_label_delete"), value: BulkAction.remove });
       }
       return res3;
   }

@@ -164,7 +164,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
             readOnly: true,
             style: { color: "rgba(0,0,0,1)" },
           }}
-          value={d("N/A").t("assess_column_n_a")}
+          value={"None Specified"}
         />
       ) : (
         <Controller
@@ -204,7 +204,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
             readOnly: true,
             style: { color: "rgba(0,0,0,1)" },
           }}
-          value={d("N/A").t("assess_column_n_a")}
+          value={"None Specified"}
         />
       ) : (
         <Controller
@@ -244,7 +244,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
             readOnly: true,
             style: { color: "rgba(0,0,0,1)" },
           }}
-          value={d("N/A").t("assess_column_n_a")}
+          value={"None Specified"}
         />
       ) : (
         <Controller
@@ -284,7 +284,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
             readOnly: true,
             style: { color: "rgba(0,0,0,1)" },
           }}
-          value={d("N/A").t("assess_column_n_a")}
+          value={"None Specified"}
         />
       ) : (
         <Controller
@@ -316,7 +316,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
                 readOnly: true,
                 style: { color: "rgba(0,0,0,1)" },
               }}
-              value={d("N/A").t("assess_column_n_a")}
+              value={"None Specified"}
             />
           ) : (
             <Controller
@@ -349,7 +349,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
                 readOnly: true,
                 style: { color: "rgba(0,0,0,1)" },
               }}
-              value={d("N/A").t("assess_column_n_a")}
+              value={"None Specified"}
             />
           ) : (
             <Controller

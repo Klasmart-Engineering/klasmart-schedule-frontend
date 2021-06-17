@@ -10,6 +10,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "100%",
     backgroundColor: "#f0f0f0",
     fontSize: "18px",
+    "& .MuiTabs-indicator": {
+      width: 0,
+    },
+  },
+  tabAlignLeft: {
+    flexGrow: 0,
+    color: "rgba(0, 0, 0, 0.54) !important",
+  },
+  span: {
+    width: "0 !important",
   },
   tabPane: {
     padding: 0,
@@ -27,11 +37,12 @@ interface ContentTabProps {
   onChangeTab: (value: TabValue) => any;
   children: ReactNode;
   error?: FieldError;
+  showSecondTab?: boolean;
 }
 
 export default function ContentTab(props: ContentTabProps) {
   const css = useStyles();
-  const { tab, children, onChangeTab } = props;
+  const { tab, children, showSecondTab, onChangeTab } = props;
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
   let idx = -1;
@@ -50,13 +61,18 @@ export default function ContentTab(props: ContentTabProps) {
           className={css.tab}
           value={tab}
           onChange={(e, value) => onChangeTab(value)}
+          classes={{ indicator: showSecondTab ? "" : css.span }}
           indicatorColor="primary"
           textColor="primary"
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          <Tab label={d("Details").t("library_label_details")} value={VALUES[0]} />
-          <Tab label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={VALUES[1]} />
+          <Tab
+            classes={{ selected: showSecondTab ? "" : css.tabAlignLeft }}
+            label={d("Details").t("library_label_details")}
+            value={VALUES[0]}
+          />
+          {showSecondTab && <Tab label={d("Learning Outcomes").t("library_label_learning_outcomes")} value={VALUES[1]} />}
         </Tabs>
         {tabPanels}
       </TabContext>

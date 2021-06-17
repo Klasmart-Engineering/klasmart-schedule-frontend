@@ -1,4 +1,5 @@
 import { cloneDeep } from "lodash";
+import { EntityAssessmentDetailContent, EntityAssessmentStudent } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
@@ -6,7 +7,6 @@ import {
   UpdateAssessmentRequestData,
   UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
-import { EntityAssessmentDetailContent, EntityAssessmentStudent } from "../api/api.auto";
 
 interface ObjContainId {
   id?: string;
@@ -242,8 +242,15 @@ export const ModelAssessment = {
   toStudyRequest(detail: DetailStudyAssessment): UpdateStudyAssessmentDataOmitAction {
     const draft = cloneDeep(detail);
     const attendance_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
-    const lesson_materials = draft.lesson_materials;
-    return { attendance_ids, lesson_materials };
+    const outcomes = draft.outcomes || [];
+    const lesson_materials = draft.lesson_materials?.map((item) => {
+      return {
+        checked: item.checked,
+        comment: item.comment,
+        id: item.id,
+      };
+    });
+    return { attendance_ids, outcomes, lesson_materials };
   },
   toGetCompleteRate(student_view_items: DetailStudyAssessment["student_view_items"]) {
     let all: number = 0;
