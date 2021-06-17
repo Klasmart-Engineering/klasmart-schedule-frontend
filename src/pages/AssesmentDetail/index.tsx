@@ -15,6 +15,7 @@ import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";
 import { DetailTable } from "./DetailTable";
+import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 
 export const useQueryDetail = () => {
   const { search } = useLocation();
@@ -40,14 +41,25 @@ export function AssessmentDetail() {
   const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
   const { handleSubmit, watch, reset } = formMethods;
   const formValue = watch();
-  const { attendance_ids, lesson_materials, student_view_items } = formValue;
+  const { attendance_ids, lesson_materials } = formValue;
+  const { students } = useMemo(() => ModelAssessment.toDetail(studyAssessmentDetail, formValue), [studyAssessmentDetail, formValue]);
+  const [autocompleteValue, setChangeAutocompleteValue] = React.useState<
+    {
+      id: string | number;
+      title: string;
+    }[]
+  >([{ id: 1, title: "Select All" }]);
+  const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<string>("View by Student");
+  const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>(
+    ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials)
+  );
   const init_student_view_items = useMemo(() => {
     return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
   }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
   const filter_student_view_items = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
-    return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
-  }, [studyAssessmentDetail, attendance_ids, lesson_materials, student_view_items]);
+    return ModelAssessment.toGetStudentViewFormItems(res, studentViewItems, autocompleteValue, autocompleteLabel);
+  }, [studyAssessmentDetail, attendance_ids, lesson_materials, studentViewItems, autocompleteValue, autocompleteLabel]);
 
   const complete_rate = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
@@ -98,6 +110,22 @@ export function AssessmentDetail() {
       }),
     [handleSubmit, init_student_view_items, filter_student_view_items, dispatch, id, history, editindex]
   );
+
+  const changeAutocompleteValue = useMemo(
+    () => (
+      value: {
+        id: string | number;
+        title: string;
+      }[]
+    ) => {
+      setChangeAutocompleteValue(value);
+    },
+    []
+  );
+
+  const changeAutocompleteDimensionValue = (label: string) => {
+    setChangeAutocompleteLabel(label);
+  };
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
   }, [dispatch, id, editindex]);
@@ -107,6 +135,10 @@ export function AssessmentDetail() {
       reset(ModelAssessment.toStudyRequest(studyAssessmentDetail));
     }
   }, [reset, studyAssessmentDetail]);
+
+  const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
+    setStudentViewItems(value);
+  };
   return (
     <>
       <DetailHeader
@@ -124,7 +156,18 @@ export function AssessmentDetail() {
           editable={editable}
           complete_rate={complete_rate}
         />
-        <DetailTable studentViewItems={filter_student_view_items} formMethods={formMethods} isComplete={isComplete} editable={editable} />
+        <DetailTable
+          autocompleteLabel={autocompleteLabel}
+          studentViewItems={filter_student_view_items}
+          isComplete={isComplete}
+          editable={editable}
+          changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
+          changeAutocompleteValue={changeAutocompleteValue}
+          lesson_materials={lesson_materials}
+          students={students}
+          studyAssessmentDetail={studyAssessmentDetail}
+          changeAssessmentTableDetail={changeAssessmentTableDetail}
+        />
       </LayoutPair>
     </>
   );

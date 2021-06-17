@@ -44,8 +44,13 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
 
   const autocompleteChange = async (e: React.ChangeEvent<{}>, value: MultipleChildProps[]) => {
     const result = value.length > 1 ? value.filter((v) => v.id !== 1) : value;
-    setValue(result);
-    changeAutocompleteValue(result);
+    if (result.length && value[value.length - 1].id === 1) {
+      setValue(initValue);
+      changeAutocompleteValue(initValue);
+    } else {
+      setValue(result);
+      changeAutocompleteValue(result);
+    }
   };
 
   const autocompleteDimensionChange = async (
@@ -58,7 +63,7 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
     setSecondaryValue(value ? value.data : []);
     setValue(value ? initValue : []);
     changeAutocompleteDimensionValue(value?.label as string);
-    changeAutocompleteValue([]);
+    changeAutocompleteValue(initValue);
   };
 
   return (
@@ -82,11 +87,10 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
         onChange={(e, value) => {
           autocompleteChange(e, value);
         }}
-        options={secondaryValue}
+        options={[...initValue, ...(secondaryValue.length ? secondaryValue : groupCollect[0].data)]}
         getOptionLabel={(option) => option.title}
         defaultValue={initValue}
         value={value}
-        filterSelectedOptions
         renderInput={(params) => <TextField {...params} variant="outlined" label="View by Lesson Material" />}
       />
     </Box>

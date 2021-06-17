@@ -19,6 +19,7 @@ import { OutcomesTable } from "./OutcomesTable";
 import RadioHeader, { RadioValue } from "./RadioHeader";
 import { Summary } from "./Summary";
 import MultipleSelectGroup from "../../components/MultipleSelectGroup";
+import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -39,7 +40,17 @@ function AssessmentsEditIner() {
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
-  const { lesson_materials, student_view_items, attendance_ids } = formValue;
+  const { lesson_materials, attendance_ids } = formValue;
+  const [autocompleteValue, setChangeAutocompleteValue] = React.useState<
+    {
+      id: string | number;
+      title: string;
+    }[]
+  >([{ id: 1, title: "Select All" }]);
+  const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<string>("View by Student");
+  const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>(
+    ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials)
+  );
   const { students } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
   // const filteredOutcomelist = assessmentDetail.outcome_attendances;
@@ -58,11 +69,13 @@ function AssessmentsEditIner() {
     const new_lesson_materials = lesson_materials ? lesson_materials : assessmentDetail.lesson_materials;
     return ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, new_lesson_materials);
   }, [assessmentDetail, attendance_ids, lesson_materials]);
+
   const filter_student_view_items = useMemo(() => {
     const new_lesson_materials = lesson_materials ? lesson_materials : assessmentDetail.lesson_materials;
     const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, new_lesson_materials);
-    return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
-  }, [assessmentDetail, attendance_ids, lesson_materials, student_view_items]);
+    return ModelAssessment.toGetStudentViewFormItems(res, studentViewItems, autocompleteValue, autocompleteLabel);
+  }, [assessmentDetail, attendance_ids, lesson_materials, studentViewItems, autocompleteValue, autocompleteLabel]);
+
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
@@ -140,7 +153,7 @@ function AssessmentsEditIner() {
     }
   }, [assessmentDetail, reset]);
 
-  const TableCellData = [
+  const TableCellDataDefault = [
     `${d("No").t("assess_detail_no")}.`,
     d("Lesson Material Name").t("assess_detail_lesson_material_name"),
     d("Lesson Material Type").t("assess_detail_lesson_material_type"),
@@ -148,18 +161,26 @@ function AssessmentsEditIner() {
     "Score / Full Marks",
     d("Learning Outcomes").t("library_label_learning_outcomes"),
   ];
+  const TableCellDataMaterials = ["Student Name", "Answer", "Score/Full Marks", "Learning Outcomes"];
 
-  const changeAutocompleteValue = (
-    value: {
-      id: string | number;
-      title: string;
-    }[]
-  ) => {
-    console.log(value);
-  };
+  const changeAutocompleteValue = useMemo(
+    () => (
+      value: {
+        id: string | number;
+        title: string;
+      }[]
+    ) => {
+      setChangeAutocompleteValue(value);
+    },
+    []
+  );
 
   const changeAutocompleteDimensionValue = (label: string) => {
-    console.log(label);
+    setChangeAutocompleteLabel(label);
+  };
+
+  const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
+    setStudentViewItems(value);
   };
 
   const rightsideArea = (
@@ -190,12 +211,14 @@ function AssessmentsEditIner() {
       <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
         <DynamicTable
           studentViewItems={filter_student_view_items}
-          tableCellData={TableCellData}
-          formMethods={formMethods}
+          tableCellData={autocompleteLabel === "View by Student" ? TableCellDataDefault : TableCellDataMaterials}
           isComplete={isComplete}
           editable={editable}
           name="student_view_items"
-          tableType="live"
+          tableType="study"
+          autocompleteLabel={autocompleteLabel}
+          changeAssessmentTableDetail={changeAssessmentTableDetail}
+          lesson_materials={lesson_materials ?? assessmentDetail.lesson_materials}
         />
       </div>
     </div>
