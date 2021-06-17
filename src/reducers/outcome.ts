@@ -367,8 +367,12 @@ export const reject = createAsyncThunk<ResultRejectOutcome, ParamsRejectOutcome>
   return await api.learningOutcomes.rejectLearningOutcomes(id, { reject_reason });
 });
 
-export const approve = createAsyncThunk<any, any>("outcome/approve", (id) => {
-  return api.learningOutcomes.approveLearningOutcomes(id);
+export const approve = createAsyncThunk<any, any>("outcome/approve", async (id, { dispatch }) => {
+  const res = await api.learningOutcomes.approveLearningOutcomes(id);
+  if (res === "ok") {
+    dispatch(actSuccess("Approved Successfully"));
+  }
+  return res;
 });
 
 export const getMockOptions = createAsyncThunk<MockOptions>("apiGetMockOptions", async () => {
