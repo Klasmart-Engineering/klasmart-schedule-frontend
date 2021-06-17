@@ -3,15 +3,17 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
+import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 import { AssessmentStatus, UpdataStudyAssessmentRequestData } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
+import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { AsyncTrunkReturned, completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
 import { actSuccess } from "../../reducers/notify";
-import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "../AssessmentEdit/filterOutcomes";
+import { OutcomesFilter, OutcomesFilterProps } from "../AssessmentEdit/filterOutcomes";
 import { OutcomesTable } from "../AssessmentEdit/OutcomesTable";
 import RadioHeader, { RadioValue } from "../AssessmentEdit/RadioHeader";
 import LayoutPair from "../ContentEdit/Layout";
@@ -45,7 +47,7 @@ export function AssessmentDetail() {
   const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
   const { handleSubmit, watch, reset, setValue } = formMethods;
   const formValue = watch();
-  const { attendance_ids, lesson_materials, student_view_items } = formValue;
+  const { attendance_ids, lesson_materials } = formValue;
   const { students } = useMemo(() => ModelAssessment.toDetail(studyAssessmentDetail, formValue), [studyAssessmentDetail, formValue]);
   const filteredOutcomelist = useMemo(() => {
     if (lesson_materials) {
@@ -58,13 +60,23 @@ export function AssessmentDetail() {
       return outcome;
     }
   }, [lesson_materials, studyAssessmentDetail, setValue]);
+  const [autocompleteValue, setChangeAutocompleteValue] = React.useState<
+    {
+      id: string | number;
+      title: string;
+    }[]
+  >([{ id: 1, title: "Select All" }]);
+  const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<string>("View by Student");
+  const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>(
+    ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials)
+  );
   const init_student_view_items = useMemo(() => {
     return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
   }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
   const filter_student_view_items = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
-    return ModelAssessment.toGetStudentViewFormItems(res, student_view_items);
-  }, [studyAssessmentDetail, attendance_ids, lesson_materials, student_view_items]);
+    return ModelAssessment.toGetStudentViewFormItems(res, studentViewItems, autocompleteValue, autocompleteLabel);
+  }, [studyAssessmentDetail, attendance_ids, lesson_materials, studentViewItems, autocompleteValue, autocompleteLabel]);
 
   const complete_rate = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
@@ -115,6 +127,22 @@ export function AssessmentDetail() {
       }),
     [handleSubmit, init_student_view_items, filter_student_view_items, dispatch, id, history, editindex]
   );
+
+  const changeAutocompleteValue = useMemo(
+    () => (
+      value: {
+        id: string | number;
+        title: string;
+      }[]
+    ) => {
+      setChangeAutocompleteValue(value);
+    },
+    []
+  );
+
+  const changeAutocompleteDimensionValue = (label: string) => {
+    setChangeAutocompleteLabel(label);
+  };
   const handleChangeRadio = (value: RadioValue) => {
     setRadioValue(value);
   };
@@ -135,6 +163,10 @@ export function AssessmentDetail() {
       reset(ModelAssessment.toStudyRequest(studyAssessmentDetail));
     }
   }, [reset, studyAssessmentDetail]);
+
+  const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
+    setStudentViewItems(value);
+  };
   return (
     <>
       <DetailHeader
@@ -156,10 +188,16 @@ export function AssessmentDetail() {
           <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
           <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
             <DetailTable
+              autocompleteLabel={autocompleteLabel}
               studentViewItems={filter_student_view_items}
-              formMethods={formMethods}
               isComplete={isComplete}
               editable={editable}
+              changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
+              changeAutocompleteValue={changeAutocompleteValue}
+              lesson_materials={lesson_materials}
+              students={students}
+              studyAssessmentDetail={studyAssessmentDetail}
+              changeAssessmentTableDetail={changeAssessmentTableDetail}
             />
           </div>
           <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
@@ -174,7 +212,7 @@ export function AssessmentDetail() {
                 editable={editable}
               />
             ) : (
-              <NoOutComesList />
+              <NoOutcome />
             )}
           </div>
         </div>

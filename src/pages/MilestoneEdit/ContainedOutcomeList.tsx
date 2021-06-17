@@ -5,7 +5,7 @@ import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
 import React, { useMemo, useState } from "react";
 import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
-import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
+
 import { d } from "../../locale/LocaleManager";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -102,7 +102,9 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
     ));
   return (
     <>
-      <h1 style={{ marginLeft: 10 }}>{d("Contained Learning Outcomes").t("assess_milestone_contained_lo")}</h1>
+      <h1 style={{ marginLeft: 10 }}>
+        {d("Contained Learning Outcomes").t("assess_milestone_contained_lo")} {`(${outcomeList.length})`}
+      </h1>
       <TableContainer className={css.tableContainer}>
         <Table className={css.table} stickyHeader>
           <TableHead className={css.tableHead}>
@@ -140,15 +142,6 @@ export function AddOutcomes(props: AddOutcomesProps) {
       <Button variant="contained" color="primary" onClick={onAddOutcome}>
         {d("Add").t("assess_milestone_detail_add")} +
       </Button>
-    </div>
-  );
-}
-
-export function NoOutcome() {
-  return (
-    <div style={{ width: "100%", textAlign: "center" }}>
-      <img src={AnyTimeNoData} style={{ width: "50%" }} alt="" />
-      <p>{d("No learning outcome is available.").t("assess_msg_no_lo")}</p>
     </div>
   );
 }

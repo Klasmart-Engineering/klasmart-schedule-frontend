@@ -184,21 +184,39 @@ export const ModelAssessment = {
   },
   toGetStudentViewFormItems(
     student_view_items: UpdataStudyAssessmentRequestData["student_view_items"],
-    student_view_items_form: UpdataStudyAssessmentRequestData["student_view_items"]
+    student_view_items_form: UpdataStudyAssessmentRequestData["student_view_items"],
+    autocomplete_value?: { id: string | number | undefined; title: string }[],
+    autocompleteLabel?: string
   ) {
-    return student_view_items?.map((item) => {
-      const Similar = student_view_items_form?.filter((item_from) => item_from.student_id === item.student_id) ?? [];
+    const assessmentData: UpdataStudyAssessmentRequestData["student_view_items"] = [];
+    student_view_items?.forEach((item) => {
+      const autocompleteValue = autocomplete_value?.map((value) => value.id) ?? [];
+      const autocompleteValueIsAll = autocomplete_value?.length === 1 && autocomplete_value.every((v) => v?.id === 1);
+      if (autocompleteLabel === "View by Student" && !autocompleteValue.includes(item.student_id) && !autocompleteValueIsAll) return;
+      const items = {
+        ...item,
+        lesson_materials: item?.lesson_materials?.filter(
+          (result) =>
+            !(
+              autocompleteLabel === "View by Lesson Material" &&
+              !autocompleteValue.includes(result.lesson_material_id) &&
+              !autocompleteValueIsAll
+            )
+        ),
+      };
+      const Similar = student_view_items_form?.filter((item_from) => item_from.student_id === items.student_id) ?? [];
       if (Similar.length) {
-        const lesson_materials = item?.lesson_materials?.map((material) => {
+        const lesson_materials = items?.lesson_materials?.map((material) => {
           const similarMaterial =
             Similar[0]?.lesson_materials?.filter((material_from) => material.lesson_material_id === material_from.lesson_material_id) ?? [];
           return similarMaterial.length ? similarMaterial[0] : material;
         });
-        return { ...Similar[0], lesson_materials: lesson_materials };
+        assessmentData.push({ ...Similar[0], lesson_materials: lesson_materials });
       } else {
-        return item;
+        assessmentData.push(items);
       }
-    }) as UpdataStudyAssessmentRequestData["student_view_items"];
+    });
+    return assessmentData;
   },
   toUpdateH5pStudentView(
     initValue: DetailStudyAssessment["student_view_items"],
