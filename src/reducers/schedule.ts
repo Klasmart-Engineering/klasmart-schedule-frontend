@@ -766,7 +766,7 @@ const { actions, reducer } = createSlice({
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
       let teachers: RolesData[] = [];
       let students: RolesData[] = [];
-      payload.classes.forEach((item: ClassesData) => {
+      payload?.classes.forEach((item: ClassesData) => {
         teachers = teachers.concat(item.teachers);
         students = students.concat(item.students);
       });
