@@ -61,13 +61,13 @@ export interface ContainedOutcomeListProps {
 
 export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
   const css = useStyles();
-  const { outcomeList, canEdit, addOrRemoveOutcome, onClickOutcome } = props;
+  const { outcomeList, canEdit, isGeneralMilestone, addOrRemoveOutcome, onClickOutcome } = props;
   const [page, setPage] = useState(1);
   const containedList = useMemo(() => {
     const newList = cloneDeep(outcomeList);
-
-    return newList;
-  }, [outcomeList]);
+    if (isGeneralMilestone) return newList;
+    return newList.reverse();
+  }, [isGeneralMilestone, outcomeList]);
   const handleChangePage = (e: Object, page: number) => {
     setPage(page);
   };

@@ -94,7 +94,7 @@ function MilestoneEditForm() {
     () => ModelMilestoneOptions.createDefaultValueAndKey({ regulation, milestoneDetail, linkedMockOptions }),
     [linkedMockOptions, milestoneDetail, regulation]
   );
-  const value = watch("outcomes");
+  const outcomes = watch("outcomes");
   const isGeneralMilestone = milestoneDetail.type === GENERALMILESTONE;
   const handleCancel = () => {
     history.push(MilestoneList.routeRedirectDefault);
@@ -230,12 +230,12 @@ function MilestoneEditForm() {
   const handleAddOrRemoveOutcome: ContainedOutcomeListProps["addOrRemoveOutcome"] = (outcome: GetOutcomeDetail, type: "add" | "remove") => {
     const { ancestor_id: id } = outcome;
     if (type === "add") {
-      if (id && value) {
-        value.concat([outcome]);
+      if (id && outcomes) {
+        outcomes.concat([outcome]);
       }
     } else {
-      if (id && value) {
-        let newValue = cloneDeep(value);
+      if (id && outcomes) {
+        let newValue = cloneDeep(outcomes);
         newValue = newValue.filter((v) => v.ancestor_id !== id);
         setValue("outcomes", newValue, { shouldDirty: true });
       }
@@ -286,10 +286,10 @@ function MilestoneEditForm() {
   );
   const rightside = (
     <>
-      {value && value.length ? (
+      {outcomes && outcomes.length ? (
         <ContainedOutcomeList
-          outcomeList={value}
-          value={value}
+          outcomeList={outcomes}
+          value={outcomes}
           canEdit={canEdit}
           addOrRemoveOutcome={handleAddOrRemoveOutcome}
           onClickOutcome={handleClickOutcome}
