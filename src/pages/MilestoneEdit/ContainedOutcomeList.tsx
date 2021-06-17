@@ -56,6 +56,7 @@ export interface ContainedOutcomeListProps {
   addOrRemoveOutcome: (outcome: GetOutcomeDetail, type: "add" | "remove") => any;
   canEdit: boolean;
   onClickOutcome: (id: GetOutcomeDetail["outcome_id"]) => any;
+  isGeneralMilestone: boolean;
 }
 
 export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
@@ -64,7 +65,8 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
   const [page, setPage] = useState(1);
   const containedList = useMemo(() => {
     const newList = cloneDeep(outcomeList);
-    return newList.reverse();
+
+    return newList;
   }, [outcomeList]);
   const handleChangePage = (e: Object, page: number) => {
     setPage(page);

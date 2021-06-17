@@ -28,7 +28,7 @@ import { OutcomeListExectSearch } from "../OutcomeList/types";
 import ContainedOutcomeList, { AddOutcomes, ContainedOutcomeListProps, NoOutcome } from "./ContainedOutcomeList";
 import ContentTab from "./ContentTab";
 import MilestoneForm from "./MilestoneForm";
-import { MilestoneHeader } from "./MilestoneHeader";
+import { GENERALMILESTONE, MilestoneHeader } from "./MilestoneHeader";
 import { Outcomes, OutcomesProps } from "./Outcomes";
 import { OutcomeSearchProps } from "./OutcomeSearch";
 import { Regulation } from "./type";
@@ -95,6 +95,7 @@ function MilestoneEditForm() {
     [linkedMockOptions, milestoneDetail, regulation]
   );
   const value = watch("outcomes");
+  const isGeneralMilestone = milestoneDetail.type === GENERALMILESTONE;
   const handleCancel = () => {
     history.push(MilestoneList.routeRedirectDefault);
   };
@@ -253,7 +254,7 @@ function MilestoneEditForm() {
     id && !first_save ? setCanEdit(false) : setCanEdit(true);
   }, [dispatch, first_save, id]);
   const leftside = (
-    <ContentTab tab={tab} onChangeTab={handleChangeTab} error={errors.milestone_name}>
+    <ContentTab tab={tab} onChangeTab={handleChangeTab} error={errors.milestone_name} showSecondTab={!isGeneralMilestone}>
       <MilestoneForm
         formMethods={formMethods}
         initDefaultValue={initDefaultValue}
@@ -292,6 +293,7 @@ function MilestoneEditForm() {
           canEdit={canEdit}
           addOrRemoveOutcome={handleAddOrRemoveOutcome}
           onClickOutcome={handleClickOutcome}
+          isGeneralMilestone={isGeneralMilestone}
         />
       ) : (
         <NoOutcome />
