@@ -5,7 +5,7 @@ import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
 import React, { useMemo, useState } from "react";
 import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
-import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
+
 import { d } from "../../locale/LocaleManager";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -142,15 +142,6 @@ export function AddOutcomes(props: AddOutcomesProps) {
       <Button variant="contained" color="primary" onClick={onAddOutcome}>
         {d("Add").t("assess_milestone_detail_add")} +
       </Button>
-    </div>
-  );
-}
-
-export function NoOutcome() {
-  return (
-    <div style={{ width: "100%", textAlign: "center" }}>
-      <img src={AnyTimeNoData} style={{ width: "50%" }} alt="" />
-      <p>{d("No learning outcome is available.").t("assess_msg_no_lo")}</p>
     </div>
   );
 }

@@ -1,10 +1,11 @@
 import { Box, makeStyles, Typography } from "@material-ui/core";
 import React, { Fragment } from "react";
+import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
 import noPermissionUrl from "../../assets/icons/permission.jpg";
-import { t } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   emptyImage: {
@@ -61,3 +62,12 @@ export const permissionTip = <TipImages type={TipImagesType.noPermission} text="
 export const emptyTip = <TipImages type={TipImagesType.empty} text="library_label_empty" />;
 export const comingsoonTip = <TipImages type={TipImagesType.commingSoon} text="library_msg_coming_soon" />;
 export const resultsTip = <TipImages type={TipImagesType.noResults} text="library_msg_no_results_found" />;
+
+export function NoOutcome() {
+  return (
+    <div style={{ width: "100%", textAlign: "center", marginTop: "calc(30% - 80px)" }}>
+      <img src={AnyTimeNoData} alt="" />
+      <p>{d("No learning outcome is available.").t("assess_msg_no_lo")}</p>
+    </div>
+  );
+}
