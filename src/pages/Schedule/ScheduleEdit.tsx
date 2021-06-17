@@ -1551,6 +1551,14 @@ function EditBox(props: CalendarStateProps) {
     return JSON.stringify(item) === "[]";
   };
 
+  const repeatHide = () => {
+    return scheduleList.class_type === "Task" && !checkedStatus.dueDateCheck;
+  };
+
+  const dueDataHide = () => {
+    return scheduleList.class_type === "Task" && !checkedStatus.repeatCheck;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -1673,11 +1681,13 @@ function EditBox(props: CalendarStateProps) {
                 control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
                 label={d("All day").t("schedule_detail_all_day")}
               />
-              <FormControlLabel
-                disabled={isScheduleExpired() || isLimit()}
-                control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
-                label={d("Repeat").t("schedule_detail_repeat")}
-              />
+              {repeatHide() && (
+                <FormControlLabel
+                  disabled={isScheduleExpired() || isLimit()}
+                  control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
+                  label={d("Repeat").t("schedule_detail_repeat")}
+                />
+              )}
             </FormGroup>
           </Box>
         )}
@@ -1689,11 +1699,13 @@ function EditBox(props: CalendarStateProps) {
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-between" alignItems="center">
               <Grid item xs={5}>
-                <FormControlLabel
-                  disabled={isScheduleExpired() || isLimit()}
-                  control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
-                  label={d("Due Date").t("schedule_detail_due_date")}
-                />
+                {dueDataHide() && (
+                  <FormControlLabel
+                    disabled={isScheduleExpired() || isLimit()}
+                    control={<Checkbox name="dueDateCheck" color="primary" checked={checkedStatus.dueDateCheck} onChange={handleCheck} />}
+                    label={d("Due Date").t("schedule_detail_due_date")}
+                  />
+                )}
               </Grid>
               <Grid item xs={7}>
                 <KeyboardDatePicker
