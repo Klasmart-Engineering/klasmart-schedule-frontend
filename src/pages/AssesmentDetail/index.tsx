@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
@@ -11,6 +11,9 @@ import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { AsyncTrunkReturned, completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
 import { actSuccess } from "../../reducers/notify";
+import { NoOutComesList, OutcomesFilter, OutcomesFilterProps } from "../AssessmentEdit/filterOutcomes";
+import { OutcomesTable } from "../AssessmentEdit/OutcomesTable";
+import RadioHeader, { RadioValue } from "../AssessmentEdit/RadioHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";
@@ -22,11 +25,13 @@ export const useQueryDetail = () => {
   const scheduleId = query.get("schedule_id") || "";
   const id = query.get("id") || "";
   const editindex: number = Number(query.get("editindex") || 0);
-  return { scheduleId, id, editindex };
+  const filterOutcomes = query.get("filterOutcomes") || "all";
+  return { scheduleId, id, editindex, filterOutcomes };
 };
 
 export function AssessmentDetail() {
-  const { id, editindex } = useQueryDetail();
+  const { id, editindex, filterOutcomes } = useQueryDetail();
+  const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
   const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
   const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
@@ -38,9 +43,21 @@ export function AssessmentDetail() {
   const isInProgress = studyAssessmentDetail.status === AssessmentStatus.in_progress;
   const isComplete = studyAssessmentDetail.status === AssessmentStatus.complete;
   const editable = isMyAssessment && perm_439 && !hasRemainTime && isInProgress;
-  const { handleSubmit, watch, reset } = formMethods;
+  const { handleSubmit, watch, reset, setValue } = formMethods;
   const formValue = watch();
   const { attendance_ids, lesson_materials, student_view_items } = formValue;
+  const { students } = useMemo(() => ModelAssessment.toDetail(studyAssessmentDetail, formValue), [studyAssessmentDetail, formValue]);
+  const filteredOutcomelist = useMemo(() => {
+    if (lesson_materials) {
+      const new_lesson_materials = ModelAssessment.toMaterial(studyAssessmentDetail.lesson_materials, lesson_materials);
+      const outcome = ModelAssessment.filterOutcomeList(studyAssessmentDetail, new_lesson_materials);
+      return outcome;
+    } else {
+      const outcome = ModelAssessment.filterOutcomeList(studyAssessmentDetail, studyAssessmentDetail.lesson_materials);
+      setTimeout(() => setValue("outcomes", outcome), 100);
+      return outcome;
+    }
+  }, [lesson_materials, studyAssessmentDetail, setValue]);
   const init_student_view_items = useMemo(() => {
     return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
   }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
@@ -98,6 +115,17 @@ export function AssessmentDetail() {
       }),
     [handleSubmit, init_student_view_items, filter_student_view_items, dispatch, id, history, editindex]
   );
+  const handleChangeRadio = (value: RadioValue) => {
+    setRadioValue(value);
+  };
+  const handleFilterOutcomes = useMemo<OutcomesFilterProps["onChange"]>(
+    () => (value) => {
+      history.replace({
+        search: setQuery(history.location.search, { filterOutcomes: value }),
+      });
+    },
+    [history]
+  );
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
   }, [dispatch, id, editindex]);
@@ -124,7 +152,32 @@ export function AssessmentDetail() {
           editable={editable}
           complete_rate={complete_rate}
         />
-        <DetailTable studentViewItems={filter_student_view_items} formMethods={formMethods} isComplete={isComplete} editable={editable} />
+        <div style={{ position: "relative" }}>
+          <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
+          <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
+            <DetailTable
+              studentViewItems={filter_student_view_items}
+              formMethods={formMethods}
+              isComplete={isComplete}
+              editable={editable}
+            />
+          </div>
+          <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
+            <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
+            {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+              <OutcomesTable
+                outcomesList={filteredOutcomelist}
+                attendanceList={students}
+                formMethods={formMethods}
+                formValue={formValue}
+                filterOutcomes={filterOutcomes}
+                editable={editable}
+              />
+            ) : (
+              <NoOutComesList />
+            )}
+          </div>
+        </div>
       </LayoutPair>
     </>
   );
