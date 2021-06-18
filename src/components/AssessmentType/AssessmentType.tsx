@@ -39,7 +39,7 @@ export function AssessmentType(props: AssessmentTypeProps) {
       style={{ width: 160, marginLeft: 10 }}
       size="small"
       onChange={handleChangeAssessmentType}
-      label={d("Content Type").t("library_label_contentType")}
+      label={d("Class Type").t("assess_class_type")}
       value={type}
       select
       SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

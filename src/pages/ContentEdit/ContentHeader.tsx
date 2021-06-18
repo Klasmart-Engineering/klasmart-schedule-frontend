@@ -478,7 +478,7 @@ export const SelectH5PRadio = forwardRef<HTMLDivElement, SelectH5PRadioProps>((p
           control={<Radio size={size} color="primary" value={1} />}
           label={
             <Typography variant={radioTypography} className={css.h5pRadio}>
-              {d("H5P").t("library_label_h5p")}
+              {d("Create Content ").t("library_label_h5p")}
             </Typography>
           }
           disabled={disabled}
@@ -490,7 +490,7 @@ export const SelectH5PRadio = forwardRef<HTMLDivElement, SelectH5PRadioProps>((p
             control={<Radio size={size} color="primary" value={3} />}
             label={
               <Typography variant={radioTypography} className={css.h5pRadio}>
-                {d("Non H5P").t("library_label_non_h5p")}
+                {d("Upload from Device").t("library_label_non_h5p")}
               </Typography>
             }
             disabled={disabled}
@@ -502,7 +502,7 @@ export const SelectH5PRadio = forwardRef<HTMLDivElement, SelectH5PRadioProps>((p
             control={<Radio size={size} color="primary" value={2} />}
             label={
               <Typography variant={radioTypography} className={css.h5pRadio}>
-                {d("Non H5P").t("library_label_non_h5p")}
+                {d("Upload from Device").t("library_label_non_h5p")}
               </Typography>
             }
             disabled={disabled}

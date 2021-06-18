@@ -109,8 +109,8 @@ type LangRecord<T = string> =
   | { id: "library_label_upload_a"; description: "Upload a {fillfileType} here"; values: { fillfileType: string | number } }
   | { id: "library_label_upload"; description: "Upload"; values: undefined }
   | { id: "library_label_file_type"; description: "File Type"; values: undefined }
-  | { id: "library_label_h5p"; description: "H5P"; values: undefined }
-  | { id: "library_label_non_h5p"; description: "Non H5P"; values: undefined }
+  | { id: "library_label_h5p"; description: "Create Content "; values: undefined }
+  | { id: "library_label_non_h5p"; description: "Upload from Device"; values: undefined }
   | { id: "library_label_select_a_file"; description: "Select a File"; values: undefined }
   | { id: "library_msg_drag_asset"; description: "Drag from Assets Library"; values: undefined }
   | { id: "library_label_upload_from_device"; description: "Upload from Device"; values: undefined }
@@ -738,7 +738,7 @@ type LangRecord<T = string> =
   | { id: "report_label_achieved"; description: "Achieved"; values: undefined }
   | { id: "report_label_not_achieved"; description: "Not Achieved"; values: undefined }
   | { id: "report_label_not_attempted"; description: "Not Attempted"; values: undefined }
-  | { id: "report_label_sort_by"; description: "Sort By"; values: undefined }
+  | { id: "report_label_sort_by"; description: "Sort By Outcomes"; values: undefined }
   | { id: "report_label_ascending"; description: "Ascending"; values: undefined }
   | { id: "report_label_descending"; description: "Descending"; values: undefined }
   | { id: "report_label_learning_outcomes_percentage"; description: "Learning Outcomes %"; values: undefined }
@@ -766,6 +766,7 @@ type LangRecord<T = string> =
   | { id: "report_label_hours"; description: "Hours"; values: undefined }
   | { id: "report_label_mins"; description: "Mins"; values: undefined }
   | { id: "report_label_go_back"; description: "Return to Reports List"; values: undefined }
+  | { id: "report_label_individual_achievement"; description: "Individual Student Achievement"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }
