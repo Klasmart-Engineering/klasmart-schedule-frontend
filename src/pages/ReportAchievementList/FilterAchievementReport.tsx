@@ -309,7 +309,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                   size="small"
                   className={clsx(css.selectButton, css.lastButton)}
                   onChange={(e) => onChange(e.target.value, "sort_by")}
-                  label={d("Sort By").t("report_label_sort_by")}
+                  label={d("Sort By Outcomes").t("report_label_sort_by")}
                   value={value.sort_by}
                   select
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
