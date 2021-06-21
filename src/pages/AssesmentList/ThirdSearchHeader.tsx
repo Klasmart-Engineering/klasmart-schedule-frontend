@@ -238,7 +238,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
                 {assessmentTypes().map((item, index) => (
                   <MenuItem
                     key={item.label}
-                    selected={item.value === AssessmentTypeValues.class}
+                    selected={item.value === value.class_type}
                     onClick={(e) => handleClickTypebyItem(e, item.value)}
                   >
                     {item.label}
