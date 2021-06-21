@@ -214,7 +214,138 @@ type LangRecord<T = string> =
       description: "This lesson plan includes archived lesson material, please remove it and try publishing again.";
       values: undefined;
     }
-  | { id: "undefined"; description: "All Lesson Materials"; values: undefined }
+  | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
+  | { id: "assess_button_search"; description: "Search"; values: undefined }
+  | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
+  | { id: "assess_filter_column_status"; description: "Status"; values: undefined }
+  | { id: "assess_filter_all"; description: "All"; values: undefined }
+  | { id: "assess_filter_complete"; description: "Complete"; values: undefined }
+  | { id: "assess_filter_in_progress"; description: "Incomplete"; values: undefined }
+  | { id: "assess_sort_by"; description: "Sort By"; values: undefined }
+  | { id: "assess_class_end_time_new_old"; description: "Class End Time (New-Old)"; values: undefined }
+  | { id: "assess_class_end_time_old_new"; description: "Class End Time (Old -New)"; values: undefined }
+  | { id: "assess_complete_time_new_old"; description: "Complete Time (New-Old)"; values: undefined }
+  | { id: "assess_complete_time_old_new"; description: "Complete Time (Old-New)"; values: undefined }
+  | { id: "assess_column_title"; description: "Assessment Title"; values: undefined }
+  | { id: "assess_column_subject"; description: "Subject"; values: undefined }
+  | { id: "assess_column_program"; description: "Program"; values: undefined }
+  | { id: "assess_column_teacher"; description: "Teacher"; values: undefined }
+  | { id: "assess_column_class_end_time"; description: "Class End Time"; values: undefined }
+  | { id: "assess_column_complete_time"; description: "Complete Time"; values: undefined }
+  | { id: "assess_button_cancel"; description: "Cancel"; values: undefined }
+  | { id: "assess_button_save"; description: "Save"; values: undefined }
+  | { id: "assess_button_complete"; description: "Complete"; values: undefined }
+  | { id: "assess_assessment_details"; description: "Assessment Details"; values: undefined }
+  | { id: "assess_class_summary"; description: "Class Summary"; values: undefined }
+  | { id: "assess_detail_attendance"; description: "Attendance"; values: undefined }
+  | { id: "assess_button_edit"; description: "Edit"; values: undefined }
+  | { id: "assess_detail_class_length"; description: "Class Length"; values: undefined }
+  | { id: "assess_detail_minutes"; description: "Minutes"; values: undefined }
+  | { id: "assess_detail_number_activity"; description: "Number of Activities"; values: undefined }
+  | { id: "assess_detail_number_lo"; description: "Number of Learning Outcomes"; values: undefined }
+  | { id: "assess_detail_assessment_complete_time"; description: "Assessment Complete Time"; values: undefined }
+  | { id: "assess_popup_edit_attendance"; description: "Edit Attendance"; values: undefined }
+  | { id: "assess_button_ok"; description: "OK"; values: undefined }
+  | { id: "assess_filter_assumed"; description: "Assumed"; values: undefined }
+  | { id: "assess_filter_unassumed"; description: "Unassumed"; values: undefined }
+  | { id: "assess_column_lo"; description: "Learning Outcomes"; values: undefined }
+  | { id: "assess_option_award all"; description: "Award All"; values: undefined }
+  | { id: "assess_option_skip"; description: "Skip"; values: undefined }
+  | { id: "assess_option_assessing_actions"; description: "Assessing Actions"; values: undefined }
+  | { id: "assess_msg_discard"; description: "Discard unsaved changes?"; values: undefined }
+  | { id: "assess_msg_cannot_delete"; description: "You cannot change the assessment after clicking Complete."; values: undefined }
+  | { id: "assess_msg_ one_student"; description: "You must choose at least one student."; values: undefined }
+  | { id: "assess_button_discard"; description: "Discard"; values: undefined }
+  | { id: "assess_msg_no_lo"; description: "No learning outcome is available."; values: undefined }
+  | { id: "assess_msg_missing_infor"; description: "Please fill in all the information."; values: undefined }
+  | { id: "assess_msg_save_successfully"; description: "Saved Successfully."; values: undefined }
+  | { id: "assess_msg_compete_successfully"; description: "Completed Successfully."; values: undefined }
+  | { id: "assess_option_all_achieved"; description: "All Achieved"; values: undefined }
+  | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
+  | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
+  | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
+  | { id: "assess_class_type"; description: "Class Type"; values: undefined }
+  | { id: "assess_class_type_class_live"; description: "Class / Live"; values: undefined }
+  | { id: "assess_class_type_homefun"; description: "Study / Home Fun"; values: undefined }
+  | { id: "assess_column_due_date"; description: "Due Date"; values: undefined }
+  | { id: "assess_column_submit_time"; description: "Submit Time"; values: undefined }
+  | { id: "assess_column_assessment_score"; description: "Assessment Score"; values: undefined }
+  | { id: "assess_column_no_class"; description: "NoClass"; values: undefined }
+  | { id: "assess_column_n_a"; description: "N/A"; values: undefined }
+  | { id: "assess_detail_study_homefun_summary"; description: "Study / Home Fun Summary"; values: undefined }
+  | { id: "assess_assignment_of_student"; description: "Assignment of {studentname}"; values: { studentname: string | number } }
+  | { id: "assess_assignment_uploaded"; description: "Assignment Uploaded"; values: undefined }
+  | { id: "assess_comment"; description: "Comment"; values: undefined }
+  | { id: "assess_teacher_assessment"; description: "Teacher Assessment"; values: undefined }
+  | { id: "assess_score_poor"; description: "Poor"; values: undefined }
+  | { id: "assess_score_fair"; description: "Fair"; values: undefined }
+  | { id: "assess_score_average"; description: "Average"; values: undefined }
+  | { id: "assess_score_good"; description: "Good"; values: undefined }
+  | { id: "assess_score_excellent"; description: "Excellent"; values: undefined }
+  | { id: "assess_leave_a_comment_here"; description: "Leave a comment here"; values: undefined }
+  | { id: "assess_submission_history"; description: "Submission History"; values: undefined }
+  | { id: "assess_msg_new_version"; description: "A new version of the assignment has been submitted, please refresh"; values: undefined }
+  | { id: "assess_submit_new_old"; description: "Submit Time (New-Old)"; values: undefined }
+  | { id: "assess_submit_old_new"; description: "Submit Time (Old-New)"; values: undefined }
+  | {
+      id: "assess_new_version_comment";
+      description: "We update to get this student's newest assignment, please assess again. ";
+      values: undefined;
+    }
+  | { id: "assess_detail_room_id"; description: "Room ID"; values: undefined }
+  | { id: "assess_detail_class_name"; description: "Class Name"; values: undefined }
+  | { id: "assess_detail_lesson_name"; description: "Lesson Name"; values: undefined }
+  | { id: "assess_detail_date_of_class"; description: "Date of Class"; values: undefined }
+  | { id: "assess_detail_teacher_list"; description: "Teacher List"; values: undefined }
+  | { id: "assess_detail_student_list"; description: "Student List"; values: undefined }
+  | { id: "assess_detail_edit_student"; description: "Edit Student"; values: undefined }
+  | { id: "assess_detail_see_more"; description: "See More"; values: undefined }
+  | { id: "assess_detail_see_less"; description: "See Less"; values: undefined }
+  | { id: "assess_detail_lesson_materials_covered"; description: "Lesson Materials Covered"; values: undefined }
+  | { id: "assess_detail_edit_covered"; description: "Edit Lesson Materials Covered"; values: undefined }
+  | { id: "assess_detail_edit_student_list"; description: "Edit Student List"; values: undefined }
+  | { id: "assess_detail_students"; description: "Students"; values: undefined }
+  | { id: "assess_detail_lesson_materials_exposed"; description: "Lesson Materials Covered"; values: undefined }
+  | { id: "assess_msg_one_exposed"; description: "At least one lesson material needs to be selected as covered."; values: undefined }
+  | { id: "assess_detail_student"; description: "Student"; values: undefined }
+  | { id: "assess_detail_view_covered"; description: "View Lesson Materials Covered"; values: undefined }
+  | { id: "assess_detail_button_view"; description: "View"; values: undefined }
+  | { id: "assess_detail_comment_here"; description: "Comment here"; values: undefined }
+  | { id: "assess_study_list_study"; description: "Study"; values: undefined }
+  | { id: "assess_study_teacher_name"; description: "Teacher Name"; values: undefined }
+  | { id: "assess_list_study_title"; description: "Study Title"; values: undefined }
+  | { id: "assess_list_completion_rate"; description: "Completion Rate"; values: undefined }
+  | { id: "assess_list_assessment_remaining"; description: "Assessment Remaining"; values: undefined }
+  | { id: "assess_list_remaining_days"; description: "Day(s) "; values: undefined }
+  | { id: "assess_detail_no"; description: "No"; values: undefined }
+  | { id: "assess_detail_lesson_material_name"; description: "Lesson Material Name"; values: undefined }
+  | { id: "assess_detail_lesson_material_type"; description: "Lesson Material Type"; values: undefined }
+  | { id: "assess_detail_answer"; description: "Answer"; values: undefined }
+  | { id: "assess_detail_click_to_view"; description: "Click to View"; values: undefined }
+  | { id: "assess_detail_maximum_possible_score"; description: "Maximum Possible Score"; values: undefined }
+  | { id: "assess_detail_achieved_score"; description: "Achieved Score"; values: undefined }
+  | { id: "assess_msg_exceed_maximum"; description: "The score you entered cannot exceed the maximum score."; values: undefined }
+  | { id: "assess_detail_not_attempted"; description: "Not Attempted"; values: undefined }
+  | { id: "assess_detail_percentage"; description: "Percentage"; values: undefined }
+  | { id: "assess_detail_click_to_add_comments"; description: "Click to add comments"; values: undefined }
+  | { id: "assess_detail_click_to_view_comments"; description: "Click to view comments"; values: undefined }
+  | { id: "assess_popup_add_comments"; description: "Add Comments"; values: undefined }
+  | { id: "assess_popup_leave_msg"; description: "Leave a message to your student!"; values: undefined }
+  | { id: "assess_popup_view_comments"; description: "View Comments"; values: undefined }
+  | { id: "assess_popup_detailed_answer"; description: "Detailed Answer"; values: undefined }
+  | {
+      id: "assess_popup_students_not_started";
+      description: "There are still students not start their Study activities. You cannot change the assessment after clicking Complete. ";
+      values: undefined;
+    }
+  | { id: "assess_detail_lesson_plan_assessment"; description: "Lesson Plan Assessment"; values: undefined }
+  | { id: "assess_detail_score_assessment"; description: "Score Assessment"; values: undefined }
+  | { id: "assess_detail_score_full_marks"; description: "Score / Full Marks"; values: undefined }
+  | { id: "assess_study_summary"; description: "Study Summary"; values: undefined }
+  | { id: "assess_detail_all_students"; description: "All Students"; values: undefined }
+  | { id: "assess_detail_view_by_students"; description: "View by Students"; values: undefined }
+  | { id: "assess_detail_view_by_lesson_material"; description: "View by Lesson Material"; values: undefined }
+  | { id: "assess_detail_all_lesson_materials"; description: "All Lesson Materials"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
