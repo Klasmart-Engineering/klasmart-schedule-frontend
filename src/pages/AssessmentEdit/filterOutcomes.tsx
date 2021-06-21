@@ -50,7 +50,7 @@ export function OutcomesFilter(props: OutcomesFilterProps) {
     [onChange]
   );
   return (
-    <Box display="flex" justifyContent="flex-end" mb={2}>
+    <Box display="flex" mb={2}>
       <FormControl variant="outlined" size="small" className={css.selectButton}>
         <Select native defaultValue={value} onChange={handleChange}>
           <option value="all">{d("All").t("assess_filter_all")} </option>
