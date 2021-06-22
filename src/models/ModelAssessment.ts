@@ -201,12 +201,11 @@ export const ModelAssessment = {
         ),
       };
       // @ts-ignore
+      const student_view_items_form_new = student_view_items_form[0] && student_view_items_form[0].lesson_materials;
       const Similar: any =
         autocompleteLabel === 1
           ? student_view_items_form?.filter((item_from) => item_from.student_id === items.student_id) ?? []
-          : (student_view_items_form && student_view_items_form[0].lesson_materials)?.filter(
-              (item_from: any) => item_from.student_id === items.student_id
-            ) ?? [];
+          : student_view_items_form_new?.filter((item_from: any) => item_from.student_id === items.student_id) ?? [];
       if (Similar.length) {
         const lesson_materials = items?.lesson_materials?.map((material) => {
           const similarMaterial =
