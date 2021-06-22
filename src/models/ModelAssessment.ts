@@ -216,7 +216,7 @@ export const ModelAssessment = {
               : Similar?.filter((material_from: any) => material.lesson_material_id === material_from.lesson_material_id) ?? [];
           return similarMaterial.length ? similarMaterial[0] : material;
         });
-        assessmentData.push({ ...Similar[0], lesson_materials: lesson_materials });
+        assessmentData.push({ ...items, lesson_materials: lesson_materials });
       } else {
         assessmentData.push(items);
       }
