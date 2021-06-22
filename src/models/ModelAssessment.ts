@@ -200,11 +200,21 @@ export const ModelAssessment = {
           (result) => !(autocompleteLabel === 2 && !autocompleteValue.includes(result.lesson_material_id) && !autocompleteValueIsAll)
         ),
       };
-      const Similar = student_view_items_form?.filter((item_from) => item_from.student_id === items.student_id) ?? [];
+      // @ts-ignore
+      const Similar: any =
+        autocompleteLabel === 1
+          ? student_view_items_form?.filter((item_from) => item_from.student_id === items.student_id) ?? []
+          : (student_view_items_form[0] && student_view_items_form[0].lesson_materials)?.filter(
+              (item_from) => item_from.student_id === items.student_id
+            ) ?? [];
       if (Similar.length) {
         const lesson_materials = items?.lesson_materials?.map((material) => {
           const similarMaterial =
-            Similar[0]?.lesson_materials?.filter((material_from) => material.lesson_material_id === material_from.lesson_material_id) ?? [];
+            autocompleteLabel === 1
+              ? Similar[0]?.lesson_materials?.filter(
+                  (material_from: any) => material.lesson_material_id === material_from.lesson_material_id
+                ) ?? []
+              : Similar?.filter((material_from: any) => material.lesson_material_id === material_from.lesson_material_id) ?? [];
           return similarMaterial.length ? similarMaterial[0] : material;
         });
         assessmentData.push({ ...Similar[0], lesson_materials: lesson_materials });

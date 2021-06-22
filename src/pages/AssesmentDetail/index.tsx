@@ -67,9 +67,7 @@ export function AssessmentDetail() {
     }[]
   >([{ id: 1, title: "Select All" }]);
   const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<number>(1);
-  const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>(
-    ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials)
-  );
+  const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>([]);
   const init_student_view_items = useMemo(() => {
     return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
   }, [lesson_materials, attendance_ids, studyAssessmentDetail]);

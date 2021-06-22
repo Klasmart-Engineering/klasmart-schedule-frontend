@@ -345,7 +345,7 @@ function BasicTable2(props: BasicTableProps) {
     const lesson_materials =
       goalStu &&
       goalStu[0].lesson_materials?.map((materials, idx) => {
-        return idx === index ? { ...materials, achieved_score: score } : materials;
+        return idx === index ? { ...materials, achieved_score: score, student_id: student_id } : materials;
       });
     const result = Object.values({
       ...studentViewItemsSet,

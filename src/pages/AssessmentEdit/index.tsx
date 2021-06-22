@@ -50,9 +50,7 @@ function AssessmentsEditIner() {
     }[]
   >([{ id: 1, title: "Select All" }]);
   const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<number>(1);
-  const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>(
-    ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials)
-  );
+  const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>([]);
   const { students } = useMemo(() => ModelAssessment.toDetail(assessmentDetail, formValue), [assessmentDetail, formValue]);
   // 切换到另一个assessmentDetail的时候watch到的的数据先是变为空然后变成上一次assessment Detail的数据
   // const filteredOutcomelist = assessmentDetail.outcome_attendances;
