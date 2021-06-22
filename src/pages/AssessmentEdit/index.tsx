@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -28,14 +28,15 @@ const useQuery = () => {
   const id = query.get("id");
   const editindex: number = Number(query.get("editindex") || 0);
   const filterOutcomes = query.get("filterOutcomes") || "all";
-  return { id, filterOutcomes, editindex };
+  const radioValue = query.get("radioValue") || RadioValue.lessonPlan;
+  return { id, filterOutcomes, editindex, radioValue };
 };
 
 function AssessmentsEditIner() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { filterOutcomes, id, editindex } = useQuery();
-  const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
+  const { filterOutcomes, id, editindex, radioValue } = useQuery();
+  // const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
@@ -84,9 +85,9 @@ function AssessmentsEditIner() {
   const handleAssessmentSave = useMemo(
     () =>
       handleSubmit(async (value) => {
+        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
+        const formValue = { ...value, student_view_items };
         if (id) {
-          const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
-          const formValue = { ...value, student_view_items };
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
@@ -138,10 +139,10 @@ function AssessmentsEditIner() {
     [history]
   );
   const handleChangeRadio = (value: RadioValue) => {
-    // history.replace({
-    //   search: setQuery(history.location.search, { radioValue: value }),
-    // });
-    setRadioValue(value);
+    history.replace({
+      search: setQuery(history.location.search, { radioValue: value }),
+    });
+    // setRadioValue(value);
   };
   useEffect(() => {
     if (id) {
