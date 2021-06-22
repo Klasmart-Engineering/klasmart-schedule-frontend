@@ -18,7 +18,7 @@ interface MultipleChildProps {
 
 interface MultipleGroupProps {
   changeAutocompleteValue: (value: MultipleChildProps[]) => void;
-  changeAutocompleteDimensionValue: (value: string) => void;
+  changeAutocompleteDimensionValue: (value: number) => void;
   studyAssessmentDetail: EntityAssessmentDetail;
   students: EntityAssessmentStudent[] | undefined;
   lesson_materials: EntityAssessmentDetailContent[] | undefined;
@@ -28,7 +28,7 @@ interface tableProps extends MultipleGroupProps {
   studentViewItems?: EntityAssessmentStudentViewH5PItem[];
   editable: boolean;
   isComplete: boolean;
-  autocompleteLabel: string;
+  autocompleteLabel: number;
   changeAssessmentTableDetail?: (value?: EntityUpdateAssessmentH5PStudent[]) => void;
 }
 
@@ -62,13 +62,17 @@ export function DetailTable(props: tableProps) {
   return (
     <>
       <MultipleSelectGroup
-        groupCollect={ModelAssessment.MultipleSelectSet(students, lesson_materials ?? studyAssessmentDetail.lesson_materials)}
+        groupCollect={ModelAssessment.MultipleSelectSet(
+          students,
+          lesson_materials ?? studyAssessmentDetail.lesson_materials,
+          studyAssessmentDetail.lesson_materials
+        )}
         changeAutocompleteValue={changeAutocompleteValue}
         changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
       />
       <DynamicTable
         studentViewItems={studentViewItems}
-        tableCellData={autocompleteLabel === "View by Student" ? TableCellDataDefault : TableCellDataMaterials}
+        tableCellData={autocompleteLabel === 1 ? TableCellDataDefault : TableCellDataMaterials}
         isComplete={isComplete}
         editable={editable}
         name="student_view_items"
