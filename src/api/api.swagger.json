@@ -67,6 +67,7 @@
             "in": "query"
           },
           {
+            "enum": ["OnlineClass", "OfflineClass"],
             "type": "string",
             "description": "class type",
             "name": "class_type",
@@ -137,7 +138,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentArgs"
+              "$ref": "#/definitions/entity.AddClassAndLiveAssessmentArgs"
             }
           }
         ],
@@ -281,7 +282,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentArgs"
+              "$ref": "#/definitions/entity.AddClassAndLiveAssessmentArgs"
             }
           }
         ],
@@ -7812,32 +7813,6 @@
         }
       }
     },
-    "entity.AddAssessmentArgs": {
-      "type": "object",
-      "properties": {
-        "attendance_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "class_end_time": {
-          "type": "integer"
-        },
-        "class_length": {
-          "type": "integer"
-        },
-        "schedule_id": {
-          "type": "string"
-        },
-        "types": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "entity.AddAssessmentResult": {
       "type": "object",
       "properties": {
@@ -7856,6 +7831,26 @@
           "type": "string"
         },
         "org_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AddClassAndLiveAssessmentArgs": {
+      "type": "object",
+      "properties": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_end_time": {
+          "type": "integer"
+        },
+        "class_length": {
+          "type": "integer"
+        },
+        "schedule_id": {
           "type": "string"
         }
       }
@@ -7909,9 +7904,6 @@
         "complete_time": {
           "type": "integer"
         },
-        "due_at": {
-          "type": "integer"
-        },
         "id": {
           "type": "string"
         },
@@ -7941,11 +7933,9 @@
         "room_id": {
           "type": "string"
         },
-        "schedule_id": {
-          "type": "string"
-        },
-        "schedule_title": {
-          "type": "string"
+        "schedule": {
+          "type": "object",
+          "$ref": "#/definitions/entity.Schedule"
         },
         "status": {
           "type": "string"
@@ -9920,6 +9910,91 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.Schedule": {
+      "type": "object",
+      "properties": {
+        "attachment": {
+          "type": "string"
+        },
+        "class_id": {
+          "description": "disabled",
+          "type": "string"
+        },
+        "class_type": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "created_id": {
+          "type": "string"
+        },
+        "delete_at": {
+          "type": "integer"
+        },
+        "deleted_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "end_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_all_day": {
+          "type": "boolean"
+        },
+        "is_hidden": {
+          "type": "boolean"
+        },
+        "is_home_fun": {
+          "type": "boolean"
+        },
+        "lesson_plan_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        },
+        "program_id": {
+          "type": "string"
+        },
+        "repeat_id": {
+          "type": "string"
+        },
+        "repeat_json": {
+          "type": "string"
+        },
+        "schedule_version": {
+          "type": "integer"
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "subject_id": {
+          "description": "disabled",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "integer"
+        },
+        "updated_id": {
+          "type": "string"
         }
       }
     },
