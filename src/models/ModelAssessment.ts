@@ -7,6 +7,7 @@ import {
   UpdateAssessmentRequestData,
   UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
+import { d } from "../locale/LocaleManager";
 
 interface ObjContainId {
   id?: string;
@@ -186,22 +187,17 @@ export const ModelAssessment = {
     student_view_items: UpdataStudyAssessmentRequestData["student_view_items"],
     student_view_items_form: UpdataStudyAssessmentRequestData["student_view_items"],
     autocomplete_value?: { id: string | number | undefined; title: string }[],
-    autocompleteLabel?: string
+    autocompleteLabel?: number
   ) {
     const assessmentData: UpdataStudyAssessmentRequestData["student_view_items"] = [];
     student_view_items?.forEach((item) => {
       const autocompleteValue = autocomplete_value?.map((value) => value.id) ?? [];
       const autocompleteValueIsAll = autocomplete_value?.length === 1 && autocomplete_value.every((v) => v?.id === 1);
-      if (autocompleteLabel === "View by Student" && !autocompleteValue.includes(item.student_id) && !autocompleteValueIsAll) return;
+      if (autocompleteLabel === 1 && !autocompleteValue.includes(item.student_id) && !autocompleteValueIsAll) return;
       const items = {
         ...item,
         lesson_materials: item?.lesson_materials?.filter(
-          (result) =>
-            !(
-              autocompleteLabel === "View by Lesson Material" &&
-              !autocompleteValue.includes(result.lesson_material_id) &&
-              !autocompleteValueIsAll
-            )
+          (result) => !(autocompleteLabel === 2 && !autocompleteValue.includes(result.lesson_material_id) && !autocompleteValueIsAll)
         ),
       };
       const Similar = student_view_items_form?.filter((item_from) => item_from.student_id === items.student_id) ?? [];
@@ -309,10 +305,12 @@ export const ModelAssessment = {
   },
   MultipleSelectSet(
     students: EntityAssessmentStudent[] | undefined,
-    materials: EntityAssessmentDetailContent[] | undefined
+    materials: EntityAssessmentDetailContent[] | undefined,
+    materialsCheck: EntityAssessmentDetailContent[] | undefined
   ): {
     label: string;
     data: { id: string | number; title: string }[];
+    enum: number;
   }[] {
     const studentsSet = students?.map((student) => {
       return { id: student.id, title: student.name };
@@ -320,11 +318,11 @@ export const ModelAssessment = {
     const materialsSet = materials
       ?.filter((material) => material.checked)
       ?.map((material) => {
-        return { id: material.id, title: material.name };
+        return { id: material.id, title: materialsCheck?.filter((item) => item.id === material.id)[0].name ?? "" };
       }) as { id: string | number; title: string }[];
     return [
-      { label: "View by Student", data: studentsSet },
-      { label: "View by Lesson Material", data: materialsSet },
+      { label: d("View by Students").t("assess_detail_view_by_students"), data: studentsSet, enum: 1 },
+      { label: d("View by Lesson Material").t("assess_detail_view_by_lesson_material"), data: materialsSet, enum: 2 },
     ];
   },
 };

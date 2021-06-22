@@ -66,7 +66,7 @@ export function AssessmentDetail() {
       title: string;
     }[]
   >([{ id: 1, title: "Select All" }]);
-  const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<string>("View by Student");
+  const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<number>(1);
   const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>(
     ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials)
   );
@@ -140,7 +140,7 @@ export function AssessmentDetail() {
     []
   );
 
-  const changeAutocompleteDimensionValue = (label: string) => {
+  const changeAutocompleteDimensionValue = (label: number) => {
     setChangeAutocompleteLabel(label);
   };
   const handleChangeRadio = (value: RadioValue) => {
