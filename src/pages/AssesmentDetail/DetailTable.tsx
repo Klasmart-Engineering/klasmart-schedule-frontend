@@ -18,7 +18,7 @@ interface MultipleChildProps {
 
 interface MultipleGroupProps {
   changeAutocompleteValue: (value: MultipleChildProps[]) => void;
-  changeAutocompleteDimensionValue: (value: string) => void;
+  changeAutocompleteDimensionValue: (value: number) => void;
   studyAssessmentDetail: EntityAssessmentDetail;
   students: EntityAssessmentStudent[] | undefined;
   lesson_materials: EntityAssessmentDetailContent[] | undefined;
@@ -28,7 +28,7 @@ interface tableProps extends MultipleGroupProps {
   studentViewItems?: EntityAssessmentStudentViewH5PItem[];
   editable: boolean;
   isComplete: boolean;
-  autocompleteLabel: string;
+  autocompleteLabel: number;
   changeAssessmentTableDetail?: (value?: EntityUpdateAssessmentH5PStudent[]) => void;
 }
 
@@ -50,20 +50,29 @@ export function DetailTable(props: tableProps) {
     d("Lesson Material Name").t("assess_detail_lesson_material_name"),
     d("Lesson Material Type").t("assess_detail_lesson_material_type"),
     d("Answer").t("assess_detail_answer"),
-    "Score / Full Marks",
+    d("Score / Full Marks").t("assess_detail_score_full_marks"),
     d("Percentage").t("assess_detail_percentage"),
   ];
-  const TableCellDataMaterials = ["Student Name", "Answer", "Score/Full Marks", "Learning Outcomes"];
+  const TableCellDataMaterials = [
+    "Student Name",
+    d("Answer").t("assess_detail_answer"),
+    d("Score / Full Marks").t("assess_detail_score_full_marks"),
+    d("Learning Outcomes").t("library_label_learning_outcomes"),
+  ];
   return (
     <>
       <MultipleSelectGroup
-        groupCollect={ModelAssessment.MultipleSelectSet(students, lesson_materials ?? studyAssessmentDetail.lesson_materials)}
+        groupCollect={ModelAssessment.MultipleSelectSet(
+          students,
+          lesson_materials ?? studyAssessmentDetail.lesson_materials,
+          studyAssessmentDetail.lesson_materials
+        )}
         changeAutocompleteValue={changeAutocompleteValue}
         changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
       />
       <DynamicTable
         studentViewItems={studentViewItems}
-        tableCellData={autocompleteLabel === "View by Student" ? TableCellDataDefault : TableCellDataMaterials}
+        tableCellData={autocompleteLabel === 1 ? TableCellDataDefault : TableCellDataMaterials}
         isComplete={isComplete}
         editable={editable}
         name="student_view_items"

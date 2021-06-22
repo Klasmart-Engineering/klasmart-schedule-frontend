@@ -306,16 +306,12 @@ function BasicTable(props: BasicTableProps) {
                       isComplete={isComplete}
                     />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" style={{ borderLeft: tableType === "live" ? "1px solid rgba(224, 224, 224, 1)" : "" }}>
                     {tableType === "study" && (
                       <>{row?.max_score! === 0 ? "" : Math.ceil((row?.achieved_score! / row?.max_score!) * 100) + "%"}</>
                     )}
                     {tableType === "live" && (
-                      <ul className={classes.outcomesBox}>
-                        {row?.outcome_names?.map((name) => (
-                          <li>{name}</li>
-                        ))}
-                      </ul>
+                      <ul className={classes.outcomesBox}>{row?.outcome_names?.map((name) => name && <li key={name}>{name}</li>)}</ul>
                     )}
                   </TableCell>
                 </TableRow>
@@ -448,11 +444,13 @@ function BasicTable2(props: BasicTableProps) {
                     />
                   </TableCell>
                   {!index && (
-                    <TableCell align="center" rowSpan={dimension2Item?.student.length}>
+                    <TableCell
+                      align="center"
+                      rowSpan={dimension2Item?.student.length}
+                      style={{ borderLeft: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
                       <ul className={classes.outcomesBox} style={{ margin: "0 auto" }}>
-                        {row?.outcome_names?.map((name: string) => (
-                          <li>{name}</li>
-                        ))}
+                        {row?.outcome_names?.map((name: string) => name && <li>{name}</li>)}
                       </ul>
                     </TableCell>
                   )}
@@ -473,7 +471,7 @@ interface tableProps {
   tableCellData: string[];
   name: dynamicTableName;
   tableType: "live" | "study";
-  autocompleteLabel: string;
+  autocompleteLabel: number;
   lesson_materials: EntityAssessmentDetailContent[] | undefined;
   changeAssessmentTableDetail?: (value?: EntityUpdateAssessmentH5PStudent[]) => void;
 }
@@ -512,7 +510,7 @@ export function DynamicTable(props: tableProps) {
 
   return (
     <>
-      {autocompleteLabel === "View by Student" &&
+      {autocompleteLabel === 1 &&
         studentViewItems?.map((item: EntityAssessmentStudentViewH5PItem, index: number) => {
           return (
             <BasicTable
@@ -532,7 +530,7 @@ export function DynamicTable(props: tableProps) {
             />
           );
         })}
-      {autocompleteLabel === "View by Lesson Material" &&
+      {autocompleteLabel === 2 &&
         dimension2?.map((item, index: number) => {
           return (
             <BasicTable2

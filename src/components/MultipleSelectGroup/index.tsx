@@ -2,7 +2,8 @@ import React from "react";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import { Box } from "@material-ui/core";
+import { Box, MenuItem } from "@material-ui/core";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,17 +31,30 @@ interface MultipleGroupProps {
   groupCollect: {
     label: string;
     data: MultipleChildProps[];
+    enum: number;
   }[];
   changeAutocompleteValue: (value: MultipleChildProps[]) => void;
-  changeAutocompleteDimensionValue: (value: string) => void;
+  changeAutocompleteDimensionValue: (value: number) => void;
 }
 
 export default function MultipleSelectGroup(props: MultipleGroupProps) {
   const classes = useStyles();
-  const initValue = [{ id: 1, title: "Select All" }];
+  const initValue = [{ id: 1, title: d("Select All").t("schedule_detail_select_all") }];
   const { groupCollect, changeAutocompleteValue, changeAutocompleteDimensionValue } = props;
   const [secondaryValue, setSecondaryValue] = React.useState<MultipleChildProps[]>(groupCollect[0].data);
   const [value, setValue] = React.useState<MultipleChildProps[]>(initValue);
+
+  const deduplication = (childItem: MultipleChildProps[]) => {
+    const reduceTemporaryStorage: { [id: string]: boolean } = {};
+    return childItem.reduce<MultipleChildProps[]>((item, next) => {
+      if (next !== null)
+        if (!reduceTemporaryStorage[next.id as string] && next.id) {
+          item.push(next);
+          reduceTemporaryStorage[next.id as string] = true;
+        }
+      return item;
+    }, []);
+  };
 
   const autocompleteChange = async (e: React.ChangeEvent<{}>, value: MultipleChildProps[]) => {
     const result = value.length > 1 ? value.filter((v) => v.id !== 1) : value;
@@ -48,40 +62,38 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
       setValue(initValue);
       changeAutocompleteValue(initValue);
     } else {
-      setValue(result);
+      setValue(deduplication(result));
       changeAutocompleteValue(result);
     }
   };
 
-  const autocompleteDimensionChange = async (
-    e: React.ChangeEvent<{}>,
-    value: {
-      label: string;
-      data: MultipleChildProps[];
-    } | null
-  ) => {
-    setSecondaryValue(value ? value.data : []);
+  const autocompleteDimensionChange = async (e: React.ChangeEvent<{ value: String | Number }>) => {
+    const value = e.target.value;
+    const collect = groupCollect.filter((collect) => collect.enum === e.target.value);
+    setSecondaryValue(value ? collect[0].data : []);
     setValue(value ? initValue : []);
-    changeAutocompleteDimensionValue(value?.label as string);
+    changeAutocompleteDimensionValue(value as number);
     changeAutocompleteValue(initValue);
   };
 
   return (
     <Box className={classes.root}>
-      <Autocomplete
-        id="tags-outlined"
+      <TextField
+        defaultValue={groupCollect[0].enum}
         className={classes.autocomplete}
-        options={groupCollect}
-        onChange={(e, value) => {
-          autocompleteDimensionChange(e, value);
-        }}
-        getOptionLabel={(option) => option.label}
-        defaultValue={groupCollect[0]}
-        filterSelectedOptions
-        renderInput={(params) => <TextField {...params} variant="outlined" label="View by Lesson Material" />}
-      />
+        onChange={(e) => autocompleteDimensionChange(e)}
+        select
+        required
+      >
+        {groupCollect.map((collect) => (
+          <MenuItem key={collect.enum} value={collect.enum}>
+            {collect.label}
+          </MenuItem>
+        ))}
+      </TextField>
       <Autocomplete
         multiple
+        limitTags={1}
         id="tags-outlined"
         className={classes.autocomplete}
         onChange={(e, value) => {
@@ -91,7 +103,9 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
         getOptionLabel={(option) => option.title}
         defaultValue={initValue}
         value={value}
-        renderInput={(params) => <TextField {...params} variant="outlined" label="View by Lesson Material" />}
+        renderInput={(params) => (
+          <TextField {...params} variant="outlined" label={d("Please select here").t("assess_detail_please_select_here")} />
+        )}
       />
     </Box>
   );
