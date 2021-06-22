@@ -50,10 +50,15 @@ export function DetailTable(props: tableProps) {
     d("Lesson Material Name").t("assess_detail_lesson_material_name"),
     d("Lesson Material Type").t("assess_detail_lesson_material_type"),
     d("Answer").t("assess_detail_answer"),
-    "Score / Full Marks",
+    d("Score / Full Marks").t("assess_detail_score_full_marks"),
     d("Percentage").t("assess_detail_percentage"),
   ];
-  const TableCellDataMaterials = ["Student Name", "Answer", "Score/Full Marks", "Learning Outcomes"];
+  const TableCellDataMaterials = [
+    "Student Name",
+    d("Answer").t("assess_detail_answer"),
+    d("Score / Full Marks").t("assess_detail_score_full_marks"),
+    d("Learning Outcomes").t("library_label_learning_outcomes"),
+  ];
   return (
     <>
       <MultipleSelectGroup

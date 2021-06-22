@@ -335,7 +335,7 @@ type LangRecord<T = string> =
   | { id: "assess_popup_detailed_answer"; description: "Detailed Answer"; values: undefined }
   | {
       id: "assess_popup_students_not_started";
-      description: "There are still students not start their Study activities. You cannot change the assessment after clicking Complete. ";
+      description: "There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete";
       values: undefined;
     }
   | { id: "assess_detail_lesson_plan_assessment"; description: "Lesson Plan Assessment"; values: undefined }
@@ -346,6 +346,7 @@ type LangRecord<T = string> =
   | { id: "assess_detail_view_by_students"; description: "View by Students"; values: undefined }
   | { id: "assess_detail_view_by_lesson_material"; description: "View by Lesson Material"; values: undefined }
   | { id: "assess_detail_all_lesson_materials"; description: "All Lesson Materials"; values: undefined }
+  | { id: "assess_detail_please_select_here"; description: "Please select here"; values: undefined }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
