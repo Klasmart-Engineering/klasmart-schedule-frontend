@@ -567,7 +567,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="title"
-            value={assessmentDetail.schedule_title || ""}
+            value={assessmentDetail.schedule?.title || ""}
             className={css.fieldset}
             label={d("Lesson Name").t("assess_detail_lesson_name")}
           />

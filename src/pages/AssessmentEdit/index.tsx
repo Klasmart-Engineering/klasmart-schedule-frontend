@@ -39,6 +39,7 @@ function AssessmentsEditIner() {
   // const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
+  const isLive = assessmentDetail.schedule?.class_type === "OnlineClass";
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
@@ -190,8 +191,8 @@ function AssessmentsEditIner() {
 
   const rightsideArea = (
     <div style={{ position: "relative" }}>
-      <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
-      {radioValue === RadioValue.score && (
+      {isLive && <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />}
+      {isLive && radioValue === RadioValue.score && (
         <MultipleSelectGroup
           groupCollect={ModelAssessment.MultipleSelectSet(
             students,
@@ -202,34 +203,54 @@ function AssessmentsEditIner() {
           changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
         />
       )}
-      <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
-        <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-        {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-          <OutcomesTable
-            outcomesList={filteredOutcomelist}
-            attendanceList={students}
-            formMethods={formMethods}
-            formValue={formValue}
-            filterOutcomes={filterOutcomes}
+      {isLive ? (
+        <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
+          <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
+          {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+            <OutcomesTable
+              outcomesList={filteredOutcomelist}
+              attendanceList={students}
+              formMethods={formMethods}
+              formValue={formValue}
+              filterOutcomes={filterOutcomes}
+              editable={editable}
+            />
+          ) : (
+            <NoOutcome />
+          )}
+        </div>
+      ) : (
+        <>
+          <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
+          {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+            <OutcomesTable
+              outcomesList={filteredOutcomelist}
+              attendanceList={students}
+              formMethods={formMethods}
+              formValue={formValue}
+              filterOutcomes={filterOutcomes}
+              editable={editable}
+            />
+          ) : (
+            <NoOutcome />
+          )}
+        </>
+      )}
+      {isLive && (
+        <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
+          <DynamicTable
+            studentViewItems={filter_student_view_items}
+            tableCellData={autocompleteLabel === 1 ? TableCellDataDefault : TableCellDataMaterials}
+            isComplete={isComplete}
             editable={editable}
+            name="student_view_items"
+            tableType="live"
+            autocompleteLabel={autocompleteLabel}
+            changeAssessmentTableDetail={changeAssessmentTableDetail}
+            lesson_materials={lesson_materials ?? assessmentDetail.lesson_materials}
           />
-        ) : (
-          <NoOutcome />
-        )}
-      </div>
-      <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
-        <DynamicTable
-          studentViewItems={filter_student_view_items}
-          tableCellData={autocompleteLabel === 1 ? TableCellDataDefault : TableCellDataMaterials}
-          isComplete={isComplete}
-          editable={editable}
-          name="student_view_items"
-          tableType="live"
-          autocompleteLabel={autocompleteLabel}
-          changeAssessmentTableDetail={changeAssessmentTableDetail}
-          lesson_materials={lesson_materials ?? assessmentDetail.lesson_materials}
-        />
-      </div>
+        </div>
+      )}
     </div>
   );
 

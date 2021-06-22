@@ -203,14 +203,6 @@ export interface EntityActivityMemoryGamePlayRecord {
   start_time?: number;
 }
 
-export interface EntityAddAssessmentArgs {
-  attendance_ids?: string[];
-  class_end_time?: number;
-  class_length?: number;
-  schedule_id?: string;
-  types?: string[];
-}
-
 export interface EntityAddAssessmentResult {
   id?: string;
 }
@@ -219,6 +211,13 @@ export interface EntityAddAuthedContentRequest {
   content_id?: string;
   from_folder_id?: string;
   org_id?: string;
+}
+
+export interface EntityAddClassAndLiveAssessmentArgs {
+  attendance_ids?: string[];
+  class_end_time?: number;
+  class_length?: number;
+  schedule_id?: string;
 }
 
 export interface EntityAssessHomeFunStudyArgs {
@@ -239,7 +238,6 @@ export interface EntityAssessmentDetail {
   class_end_time?: number;
   class_length?: number;
   complete_time?: number;
-  due_at?: number;
   id?: string;
   lesson_materials?: EntityAssessmentDetailContent[];
   lesson_plan?: EntityAssessmentDetailContent;
@@ -247,8 +245,7 @@ export interface EntityAssessmentDetail {
   program?: EntityAssessmentProgram;
   remaining_time?: number;
   room_id?: string;
-  schedule_id?: string;
-  schedule_title?: string;
+  schedule?: EntitySchedule;
   status?: string;
   student_view_items?: EntityAssessmentStudentViewH5PItem[];
   students?: EntityAssessmentStudent[];
@@ -908,6 +905,39 @@ export interface EntityReportListTeachingLoadItem {
 export interface EntityReportListTeachingLoadResult {
   items?: EntityReportListTeachingLoadItem[];
   total?: number;
+}
+
+export interface EntitySchedule {
+  attachment?: string;
+
+  /** disabled */
+  class_id?: string;
+  class_type?: string;
+  created_at?: number;
+  created_id?: string;
+  delete_at?: number;
+  deleted_id?: string;
+  description?: string;
+  due_at?: number;
+  end_at?: number;
+  id?: string;
+  is_all_day?: boolean;
+  is_hidden?: boolean;
+  is_home_fun?: boolean;
+  lesson_plan_id?: string;
+  org_id?: string;
+  program_id?: string;
+  repeat_id?: string;
+  repeat_json?: string;
+  schedule_version?: number;
+  start_at?: number;
+  status?: string;
+
+  /** disabled */
+  subject_id?: string;
+  title?: string;
+  updated_at?: number;
+  updated_id?: string;
 }
 
 export interface EntityScheduleAccessibleUserView {
@@ -1661,7 +1691,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       query?: {
         status?: string;
         teacher_name?: string;
-        class_type?: string;
+        class_type?: "OnlineClass" | "OfflineClass";
         page?: number;
         page_size?: number;
         order_by?: "class_end_time" | "-class_end_time" | "complete_time" | "-complete_time";
@@ -1681,7 +1711,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/assessments
      * @description add assessments
      */
-    addAssessment: (assessment: EntityAddAssessmentArgs, params?: RequestParams) =>
+    addAssessment: (assessment: EntityAddClassAndLiveAssessmentArgs, params?: RequestParams) =>
       this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/assessments`,
         "POST",
@@ -1725,7 +1755,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/assessments_for_test
      * @description add assessments for test
      */
-    addAssessmentForTest: (assessment: EntityAddAssessmentArgs, params?: RequestParams) =>
+    addAssessmentForTest: (assessment: EntityAddClassAndLiveAssessmentArgs, params?: RequestParams) =>
       this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/assessments_for_test`,
         "POST",
