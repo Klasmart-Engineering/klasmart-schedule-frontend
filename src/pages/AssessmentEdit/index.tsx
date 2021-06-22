@@ -49,7 +49,7 @@ function AssessmentsEditIner() {
       title: string;
     }[]
   >([{ id: 1, title: "Select All" }]);
-  const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<string>("View by Student");
+  const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<number>(1);
   const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>(
     ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials)
   );
@@ -182,7 +182,7 @@ function AssessmentsEditIner() {
     []
   );
 
-  const changeAutocompleteDimensionValue = (label: string) => {
+  const changeAutocompleteDimensionValue = (label: number) => {
     setChangeAutocompleteLabel(label);
   };
 
@@ -195,7 +195,11 @@ function AssessmentsEditIner() {
       <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
       {radioValue === RadioValue.score && (
         <MultipleSelectGroup
-          groupCollect={ModelAssessment.MultipleSelectSet(students, lesson_materials ?? assessmentDetail.lesson_materials)}
+          groupCollect={ModelAssessment.MultipleSelectSet(
+            students,
+            lesson_materials ?? assessmentDetail.lesson_materials,
+            assessmentDetail.lesson_materials
+          )}
           changeAutocompleteValue={changeAutocompleteValue}
           changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
         />
@@ -218,7 +222,7 @@ function AssessmentsEditIner() {
       <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
         <DynamicTable
           studentViewItems={filter_student_view_items}
-          tableCellData={autocompleteLabel === "View by Student" ? TableCellDataDefault : TableCellDataMaterials}
+          tableCellData={autocompleteLabel === 1 ? TableCellDataDefault : TableCellDataMaterials}
           isComplete={isComplete}
           editable={editable}
           name="student_view_items"
