@@ -2,7 +2,8 @@ import React from "react";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import { Box } from "@material-ui/core";
+import { Box, MenuItem } from "@material-ui/core";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,7 +38,7 @@ interface MultipleGroupProps {
 
 export default function MultipleSelectGroup(props: MultipleGroupProps) {
   const classes = useStyles();
-  const initValue = [{ id: 1, title: "Select All" }];
+  const initValue = [{ id: 1, title: d("Select All").t("schedule_detail_select_all") }];
   const { groupCollect, changeAutocompleteValue, changeAutocompleteDimensionValue } = props;
   const [secondaryValue, setSecondaryValue] = React.useState<MultipleChildProps[]>(groupCollect[0].data);
   const [value, setValue] = React.useState<MultipleChildProps[]>(initValue);
@@ -53,35 +54,33 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
     }
   };
 
-  const autocompleteDimensionChange = async (
-    e: React.ChangeEvent<{}>,
-    value: {
-      label: string;
-      data: MultipleChildProps[];
-    } | null
-  ) => {
-    setSecondaryValue(value ? value.data : []);
+  const autocompleteDimensionChange = async (e: React.ChangeEvent<{ value: String | Number }>) => {
+    const value = e.target.value;
+    const collect = groupCollect.filter((collect) => collect.label === e.target.value);
+    setSecondaryValue(value ? collect[0].data : []);
     setValue(value ? initValue : []);
-    changeAutocompleteDimensionValue(value?.label as string);
+    changeAutocompleteDimensionValue(value as string);
     changeAutocompleteValue(initValue);
   };
 
   return (
     <Box className={classes.root}>
-      <Autocomplete
-        id="tags-outlined"
+      <TextField
+        defaultValue={groupCollect[0].label}
         className={classes.autocomplete}
-        options={groupCollect}
-        onChange={(e, value) => {
-          autocompleteDimensionChange(e, value);
-        }}
-        getOptionLabel={(option) => option.label}
-        defaultValue={groupCollect[0]}
-        filterSelectedOptions
-        renderInput={(params) => <TextField {...params} variant="outlined" label="View by Lesson Material" />}
-      />
+        onChange={(e) => autocompleteDimensionChange(e)}
+        select
+        required
+      >
+        {groupCollect.map((collect) => (
+          <MenuItem key={collect.label} value={collect.label}>
+            {collect.label}
+          </MenuItem>
+        ))}
+      </TextField>
       <Autocomplete
         multiple
+        limitTags={1}
         id="tags-outlined"
         className={classes.autocomplete}
         onChange={(e, value) => {
@@ -91,7 +90,7 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
         getOptionLabel={(option) => option.title}
         defaultValue={initValue}
         value={value}
-        renderInput={(params) => <TextField {...params} variant="outlined" label="View by Lesson Material" />}
+        renderInput={(params) => <TextField {...params} variant="outlined" label="Please select here" />}
       />
     </Box>
   );

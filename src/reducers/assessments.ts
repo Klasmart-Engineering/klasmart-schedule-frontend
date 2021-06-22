@@ -232,7 +232,7 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
       return res;
     }
     const content = d(
-      "There are still students not start their Study activities. You cannot change the assessment after clicking Complete. "
+      "There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete"
     ).t("assess_popup_students_not_started");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     if (!isConfirmed) return Promise.reject();

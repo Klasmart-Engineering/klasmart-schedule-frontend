@@ -159,10 +159,15 @@ function AssessmentsEditIner() {
     d("Lesson Material Name").t("assess_detail_lesson_material_name"),
     d("Lesson Material Type").t("assess_detail_lesson_material_type"),
     d("Answer").t("assess_detail_answer"),
-    "Score / Full Marks",
+    d("Score / Full Marks").t("assess_detail_score_full_marks"),
     d("Learning Outcomes").t("library_label_learning_outcomes"),
   ];
-  const TableCellDataMaterials = ["Student Name", "Answer", "Score/Full Marks", "Learning Outcomes"];
+  const TableCellDataMaterials = [
+    "Student Name",
+    d("Answer").t("assess_detail_answer"),
+    d("Score / Full Marks").t("assess_detail_score_full_marks"),
+    d("Learning Outcomes").t("library_label_learning_outcomes"),
+  ];
 
   const changeAutocompleteValue = useMemo(
     () => (
@@ -216,7 +221,7 @@ function AssessmentsEditIner() {
           isComplete={isComplete}
           editable={editable}
           name="student_view_items"
-          tableType="study"
+          tableType="live"
           autocompleteLabel={autocompleteLabel}
           changeAssessmentTableDetail={changeAssessmentTableDetail}
           lesson_materials={lesson_materials ?? assessmentDetail.lesson_materials}

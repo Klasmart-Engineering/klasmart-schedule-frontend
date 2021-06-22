@@ -311,11 +311,7 @@ function BasicTable(props: BasicTableProps) {
                       <>{row?.max_score! === 0 ? "" : Math.ceil((row?.achieved_score! / row?.max_score!) * 100) + "%"}</>
                     )}
                     {tableType === "live" && (
-                      <ul className={classes.outcomesBox}>
-                        {row?.outcome_names?.map((name) => (
-                          <li>{name}</li>
-                        ))}
-                      </ul>
+                      <ul className={classes.outcomesBox}>{row?.outcome_names?.map((name) => name && <li>{name}</li>)}</ul>
                     )}
                   </TableCell>
                 </TableRow>
@@ -450,9 +446,7 @@ function BasicTable2(props: BasicTableProps) {
                   {!index && (
                     <TableCell align="center" rowSpan={dimension2Item?.student.length}>
                       <ul className={classes.outcomesBox} style={{ margin: "0 auto" }}>
-                        {row?.outcome_names?.map((name: string) => (
-                          <li>{name}</li>
-                        ))}
+                        {row?.outcome_names?.map((name: string) => name && <li>{name}</li>)}
                       </ul>
                     </TableCell>
                   )}
