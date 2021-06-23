@@ -306,7 +306,7 @@ function BasicTable(props: BasicTableProps) {
                       isComplete={isComplete}
                     />
                   </TableCell>
-                  <TableCell align="center" style={{ borderLeft: tableType === "live" ? "1px solid rgba(224, 224, 224, 1)" : "" }}>
+                  <TableCell align="center">
                     {tableType === "study" && (
                       <>{row?.max_score! === 0 ? "" : Math.ceil((row?.achieved_score! / row?.max_score!) * 100) + "%"}</>
                     )}
@@ -349,7 +349,7 @@ function BasicTable2(props: BasicTableProps) {
       });
     const result = Object.values({
       ...studentViewItemsSet,
-      [studentIndex]: { ...(studentViewItemsSet && studentViewItemsSet[index]), lesson_materials: lesson_materials },
+      [studentIndex]: { ...(studentViewItemsSet && studentViewItemsSet[studentIndex]), lesson_materials: lesson_materials },
     }) as EntityUpdateAssessmentH5PStudent[];
     changeAssessmentTableDetail && changeAssessmentTableDetail(result);
   };
@@ -447,7 +447,7 @@ function BasicTable2(props: BasicTableProps) {
                     <TableCell
                       align="center"
                       rowSpan={dimension2Item?.student.length}
-                      style={{ borderLeft: "1px solid rgba(224, 224, 224, 1)" }}
+                      style={{ borderLeft: "1px solid rgba(224, 224, 224, 1)", width: "260px" }}
                     >
                       <ul className={classes.outcomesBox} style={{ margin: "0 auto" }}>
                         {row?.outcome_names?.map((name: string) => name && <li>{name}</li>)}
@@ -497,14 +497,26 @@ export function DynamicTable(props: tableProps) {
   };
   const classes = useStyles();
 
+  const getLessonMaterialsType = (id?: string) => {
+    let type = "";
+    studentViewItems?.forEach((item) => {
+      item.lesson_materials?.forEach((lesson, index) => {
+        if (lesson.lesson_material_id === id) type = lesson.lesson_material_type as string;
+      });
+    });
+    return type;
+  };
+
   const dimension2 = studentViewItems?.length
     ? studentViewItems[0].lesson_materials?.map((material) => {
-        return { student: [], ...material };
+        return { ...material, student: [], lesson_material_type: getLessonMaterialsType(material.lesson_material_id) };
       })
     : [];
   studentViewItems?.forEach((item) => {
     item.lesson_materials?.forEach((lesson, index) => {
-      if (dimension2) dimension2[index].student.push({ student_id: item.student_id, student_name: item.student_name, ...lesson } as never);
+      if (dimension2) {
+        dimension2[index].student.push({ student_id: item.student_id, student_name: item.student_name, ...lesson } as never);
+      }
     });
   });
 
