@@ -193,12 +193,15 @@ export const ModelAssessment = {
     student_view_items?.forEach((item) => {
       const autocompleteValue = autocomplete_value?.map((value) => value.id) ?? [];
       const autocompleteValueIsAll = autocomplete_value?.length === 1 && autocomplete_value.every((v) => v?.id === 1);
-      if (autocompleteLabel === 1 && !autocompleteValue.includes(item.student_id) && !autocompleteValueIsAll) return;
       const items = {
         ...item,
-        lesson_materials: item?.lesson_materials?.filter(
-          (result) => !(autocompleteLabel === 2 && !autocompleteValue.includes(result.lesson_material_id) && !autocompleteValueIsAll)
-        ),
+        is_hide: autocompleteLabel === 1 && !autocompleteValue.includes(item.student_id) && !autocompleteValueIsAll,
+        lesson_materials: item?.lesson_materials?.map((result) => {
+          return {
+            ...result,
+            is_hide: autocompleteLabel === 2 && !autocompleteValue.includes(result.lesson_material_id) && !autocompleteValueIsAll,
+          };
+        }),
       };
       const Similar = student_view_items_form?.filter((item_from) => item_from.student_id === items.student_id) ?? [];
       if (Similar.length) {

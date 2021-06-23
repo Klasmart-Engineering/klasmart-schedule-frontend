@@ -65,7 +65,7 @@ const useStyles = makeStyles({
 
 interface BasicTableProps extends tableProps {
   handleElasticLayerControl: (elasticLayerControlData: ElasticLayerControl) => void;
-  studentViewItem: EntityAssessmentStudentViewH5PItem;
+  studentViewItem: EntityAssessmentStudentViewH5PItemExtend;
   index: number;
   dimension2Item?: {
     achieved_score?: number | undefined;
@@ -78,6 +78,7 @@ interface BasicTableProps extends tableProps {
     max_score?: number | undefined;
     outcome_names?: string[];
     student: never[];
+    is_hide?: boolean;
   };
   studentViewItemsSet?: EntityAssessmentStudentViewH5PItem[];
 }
@@ -202,7 +203,7 @@ function BasicTable(props: BasicTableProps) {
   };
 
   return (
-    <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
+    <TableContainer component={Paper} style={{ marginBottom: "20px", display: studentViewItem.is_hide ? "none" : "block" }}>
       <Box
         className={classes.tableBar}
         style={{ backgroundColor: checked ? "#F2F5F7" : "white" }}
@@ -375,7 +376,7 @@ function BasicTable2(props: BasicTableProps) {
   };
 
   return (
-    <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
+    <TableContainer component={Paper} style={{ marginBottom: "20px", display: dimension2Item?.is_hide ? "none" : "block" }}>
       <Box
         className={classes.tableBar}
         style={{ backgroundColor: checked ? "#F2F5F7" : "white" }}
@@ -464,8 +465,12 @@ function BasicTable2(props: BasicTableProps) {
   );
 }
 
+interface EntityAssessmentStudentViewH5PItemExtend extends EntityAssessmentStudentViewH5PItem {
+  is_hide?: boolean;
+}
+
 interface tableProps {
-  studentViewItems?: EntityAssessmentStudentViewH5PItem[];
+  studentViewItems?: EntityAssessmentStudentViewH5PItemExtend[];
   editable?: boolean;
   isComplete: boolean;
   tableCellData: string[];
@@ -523,7 +528,7 @@ export function DynamicTable(props: tableProps) {
   return (
     <>
       {autocompleteLabel === 1 &&
-        studentViewItems?.map((item: EntityAssessmentStudentViewH5PItem, index: number) => {
+        studentViewItems?.map((item: EntityAssessmentStudentViewH5PItemExtend, index: number) => {
           return (
             <BasicTable
               key={item.student_id}
