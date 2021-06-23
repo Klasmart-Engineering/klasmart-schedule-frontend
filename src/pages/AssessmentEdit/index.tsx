@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -28,18 +28,19 @@ const useQuery = () => {
   const id = query.get("id");
   const editindex: number = Number(query.get("editindex") || 0);
   const filterOutcomes = query.get("filterOutcomes") || "all";
-  const radioValue = query.get("radioValue") || RadioValue.lessonPlan;
-  return { id, filterOutcomes, editindex, radioValue };
+  // const radioValue = query.get("radioValue") || RadioValue.lessonPlan;
+  const classType = query.get("classType");
+  return { id, filterOutcomes, editindex, classType };
 };
 
-function AssessmentsEditIner() {
+export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { filterOutcomes, id, editindex, radioValue } = useQuery();
-  // const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
+  const { filterOutcomes, id, editindex, classType } = useQuery();
+  const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
-  const isLive = assessmentDetail.schedule?.class_type === "OnlineClass";
+  const isLive = classType ? classType === "OnlineClass" : assessmentDetail.schedule?.class_type === "OnlineClass";
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
@@ -138,10 +139,10 @@ function AssessmentsEditIner() {
     [history]
   );
   const handleChangeRadio = (value: RadioValue) => {
-    history.replace({
-      search: setQuery(history.location.search, { radioValue: value }),
-    });
-    // setRadioValue(value);
+    // history.replace({
+    //   search: setQuery(history.location.search, { radioValue: value }),
+    // });
+    setRadioValue(value);
   };
   useEffect(() => {
     if (id) {
@@ -275,8 +276,8 @@ function AssessmentsEditIner() {
     </>
   );
 }
-export function AssessmentsEdit() {
-  const { id, editindex } = useQuery();
-  return <AssessmentsEditIner key={`${id}${editindex}`}></AssessmentsEditIner>;
-}
+// export function AssessmentsEdit() {
+//   const { id, editindex } = useQuery();
+//   return <AssessmentsEditIner key={`${id}${editindex}`}></AssessmentsEditIner>;
+// }
 AssessmentsEdit.routeBasePath = "/assessments/assessments-detail";

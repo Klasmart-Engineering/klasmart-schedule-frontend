@@ -61,7 +61,7 @@ export function AssessmentList() {
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) =>
-    history.push({ pathname: AssessmentsEdit.routeBasePath, search: toQueryString({ id }) });
+    history.push({ pathname: AssessmentsEdit.routeBasePath, search: toQueryString({ id, classType: condition.class_type }) });
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => history.push({ search: toQueryString(value) });
   const handleChangeAssessmentType = (assessmentType: AssessmentTypeValues) => {
     if (assessmentType === AssessmentTypeValues.live || assessmentType === AssessmentTypeValues.class) {
