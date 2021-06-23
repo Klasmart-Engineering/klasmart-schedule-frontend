@@ -43,6 +43,7 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
   const { groupCollect, changeAutocompleteValue, changeAutocompleteDimensionValue } = props;
   const [secondaryValue, setSecondaryValue] = React.useState<MultipleChildProps[]>(groupCollect[0].data);
   const [value, setValue] = React.useState<MultipleChildProps[]>(initValue);
+  const [current, setCurrent] = React.useState<number>(1);
 
   const deduplication = (childItem: MultipleChildProps[]) => {
     const reduceTemporaryStorage: { [id: string]: boolean } = {};
@@ -70,10 +71,15 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
   const autocompleteDimensionChange = async (e: React.ChangeEvent<{ value: String | Number }>) => {
     const value = e.target.value;
     const collect = groupCollect.filter((collect) => collect.enum === e.target.value);
-    setSecondaryValue(value ? collect[0].data : []);
+    setSecondaryValue(value ? collect[0].data ?? [] : []);
     setValue(value ? initValue : []);
     changeAutocompleteDimensionValue(value as number);
     changeAutocompleteValue(initValue);
+    setCurrent(collect[0].enum);
+  };
+
+  const getGroupCollect = () => {
+    return groupCollect[current === 1 ? 0 : 1].data ?? [];
   };
 
   return (
@@ -99,7 +105,7 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
         onChange={(e, value) => {
           autocompleteChange(e, value);
         }}
-        options={[...initValue, ...(secondaryValue && secondaryValue.length ? secondaryValue : groupCollect[0].data)]}
+        options={[...initValue, ...(secondaryValue.length ? secondaryValue : getGroupCollect())]}
         getOptionLabel={(option) => option.title}
         defaultValue={initValue}
         value={value}
