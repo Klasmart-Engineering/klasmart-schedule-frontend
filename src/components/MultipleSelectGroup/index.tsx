@@ -99,7 +99,7 @@ export default function MultipleSelectGroup(props: MultipleGroupProps) {
         onChange={(e, value) => {
           autocompleteChange(e, value);
         }}
-        options={[...initValue, ...(secondaryValue.length ? secondaryValue : groupCollect[0].data)]}
+        options={[...initValue, ...(secondaryValue && secondaryValue.length ? secondaryValue : groupCollect[0].data)]}
         getOptionLabel={(option) => option.title}
         defaultValue={initValue}
         value={value}
