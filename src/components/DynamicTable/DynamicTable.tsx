@@ -506,7 +506,7 @@ export function DynamicTable(props: tableProps) {
     let type = "";
     studentViewItems?.forEach((item) => {
       item.lesson_materials?.forEach((lesson, index) => {
-        if (lesson.lesson_material_id === id) type = lesson.lesson_material_type as string;
+        if (lesson.lesson_material_id === id && lesson.lesson_material_type) type = lesson.lesson_material_type as string;
       });
     });
     return type;
