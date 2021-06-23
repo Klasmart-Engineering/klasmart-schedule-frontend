@@ -121,6 +121,7 @@ export enum H5pSub {
   edit = "edit",
   new = "new",
   view = "view",
+  clone = "clone",
 }
 
 export enum FolderPartition {
