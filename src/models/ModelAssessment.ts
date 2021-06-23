@@ -193,9 +193,10 @@ export const ModelAssessment = {
     student_view_items?.forEach((item) => {
       const autocompleteValue = autocomplete_value?.map((value) => value.id) ?? [];
       const autocompleteValueIsAll = autocomplete_value?.length === 1 && autocomplete_value.every((v) => v?.id === 1);
+      const is_hide = autocompleteLabel === 1 && !autocompleteValue.includes(item.student_id) && !autocompleteValueIsAll;
       const items = {
         ...item,
-        is_hide: autocompleteLabel === 1 && !autocompleteValue.includes(item.student_id) && !autocompleteValueIsAll,
+        is_hide: is_hide,
         lesson_materials: item?.lesson_materials?.map((result) => {
           return {
             ...result,
@@ -210,7 +211,18 @@ export const ModelAssessment = {
             Similar[0]?.lesson_materials?.filter((material_from) => material.lesson_material_id === material_from.lesson_material_id) ?? [];
           return similarMaterial.length ? similarMaterial[0] : material;
         });
-        assessmentData.push({ ...Similar[0], lesson_materials: lesson_materials });
+
+        assessmentData.push({
+          ...Similar[0],
+          // @ts-ignore
+          is_hide: is_hide,
+          lesson_materials: lesson_materials?.map((result) => {
+            return {
+              ...result,
+              is_hide: autocompleteLabel === 2 && !autocompleteValue.includes(result.lesson_material_id) && !autocompleteValueIsAll,
+            };
+          }),
+        });
       } else {
         assessmentData.push(items);
       }
