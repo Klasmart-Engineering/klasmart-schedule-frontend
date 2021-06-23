@@ -126,7 +126,13 @@ export default function MyContentList() {
     RootState,
     RootState["content"]
   >((state) => state.content);
-  const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, ids), [ids, folderTree]);
+  const [move, setMove] = useState(false);
+  const [bulkMove, setBulkMove] = useState(false);
+  const [moveId, setMoveId] = useState<string[]>([]);
+  const filteredFolderTree = useMemo(() => {
+    const selectedId = move ? moveId : bulkMove ? ids : [];
+    return excludeFolderOfTree(folderTree, selectedId);
+  }, [move, moveId, bulkMove, ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
@@ -258,6 +264,9 @@ export default function MyContentList() {
     return refreshWithDispatch(dispatch(bulkDeleteFolder({ folder_ids: ids })));
   };
   const handleClickMoveBtn: ContentCardListProps["onClickMoveBtn"] = async (content) => {
+    setMove(true);
+    setBulkMove(false);
+    setMoveId([content.id as string]);
     setReferContent([content]);
     await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
@@ -272,6 +281,8 @@ export default function MyContentList() {
     if (!ids || !ids.length) {
       return Promise.reject(dispatch(actWarning(d("At least one content should be selected.").t("library_msg_remove_select_one"))));
     }
+    setMove(false);
+    setBulkMove(true);
     setReferContent(ids2Content(contentsList, ids));
     await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
