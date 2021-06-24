@@ -130,7 +130,9 @@ export default function MyContentList() {
   const [bulkMove, setBulkMove] = useState(false);
   const [moveId, setMoveId] = useState<string[]>([]);
   const filteredFolderTree = useMemo(() => {
+    console.log("move=", move, "bulkmove=", bulkMove);
     const selectedId = move ? moveId : bulkMove ? ids : [];
+    console.log(selectedId);
     return excludeFolderOfTree(folderTree, selectedId);
   }, [move, moveId, bulkMove, ids, folderTree]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
