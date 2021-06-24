@@ -139,6 +139,7 @@ function ContentEditForm() {
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental, subject }
   );
+  console.log("data.source=", allDefaultValueAndKey["data.source"]?.value);
   // 兼容现在的国际版专用变量
   const isEnableNewH5p = apiIsEnableNewH5p();
   const isOldH5p = formLiteFileType(id, allDefaultValueAndKey["data.file_type"]?.value, inputSource)?.isOldH5p;
@@ -512,7 +513,15 @@ function ContentEditForm() {
                               key={allDefaultValueAndKey["source_type"]?.key}
                               render={(sourceTypeProps) => (
                                 <ContentH5p
-                                  sub={id ? H5pSub.clone : dataSourceProps.value ? H5pSub.view : H5pSub.new}
+                                  sub={
+                                    id
+                                      ? dataSourceProps.value === allDefaultValueAndKey["data.source"]?.value
+                                        ? H5pSub.clone
+                                        : H5pSub.view
+                                      : dataSourceProps.value
+                                      ? H5pSub.view
+                                      : H5pSub.new
+                                  }
                                   value={dataSourceProps.value}
                                   onChange={dataSourceProps.onChange}
                                   onChangeSourceType={sourceTypeProps.onChange}
