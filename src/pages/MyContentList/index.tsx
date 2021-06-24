@@ -129,14 +129,7 @@ export default function MyContentList() {
   const [move, setMove] = useState(false);
   const [bulkMove, setBulkMove] = useState(false);
   const [moveId, setMoveId] = useState<string[]>([]);
-  // const filteredFolderTree = useMemo(() => {
-  //   console.log("move=", move, "bulkmove=", bulkMove);
-  //   const selectedId = move ? moveId : bulkMove ? ids : [];
-  //   console.log(selectedId);
-  //   return excludeFolderOfTree(folderTree, selectedId);
-  // }, [move, moveId, bulkMove, ids, folderTree]);
   const selectedId = useMemo(() => (move ? moveId : bulkMove ? ids : []), [bulkMove, ids, move, moveId]);
-  console.log("selectedId=", selectedId);
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, selectedId), [folderTree, selectedId]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
@@ -247,7 +240,6 @@ export default function MyContentList() {
   };
 
   const handleClickRenameFolder = (content: EntityFolderContentData) => {
-    console.log(content);
     setFolderForm(content);
     openFolderForm();
   };
@@ -272,7 +264,6 @@ export default function MyContentList() {
     setMove(true);
     setBulkMove(false);
     setMoveId([content.id as string]);
-    console.log("move=", move, "bulkmove=", bulkMove, "moveId=", moveId);
     setReferContent([content]);
     await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
@@ -289,7 +280,6 @@ export default function MyContentList() {
     }
     setMove(false);
     setBulkMove(true);
-    console.log("move=", move, "bulkmove=", bulkMove, "ids=", ids);
     setReferContent(ids2Content(contentsList, ids));
     await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
