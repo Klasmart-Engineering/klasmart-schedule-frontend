@@ -272,6 +272,7 @@ export default function MyContentList() {
     setMove(true);
     setBulkMove(false);
     setMoveId([content.id as string]);
+    console.log("move=", move, "bulkmove=", bulkMove, "moveId=", moveId);
     setReferContent([content]);
     await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
@@ -288,6 +289,7 @@ export default function MyContentList() {
     }
     setMove(false);
     setBulkMove(true);
+    console.log("move=", move, "bulkmove=", bulkMove, "ids=", ids);
     setReferContent(ids2Content(contentsList, ids));
     await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
     openFolderTree();
