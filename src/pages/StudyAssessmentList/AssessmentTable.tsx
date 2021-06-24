@@ -61,6 +61,9 @@ function AssessmentRow(props: AssessmentProps) {
         {assessment.title ?? d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
+        {assessment.lesson_plan?.name}
+      </TableCell>
+      <TableCell className={css.tableCell} align="center">
         {assessment.teacher_names?.join(",") ?? d("N/A").t("assess_column_n_a")}
       </TableCell>
       <TableCell className={css.tableCell} align="center">
@@ -105,6 +108,9 @@ export function AssessmentTable(props: AssessmentTableProps) {
             <TableRow>
               <TableCell className={css.tableCell} align="center">
                 {d("Study Title").t("assess_list_study_title")}
+              </TableCell>
+              <TableCell className={css.tableCell} align="center">
+                {d("Lesson Plan").t("library_label_lesson_plan")}
               </TableCell>
               <TableCell className={css.tableCell} align="center">
                 {d("Teacher Name").t("schedule_label_teacher_name")}

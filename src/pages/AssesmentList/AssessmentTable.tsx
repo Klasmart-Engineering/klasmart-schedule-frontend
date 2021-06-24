@@ -74,6 +74,7 @@ function AssessmentRow(props: AssessmentProps) {
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title}</TableCell>
+      <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>
       <TableCell align="center">{assessment.subjects?.map((v) => v.name).join(", ")}</TableCell>
       <TableCell align="center">{assessment.program?.name}</TableCell>
       <TableCell align="center" className={css.tableCell}>
@@ -106,6 +107,7 @@ export function AssessmentTable(props: AssessmentTableProps) {
           <TableHead className={css.tableHead}>
             <TableRow>
               <TableCell align="center">{d("Assessment Title").t("assess_column_title")}</TableCell>
+              <TableCell align="center">{d("Lesson Plan").t("library_label_lesson_plan")}</TableCell>
               <TableCell align="center">{d("Subject").t("assess_column_subject")}</TableCell>
               <TableCell align="center">{d("Program").t("assess_column_program")}</TableCell>
               <TableCell align="center" className={css.tableCell}>

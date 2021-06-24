@@ -10,7 +10,10 @@
  * ---------------------------------------------------------------
  */
 
-export type ApiBadRequestResponse = ApiResponse;
+export interface ApiBadRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -21,7 +24,10 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export type ApiConflictResponse = ApiResponse;
+export interface ApiConflictResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -44,7 +50,10 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export type ApiForbiddenResponse = ApiResponse;
+export interface ApiForbiddenResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -62,7 +71,10 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export type ApiInternalServerErrorResponse = ApiResponse;
+export interface ApiInternalServerErrorResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -74,7 +86,10 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export type ApiNotFoundResponse = ApiResponse;
+export interface ApiNotFoundResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -118,11 +133,6 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
-export interface ApiResponse {
-  data?: object;
-  label?: string;
-}
-
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -140,13 +150,19 @@ export interface ApiSignatureResponse {
   url?: string;
 }
 
-export type ApiSuccessRequestResponse = ApiResponse;
+export interface ApiSuccessRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export type ApiUnAuthorizedResponse = ApiResponse;
+export interface ApiUnAuthorizedResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -276,11 +292,17 @@ export interface EntityAssessmentItem {
   class_end_time?: number;
   complete_time?: number;
   id?: string;
+  lesson_plan?: EntityAssessmentLessonPlan;
   program?: EntityAssessmentProgram;
   status?: string;
   subjects?: EntityAssessmentSubject[];
   teachers?: EntityAssessmentTeacher[];
   title?: string;
+}
+
+export interface EntityAssessmentLessonPlan {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityAssessmentProgram {
@@ -708,6 +730,7 @@ export interface EntityListHomeFunStudiesResultItem {
   due_at?: number;
   id?: string;
   latest_feedback_at?: number;
+  lesson_plan?: EntityAssessmentLessonPlan;
 
   /** debug */
   schedule_id?: string;
@@ -738,6 +761,7 @@ export interface EntityListStudyAssessmentsResultItem {
   create_at?: number;
   due_at?: number;
   id?: string;
+  lesson_plan?: EntityAssessmentLessonPlan;
   remaining_time?: number;
 
   /** debug */
