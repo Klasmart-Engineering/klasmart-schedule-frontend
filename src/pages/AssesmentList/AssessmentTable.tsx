@@ -1,6 +1,7 @@
 import { createStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Pagination } from "@material-ui/lab";
+import clsx from "clsx";
 import React from "react";
 import { AssessmentStatus, ListAssessmentResultItem } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
@@ -34,12 +35,33 @@ const useStyles = makeStyles((theme) =>
       height: 80,
       backgroundColor: "#f2f5f7",
     },
+    tableCell: {
+      width: 126,
+      minWidth: 104,
+    },
+    statusCon: {
+      color: "#fff",
+      borderRadius: "15px",
+      height: 30,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    completeColor: {
+      backgroundColor: "#1aa21e",
+    },
+    inCompleteColor: {
+      backgroundColor: "#f1c621",
+    },
   })
 );
 
-const mapStatus = (status: string | undefined) => {
-  if (status === AssessmentStatus.complete) return d("Complete").t("assess_filter_complete");
-  if (status === AssessmentStatus.in_progress) return d("Incomplete").t("assess_filter_in_progress");
+export const MapStatus = (status: string | undefined) => {
+  const css = useStyles();
+  if (status === AssessmentStatus.complete)
+    return <div className={clsx(css.statusCon, css.completeColor)}>{d("Complete").t("assess_filter_complete")}</div>;
+  if (status === AssessmentStatus.in_progress)
+    return <div className={clsx(css.statusCon, css.inCompleteColor)}>{d("Incomplete").t("assess_filter_in_progress")}</div>;
 };
 
 interface AssessmentProps {
@@ -47,13 +69,16 @@ interface AssessmentProps {
   onClickAssessment: AssessmentTableProps["onClickAssessment"];
 }
 function AssessmentRow(props: AssessmentProps) {
+  const css = useStyles();
   const { assessment, onClickAssessment } = props;
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title}</TableCell>
       <TableCell align="center">{assessment.subjects?.map((v) => v.name).join(", ")}</TableCell>
       <TableCell align="center">{assessment.program?.name}</TableCell>
-      <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
+      <TableCell align="center" className={css.tableCell}>
+        {MapStatus(assessment.status)}
+      </TableCell>
       <TableCell align="center">{assessment.teachers?.map((v) => v.name)?.join(" ,")}</TableCell>
       <TableCell align="center">{formattedTime(assessment.class_end_time)}</TableCell>
       <TableCell align="center">{formattedTime(assessment.complete_time)}</TableCell>
@@ -83,7 +108,9 @@ export function AssessmentTable(props: AssessmentTableProps) {
               <TableCell align="center">{d("Assessment Title").t("assess_column_title")}</TableCell>
               <TableCell align="center">{d("Subject").t("assess_column_subject")}</TableCell>
               <TableCell align="center">{d("Program").t("assess_column_program")}</TableCell>
-              <TableCell align="center">{d("Status").t("assess_filter_column_status")}</TableCell>
+              <TableCell align="center" className={css.tableCell}>
+                {d("Status").t("assess_filter_column_status")}
+              </TableCell>
               <TableCell align="center">{d("Teacher").t("assess_column_teacher")}</TableCell>
               <TableCell align="center">{d("Class End Time").t("assess_column_class_end_time")}</TableCell>
               <TableCell align="center">{d("Complete Time").t("assess_column_complete_time")}</TableCell>
