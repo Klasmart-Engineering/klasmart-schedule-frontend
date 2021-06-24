@@ -129,12 +129,15 @@ export default function MyContentList() {
   const [move, setMove] = useState(false);
   const [bulkMove, setBulkMove] = useState(false);
   const [moveId, setMoveId] = useState<string[]>([]);
-  const filteredFolderTree = useMemo(() => {
-    console.log("move=", move, "bulkmove=", bulkMove);
-    const selectedId = move ? moveId : bulkMove ? ids : [];
-    console.log(selectedId);
-    return excludeFolderOfTree(folderTree, selectedId);
-  }, [move, moveId, bulkMove, ids, folderTree]);
+  // const filteredFolderTree = useMemo(() => {
+  //   console.log("move=", move, "bulkmove=", bulkMove);
+  //   const selectedId = move ? moveId : bulkMove ? ids : [];
+  //   console.log(selectedId);
+  //   return excludeFolderOfTree(folderTree, selectedId);
+  // }, [move, moveId, bulkMove, ids, folderTree]);
+  const selectedId = useMemo(() => (move ? moveId : bulkMove ? ids : []), [bulkMove, ids, move, moveId]);
+  console.log("selectedId=", selectedId);
+  const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, selectedId), [folderTree, selectedId]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
