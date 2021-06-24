@@ -6,7 +6,7 @@ const useStyles = makeStyles(() => ({
   colorPart: {
     width: "32px",
     height: "20px",
-    backgroundColor: "#78bae6",
+    backgroundColor: "#0062FF",
   },
   flexRight: {
     display: "flex",
@@ -40,6 +40,10 @@ interface InfoListItem {
 export function InfoTeacherLoad() {
   const css = useStyles();
   const infoList: InfoListItem[] = [
+    {
+      title: "0 hours",
+      opaciity: 0.1,
+    },
     {
       title: "0~2 hours",
       opaciity: 0.25,

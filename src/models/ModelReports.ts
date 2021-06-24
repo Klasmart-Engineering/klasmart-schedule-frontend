@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { School, User } from "../api/api-ko-schema.auto";
-import { EntityReportListTeachingLoadItem } from "../api/api.auto";
+import { EntityReportListTeachingLoadItem, EntityStudentAchievementReportCategoryItem } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
 interface formatTeachingLoadListResponse {
@@ -77,7 +77,7 @@ interface Time2colorLevelResponse {
   min: number;
 }
 export function time2colorLevel(seconds: number): Time2colorLevelResponse {
-  if (seconds === 0) return { opacity: 0.25, hour: 0, min: 0 };
+  if (seconds === 0) return { opacity: 0.1, hour: 0, min: 0 };
   const hour = Math.floor(seconds / 3600);
   const min = Math.floor((seconds % 3600) / 60);
   let opacity = 1;
@@ -105,7 +105,7 @@ export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[])
             return {
               name: `category-${idx}`,
               value: 10,
-              color: `rgba(120,186,230,${opacity})`,
+              color: `rgba(0,98,255,${opacity})`,
               description: description,
             };
           })
@@ -116,4 +116,8 @@ export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[])
     return formatTimeToMonWek && formatTimeToMonWek(items.end_at || 0, formatTimeToMonWekType.hasTh).split(",");
   });
   return { formatedData, xLabels };
+}
+
+export function getAchievementDetailEmptyStatus(data: EntityStudentAchievementReportCategoryItem[]): boolean {
+  return data && data.length ? data.every((item) => !item.achieved_items) : false;
 }

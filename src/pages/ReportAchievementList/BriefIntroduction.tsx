@@ -2,7 +2,6 @@ import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { User } from "../../api/api-ko-schema.auto";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
@@ -63,7 +62,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
-function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: string, id: string) {
+/*function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: string, id: string) {
   const teacherList = reportMockOptions.teacherList;
   const classList = reportMockOptions.classList;
   if (type === "teacher" && teacherList) {
@@ -74,7 +73,7 @@ function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: 
     const tempClass = classList.filter((item) => item.class_id === id)[0];
     return tempClass ? tempClass.class_name : "";
   }
-}
+}*/
 
 interface BriefIntroductionProps {
   value: QueryCondition;
@@ -89,7 +88,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   const lessonPlanList = reportMockOptions?.lessonPlanList;
   const css = useStyles();
   const history = useHistory();
-  const [lessonPlanName, setLessonPlanName] = React.useState("");
+  const [, setLessonPlanName] = React.useState("");
   const perm = usePermission([
     PermissionType.view_reports_610,
     PermissionType.view_my_reports_614,
@@ -117,7 +116,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
       {(perm.view_my_reports_614 || perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
         <Box className={css.container_intro}>
           <Box className={css.leftName}>
-            {value.teacher_id && (
+            {/*            {value.teacher_id && (
               <span className={css.teacherAndClass}>
                 {getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "teacher", value.teacher_id)}
               </span>
@@ -126,13 +125,17 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
               <span className={css.teacherAndClass}>
                 {" - " + getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "class", value.class_id)}
               </span>
-            )}
+            )}*/}
             {value.lesson_plan_id && (
-              <span style={{ cursor: value.student_id ? "pointer" : "default" }} className={css.lessonPlan} onClick={handleClick}>
-                {" - " + lessonPlanName}
+              <span
+                style={{ cursor: value.student_id ? "pointer" : "default", color: value.student_id ? "blue" : "black" }}
+                className={css.lessonPlan}
+                onClick={handleClick}
+              >
+                {d("Class View").t("report_navigation_class_view")}
               </span>
             )}
-            {value.student_id && <span className={css.teacherAndClass}>{"- " + student_name}</span>}
+            {value.student_id && <span className={css.teacherAndClass}>{student_name && ` - ${student_name}`}</span>}
           </Box>
           {!hiddenLegend && (
             <Box className={css.rightContainer}>

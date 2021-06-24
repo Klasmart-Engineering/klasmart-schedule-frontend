@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { emptyTip } from "../../components/TipImages";
+import { emptyTip, achievementEmpty } from "../../components/TipImages";
 import { t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { getAchievementDetail } from "../../reducers/report";
@@ -9,6 +9,7 @@ import { ReportAchievementList } from "../ReportAchievementList";
 import BriefIntroduction from "../ReportAchievementList/BriefIntroduction";
 import { ReportTitle } from "../ReportDashboard";
 import { AchievementDetailChart } from "./AchievementDetailChart";
+import { getAchievementDetailEmptyStatus } from "../../models/ModelReports";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -55,7 +56,7 @@ export function ReportAchievementDetail() {
 
   return (
     <>
-      <ReportTitle title={t("report_label_student_achievement")}></ReportTitle>
+      <ReportTitle title={t("report_label_individual_achievement")} info={t("report_msg_individual_infor")}></ReportTitle>
       <BriefIntroduction
         value={condition}
         student_name={student_name}
@@ -63,6 +64,7 @@ export function ReportAchievementDetail() {
         reportMockOptions={reportMockOptions}
       />
       {achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={achievementDetail} /> : emptyTip}
+      {getAchievementDetailEmptyStatus(achievementDetail) && achievementEmpty}
     </>
   );
 }

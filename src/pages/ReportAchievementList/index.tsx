@@ -1,10 +1,10 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { NavLink, useHistory, useLocation } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { emptyTip, permissionTip } from "../../components/TipImages";
-import { t } from "../../locale/LocaleManager";
+import { emptyTipAndCreate, permissionTip } from "../../components/TipImages";
+import { d, t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
@@ -14,6 +14,7 @@ import { AchievementListChart, AchievementListChartProps } from "./AchievementLi
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import { QueryCondition } from "./types";
+import { Box, Button } from "@material-ui/core";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -128,7 +129,7 @@ export function ReportAchievementList() {
 
   return (
     <>
-      <ReportTitle title={t("report_label_student_achievement")}></ReportTitle>
+      <ReportTitle title={t("report_label_student_achievement")} info={t("report_msg_overall_infor")}></ReportTitle>
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}
@@ -139,7 +140,14 @@ export function ReportAchievementList() {
         reportList && reportList.length > 0 && condition.lesson_plan_id ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
         ) : (
-          emptyTip
+          <>
+            {emptyTipAndCreate}
+            <Box style={{ textAlign: "center", padding: "2rem" }}>
+              <Button component={NavLink} variant="contained" color="primary" to="/library">
+                {d("Create a Lesson Plan").t("report_button_create_plan")}
+              </Button>
+            </Box>
+          </>
         )
       ) : (
         permissionTip
