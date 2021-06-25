@@ -248,6 +248,8 @@ export const ModelAssessment = {
                 return {
                   achieved_score: v.achieved_score,
                   lesson_material_id: v.lesson_material_id,
+                  h5p_id: v.h5p_id,
+                  sub_h5p_id: v.sub_h5p_id,
                 };
               })
             : [],

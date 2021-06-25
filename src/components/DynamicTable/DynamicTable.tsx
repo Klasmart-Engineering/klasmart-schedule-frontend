@@ -265,9 +265,9 @@ function BasicTable(props: BasicTableProps) {
             </TableHead>
             <TableBody>
               {studentViewItem?.lesson_materials?.map((row, index) => (
-                <TableRow key={row.lesson_material_id}>
+                <TableRow key={`${row.sub_h5p_id ? row.sub_h5p_id : row.lesson_material_id}${index}`}>
                   <TableCell component="th" scope="row" align="center">
-                    {index + 1}
+                    {row.number}
                   </TableCell>
                   <TableCell align="center">
                     <Tooltip title={row.lesson_material_name as string} placement="top-start">
@@ -551,7 +551,7 @@ export function DynamicTable(props: tableProps) {
         dimension2?.map((item, index: number) => {
           return (
             <BasicTable2
-              key={item.lesson_material_id}
+              key={item.sub_h5p_id ? item.sub_h5p_id : item.lesson_material_id}
               handleElasticLayerControl={handleElasticLayerControl}
               studentViewItem={[] as EntityAssessmentStudentViewH5PItem}
               index={index}
