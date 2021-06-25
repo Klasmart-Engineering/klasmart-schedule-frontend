@@ -13,7 +13,7 @@ import { EntityStudentAchievementReportItem } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { useChartScale } from "../../hooks/useChartScale";
 import { ReportFilter, StatusColor } from "./types";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 
 const useStyle = makeStyles({
   chart: {
@@ -207,7 +207,9 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
     const pixels = getPixels(px);
     return barStacks.slice(-1)[0].bars.map((bar) => {
       const percentage = filter === ReportFilter.all ? (bar.bar.data.sum === 0 ? 0 : 100) : data[bar.index][RATIO_KEYS[filter]].toFixed(0);
-      const los = filter === ReportFilter.all ? data[bar.index].sum : data[bar.index][COUNT_KEYS[filter]];
+      const los = (filter === ReportFilter.all ? data[bar.index].sum : data[bar.index][COUNT_KEYS[filter]]) ?? 0;
+      const achieved = bar.bar.data.achieved_count ?? 0;
+      const percentTemplate = `${los ? Math.round((achieved / los) * 100) : 0}%, ${los}LOs`;
       return (
         <text
           key={`desc-${bar.index}`}
@@ -215,9 +217,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
           y={bar.y + 0.5 * bar.height}
           style={inlineStyles.desc}
         >
-          {percentage || los
-            ? `${percentage}%, ${los} LOs`
-            : `${d("No achievement data available for this lesson.").t("report_msg_no_achieve")}`}
+          {percentage || los ? percentTemplate : `${d("No achievement data available for this lesson.").t("report_msg_no_achieve")}`}
         </text>
       );
     });
@@ -265,7 +265,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
             top={0}
             scale={xAxiosScale}
             axisLineClassName={css.axiosLine}
-            label="% Achieved of All Learning Outcomes"
+            label={`% ${t("report_achieved_lo")}`}
             labelOffset={0}
             labelProps={inlineStyles.xAxiosLabel}
           />

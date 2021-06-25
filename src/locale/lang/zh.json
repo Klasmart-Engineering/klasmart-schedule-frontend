@@ -638,6 +638,7 @@
   "report_msg_no_plan": "该老师没有课件，您需要添加新的课件吗？",
   "report_button_create_plan": "创建课件",
   "report_label_0_hour": "0 小时 ",
+  "report_achieved_lo": "达标的学习成果",
   "general_error_unauthorized": "用户未登录，请先登录",
   "general_error_no_organization": "用户没有机构信息",
   "general_error_unknown": "服务器请求失败",

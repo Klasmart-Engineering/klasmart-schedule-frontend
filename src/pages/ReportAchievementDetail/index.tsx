@@ -63,7 +63,17 @@ export function ReportAchievementDetail() {
         backByLessonPlan={backByLessonPlan}
         reportMockOptions={reportMockOptions}
       />
-      {achievementDetail && achievementDetail.length > 0 ? <AchievementDetailChart data={achievementDetail} /> : emptyTip}
+      {achievementDetail && achievementDetail.length > 0 ? (
+        <AchievementDetailChart
+          data={
+            achievementDetail.filter((item) => {
+              return item.achieved_items || item.not_achieved_items || item.not_attempted_items;
+            }) ?? []
+          }
+        />
+      ) : (
+        emptyTip
+      )}
       {getAchievementDetailEmptyStatus(achievementDetail) && achievementEmpty}
     </>
   );

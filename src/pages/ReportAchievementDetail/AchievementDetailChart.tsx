@@ -12,6 +12,7 @@ import { EntityStudentAchievementReportCategoryItem } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { useChartScale } from "../../hooks/useChartScale";
 import { ReportFilter, StatusColor } from "../ReportAchievementList/types";
+import { t } from "../../locale/LocaleManager";
 
 const AXIOS_TICK_RABEL_MAX_WIDTH_RATIO = 0.6;
 
@@ -182,7 +183,7 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
     const noAchieved = bar.not_achieved_items ? bar.not_achieved_items.length : 0;
     const notAttempted = bar.not_attempted_items ? bar.not_attempted_items.length : 0;
     const achievedTotal = achieved + noAchieved + notAttempted;
-    return `${achievedTotal ? Math.ceil((achieved / achievedTotal) * 100) : 0}%, ${achieved}/${achievedTotal} LOs`;
+    return `${achievedTotal ? Math.round((achieved / achievedTotal) * 100) : 0}%, ${achieved}/${achievedTotal} LOs`;
   };
   const descriptionList = (barStacks: TBarStack[]) =>
     barStacks.slice(-1)[0].bars.map((bar) => {
@@ -212,7 +213,7 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
           top={0}
           scale={yAxiosScale}
           axisLineClassName={css.axiosLine}
-          label="% Achieved of All Learning Outcomes"
+          label={`% ${t("report_achieved_lo")}`}
           labelOffset={0}
           labelProps={inlineStyles.yAxiosLabel}
         />

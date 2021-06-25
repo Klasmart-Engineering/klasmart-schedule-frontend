@@ -638,6 +638,7 @@
   "report_msg_no_plan": "There are no lesson plans for this teacher. Would you like to add one?",
   "report_button_create_plan": "Create a Lesson Plan",
   "report_label_0_hour": "0 Hour",
+  "report_achieved_lo": "Achieved of All Learning Outcomes",
   "general_error_unauthorized": "User not logged in, please log in",
   "general_error_no_organization": "You have no organization",
   "general_error_unknown": "Server request failed",

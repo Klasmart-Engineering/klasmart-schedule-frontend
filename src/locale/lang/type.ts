@@ -784,6 +784,7 @@ type LangRecord<T = string> =
   | { id: "report_msg_no_plan"; description: "There are no lesson plans for this teacher. Would you like to add one?"; values: undefined }
   | { id: "report_button_create_plan"; description: "Create a Lesson Plan"; values: undefined }
   | { id: "report_label_0_hour"; description: "0 Hour"; values: undefined }
+  | { id: "report_achieved_lo"; description: "Achieved of All Learning Outcomes"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }
