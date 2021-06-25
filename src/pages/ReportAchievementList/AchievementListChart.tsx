@@ -216,7 +216,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
           style={inlineStyles.desc}
         >
           {percentage || los
-            ? `${percentage}%,&nbsp;${los}&nbsp;LOs`
+            ? `${percentage}%, ${los} LOs`
             : `${d("No achievement data available for this lesson.").t("report_msg_no_achieve")}`}
         </text>
       );
@@ -265,7 +265,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
             top={0}
             scale={xAxiosScale}
             axisLineClassName={css.axiosLine}
-            label="in % of all Learning Outcomes"
+            label="% Achieved of All Learning Outcomes"
             labelOffset={0}
             labelProps={inlineStyles.xAxiosLabel}
           />

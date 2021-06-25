@@ -75,7 +75,7 @@ const getInlineStyles = (px: number) => ({
     textAnchor: "middle" as const,
     alignmentBaseline: "baseline" as const,
     stroke: "black" as const,
-    fontSize: 18 * px,
+    fontSize: 14 * px,
     fontWeight: "lighter" as const,
   },
 });
@@ -177,13 +177,21 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
         />
       ))
     );
+  const getAchievedOfAllLearningOutcomes = (bar: RatioExtendedCategory) => {
+    const achieved = bar.achieved_items ? bar.achieved_items.length : 0;
+    const noAchieved = bar.not_achieved_items ? bar.not_achieved_items.length : 0;
+    const notAttempted = bar.not_attempted_items ? bar.not_attempted_items.length : 0;
+    const achievedTotal = achieved + noAchieved + notAttempted;
+    return `${achievedTotal ? Math.ceil((achieved / achievedTotal) * 100) : 0}%, ${achieved}/${achievedTotal} LOs`;
+  };
   const descriptionList = (barStacks: TBarStack[]) =>
-    barStacks.slice(-1)[0].bars.map((bar) => (
-      <text key={`desc-${bar.index}`} x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
-        {data[bar.index].sum === 0 ? 0 : 100}%,&nbsp;
-        {data[bar.index].sum}&nbsp;LOs
-      </text>
-    ));
+    barStacks.slice(-1)[0].bars.map((bar) => {
+      return (
+        <text key={`desc-${bar.index}`} x={bar.x + 0.5 * bar.width} y={bar.y - pixels.descMarginBottom} style={inlineStyles.desc}>
+          {getAchievedOfAllLearningOutcomes(data[bar.index])}
+        </text>
+      );
+    });
   return (
     <div className={css.chart}>
       <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
@@ -204,7 +212,7 @@ export function AchievementDetailStaticChart(props: AchievementDetailStaticChart
           top={0}
           scale={yAxiosScale}
           axisLineClassName={css.axiosLine}
-          label="% of Learning Outcomes"
+          label="% Achieved of All Learning Outcomes"
           labelOffset={0}
           labelProps={inlineStyles.yAxiosLabel}
         />
