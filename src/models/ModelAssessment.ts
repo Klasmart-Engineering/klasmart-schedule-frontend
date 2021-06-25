@@ -208,7 +208,11 @@ export const ModelAssessment = {
       if (Similar.length) {
         const lesson_materials = items?.lesson_materials?.map((material) => {
           const similarMaterial =
-            Similar[0]?.lesson_materials?.filter((material_from) => material.lesson_material_id === material_from.lesson_material_id) ?? [];
+            Similar[0]?.lesson_materials?.filter((material_from) => {
+              return material.sub_h5p_id
+                ? material.sub_h5p_id === material_from.sub_h5p_id
+                : material.lesson_material_id === material_from.lesson_material_id;
+            }) ?? [];
           return similarMaterial.length ? similarMaterial[0] : material;
         });
 
