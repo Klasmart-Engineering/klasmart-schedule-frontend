@@ -510,7 +510,7 @@ export function DynamicTable(props: tableProps) {
     studentViewItems?.forEach((item) => {
       item.lesson_materials?.forEach((lesson, index) => {
         if (t === "p" && lesson.lesson_material_id === id && lesson.lesson_material_type) type = lesson.lesson_material_type as string;
-        if (t === "c" && lesson.sub_h5p_id === id && lesson.sub_h5p_id) type = lesson.lesson_material_type as string;
+        if (t === "c" && lesson.sub_h5p_id === id && lesson.lesson_material_type) type = lesson.lesson_material_type as string;
       });
     });
     return type;

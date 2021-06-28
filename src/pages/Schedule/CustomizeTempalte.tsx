@@ -391,7 +391,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       <div className={classes.customizeContentBox}>
         <p className={classes.contentRow}>
           <span className={classes.row}>{d("Description").t("assess_label_description")}</span>
-          <span className={classes.row2}>{ScheduleViewInfo.description ?? "N/A"}</span>
+          <span className={classes.row2}>{!ScheduleViewInfo.description ? "N/A" : ScheduleViewInfo.description}</span>
         </p>
         <p className={classes.contentRow}>
           <span className={classes.row}>{d("Class Type").t("schedule_detail_class_type")}</span>
