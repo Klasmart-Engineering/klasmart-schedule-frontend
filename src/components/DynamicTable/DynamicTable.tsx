@@ -518,7 +518,7 @@ export function DynamicTable(props: tableProps) {
 
   const dimension2 = studentViewItems?.length
     ? studentViewItems[0].lesson_materials?.map((material) => {
-        const id = material.sub_h5p_id ?? material.lesson_material_id;
+        const id = material.sub_h5p_id ? material.sub_h5p_id : material.lesson_material_id;
         const type = material.sub_h5p_id ? "c" : "p";
         return { ...material, student: [], lesson_material_type: getLessonMaterialsType(id, type) };
       })

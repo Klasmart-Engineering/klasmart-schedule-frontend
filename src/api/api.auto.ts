@@ -1173,6 +1173,7 @@ export interface EntityScheduleViewDetail {
   students?: EntityScheduleShortInfo[];
   teachers?: EntityScheduleShortInfo[];
   title?: string;
+  description?: string;
 }
 
 export interface EntitySet {
