@@ -20,11 +20,11 @@ import { actInfo } from "./notify";
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
   my_id?: string;
-  total: NonNullable<ListAssessmentResult["total"]>;
+  total: ListAssessmentResult["total"];
   assessmentList: ListAssessmentResultItem[];
   homefunDetail: EntityGetHomeFunStudyResult;
   homefunFeedbacks: EntityScheduleFeedbackView[];
-  hasPermissionOfHomefun: boolean;
+  hasPermissionOfHomefun: boolean | undefined;
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
   studyAssessmentList: NonNullable<AsyncReturnType<typeof api.studyAssessments.listStudyAssessments>["items"]>;
   studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>>;
@@ -35,7 +35,7 @@ interface RootState {
 }
 
 const initialState: IAssessmentState = {
-  total: 0,
+  total: undefined,
   assessmentList: [],
   homeFunAssessmentList: [],
   assessmentDetail: {},
@@ -120,7 +120,7 @@ export const getAssessment = createAsyncThunk<getAssessmentResponce, { id: strin
 interface onLoadHomefunDetailResult {
   detail: EntityGetHomeFunStudyResult;
   feedbacks: EntityScheduleFeedbackView[];
-  hasPermissionOfHomefun: boolean;
+  hasPermissionOfHomefun: boolean | undefined;
 }
 export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, { id: string } & LoadingMetaPayload>(
   "assessments/onLoadHomefunDetail",
@@ -256,7 +256,7 @@ const { reducer } = createSlice({
     },
     [actAssessmentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       state.assessmentList = initialState.assessmentList;
-      state.total = 0;
+      state.total = initialState.total;
     },
     [getAssessment.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       state.assessmentDetail = cloneDeep(initialState.assessmentDetail);
@@ -294,7 +294,7 @@ const { reducer } = createSlice({
     },
     [actHomeFunAssessmentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssessment>>) => {
       state.homeFunAssessmentList = initialState.homeFunAssessmentList;
-      state.total = 0;
+      state.total = initialState.total;
     },
     [updateHomefun.rejected.type]: (state, { error }: any) => {
       console.error(error);
@@ -306,7 +306,7 @@ const { reducer } = createSlice({
     },
     [getStudyAssessmentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentList>>) => {
       state.studyAssessmentList = initialState.studyAssessmentList;
-      state.total = 0;
+      state.total = initialState.total;
     },
     [getStudyAssessmentDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
       state.studyAssessmentDetail = payload.detail;

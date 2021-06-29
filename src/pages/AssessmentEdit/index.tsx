@@ -214,7 +214,7 @@ export function AssessmentsEdit() {
               formMethods={formMethods}
               formValue={formValue}
               filterOutcomes={filterOutcomes}
-              editable={editable}
+              editable={editable as boolean}
             />
           ) : (
             <NoOutcome />
@@ -230,7 +230,7 @@ export function AssessmentsEdit() {
               formMethods={formMethods}
               formValue={formValue}
               filterOutcomes={filterOutcomes}
-              editable={editable}
+              editable={editable as boolean}
             />
           ) : (
             <NoOutcome />

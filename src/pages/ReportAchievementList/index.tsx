@@ -1,3 +1,4 @@
+import { Box, Button } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +15,6 @@ import { AchievementListChart, AchievementListChartProps } from "./AchievementLi
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import { QueryCondition } from "./types";
-import { Box, Button } from "@material-ui/core";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -49,6 +49,8 @@ export function ReportAchievementList() {
     PermissionType.view_my_organizations_reports_612,
     PermissionType.view_my_school_reports_611,
   ]);
+  const hasPerm =
+    perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organizations_reports_612 || perm.view_my_school_reports_611;
   const student_name = totalData.student_name;
   const reportMockOptions = totalData.reportMockOptions;
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
@@ -136,7 +138,7 @@ export function ReportAchievementList() {
         reportMockOptions={reportMockOptions}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
-      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612 ? (
+      {hasPerm ? (
         reportList && reportList.length > 0 && condition.lesson_plan_id ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
         ) : (

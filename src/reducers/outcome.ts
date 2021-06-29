@@ -3,7 +3,7 @@ import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import { ApiPullOutcomeSetResponse } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
-import { GetOutcomeDetail, GetOutcomeList, OutcomePublishStatus } from "../api/type";
+import { GetOutcomeDetail, GetOutcomeList, GetOutcomeListResult, OutcomePublishStatus } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
 import { isUnpublish } from "../pages/OutcomeList/ThirdSearchHeader";
@@ -16,7 +16,7 @@ import { IPermissionState } from "./type";
 
 interface IOutcomeState extends IPermissionState {
   outcomeDetail: GetOutcomeDetail;
-  total: number;
+  total: GetOutcomeListResult["total"];
   outcomeList: GetOutcomeList;
   // createOutcome: ApiOutcomeCreateView;
   lockOutcome_id: string;
@@ -64,7 +64,7 @@ export const initialState: IOutcomeState = {
     created_at: 0,
     description: "",
   },
-  total: 0,
+  total: undefined,
   outcomeList: [],
   // createOutcome: {
   //   outcome_name: "",
@@ -593,6 +593,10 @@ const { reducer } = createSlice({
         state.outcomeList = payload.outcomeRes.list;
         state.total = payload.outcomeRes.total;
       }
+    },
+    [onLoadOutcomeList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadOutcomeList>>) => {
+      state.outcomeList = initialState.outcomeList;
+      state.total = initialState.total;
     },
     [onLoadOutcomeList.rejected.type]: (state, { error }: any) => {
       state.permission[assess_msg_no_permission] = false;

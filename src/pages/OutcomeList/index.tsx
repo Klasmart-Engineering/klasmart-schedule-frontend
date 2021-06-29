@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { OrderBy, OutcomeOrderBy, OutcomePublishStatus, OutcomeSetResult } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, isAllMineOutcome } from "../../models/ModelOutcomeDetailForm";
@@ -93,14 +94,23 @@ export function OutcomeList() {
   const formMethods = useForm<BulkListForm>();
   const { watch, reset, getValues } = formMethods;
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
-  const {
-    outcomeList,
-    total,
-    user_id,
-    permission: { assess_msg_no_permission },
-    outcomeSetList,
-    defaultSelectOutcomeset,
-  } = useSelector<RootState, RootState["outcome"]>((state) => state.outcome);
+  const { outcomeList, total, user_id, outcomeSetList, defaultSelectOutcomeset } = useSelector<RootState, RootState["outcome"]>(
+    (state) => state.outcome
+  );
+  const perm = usePermission([
+    PermissionType.view_my_unpublished_learning_outcome_410,
+    PermissionType.view_org_unpublished_learning_outcome_411,
+    PermissionType.view_my_pending_learning_outcome_412,
+    PermissionType.view_org_pending_learning_outcome_413,
+  ]);
+  const hasPerm =
+    perm.view_my_unpublished_learning_outcome_410 ||
+    perm.view_org_unpublished_learning_outcome_411 ||
+    perm.view_my_pending_learning_outcome_412 ||
+    perm.view_org_pending_learning_outcome_413;
+  const isPending = useMemo(() => perm.view_my_unpublished_learning_outcome_410 === undefined, [
+    perm.view_my_unpublished_learning_outcome_410,
+  ]);
   const [showSetList, setShowSetList] = React.useState(false);
   const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<OutcomeSetResult>([]);
   const { addSetActive, openAddSet, closeAddSet } = useAddSet();
@@ -194,7 +204,7 @@ export function OutcomeList() {
   };
   useEffect(() => {
     let page = condition.page;
-    if (outcomeList.length === 0 && total > 1) {
+    if (outcomeList.length === 0 && total && total > 1) {
       page = 1;
       history.push({ search: toQueryString({ ...condition, page }) });
     }
@@ -211,44 +221,54 @@ export function OutcomeList() {
     <div>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      <SecondSearchHeader formMethods={formMethods} value={condition} onChange={handleChange} />
-      <SecondSearchHeaderMb formMethods={formMethods} value={condition} onChange={handleChange} />
-      <ThirdSearchHeader
-        value={condition}
-        onChange={handleChange}
-        onBulkPublish={handleBulkPublish}
-        onBulkDelete={handleBulkDelete}
-        onBulkApprove={handleBulkApprove}
-        onBulkReject={handleBulkReject}
-        onBulkAddSet={handleBulkAddSet}
-      />
-      <ThirdSearchHeaderMb
-        value={condition}
-        onChange={handleChange}
-        onBulkPublish={handleBulkPublish}
-        onBulkDelete={handleBulkDelete}
-        onBulkApprove={handleBulkApprove}
-        onBulkReject={handleBulkReject}
-        onBulkAddSet={handleBulkAddSet}
-      />
-      {assess_msg_no_permission === false ? (
-        permissionTip
-      ) : outcomeList && outcomeList.length > 0 ? (
-        <OutcomeTable
-          formMethods={formMethods}
-          list={outcomeList}
-          total={total}
-          userId={user_id}
-          queryCondition={condition}
-          onChangePage={handleChangePage}
-          onClickOutcome={handleClickOutcome}
-          onPublish={handlePublish}
-          onDelete={handleDelete}
-          onApprove={handleApprove}
-          onReject={handleReject}
-        />
+      {hasPerm && (
+        <>
+          <SecondSearchHeader formMethods={formMethods} value={condition} onChange={handleChange} />
+          <SecondSearchHeaderMb formMethods={formMethods} value={condition} onChange={handleChange} />
+          <ThirdSearchHeader
+            value={condition}
+            onChange={handleChange}
+            onBulkPublish={handleBulkPublish}
+            onBulkDelete={handleBulkDelete}
+            onBulkApprove={handleBulkApprove}
+            onBulkReject={handleBulkReject}
+            onBulkAddSet={handleBulkAddSet}
+          />
+          <ThirdSearchHeaderMb
+            value={condition}
+            onChange={handleChange}
+            onBulkPublish={handleBulkPublish}
+            onBulkDelete={handleBulkDelete}
+            onBulkApprove={handleBulkApprove}
+            onBulkReject={handleBulkReject}
+            onBulkAddSet={handleBulkAddSet}
+          />
+        </>
+      )}
+      {isPending ? (
+        ""
+      ) : hasPerm ? (
+        total === undefined ? (
+          ""
+        ) : outcomeList && outcomeList.length > 0 ? (
+          <OutcomeTable
+            formMethods={formMethods}
+            list={outcomeList}
+            total={total as number}
+            userId={user_id}
+            queryCondition={condition}
+            onChangePage={handleChangePage}
+            onClickOutcome={handleClickOutcome}
+            onPublish={handlePublish}
+            onDelete={handleDelete}
+            onApprove={handleApprove}
+            onReject={handleReject}
+          />
+        ) : (
+          emptyTip
+        )
       ) : (
-        emptyTip
+        permissionTip
       )}
       <AddSet
         open={addSetActive}

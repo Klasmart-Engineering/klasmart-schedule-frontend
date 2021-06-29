@@ -58,6 +58,14 @@ export function HomeFunAssessmentList() {
     PermissionType.view_school_completed_assessments_426,
     PermissionType.view_school_in_progress_assessments_427,
   ]);
+  const hasPerm =
+    perm.view_completed_assessments_414 ||
+    perm.view_in_progress_assessments_415 ||
+    perm.view_org_completed_assessments_424 ||
+    perm.view_org_in_progress_assessments_425 ||
+    perm.view_school_completed_assessments_426 ||
+    perm.view_school_in_progress_assessments_427;
+  const isPending = useMemo(() => perm.view_completed_assessments_414 === undefined, [perm.view_completed_assessments_414]);
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleChangeAssessmentType = (assessmentType: AssessmentTypeValues) => {
@@ -85,12 +93,7 @@ export function HomeFunAssessmentList() {
     <>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      {(perm.view_completed_assessments_414 ||
-        perm.view_in_progress_assessments_415 ||
-        perm.view_org_completed_assessments_424 ||
-        perm.view_org_in_progress_assessments_425 ||
-        perm.view_school_completed_assessments_426 ||
-        perm.view_school_in_progress_assessments_427) && (
+      {!isPending && hasPerm && (
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
           {/* <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} /> */}
@@ -98,16 +101,15 @@ export function HomeFunAssessmentList() {
           <ThirdSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
         </>
       )}
-      {perm.view_completed_assessments_414 ||
-      perm.view_in_progress_assessments_415 ||
-      perm.view_org_completed_assessments_424 ||
-      perm.view_org_in_progress_assessments_425 ||
-      perm.view_school_completed_assessments_426 ||
-      perm.view_school_in_progress_assessments_427 ? (
-        homeFunAssessmentList && homeFunAssessmentList.length > 0 ? (
+      {isPending ? (
+        ""
+      ) : hasPerm ? (
+        total === undefined ? (
+          ""
+        ) : homeFunAssessmentList && homeFunAssessmentList.length > 0 ? (
           <AssessmentTable
             list={homeFunAssessmentList}
-            total={total}
+            total={total as number}
             queryCondition={condition}
             onChangePage={handleChangePage}
             onClickAssessment={handleClickAssessment}

@@ -7,7 +7,7 @@ import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { EntityFolderContentData } from "../../api/api.auto";
 import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionOr, PermissionType } from "../../components/Permission/Permission";
+import { PermissionType, usePermission } from "../../components/Permission/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
@@ -118,6 +118,20 @@ function useRefreshWithDispatch() {
 export default function MyContentList() {
   const condition = useQuery();
   const history = useHistory();
+  const perm = usePermission([
+    PermissionType.published_content_page_204,
+    PermissionType.pending_content_page_203,
+    PermissionType.unpublished_content_page_202,
+    PermissionType.archived_content_page_205,
+    PermissionType.create_asset_page_301,
+  ]);
+  const hasPerm =
+    perm.published_content_page_204 ||
+    perm.pending_content_page_203 ||
+    perm.unpublished_content_page_202 ||
+    perm.archived_content_page_205 ||
+    perm.create_asset_page_301;
+  const isPending = useMemo(() => perm.published_content_page_204 === undefined, [perm.published_content_page_204]);
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
   const conditionFormMethods = useForm<ContentListForm>();
   const { watch, reset, getValues, handleSubmit } = conditionFormMethods;
@@ -353,7 +367,7 @@ export default function MyContentList() {
     [closeFolderForm, dispatch, folderForm, handleSubmit, refreshWithDispatch, conditionFormMethods]
   );
   useEffect(() => {
-    if (contentsList?.length === 0 && total > 0) {
+    if (contentsList?.length === 0 && total && total > 0) {
       const page = 1;
       history.push({ search: toQueryString({ ...condition, page }) });
     }
@@ -400,96 +414,93 @@ export default function MyContentList() {
           onNewFolder={handleClickAddFolderBtn}
         />
       )}
-      <SecondSearchHeader
-        value={condition}
-        onChange={handleChange}
-        onCreateContent={handleCreateContent}
-        conditionFormMethods={conditionFormMethods}
-        onNewFolder={handleClickAddFolderBtn}
-      />
-      <SecondSearchHeaderMb
-        value={condition}
-        onChange={handleChange}
-        onCreateContent={handleCreateContent}
-        conditionFormMethods={conditionFormMethods}
-        onNewFolder={handleClickAddFolderBtn}
-      />
-      <ThirdSearchHeader
-        value={condition}
-        onChange={handleChange}
-        onBulkPublish={handleBulkPublish}
-        onBulkDelete={handleBulkDelete}
-        onBulkMove={handleClickBulkMove}
-        actionObj={actionObj}
-        onBulkDeleteFolder={handleBulkDeleteFolder}
-        onBulkApprove={handleBulkApprove}
-        onBulkReject={handleBulkReject}
-        onExportCSV={handleExportCSV}
-        ids={ids}
-        contentList={contentsList}
-        conditionFormMethods={conditionFormMethods}
-      />
-      <ThirdSearchHeaderMb
-        value={condition}
-        onChange={handleChange}
-        onBulkPublish={handleBulkPublish}
-        onBulkDelete={handleBulkDelete}
-        onBulkMove={handleClickBulkMove}
-        actionObj={actionObj}
-        onBulkDeleteFolder={handleBulkDeleteFolder}
-        onBulkApprove={handleBulkApprove}
-        onBulkReject={handleBulkReject}
-        onExportCSV={handleExportCSV}
-        ids={ids}
-        contentList={contentsList}
-        conditionFormMethods={conditionFormMethods}
-      />
-      <PermissionOr
-        value={[
-          PermissionType.published_content_page_204,
-          PermissionType.pending_content_page_203,
-          PermissionType.unpublished_content_page_202,
-          PermissionType.archived_content_page_205,
-          PermissionType.create_asset_page_301,
-        ]}
-        render={(value) =>
-          value ? (
-            contentsList && contentsList.length > 0 ? (
-              <ContentCardList
-                formMethods={conditionFormMethods}
-                list={contentsList}
-                total={total}
-                amountPerPage={page_size}
-                queryCondition={condition}
-                orgProperty={orgProperty}
-                onChangePage={handleChangePage}
-                onChangePageSize={handleChangePageSize}
-                onClickContent={handleClickConent}
-                onPublish={handlePublish}
-                onDelete={handleDelete}
-                onClickMoveBtn={handleClickMoveBtn}
-                onRenameFolder={handleClickRenameFolder}
-                onDeleteFolder={handleDeleteFolder}
-                onGoBack={handleGoback}
-                parentFolderInfo={parentFolderInfo}
-                onApprove={handleApprove}
-                onReject={handleReject}
-                onClickShareBtn={handleClickShareBtn}
-              />
-            ) : JSON.stringify(parentFolderInfo) !== "{}" &&
-              (condition.publish_status === PublishStatus.published ||
-                condition.content_type === SearchContentsRequestContentType.assetsandfolder) ? (
-              <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-                <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} onRenameFolder={handleClickRenameFolder} />
-              </LayoutBox>
-            ) : (
-              emptyTip
-            )
-          ) : (
-            permissionTip
-          )
-        }
-      />
+      {hasPerm && (
+        <>
+          <SecondSearchHeader
+            value={condition}
+            onChange={handleChange}
+            onCreateContent={handleCreateContent}
+            conditionFormMethods={conditionFormMethods}
+            onNewFolder={handleClickAddFolderBtn}
+          />
+          <SecondSearchHeaderMb
+            value={condition}
+            onChange={handleChange}
+            onCreateContent={handleCreateContent}
+            conditionFormMethods={conditionFormMethods}
+            onNewFolder={handleClickAddFolderBtn}
+          />
+          <ThirdSearchHeader
+            value={condition}
+            onChange={handleChange}
+            onBulkPublish={handleBulkPublish}
+            onBulkDelete={handleBulkDelete}
+            onBulkMove={handleClickBulkMove}
+            actionObj={actionObj}
+            onBulkDeleteFolder={handleBulkDeleteFolder}
+            onBulkApprove={handleBulkApprove}
+            onBulkReject={handleBulkReject}
+            onExportCSV={handleExportCSV}
+            ids={ids}
+            contentList={contentsList}
+            conditionFormMethods={conditionFormMethods}
+          />
+          <ThirdSearchHeaderMb
+            value={condition}
+            onChange={handleChange}
+            onBulkPublish={handleBulkPublish}
+            onBulkDelete={handleBulkDelete}
+            onBulkMove={handleClickBulkMove}
+            actionObj={actionObj}
+            onBulkDeleteFolder={handleBulkDeleteFolder}
+            onBulkApprove={handleBulkApprove}
+            onBulkReject={handleBulkReject}
+            onExportCSV={handleExportCSV}
+            ids={ids}
+            contentList={contentsList}
+            conditionFormMethods={conditionFormMethods}
+          />
+        </>
+      )}
+      {isPending ? (
+        ""
+      ) : hasPerm ? (
+        total === undefined ? (
+          ""
+        ) : contentsList && contentsList.length > 0 ? (
+          <ContentCardList
+            formMethods={conditionFormMethods}
+            list={contentsList}
+            total={total as number}
+            amountPerPage={page_size}
+            queryCondition={condition}
+            orgProperty={orgProperty}
+            onChangePage={handleChangePage}
+            onChangePageSize={handleChangePageSize}
+            onClickContent={handleClickConent}
+            onPublish={handlePublish}
+            onDelete={handleDelete}
+            onClickMoveBtn={handleClickMoveBtn}
+            onRenameFolder={handleClickRenameFolder}
+            onDeleteFolder={handleDeleteFolder}
+            onGoBack={handleGoback}
+            parentFolderInfo={parentFolderInfo}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            onClickShareBtn={handleClickShareBtn}
+          />
+        ) : JSON.stringify(parentFolderInfo) !== "{}" &&
+          (condition.publish_status === PublishStatus.published ||
+            condition.content_type === SearchContentsRequestContentType.assetsandfolder) ? (
+          <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+            <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} onRenameFolder={handleClickRenameFolder} />
+          </LayoutBox>
+        ) : (
+          emptyTip
+        )
+      ) : (
+        permissionTip
+      )}
       <FolderTree
         folders={filteredFolderTree}
         rootFolderName={condition.content_type === SearchContentsRequestContentType.assetsandfolder ? "Assets" : "Organization Content"}

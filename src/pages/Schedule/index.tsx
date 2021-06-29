@@ -1,55 +1,55 @@
 import { Grid } from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import Zoom from "@material-ui/core/Zoom";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
+import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
 import { apiLivePath } from "../../api/extra";
 import KidsCalendar from "../../components/Calendar";
-import ScheduleAnyTime from "./ScheduleAnyTime";
 import LayoutBox from "../../components/LayoutBox";
 import ModalBox from "../../components/ModalBox";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
+import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
+import { modelSchedule } from "../../models/ModelSchedule";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists, onLoadContentPreview } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
+  changeParticipants,
   getClassesByOrg,
+  getClassesBySchool,
+  getClassesByStudent,
   getClassesByTeacher,
   getContentsAuthed,
   getParticipantsData,
+  getScheduleAnyTimeViewData,
+  getScheduleFilterClasses,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
-  getSearchScheduleList,
-  scheduleUpdateStatus,
-  getClassesBySchool,
-  changeParticipants,
-  getSchoolInfo,
-  getSubjectByProgramId,
-  ScheduleFilterPrograms,
-  ScheduleClassTypesFilter,
-  getScheduleAnyTimeViewData,
-  getScheduleFilterClasses,
   getScheduleUserId,
-  getClassesByStudent,
-  getSchoolByUser,
-  getSchoolByOrg,
-  searchAuthContentLists,
   getScheduleViewInfo,
+  getSchoolByOrg,
+  getSchoolByUser,
+  getSchoolInfo,
+  getSearchScheduleList,
+  getSubjectByProgramId,
+  ScheduleClassTypesFilter,
+  ScheduleFilterPrograms,
+  scheduleUpdateStatus,
+  searchAuthContentLists,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
+import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { PermissionType, usePermission } from "../../components/Permission";
-import Paper from "@material-ui/core/Paper";
-import Zoom from "@material-ui/core/Zoom";
-import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
-import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
-import { modelSchedule } from "../../models/ModelSchedule";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -241,7 +241,7 @@ function ScheduleContent() {
         Teacher: !isAdmin && !isSchool && isTeacher,
         Student: !isAdmin && !isSchool && !isTeacher && isStudent,
       };
-      return permissions[member];
+      return permissions[member] as boolean;
     },
     [isAdmin, isSchool, isTeacher, isStudent]
   );
@@ -303,7 +303,7 @@ function ScheduleContent() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(getParticipantsData(isAdmin));
+    dispatch(getParticipantsData(isAdmin as boolean));
   }, [dispatch, isAdmin]);
 
   React.useEffect(() => {

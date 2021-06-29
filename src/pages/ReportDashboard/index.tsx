@@ -1,4 +1,5 @@
-import { Button, Grid, Hidden, makeStyles, SvgIcon, Typography, Tooltip } from "@material-ui/core";
+import { Button, Grid, Hidden, makeStyles, SvgIcon, Tooltip, Typography } from "@material-ui/core";
+import { Theme, withStyles } from "@material-ui/core/styles";
 import { AccessTime, CategoryOutlined, ChevronRight, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useHistory } from "react-router";
@@ -11,7 +12,6 @@ import { d, t } from "../../locale/LocaleManager";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import ReportTeachingLoad from "../ReportTeachingLoad";
-import { withStyles, Theme } from "@material-ui/core/styles";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
     height: 129,
@@ -133,10 +133,14 @@ export function ReportDashboard() {
     PermissionType.view_my_organizations_reports_612,
     PermissionType.view_my_school_reports_611,
   ]);
-
+  const hasPerm =
+    perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organizations_reports_612 || perm.view_my_school_reports_611;
+  const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
   return (
     <Fragment>
-      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612 ? (
+      {isPending ? (
+        ""
+      ) : hasPerm ? (
         <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
           <div className={css.reportTitle}>
             <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>

@@ -77,10 +77,10 @@ import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
+import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -1178,7 +1178,7 @@ function EditBox(props: CalendarStateProps) {
     const participantsFilterData = modelSchedule.FilterParticipants(
       ParticipantsData,
       participantMockOptions.participantList,
-      perm.create_event_520,
+      perm.create_event_520 as boolean,
       mySchoolId
     );
     changeModalDate({

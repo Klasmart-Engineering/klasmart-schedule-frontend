@@ -50,6 +50,14 @@ export function StudyAssessmentList() {
     PermissionType.view_school_completed_assessments_426,
     PermissionType.view_school_in_progress_assessments_427,
   ]);
+  const hasPerm =
+    perm.view_completed_assessments_414 ||
+    perm.view_in_progress_assessments_415 ||
+    perm.view_org_completed_assessments_424 ||
+    perm.view_org_in_progress_assessments_425 ||
+    perm.view_school_completed_assessments_426 ||
+    perm.view_school_in_progress_assessments_427;
+  const isPending = useMemo(() => perm.view_completed_assessments_414 === undefined, [perm.view_completed_assessments_414]);
   const condition = useQuery();
   const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
@@ -89,12 +97,7 @@ export function StudyAssessmentList() {
     <>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      {(perm.view_completed_assessments_414 ||
-        perm.view_in_progress_assessments_415 ||
-        perm.view_org_completed_assessments_424 ||
-        perm.view_org_in_progress_assessments_425 ||
-        perm.view_school_completed_assessments_426 ||
-        perm.view_school_in_progress_assessments_427) && (
+      {!isPending && hasPerm && (
         <>
           <SecondSearchHeader
             value={condition}
@@ -112,16 +115,15 @@ export function StudyAssessmentList() {
           <ThirdSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
         </>
       )}
-      {perm.view_completed_assessments_414 ||
-      perm.view_in_progress_assessments_415 ||
-      perm.view_org_completed_assessments_424 ||
-      perm.view_org_in_progress_assessments_425 ||
-      perm.view_school_completed_assessments_426 ||
-      perm.view_school_in_progress_assessments_427 ? (
-        studyAssessmentList && studyAssessmentList[0] ? (
+      {isPending ? (
+        ""
+      ) : hasPerm ? (
+        total === undefined ? (
+          ""
+        ) : studyAssessmentList && studyAssessmentList[0] ? (
           <AssessmentTable
             list={studyAssessmentList}
-            total={total}
+            total={total as number}
             queryCondition={condition}
             onChangePage={handleChangePage}
             onClickAssessment={handleClickAssessment}

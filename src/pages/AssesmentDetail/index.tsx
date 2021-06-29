@@ -179,7 +179,7 @@ export function AssessmentDetail() {
           assessmentDetail={studyAssessmentDetail}
           formMethods={formMethods}
           isMyAssessment={isMyAssessment}
-          editable={editable}
+          editable={editable as boolean}
           complete_rate={complete_rate}
         />
         <div style={{ position: "relative" }}>
@@ -189,7 +189,7 @@ export function AssessmentDetail() {
               autocompleteLabel={autocompleteLabel}
               studentViewItems={filter_student_view_items}
               isComplete={isComplete}
-              editable={editable}
+              editable={editable as boolean}
               changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
               changeAutocompleteValue={changeAutocompleteValue}
               lesson_materials={lesson_materials}

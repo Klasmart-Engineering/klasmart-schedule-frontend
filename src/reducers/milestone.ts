@@ -2,7 +2,7 @@ import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult 
 import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
-import { GetOutcomeList, MilestoneDetailResult, MilestoneListResult } from "../api/type";
+import { GetOutcomeList, MilestoneDetailResult, MilestoneListResult, SearchMilestonneResult } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { MilestoneQueryCondition } from "../pages/MilestoneList/types";
 import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
@@ -12,7 +12,7 @@ import { actSuccess, actWarning } from "./notify";
 interface IMilestoneState {
   milestoneList: MilestoneListResult;
   milestoneDetail: MilestoneDetailResult;
-  total: number;
+  total: SearchMilestonneResult["total"];
   shortCode: string;
   linkedMockOptions: LinkedMockOptions;
   organization_name: string;
@@ -61,7 +61,7 @@ const initialState: IMilestoneState = {
     subject: [],
     subject_ids: [],
   },
-  total: 0,
+  total: undefined,
   shortCode: "",
   linkedMockOptions: {
     program: [],

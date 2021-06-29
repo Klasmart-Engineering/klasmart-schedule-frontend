@@ -47,7 +47,7 @@ interface IContentState {
   contentDetail: Required<EntityContentInfoWithDetails>;
   mediaList: EntityContentInfoWithDetails[];
   outcomeList: GetOutcomeList;
-  total: number;
+  total: number | undefined;
   contentsList: EntityFolderContentData[];
   contentPreview: EntityContentInfoWithDetails;
   mediaListTotal: number;
@@ -139,7 +139,7 @@ const initialState: IContentState = {
   },
   lesson_types: [],
   visibility_settings: [],
-  total: 0,
+  total: undefined,
   contentsList: [],
   contentPreview: {
     created_at: 0,

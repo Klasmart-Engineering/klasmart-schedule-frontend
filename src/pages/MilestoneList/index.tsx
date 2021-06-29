@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { MilestoneOrderBy, MilestoneStatus } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
-import { PermissionOr, PermissionType, usePermission } from "../../components/Permission";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
 import { deleteMilestone, onLoadMilestoneList } from "../../reducers/milestone";
@@ -76,6 +76,8 @@ export default function MilestonesList() {
   const { milestoneList, total } = useSelector<RootState, RootState["milestone"]>((state) => state.milestone);
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
   const perm = usePermission([PermissionType.view_unpublished_milestone_417, PermissionType.view_published_milestone_418]);
+  const hasPerm = perm.view_published_milestone_418 || perm.view_unpublished_milestone_417;
+  const isPending = useMemo(() => perm.view_published_milestone_418 === undefined, [perm.view_published_milestone_418]);
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => {
     history.push({ search: toQueryString(clearNull(value)) });
   };
@@ -90,6 +92,12 @@ export default function MilestonesList() {
     history.push(`/milestone/milestone-edit/tab/details?id=${milestone_id}`);
   };
   useEffect(() => {
+    if (milestoneList?.length === 0 && total && total > 0) {
+      const page = 1;
+      history.push({ search: toQueryString({ ...condition, page }) });
+    }
+  }, [condition, history, milestoneList, total]);
+  useEffect(() => {
     (async () => {
       await dispatch(onLoadMilestoneList({ ...condition, metaLoading: true }));
     })();
@@ -98,35 +106,34 @@ export default function MilestonesList() {
     <>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      {(perm.view_published_milestone_418 || perm.view_unpublished_milestone_417) && (
+      {hasPerm && (
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} />
           <ThirdSearchHeader value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
           <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
         </>
       )}
-      <PermissionOr
-        value={[PermissionType.view_unpublished_milestone_417, PermissionType.view_published_milestone_418]}
-        render={(value) =>
-          value ? (
-            milestoneList && milestoneList.length > 0 ? (
-              <MilestoneTable
-                queryCondition={condition}
-                formMethods={formMethods}
-                total={total}
-                list={milestoneList}
-                onChangePage={handleChangePage}
-                onClickMilestone={handleClickMilestone}
-                onDelete={handleDelete}
-              />
-            ) : (
-              emptyTip
-            )
-          ) : (
-            permissionTip
-          )
-        }
-      />
+      {isPending ? (
+        ""
+      ) : hasPerm ? (
+        total === undefined ? (
+          ""
+        ) : milestoneList && milestoneList.length > 0 ? (
+          <MilestoneTable
+            queryCondition={condition}
+            formMethods={formMethods}
+            total={total}
+            list={milestoneList}
+            onChangePage={handleChangePage}
+            onClickMilestone={handleClickMilestone}
+            onDelete={handleDelete}
+          />
+        ) : (
+          emptyTip
+        )
+      ) : (
+        permissionTip
+      )}
     </>
   );
 }

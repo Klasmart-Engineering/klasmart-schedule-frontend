@@ -436,7 +436,7 @@ export enum PermissionType {
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);
 
-export type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean> : boolean;
+export type PermissionResult<V> = V extends PermissionType[] ? Record<PermissionType, boolean | undefined> : boolean | undefined;
 
 export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(value: V, me: QeuryMeQuery["me"]): PermissionResult<V> {
   const permissionList: PermissionType[] = [];
@@ -447,10 +447,10 @@ export function hasPermissionOfMe<V extends PermissionType | PermissionType[]>(v
     });
   });
   if (isPermissionType(value)) {
-    result = permissionList.includes(value);
+    result = permissionList.length ? permissionList.includes(value) : undefined;
   } else {
     result = (value as PermissionType[]).reduce((s, name) => {
-      s[name] = permissionList.includes(name);
+      s[name] = permissionList.length ? permissionList.includes(name) : undefined;
       return s;
     }, {} as PermissionResult<PermissionType[]>);
   }

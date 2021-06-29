@@ -41,7 +41,7 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
     color: palette.grey[500],
   },
 }));
-function isClassDisabled(props: { perm: Record<PermissionType, Boolean>; value: TeachingLoadPayload; teacher_ids: string[] }) {
+function isClassDisabled(props: { perm: Record<PermissionType, Boolean | undefined>; value: TeachingLoadPayload; teacher_ids: string[] }) {
   const { perm, value, teacher_ids } = props;
   if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
     return false;

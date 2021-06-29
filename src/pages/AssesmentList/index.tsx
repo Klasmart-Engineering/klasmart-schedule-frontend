@@ -57,6 +57,14 @@ export function AssessmentList() {
     PermissionType.view_school_completed_assessments_426,
     PermissionType.view_school_in_progress_assessments_427,
   ]);
+  const isPending = useMemo(() => perm.view_completed_assessments_414 === undefined, [perm.view_completed_assessments_414]);
+  const hasPerm =
+    perm.view_completed_assessments_414 ||
+    perm.view_in_progress_assessments_415 ||
+    perm.view_org_completed_assessments_424 ||
+    perm.view_org_in_progress_assessments_425 ||
+    perm.view_school_completed_assessments_426 ||
+    perm.view_school_in_progress_assessments_427;
   const { assessmentList, total } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
@@ -79,17 +87,12 @@ export function AssessmentList() {
   useEffect(() => {
     dispatch(actAssessmentList({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
   }, [condition, dispatch]);
-
+  console.log(total);
   return (
     <div>
       <FirstSearchHeader />
       <FirstSearchHeaderMb />
-      {(perm.view_completed_assessments_414 ||
-        perm.view_in_progress_assessments_415 ||
-        perm.view_org_completed_assessments_424 ||
-        perm.view_org_in_progress_assessments_425 ||
-        perm.view_school_completed_assessments_426 ||
-        perm.view_school_in_progress_assessments_427) && (
+      {!isPending && hasPerm && (
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
           {/* <SecondSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} /> */}
@@ -97,16 +100,15 @@ export function AssessmentList() {
           <ThirdSearchHeaderMb value={condition} onChange={handleChange} onChangeAssessmentType={handleChangeAssessmentType} />
         </>
       )}
-      {perm.view_completed_assessments_414 ||
-      perm.view_in_progress_assessments_415 ||
-      perm.view_org_completed_assessments_424 ||
-      perm.view_org_in_progress_assessments_425 ||
-      perm.view_school_completed_assessments_426 ||
-      perm.view_school_in_progress_assessments_427 ? (
-        assessmentList && assessmentList.length > 0 ? (
+      {isPending ? (
+        ""
+      ) : hasPerm ? (
+        total === undefined ? (
+          ""
+        ) : assessmentList && assessmentList.length > 0 ? (
           <AssessmentTable
             list={assessmentList}
-            total={total}
+            total={total as number}
             queryCondition={condition}
             onChangePage={handleChangePage}
             onClickAssessment={handleClickAssessment}
