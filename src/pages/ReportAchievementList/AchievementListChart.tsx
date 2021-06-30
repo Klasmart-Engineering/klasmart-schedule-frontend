@@ -209,7 +209,10 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
       const percentage = filter === ReportFilter.all ? (bar.bar.data.sum === 0 ? 0 : 100) : data[bar.index][RATIO_KEYS[filter]].toFixed(0);
       const los = (filter === ReportFilter.all ? data[bar.index].sum : data[bar.index][COUNT_KEYS[filter]]) ?? 0;
       const achieved = bar.bar.data.achieved_count ?? 0;
-      const percentTemplate = `${los ? Math.round((achieved / los) * 100) : 0}%, ${los}LOs`;
+      const percentTemplate =
+        filter === ReportFilter.all
+          ? `${los ? Math.round((achieved / los) * 100) : 0}%, ${achieved}/${los}LOs`
+          : `${percentage}%, ${los}LOs`;
       return (
         <text
           key={`desc-${bar.index}`}
@@ -217,7 +220,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
           y={bar.y + 0.5 * bar.height}
           style={inlineStyles.desc}
         >
-          {percentage || los ? percentTemplate : `${d("No achievement data available for this lesson.").t("report_msg_no_achieve")}`}
+          {los ? percentTemplate : `${d("No achievement data available for this lesson.").t("report_msg_no_achieve")}`}
         </text>
       );
     });
