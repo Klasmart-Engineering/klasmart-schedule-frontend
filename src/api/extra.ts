@@ -86,6 +86,11 @@ export const apiOrganizationOfPage = () => {
   return searchParams.get(ORG_ID_KEY);
 };
 
+export const getDocumentUrl = (router: string) => {
+  const { origin, search } = document.location;
+  return `${origin}/${search}#/${router}`;
+};
+
 export const apiWaitForOrganizationOfPage = () => {
   const errorLabel: LangRecordId = "general_error_no_organization";
   // const infoLabel: LangRecordId = "general_info_waiting_orgnization_info";

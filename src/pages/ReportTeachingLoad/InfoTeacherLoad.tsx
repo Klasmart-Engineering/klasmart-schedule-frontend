@@ -41,7 +41,7 @@ export function InfoTeacherLoad() {
   const css = useStyles();
   const infoList: InfoListItem[] = [
     {
-      title: "0 hours",
+      title: "0 hour",
       opaciity: 0.1,
     },
     {

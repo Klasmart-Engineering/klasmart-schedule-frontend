@@ -1,7 +1,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTipAndCreate, permissionTip } from "../../components/TipImages";
 import { d, t } from "../../locale/LocaleManager";
@@ -15,6 +15,7 @@ import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import { QueryCondition } from "./types";
 import { Box, Button } from "@material-ui/core";
+import { getDocumentUrl } from "../../api/extra";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -127,6 +128,16 @@ export function ReportAchievementList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, reportMockOptions.teacher_id]);
 
+  const ChangeParentContainer = () => {
+    const parentContainerSrc = window.parent.document.getElementsByTagName("iframe").item(0);
+    console.log(parentContainerSrc, "iframe");
+    if (parentContainerSrc) {
+      parentContainerSrc.src = getDocumentUrl("library");
+    } else {
+      window.location.href = "#/library";
+    }
+  };
+
   return (
     <>
       <ReportTitle title={t("report_label_student_achievement")} info={t("report_msg_overall_infor")}></ReportTitle>
@@ -143,7 +154,13 @@ export function ReportAchievementList() {
           <>
             {emptyTipAndCreate}
             <Box style={{ textAlign: "center", padding: "2rem" }}>
-              <Button component={NavLink} variant="contained" color="primary" to="/library">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  ChangeParentContainer();
+                }}
+              >
                 {d("Create a Lesson Plan").t("report_button_create_plan")}
               </Button>
             </Box>
