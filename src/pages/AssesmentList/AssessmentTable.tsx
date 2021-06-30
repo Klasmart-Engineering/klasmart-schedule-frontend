@@ -36,13 +36,13 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: "#f2f5f7",
     },
     tableCell: {
-      width: 126,
+      width: 115,
       minWidth: 104,
     },
     statusCon: {
       color: "#fff",
       borderRadius: "15px",
-      height: 30,
+      height: 26,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
