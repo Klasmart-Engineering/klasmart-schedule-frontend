@@ -305,12 +305,21 @@ export interface EntityAssessmentStudentViewH5PLessonMaterial {
   achieved_score?: number;
   answer?: string;
   attempted?: boolean;
+
+  /** add: 2021.06.24 */
+  h5p_id?: string;
   is_h5p?: boolean;
   lesson_material_id?: string;
   lesson_material_name?: string;
   lesson_material_type?: string;
   max_score?: number;
+
+  /** add: 2021.06.24 */
+  number?: string;
   outcome_names?: string[];
+
+  /** add: 2021.06.24 */
+  sub_h5p_id?: string;
 }
 
 export interface EntityAssessmentSubject {
@@ -1164,6 +1173,7 @@ export interface EntityScheduleViewDetail {
   students?: EntityScheduleShortInfo[];
   teachers?: EntityScheduleShortInfo[];
   title?: string;
+  description?: string;
 }
 
 export interface EntitySet {
@@ -1278,7 +1288,13 @@ export interface EntityUpdateAssessmentContentArgs {
 
 export interface EntityUpdateAssessmentH5PLessonMaterial {
   achieved_score?: number;
+
+  /** add: 2021.06.24 */
+  h5p_id?: string;
   lesson_material_id?: string;
+
+  /** add: 2021.06.24 */
+  sub_h5p_id?: string;
 }
 
 export interface EntityUpdateAssessmentH5PStudent {

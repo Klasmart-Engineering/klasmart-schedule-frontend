@@ -79,6 +79,9 @@ interface BasicTableProps extends tableProps {
     outcome_names?: string[];
     student: never[];
     is_hide?: boolean;
+    number?: string;
+    sub_h5p_id?: string;
+    h5p_id?: string;
   };
   studentViewItemsSet?: EntityAssessmentStudentViewH5PItem[];
 }
@@ -265,9 +268,9 @@ function BasicTable(props: BasicTableProps) {
             </TableHead>
             <TableBody>
               {studentViewItem?.lesson_materials?.map((row, index) => (
-                <TableRow key={row.lesson_material_id}>
+                <TableRow key={`${row.sub_h5p_id ? row.sub_h5p_id : row.lesson_material_id}${index}`}>
                   <TableCell component="th" scope="row" align="center">
-                    {index + 1}
+                    {row.number}
                   </TableCell>
                   <TableCell align="center">
                     <Tooltip title={row.lesson_material_name as string} placement="top-start">
@@ -386,7 +389,7 @@ function BasicTable2(props: BasicTableProps) {
       >
         <div style={{ color: checked ? "black" : "#666666" }}>
           <Tooltip title={dimension2Item?.lesson_material_name as string} placement="top-start">
-            <span>{textEllipsis(dimension2Item?.lesson_material_name)}</span>
+            <span>{`${dimension2Item?.number}. ${textEllipsis(dimension2Item?.lesson_material_name)}`}</span>
           </Tooltip>
           <span style={{ padding: "0 18px 0 18px", color: "gray" }}>
             {dimension2Item?.lesson_material_type ? `(${dimension2Item?.lesson_material_type})` : ""}
@@ -502,11 +505,12 @@ export function DynamicTable(props: tableProps) {
   };
   const classes = useStyles();
 
-  const getLessonMaterialsType = (id?: string) => {
+  const getLessonMaterialsType = (id?: string, t?: string) => {
     let type = "";
     studentViewItems?.forEach((item) => {
       item.lesson_materials?.forEach((lesson, index) => {
-        if (lesson.lesson_material_id === id && lesson.lesson_material_type) type = lesson.lesson_material_type as string;
+        if (t === "p" && lesson.lesson_material_id === id && lesson.lesson_material_type) type = lesson.lesson_material_type as string;
+        if (t === "c" && lesson.sub_h5p_id === id && lesson.lesson_material_type) type = lesson.lesson_material_type as string;
       });
     });
     return type;
@@ -514,7 +518,9 @@ export function DynamicTable(props: tableProps) {
 
   const dimension2 = studentViewItems?.length
     ? studentViewItems[0].lesson_materials?.map((material) => {
-        return { ...material, student: [], lesson_material_type: getLessonMaterialsType(material.lesson_material_id) };
+        const id = material.sub_h5p_id ? material.sub_h5p_id : material.lesson_material_id;
+        const type = material.sub_h5p_id ? "c" : "p";
+        return { ...material, student: [], lesson_material_type: getLessonMaterialsType(id, type) };
       })
     : [];
   studentViewItems?.forEach((item) => {
@@ -551,7 +557,7 @@ export function DynamicTable(props: tableProps) {
         dimension2?.map((item, index: number) => {
           return (
             <BasicTable2
-              key={item.lesson_material_id}
+              key={item.sub_h5p_id ? item.sub_h5p_id : item.lesson_material_id}
               handleElasticLayerControl={handleElasticLayerControl}
               studentViewItem={[] as EntityAssessmentStudentViewH5PItem}
               index={index}

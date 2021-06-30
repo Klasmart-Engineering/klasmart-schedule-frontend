@@ -8114,6 +8114,10 @@
         "attempted": {
           "type": "boolean"
         },
+        "h5p_id": {
+          "description": "add: 2021.06.24",
+          "type": "string"
+        },
         "is_h5p": {
           "type": "boolean"
         },
@@ -8129,11 +8133,19 @@
         "max_score": {
           "type": "number"
         },
+        "number": {
+          "description": "add: 2021.06.24",
+          "type": "string"
+        },
         "outcome_names": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "sub_h5p_id": {
+          "description": "add: 2021.06.24",
+          "type": "string"
         }
       }
     },
@@ -11072,7 +11084,15 @@
         "achieved_score": {
           "type": "number"
         },
+        "h5p_id": {
+          "description": "add: 2021.06.24",
+          "type": "string"
+        },
         "lesson_material_id": {
+          "type": "string"
+        },
+        "sub_h5p_id": {
+          "description": "add: 2021.06.24",
           "type": "string"
         }
       }
