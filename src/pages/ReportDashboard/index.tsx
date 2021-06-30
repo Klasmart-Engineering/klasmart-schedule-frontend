@@ -1,5 +1,5 @@
-import { Button, Grid, Hidden, makeStyles, SvgIcon, Typography } from "@material-ui/core";
-import { AccessTime, CategoryOutlined, ChevronRight, KeyboardBackspace } from "@material-ui/icons";
+import { Button, Grid, Hidden, makeStyles, SvgIcon, Typography, Tooltip } from "@material-ui/core";
+import { AccessTime, CategoryOutlined, ChevronRight, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useHistory } from "react-router";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
@@ -11,6 +11,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import ReportTeachingLoad from "../ReportTeachingLoad";
+import { withStyles, Theme } from "@material-ui/core/styles";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
     height: 129,
@@ -85,6 +86,17 @@ interface ReportItem {
   icon: JSX.Element;
   bgColor: string;
 }
+
+const DiyTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: "rgba(0, 0, 0, 0.87)",
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+    padding: 10,
+    lineHeight: "18px",
+  },
+}))(Tooltip);
 
 export function ReportDashboard() {
   const css = useStyles();
@@ -171,9 +183,9 @@ export function ReportDashboard() {
   );
 }
 
-export const ReportTitle = (props: { title: string }) => {
+export const ReportTitle = (props: { title: string; info?: string }) => {
   const css = useStyles();
-  const { title } = props;
+  const { title, info } = props;
   const history = useHistory();
   const handleBack = useCallback(() => {
     history.push(ReportDashboard.routeBasePath);
@@ -184,7 +196,14 @@ export const ReportTitle = (props: { title: string }) => {
         <Button color="primary" startIcon={<KeyboardBackspace />} onClick={handleBack}>
           {d("Return to Reports List").t("report_label_go_back")}
         </Button>
-        <Typography className={css.reportItemTitleTop}>{title}</Typography>
+        <Typography className={css.reportItemTitleTop}>
+          {title}
+          {info && (
+            <DiyTooltip title={info}>
+              <InfoOutlined style={{ marginLeft: "10px", color: "gray" }} />
+            </DiyTooltip>
+          )}
+        </Typography>
       </div>
     </LayoutBox>
   );

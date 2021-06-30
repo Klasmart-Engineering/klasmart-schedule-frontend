@@ -13,6 +13,7 @@ import { EntityStudentAchievementReportItem } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { useChartScale } from "../../hooks/useChartScale";
 import { ReportFilter, StatusColor } from "./types";
+import { d, t } from "../../locale/LocaleManager";
 
 const useStyle = makeStyles({
   chart: {
@@ -204,12 +205,22 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
     );
   const descriptionList = (barStacks: TBarStack[], px: number) => {
     const pixels = getPixels(px);
-    return barStacks.slice(-1)[0].bars.map((bar) => (
-      <text key={`desc-${bar.index}`} x={bar.x + bar.width + pixels.descMarginLeft} y={bar.y + 0.5 * bar.height} style={inlineStyles.desc}>
-        {filter === ReportFilter.all ? (bar.bar.data.sum === 0 ? 0 : 100) : data[bar.index][RATIO_KEYS[filter]].toFixed(0)}%,&nbsp;
-        {filter === ReportFilter.all ? data[bar.index].sum : data[bar.index][COUNT_KEYS[filter]]}&nbsp;LOs
-      </text>
-    ));
+    return barStacks.slice(-1)[0].bars.map((bar) => {
+      const percentage = filter === ReportFilter.all ? (bar.bar.data.sum === 0 ? 0 : 100) : data[bar.index][RATIO_KEYS[filter]].toFixed(0);
+      const los = (filter === ReportFilter.all ? data[bar.index].sum : data[bar.index][COUNT_KEYS[filter]]) ?? 0;
+      const achieved = bar.bar.data.achieved_count ?? 0;
+      const percentTemplate = `${los ? Math.round((achieved / los) * 100) : 0}%, ${los}LOs`;
+      return (
+        <text
+          key={`desc-${bar.index}`}
+          x={bar.x + bar.width + pixels.descMarginLeft}
+          y={bar.y + 0.5 * bar.height}
+          style={inlineStyles.desc}
+        >
+          {percentage || los ? percentTemplate : `${d("No achievement data available for this lesson.").t("report_msg_no_achieve")}`}
+        </text>
+      );
+    });
   };
   return (
     <>
@@ -234,7 +245,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
             tickLabelProps={() => inlineStyles.yAxiosTickLabel}
             tickComponent={({ formattedValue, ...tickTextProps }) =>
               isAttend(formattedValue, data) ? (
-                <Text {...tickTextProps} onClick={() => onClickStudent(formattedValue as string)}>
+                <Text {...tickTextProps} style={{ cursor: "pointer" }} onClick={() => onClickStudent(formattedValue as string)}>
                   {studentId2studentName(formattedValue as string, data)}
                 </Text>
               ) : (
@@ -254,7 +265,7 @@ export function AchievementListStaticChart(props: AchievementListStaticChartProp
             top={0}
             scale={xAxiosScale}
             axisLineClassName={css.axiosLine}
-            label="in % of all Learning Outcomes"
+            label={`% ${t("report_achieved_lo")}`}
             labelOffset={0}
             labelProps={inlineStyles.xAxiosLabel}
           />

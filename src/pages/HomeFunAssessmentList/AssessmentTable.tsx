@@ -7,6 +7,7 @@ import { HomeFunAssessmentStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
+import { MapStatus } from "../AssesmentList/AssessmentTable";
 import { HomeFunAssessmentQueryCondition } from "./types";
 
 const useStyles = makeStyles((theme) =>
@@ -35,13 +36,13 @@ const useStyles = makeStyles((theme) =>
       height: 80,
       backgroundColor: "#f2f5f7",
     },
+    tableCell: {
+      width: 126,
+      minWidth: 104,
+    },
   })
 );
 
-const mapStatus = (status: string | undefined) => {
-  if (status === HomeFunAssessmentStatus.complete) return d("Complete").t("assess_filter_complete");
-  if (status === HomeFunAssessmentStatus.in_progress) return d("Incomplete").t("assess_filter_in_progress");
-};
 const mapScore = (score: number | undefined) => {
   if (!score) return "";
   if (score === 1) return `1-${d("Poor").t("assess_score_poor")}`;
@@ -56,13 +57,16 @@ interface AssessmentProps {
   onClickAssessment: AssessmentTableProps["onClickAssessment"];
 }
 function AssessmentRow(props: AssessmentProps) {
+  const css = useStyles();
   const { assessment, onClickAssessment } = props;
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title}</TableCell>
       <TableCell align="center">{assessment.teacher_names?.join(" ,")}</TableCell>
       <TableCell align="center">{assessment.student_name}</TableCell>
-      <TableCell align="center">{mapStatus(assessment.status)}</TableCell>
+      <TableCell align="center" className={css.tableCell}>
+        {MapStatus(assessment.status)}
+      </TableCell>
       <TableCell align="center">{assessment.due_at ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}</TableCell>
       <TableCell align="center">{formattedTime(assessment.latest_feedback_at)}</TableCell>
       <TableCell align="center">
@@ -95,7 +99,9 @@ export function AssessmentTable(props: AssessmentTableProps) {
               <TableCell align="center">{d("Assessment Title").t("assess_column_title")}</TableCell>
               <TableCell align="center">{d("Teacher").t("assess_column_teacher")}</TableCell>
               <TableCell align="center">{d("Student").t("schedule_time_conflict_student")}</TableCell>
-              <TableCell align="center">{d("Status").t("assess_filter_column_status")}</TableCell>
+              <TableCell align="center" className={css.tableCell}>
+                {d("Status").t("assess_filter_column_status")}
+              </TableCell>
               <TableCell align="center">{d("Due Date").t("assess_column_due_date")}</TableCell>
               <TableCell align="center">{d("Submit Time").t("assess_column_submit_time")}</TableCell>
               <TableCell align="center">{d("Assessment Score").t("assess_column_assessment_score")}</TableCell>

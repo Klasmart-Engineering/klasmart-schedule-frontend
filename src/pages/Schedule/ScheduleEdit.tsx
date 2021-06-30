@@ -1430,12 +1430,18 @@ function EditBox(props: CalendarStateProps) {
     });
   };
 
-  const menuItemListClassType = (list: MockOptionsItem[]) =>
-    list.map((item) => (
-      <MenuItem key={item.id} value={item.id}>
-        {t(item.name as classTypeLabel)}
+  const menuItemListClassType = (list: MockOptionsItem[]) => {
+    const classType = list.map((item) => t(item.name as classTypeLabel)).sort();
+    const getKey = (name: string) => {
+      const key = list.filter((item) => t(item.name as classTypeLabel) === name);
+      return key.length ? key[0].id : "";
+    };
+    return classType.map((name) => (
+      <MenuItem key={getKey(name)} value={getKey(name)}>
+        {name}
       </MenuItem>
     ));
+  };
 
   const menuItemListClassKr = (type: string) => {
     const classRosterIdsTeacher = classRosterIds?.teacher.map((item: any) => {

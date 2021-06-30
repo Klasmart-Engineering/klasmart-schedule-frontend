@@ -768,6 +768,23 @@ type LangRecord<T = string> =
   | { id: "report_label_mins"; description: "Mins"; values: undefined }
   | { id: "report_label_go_back"; description: "Return to Reports List"; values: undefined }
   | { id: "report_label_individual_achievement"; description: "Individual Student Achievement"; values: undefined }
+  | { id: "report_msg_no_data"; description: "No achievement data is available."; values: undefined }
+  | { id: "report_navigation_class_view"; description: "Class View"; values: undefined }
+  | {
+      id: "report_msg_individual_infor";
+      description: "This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_overall_infor";
+      description: "The Overall Student Achievement Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.";
+      values: undefined;
+    }
+  | { id: "report_msg_no_achieve"; description: "No achievement data available for this lesson."; values: undefined }
+  | { id: "report_msg_no_plan"; description: "There are no lesson plans for this teacher. Would you like to add one?"; values: undefined }
+  | { id: "report_button_create_plan"; description: "Create a Lesson Plan"; values: undefined }
+  | { id: "report_label_0_hour"; description: "0 Hour"; values: undefined }
+  | { id: "report_achieved_lo"; description: "Achieved of All Learning Outcomes"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }

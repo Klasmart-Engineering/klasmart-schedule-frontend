@@ -5,6 +5,7 @@ import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
 import noPermissionUrl from "../../assets/icons/permission.jpg";
+import achievementEmptyUrl from "../../assets/icons/noLearningOutcomes.svg";
 import { d, t } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -25,8 +26,15 @@ export enum TipImagesType {
   commingSoon = "commingSoon",
   noResults = "noResults",
   noPermission = "noPermission",
+  achievementEmpty = "achievementEmpty",
 }
-export type TextLabel = "library_msg_no_results_found" | "library_label_empty" | "library_msg_coming_soon" | "library_error_no_permissions";
+export type TextLabel =
+  | "library_msg_no_results_found"
+  | "library_label_empty"
+  | "library_msg_coming_soon"
+  | "library_error_no_permissions"
+  | "report_msg_no_data"
+  | "report_msg_no_plan";
 interface TipImagesProps {
   type: TipImagesType;
   text: TextLabel;
@@ -47,6 +55,9 @@ export function TipImages(props: TipImagesProps) {
   if (type === TipImagesType.noPermission) {
     src = noPermissionUrl;
   }
+  if (type === TipImagesType.achievementEmpty) {
+    src = achievementEmptyUrl;
+  }
   return (
     <Fragment>
       <Box className={css.emptyContainer}>
@@ -62,6 +73,8 @@ export const permissionTip = <TipImages type={TipImagesType.noPermission} text="
 export const emptyTip = <TipImages type={TipImagesType.empty} text="library_label_empty" />;
 export const comingsoonTip = <TipImages type={TipImagesType.commingSoon} text="library_msg_coming_soon" />;
 export const resultsTip = <TipImages type={TipImagesType.noResults} text="library_msg_no_results_found" />;
+export const achievementEmpty = <TipImages type={TipImagesType.achievementEmpty} text="report_msg_no_data" />;
+export const emptyTipAndCreate = <TipImages type={TipImagesType.empty} text="report_msg_no_plan" />;
 
 export function NoOutcome() {
   return (
