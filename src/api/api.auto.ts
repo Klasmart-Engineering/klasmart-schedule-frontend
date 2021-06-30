@@ -281,6 +281,7 @@ export interface EntityAssessmentItem {
   subjects?: EntityAssessmentSubject[];
   teachers?: EntityAssessmentTeacher[];
   title?: string;
+  lesson_plan?: EntityAssessmentLessonPlan;
 }
 
 export interface EntityAssessmentProgram {
@@ -745,7 +746,7 @@ export interface EntityListStudyAssessmentsResultItem {
   due_at?: number;
   id?: string;
   remaining_time?: number;
-
+  lesson_plan?: EntityAssessmentLessonPlan;
   /** debug */
   schedule_id?: string;
   teacher_names?: string[];
