@@ -87,7 +87,6 @@ export function AssessmentList() {
   useEffect(() => {
     dispatch(actAssessmentList({ ...condition, page_size: PAGE_SIZE, metaLoading: true }));
   }, [condition, dispatch]);
-  console.log(total);
   return (
     <div>
       <FirstSearchHeader />
