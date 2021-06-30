@@ -225,6 +225,16 @@ export default function Details(props: DetailsProps) {
   const defaultTheme = useTheme();
   const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
+  // const groupMenuItemList = (list?: LinkedMockOptionsItem[]) =>{
+  //   const newArr: JSX.Element[] = []
+  //   list?.forEach((item, index) => {
+  //     index%3 === 0 && newArr.push(<ListSubheader key={`${item.id}+${index}`}>Category 1</ListSubheader>);
+  //     newArr.push(<MenuItem key={item.id} value={item.id}>
+  //       {item.name}
+  //     </MenuItem>)
+  //   });
+  //   return newArr;
+  // }
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
     list.map((item) => (

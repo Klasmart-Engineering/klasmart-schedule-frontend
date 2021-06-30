@@ -139,7 +139,6 @@ function ContentEditForm() {
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental, subject }
   );
-  console.log("data.source=", allDefaultValueAndKey["data.source"]?.value);
   // 兼容现在的国际版专用变量
   const isEnableNewH5p = apiIsEnableNewH5p();
   const isOldH5p = formLiteFileType(id, allDefaultValueAndKey["data.file_type"]?.value, inputSource)?.isOldH5p;
