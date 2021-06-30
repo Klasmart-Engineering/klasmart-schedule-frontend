@@ -10,10 +10,7 @@
  * ---------------------------------------------------------------
  */
 
-export interface ApiBadRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiBadRequestResponse = ApiResponse;
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -24,10 +21,7 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export interface ApiConflictResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiConflictResponse = ApiResponse;
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -50,10 +44,7 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export interface ApiForbiddenResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiForbiddenResponse = ApiResponse;
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -71,10 +62,7 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export interface ApiInternalServerErrorResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiInternalServerErrorResponse = ApiResponse;
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -86,10 +74,7 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export interface ApiNotFoundResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiNotFoundResponse = ApiResponse;
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -133,6 +118,11 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
+export interface ApiResponse {
+  data?: object;
+  label?: string;
+}
+
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -150,19 +140,13 @@ export interface ApiSignatureResponse {
   url?: string;
 }
 
-export interface ApiSuccessRequestResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiSuccessRequestResponse = ApiResponse;
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export interface ApiUnAuthorizedResponse {
-  data?: object;
-  label?: string;
-}
+export type ApiUnAuthorizedResponse = ApiResponse;
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -292,17 +276,11 @@ export interface EntityAssessmentItem {
   class_end_time?: number;
   complete_time?: number;
   id?: string;
-  lesson_plan?: EntityAssessmentLessonPlan;
   program?: EntityAssessmentProgram;
   status?: string;
   subjects?: EntityAssessmentSubject[];
   teachers?: EntityAssessmentTeacher[];
   title?: string;
-}
-
-export interface EntityAssessmentLessonPlan {
-  id?: string;
-  name?: string;
 }
 
 export interface EntityAssessmentProgram {
@@ -339,6 +317,9 @@ export interface EntityAssessmentStudentViewH5PLessonMaterial {
   /** add: 2021.06.24 */
   number?: string;
   outcome_names?: string[];
+
+  /** add: 2021.06.24 */
+  sub_content_number?: number;
 
   /** add: 2021.06.24 */
   sub_h5p_id?: string;
@@ -731,7 +712,6 @@ export interface EntityListHomeFunStudiesResultItem {
   id?: string;
   latest_feedback_at?: number;
   lesson_plan?: EntityAssessmentLessonPlan;
-
   /** debug */
   schedule_id?: string;
   status?: string;
@@ -739,7 +719,10 @@ export interface EntityListHomeFunStudiesResultItem {
   teacher_names?: string[];
   title?: string;
 }
-
+export interface EntityAssessmentLessonPlan {
+  id?: string;
+  name?: string;
+}
 export interface EntityListStudentsPerformanceH5PReportResponse {
   items?: EntityStudentsPerformanceH5PReportItem[];
 }
@@ -761,7 +744,6 @@ export interface EntityListStudyAssessmentsResultItem {
   create_at?: number;
   due_at?: number;
   id?: string;
-  lesson_plan?: EntityAssessmentLessonPlan;
   remaining_time?: number;
 
   /** debug */
@@ -1178,6 +1160,7 @@ export interface EntityScheduleViewDetail {
   class_type?: EntityScheduleShortInfo;
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
+  description?: string;
   due_at?: number;
   end_at?: number;
 
@@ -1197,7 +1180,6 @@ export interface EntityScheduleViewDetail {
   students?: EntityScheduleShortInfo[];
   teachers?: EntityScheduleShortInfo[];
   title?: string;
-  description?: string;
 }
 
 export interface EntitySet {
