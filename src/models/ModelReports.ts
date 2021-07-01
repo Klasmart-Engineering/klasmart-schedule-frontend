@@ -119,5 +119,5 @@ export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[])
 }
 
 export function getAchievementDetailEmptyStatus(data: EntityStudentAchievementReportCategoryItem[]): boolean {
-  return data && data.length ? data.every((item) => !item.achieved_items) : false;
+  return data && data.length ? data.every((item) => !item.achieved_items && !item.not_achieved_items && !item.not_attempted_items) : false;
 }

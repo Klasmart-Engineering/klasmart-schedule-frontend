@@ -63,7 +63,9 @@ export function ReportAchievementDetail() {
         backByLessonPlan={backByLessonPlan}
         reportMockOptions={reportMockOptions}
       />
-      {achievementDetail && achievementDetail.length > 0 ? (
+      {getAchievementDetailEmptyStatus(achievementDetail) ? (
+        achievementEmpty
+      ) : achievementDetail && achievementDetail.length > 0 ? (
         <AchievementDetailChart
           data={
             achievementDetail.filter((item) => {
@@ -74,7 +76,6 @@ export function ReportAchievementDetail() {
       ) : (
         emptyTip
       )}
-      {getAchievementDetailEmptyStatus(achievementDetail) && achievementEmpty}
     </>
   );
 }
