@@ -157,6 +157,27 @@ export class modelSchedule {
     return filterQuery;
   }
 
+  /**
+   * Set Initialization Assembly Filter Parameter
+   * @param school
+   * @param others
+   * @constructor
+   */
+  static SetInitializationAssemblyFilterParameter(school: EntityScheduleSchoolInfo[], others: EntityScheduleFilterClass[]) {
+    const set = [];
+    school.forEach((classs) => {
+      set.push(`class+All+${classs.school_id}`);
+      classs.classes.forEach((item) => {
+        set.push(`class+${item.class_id}+${classs.school_id}`);
+      });
+    });
+    others.forEach((item) => {
+      set.push(`other+${item.id}`);
+    });
+    if (others.length) set.push(`class+All+Others`);
+    return set;
+  }
+
   static FilterParticipants(
     ParticipantsDatas: ParticipantsData | undefined,
     ClassRoster: ParticipantsByClassQuery,

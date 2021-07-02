@@ -14,11 +14,10 @@ import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsOptionsItem } from "../../api/extra";
 import { d, t } from "../../locale/LocaleManager";
-import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
@@ -31,6 +30,7 @@ import {
   modeViewType,
   RolesData,
   timestampType,
+  filterOptionItem,
   FilterItemInfo,
 } from "../../types/scheduleTypes";
 import { modelSchedule } from "../../models/ModelSchedule";
@@ -344,8 +344,15 @@ function FilterTemplate(props: FilterProps) {
   const dispatch = useDispatch();
   const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
-  const { filterOption, user_id, schoolByOrgOrUserData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { handleChangeShowAnyTime, stateOnlyMine, handleChangeOnlyMine, privilegedMembers } = props;
+  const {
+    handleChangeShowAnyTime,
+    stateOnlyMine,
+    handleChangeOnlyMine,
+    privilegedMembers,
+    filterOption,
+    user_id,
+    schoolByOrgOrUserData,
+  } = props;
   const [stateOnlySelectMineExistData, setStateOnlySelectMineExistData] = React.useState<any>({});
 
   const subDataStructures = (
@@ -685,6 +692,9 @@ interface FilterProps {
   timesTamp: timestampType;
   modelView: modeViewType;
   privilegedMembers: (member: memberType) => boolean;
+  filterOption: filterOptionItem;
+  user_id: string;
+  schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
 }
 
 export default function ScheduleFilter(props: FilterProps) {
@@ -698,6 +708,9 @@ export default function ScheduleFilter(props: FilterProps) {
     modelView,
     timesTamp,
     privilegedMembers,
+    filterOption,
+    user_id,
+    schoolByOrgOrUserData,
   } = props;
   return (
     <FilterTemplate
@@ -710,6 +723,9 @@ export default function ScheduleFilter(props: FilterProps) {
       modelView={modelView}
       timesTamp={timesTamp}
       privilegedMembers={privilegedMembers}
+      filterOption={filterOption}
+      user_id={user_id}
+      schoolByOrgOrUserData={schoolByOrgOrUserData}
     />
   );
 }

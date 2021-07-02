@@ -15,7 +15,7 @@ import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule } from "../../reducers/schedule";
+import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
 import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps, memberType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
@@ -233,6 +233,7 @@ function MyCalendar(props: CalendarProps) {
           start: getTimestamp(`${offsetYear}-${dateNumFun(offsetMonth + 1)}-01`),
           end: getTimestamp(`${offsetYear}-${dateNumFun(offsetMonth + 1)}-01`),
         });
+        dispatch(resetScheduleTimeViewData([]));
         break;
       case "week":
         changeWeek("week", type, Y, M);

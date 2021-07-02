@@ -1,5 +1,11 @@
 import { MockOptionsItem } from "../api/extra";
-import { EntityScheduleDetailsView, EntityScheduleLessonPlan, EntityScheduleListView, EntityScheduleViewDetail } from "../api/api.auto";
+import {
+  EntityScheduleDetailsView,
+  EntityScheduleFilterClass,
+  EntityScheduleLessonPlan,
+  EntityScheduleListView,
+  EntityScheduleViewDetail,
+} from "../api/api.auto";
 
 export type timestampType = {
   start: number;
@@ -227,4 +233,10 @@ export interface FilterItemInfo {
   label: string;
   self_id: string;
   school_id: string;
+}
+
+export interface filterOptionItem {
+  classType: EntityScheduleShortInfo[];
+  programs: EntityScheduleShortInfo[];
+  others: EntityScheduleFilterClass[];
 }

@@ -65,6 +65,8 @@ import {
   classTypeLabel,
   EntityLessonPlanShortInfo,
   EntityScheduleClassInfo,
+  EntityScheduleSchoolInfo,
+  filterOptionItem,
   FilterQueryTypeProps,
   memberType,
   modeViewType,
@@ -249,6 +251,9 @@ function SmallCalendar(props: CalendarStateProps) {
     stateOnlyMine,
     handleChangeOnlyMine,
     privilegedMembers,
+    filterOption,
+    user_id,
+    schoolByOrgOrUserData,
   } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
@@ -295,6 +300,9 @@ function SmallCalendar(props: CalendarStateProps) {
           modelView={modelView}
           timesTamp={timesTamp}
           privilegedMembers={privilegedMembers}
+          filterOption={filterOption}
+          user_id={user_id}
+          schoolByOrgOrUserData={schoolByOrgOrUserData}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -2173,6 +2181,9 @@ interface CalendarStateProps {
   isShowAnyTime: boolean;
   stateCurrentCid: string;
   stateMaterialArr: (EntityContentInfoWithDetails | undefined)[];
+  filterOption: filterOptionItem;
+  user_id: string;
+  schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2213,6 +2224,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     isShowAnyTime,
     stateCurrentCid,
     stateMaterialArr,
+    filterOption,
+    user_id,
+    schoolByOrgOrUserData,
   } = props;
 
   const template = (
@@ -2248,6 +2262,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           isShowAnyTime={isShowAnyTime}
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
+          filterOption={filterOption}
+          user_id={user_id}
+          schoolByOrgOrUserData={schoolByOrgOrUserData}
         />
       </Box>
       <Box
@@ -2288,6 +2305,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           isShowAnyTime={isShowAnyTime}
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
+          filterOption={filterOption}
+          user_id={user_id}
+          schoolByOrgOrUserData={schoolByOrgOrUserData}
         />
       </Box>
     </>

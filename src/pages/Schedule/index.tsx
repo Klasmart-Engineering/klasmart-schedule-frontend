@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
@@ -87,6 +87,9 @@ function ScheduleContent() {
     scheduleAnyTimeViewData,
     mediaList,
     ScheduleViewInfo,
+    filterOption,
+    user_id,
+    schoolByOrgOrUserData,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -277,6 +280,14 @@ function ScheduleContent() {
     }
   }, [teacherName, modelView, timesTamp, stateOnlyMine, dispatch]);
 
+  const initialization_assembly_filter_data = useMemo(() => {
+    return modelSchedule.SetInitializationAssemblyFilterParameter(schoolByOrgOrUserData, filterOption.others);
+  }, [filterOption, schoolByOrgOrUserData]);
+
+  React.useEffect(() => {
+    if (initialization_assembly_filter_data.length) setStateOnlyMine(initialization_assembly_filter_data);
+  }, [initialization_assembly_filter_data]);
+
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
   }, [dispatch, scheduleDetial, scheduleId]);
@@ -397,6 +408,9 @@ function ScheduleContent() {
               isShowAnyTime={isShowAnyTime}
               stateCurrentCid={stateCurrentCid}
               stateMaterialArr={stateMaterialArr}
+              filterOption={filterOption}
+              user_id={user_id}
+              schoolByOrgOrUserData={schoolByOrgOrUserData}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

@@ -52,8 +52,6 @@ import {
   EntityScheduleFeedbackView,
   EntityScheduleListView,
   EntityScheduleSearchView,
-  EntityScheduleShortInfo,
-  EntityScheduleFilterClass,
   EntityScheduleViewDetail,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
@@ -65,6 +63,7 @@ import {
   ParticipantsData,
   ParticipantsShortInfo,
   RolesData,
+  filterOptionItem,
 } from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -78,12 +77,6 @@ interface classOptionsProp {
   classListTeacher: ClassesByTeacherQuery;
   classListSchool: ClassesBySchoolQuery;
   classListStudent: ClassesStudentQueryQuery;
-}
-
-interface filterOptionItem {
-  classType: EntityScheduleShortInfo[];
-  programs: EntityScheduleShortInfo[];
-  others: EntityScheduleFilterClass[];
 }
 
 export interface ScheduleState {
@@ -699,6 +692,9 @@ const { actions, reducer } = createSlice({
     changeParticipants: (state, { payload }: PayloadAction<ChangeParticipants>) => {
       payload.type === "classRoster" ? (state.classRosterIds = payload.data) : (state.participantsIds = payload.data);
     },
+    resetScheduleTimeViewData: (state, { payload }: PayloadAction<ScheduleState["scheduleTimeViewData"]>) => {
+      state.scheduleTimeViewData = payload;
+    },
   },
   extraReducers: {
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
@@ -814,5 +810,5 @@ const { actions, reducer } = createSlice({
     },
   },
 });
-export const { resetScheduleDetial, resetParticipantList, changeParticipants } = actions;
+export const { resetScheduleDetial, resetParticipantList, changeParticipants, resetScheduleTimeViewData } = actions;
 export default reducer;
