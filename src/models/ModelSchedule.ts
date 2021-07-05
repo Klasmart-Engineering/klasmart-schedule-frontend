@@ -166,7 +166,7 @@ export class modelSchedule {
   static SetInitializationAssemblyFilterParameter(school: EntityScheduleSchoolInfo[], others: EntityScheduleFilterClass[]) {
     const set = [];
     school.forEach((classs) => {
-      set.push(`class+All+${classs.school_id}`);
+      if (classs.classes.length) set.push(`class+All+${classs.school_id}`);
       classs.classes.forEach((item) => {
         set.push(`class+${item.class_id}+${classs.school_id}`);
       });
