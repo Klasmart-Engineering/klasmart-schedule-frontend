@@ -84,7 +84,7 @@
   },
   "scripts": {
     "start": "react-scripts --max_old_space_size=8192 start",
-    "build": "react-scripts build && cp -r build h5pextend && mv h5pextend build/h5pextend",
+    "build": "react-scripts build && cp -r build h5pextend && mv h5pextend build/h5pextend && node ./scripts/version.js",
     "test": "react-scripts test",
     "syncapi": "node ./scripts/syncapi.js",
     "syncLang": "node ./scripts/syncLang",
