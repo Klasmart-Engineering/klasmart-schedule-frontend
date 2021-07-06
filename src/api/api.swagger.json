@@ -8033,6 +8033,10 @@
         "id": {
           "type": "string"
         },
+        "lesson_plan": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentLessonPlan"
+        },
         "program": {
           "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
@@ -8053,6 +8057,17 @@
           }
         },
         "title": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.AssessmentLessonPlan": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         }
       }
@@ -9319,6 +9334,10 @@
         "latest_feedback_at": {
           "type": "integer"
         },
+        "lesson_plan": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentLessonPlan"
+        },
         "schedule_id": {
           "description": "debug",
           "type": "string"
@@ -9402,6 +9421,10 @@
         },
         "id": {
           "type": "string"
+        },
+        "lesson_plan": {
+          "type": "object",
+          "$ref": "#/definitions/entity.AssessmentLessonPlan"
         },
         "remaining_time": {
           "type": "integer"
@@ -11183,6 +11206,9 @@
           "type": "integer"
         },
         "deleteID": {
+          "type": "string"
+        },
+        "group": {
           "type": "string"
         },
         "id": {

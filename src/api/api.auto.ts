@@ -276,12 +276,17 @@ export interface EntityAssessmentItem {
   class_end_time?: number;
   complete_time?: number;
   id?: string;
+  lesson_plan?: EntityAssessmentLessonPlan;
   program?: EntityAssessmentProgram;
   status?: string;
   subjects?: EntityAssessmentSubject[];
   teachers?: EntityAssessmentTeacher[];
   title?: string;
-  lesson_plan?: EntityAssessmentLessonPlan;
+}
+
+export interface EntityAssessmentLessonPlan {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityAssessmentProgram {
@@ -713,6 +718,7 @@ export interface EntityListHomeFunStudiesResultItem {
   id?: string;
   latest_feedback_at?: number;
   lesson_plan?: EntityAssessmentLessonPlan;
+
   /** debug */
   schedule_id?: string;
   status?: string;
@@ -720,10 +726,7 @@ export interface EntityListHomeFunStudiesResultItem {
   teacher_names?: string[];
   title?: string;
 }
-export interface EntityAssessmentLessonPlan {
-  id?: string;
-  name?: string;
-}
+
 export interface EntityListStudentsPerformanceH5PReportResponse {
   items?: EntityStudentsPerformanceH5PReportItem[];
 }
@@ -745,8 +748,9 @@ export interface EntityListStudyAssessmentsResultItem {
   create_at?: number;
   due_at?: number;
   id?: string;
-  remaining_time?: number;
   lesson_plan?: EntityAssessmentLessonPlan;
+  remaining_time?: number;
+
   /** debug */
   schedule_id?: string;
   teacher_names?: string[];
@@ -1333,6 +1337,7 @@ export interface EntityVisibilitySetting {
   createID?: string;
   deleteAt?: number;
   deleteID?: string;
+  group?: string;
   id?: string;
   name?: string;
   number?: number;
