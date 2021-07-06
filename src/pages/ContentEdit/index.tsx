@@ -141,7 +141,6 @@ function ContentEditForm() {
     perm.edit_lesson_material_metadata_and_content_236 ||
     perm.edit_lesson_plan_content_238 ||
     perm.edit_lesson_plan_metadata_237;
-  console.log(hasPerm);
   const adapteredRectIntersection = (entries: any, target: any) => {
     const top = (activeRectRef.current?.current.translated?.top as number) + scrollTop + offsetRef.current;
     const offsetTop = top + scrollTop;
@@ -641,7 +640,7 @@ function ContentEditForm() {
           }
           {rightsideArea}
         </LayoutPair>
-      ) : hasPerm === undefined ? (
+      ) : hasPerm === undefined || contentDetail.permission.allow_edit === undefined ? (
         ""
       ) : (
         permissionTip
