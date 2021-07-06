@@ -214,6 +214,12 @@ type LangRecord<T = string> =
       description: "This lesson plan includes archived lesson material, please remove it and try publishing again.";
       values: undefined;
     }
+  | {
+      id: "library_error_cannot_delete_lesson_plan";
+      description: "This lesson plan cannot be deleted because it has already been used in Schedule. ";
+      values: undefined;
+    }
+  | { id: "library_label_visibility_schools"; description: "Schools"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }

@@ -160,6 +160,8 @@
   "library_label_uploadInfo1": "Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4, MP3, WAV",
   "library_label_uploadInfo2": "(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)",
   "library_error_include_archived_lesson_material": "This lesson plan includes archived lesson material, please remove it and try publishing again.",
+  "library_error_cannot_delete_lesson_plan": "This lesson plan cannot be deleted because it has already been used in Schedule. ",
+  "library_label_visibility_schools": "Schools",
   "assess_tab_assessments": "Assessments",
   "assess_button_search": "Search",
   "assess_text_search teacher": "Search Teacher",

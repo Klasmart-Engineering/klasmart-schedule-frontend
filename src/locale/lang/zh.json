@@ -160,6 +160,8 @@
   "library_label_uploadInfo1": "支持格式：PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4, MP3, WAV",
   "library_label_uploadInfo2": "我们建议您把Office文档转换成PDF后上传，\n或在课堂上使用屏幕共享功能",
   "library_error_include_archived_lesson_material": "这个教学课件包含回收站的素材，请先移除再尝试发布",
+  "library_error_cannot_delete_lesson_plan": "该课件已被引用，您无法删除",
+  "library_label_visibility_schools": "分支机构",
   "assess_tab_assessments": "学习评估",
   "assess_button_search": "搜索",
   "assess_text_search teacher": "搜索老师",
