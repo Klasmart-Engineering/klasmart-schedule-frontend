@@ -236,7 +236,7 @@ export default function Details(props: DetailsProps) {
           item.group !== newList[index - 1].group &&
           newArr.push(<ListSubheader key={`${item.id}+${index}`}>{toMapGroup(item.group)}</ListSubheader>);
         newArr.push(
-          <MenuItem key={item.id} value={item.id}>
+          <MenuItem style={{ paddingLeft: 28 }} key={item.id} value={item.id}>
             {item.name}
           </MenuItem>
         );
