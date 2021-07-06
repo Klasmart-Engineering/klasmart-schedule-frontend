@@ -268,6 +268,7 @@ export const publishWidthAssets = createAsyncThunk<
 export interface LinkedMockOptionsItem {
   id?: string;
   name?: string;
+  group?: string;
 }
 
 export interface LinkedMockOptions {

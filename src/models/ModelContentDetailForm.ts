@@ -1,5 +1,7 @@
 import { EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
 import { ContentFileType, ContentInputSourceType, ContentType } from "../api/type";
+import { d } from "../locale/LocaleManager";
+import { LinkedMockOptionsItem } from "../reducers/content";
 import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
 interface MyExtendedDetailForm {
@@ -64,4 +66,25 @@ export const setQuery = (search: string, hash: Record<string, string | number | 
 export const toQueryString = (hash: Record<string, any>): string => {
   const search = new URLSearchParams(hash);
   return `?${search.toString()}`;
+};
+
+export const toMapVisibilitySettings = (list?: LinkedMockOptionsItem[]): LinkedMockOptionsItem[] => {
+  const schList: LinkedMockOptionsItem[] = [];
+  const orgList: LinkedMockOptionsItem[] = [];
+  if (list && list.length) {
+    list.forEach((item) => {
+      if (item.group === "school") {
+        schList.push(item);
+      }
+      if (item.group === "org") {
+        orgList.push(item);
+      }
+    });
+    return orgList.concat(schList);
+  }
+  return [];
+};
+export const toMapGroup = (group?: string) => {
+  if (group === "school") return d("Schools").t("library_label_visibility_schools");
+  if (group === "org") return d("Organization").t("library_label_visibility_organization");
 };

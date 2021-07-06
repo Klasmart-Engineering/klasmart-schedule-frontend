@@ -9,6 +9,7 @@ import {
   FormControlLabel,
   InputLabel,
   LinearProgress,
+  ListSubheader,
   makeStyles,
   MenuItem,
   OutlinedInput,
@@ -32,7 +33,7 @@ import { FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../..
 import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
-import { ContentDetailForm, formattedTime } from "../../models/ModelContentDetailForm";
+import { ContentDetailForm, formattedTime, toMapGroup, toMapVisibilitySettings } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
@@ -225,16 +226,23 @@ export default function Details(props: DetailsProps) {
   const defaultTheme = useTheme();
   const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
-  // const groupMenuItemList = (list?: LinkedMockOptionsItem[]) =>{
-  //   const newArr: JSX.Element[] = []
-  //   list?.forEach((item, index) => {
-  //     index%3 === 0 && newArr.push(<ListSubheader key={`${item.id}+${index}`}>Category 1</ListSubheader>);
-  //     newArr.push(<MenuItem key={item.id} value={item.id}>
-  //       {item.name}
-  //     </MenuItem>)
-  //   });
-  //   return newArr;
-  // }
+  const groupMenuItemList = (list?: LinkedMockOptionsItem[]) => {
+    const newArr: JSX.Element[] = [];
+    const newList = toMapVisibilitySettings(list);
+    newList.length &&
+      newList.forEach((item, index) => {
+        index === 0 && newArr.push(<ListSubheader key={`${item.id}+${index}`}>{toMapGroup(item.group)}</ListSubheader>);
+        index !== 0 &&
+          item.group !== newList[index - 1].group &&
+          newArr.push(<ListSubheader key={`${item.id}+${index}`}>{toMapGroup(item.group)}</ListSubheader>);
+        newArr.push(
+          <MenuItem key={item.id} value={item.id}>
+            {item.name}
+          </MenuItem>
+        );
+      });
+    return newArr;
+  };
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
     list.map((item) => (
@@ -598,7 +606,7 @@ export default function Details(props: DetailsProps) {
           error={errors.publish_scope ? true : false}
           helperText=""
         >
-          {menuItemList(visibility_settings)}
+          {groupMenuItemList(visibility_settings)}
         </Controller>
         {lesson === "material" && (
           <Controller
