@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
-import { PermissionOr, PermissionType } from "../../components/Permission";
+import { PermissionOr, PermissionType, usePermission } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
@@ -102,7 +102,6 @@ function ContentEditForm() {
     visibility_settings,
     lesson_types,
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  console.log(linkedMockOptions);
   const { lesson, tab, rightside } = useParams<RouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
   const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch } = useQueryCms();
@@ -123,6 +122,26 @@ function ContentEditForm() {
   const activeRectRef = useRef<Active["rect"]>();
   const unmountRef = useRef<Function>();
   const isTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const perm = usePermission([
+    PermissionType.create_content_page_201,
+    PermissionType.edit_org_published_content_235,
+    PermissionType.create_asset_320,
+    PermissionType.create_lesson_material_220,
+    PermissionType.create_lesson_plan_221,
+    PermissionType.edit_lesson_material_metadata_and_content_236,
+    PermissionType.edit_lesson_plan_content_238,
+    PermissionType.edit_lesson_plan_metadata_237,
+  ]);
+  const hasPerm =
+    perm.create_content_page_201 ||
+    perm.edit_org_published_content_235 ||
+    perm.create_asset_320 ||
+    perm.create_lesson_material_220 ||
+    perm.create_lesson_plan_221 ||
+    perm.edit_lesson_material_metadata_and_content_236 ||
+    perm.edit_lesson_plan_content_238 ||
+    perm.edit_lesson_plan_metadata_237;
+  console.log(hasPerm);
   const adapteredRectIntersection = (entries: any, target: any) => {
     const top = (activeRectRef.current?.current.translated?.top as number) + scrollTop + offsetRef.current;
     const offsetTop = top + scrollTop;
@@ -600,7 +619,7 @@ function ContentEditForm() {
         inputSourceWatch={inputSource}
         teacherManualBatchLengthWatch={teacherManualBatchLengthWatch}
       />
-      <PermissionOr
+      {/* <PermissionOr
         value={[
           PermissionType.create_content_page_201,
           PermissionType.edit_org_published_content_235,
@@ -611,22 +630,23 @@ function ContentEditForm() {
           PermissionType.edit_lesson_plan_content_238,
           PermissionType.edit_lesson_plan_metadata_237,
         ]}
-        render={(value) =>
-          (contentDetail.content_type !== ContentType.assets && id ? !!contentDetail.permission.allow_edit : value) ? (
-            <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
-              {
-                <Fragment>
-                  <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />
-                  {leftsideArea}
-                </Fragment>
-              }
-              {rightsideArea}
-            </LayoutPair>
-          ) : (
-            permissionTip
-          )
-        }
-      />
+        render={(value) => */}
+      {(contentDetail.content_type !== ContentType.assets && id ? !!contentDetail.permission.allow_edit : hasPerm) ? (
+        <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
+          {
+            <Fragment>
+              <SelectLesson lesson={lesson} onChangeLesson={handleChangeLesson} disabled={!!id} />
+              {leftsideArea}
+            </Fragment>
+          }
+          {rightsideArea}
+        </LayoutPair>
+      ) : hasPerm === undefined ? (
+        ""
+      ) : (
+        permissionTip
+      )}
+      {/* /> */}
       {/* <DevTool control={control} /> */}
     </DndContext>
   );
