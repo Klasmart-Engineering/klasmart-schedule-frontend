@@ -17,7 +17,7 @@ import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles({
   previewContainer: {
-    width: "600px",
+    width: document.body.clientWidth < 600 ? "22rem" : "600px",
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
   },
@@ -108,7 +108,7 @@ const useStyles = makeStyles({
     fontWeight: "bold",
     width: "18%",
     textAlign: "left",
-    fontSize: "1.1rem",
+    fontSize: document.body.clientWidth < 600 ? "0.9rem" : "1.1rem",
     paddingLeft: "8%",
   },
   row2: {
@@ -116,6 +116,7 @@ const useStyles = makeStyles({
     wordBreak: "break-word",
     fontWeight: 500,
     paddingLeft: "6%",
+    fontSize: document.body.clientWidth < 600 ? "0.8rem" : "1rem",
   },
 });
 
