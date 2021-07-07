@@ -270,7 +270,7 @@ function ScheduleContent() {
       };
       dispatch(getSearchScheduleList({ data, metaLoading: true }));
     } else {
-      if (stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) {
+      if ((stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) || !stateOnlyMine.length) {
         dispatch(resetScheduleTimeViewData([]));
         return;
       }
