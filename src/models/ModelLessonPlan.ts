@@ -66,7 +66,7 @@ export class ModelLessonPlan {
     const newPlan = JSON.parse(plan) as Segment;
     const result = produce(newPlan, (draft) => {
       ModelLessonPlan.forEach(draft, (item) => {
-        if (item.material === null) {
+        if (!item.material || item.material === null) {
           item.material = {};
         }
       });
