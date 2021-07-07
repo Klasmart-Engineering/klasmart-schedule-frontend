@@ -172,9 +172,13 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           defaultValue={initDefaultValue.program?.value || []}
           key={initDefaultValue.program?.key}
           control={control}
+          rules={{
+            validate: (value) => value.length > 0,
+          }}
           render={(props) => (
             <FormattedTextField
               select
+              error={errors.program_ids ? true : false}
               label={d("Program").t("assess_label_program")}
               encode={encodeOneItemArray}
               decode={decodeOneItemArray}
@@ -212,9 +216,13 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           defaultValue={initDefaultValue.subject?.value || []}
           key={initDefaultValue.subject?.key}
           control={control}
+          rules={{
+            validate: (value) => value.length > 0,
+          }}
           render={(props) => (
             <TextField
               select
+              error={errors.subject_ids ? true : false}
               label={d("Subject").t("assess_label_subject")}
               {...props}
               onChange={(e) => {
@@ -252,9 +260,13 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           defaultValue={initDefaultValue.category?.value || []}
           key={initDefaultValue.category?.key}
           control={control}
+          rules={{
+            validate: (value) => value.length > 0,
+          }}
           render={(props) => (
             <FormattedTextField
               select
+              error={errors.category_ids ? true : false}
               label={d("Category").t("library_label_category")}
               encode={encodeOneItemArray}
               decode={decodeOneItemArray}

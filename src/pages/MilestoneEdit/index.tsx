@@ -209,6 +209,7 @@ function MilestoneEditForm() {
           default_program_id: program[0],
           default_subject_ids: subject.join(","),
           default_developmental_id: catetory_id,
+          metaLoading: true,
         })
       );
     },

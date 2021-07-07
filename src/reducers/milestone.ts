@@ -137,6 +137,8 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
     const program_id = default_program_id ? default_program_id : program[0].id;
     if (program_id) {
       const subject = await api.subjects.getSubject({ program_id });
+      if (!subject.length)
+        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
       const subject_ids = default_subject_ids ? default_subject_ids : subject[0].id;
       const [developmental, age, grade] = await Promise.all([
         api.developmentals.getDevelopmental({ program_id, subject_ids }),
