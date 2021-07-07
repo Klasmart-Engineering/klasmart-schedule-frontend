@@ -310,12 +310,12 @@ export default function CreateOutcomings() {
 
   React.useEffect(() => {
     const nextValue: any = {
-      program: [newOptions.program[0]?.id],
-      developmental: [newOptions.developmental[0]?.id],
-      subject: [newOptions.subject[0]?.id],
-      skills: [newOptions.skills[0]?.id],
-      age: [newOptions.age[0]?.id],
-      grade: [newOptions.grade[0]?.id],
+      program: [],
+      developmental: [],
+      subject: [],
+      skills: [],
+      age: [],
+      grade: [],
       assumed: true,
       shortcode: shortCode,
     };
@@ -327,6 +327,10 @@ export default function CreateOutcomings() {
         setValue("skills", []);
         setValue("age", []);
         setValue("grade", []);
+      }
+      if (condition === "subject") {
+        setValue("developmental", nextValue.developmental);
+        setValue("skills", []);
       }
       if (condition === "development") {
         setValue("skills", []);
@@ -345,6 +349,10 @@ export default function CreateOutcomings() {
       setValue("skills", []);
       setValue("age", []);
       setValue("grade", []);
+    }
+    if (condition === "subject") {
+      setValue("developmental", nextValue.developmental);
+      setValue("skills", []);
     }
     if (condition === "development") {
       setValue("skills", []);

@@ -265,9 +265,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="program"
                 defaultValue={outcomeDetail.program}
                 control={control}
+                rules={{
+                  validate: (value) => value.length > 0,
+                }}
                 render={(props) => (
                   <FormattedTextField
                     select
+                    error={errors.program ? true : false}
                     label={d("Program").t("assess_label_program")}
                     encode={encodeOneItemArray}
                     decode={decodeOneItemArray}
@@ -286,26 +290,17 @@ export function OutcomeForm(props: OutcomeFormProps) {
               />
             </Grid>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              {/* <Controller
-                as={TextField}
-                select
-                SelectProps={{ multiple: true }}
-                label={d("Subject").t("assess_label_subject")}
-                name="subject"
-                defaultValue={outcome_id ? outcomeDetail.subject : []}
-                control={control}
-                disabled={showEdit}
-                fullWidth
-              >
-                {getItems(newOptions.subject)}
-              </Controller> */}
               <Controller
                 name="subject"
                 defaultValue={outcome_id ? outcomeDetail.subject : []}
                 control={control}
+                rules={{
+                  validate: (value) => value.length > 0,
+                }}
                 render={(props) => (
                   <TextField
                     select
+                    error={errors.subject ? true : false}
                     label={d("Subject").t("assess_label_subject")}
                     {...props}
                     onChange={(e) => {
@@ -330,9 +325,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="developmental"
                 defaultValue={outcomeDetail.developmental}
                 control={control}
+                rules={{
+                  validate: (value) => value.length > 0,
+                }}
                 render={(props) => (
                   <FormattedTextField
                     select
+                    error={errors.developmental ? true : false}
                     label={d("Category").t("library_label_category")}
                     encode={encodeOneItemArray}
                     decode={decodeOneItemArray}

@@ -1,9 +1,23 @@
-import { Checkbox, createStyles, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import {
+  Checkbox,
+  createStyles,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  Typography,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
 import ClearIcon from "@material-ui/icons/Clear";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import DoneIcon from "@material-ui/icons/Done";
+import ErrorOutlineOutlinedIcon from "@material-ui/icons/ErrorOutlineOutlined";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { useMemo, useState } from "react";
@@ -20,7 +34,6 @@ import { AppDispatch } from "../../reducers";
 import { actWarning } from "../../reducers/notify";
 import { isUnpublish } from "./ThirdSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
-
 const useStyles = makeStyles((theme) =>
   createStyles({
     iconColor: {
@@ -72,6 +85,18 @@ const useStyles = makeStyles((theme) =>
       whiteSpace: "nowrap",
       listStylePosition: "inside",
     },
+    disableTableRow: {
+      "& td": {
+        color: "rgba(0, 0, 0, 0.26)",
+        backgroundColor: "transparent",
+      },
+    },
+    disableBtn: {
+      opacity: 0.6,
+      filter: "alpha(opacity=60)",
+      pointerEvents: "none",
+      cursor: "default",
+    },
   })
 );
 
@@ -100,21 +125,42 @@ function OutomeRow(props: OutcomeProps) {
     }
     registerChange(e);
   };
+  const isLocked = outcome.locked_by && outcome.locked_by !== "-";
   return (
-    <TableRow onClick={(e) => onClickOutcome(outcome.outcome_id)}>
+    <TableRow className={isLocked ? css.disableTableRow : ""} onClick={(e) => onClickOutcome(outcome.outcome_id)}>
       <TableCell align="center" padding="checkbox">
-        <Checkbox
-          icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-          checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-          size="small"
-          className={css.checkbox}
-          color="secondary"
-          value={outcome.outcome_id}
-          checked={hashValue[outcome.outcome_id as string] || false}
-          onClick={stopPropagation()}
-          onChange={handleChangeCheckbox}
-          disabled={isDisable}
-        ></Checkbox>
+        {isLocked ? (
+          <div style={{ display: "inline-block", position: "relative" }}>
+            <LockOutlinedIcon />
+            <Tooltip
+              title={
+                <>
+                  <Typography>In-lock Status</Typography>
+                  <div>Last edited by: </div>
+                  <div>Locked location: </div>
+                  <div>Date edited: </div>
+                  <div>Time edited: </div>
+                </>
+              }
+              placement="bottom-end"
+            >
+              <ErrorOutlineOutlinedIcon style={{ position: "absolute", fontSize: 16, top: -8, left: 16, color: "#0e78d5" }} />
+            </Tooltip>
+          </div>
+        ) : (
+          <Checkbox
+            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+            size="small"
+            className={css.checkbox}
+            color="secondary"
+            value={outcome.outcome_id}
+            checked={hashValue[outcome.outcome_id as string] || false}
+            onClick={stopPropagation()}
+            onChange={handleChangeCheckbox}
+            disabled={isDisable}
+          ></Checkbox>
+        )}
       </TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.outcome_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.shortcode}</TableCell>
@@ -135,7 +181,7 @@ function OutomeRow(props: OutcomeProps) {
         </ul>
         {/* <div className={css.outcomeSet}>{outcome.sets?.map((item) => item.set_name).join(";")}</div> */}
       </TableCell>
-      <TableCell className={clsx(css.tableCell)}>
+      <TableCell className={clsx(css.tableCell, isLocked ? css.disableBtn : "")}>
         {outcome.publish_status === OutcomePublishStatus.published && (
           <Permission value={PermissionType.delete_published_learning_outcome_448}>
             <LButton
