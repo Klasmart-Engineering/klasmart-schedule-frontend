@@ -451,11 +451,12 @@ export default function Details(props: DetailsProps) {
             key={allDefaultValueAndKey.program?.key}
             control={control}
             rules={{
-              required: true,
+              validate: (value) => !!value,
             }}
             render={(props) => (
               <TextField
                 select
+                error={errors.program ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Program").t("library_label_program")}
                 disabled={disabled}
@@ -509,7 +510,7 @@ export default function Details(props: DetailsProps) {
             key={allDefaultValueAndKey.developmental?.key}
             control={control}
             rules={{
-              validate: (value) => value.length > 0,
+              validate: (value) => !!value[0],
             }}
             render={(props) => (
               <FormattedTextField

@@ -86,21 +86,21 @@ export class ModelMockOptions {
   }
 
   static createMandatoryDefaultValue(props: CreateDefaultValueProps, name: "program" | "developmental"): string {
-    const { regulation, contentDetail, linkedMockOptions } = props;
+    const { regulation, contentDetail } = props;
     if (regulation === Regulation.ByContentDetail)
       return Array.isArray(contentDetail[name]) ? (contentDetail[name] || [])[0] : (contentDetail[name] as string);
-    return (linkedMockOptions[name] || [])[0]?.id || "";
+    return "";
   }
 
   static createDefaultValue(
     props: CreateDefaultValueProps,
     name: Exclude<keyof LinkedMockOptions & keyof EntityContentInfoWithDetails, "program">
   ): string[] {
-    const { regulation, contentDetail, linkedMockOptions } = props;
+    const { regulation, contentDetail } = props;
     if (regulation === Regulation.ByContentDetail) return contentDetail[name] || [];
-    const options = linkedMockOptions[name] || [];
-    if (name === "subject" && options.length > 0) return [options[0].id as string];
-    if (options.length === 1) return [options[0].id as string];
+    // const options = linkedMockOptions[name] || [];
+    // if (name === "subject" && options.length > 0) return [options[0].id as string];
+    // if (options.length === 1) return [options[0].id as string];
     return [];
   }
 
