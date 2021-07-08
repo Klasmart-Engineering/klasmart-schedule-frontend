@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 10,
   },
   searchTextCon: {
-    width: 250,
+    width: 340,
   },
   searchBtn: {
     width: "111px",

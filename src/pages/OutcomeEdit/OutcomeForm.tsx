@@ -445,9 +445,9 @@ export function OutcomeForm(props: OutcomeFormProps) {
               )}
             </Grid>
           </Grid>
-          {!showEdit && (
-            <Grid container justify="space-between" className={classes.marginItem}>
-              <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
+          <Grid container justify="space-between" className={classes.marginItem}>
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
+              {!showEdit && (
                 <OutcomeSet
                   title={d("Add more sets").t("assess_set_add_more_sets")}
                   showSetList={showSetList}
@@ -460,9 +460,22 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   defaultSelectOutcomeset={defaultSelectOutcomeset}
                   onInputChange={onInputChange}
                 />
-              </Grid>
+              )}
             </Grid>
-          )}
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} style={{ marginTop: "22px" }}>
+              <Controller
+                as={FormattedTextField}
+                control={control}
+                name="keywords"
+                decode={decodeArray}
+                defaultValue={outcome_id ? outcomeDetail.keywords : []}
+                label={d("Keywords").t("assess_label_keywords")}
+                helperText=""
+                fullWidth
+                disabled={showEdit}
+              />
+            </Grid>
+          </Grid>
           {outcome_id && (
             <Grid container justify="space-between" className={classes.marginItem}>
               <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
@@ -481,7 +494,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
           )}
         </Box>
         <Box style={{ marginTop: 40 }}>
-          <Grid container justify="space-between" style={{ marginTop: "40px" }}>
+          {/*          <Grid container justify="space-between" style={{ marginTop: "40px" }}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 as={FormattedTextField}
@@ -511,7 +524,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 disabled={showEdit}
               />
             </Grid>
-          </Grid>
+          </Grid>*/}
           <Grid container justify="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
               <Controller
