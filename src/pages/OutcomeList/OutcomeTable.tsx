@@ -9,9 +9,8 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
 import ClearIcon from "@material-ui/icons/Clear";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
@@ -34,6 +33,14 @@ import { AppDispatch } from "../../reducers";
 import { actWarning } from "../../reducers/notify";
 import { isUnpublish } from "./ThirdSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
+const LightTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: "rgba(0, 0, 0, 0.87)",
+    boxShadow: theme.shadows[1],
+    fontSize: 12,
+  },
+}))(Tooltip);
 const useStyles = makeStyles((theme) =>
   createStyles({
     iconColor: {
@@ -97,6 +104,17 @@ const useStyles = makeStyles((theme) =>
       pointerEvents: "none",
       cursor: "default",
     },
+    lockTitle: {
+      fontWeight: 700,
+    },
+    lockInfoWrap: {
+      fontSize: 14,
+      height: 28,
+      lineHeight: "28px",
+    },
+    lightGrayColor: {
+      color: "#666",
+    },
   })
 );
 
@@ -132,20 +150,32 @@ function OutomeRow(props: OutcomeProps) {
         {isLocked ? (
           <div style={{ display: "inline-block", position: "relative" }}>
             <LockOutlinedIcon />
-            <Tooltip
+            <LightTooltip
               title={
                 <>
-                  <Typography>In-lock Status</Typography>
-                  <div>Last edited by: </div>
-                  <div>Locked location: </div>
-                  <div>Date edited: </div>
-                  <div>Time edited: </div>
+                  <div className={clsx(css.lockInfoWrap, css.lockTitle)}>In-lock Status</div>
+                  <div className={css.lockInfoWrap}>
+                    <span>Last edited by: </span>
+                    <span></span>
+                  </div>
+                  <div className={css.lockInfoWrap}>
+                    <span>Locked location: </span>
+                    <span></span>
+                  </div>
+                  <div className={css.lockInfoWrap}>
+                    <span>Date edited: </span>
+                    <span></span>
+                  </div>
+                  <div className={css.lockInfoWrap}>
+                    <span>Time edited: </span>
+                    <span></span>
+                  </div>
                 </>
               }
-              placement="bottom-end"
+              placement="right"
             >
               <ErrorOutlineOutlinedIcon style={{ position: "absolute", fontSize: 16, top: -8, left: 16, color: "#0e78d5" }} />
-            </Tooltip>
+            </LightTooltip>
           </div>
         ) : (
           <Checkbox
