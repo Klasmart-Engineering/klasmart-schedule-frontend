@@ -27,6 +27,7 @@ import {
   reject,
   save,
   updateOutcome,
+  resetShortCode,
 } from "../../reducers/outcome";
 import { OutcomeList } from "../OutcomeList";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
@@ -137,6 +138,12 @@ export default function CreateOutcomings() {
   const handleSave = React.useMemo(
     () =>
       handleSubmit(async (value) => {
+        if (!value.shortcode) {
+          const resultInfo = ((await dispatch(generateShortcode({ kind: "outcomes" }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof generateShortcode>
+          >;
+          value.shortcode = resultInfo.payload.shortcode;
+        }
         setValue("assumed", isAssumed);
         if (outcome_id) {
           const { payload } = ((await dispatch(updateOutcome({ outcome_id, value }))) as unknown) as PayloadAction<
@@ -302,6 +309,7 @@ export default function CreateOutcomings() {
   }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcomeDetail.outcome_id, outcome_id, outcomeDetail.subject]);
 
   React.useEffect(() => {
+    dispatch(resetShortCode(""));
     if (!outcome_id) {
       dispatch(generateShortcode({ kind: "outcomes" }));
       dispatch(getNewOptions({ metaLoading: true }));
@@ -336,7 +344,8 @@ export default function CreateOutcomings() {
         setValue("skills", []);
       }
       if (condition === "default") {
-        reset(modelOutcomeDetail(outcomeDetail));
+        const detail = shortCode ? { ...outcomeDetail, shortcode: shortCode } : outcomeDetail;
+        reset(modelOutcomeDetail(detail));
       }
       return;
     }

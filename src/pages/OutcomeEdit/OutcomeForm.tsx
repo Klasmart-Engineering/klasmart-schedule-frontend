@@ -138,7 +138,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
   const shortCodeValidate = (value: string) => {
     const re = /^[0-9A-Z]+$/;
     const newValue = value.trim();
-    if (newValue.length < 5 || !re.test(newValue)) return false;
+    if (newValue.length && (newValue.length < 5 || !re.test(newValue))) return false;
   };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);

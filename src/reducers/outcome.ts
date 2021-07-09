@@ -473,10 +473,14 @@ export const generateShortcode = createAsyncThunk<IQueryGenerateShortcodeResult,
   }
 );
 
-const { reducer } = createSlice({
+const { actions, reducer } = createSlice({
   name: "outcome",
   initialState,
-  reducers: {},
+  reducers: {
+    resetShortCode: (state, { payload }: PayloadAction<string>) => {
+      state.shortCode = payload;
+    },
+  },
   extraReducers: {
     [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
@@ -624,5 +628,5 @@ const { reducer } = createSlice({
     },
   },
 });
-
+export const { resetShortCode } = actions;
 export default reducer;
