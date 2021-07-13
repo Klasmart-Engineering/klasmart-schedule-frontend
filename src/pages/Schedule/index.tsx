@@ -39,6 +39,7 @@ import {
   getSchoolInfo,
   getSearchScheduleList,
   getSubjectByProgramId,
+  resetScheduleTimeViewData,
   ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
