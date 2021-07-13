@@ -325,6 +325,10 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
   }
 );
 
+export const resetReportMockOptions = createAsyncThunk<null>("report/resetReportMockOptions", () => {
+  return null;
+});
+
 interface ReportCategoriesPayLoadProps {
   teacher_id?: string;
 }
@@ -1075,6 +1079,9 @@ const { reducer } = createSlice({
     [getClassListByschool.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassListByschool>>) => {
       state.teachingLoadOnload.classList = initialState.teachingLoadOnload.classList;
       state.teachingLoadOnload.teachingLoadList = initialState.teachingLoadOnload.teachingLoadList;
+    },
+    [resetReportMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof resetReportMockOptions>>) => {
+      state.reportMockOptions = initialState.reportMockOptions;
     },
   },
 });
