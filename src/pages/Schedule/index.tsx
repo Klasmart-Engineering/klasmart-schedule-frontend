@@ -312,7 +312,7 @@ function ScheduleContent() {
       searchAuthContentLists({
         metaLoading: true,
         program_group: "More Featured Content",
-        page_size: 1000,
+        page_size: 0,
         content_type: "2",
       })
     );
@@ -340,9 +340,9 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     if (privilegedMembers("Admin") || privilegedMembers("School") || privilegedMembers("Teacher")) {
-      dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 1000, order_by: "create_at" }));
+      dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 0, order_by: "create_at" }));
     }
-    dispatch(getContentsAuthed({ content_type: "2", page_size: 1000 }));
+    dispatch(getContentsAuthed({ content_type: "2", page_size: 0 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
       setStateMaterialArr([]);
