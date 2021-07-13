@@ -2,6 +2,7 @@ import { Button, Grid, Hidden, makeStyles, SvgIcon, Tooltip, Typography } from "
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { AccessTime, CategoryOutlined, ChevronRight, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
@@ -9,6 +10,7 @@ import { PermissionType, usePermission } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
+import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import ReportTeachingLoad from "../ReportTeachingLoad";
@@ -191,9 +193,11 @@ export const ReportTitle = (props: { title: string; info?: string }) => {
   const css = useStyles();
   const { title, info } = props;
   const history = useHistory();
+  const dispatch = useDispatch();
   const handleBack = useCallback(() => {
+    dispatch(resetReportMockOptions());
     history.push(ReportDashboard.routeBasePath);
-  }, [history]);
+  }, [dispatch, history]);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportTitle}>
