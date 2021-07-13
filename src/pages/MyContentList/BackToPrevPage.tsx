@@ -4,6 +4,7 @@ import React from "react";
 import { EntityFolderContentData, EntityFolderItemInfo } from "../../api/api.auto";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 const LightTooltip = withStyles((theme: Theme) => ({
   tooltip: {
@@ -101,6 +102,7 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
   const css = useStyles();
   const { onGoBack, parentFolderInfo, onRenameFolder } = props;
   const keywords = parentFolderInfo.keywords ? parentFolderInfo.keywords.join(",") : "";
+  const perm = usePermission([PermissionType.create_folder_289]);
   const folderInfo = () => {
     return (
       <>
@@ -154,9 +156,11 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
               {folderInfo()}
             </Grid>
             <Grid item container justify="flex-end">
-              <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
-                {d("Edit").t("library_label_edit")}
-              </Button>
+              {perm.create_folder_289 && (
+                <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
+                  {d("Edit").t("library_label_edit")}
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Hidden>
@@ -173,9 +177,11 @@ export function BackToPrevPage(props: BackToPrevePageProps) {
             </div>
             {folderInfo()}
             <div className={css.mbBtnCon}>
-              <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
-                {d("Edit").t("library_label_edit")}
-              </Button>
+              {perm.create_folder_289 && (
+                <Button variant="outlined" color="primary" onClick={() => onRenameFolder(parentFolderInfo)}>
+                  {d("Edit").t("library_label_edit")}
+                </Button>
+              )}
             </div>
           </Grid>
         </Hidden>
