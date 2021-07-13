@@ -133,7 +133,8 @@ function AssetEdit(props: AssetEditProps) {
     }
     if (assetLibraryId === ContentFileType.video) {
       return fileFormat.video.join();
-    } else return `image/*,audio/*,video/*,${fileFormat.document.join()}, ${fileFormat.pdf.join()}`;
+    } else
+      return `${fileFormat.pdf.join()},${fileFormat.image.join()},${fileFormat.video.join()},${fileFormat.audio.join()},${fileFormat.document.join()},`;
   };
   return (
     <div ref={fileRef} className={uploadCss.uploadBox}>
