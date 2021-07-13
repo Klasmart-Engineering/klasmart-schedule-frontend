@@ -290,20 +290,22 @@ function SmallCalendar(props: CalendarStateProps) {
         <Grid container justify="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
-        <ScheduleFilter
-          handleChangeLoadScheduleView={handleChangeLoadScheduleView}
-          mockOptions={mockOptions}
-          scheduleMockOptions={scheduleMockOptions}
-          handleChangeShowAnyTime={handleChangeShowAnyTime}
-          stateOnlyMine={stateOnlyMine}
-          handleChangeOnlyMine={handleChangeOnlyMine}
-          modelView={modelView}
-          timesTamp={timesTamp}
-          privilegedMembers={privilegedMembers}
-          filterOption={filterOption}
-          user_id={user_id}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
-        />
+        {false && (
+          <ScheduleFilter
+            handleChangeLoadScheduleView={handleChangeLoadScheduleView}
+            mockOptions={mockOptions}
+            scheduleMockOptions={scheduleMockOptions}
+            handleChangeShowAnyTime={handleChangeShowAnyTime}
+            stateOnlyMine={stateOnlyMine}
+            handleChangeOnlyMine={handleChangeOnlyMine}
+            modelView={modelView}
+            timesTamp={timesTamp}
+            privilegedMembers={privilegedMembers}
+            filterOption={filterOption}
+            user_id={user_id}
+            schoolByOrgOrUserData={schoolByOrgOrUserData}
+          />
+        )}
       </MuiPickersUtilsProvider>
     </Box>
   );
