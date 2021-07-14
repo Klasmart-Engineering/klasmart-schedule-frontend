@@ -11852,10 +11852,19 @@
             "type": "string"
           }
         },
+        "last_edited_at": {
+          "type": "integer"
+        },
+        "last_edited_by": {
+          "type": "string"
+        },
         "latest_id": {
           "type": "string"
         },
         "locked_by": {
+          "type": "string"
+        },
+        "locked_location": {
           "type": "string"
         },
         "milestones": {

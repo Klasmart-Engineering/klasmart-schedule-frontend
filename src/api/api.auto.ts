@@ -1545,8 +1545,11 @@ export interface ModelOutcomeView {
   estimated_time?: number;
   grade?: ModelGrade[];
   keywords?: string[];
+  last_edited_at?: number;
+  last_edited_by?: string;
   latest_id?: string;
   locked_by?: string;
+  locked_location?: string;
   milestones?: ModelMilestone[];
   organization_id?: string;
   organization_name?: string;
