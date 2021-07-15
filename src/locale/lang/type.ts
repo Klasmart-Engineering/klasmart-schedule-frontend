@@ -454,6 +454,12 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "assess_approved_successfully"; description: "Approved Successfully"; values: undefined }
+  | { id: "assess_in_lock_status"; description: "Lock Status"; values: undefined }
+  | { id: "assess_last_edited_by"; description: "Last edited by"; values: undefined }
+  | { id: "assess_locked_location"; description: "Locked location"; values: undefined }
+  | { id: "assess_date_edited"; description: "Date edited"; values: undefined }
+  | { id: "assess_time_edited"; description: "Time edited"; values: undefined }
+  | { id: "assess_msg_approve_milestone"; description: "Are you sure you want to approve these milestones?"; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
