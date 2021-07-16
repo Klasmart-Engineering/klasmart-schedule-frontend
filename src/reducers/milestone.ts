@@ -2,11 +2,11 @@ import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult 
 import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
-import { GetOutcomeList, MilestoneDetailResult, MilestoneListResult, SearchMilestonneResult } from "../api/type";
+import { GetOutcomeList, MilestoneDetailResult, MilestoneListResult, MilestoneStatus, SearchMilestonneResult } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { MilestoneQueryCondition } from "../pages/MilestoneList/types";
 import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
-import { actAsyncConfirm } from "./confirm";
+import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actSuccess, actWarning } from "./notify";
 interface IMilestoneState {
@@ -18,7 +18,8 @@ interface IMilestoneState {
   organization_name: string;
   user_name: string;
   outcomeList: GetOutcomeList;
-  outcomeTotal: number;
+  outcomeTotal: number | undefined;
+  user_id: string;
 }
 const PAGE_SIZE = 10;
 interface RootState {
@@ -76,7 +77,8 @@ const initialState: IMilestoneState = {
   organization_name: "",
   user_name: "",
   outcomeList: [],
-  outcomeTotal: 0,
+  outcomeTotal: undefined,
+  user_id: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -87,7 +89,12 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   : any;
 
 type ParamsMilestoneList = LoadingMetaPayload & MilestoneQueryCondition;
-type ResultMilestoneList = AsyncReturnType<typeof api.milestones.searchMilestone>;
+type ResultMilestoneList = {
+  pendingRes?: AsyncReturnType<typeof api.pendingMilestones.searchPendingMilestone>;
+  privateRes?: AsyncReturnType<typeof api.privateMilestones.searchPrivateMilestone>;
+  milestoneRes?: AsyncReturnType<typeof api.milestones.searchMilestone>;
+  user_id?: string;
+};
 export const onLoadMilestoneList = createAsyncThunk<ResultMilestoneList, ParamsMilestoneList>(
   "milestone/onLoadMilestoneList",
   async ({ metaLoading, ...query }) => {
@@ -101,12 +108,18 @@ export const onLoadMilestoneList = createAsyncThunk<ResultMilestoneList, ParamsM
     });
     const { author_id } = query;
     const user_id = meInfo.me?.user_id;
-    const { total, milestones } = await api.milestones.searchMilestone({
-      ...query,
-      author_id: author_id ? user_id : "",
-      page_size: PAGE_SIZE,
-    });
-    return { total, milestones };
+    const resObj: ResultMilestoneList = {};
+    resObj.user_id = user_id as string;
+    const { status, is_unpub } = query;
+    const params = { ...query, author_id: author_id ? user_id : "", page_size: PAGE_SIZE };
+    if (status === MilestoneStatus.pending && !is_unpub) {
+      resObj.pendingRes = await api.pendingMilestones.searchPendingMilestone(params);
+    } else if (is_unpub) {
+      resObj.privateRes = await api.privateMilestones.searchPrivateMilestone(params);
+    } else {
+      resObj.milestoneRes = await api.milestones.searchMilestone(params);
+    }
+    return resObj;
   }
 );
 
@@ -164,6 +177,7 @@ interface ParamsOnLoadMilestoneEdit extends IQueryOnLoadOutcomeListParams {
 interface ResultOnLoadMilestoneEdit {
   milestoneDetail?: AsyncReturnType<typeof api.milestones.obtainMilestone>;
   // shortCode?: AsyncReturnType<typeof api.shortcode.generateShortcode>["shortcode"];
+  user_id?: string;
 }
 export const onLoadMilestoneEdit = createAsyncThunk<ResultOnLoadMilestoneEdit, ParamsOnLoadMilestoneEdit, { state: RootState }>(
   "milestone/onLoadMilestoneEdit",
@@ -180,7 +194,16 @@ export const onLoadMilestoneEdit = createAsyncThunk<ResultOnLoadMilestoneEdit, P
           milestoneDetail.subject && milestoneDetail.subject[0] ? milestoneDetail.subject?.map((v) => v.subject_id).join(",") : "",
       })
     );
-    return { milestoneDetail };
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    const { data } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+      fetchPolicy: "cache-first",
+    });
+    const user_id = data?.me?.user_id as string;
+    return { milestoneDetail, user_id };
   }
 );
 
@@ -211,11 +234,80 @@ export const deleteMilestone = createAsyncThunk<ResultDeleteMilestone, ParamsDel
   }
 );
 
-type ParamsPublishMilestone = Parameters<typeof api.milestones.publishMilestone>[0];
-type ResultPublishMilestone = AsyncReturnType<typeof api.milestones.publishMilestone>;
-export const publishMilestone = createAsyncThunk<ResultPublishMilestone, ParamsPublishMilestone>("milestone/publishMilestone", (ids) => {
-  return api.milestones.publishMilestone(ids);
+type ParamsPublishMilestone = Parameters<typeof api.bulkPublish.publishMilestonesBulk>[0];
+type ResultPublishMilestone = AsyncReturnType<typeof api.bulkPublish.publishMilestonesBulk>;
+export const publishMilestone = createAsyncThunk<ResultPublishMilestone, ParamsPublishMilestone>("milestone/publishMilestone", (id) => {
+  return api.bulkPublish.publishMilestonesBulk(id);
 });
+
+type ParasmsApproveMilestone = Parameters<typeof api.bulkApprove.bulkApproveMilestone>[0]["ids"];
+type ResultApproveMilestone = AsyncReturnType<typeof api.bulkApprove.bulkApproveMilestone>;
+export const approveMilestone = createAsyncThunk<ResultApproveMilestone, ParasmsApproveMilestone>(
+  "milestone/approveMilestone",
+  async (ids, { dispatch }) => {
+    const res = await api.bulkApprove.bulkApproveMilestone({ ids });
+    if (res === "ok") {
+      dispatch(actSuccess("Approved Successfully"));
+    }
+    return res;
+  }
+);
+type ParasmsRejectMilestone = Parameters<typeof api.bulkReject.bulkRejectMilestone>[0];
+type ResultRejectMilestone = AsyncReturnType<typeof api.bulkReject.bulkRejectMilestone>;
+export const rejectMilestone = createAsyncThunk<ResultRejectMilestone, ParasmsRejectMilestone["milestone_ids"]>(
+  "milestone/approveMilestone",
+  async (ids, { dispatch }) => {
+    const title = d("Reason").t("library_label_reason");
+    const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
+    const type = ConfirmDialogType.onlyInput;
+    const { isConfirmed, otherValue } = unwrapResult(await dispatch(actAsyncConfirm({ title, content, type, defaultValue: "" })));
+    if (!isConfirmed) return Promise.reject();
+    return api.bulkReject.bulkRejectMilestone({ milestone_ids: ids, reject_reason: otherValue });
+    // return api.milestones.rejectMilestone( id, { reject_reason })
+  }
+);
+
+type BulkPublishMilestoneParams = Parameters<typeof api.bulkPublish.publishMilestonesBulk>[0];
+export const bulkPublishMilestone = createAsyncThunk<string, BulkPublishMilestoneParams["ids"]>(
+  "outcome/bulkPublishMilestone",
+  async (ids, { dispatch }) => {
+    return api.bulkPublish.publishMilestonesBulk({ ids });
+  }
+);
+
+type ParamsBulkApproveMilestone = Parameters<typeof api.bulkApprove.bulkApproveMilestone>[0];
+type ResultBulkArropveMilestone = AsyncReturnType<typeof api.bulkApprove.bulkApproveMilestone>;
+export const bulkApprove = createAsyncThunk<ResultBulkArropveMilestone, ParamsBulkApproveMilestone["ids"]>(
+  "milestone/bulkApprove",
+  async (ids, { dispatch }) => {
+    if (!ids || !ids.length)
+      return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
+    const content = d("Are you sure you want to approve these milestones?").t("assess_msg_approve_milestone");
+    const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
+    if (!isConfirmed) return Promise.reject();
+    const res = await api.bulkApprove.bulkApproveMilestone({ ids });
+    if (res === "ok") {
+      dispatch(actSuccess("Approved Successfully"));
+    }
+    return res;
+  }
+);
+
+type ResultBulkRejectMilestone = AsyncReturnType<typeof api.bulkReject.bulkRejectMilestone>;
+type ParamsBulkRejectMilestone = Parameters<typeof api.bulkReject.bulkRejectMilestone>[0];
+export const bulkReject = createAsyncThunk<ResultBulkRejectMilestone, ParamsBulkRejectMilestone["milestone_ids"]>(
+  "outcome/bulkReject",
+  async (ids, { dispatch }) => {
+    if (!ids || !ids.length)
+      return Promise.reject(dispatch(actWarning(d("At least one learning outcome should be selected.").t("assess_msg_remove_select_one"))));
+    const title = d("Reason").t("library_label_reason");
+    const content = d("Please specify the reason for rejection.").t("library_msg_reject_reason");
+    const type = ConfirmDialogType.onlyInput;
+    const { isConfirmed, text } = unwrapResult(await dispatch(actAsyncConfirm({ title, defaultValue: "", content, type })));
+    if (!isConfirmed) return Promise.reject();
+    return await api.bulkReject.bulkRejectMilestone({ milestone_ids: ids, reject_reason: text });
+  }
+);
 
 type ParamsObtainMilestone = Parameters<typeof api.milestones.obtainMilestone>[0] & LoadingMetaPayload;
 type ResultObtainMilestone = AsyncReturnType<typeof api.milestones.obtainMilestone>;
@@ -296,8 +388,19 @@ const { reducer } = createSlice({
   reducers: {},
   extraReducers: {
     [onLoadMilestoneList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadMilestoneList>>) => {
-      state.milestoneList = payload.milestones;
-      state.total = payload.total || 0;
+      state.user_id = payload.user_id as string;
+      if (payload.pendingRes) {
+        state.milestoneList = payload.pendingRes.milestones;
+        state.total = payload.pendingRes.total || 0;
+      }
+      if (payload.privateRes) {
+        state.milestoneList = payload.privateRes.milestones;
+        state.total = payload.privateRes.total || 0;
+      }
+      if (payload.milestoneRes) {
+        state.milestoneList = payload.milestoneRes.milestones;
+        state.total = payload.milestoneRes.total || 0;
+      }
     },
     [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>) => {
       state.linkedMockOptions = payload;
@@ -305,9 +408,11 @@ const { reducer } = createSlice({
     [getLinkedMockOptions.rejected.type]: (state: any, { error }: any) => {},
     [onLoadMilestoneEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadMilestoneEdit>>) => {
       state.milestoneDetail = payload.milestoneDetail || {};
+      state.user_id = payload.user_id || "";
     },
     [onLoadMilestoneEdit.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.milestoneDetail = initialState.milestoneDetail;
+      state.user_id = initialState.user_id;
     },
     [onLoadOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadOutcomeList>>) => {
       state.outcomeList = payload.outcomeRes?.list || [];
@@ -315,7 +420,7 @@ const { reducer } = createSlice({
     },
     [onLoadOutcomeList.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeList = [];
-      state.outcomeTotal = 0;
+      state.outcomeTotal = initialState.outcomeTotal;
     },
     [generateShortcode.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof generateShortcode>>) => {
       state.shortCode = payload.shortcode || "";

@@ -1,6 +1,6 @@
 import { Box, Button, ButtonProps, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { ArrowBack, CancelOutlined, Create, Delete, Publish, Save } from "@material-ui/icons";
+import { ArrowBack, CancelOutlined, Check, Clear, ClearSharp, Create, Delete, Publish, Save } from "@material-ui/icons";
 import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
@@ -12,7 +12,7 @@ import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { MilestoneDetailResult, MilestoneStatus } from "../../api/type";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,
@@ -112,76 +112,251 @@ export interface MilestoneHeaderProps {
   onPublish: LButtonProps["onClick"];
   onEdit: ButtonProps["onClick"];
   onDelete: ButtonProps["onClick"];
+  onReject: ButtonProps["onClick"];
+  onApprove: LButtonProps["onClick"];
   canEdit: boolean;
   formMethods: UseFormMethods<MilestoneDetailResult>;
+  isMyself: boolean;
+  is_unpub: boolean;
 }
 export function MilestoneHeader(props: MilestoneHeaderProps) {
   const history = useHistory();
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const { milestone_id, canEdit, onCancel, onPublish, onSave, onEdit, onDelete, formMethods, milestoneDetail } = props;
-  const status = milestoneDetail?.status;
-  const canClick = status === MilestoneStatus.unpublished;
+  const {
+    milestone_id,
+    canEdit,
+    onCancel,
+    onPublish,
+    onSave,
+    onEdit,
+    onDelete,
+    onReject,
+    onApprove,
+    formMethods,
+    milestoneDetail,
+    isMyself,
+    is_unpub,
+  } = props;
+  const status = milestoneDetail?.status || MilestoneStatus.draft;
+  const canClick = status === MilestoneStatus.draft || status === MilestoneStatus.rejected;
   const {
     formState: { isDirty },
   } = formMethods;
+  const perm = usePermission([
+    PermissionType.edit_my_unpublished_milestone_487,
+    PermissionType.delete_org_pending_milestone_489,
+    PermissionType.edit_published_milestone_441,
+    PermissionType.delete_my_pending_milestone_490,
+    PermissionType.delete_unpublished_milestone_449,
+    PermissionType.delete_my_unpublished_milestone_488,
+    PermissionType.delete_published_milestone_450,
+    PermissionType.approve_pending_milestone_491,
+    PermissionType.reject_pending_milestone_492,
+  ]);
   const goBack = () => {
     history.go(-1);
   };
   const getHeaderButtons = () => {
     return (
       <>
-        {(!milestone_id || (milestone_id && canEdit)) && (
+        {status === MilestoneStatus.draft && (
           <>
-            <Button
-              variant="contained"
-              endIcon={<CancelOutlinedIcon />}
-              className={clsx(css.headerButton, css.redButton)}
-              onClick={onCancel}
-            >
-              {d("Cancel").t("assess_label_cancel")}
-            </Button>
-            <LButton
-              variant="contained"
-              endIcon={<SaveOutlinedIcon />}
-              color="primary"
-              className={css.headerButton}
-              disabled={canClick ? !canClick : !isDirty}
-              onClick={onSave}
-            >
-              {d("Save").t("assess_label_save")}
-            </LButton>
-            <LButton
-              variant="contained"
-              endIcon={<PublishOutlinedIcon />}
-              className={clsx(css.headerButton, css.greenButton)}
-              onClick={onPublish}
-              disabled={canClick ? !canClick : !isDirty}
-            >
-              {d("Publish").t("assess_label_publish")}
-            </LButton>
+            {!milestone_id || canEdit ? (
+              <>
+                <Button
+                  variant="contained"
+                  endIcon={<CancelOutlinedIcon />}
+                  className={clsx(css.headerButton, css.redButton)}
+                  onClick={onCancel}
+                >
+                  {d("Cancel").t("assess_label_cancel")}
+                </Button>
+                <LButton
+                  variant="contained"
+                  endIcon={<SaveOutlinedIcon />}
+                  color="primary"
+                  className={css.headerButton}
+                  disabled={!isDirty}
+                  onClick={onSave}
+                >
+                  {d("Save").t("assess_label_save")}
+                </LButton>
+                <LButton
+                  variant="contained"
+                  endIcon={<PublishOutlinedIcon />}
+                  className={clsx(css.headerButton, css.greenButton)}
+                  onClick={onPublish}
+                  disabled={!milestone_id ? true : isDirty}
+                >
+                  {d("Publish").t("assess_label_publish")}
+                </LButton>
+              </>
+            ) : isMyself ? (
+              <>
+                <Button
+                  variant="contained"
+                  endIcon={<CreateOutlinedIcon />}
+                  color="primary"
+                  className={clsx(css.headerButton, css.editButton, css.editBtn)}
+                  onClick={onEdit}
+                >
+                  {d("Edit").t("library_label_edit")}
+                </Button>
+                <Button
+                  variant="outlined"
+                  endIcon={<DeleteOutlinedIcon />}
+                  className={clsx(css.deleteButton, css.deleteBtn)}
+                  onClick={onDelete}
+                >
+                  {d("Delete").t("assess_label_delete")}
+                </Button>
+              </>
+            ) : (
+              perm.edit_my_unpublished_milestone_487 && (
+                <>
+                  <Button
+                    variant="contained"
+                    endIcon={<CreateOutlinedIcon />}
+                    color="primary"
+                    className={clsx(css.headerButton, css.editButton, css.editBtn)}
+                    onClick={onEdit}
+                  >
+                    {d("Edit").t("library_label_edit")}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    endIcon={<DeleteOutlinedIcon />}
+                    className={clsx(css.deleteButton, css.deleteBtn)}
+                    onClick={onDelete}
+                  >
+                    {d("Delete").t("assess_label_delete")}
+                  </Button>
+                </>
+              )
+            )}
           </>
         )}
-        {milestone_id && !canEdit && (
+        {status === MilestoneStatus.pending && (
           <>
-            <Button
-              variant="contained"
-              endIcon={<CreateOutlinedIcon />}
-              color="primary"
-              className={clsx(css.headerButton, css.editButton, css.editBtn)}
-              onClick={onEdit}
-            >
-              {d("Edit").t("library_label_edit")}
-            </Button>
-            <Button
-              variant="outlined"
-              endIcon={<DeleteOutlinedIcon />}
-              className={clsx(css.deleteButton, css.deleteBtn)}
-              onClick={onDelete}
-            >
-              {d("Delete").t("assess_label_delete")}
-            </Button>
+            {isMyself
+              ? perm.delete_my_pending_milestone_490 && (
+                  <Button
+                    variant="outlined"
+                    endIcon={<DeleteOutlinedIcon />}
+                    className={clsx(css.deleteButton, css.deleteBtn)}
+                    onClick={onDelete}
+                  >
+                    {d("Delete").t("assess_label_delete")}
+                  </Button>
+                )
+              : perm.delete_org_pending_milestone_489 && (
+                  <Button
+                    variant="outlined"
+                    endIcon={<DeleteOutlinedIcon />}
+                    className={clsx(css.deleteButton, css.deleteBtn)}
+                    onClick={onDelete}
+                  >
+                    {d("Delete").t("assess_label_delete")}
+                  </Button>
+                )}
+            {!is_unpub && (
+              <>
+                {perm.reject_pending_milestone_492 && (
+                  <Button variant="contained" endIcon={<Clear />} className={clsx(css.headerButton, css.redButton)} onClick={onReject}>
+                    {d("Reject").t("assess_label_reject")}
+                  </Button>
+                )}
+                {perm.approve_pending_milestone_491 && (
+                  <LButton variant="contained" endIcon={<Check />} className={clsx(css.headerButton, css.greenButton)} onClick={onApprove}>
+                    {d("Approve").t("assess_label_approve")}
+                  </LButton>
+                )}
+              </>
+            )}
+          </>
+        )}
+        {status === MilestoneStatus.rejected && (
+          <>
+            {!canEdit ? (
+              <>
+                {perm.edit_my_unpublished_milestone_487 && (
+                  <Button
+                    variant="contained"
+                    endIcon={<CreateOutlinedIcon />}
+                    color="primary"
+                    className={clsx(css.headerButton, css.editButton, css.editBtn)}
+                    onClick={onEdit}
+                  >
+                    {d("Edit").t("library_label_edit")}
+                  </Button>
+                )}
+                <Button
+                  variant="outlined"
+                  endIcon={<DeleteOutlinedIcon />}
+                  className={clsx(css.deleteButton, css.deleteBtn)}
+                  onClick={onDelete}
+                >
+                  {d("Delete").t("assess_label_delete")}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="contained"
+                  endIcon={<CancelOutlinedIcon />}
+                  className={clsx(css.headerButton, css.redButton)}
+                  onClick={onCancel}
+                >
+                  {d("Cancel").t("assess_label_cancel")}
+                </Button>
+                <LButton
+                  variant="contained"
+                  endIcon={<SaveOutlinedIcon />}
+                  color="primary"
+                  className={css.headerButton}
+                  disabled={!isDirty}
+                  onClick={onSave}
+                >
+                  {d("Save").t("assess_label_save")}
+                </LButton>
+                <LButton
+                  variant="contained"
+                  endIcon={<PublishOutlinedIcon />}
+                  className={clsx(css.headerButton, css.greenButton)}
+                  onClick={onPublish}
+                  disabled={isDirty}
+                >
+                  {d("Publish").t("assess_label_publish")}
+                </LButton>
+              </>
+            )}
+          </>
+        )}
+        {status === MilestoneStatus.published && (
+          <>
+            {perm.edit_published_milestone_441 && (
+              <Button
+                variant="contained"
+                endIcon={<CreateOutlinedIcon />}
+                color="primary"
+                className={clsx(css.headerButton, css.editButton, css.editBtn)}
+                onClick={onEdit}
+              >
+                {d("Edit").t("library_label_edit")}
+              </Button>
+            )}
+            {perm.delete_published_milestone_450 && (
+              <Button
+                variant="outlined"
+                endIcon={<DeleteOutlinedIcon />}
+                className={clsx(css.deleteButton, css.deleteBtn)}
+                onClick={onDelete}
+              >
+                {d("Delete").t("assess_label_delete")}
+              </Button>
+            )}
           </>
         )}
       </>
@@ -190,58 +365,131 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
   const getHeaderButtonsSmallScreen = () => {
     return (
       <>
-        {(!milestone_id || (milestone_id && canEdit)) && (
+        {status === MilestoneStatus.draft && (
           <>
-            <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
-              <CancelOutlined fontSize="small" />
-            </IconButton>
-            <LButton
-              disabled={canClick ? !canClick : !isDirty}
-              className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
-              color="primary"
-              onClick={onSave}
-            >
-              <Save fontSize="small" />
-            </LButton>
-            <IconButton
-              disabled={canClick ? !canClick : !isDirty}
-              className={clsx(css.iconButton, css.greenButton)}
-              color="primary"
-              onClick={onPublish}
-            >
-              <Publish fontSize="small" />
-            </IconButton>
+            {!milestone_id || canEdit ? (
+              <>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
+                  <CancelOutlined fontSize="small" />
+                </IconButton>
+                <LButton
+                  disabled={!isDirty}
+                  className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
+                  color="primary"
+                  onClick={onSave}
+                >
+                  <Save fontSize="small" />
+                </LButton>
+                <IconButton
+                  disabled={canClick ? !canClick : !isDirty}
+                  className={clsx(css.iconButton, css.greenButton)}
+                  color="primary"
+                  onClick={onPublish}
+                >
+                  <Publish fontSize="small" />
+                </IconButton>
+              </>
+            ) : isMyself ? (
+              <>
+                <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
+                  <Create fontSize="small" />
+                </IconButton>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+                  <Delete fontSize="small" />
+                </IconButton>
+              </>
+            ) : (
+              perm.edit_my_unpublished_milestone_487 && (
+                <>
+                  <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
+                    <Create fontSize="small" />
+                  </IconButton>
+                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </>
+              )
+            )}
           </>
         )}
-        {milestone_id && !canEdit && (
+        {status === MilestoneStatus.pending && (
           <>
-            {canClick && (
-              <Permission value={PermissionType.delete_unpublished_milestone_449}>
+            {isMyself
+              ? perm.delete_my_pending_milestone_490 && (
+                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+                    <Delete fontSize="small" />
+                  </IconButton>
+                )
+              : perm.delete_org_pending_milestone_489 && (
+                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+                    <Delete fontSize="small" />
+                  </IconButton>
+                )}
+            {!is_unpub && (
+              <>
+                {perm.reject_pending_milestone_492 && (
+                  <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onReject}>
+                    <ClearSharp fontSize="small" />
+                  </IconButton>
+                )}
+                {perm.approve_pending_milestone_491 && (
+                  <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onApprove}>
+                    <Check fontSize="small" />
+                  </IconButton>
+                )}
+              </>
+            )}
+          </>
+        )}
+        {status === MilestoneStatus.rejected && (
+          <>
+            {!canEdit ? (
+              <>
+                {perm.edit_my_unpublished_milestone_487 && (
+                  <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
+                    <Create fontSize="small" />
+                  </IconButton>
+                )}
                 <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
                   <Delete fontSize="small" />
                 </IconButton>
-              </Permission>
-            )}
-            {!canClick && (
-              <Permission value={PermissionType.delete_published_milestone_450}>
-                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
-                  <Delete fontSize="small" />
+              </>
+            ) : (
+              <>
+                <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onCancel}>
+                  <CancelOutlined fontSize="small" />
                 </IconButton>
-              </Permission>
-            )}
-            {canClick && (
-              <Permission value={PermissionType.edit_unpublished_milestone_440}>
-                <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
-                  <Create fontSize="small" />
+                <LButton
+                  disabled={!isDirty}
+                  className={clsx(css.iconButton, css.primaryIconButton, css.saveButton)}
+                  color="primary"
+                  onClick={onSave}
+                >
+                  <Save fontSize="small" />
+                </LButton>
+                <IconButton
+                  disabled={canClick ? !canClick : !isDirty}
+                  className={clsx(css.iconButton, css.greenButton)}
+                  color="primary"
+                  onClick={onPublish}
+                >
+                  <Publish fontSize="small" />
                 </IconButton>
-              </Permission>
+              </>
             )}
-            {!canClick && (
-              <Permission value={PermissionType.edit_published_milestone_441}>
-                <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
-                  <Create fontSize="small" />
-                </IconButton>
-              </Permission>
+          </>
+        )}
+        {status === MilestoneStatus.published && (
+          <>
+            {perm.edit_published_milestone_441 && (
+              <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
+                <Create fontSize="small" />
+              </IconButton>
+            )}
+            {perm.delete_published_milestone_450 && (
+              <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
+                <Delete fontSize="small" />
+              </IconButton>
             )}
           </>
         )}

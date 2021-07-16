@@ -464,6 +464,59 @@
         }
       }
     },
+    "/bulk_approve/milestones": {
+      "put": {
+        "description": "bulk approve milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "bulk approve milestone",
+        "operationId": "bulkApproveMilestone",
+        "parameters": [
+          {
+            "description": "milestone id list",
+            "name": "id_list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/bulk_publish/learning_outcomes": {
       "put": {
         "description": "submit publish learning outcomes",
@@ -517,6 +570,59 @@
         }
       }
     },
+    "/bulk_publish/milestones": {
+      "put": {
+        "description": "submit publish milestones",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "publish bulk milestone",
+        "operationId": "publishMilestonesBulk",
+        "parameters": [
+          {
+            "description": "milestone id list",
+            "name": "id_list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/bulk_reject/learning_outcomes": {
       "put": {
         "description": "reject learning outcomes",
@@ -533,6 +639,59 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/model.OutcomeBulkRejectRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bulk_reject/milestones": {
+      "put": {
+        "description": "bulk reject milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "bulk reject milestone",
+        "operationId": "bulkRejectMilestone",
+        "parameters": [
+          {
+            "description": "milestone id list",
+            "name": "bulk_reject_list",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneBulkRejectRequest"
             }
           }
         ],
@@ -3988,7 +4147,7 @@
             "in": "query"
           },
           {
-            "enum": ["draft", "published"],
+            "enum": ["draft", "pending", "published", "rejected"],
             "type": "string",
             "description": "search by publish_status",
             "name": "status",
@@ -4139,65 +4298,6 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/milestones/publish": {
-      "post": {
-        "description": "publish milestone",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["milestone"],
-        "summary": "publish milestone",
-        "operationId": "publishMilestone",
-        "parameters": [
-          {
-            "description": "publish milestone",
-            "name": "milestones",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/model.MilestoneList"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "schema": {
-              "$ref": "#/definitions/api.ConflictResponse"
             }
           },
           "500": {
@@ -4577,6 +4677,100 @@
         }
       }
     },
+    "/pending_milestones": {
+      "get": {
+        "description": "search pending milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "search pending milestone",
+        "operationId": "searchPendingMilestone",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by search_key",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by description",
+            "name": "description",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by shortcode",
+            "name": "shortcode",
+            "in": "query"
+          },
+          {
+            "enum": ["draft", "pending", "published", "rejected"],
+            "type": "string",
+            "description": "search by publish_status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by author",
+            "name": "author_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneSearchResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/ping": {
       "get": {
         "description": "Ping and test service",
@@ -4696,6 +4890,100 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/model.OutcomeSearchResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/private_milestones": {
+      "get": {
+        "description": "search private milestone",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["milestone"],
+        "summary": "search private milestone",
+        "operationId": "searchPrivateMilestone",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by search_key",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by description",
+            "name": "description",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by shortcode",
+            "name": "shortcode",
+            "in": "query"
+          },
+          {
+            "enum": ["draft", "pending", "published", "rejected"],
+            "type": "string",
+            "description": "search by publish_status",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by author",
+            "name": "author_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/model.MilestoneSearchResponse"
             }
           },
           "400": {
@@ -9518,6 +9806,9 @@
             "type": "string"
           }
         },
+        "reject_reason": {
+          "type": "string"
+        },
         "shortcode": {
           "type": "string"
         },
@@ -11399,6 +11690,20 @@
         }
       }
     },
+    "model.MilestoneBulkRejectRequest": {
+      "type": "object",
+      "properties": {
+        "milestone_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reject_reason": {
+          "type": "string"
+        }
+      }
+    },
     "model.MilestoneList": {
       "type": "object",
       "properties": {
@@ -11476,11 +11781,23 @@
             "type": "string"
           }
         },
+        "last_edited_at": {
+          "type": "integer"
+        },
+        "last_edited_by": {
+          "type": "string"
+        },
         "latest_id": {
           "type": "string"
         },
         "locked_by": {
           "type": "string"
+        },
+        "locked_location": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "milestone_id": {
           "type": "string"
@@ -11518,6 +11835,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "reject_reason": {
+          "type": "string"
         },
         "shortcode": {
           "type": "string"
@@ -11852,11 +12172,23 @@
             "type": "string"
           }
         },
+        "last_edited_at": {
+          "type": "integer"
+        },
+        "last_edited_by": {
+          "type": "string"
+        },
         "latest_id": {
           "type": "string"
         },
         "locked_by": {
           "type": "string"
+        },
+        "locked_location": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "milestones": {
           "type": "array",

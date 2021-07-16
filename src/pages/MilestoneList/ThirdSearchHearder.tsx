@@ -1,14 +1,15 @@
-import { Button, Divider, Grid, Menu, MenuItem, TextField } from "@material-ui/core";
+import { Button, Divider, Grid, Grow, Menu, MenuItem, MenuList, Paper, Popper, TextField } from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import { MoreHoriz } from "@material-ui/icons";
+import ArrowDropDownOutlinedIcon from "@material-ui/icons/ArrowDropDownOutlined";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import clsx from "clsx";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
 import { MilestoneOrderBy, MilestoneStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
+import { Permission, PermissionOr, PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { MilestoneQueryCondition, MilestoneQueryConditionBaseProps } from "./types";
 
@@ -97,12 +98,38 @@ const useStyles = makeStyles((theme) => ({
     left: "60%",
   },
 }));
-
+export const UNPUB = "UNPUB";
 function SubLearningOutcome(props: MilestoneQueryConditionBaseProps) {
   const classes = useStyles();
   const { value, onChange } = props;
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const perm = usePermission([PermissionType.view_my_pending_milestone_429]);
+  const unpublished = () => {
+    if (perm.view_my_pending_milestone_429) {
+      return [
+        { label: d("Draft").t("assess_label_draft"), value: MilestoneStatus.draft },
+        { label: d("Waiting for Approval").t("assess_label_waiting_for_approval"), value: MilestoneStatus.pending },
+        { label: d("Rejected").t("assess_label_rejected"), value: MilestoneStatus.rejected },
+      ];
+    } else {
+      return [
+        { label: d("Draft").t("assess_label_draft"), value: MilestoneStatus.draft },
+        { label: d("Rejected").t("assess_label_rejected"), value: MilestoneStatus.rejected },
+      ];
+    }
+  };
+  const showDropdown = (event: any) => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleClickActionItem = (e: ChangeEvent<{}>, status: MilestoneQueryCondition["status"]) => {
+    onChange({ ...value, status, page: 1, is_unpub: UNPUB });
+  };
   const handleClickStatus = (status: MilestoneQueryCondition["status"]) => () => {
-    onChange({ ...value, status, page: 1 });
+    onChange({ ...value, status, page: 1, is_unpub: "" });
   };
   return (
     <>
@@ -115,16 +142,50 @@ function SubLearningOutcome(props: MilestoneQueryConditionBaseProps) {
             {d("Published").t("assess_label_published")}
           </Button>
         </Permission>
-        <Permission value={PermissionType.view_unpublished_milestone_417}>
+        <Permission value={PermissionType.view_pending_milestone_486}>
           <Button
             className={clsx(classes.button, {
-              [classes.active]: value?.status === MilestoneStatus.unpublished,
+              [classes.active]: value?.status === MilestoneStatus.pending && value.is_unpub !== UNPUB,
             })}
-            onClick={handleClickStatus(MilestoneStatus.unpublished)}
+            onClick={handleClickStatus(MilestoneStatus.pending)}
           >
-            {d("Unpublished").t("library_label_unpublished")}
+            {d("Pending").t("assess_label_pending")}
           </Button>
         </Permission>
+        <PermissionOr value={[PermissionType.view_unpublished_milestone_417, PermissionType.view_my_unpublished_milestone_428]}>
+          <Button
+            ref={anchorRef}
+            className={clsx(classes.button, { [classes.active]: value.is_unpub === UNPUB })}
+            endIcon={<ArrowDropDownOutlinedIcon />}
+            onMouseEnter={showDropdown}
+            onMouseLeave={handleClose}
+          >
+            {d("Unpublished").t("assess_label_unpublished")}
+            <Popper open={open} anchorEl={anchorRef.current} transition disablePortal>
+              {({ TransitionProps, placement }) => (
+                <Grow {...TransitionProps} style={{ transformOrigin: placement === "bottom" ? "center top" : "center bottom" }}>
+                  <Paper>
+                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleClose}>
+                      {unpublished().map((item) => (
+                        <MenuItem
+                          key={item.label}
+                          selected={
+                            value.status === MilestoneStatus.pending
+                              ? value.status === item.value && value.is_unpub === UNPUB
+                              : value.status === item.value
+                          }
+                          onClick={(event) => handleClickActionItem(event, item.value)}
+                        >
+                          {item.label}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
+          </Button>
+        </PermissionOr>
       </div>
     </>
   );
@@ -132,6 +193,8 @@ function SubLearningOutcome(props: MilestoneQueryConditionBaseProps) {
 
 enum BulkAction {
   delete = "delete",
+  approve = "approve",
+  reject = "reject",
 }
 
 interface BulkActionOption {
@@ -152,9 +215,42 @@ function getBulkAction(condition: MilestoneQueryCondition, perm: PermissionResul
         ];
       }
       return pubRes;
-    case MilestoneStatus.unpublished:
+    case MilestoneStatus.pending:
+      let pendingRes: BulkActionOption[] = [];
+      if (condition.is_unpub) {
+        if (perm.delete_unpublished_milestone_449 || perm.delete_my_pending_milestone_490) {
+          pendingRes = [
+            {
+              label: d("Delete").t("assess_label_delete"),
+              value: BulkAction.delete,
+            },
+          ];
+        }
+      } else {
+        if (perm.delete_org_pending_milestone_489) {
+          pendingRes.push({
+            label: d("Delete").t("assess_label_delete"),
+            value: BulkAction.delete,
+          });
+        }
+        if (perm.approve_pending_milestone_491) {
+          pendingRes.push({
+            label: d("Approve").t("assess_label_approve"),
+            value: BulkAction.approve,
+          });
+        }
+        if (perm.reject_pending_milestone_492) {
+          pendingRes.push({
+            label: d("Reject").t("assess_label_reject"),
+            value: BulkAction.reject,
+          });
+        }
+      }
+      return pendingRes;
+    case MilestoneStatus.draft:
+    case MilestoneStatus.rejected:
       let unPubRes: BulkActionOption[] = [];
-      if (perm.delete_unpublished_milestone_449) {
+      if (perm.delete_unpublished_milestone_449 || perm.delete_my_unpublished_milestone_488) {
         unPubRes = [
           {
             label: d("Delete").t("assess_label_delete"),
@@ -179,13 +275,25 @@ const sortOptions = () => {
 
 export interface ThirdSearchHeaderProps extends MilestoneQueryConditionBaseProps {
   onBulkDelete: () => any;
+  onBulkApprove: () => any;
+  onBulkReject: () => any;
 }
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete } = props;
-  const perm = usePermission([PermissionType.delete_published_milestone_450, PermissionType.delete_unpublished_milestone_449]);
+  const { value, onChange, onBulkDelete, onBulkApprove, onBulkReject } = props;
+  const perm = usePermission([
+    PermissionType.delete_org_pending_milestone_489,
+    PermissionType.delete_my_pending_milestone_490,
+    PermissionType.delete_unpublished_milestone_449,
+    PermissionType.delete_my_unpublished_milestone_488,
+    PermissionType.delete_published_milestone_450,
+    PermissionType.approve_pending_milestone_491,
+    PermissionType.reject_pending_milestone_492,
+  ]);
   const handleChangeBulkAction = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === BulkAction.delete) onBulkDelete();
+    if (event.target.value === BulkAction.approve) onBulkApprove();
+    if (event.target.value === BulkAction.reject) onBulkReject();
   };
   const handleChangeOrder = (event: ChangeEvent<HTMLInputElement>) => {
     const order_by = event.target.value as MilestoneOrderBy | undefined;
@@ -252,8 +360,16 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
 
 export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
-  const { value, onChange, onBulkDelete } = props;
-  const perm = usePermission([PermissionType.delete_published_milestone_450, PermissionType.delete_unpublished_milestone_449]);
+  const { value, onChange, onBulkDelete, onBulkApprove, onBulkReject } = props;
+  const perm = usePermission([
+    PermissionType.delete_org_pending_milestone_489,
+    PermissionType.delete_my_pending_milestone_490,
+    PermissionType.delete_unpublished_milestone_449,
+    PermissionType.delete_my_unpublished_milestone_488,
+    PermissionType.delete_published_milestone_450,
+    PermissionType.approve_pending_milestone_491,
+    PermissionType.reject_pending_milestone_492,
+  ]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElLeft, setAnchorElLeft] = React.useState<null | HTMLElement>(null);
   const handleClickBulkActionButton = (event: any) => {
@@ -262,6 +378,8 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
   const handleClickActionItem = (event: any, bulkaction: BulkAction) => {
     setAnchorElLeft(null);
     if (bulkaction === BulkAction.delete) onBulkDelete();
+    if (bulkaction === BulkAction.approve) onBulkApprove();
+    if (bulkaction === BulkAction.reject) onBulkReject();
   };
   const handleClose = () => {
     setAnchorElLeft(null);

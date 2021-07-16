@@ -778,6 +778,7 @@ export interface EntityMilestone {
   organization_id?: string;
   outcomes?: EntityOutcome[];
   programs?: string[];
+  reject_reason?: string;
   shortcode?: string;
   source_id?: string;
   status?: string;
@@ -1418,6 +1419,11 @@ export interface ModelMilestone {
   milestone_name?: string;
 }
 
+export interface ModelMilestoneBulkRejectRequest {
+  milestone_ids?: string[];
+  reject_reason?: string;
+}
+
 export interface ModelMilestoneList {
   ids?: string[];
 }
@@ -1438,8 +1444,11 @@ export interface ModelMilestoneView {
   description?: string;
   grade?: ModelGrade[];
   grade_ids?: string[];
+  last_edited_at?: number;
+  last_edited_by?: string;
   latest_id?: string;
   locked_by?: string;
+  locked_location?: string[];
   milestone_id?: string;
   milestone_name?: string;
   organization?: ModelOrganizationView;
@@ -1448,6 +1457,7 @@ export interface ModelMilestoneView {
   outcomes?: ModelOutcomeView[];
   program?: ModelProgram[];
   program_ids?: string[];
+  reject_reason?: string;
   shortcode?: string;
   source_id?: string;
   status?: string;
@@ -1545,8 +1555,11 @@ export interface ModelOutcomeView {
   estimated_time?: number;
   grade?: ModelGrade[];
   keywords?: string[];
+  last_edited_at?: number;
+  last_edited_by?: string;
   latest_id?: string;
   locked_by?: string;
+  locked_location?: string[];
   milestones?: ModelMilestone[];
   organization_id?: string;
   organization_name?: string;
@@ -1837,6 +1850,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         id_list
       ),
+
+    /**
+     * @tags milestone
+     * @name bulkApproveMilestone
+     * @summary bulk approve milestone
+     * @request PUT:/bulk_approve/milestones
+     * @description bulk approve milestone
+     */
+    bulkApproveMilestone: (id_list: ModelMilestoneList, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/bulk_approve/milestones`,
+        "PUT",
+        params,
+        id_list
+      ),
   };
   bulkPublish = {
     /**
@@ -1853,6 +1881,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         id_list
       ),
+
+    /**
+     * @tags milestone
+     * @name publishMilestonesBulk
+     * @summary publish bulk milestone
+     * @request PUT:/bulk_publish/milestones
+     * @description submit publish milestones
+     */
+    publishMilestonesBulk: (id_list: ModelMilestoneList, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/bulk_publish/milestones`,
+        "PUT",
+        params,
+        id_list
+      ),
   };
   bulkReject = {
     /**
@@ -1865,6 +1908,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     rejectLearningOutcomesBulk: (bulk_reject_list: ModelOutcomeBulkRejectRequest, params?: RequestParams) =>
       this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/bulk_reject/learning_outcomes`,
+        "PUT",
+        params,
+        bulk_reject_list
+      ),
+
+    /**
+     * @tags milestone
+     * @name bulkRejectMilestone
+     * @summary bulk reject milestone
+     * @request PUT:/bulk_reject/milestones
+     * @description bulk reject milestone
+     */
+    bulkRejectMilestone: (bulk_reject_list: ModelMilestoneBulkRejectRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/bulk_reject/milestones`,
         "PUT",
         params,
         bulk_reject_list
@@ -2881,7 +2939,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         name?: string;
         description?: string;
         shortcode?: string;
-        status?: "draft" | "published";
+        status?: "draft" | "pending" | "published" | "rejected";
         author_id?: string;
         page?: number;
         page_size?: number;
@@ -2924,19 +2982,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         milestones
       ),
-
-    /**
-     * @tags milestone
-     * @name publishMilestone
-     * @summary publish milestone
-     * @request POST:/milestones/publish
-     * @description publish milestone
-     */
-    publishMilestone: (milestones: ModelMilestoneList, params?: RequestParams) =>
-      this.request<
-        string,
-        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
-      >(`/milestones/publish`, "POST", params, milestones),
 
     /**
      * @tags milestone
@@ -3046,6 +3091,34 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params
       ),
   };
+  pendingMilestones = {
+    /**
+     * @tags milestone
+     * @name searchPendingMilestone
+     * @summary search pending milestone
+     * @request GET:/pending_milestones
+     * @description search pending milestone
+     */
+    searchPendingMilestone: (
+      query?: {
+        search_key?: string;
+        name?: string;
+        description?: string;
+        shortcode?: string;
+        status?: "draft" | "pending" | "published" | "rejected";
+        author_id?: string;
+        page?: number;
+        page_size?: number;
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<ModelMilestoneSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/pending_milestones${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
   ping = {
     /**
      * @tags common
@@ -3083,6 +3156,34 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<ModelOutcomeSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/private_learning_outcomes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+  };
+  privateMilestones = {
+    /**
+     * @tags milestone
+     * @name searchPrivateMilestone
+     * @summary search private milestone
+     * @request GET:/private_milestones
+     * @description search private milestone
+     */
+    searchPrivateMilestone: (
+      query?: {
+        search_key?: string;
+        name?: string;
+        description?: string;
+        shortcode?: string;
+        status?: "draft" | "pending" | "published" | "rejected";
+        author_id?: string;
+        page?: number;
+        page_size?: number;
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<ModelMilestoneSearchResponse, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/private_milestones${this.addQueryParams(query)}`,
         "GET",
         params
       ),

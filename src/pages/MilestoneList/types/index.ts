@@ -11,7 +11,9 @@ type NonNullRecordValue<T> = {
   [K in keyof T]: NonOnlyNull<T[K]>;
 };
 
-export type MilestoneQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.milestones.searchMilestone>[0]>>;
+export type MilestoneQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.milestones.searchMilestone>[0]>> & {
+  is_unpub?: string;
+};
 
 export enum MilestoneListExectSearch {
   all = "search_key",

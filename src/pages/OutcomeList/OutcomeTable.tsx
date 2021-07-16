@@ -9,31 +9,35 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
 import ClearIcon from "@material-ui/icons/Clear";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import DoneIcon from "@material-ui/icons/Done";
-import ErrorOutlineOutlinedIcon from "@material-ui/icons/ErrorOutlineOutlined";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { GetOutcomeDetail, OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
 import { Permission, PermissionType } from "../../components/Permission/Permission";
-import { d, t } from "../../locale/LocaleManager";
+import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
-import { AppDispatch } from "../../reducers";
-import { actWarning } from "../../reducers/notify";
+import { formatTimeToEng } from "../../models/ModelReports";
 import { isUnpublish } from "./ThirdSearchHeader";
 import { BulkListForm, BulkListFormKey, OutcomeQueryCondition } from "./types";
+const LightTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: "rgba(0, 0, 0, 0.87)",
+    boxShadow: theme.shadows[1],
+    fontSize: 12,
+  },
+}))(Tooltip);
 const useStyles = makeStyles((theme) =>
   createStyles({
     iconColor: {
@@ -91,11 +95,61 @@ const useStyles = makeStyles((theme) =>
         backgroundColor: "transparent",
       },
     },
+    disableTableCell: {
+      position: "relative",
+      zIndex: 100,
+      color: "rgba(0, 0, 0, 0.26)",
+      backgroundColor: "transparent",
+    },
     disableBtn: {
       opacity: 0.6,
       filter: "alpha(opacity=60)",
       pointerEvents: "none",
       cursor: "default",
+    },
+    lockWrap: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+    },
+    trapezoidCon: {
+      width: "27px",
+      borderTop: "3px solid #d8e9f8",
+      borderLeft: "2px solid #fff",
+      borderRight: "2px solid #fff",
+      height: 0,
+    },
+    lockCon: {
+      width: 0,
+      height: 0,
+      borderTop: "22px solid #d8e9f8",
+      borderLeft: "13.5px solid #d8e9f8",
+      borderRight: "13.5px solid #d8e9f8",
+      borderBottom: "5px solid #fff",
+      textAlign: "center",
+      borderRadius: "1px",
+      position: "absolute",
+      marginTop: 1,
+      marginLeft: 2,
+    },
+    lockTitle: {
+      fontWeight: 700,
+    },
+    lockInfoWrap: {
+      fontSize: 14,
+      height: 28,
+      lineHeight: "28px",
+      color: "#000",
+    },
+    lockIcon: {
+      fontSize: 16,
+      color: "#0f78d5",
+      position: "absolute",
+      top: -20,
+      left: -8,
+    },
+    lightGrayColor: {
+      color: "#666",
     },
   })
 );
@@ -114,53 +168,60 @@ interface OutcomeProps extends OutcomeActionProps {
 }
 function OutomeRow(props: OutcomeProps) {
   const css = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
   const { outcome, queryCondition, selectedContentGroupContext, onDelete, onClickOutcome, userId, onApprove, onReject } = props;
   const { registerChange, hashValue } = selectedContentGroupContext;
-  const [isDisable, setIsDisable] = useState(false);
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (outcome.locked_by && outcome.locked_by !== "-") {
-      setIsDisable(true);
-      return dispatch(actWarning(t("assess_msg_locked_lo")));
-    }
     registerChange(e);
   };
-  const isLocked = outcome.locked_by && outcome.locked_by !== "-";
+  const isLocked = !!(outcome.locked_by && outcome.locked_by !== "-");
   return (
     <TableRow className={isLocked ? css.disableTableRow : ""} onClick={(e) => onClickOutcome(outcome.outcome_id)}>
-      <TableCell align="center" padding="checkbox">
-        {isLocked ? (
-          <div style={{ display: "inline-block", position: "relative" }}>
-            <LockOutlinedIcon />
-            <Tooltip
-              title={
-                <>
-                  <Typography>In-lock Status</Typography>
-                  <div>Last edited by: </div>
-                  <div>Locked location: </div>
-                  <div>Date edited: </div>
-                  <div>Time edited: </div>
-                </>
-              }
-              placement="bottom-end"
-            >
-              <ErrorOutlineOutlinedIcon style={{ position: "absolute", fontSize: 16, top: -8, left: 16, color: "#0e78d5" }} />
-            </Tooltip>
-          </div>
-        ) : (
-          <Checkbox
-            icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
-            checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
-            size="small"
-            className={css.checkbox}
-            color="secondary"
-            value={outcome.outcome_id}
-            checked={hashValue[outcome.outcome_id as string] || false}
-            onClick={stopPropagation()}
-            onChange={handleChangeCheckbox}
-            disabled={isDisable}
-          ></Checkbox>
+      <TableCell className={isLocked ? css.disableTableCell : ""} style={{ width: 100 }} align="center" padding="checkbox">
+        {isLocked && (
+          <LightTooltip
+            title={
+              <>
+                <div className={clsx(css.lockInfoWrap, css.lockTitle)}>In-lock Status</div>
+                <div className={css.lockInfoWrap}>
+                  <span>{d("Last edited by").t("assess_last_edited_by")}: </span>
+                  <span className={css.lightGrayColor}>{outcome.last_edited_by}</span>
+                </div>
+                <div className={css.lockInfoWrap}>
+                  <span>{d("Locked location").t("assess_locked_location")}: </span>
+                  <span className={css.lightGrayColor}>{outcome.locked_location?.join(",")}</span>
+                </div>
+                <div className={css.lockInfoWrap}>
+                  <span>{d("Date edited").t("assess_date_edited")}: </span>
+                  <span className={css.lightGrayColor}>{formatTimeToEng(outcome.last_edited_at as number, "date")}</span>
+                </div>
+                <div className={css.lockInfoWrap}>
+                  <span>{d("Time edited").t("assess_time_edited")}: </span>
+                  <span className={css.lightGrayColor}>{formatTimeToEng(outcome.last_edited_at as number, "time")}</span>
+                </div>
+              </>
+            }
+            placement="right"
+          >
+            <div className={css.lockWrap}>
+              <div className={css.trapezoidCon}></div>
+              <div className={css.lockCon}>
+                <LockOutlinedIcon className={css.lockIcon} />
+              </div>
+            </div>
+          </LightTooltip>
         )}
+        <Checkbox
+          icon={<CheckBoxOutlineBlank viewBox="3 3 18 18"></CheckBoxOutlineBlank>}
+          checkedIcon={<CheckBox viewBox="3 3 18 18"></CheckBox>}
+          size="small"
+          className={css.checkbox}
+          color="secondary"
+          value={outcome.outcome_id}
+          checked={hashValue[outcome.outcome_id as string] || false}
+          onClick={stopPropagation()}
+          onChange={handleChangeCheckbox}
+          disabled={isLocked}
+        ></Checkbox>
       </TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.outcome_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.shortcode}</TableCell>
