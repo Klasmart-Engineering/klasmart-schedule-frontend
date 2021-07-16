@@ -18,6 +18,7 @@ import {
   bulkPublishMilestone,
   bulkReject,
   deleteMilestone,
+  generateShortcode,
   getLinkedMockOptions,
   occupyMilestone,
   onLoadMilestoneEdit,
@@ -114,6 +115,12 @@ function MilestoneEditForm() {
     () =>
       handleSubmit(async (value) => {
         setRegulation(Regulation.ByMilestoneDetail);
+        if (!value.shortcode) {
+          const resultInfo = ((await dispatch(generateShortcode({ kind: "milestones" }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof generateShortcode>
+          >;
+          value.shortcode = resultInfo.payload.shortcode;
+        }
         const { outcomes, ...restValues } = value;
         const outcome_ancestor_ids = outcomes?.map((v) => v.ancestor_id as string);
         const inputValue = { ...restValues, outcome_ancestor_ids };
