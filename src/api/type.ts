@@ -166,7 +166,9 @@ export type OutcomeSetResult = NonNullable<AsyncReturnType<typeof api.sets.pullO
 
 export enum MilestoneStatus {
   published = "published",
-  unpublished = "draft",
+  pending = "pending",
+  draft = "draft",
+  rejected = "rejected",
 }
 export enum MilestoneOrderBy {
   name = "name",

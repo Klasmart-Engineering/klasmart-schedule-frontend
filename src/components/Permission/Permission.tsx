@@ -432,6 +432,15 @@ export enum PermissionType {
   publish_free_content_for_all_hub_89000 = "publish_free_content_for_all_hub_89000",
   publish_free_content_for_specific_orgs_89001 = "publish_free_content_for_specific_orgs_89001",
   publish_free_content_for_all_orgs_89002 = "publish_free_content_for_all_orgs_89002",
+  view_pending_milestone_486 = "view_pending_milestone_486",
+  view_my_unpublished_milestone_428 = "view_my_unpublished_milestone_428",
+  edit_my_unpublished_milestone_487 = "edit_my_unpublished_milestone_487",
+  delete_my_pending_milestone_490 = "delete_my_pending_milestone_490",
+  delete_org_pending_milestone_489 = "delete_org_pending_milestone_489",
+  delete_my_unpublished_milestone_488 = "delete_my_unpublished_milestone_488",
+  approve_pending_milestone_491 = "approve_pending_milestone_491",
+  reject_pending_milestone_492 = "reject_pending_milestone_492",
+  view_my_pending_milestone_429 = "view_my_pending_milestone_429",
 }
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);

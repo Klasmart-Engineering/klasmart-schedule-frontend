@@ -1,7 +1,7 @@
 import { Box, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { MilestoneDetailResult } from "../../api/type";
+import { MilestoneDetailResult, MilestoneStatus } from "../../api/type";
 import { decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -58,8 +58,22 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         {item.name}
       </MenuItem>
     ));
+  const isRejected = milestone_id && milestoneDetail.status && milestoneDetail.status === MilestoneStatus.rejected;
   return (
     <Box component="form" p="4.5% 8.5%">
+      {isRejected && (
+        <TextField
+          label={d("Reason").t("assess_label_reason")}
+          fullWidth
+          disabled
+          variant="outlined"
+          InputProps={{
+            readOnly: true,
+            style: { color: "rgba(0,0,0,1)" },
+          }}
+          value={milestoneDetail.reject_reason}
+        />
+      )}
       <Controller
         as={FormattedTextField}
         control={control}
@@ -69,6 +83,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         fullWidth
         multiline
         rowsMax={3}
+        className={isRejected ? css.fieldset : ""}
         encode={frontTrim}
         decode={frontTrim}
         defaultValue={initDefaultValue.milestone_name?.value}

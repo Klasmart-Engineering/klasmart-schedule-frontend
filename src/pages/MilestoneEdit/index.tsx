@@ -6,13 +6,17 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { GetOutcomeDetail, MilestoneDetailResult, MilestoneStatus } from "../../api/type";
+import { GetOutcomeDetail, MilestoneDetailResult, MilestoneOrderBy, MilestoneStatus } from "../../api/type";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ModelMilestoneOptions } from "../../models/ModelMilestone";
 import { RootState } from "../../reducers";
 import {
+  approveMilestone,
   AsyncTrunkReturned,
+  bulkPublishMilestone,
+  bulkReject,
   deleteMilestone,
   getLinkedMockOptions,
   occupyMilestone,
@@ -25,11 +29,12 @@ import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { TabValue } from "../ContentPreview/type";
 import MilestoneList from "../MilestoneList";
+import { UNPUB } from "../OutcomeList/ThirdSearchHeader";
 import { OutcomeListExectSearch } from "../OutcomeList/types";
 import ContainedOutcomeList, { AddOutcomes, ContainedOutcomeListProps } from "./ContainedOutcomeList";
 import ContentTab from "./ContentTab";
 import MilestoneForm from "./MilestoneForm";
-import { GENERALMILESTONE, MilestoneHeader } from "./MilestoneHeader";
+import { GENERALMILESTONE, MilestoneHeader, MilestoneHeaderProps } from "./MilestoneHeader";
 import { Outcomes, OutcomesProps } from "./Outcomes";
 import { OutcomeSearchProps } from "./OutcomeSearch";
 import { Regulation } from "./type";
@@ -61,6 +66,7 @@ export interface MilestoneCondition {
   page: number;
   search: string;
   first_save: boolean;
+  is_unpub: string;
 }
 export const useQueryCms = (): MilestoneCondition => {
   const { search } = useLocation();
@@ -73,7 +79,8 @@ export const useQueryCms = (): MilestoneCondition => {
   const page = Number(query.get("page")) || 1;
   const first = query.get("first_save");
   const first_save = first ? (first === "true" ? true : false) : false;
-  return { id, exect_search, search_key, assumed, page, search, first_save };
+  const is_unpub = query.get("is_unpub") || "";
+  return { id, exect_search, search_key, assumed, page, search, first_save, is_unpub };
 };
 function MilestoneEditForm() {
   // const { breakpoints } = useTheme();
@@ -81,20 +88,23 @@ function MilestoneEditForm() {
   const dispatch = useDispatch();
   const history = useHistory();
   const condition = useQueryCms();
-  const { id, exect_search, search_key, assumed, page, search, first_save } = condition;
+  const { id, exect_search, search_key, assumed, page, search, first_save, is_unpub } = condition;
   const formMethods = useForm<MilestoneDetailResult>();
-  const { watch, getValues, handleSubmit, setValue, control, errors } = formMethods;
+  const { watch, getValues, handleSubmit, setValue, control, errors, reset } = formMethods;
   const { tab } = useParams<RouteParams>();
   const { routeBasePath } = MilestoneEdit;
-  const { milestoneDetail, linkedMockOptions, shortCode, outcomeList, outcomeTotal } = useSelector<RootState, RootState["milestone"]>(
-    (state) => state.milestone
-  );
+  const { milestoneDetail, linkedMockOptions, shortCode, outcomeList, outcomeTotal, user_id } = useSelector<
+    RootState,
+    RootState["milestone"]
+  >((state) => state.milestone);
+  const isMyself = useMemo(() => milestoneDetail.author?.author_id === user_id, [milestoneDetail.author, user_id]);
   const [canEdit, setCanEdit] = useState(false);
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByMilestoneDetail : Regulation.ByMilestoneDetailAndOptionCount);
   const initDefaultValue = useMemo(
     () => ModelMilestoneOptions.createDefaultValueAndKey({ regulation, milestoneDetail, linkedMockOptions }),
     [linkedMockOptions, milestoneDetail, regulation]
   );
+  const perm = usePermission([PermissionType.view_pending_milestone_486]);
   const outcomes = watch("outcomes");
   const isGeneralMilestone = milestoneDetail.type === GENERALMILESTONE;
   const handleCancel = () => {
@@ -112,6 +122,8 @@ function MilestoneEditForm() {
             AsyncTrunkReturned<typeof updateMilestone>
           >;
           if (payload === "ok") {
+            reset();
+            setValue("outcomes", outcomes, { shouldDirty: false });
             dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
           }
         } else {
@@ -126,38 +138,22 @@ function MilestoneEditForm() {
           }
         }
       }),
-    [dispatch, handleSubmit, history, id]
+    [dispatch, handleSubmit, history, id, reset, setValue]
   );
-  const handlePublish = useMemo(
-    () =>
-      handleSubmit(async (value) => {
-        const { outcomes, ...restValues } = value;
-        const outcome_ancestor_ids = outcomes?.map((v) => v.ancestor_id as string);
-        const inputValue = { ...restValues, outcome_ancestor_ids };
-        if (!id) {
-          const milestone = cloneDeep(inputValue);
-          milestone.with_publish = true;
-          const { payload } = ((await dispatch(saveMilestone(milestone))) as unknown) as PayloadAction<
-            AsyncTrunkReturned<typeof saveMilestone>
-          >;
-          if (payload === "ok") {
-            dispatch(actSuccess(d("Published Successfully").t("assess_msg_published_successfully")));
-            history.push(MilestoneList.routeRedirectDefault);
-          }
-        } else {
-          const milestone = cloneDeep(inputValue);
-          milestone.with_publish = true;
-          const { payload } = ((await dispatch(updateMilestone({ milestone_id: id, milestone }))) as unknown) as PayloadAction<
-            AsyncTrunkReturned<typeof updateMilestone>
-          >;
-          if (payload === "ok") {
-            dispatch(actSuccess(d("Published Successfully").t("assess_msg_published_successfully")));
-            history.push(MilestoneList.routeRedirectDefault);
-          }
-        }
-      }),
-    [dispatch, handleSubmit, history, id]
-  );
+  const handlePublish: MilestoneHeaderProps["onPublish"] = async () => {
+    const { payload } = ((await dispatch(bulkPublishMilestone([milestoneDetail.milestone_id as string]))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof bulkPublishMilestone>
+    >;
+    if (payload === "ok") {
+      if (perm.view_pending_milestone_486) {
+        history.push(`/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}`);
+      } else {
+        history.push(
+          `/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}&is_unpub=UNPUB`
+        );
+      }
+    }
+  };
   const handleEdit = async () => {
     if (milestoneDetail.status === MilestoneStatus.published) {
       const result: any = await dispatch(occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true }));
@@ -173,6 +169,23 @@ function MilestoneEditForm() {
     const { payload } = ((await dispatch(deleteMilestone([id]))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteMilestone>>;
     if (payload === "ok") {
       history.goBack();
+    }
+  };
+  const handleReject: MilestoneHeaderProps["onReject"] = async () => {
+    const { payload } = ((await dispatch(bulkReject([milestoneDetail.milestone_id as string]))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof bulkReject>
+    >;
+    if (payload === "ok") {
+      dispatch(actSuccess("Reject Success"));
+      history.push(`/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}`);
+    }
+  };
+  const handleApprove: MilestoneHeaderProps["onApprove"] = async () => {
+    const { payload } = ((await dispatch(approveMilestone([milestoneDetail.milestone_id as string]))) as unknown) as PayloadAction<
+      AsyncTrunkReturned<typeof bulkReject>
+    >;
+    if (payload === "ok") {
+      history.push(`/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}`);
     }
   };
   const handleChangeTab = useMemo(
@@ -313,8 +326,12 @@ function MilestoneEditForm() {
         onPublish={handlePublish}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onReject={handleReject}
+        onApprove={handleApprove}
         canEdit={canEdit}
         formMethods={formMethods}
+        isMyself={isMyself}
+        is_unpub={is_unpub === UNPUB}
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         {leftside}

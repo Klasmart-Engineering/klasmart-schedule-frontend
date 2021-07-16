@@ -1,3 +1,4 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +8,8 @@ import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/Assessm
 import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
 import { AppDispatch, RootState } from "../../reducers";
-import { deleteMilestone, onLoadMilestoneList } from "../../reducers/milestone";
+import { approveMilestone, bulkApprove, bulkReject, deleteMilestone, onLoadMilestoneList } from "../../reducers/milestone";
+import MilestoneEdit from "../MilestoneEdit";
 import { MilestoneTable, MilestoneTableProps } from "./MilestoneTable";
 import SecondSearchHeader, { SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHearder";
@@ -62,7 +64,8 @@ const useQuery = (): MilestoneQueryCondition => {
     const page = Number(query.get("page")) || 1;
     const author_id = query.get("author_id") || "";
     const order_by = (query.get("order_by") as MilestoneOrderBy | null) || undefined;
-    return clearNull({ name, status, page, order_by, search_key, description, shortcode, author_id });
+    const is_unpub = query.get("is_unpub");
+    return clearNull({ name, status, page, order_by, search_key, description, shortcode, author_id, is_unpub });
   }, [search]);
 };
 
@@ -71,9 +74,9 @@ export default function MilestonesList() {
   const history = useHistory();
   const condition = useQuery();
   const formMethods = useForm<BulkListForm>();
-  const { watch } = formMethods;
+  const { watch, reset } = formMethods;
   const { refreshKey, refreshWithDispatch } = useRefreshWithDispatch();
-  const { milestoneList, total } = useSelector<RootState, RootState["milestone"]>((state) => state.milestone);
+  const { milestoneList, total, user_id } = useSelector<RootState, RootState["milestone"]>((state) => state.milestone);
   const ids = watch(BulkListFormKey.CHECKED_BULK_IDS);
   const perm = usePermission([PermissionType.view_unpublished_milestone_417, PermissionType.view_published_milestone_418]);
   const hasPerm = perm.view_published_milestone_418 || perm.view_unpublished_milestone_417;
@@ -89,7 +92,23 @@ export default function MilestonesList() {
   };
   const handleChangePage: MilestoneTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickMilestone: MilestoneTableProps["onClickMilestone"] = (milestone_id) => {
-    history.push(`/milestone/milestone-edit/tab/details?id=${milestone_id}`);
+    history.push({
+      pathname: MilestoneEdit.routeRedirectDefault,
+      search: toQueryString(clearNull({ id: milestone_id, is_unpub: condition.is_unpub })),
+    });
+    // history.push(`/milestone/milestone-edit/tab/details?id=${milestone_id}`);
+  };
+  const handleReject: MilestoneTableProps["onReject"] = (id) => {
+    return refreshWithDispatch(dispatch(bulkReject([id])).then(unwrapResult));
+  };
+  const handleApprove: MilestoneTableProps["onApprove"] = (id) => {
+    return refreshWithDispatch(dispatch(approveMilestone([id])).then(unwrapResult));
+  };
+  const handleBulkReject = () => {
+    return refreshWithDispatch(dispatch(bulkReject(ids)).then(unwrapResult));
+  };
+  const handleBulkApprove = () => {
+    return refreshWithDispatch(dispatch(bulkApprove(ids)).then(unwrapResult));
   };
   useEffect(() => {
     if (milestoneList?.length === 0 && total && total > 0) {
@@ -98,10 +117,11 @@ export default function MilestonesList() {
     }
   }, [condition, history, milestoneList, total]);
   useEffect(() => {
+    reset();
     (async () => {
       await dispatch(onLoadMilestoneList({ ...condition, metaLoading: true }));
     })();
-  }, [condition, dispatch, refreshKey]);
+  }, [condition, dispatch, refreshKey, reset]);
   return (
     <>
       <FirstSearchHeader />
@@ -109,8 +129,20 @@ export default function MilestonesList() {
       {hasPerm && (
         <>
           <SecondSearchHeader value={condition} onChange={handleChange} />
-          <ThirdSearchHeader value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
-          <ThirdSearchHeaderMb value={condition} onChange={handleChange} onBulkDelete={handleBulkDelete} />
+          <ThirdSearchHeader
+            value={condition}
+            onChange={handleChange}
+            onBulkDelete={handleBulkDelete}
+            onBulkApprove={handleBulkApprove}
+            onBulkReject={handleBulkReject}
+          />
+          <ThirdSearchHeaderMb
+            value={condition}
+            onChange={handleChange}
+            onBulkDelete={handleBulkDelete}
+            onBulkApprove={handleBulkApprove}
+            onBulkReject={handleBulkReject}
+          />
         </>
       )}
       {isPending ? (
@@ -127,6 +159,9 @@ export default function MilestonesList() {
             onChangePage={handleChangePage}
             onClickMilestone={handleClickMilestone}
             onDelete={handleDelete}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            user_id={user_id}
           />
         ) : (
           emptyTip
