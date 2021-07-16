@@ -214,8 +214,8 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
                 </Button>
               </>
             ) : (
-              perm.edit_my_unpublished_milestone_487 && (
-                <>
+              <>
+                {perm.edit_unpublished_milestone_440 && (
                   <Button
                     variant="contained"
                     endIcon={<CreateOutlinedIcon />}
@@ -225,6 +225,8 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
                   >
                     {d("Edit").t("library_label_edit")}
                   </Button>
+                )}
+                {perm.delete_unpublished_milestone_449 && (
                   <Button
                     variant="outlined"
                     endIcon={<DeleteOutlinedIcon />}
@@ -233,8 +235,8 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
                   >
                     {d("Delete").t("assess_label_delete")}
                   </Button>
-                </>
-              )
+                )}
+              </>
             )}
           </>
         )}
@@ -399,16 +401,18 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
                 </IconButton>
               </>
             ) : (
-              perm.edit_my_unpublished_milestone_487 && (
-                <>
+              <>
+                {perm.edit_unpublished_milestone_440 && (
                   <IconButton color="primary" className={clsx(css.iconButton, css.editButton, css.greenButton)} onClick={onEdit}>
                     <Create fontSize="small" />
                   </IconButton>
+                )}
+                {perm.delete_unpublished_milestone_449 && (
                   <IconButton className={clsx(css.iconButton, css.redButton)} color="primary" onClick={onDelete}>
                     <Delete fontSize="small" />
                   </IconButton>
-                </>
-              )
+                )}
+              </>
             )}
           </>
         )}

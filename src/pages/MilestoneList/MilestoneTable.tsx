@@ -93,6 +93,12 @@ const useStyles = makeStyles((theme) =>
       color: "rgba(0, 0, 0, 0.26)",
       backgroundColor: "transparent",
     },
+    disableBtn: {
+      opacity: 0.6,
+      filter: "alpha(opacity=60)",
+      pointerEvents: "none",
+      cursor: "default",
+    },
     lockWrap: {
       position: "absolute",
       top: 0,
@@ -225,7 +231,7 @@ function MilestoneRow(props: MilestoneProps) {
         {isGeneralMilestone ? "None Specified" : milestone.category?.map((item) => item.category_name).join(",")}
       </TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(milestone.create_at)}</TableCell>
-      <TableCell className={clsx(css.tableCell)}>
+      <TableCell className={clsx(css.tableCell, isLocked ? css.disableBtn : "")}>
         {!isGeneralMilestone && milestone.status === MilestoneStatus.published && (
           <Permission value={PermissionType.delete_published_milestone_450}>
             <LButton
