@@ -15,7 +15,7 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
 export interface OutcomesProps {
   outcomeList: GetOutcomeList;
   value?: GetOutcomeList;
-  outcomeTotal: number;
+  outcomeTotal: number | undefined;
   outcomePage: number;
   onSearch: OutcomeSearchProps["onSearch"];
   condition: MilestoneCondition;
@@ -32,14 +32,16 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   return (
     <div style={{ minHeight: 900 }}>
       <OutcomeSearch condition={condition} onSearch={onSearch} />
-      {outcomeList && outcomeList.length ? (
+      {outcomeTotal === undefined ? (
+        ""
+      ) : outcomeList && outcomeList.length ? (
         <>
           <OutcomeTable outcomeList={outcomeList} value={value} onChange={onChange} canEdit={canEdit} onClickOutcome={onClickOutcome} />
           <Pagination
             className={css.pagination}
             classes={{ ul: css.paginationUl }}
             onChange={handleChangePage}
-            count={Math.ceil(outcomeTotal / 10)}
+            count={Math.ceil((outcomeTotal as number) / 10)}
             color="primary"
             page={outcomePage}
           />

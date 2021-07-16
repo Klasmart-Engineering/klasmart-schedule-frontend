@@ -18,7 +18,7 @@ interface IMilestoneState {
   organization_name: string;
   user_name: string;
   outcomeList: GetOutcomeList;
-  outcomeTotal: number;
+  outcomeTotal: number | undefined;
   user_id: string;
 }
 const PAGE_SIZE = 10;
@@ -77,7 +77,7 @@ const initialState: IMilestoneState = {
   organization_name: "",
   user_name: "",
   outcomeList: [],
-  outcomeTotal: 0,
+  outcomeTotal: undefined,
   user_id: "",
 };
 
@@ -420,7 +420,7 @@ const { reducer } = createSlice({
     },
     [onLoadOutcomeList.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeList = [];
-      state.outcomeTotal = 0;
+      state.outcomeTotal = initialState.outcomeTotal;
     },
     [generateShortcode.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof generateShortcode>>) => {
       state.shortCode = payload.shortcode || "";
