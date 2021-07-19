@@ -137,6 +137,7 @@ function MilestoneEditForm() {
             AsyncTrunkReturned<typeof saveMilestone>
           >;
           if (payload.milestone_id) {
+            reset(inputValue);
             dispatch(actSuccess(d("Saved Successfully").t("assess_msg_saved_successfully")));
             history.replace({
               search: setQuery(history.location.search, { id: payload.milestone_id, first_save: true }),
