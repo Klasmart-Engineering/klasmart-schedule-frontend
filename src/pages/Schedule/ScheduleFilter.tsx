@@ -352,6 +352,7 @@ function FilterTemplate(props: FilterProps) {
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
   const [showClassMenu, setShowClassMenu] = React.useState<boolean>(false);
   const [checkSchoolId, setCheckSchoolId] = React.useState<string>("");
+  const [pageY, setPageY] = React.useState<number>(0);
   const {
     handleChangeShowAnyTime,
     stateOnlyMine,
@@ -576,9 +577,13 @@ function FilterTemplate(props: FilterProps) {
   };
 
   const openClassMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, schoolId: string) => {
-    // console.log(e.clientX, schoolId)
+    setPageY(e.pageY);
     setShowClassMenu(true);
     setCheckSchoolId(schoolId);
+  };
+
+  const hideClassMenu = () => {
+    setShowClassMenu(false);
   };
 
   const filterData: FilterDataItemsProps[] = [
@@ -672,7 +677,16 @@ function FilterTemplate(props: FilterProps) {
       >
         {styledTreeItemTemplate(filterData)}
       </TreeView>
-      {showClassMenu && <FilterTree classDataBySchool={getClassDataBySchool} handleChangeShowAnyTime={handleChangeShowAnyTime} />}
+      {showClassMenu && (
+        <FilterTree
+          stateOnlyMine={stateOnlyMine}
+          handleChangeOnlyMine={handleChangeOnlyMine}
+          hideClassMenu={hideClassMenu}
+          pageY={pageY}
+          classDataBySchool={getClassDataBySchool}
+          handleChangeShowAnyTime={handleChangeShowAnyTime}
+        />
+      )}
     </>
   );
 }

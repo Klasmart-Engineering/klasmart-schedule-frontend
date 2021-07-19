@@ -501,7 +501,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       </p>
       {anyTimeData.study.length < 1 && anyTimeData.homeFun.length < 1 && (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-          <img src={AnyTimeNoData} style={{ width: "50%" }} alt="" />
+          <img src={AnyTimeNoData} style={{ width: "20%", marginTop: "20%" }} alt="" />
           <span>{d("No anytime study is available ").t("schedule_msg_no_available")}</span>
         </div>
       )}
