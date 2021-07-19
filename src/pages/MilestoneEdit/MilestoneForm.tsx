@@ -116,7 +116,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           name="shortcode"
           as={TextField}
           control={control}
-          defaultValue={milestone_id ? initDefaultValue.shortcode?.value : shortCode}
+          defaultValue={shortCode}
           key={milestone_id ? initDefaultValue.shortcode?.key : shortCode}
           fullWidth
           className={css.fieldset}

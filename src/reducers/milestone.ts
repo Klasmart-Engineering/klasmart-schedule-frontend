@@ -171,14 +171,23 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
   }
 );
 
-interface ParamsOnLoadMilestoneEdit extends IQueryOnLoadOutcomeListParams {
-  id: MilestoneDetailResult["milestone_id"] | null;
-}
+type ResuleGetMilestoneDetail = AsyncReturnType<typeof api.milestones.obtainMilestone>;
+type ParamsGetMilestoneDetail = { id: Parameters<typeof api.milestones.obtainMilestone>[0] } & LoadingMetaPayload;
+export const getMilestoneDetail = createAsyncThunk<ResuleGetMilestoneDetail, ParamsGetMilestoneDetail>(
+  "milestone/getMilestoneDetail",
+  ({ id }) => {
+    return api.milestones.obtainMilestone(id);
+  }
+);
 interface ResultOnLoadMilestoneEdit {
   milestoneDetail?: AsyncReturnType<typeof api.milestones.obtainMilestone>;
   // shortCode?: AsyncReturnType<typeof api.shortcode.generateShortcode>["shortcode"];
   user_id?: string;
 }
+interface ParamsOnLoadMilestoneEdit extends IQueryOnLoadOutcomeListParams {
+  id: MilestoneDetailResult["milestone_id"] | null;
+}
+
 export const onLoadMilestoneEdit = createAsyncThunk<ResultOnLoadMilestoneEdit, ParamsOnLoadMilestoneEdit, { state: RootState }>(
   "milestone/onLoadMilestoneEdit",
   async ({ id }, { dispatch }) => {
@@ -318,7 +327,7 @@ export const obtainMilestone = createAsyncThunk<ResultObtainMilestone, ParamsObt
 type ParamsUpdateMilestone = {
   milestone_id: Parameters<typeof api.milestones.updateMilestone>[0];
   milestone: Parameters<typeof api.milestones.updateMilestone>[1];
-};
+} & LoadingMetaPayload;
 type ResultUpdateMilestone = AsyncReturnType<typeof api.milestones.updateMilestone>;
 export const updateMilestone = createAsyncThunk<ResultUpdateMilestone, ParamsUpdateMilestone>(
   "milestone/updateMilestone",
@@ -409,6 +418,7 @@ const { reducer } = createSlice({
     [onLoadMilestoneEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadMilestoneEdit>>) => {
       state.milestoneDetail = payload.milestoneDetail || {};
       state.user_id = payload.user_id || "";
+      state.shortCode = (state.shortCode ? state.shortCode : payload.milestoneDetail?.shortcode) || "";
     },
     [onLoadMilestoneEdit.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.milestoneDetail = initialState.milestoneDetail;
@@ -427,6 +437,12 @@ const { reducer } = createSlice({
     },
     [generateShortcode.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.shortCode = initialState.shortCode;
+    },
+    [getMilestoneDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getMilestoneDetail>>) => {
+      state.milestoneDetail = payload || {};
+    },
+    [getMilestoneDetail.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getMilestoneDetail>>) => {
+      state.milestoneDetail = initialState.milestoneDetail;
     },
   },
 });

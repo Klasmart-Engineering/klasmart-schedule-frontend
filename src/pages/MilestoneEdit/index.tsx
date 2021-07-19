@@ -125,12 +125,11 @@ function MilestoneEditForm() {
         const outcome_ancestor_ids = outcomes?.map((v) => v.ancestor_id as string);
         const inputValue = { ...restValues, outcome_ancestor_ids };
         if (id) {
-          const { payload } = ((await dispatch(updateMilestone({ milestone_id: id, milestone: inputValue }))) as unknown) as PayloadAction<
-            AsyncTrunkReturned<typeof updateMilestone>
-          >;
+          const { payload } = ((await dispatch(
+            updateMilestone({ milestone_id: id, milestone: inputValue, metaLoading: true })
+          )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateMilestone>>;
           if (payload === "ok") {
-            reset();
-            setValue("outcomes", outcomes, { shouldDirty: false });
+            reset(inputValue);
             dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
           }
         } else {
@@ -145,7 +144,7 @@ function MilestoneEditForm() {
           }
         }
       }),
-    [dispatch, handleSubmit, history, id, reset, setValue]
+    [dispatch, handleSubmit, history, id, reset]
   );
   const handlePublish: MilestoneHeaderProps["onPublish"] = async () => {
     const { payload } = ((await dispatch(bulkPublishMilestone([milestoneDetail.milestone_id as string]))) as unknown) as PayloadAction<
