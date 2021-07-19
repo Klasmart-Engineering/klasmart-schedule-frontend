@@ -143,6 +143,9 @@ export function OutcomeForm(props: OutcomeFormProps) {
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
   };
+  const defaultShortCode = outcomeDetail.shortcode ? outcomeDetail.shortcode : shortCode;
+  console.log(defaultShortCode);
+  console.log(shortCode);
   return (
     <Box className={classes.outcomings_container}>
       <div className={classes.middleBox}>
@@ -183,7 +186,8 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="shortcode"
                 as={TextField}
                 control={control}
-                defaultValue={outcomeDetail.shortcode ? outcomeDetail.shortcode : shortCode}
+                defaultValue={defaultShortCode}
+                key={`${defaultShortCode}1`}
                 fullWidth
                 label={d("Short Code").t("assess_label_short_code")}
                 disabled={showEdit}
