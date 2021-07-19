@@ -115,7 +115,7 @@ function MilestoneEditForm() {
     () =>
       handleSubmit(async (value) => {
         setRegulation(Regulation.ByMilestoneDetail);
-        if (!value.shortcode) {
+        if (!value.shortcode?.trim()) {
           const resultInfo = ((await dispatch(generateShortcode({ kind: "milestones" }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof generateShortcode>
           >;
