@@ -198,6 +198,11 @@ export function apiGetContentTypeList() {
   });
 }
 
+export function domainSwitch() {
+  const domain = ["hub.kidsloop.live"];
+  return domain.includes(window.location.host);
+}
+
 export function apiIsEnableNewH5p() {
   return process.env.REACT_APP_ENABLE_NEW_H5P === "1";
 }

@@ -83,6 +83,7 @@ import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import { domainSwitch } from "../../api/extra";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -290,20 +291,22 @@ function SmallCalendar(props: CalendarStateProps) {
         <Grid container justify="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
-        <ScheduleFilter
-          handleChangeLoadScheduleView={handleChangeLoadScheduleView}
-          mockOptions={mockOptions}
-          scheduleMockOptions={scheduleMockOptions}
-          handleChangeShowAnyTime={handleChangeShowAnyTime}
-          stateOnlyMine={stateOnlyMine}
-          handleChangeOnlyMine={handleChangeOnlyMine}
-          modelView={modelView}
-          timesTamp={timesTamp}
-          privilegedMembers={privilegedMembers}
-          filterOption={filterOption}
-          user_id={user_id}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
-        />
+        {!domainSwitch() && (
+          <ScheduleFilter
+            handleChangeLoadScheduleView={handleChangeLoadScheduleView}
+            mockOptions={mockOptions}
+            scheduleMockOptions={scheduleMockOptions}
+            handleChangeShowAnyTime={handleChangeShowAnyTime}
+            stateOnlyMine={stateOnlyMine}
+            handleChangeOnlyMine={handleChangeOnlyMine}
+            modelView={modelView}
+            timesTamp={timesTamp}
+            privilegedMembers={privilegedMembers}
+            filterOption={filterOption}
+            user_id={user_id}
+            schoolByOrgOrUserData={schoolByOrgOrUserData}
+          />
+        )}
       </MuiPickersUtilsProvider>
     </Box>
   );

@@ -17,7 +17,7 @@ import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles({
   previewContainer: {
-    width: document.body.clientWidth < 600 ? "22rem" : "600px",
+    width: document.body.clientWidth < 600 ? "99%" : "600px",
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
   },
@@ -57,7 +57,7 @@ const useStyles = makeStyles({
   buttonPart: {
     display: "flex",
     justifyContent: "flex-end",
-    padding: "20px",
+    padding: "6%",
   },
   checkPlan: {
     color: "#E02020",
@@ -80,7 +80,7 @@ const useStyles = makeStyles({
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: "500px",
+    maxHeight: document.body.clientWidth < 600 ? "65vh" : "600px",
     overflow: "auto",
     "&::-webkit-scrollbar": {
       width: "3px",
