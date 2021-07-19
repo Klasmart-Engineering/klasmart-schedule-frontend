@@ -220,4 +220,27 @@ export class modelSchedule {
       },
     } as ParticipantsData;
   }
+
+  static classDataConversion(userId: string, schoolId: string, schools: EntityScheduleSchoolInfo[], role: boolean) {
+    const data: { class_id: string; class_name: string; showIcon: boolean }[] = [];
+    let school_name = "";
+    let onlyMine = false;
+    schools.forEach((item) => {
+      if (item.school_id === schoolId) {
+        school_name = item.school_name;
+        item.classes.forEach((classs) => {
+          const isExistStudent = classs.students.filter((studen: RolesData) => {
+            return studen.user_id === userId;
+          });
+          const isExistTeacher = classs.teachers.filter((teacher: RolesData) => {
+            return teacher.user_id === userId;
+          });
+          onlyMine = !role && (isExistTeacher.length > 0 || isExistStudent.length > 0);
+          if (classs.status === "active")
+            data.push({ class_id: classs.class_id, class_name: classs.class_name, showIcon: isExistStudent.length > 0 });
+        });
+      }
+    });
+    return { school_name: school_name, classes: data, onlyMine: onlyMine };
+  }
 }

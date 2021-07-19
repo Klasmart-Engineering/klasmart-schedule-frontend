@@ -450,7 +450,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
             </Grid>
           </Grid>
           <Grid container justify="space-between" className={classes.marginItem}>
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
+            <Grid item lg={6} xl={6} md={6} sm={12} xs={12}>
               {!showEdit && (
                 <OutcomeSet
                   title={d("Add more sets").t("assess_set_add_more_sets")}
