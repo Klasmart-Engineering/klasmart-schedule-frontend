@@ -240,3 +240,15 @@ export interface filterOptionItem {
   programs: EntityScheduleShortInfo[];
   others: EntityScheduleFilterClass[];
 }
+
+export interface FilterClasses {
+  class_id: string;
+  class_name: string;
+  showIcon: boolean;
+}
+
+export interface FilterSchoolInfo {
+  school_name: string;
+  classes: FilterClasses[];
+  onlyMine: boolean;
+}
