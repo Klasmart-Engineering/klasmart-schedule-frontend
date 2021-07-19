@@ -165,13 +165,24 @@ interface FilterLabelProps {
   class_id: string;
   showIcon: boolean;
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  hideActive: boolean;
+  handleChangeClassId: (id: string, checked: boolean) => void;
 }
 
 function FilterLabel(props: FilterLabelProps) {
-  const { class_name, class_id, showIcon, handleChangeShowAnyTime } = props;
+  const { class_name, class_id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId } = props;
   const css = useStyles();
   const name = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{class_name}</span>;
-  const primeElement = <Checkbox defaultChecked color="primary" inputProps={{ "aria-label": "secondary checkbox" }} />;
+  const primeElement = (
+    <Checkbox
+      defaultChecked
+      color="primary"
+      onClick={(e) => {
+        handleChangeClassId(class_id, (e.target as HTMLInputElement).checked);
+      }}
+      inputProps={{ "aria-label": "secondary checkbox" }}
+    />
+  );
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
@@ -224,12 +235,14 @@ function FilterLabel(props: FilterLabelProps) {
               display: "none",
             }}
           />{" "}
-          <MoreVertIcon
-            aria-describedby={id}
-            onClick={(e) => {
-              handleClick(e as any);
-            }}
-          />
+          {hideActive && (
+            <MoreVertIcon
+              aria-describedby={id}
+              onClick={(e) => {
+                handleClick(e as any);
+              }}
+            />
+          )}
         </Typography>
       </div>
     </Box>
@@ -237,26 +250,105 @@ function FilterLabel(props: FilterLabelProps) {
 }
 
 function FilterOverall(props: FilterTreeProps) {
-  const { classDataBySchool, handleChangeShowAnyTime } = props;
+  const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine } = props;
   const total = classDataBySchool.classes.length;
-  const pageSize = 2;
+  const pageSize = 10;
   const [page, setPage] = React.useState(1);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
   const getClassDataBySchool = useMemo(() => {
     const classes = classDataBySchool.classes.filter((item, index) => {
-      return index < page * pageSize;
+      const condition = page === 1 ? index < pageSize : index > (page - 1) * pageSize - 1 && index < page * pageSize;
+      return condition;
     });
     return { ...classDataBySchool, classes: classes };
   }, [page, pageSize, classDataBySchool]);
+  const getCLassData = (type: string) => {
+    let data: string[] = [];
+    if (type === "Mine") {
+      const filterMine = classDataBySchool.classes.filter((item) => {
+        return item.showIcon;
+      });
+      data = filterMine.map((item) => {
+        return `class+${item.class_id}+${classDataBySchool.school_id}`;
+      });
+    }
+    if (type === "All") {
+      data = classDataBySchool.classes.map((item) => {
+        return `class+${item.class_id}+${classDataBySchool.school_id}`;
+      });
+    }
+    return data;
+  };
+  const handleChangeClassId = (id: string, checked: boolean) => {
+    let data: string[] = [];
+    if (checked) {
+      if (["Mine", "All"].includes(id)) {
+        data = [...stateOnlyMine, ...getCLassData(id)];
+      } else {
+        const classId = `class+${id}+${classDataBySchool.school_id}`;
+        data = [...stateOnlyMine, classId];
+      }
+    } else {
+      if (["Mine", "All"].includes(id)) {
+        data = stateOnlyMine.filter((val) => {
+          return getCLassData(id).indexOf(val) === -1;
+        });
+      } else {
+        const classId = `class+${id}+${classDataBySchool.school_id}`;
+        data = stateOnlyMine.filter((val) => {
+          return classId !== val;
+        });
+      }
+    }
+    handleChangeOnlyMine(data);
+  };
+  const template = !total ? (
+    <div style={{ textAlign: "center", padding: "16px" }}>{d("No Data").t("schedule_filter_no_data")}</div>
+  ) : (
+    <>
+      {classDataBySchool.classes.length > 1 && (
+        <FilterLabel
+          handleChangeClassId={handleChangeClassId}
+          class_name="全部班级"
+          class_id="ALL"
+          showIcon={false}
+          handleChangeShowAnyTime={handleChangeShowAnyTime}
+          hideActive={false}
+        />
+      )}
+      <ul style={{ margin: "0px 0px 0px -26px" }}>
+        {getClassDataBySchool.classes.map((item) => {
+          return (
+            <FilterLabel
+              hideActive={true}
+              class_name={item.class_name}
+              class_id={item.class_id}
+              showIcon={item.showIcon}
+              handleChangeShowAnyTime={handleChangeShowAnyTime}
+              handleChangeClassId={handleChangeClassId}
+            />
+          );
+        })}
+      </ul>
+
+      <Pagination
+        count={total < pageSize ? 1 : total / pageSize}
+        style={{ display: "flex", justifyContent: "center", padding: "12px" }}
+        size="small"
+        page={page}
+        onChange={handleChange}
+      />
+    </>
+  );
   return (
     <Box
       style={{
         position: "absolute",
         width: "300px",
-        left: "450px",
-        top: "530px",
+        left: "22rem",
+        top: pageY + "px",
         zIndex: 999,
         boxShadow: "10px 10px 5px #888888",
         backgroundColor: "white",
@@ -275,30 +367,13 @@ function FilterOverall(props: FilterTreeProps) {
             </Typography>
           )}
         </span>
-        <CloseIcon />
+        <CloseIcon
+          onClick={() => {
+            hideClassMenu();
+          }}
+        />
       </div>
-      {classDataBySchool.classes.length > 1 && (
-        <FilterLabel class_name="全部学校" class_id="" showIcon={false} handleChangeShowAnyTime={handleChangeShowAnyTime} />
-      )}
-      <ul style={{ margin: "0px 0px 0px -26px" }}>
-        {getClassDataBySchool.classes.map((item) => {
-          return (
-            <FilterLabel
-              class_name={item.class_name}
-              class_id={item.class_id}
-              showIcon={item.showIcon}
-              handleChangeShowAnyTime={handleChangeShowAnyTime}
-            />
-          );
-        })}
-      </ul>
-      <Pagination
-        count={total / pageSize}
-        style={{ display: "flex", justifyContent: "center", padding: "12px" }}
-        size="small"
-        page={page}
-        onChange={handleChange}
-      />
+      {template}
     </Box>
   );
 }
@@ -306,9 +381,22 @@ function FilterOverall(props: FilterTreeProps) {
 interface FilterTreeProps {
   classDataBySchool: FilterSchoolInfo;
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  pageY: number;
+  hideClassMenu: () => void;
+  handleChangeOnlyMine: (data: string[]) => void;
+  stateOnlyMine: string[];
 }
 
 export default function FilterTree(props: FilterTreeProps) {
-  const { classDataBySchool, handleChangeShowAnyTime } = props;
-  return <FilterOverall classDataBySchool={classDataBySchool} handleChangeShowAnyTime={handleChangeShowAnyTime} />;
+  const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine } = props;
+  return (
+    <FilterOverall
+      stateOnlyMine={stateOnlyMine}
+      handleChangeOnlyMine={handleChangeOnlyMine}
+      hideClassMenu={hideClassMenu}
+      classDataBySchool={classDataBySchool}
+      handleChangeShowAnyTime={handleChangeShowAnyTime}
+      pageY={pageY}
+    />
+  );
 }

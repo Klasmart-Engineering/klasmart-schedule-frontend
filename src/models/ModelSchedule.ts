@@ -224,10 +224,12 @@ export class modelSchedule {
   static classDataConversion(userId: string, schoolId: string, schools: EntityScheduleSchoolInfo[], role: boolean) {
     const data: { class_id: string; class_name: string; showIcon: boolean }[] = [];
     let school_name = "";
+    let school_id = "";
     let onlyMine = false;
     schools.forEach((item) => {
       if (item.school_id === schoolId) {
         school_name = item.school_name;
+        school_id = item.school_id;
         item.classes.forEach((classs) => {
           const isExistStudent = classs.students.filter((studen: RolesData) => {
             return studen.user_id === userId;
@@ -241,6 +243,6 @@ export class modelSchedule {
         });
       }
     });
-    return { school_name: school_name, classes: data, onlyMine: onlyMine };
+    return { school_name: school_name, school_id: school_id, classes: data, onlyMine: onlyMine };
   }
 }

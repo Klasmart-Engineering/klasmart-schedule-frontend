@@ -249,6 +249,7 @@ export interface FilterClasses {
 
 export interface FilterSchoolInfo {
   school_name: string;
+  school_id: string;
   classes: FilterClasses[];
   onlyMine: boolean;
 }

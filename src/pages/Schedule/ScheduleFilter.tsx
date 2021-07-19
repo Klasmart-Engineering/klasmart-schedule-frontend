@@ -13,7 +13,7 @@ import { TreeView } from "@material-ui/lab";
 import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
-import React, { useMemo } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsOptionsItem } from "../../api/extra";
@@ -22,17 +22,18 @@ import { AsyncTrunkReturned } from "../../reducers/content";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
   classTypeLabel,
+  EntityScheduleClassesInfo,
   EntityScheduleSchoolInfo,
   FilterDataItemsProps,
   FilterQueryTypeProps,
   memberType,
   modeViewType,
+  RolesData,
   timestampType,
   filterOptionItem,
   FilterItemInfo,
 } from "../../types/scheduleTypes";
 import { modelSchedule } from "../../models/ModelSchedule";
-import FilterTree from "../../components/FilterTree";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -146,7 +147,6 @@ type StyledTreeItemProps = TreeItemProps & {
   privilegedMembers: (member: memberType) => boolean;
   fullSelectionStatusSet: { id: string; status: boolean }[];
   fullOtherSelectionStatusSet: boolean;
-  openClassMenu: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, schoolId: string) => void;
 };
 
 interface InterfaceSubject extends EntityScheduleShortInfo {
@@ -173,7 +173,6 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     privilegedMembers,
     fullSelectionStatusSet,
     fullOtherSelectionStatusSet,
-    openClassMenu,
     ...other
   } = props;
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -224,9 +223,10 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     }
     return allStatus;
   };
+
   return (
     <Box style={{ position: "relative" }}>
-      {minimumDom && filterItem.self_id !== "nodata" && self_id && (
+      {minimumDom && filterItem.self_id !== "nodata" && (
         <Checkbox
           color="primary"
           inputProps={{ "aria-label": "primary checkbox" }}
@@ -244,13 +244,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
       <TreeItem
         label={
           <div className={classes.labelRoot}>
-            <div
-              style={{ display: "flex", alignItems: "center", width: "58%" }}
-              className={isOnlyMine ? classes.abbreviation : ""}
-              onClick={(e) => {
-                if (!self_id) openClassMenu(e, filterItem.label);
-              }}
-            >
+            <div style={{ display: "flex", alignItems: "center", width: "58%" }} className={isOnlyMine ? classes.abbreviation : ""}>
               <Typography
                 variant="body2"
                 className={clsx(
@@ -350,8 +344,6 @@ function FilterTemplate(props: FilterProps) {
   const dispatch = useDispatch();
   const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
-  const [showClassMenu, setShowClassMenu] = React.useState<boolean>(false);
-  const [checkSchoolId, setCheckSchoolId] = React.useState<string>("");
   const {
     handleChangeShowAnyTime,
     stateOnlyMine,
@@ -472,11 +464,6 @@ function FilterTemplate(props: FilterProps) {
     }
   };
 
-  const getClassDataBySchool = useMemo(() => {
-    const role = privilegedMembers("Teacher") || privilegedMembers("Student");
-    return modelSchedule.classDataConversion(user_id, checkSchoolId, schoolByOrgOrUserData, role);
-  }, [schoolByOrgOrUserData, checkSchoolId, privilegedMembers, user_id]);
-
   const getClassBySchool = (): FilterDataItemsProps[] => {
     const classResult: FilterDataItemsProps[] = [];
     const AllExistData: string[] = [];
@@ -485,6 +472,34 @@ function FilterTemplate(props: FilterProps) {
       const existData: string[] = [];
       const onLyMineData: string[] = [];
       const classesChild = [];
+      schoolItem.classes.forEach((classItem: EntityScheduleClassesInfo) => {
+        if (classItem.status === "active") {
+          const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
+            return teacher.user_id === user_id;
+          });
+          const isExistStudent = classItem.students.filter((studen: RolesData) => {
+            return studen.user_id === user_id;
+          });
+          if ((privilegedMembers("Teacher") || privilegedMembers("Student")) && !isExistTeacher.length && !isExistStudent.length) return;
+          if (!is_exists)
+            is_exists =
+              !(privilegedMembers("Teacher") || privilegedMembers("Student")) && (isExistTeacher.length > 0 || isExistStudent.length > 0);
+          existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          if (isExistTeacher.length > 0 || isExistStudent.length > 0)
+            onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
+          classesChild.push(
+            subDataStructures(
+              `${classItem.class_id}+${schoolItem.school_id}`,
+              classItem.class_name,
+              "class",
+              isExistStudent.length > 0,
+              [],
+              onLyMineData
+            )
+          );
+        }
+      });
       if (classesChild.length > 1) {
         classesChild.unshift(subDataStructures(`All+${schoolItem.school_id}`, d("All").t("assess_filter_all"), "class", false, existData));
         existData.push(`class+All+${schoolItem.school_id}`);
@@ -495,7 +510,7 @@ function FilterTemplate(props: FilterProps) {
         id: `${schoolItem.school_id}`,
         name: schoolItem.school_name,
         isCheck: false,
-        child: classesChild,
+        child: classesChild.length < 1 ? [subDataStructures(`nodata`, d("No Data").t("schedule_filter_no_data"), "class")] : classesChild,
         isOnlyMine: is_exists,
         existData: existData,
         isHide: false,
@@ -575,12 +590,6 @@ function FilterTemplate(props: FilterProps) {
     return data;
   };
 
-  const openClassMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, schoolId: string) => {
-    // console.log(e.clientX, schoolId)
-    setShowClassMenu(true);
-    setCheckSchoolId(schoolId);
-  };
-
   const filterData: FilterDataItemsProps[] = [
     {
       id: "School+1",
@@ -652,7 +661,6 @@ function FilterTemplate(props: FilterProps) {
               privilegedMembers={privilegedMembers}
               fullSelectionStatusSet={fullSelectionStatus}
               fullOtherSelectionStatusSet={fullOtherSelectionStatus}
-              openClassMenu={openClassMenu}
             >
               {item.child && styledTreeItemTemplate(item.child)}
             </StyledTreeItem>
@@ -662,18 +670,15 @@ function FilterTemplate(props: FilterProps) {
     });
   };
   return (
-    <>
-      <TreeView
-        className={css.containerRoot}
-        defaultExpanded={["1"]}
-        defaultCollapseIcon={<KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
-        defaultExpandIcon={<KeyboardArrowDownOutlinedIcon className={css.filterArrow} style={{ cursor: "pointer" }} />}
-        multiSelect
-      >
-        {styledTreeItemTemplate(filterData)}
-      </TreeView>
-      {showClassMenu && <FilterTree classDataBySchool={getClassDataBySchool} handleChangeShowAnyTime={handleChangeShowAnyTime} />}
-    </>
+    <TreeView
+      className={css.containerRoot}
+      defaultExpanded={["1"]}
+      defaultCollapseIcon={<KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
+      defaultExpandIcon={<KeyboardArrowDownOutlinedIcon className={css.filterArrow} style={{ cursor: "pointer" }} />}
+      multiSelect
+    >
+      {styledTreeItemTemplate(filterData)}
+    </TreeView>
   );
 }
 

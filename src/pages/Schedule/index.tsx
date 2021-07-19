@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
@@ -39,6 +39,7 @@ import {
   getSchoolInfo,
   getSearchScheduleList,
   getSubjectByProgramId,
+  resetScheduleTimeViewData,
   ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
@@ -269,11 +270,10 @@ function ScheduleContent() {
       };
       dispatch(getSearchScheduleList({ data, metaLoading: true }));
     } else {
-      /*      if ((stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) || !stateOnlyMine.length) {
-      /*      if (stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) {
+      if ((stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) || !stateOnlyMine.length) {
         dispatch(resetScheduleTimeViewData([]));
         return;
-      }*/
+      }
       dispatch(
         getScheduleTimeViewData({
           view_type: modelView,
@@ -285,13 +285,13 @@ function ScheduleContent() {
     }
   }, [teacherName, modelView, timesTamp, stateOnlyMine, dispatch]);
 
-  /*  const initialization_assembly_filter_data = useMemo(() => {
+  const initialization_assembly_filter_data = useMemo(() => {
     return modelSchedule.SetInitializationAssemblyFilterParameter(schoolByOrgOrUserData, filterOption.others);
-  }, [filterOption, schoolByOrgOrUserData]);*/
+  }, [filterOption, schoolByOrgOrUserData]);
 
-  /*  React.useEffect(() => {
+  React.useEffect(() => {
     if (initialization_assembly_filter_data.length) setStateOnlyMine(initialization_assembly_filter_data);
-  }, [initialization_assembly_filter_data]);*/
+  }, [initialization_assembly_filter_data]);
 
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
