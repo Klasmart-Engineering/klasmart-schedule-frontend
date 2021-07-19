@@ -25,9 +25,9 @@ import {
   publishOutcome,
   pullOutcomeSet,
   reject,
+  resetShortCode,
   save,
   updateOutcome,
-  resetShortCode,
 } from "../../reducers/outcome";
 import { OutcomeList } from "../OutcomeList";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
@@ -151,7 +151,8 @@ export default function CreateOutcomings() {
           >;
           if (payload === "ok") {
             dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
-            dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+            // await dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+            reset(value);
             setCondition("default");
           }
         } else {
@@ -163,7 +164,7 @@ export default function CreateOutcomings() {
           }
         }
       }),
-    [dispatch, handleSubmit, history, isAssumed, outcome_id, setValue]
+    [dispatch, handleSubmit, history, isAssumed, outcome_id, reset, setValue]
   );
 
   const [enableCustomization, setEnableCustomization] = React.useState(false);
