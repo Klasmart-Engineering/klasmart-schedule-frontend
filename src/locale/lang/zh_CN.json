@@ -850,5 +850,22 @@
   "h5p_label_templete_title": "只适用于当前的幻灯片",
   "h5p_label_thisSlide_title": "适用于所有的幻灯片",
   "h5p_label_coursepresentation_noTitle": "没有标题",
-  "h5p_label_link": "链接"
+  "h5p_label_link": "链接",
+  "library_error_cannot_delete_lesson_plan": "该课件已被引用，您无法删除",
+  "library_label_visibility_schools": "学校",
+  "report_msg_no_data": "无有效数据",
+  "report_navigation_class_view": "查看班级",
+  "report_msg_individual_infor": "您可通过该报表查看单独学生基于学习成果的学习情况。",
+  "report_msg_overall_infor": "您可通过该报表查看该班级的整体学习情况并对比每位学生的学习成果。您也可点击每位学生的名字以查看该学生的单独报表。",
+  "report_msg_no_achieve": "无有效数据",
+  "report_msg_no_plan": "该老师没有课件，您需要添加新的课件吗？",
+  "report_button_create_plan": "创建课件",
+  "report_label_0_hour": "0 小时 ",
+  "report_achieved_lo": "达标的学习成果",
+  "assess_in_lock_status": "Lock Status",
+  "assess_last_edited_by": "Last edited by",
+  "assess_locked_location": "锁定位置",
+  "assess_date_edited": "编辑日期",
+  "assess_time_edited": "编辑时间",
+  "assess_msg_approve_milestone": "您确定要通过该阶段成果吗？"
 }
