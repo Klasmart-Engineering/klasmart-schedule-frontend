@@ -17,7 +17,7 @@ import ScheduleButton from "./ScheduleButton";
 
 const useStyles = makeStyles({
   previewContainer: {
-    width: document.body.clientWidth < 600 ? "99%" : "600px",
+    width: document.body.clientWidth < 650 ? "99%" : "600px",
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
   },
@@ -74,14 +74,14 @@ const useStyles = makeStyles({
     alignItems: "center",
     padding: "3%",
     "& span": {
-      fontSize: document.body.clientWidth < 600 ? "0.8rem" : "1.4rem",
+      fontSize: document.body.clientWidth < 650 ? "0.8rem" : "1.4rem",
       fontWeight: "bold",
       width: "68%",
     },
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: document.body.clientWidth < 600 ? "65vh" : "56vh",
+    maxHeight: document.body.clientWidth < 650 ? "65vh" : "56vh",
     overflow: "auto",
     "&::-webkit-scrollbar": {
       width: "3px",
@@ -107,17 +107,17 @@ const useStyles = makeStyles({
   },
   row: {
     fontWeight: "bold",
-    width: document.body.clientWidth < 600 ? "30%" : "18%",
+    width: document.body.clientWidth < 650 ? "30%" : "18%",
     textAlign: "left",
-    fontSize: document.body.clientWidth < 600 ? "0.9rem" : "1.1rem",
+    fontSize: document.body.clientWidth < 650 ? "0.9rem" : "1.1rem",
     paddingLeft: "8%",
   },
   row2: {
     width: "60%",
     wordBreak: "break-word",
     fontWeight: 500,
-    paddingLeft: document.body.clientWidth < 600 ? "38px" : "6%",
-    fontSize: document.body.clientWidth < 600 ? "0.8rem" : "1rem",
+    paddingLeft: document.body.clientWidth < 650 ? "38px" : "6%",
+    fontSize: document.body.clientWidth < 650 ? "0.8rem" : "1rem",
   },
 });
 
@@ -432,7 +432,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         {ScheduleViewInfo.lesson_plan && (
           <p className={classes.contentRow}>
             <span className={classes.row}>{d("Lesson Plan").t("schedule_detail_lesson_plan")}</span>
-            <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: document.body.clientWidth < 600 ? "38px" : "6%" }}>
+            <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: document.body.clientWidth < 650 ? "38px" : "6%" }}>
               <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
               {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
                 return <div style={{ marginTop: "10px" }}>{material.name}</div>;
