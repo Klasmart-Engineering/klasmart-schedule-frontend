@@ -23,7 +23,7 @@ import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { enAU, id, ko, vi, zhCN } from "date-fns/esm/locale";
+import { enAU, id, ko, vi, zhCN, es } from "date-fns/esm/locale";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -283,7 +283,7 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
-  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id };
+  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es };
 
   return (
     <Box className={css.smallCalendarBox}>
