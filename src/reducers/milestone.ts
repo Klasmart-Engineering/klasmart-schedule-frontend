@@ -418,7 +418,7 @@ const { reducer } = createSlice({
     [onLoadMilestoneEdit.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadMilestoneEdit>>) => {
       state.milestoneDetail = payload.milestoneDetail || {};
       state.user_id = payload.user_id || "";
-      state.shortCode = (state.shortCode ? state.shortCode : payload.milestoneDetail?.shortcode) || "";
+      state.shortCode = payload.milestoneDetail?.shortcode ? payload.milestoneDetail?.shortcode || "" : state.shortCode;
     },
     [onLoadMilestoneEdit.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.milestoneDetail = initialState.milestoneDetail;
@@ -443,6 +443,9 @@ const { reducer } = createSlice({
     },
     [getMilestoneDetail.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getMilestoneDetail>>) => {
       state.milestoneDetail = initialState.milestoneDetail;
+    },
+    [saveMilestone.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof saveMilestone>>) => {
+      state.shortCode = payload.shortcode || "";
     },
   },
 });
