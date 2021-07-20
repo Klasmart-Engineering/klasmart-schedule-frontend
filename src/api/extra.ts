@@ -199,8 +199,7 @@ export function apiGetContentTypeList() {
 }
 
 export function domainSwitch() {
-  const domain = ["hub.kidsloop.live"];
-  return domain.includes(window.location.host);
+  return window.location.host.includes("kidsloop.live");
 }
 
 export function apiIsEnableNewH5p() {
