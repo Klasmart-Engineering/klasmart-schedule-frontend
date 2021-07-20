@@ -592,6 +592,7 @@
   "schedule_detail_lesson_material": "Lesson Material",
   "schedule_msg_cannot_edit_study": "This event cannot be edited because some students already made progress for Study activities.",
   "schedule_msg_cannot_delete_study": "This event cannot be deleted because some students already made progress for Study activities.",
+  "schedule_set_learning_outcome": "Set Learning Outcome",
   "report_label_student_achievement": "Overall Student Achievement",
   "report_label_teacher": "Teacher",
   "report_label_class": "Class",
