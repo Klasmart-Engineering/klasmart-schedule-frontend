@@ -106,7 +106,7 @@ const useStyles = makeStyles({
   },
   row: {
     fontWeight: "bold",
-    width: "18%",
+    width: document.body.clientWidth < 600 ? "30%" : "18%",
     textAlign: "left",
     fontSize: document.body.clientWidth < 600 ? "0.9rem" : "1.1rem",
     paddingLeft: "8%",
@@ -115,7 +115,7 @@ const useStyles = makeStyles({
     width: "60%",
     wordBreak: "break-word",
     fontWeight: 500,
-    paddingLeft: "6%",
+    paddingLeft: document.body.clientWidth < 600 ? "38px" : "6%",
     fontSize: document.body.clientWidth < 600 ? "0.8rem" : "1rem",
   },
 });
@@ -431,7 +431,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         {ScheduleViewInfo.lesson_plan && (
           <p className={classes.contentRow}>
             <span className={classes.row}>{d("Lesson Plan").t("schedule_detail_lesson_plan")}</span>
-            <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: "6%" }}>
+            <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: document.body.clientWidth < 600 ? "38px" : "6%" }}>
               <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
               {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
                 return <div style={{ marginTop: "10px" }}>{material.name}</div>;
