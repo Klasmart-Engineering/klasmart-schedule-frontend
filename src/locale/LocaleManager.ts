@@ -20,7 +20,7 @@ type FormatMessageByDescription<Desc extends LangRecodeDescription> = LangeRecor
       <Id extends LangRecordIdByDescription<Desc>>(id: Id, values: LangeRecordValuesById<Id>): FormatMessageReturn;
     };
 
-const AVAILABLE_LANGUAGES = ["en", "zh", "vi", "ko", "id"];
+const AVAILABLE_LANGUAGES = ["en", "zh", "vi", "ko", "id", "es"];
 
 function getDefaultLocale(availableLanguages: string[]) {
   const languages = navigator.languages || [
