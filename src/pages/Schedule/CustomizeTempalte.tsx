@@ -81,7 +81,7 @@ const useStyles = makeStyles({
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: document.body.clientWidth < 600 ? "65vh" : "600px",
+    maxHeight: document.body.clientWidth < 600 ? "65vh" : "56vh",
     overflow: "auto",
     "&::-webkit-scrollbar": {
       width: "3px",
