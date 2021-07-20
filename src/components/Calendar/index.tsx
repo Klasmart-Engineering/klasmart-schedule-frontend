@@ -25,6 +25,7 @@ import "moment/locale/vi";
 import "moment/locale/ko";
 import "moment/locale/id";
 import "moment/locale/en-au";
+import "moment/locale/es";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -81,7 +82,7 @@ function MyCalendar(props: CalendarProps) {
 
   const views = { work_week: true, day: true, agenda: true, month: true, week: true };
 
-  const lang = { en: "en-au", zh: "zh-cn", vi: "vi", ko: "ko", id: "id" };
+  const lang = { en: "en-au", zh: "zh-cn", vi: "vi", ko: "ko", id: "id", es: "es" };
 
   // Setup the localizer by providing the moment (or globalize) Object
   // to the correct localizer.
