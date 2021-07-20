@@ -74,8 +74,9 @@ const useStyles = makeStyles({
     alignItems: "center",
     padding: "3%",
     "& span": {
-      fontSize: "1.4rem",
+      fontSize: document.body.clientWidth < 600 ? "0.8rem" : "1.4rem",
       fontWeight: "bold",
+      width: "68%",
     },
   },
   customizeContentBox: {
