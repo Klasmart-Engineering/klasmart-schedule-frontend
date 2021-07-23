@@ -441,6 +441,10 @@ export enum PermissionType {
   approve_pending_milestone_491 = "approve_pending_milestone_491",
   reject_pending_milestone_492 = "reject_pending_milestone_492",
   view_my_pending_milestone_429 = "view_my_pending_milestone_429",
+  report_learning_summary_org_652 = "report_learning_summary_org_652",
+  report_learning_summary_school_651 = "report_learning_summary_school_651",
+  report_learning_summary_teacher_650 = "report_learning_summary_teacher_650",
+  report_learning_summary_student_649 = "report_learning_summary_student_649",
 }
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);

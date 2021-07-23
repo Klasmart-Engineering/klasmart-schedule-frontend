@@ -93,6 +93,12 @@ export function formatTimeToHourMin(seconds: number) {
   const min = date.getMinutes();
   return `${hour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`;
 }
+export function formatTimeToMonDay(seconds: number) {
+  const date = new Date(seconds * 1000);
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${month.toString().padStart(2, "0")}.${day.toString().padStart(2, "0")}`;
+}
 
 interface Time2colorLevelResponse {
   opacity: number;

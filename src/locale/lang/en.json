@@ -868,5 +868,14 @@
   "assess_locked_location": "Locked location",
   "assess_date_edited": "Date edited",
   "assess_time_edited": "Time edited",
-  "assess_msg_approve_milestone": "Are you sure you want to approve these milestones?"
+  "assess_msg_approve_milestone": "Are you sure you want to approve these milestones?",
+  "report_learning_summary_report": "Learning Summary Report",
+  "report_msg_lsr": "This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly",
+  "report_filter_year": "Year",
+  "report_filter_week": "Week",
+  "report_filter_school": "School",
+  "report_filter_class": "Class",
+  "report_filter_teacher": "Teacher",
+  "report_filter_student": "Student",
+  "report_filter_subject": "Subject"
 }

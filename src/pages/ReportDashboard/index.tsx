@@ -1,6 +1,13 @@
 import { Button, Grid, Hidden, makeStyles, SvgIcon, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
-import { AccessTime, CategoryOutlined, ChevronRight, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
+import {
+  AccessTime,
+  AssignmentTurnedInOutlined,
+  CategoryOutlined,
+  ChevronRight,
+  InfoOutlined,
+  KeyboardBackspace,
+} from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
@@ -13,6 +20,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
+import { ReportLearningSummary } from "../ReportLearningSummary";
 import ReportTeachingLoad from "../ReportTeachingLoad";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
@@ -24,6 +32,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportList: {
     display: "flex",
     justifyContent: "space-between",
+    flexWrap: "wrap",
   },
 
   reportItem: {
@@ -33,6 +42,10 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     borderRadius: 8,
     boxShadow: shadows[3],
     padding: "32px 28px",
+    flexWrap: "wrap",
+    "&:nth-child(n+4)": {
+      marginTop: 32,
+    },
   },
   reportItemMb: {
     textAlign: "center",
@@ -121,6 +134,12 @@ export function ReportDashboard() {
       url: ReportTeachingLoad.routeBasePath,
       icon: <AccessTime />,
       bgColor: "#ffa966",
+    },
+    {
+      title: "report_learning_summary_report",
+      url: ReportLearningSummary.routeBasePath,
+      icon: <AssignmentTurnedInOutlined />,
+      bgColor: "#FE9494",
     },
   ];
   const handleClick = useMemo(

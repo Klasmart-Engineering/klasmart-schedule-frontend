@@ -1217,7 +1217,20 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "h5p_label_coursepresentation_noTitle"; description: "no title"; values: undefined }
-  | { id: "h5p_label_link"; description: "Link"; values: undefined };
+  | { id: "h5p_label_link"; description: "Link"; values: undefined }
+  | { id: "report_learning_summary_report"; description: "Learning Summary Report"; values: undefined }
+  | {
+      id: "report_msg_lsr";
+      description: "This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly";
+      values: undefined;
+    }
+  | { id: "report_filter_year"; description: "Year"; values: undefined }
+  | { id: "report_filter_week"; description: "Week"; values: undefined }
+  | { id: "report_filter_school"; description: "School"; values: undefined }
+  | { id: "report_filter_class"; description: "Class"; values: undefined }
+  | { id: "report_filter_teacher"; description: "Teacher"; values: undefined }
+  | { id: "report_filter_student"; description: "Student"; values: undefined }
+  | { id: "report_filter_subject"; description: "Subject"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

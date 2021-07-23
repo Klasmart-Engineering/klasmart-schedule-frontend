@@ -9,12 +9,21 @@ import {
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
+  MySchoolIDsDocument,
+  MySchoolIDsQuery,
+  MySchoolIDsQueryVariables,
   NotParticipantsByOrganizationDocument,
   NotParticipantsByOrganizationQuery,
   NotParticipantsByOrganizationQueryVariables,
   ParticipantsByClassDocument,
   ParticipantsByClassQuery,
   ParticipantsByClassQueryVariables,
+  ParticipantsByOrganizationDocument,
+  ParticipantsByOrganizationQuery,
+  ParticipantsByOrganizationQueryVariables,
+  ParticipantsBySchoolDocument,
+  ParticipantsBySchoolQuery,
+  ParticipantsBySchoolQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -33,15 +42,17 @@ import {
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
   EntityStudentAchievementReportItem,
-  EntityStudentPerformanceH5PReportItem,
+  // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
-  EntityStudentsPerformanceH5PReportItem,
+  // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
+  ExternalSubject,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { ModelReport } from "../models/ModelReports";
 import { ALL_STUDENT, ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
+import { QueryLearningSummaryCondition } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
@@ -57,12 +68,21 @@ interface IreportState {
     categories: EntityTeacherReportCategory[];
   };
   stuReportMockOptions: GetStuReportMockOptionsResponse;
-  h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
+  h5pReportList?: [];
   stuReportList?: EntityStudentPerformanceReportItem[];
   stuReportDetail?: EntityStudentPerformanceReportItem[];
-  h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
+  h5pReportDetail?: [];
   studentList: Pick<User, "user_id" | "user_name">[];
   teachingLoadOnload: TeachingLoadResponse;
+  learningSummartOptions: {
+    year: number[];
+    week: [];
+    schoolList: [];
+    classList: [];
+    teacherList: [];
+    studentList: [];
+    subjectList: [];
+  };
 }
 const initialState: IreportState = {
   reportList: [],
@@ -102,6 +122,15 @@ const initialState: IreportState = {
     classList: [],
     teachingLoadList: {},
     user_id: "",
+  },
+  learningSummartOptions: {
+    year: [2021],
+    week: [],
+    schoolList: [],
+    classList: [],
+    teacherList: [],
+    studentList: [],
+    subjectList: [],
   },
 };
 
@@ -406,7 +435,6 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
 
 interface GetStuReportListResponse {
   stuReportList?: EntityStudentPerformanceReportItem[];
-  h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
 }
 interface GetStuReportListPayload {
   teacher_id: string;
@@ -417,14 +445,13 @@ export const getStuReportList = createAsyncThunk<GetStuReportListResponse, GetSt
   "getStuReportList",
   async ({ teacher_id, class_id, lesson_plan_id }) => {
     const stuItems = await api.reports.listStudentsPerformanceReport({ teacher_id, class_id, lesson_plan_id });
-    const h5pItems = await api.reports.listStudentsPerformanceH5PReport({ teacher_id, class_id, lesson_plan_id });
-    return { stuReportList: stuItems.items, h5pReportList: h5pItems.items };
+    // const h5pItems = await api.reports.listStudentsPerformanceH5PReport({ teacher_id, class_id, lesson_plan_id });
+    return { stuReportList: stuItems.items };
   }
 );
 
 interface GetStuReportDetailResponse {
   stuReportDetail?: EntityStudentPerformanceReportItem[];
-  h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
 }
 interface GetStuReportDetailPayload {
   teacher_id: string;
@@ -436,8 +463,8 @@ export const getStuReportDetail = createAsyncThunk<GetStuReportDetailResponse, G
   "getStuReportDetail",
   async ({ teacher_id, class_id, lesson_plan_id, id }) => {
     const stuItems = await api.reports.getStudentPerformanceReport(id, { teacher_id, class_id, lesson_plan_id });
-    const h5pItems = await api.reports.getStudentPerformanceH5PReport(id, { teacher_id, class_id, lesson_plan_id });
-    return { stuReportDetail: stuItems.items, h5pReportDetail: h5pItems.items };
+    // const h5pItems = await api.reports.getStudentPerformanceH5PReport(id, { teacher_id, class_id, lesson_plan_id });
+    return { stuReportDetail: stuItems.items };
   }
 );
 
@@ -451,10 +478,10 @@ export interface GetStuReportMockOptionsResponse {
   student_id?: string;
   reportList?: EntityStudentAchievementReportItem[];
   studentList?: Pick<User, "user_id" | "user_name">[];
-  h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
+  h5pReportList?: [];
   stuReportList?: EntityStudentPerformanceReportItem[];
   stuReportDetail?: EntityStudentPerformanceReportItem[];
-  h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
+  h5pReportDetail?: [];
 }
 interface GetStuReportMockOptionsPayLoad {
   teacher_id?: string;
@@ -476,10 +503,10 @@ export const stuPerformanceReportOnload = createAsyncThunk<
   let teacherList: Pick<User, "user_id" | "user_name">[] | undefined = [];
   let finalTearchId: string = "";
   let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
-  let h5pReportList: EntityStudentsPerformanceH5PReportItem[] = [];
+  let h5pReportList: [] = [];
   let stuReportList: EntityStudentPerformanceReportItem[] = [];
   let stuReportDetail: EntityStudentPerformanceReportItem[] = [];
-  let h5pReportDetail: EntityStudentPerformanceH5PReportItem[] = [];
+  let h5pReportDetail: [] = [];
   // 拉取我的user_id
   const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
     query: QeuryMeDocument,
@@ -579,12 +606,12 @@ export const stuPerformanceReportOnload = createAsyncThunk<
       });
       stuReportList = stuItems.items || [];
       // stuReportList = stuPerformaceList;
-      const h5pItems = await api.reports.listStudentsPerformanceH5PReport({
-        teacher_id: finalTearchId,
-        class_id: finalClassId || "",
-        lesson_plan_id: finalPlanId as string,
-      });
-      h5pReportList = h5pItems.items || [];
+      // const h5pItems = await api.reports.listStudentsPerformanceH5PReport({
+      //   teacher_id: finalTearchId,
+      //   class_id: finalClassId || "",
+      //   lesson_plan_id: finalPlanId as string,
+      // });
+      h5pReportList = [];
       // h5pReportList = stuPerformanceH5pList;
     } else {
       const stuItems = await api.reports.getStudentPerformanceReport(student_id, {
@@ -594,12 +621,12 @@ export const stuPerformanceReportOnload = createAsyncThunk<
       });
       stuReportDetail = stuItems.items || [];
       // stuReportDetail = stuPerformanceDetail;
-      const h5pItems = await api.reports.getStudentPerformanceH5PReport(student_id, {
-        teacher_id: finalTearchId,
-        class_id: finalClassId || "",
-        lesson_plan_id: finalPlanId as string,
-      });
-      h5pReportDetail = h5pItems.items || [];
+      // const h5pItems = await api.reports.getStudentPerformanceH5PReport(student_id, {
+      //   teacher_id: finalTearchId,
+      //   class_id: finalClassId || "",
+      //   lesson_plan_id: finalPlanId as string,
+      // });
+      h5pReportDetail = [];
       // h5pReportDetail = stuPerformanceH5pDetail;
     }
   }
@@ -916,6 +943,85 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     };
   }
 );
+
+export interface LearningSummaryResponse {
+  studentList?: Pick<User, "user_id" | "user_name">[];
+  // subjectList?: ExternalSubject[];
+}
+
+export const onLoadLearningSummary = createAsyncThunk<LearningSummaryResponse, QueryLearningSummaryCondition & LoadingMetaPayload>(
+  "onLoadLearningSummary",
+  async () => {
+    const subjectList: ExternalSubject[] = await api.subjects.getSubject();
+    let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const perm = {
+      report_learning_summary_org_652: true,
+      report_learning_summary_school_651: true,
+      report_learning_summary_teacher_650: true,
+      report_learning_summary_student_649: true,
+    };
+    // const perm = hasPermissionOfMe([
+    //   PermissionType.report_learning_summary_org_652,
+    //   PermissionType.report_learning_summary_school_651,
+    //   PermissionType.report_learning_summary_teacher_650,
+    //   PermissionType.report_learning_summary_student_649,
+    // ], meInfo.me);
+    if (perm.report_learning_summary_org_652) {
+      // todo 拉取所有选项并且 默认置位第一个
+      // 通过org拉取student 可以看到 year week school teacher class student subject
+      const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
+        query: ParticipantsByOrganizationDocument,
+        variables: {
+          organization_id,
+        },
+      });
+      data.organization?.classes?.forEach((classItem) => {
+        studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
+      });
+    } else if (perm.report_learning_summary_school_651) {
+      // 通过school拉取student 可以看到 year week teacher class student subject
+      const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+        query: MySchoolIDsDocument,
+        variables: { organization_id },
+      });
+      if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
+        const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
+          query: ParticipantsBySchoolDocument,
+          variables: {
+            school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
+          },
+        });
+        data.school?.classes?.forEach((classItem) => {
+          studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
+        });
+      }
+    } else if (perm.report_learning_summary_teacher_650) {
+      // 通过classteaching拉取student 可以看到 year week class student subject
+      const { data } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+        query: ClassesTeachingQueryDocument,
+        variables: {
+          user_id: meInfo.me?.user_id as string,
+          organization_id,
+        },
+      });
+      console.log(data);
+    } else if (perm.report_learning_summary_student_649) {
+      // 不需要拉取student 可以看到 year week  subject
+    }
+    console.log(studentList);
+    return {
+      studentList,
+      subjectList,
+    };
+  }
+);
 interface GetClassListPayload {
   school_id: string;
   teacher_ids: string;
@@ -1042,7 +1148,7 @@ const { reducer } = createSlice({
     },
     [getStuReportList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportList>>) => {
       state.stuReportList = payload.stuReportList;
-      state.h5pReportList = payload.h5pReportList;
+      state.h5pReportList = [];
     },
     [getStuReportList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1057,7 +1163,7 @@ const { reducer } = createSlice({
     },
     [getStuReportDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportDetail>>) => {
       state.stuReportDetail = payload.stuReportDetail;
-      state.h5pReportDetail = payload.h5pReportDetail;
+      state.h5pReportDetail = [];
     },
     [getStuReportDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
@@ -1082,6 +1188,10 @@ const { reducer } = createSlice({
     },
     [resetReportMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof resetReportMockOptions>>) => {
       state.reportMockOptions = initialState.reportMockOptions;
+    },
+    [onLoadLearningSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadLearningSummary>>) => {
+      state.studentList = payload.studentList || [];
+      // state.subjectList = payload.subjectList || [];
     },
   },
 });
