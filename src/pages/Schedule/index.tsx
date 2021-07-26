@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
@@ -44,13 +44,25 @@ import {
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   searchAuthContentLists,
+  actOutcomeList,
 } from "../../reducers/schedule";
-import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
+import {
+  AlertDialogProps,
+  LearningContentList,
+  memberType,
+  modeViewType,
+  ParticipantsShortInfo,
+  RouteParams,
+  timestampType,
+} from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+import { useHistory } from "react-router-dom";
+import { OutcomeListExectSearch, OutcomeQueryCondition } from "../OutcomeList/types";
+import { OrderBy } from "../../api/type";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -58,6 +70,33 @@ const useQuery = () => {
   const scheduleId = query.get("schedule_id") || "";
   const teacherName = query.get("name") || "";
   return { scheduleId, teacherName };
+};
+
+const clearNull = (obj: Record<string, any>) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == null) delete obj[key];
+  });
+  return obj;
+};
+
+const useOutcomeQuery = (): OutcomeQueryCondition => {
+  const { search } = useLocation();
+  return useMemo(() => {
+    const query = new URLSearchParams(search);
+    const search_key = query.get("search_key");
+    const publish_status = query.get("publish_status");
+    const author_name = query.get("author_name");
+    const page = Number(query.get("page")) || 1;
+    const order_by = (query.get("order_by") as OrderBy | null) || undefined;
+    const is_unpub = query.get("is_unpub");
+    const exect_search = query.get("exect_search") || OutcomeListExectSearch.all;
+    return clearNull({ search_key, publish_status, author_name, page, order_by, is_unpub, exect_search });
+  }, [search]);
+};
+
+const toQueryString = (hash: Record<string, any>): string => {
+  const search = new URLSearchParams(hash);
+  return `?${search.toString()}`;
 };
 
 const parseRightside = (rightside: RouteParams["rightside"]) => ({
@@ -91,6 +130,8 @@ function ScheduleContent() {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
+    outcomeList,
+    outcomeTotal,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -104,6 +145,8 @@ function ScheduleContent() {
   const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
   const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
+  const condition = useOutcomeQuery();
+  const history = useHistory();
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -362,6 +405,25 @@ function ScheduleContent() {
   }, [scheduleId, setModalDate, privilegedMembers, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
+  useEffect(() => {
+    let page = condition.page;
+    if (outcomeList.length === 0 && outcomeTotal && outcomeTotal > 1) {
+      page = 1;
+      history.push({ search: toQueryString({ ...condition, page }) });
+    }
+  }, [condition, condition.page, history, outcomeList.length, outcomeTotal]);
+
+  useEffect(() => {
+    (async () => {
+      await dispatch(actOutcomeList({ ...condition, metaLoading: true }));
+    })();
+  }, [condition, dispatch]);
+
+  const content_list = useMemo(() => {
+    console.log(outcomeList);
+    return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
+  }, [outcomeList]);
+
   return (
     <>
       <LayoutBox holderMin={40} holderBase={80} mainBase={1920}>
@@ -416,6 +478,7 @@ function ScheduleContent() {
               filterOption={filterOption}
               user_id={user_id}
               schoolByOrgOrUserData={schoolByOrgOrUserData}
+              learingOutcomeData={content_list}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

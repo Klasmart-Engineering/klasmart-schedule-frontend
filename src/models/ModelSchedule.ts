@@ -11,6 +11,7 @@ import {
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/api.auto";
 import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import { ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { GetOutcomeList } from "../api/type";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -176,6 +177,19 @@ export class modelSchedule {
     });
     if (others.length > 1) set.push(`class+All+Others`);
     return set;
+  }
+
+  static AssemblyLearningOutcome(outcomeList: GetOutcomeList) {
+    return outcomeList.map((item) => {
+      return {
+        id: item.outcome_id,
+        name: item.outcome_name,
+        shortCode: item.shortcode,
+        assumed: item.assumed,
+        learningOutcomeSet: item.sets,
+        select: false,
+      };
+    });
   }
 
   static FilterParticipants(

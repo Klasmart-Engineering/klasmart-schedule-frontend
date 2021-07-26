@@ -68,12 +68,14 @@ import {
   EntityScheduleSchoolInfo,
   filterOptionItem,
   FilterQueryTypeProps,
+  LearningContentList,
   memberType,
   modeViewType,
   ParticipantsData,
   ParticipantsShortInfo,
   repeatOptionsType,
   timestampType,
+  LearningContentListForm,
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -84,6 +86,8 @@ import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import { domainSwitch } from "../../api/extra";
+import LearingOutcome from "./LearingOutcome";
+import { useForm } from "react-hook-form";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -239,6 +243,17 @@ const useStyles = makeStyles(({ shadows }) => ({
     zIndex: 10,
     padding: "0 5px 0 5px",
   },
+  learnOutcomeCounter: {
+    width: "1.5rem",
+    height: "1.5rem",
+    backgroundColor: "white",
+    color: "blue",
+    fontWeight: "bold",
+    borderRadius: "1.5rem",
+    textAlign: "center",
+    lineHeight: "1.5rem",
+    marginLeft: "4px",
+  },
 }));
 
 function SmallCalendar(props: CalendarStateProps) {
@@ -355,6 +370,7 @@ function EditBox(props: CalendarStateProps) {
     isShowAnyTime,
     stateCurrentCid,
     stateMaterialArr,
+    learingOutcomeData,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -1583,6 +1599,47 @@ function EditBox(props: CalendarStateProps) {
     return scheduleList.class_type === "Task" && checkedStatus.repeatCheck;
   };
 
+  const conditionFormMethods = useForm<LearningContentListForm>();
+  const { getValues } = conditionFormMethods;
+
+  const searchOutcomesList = () => {
+    console.log(123);
+  };
+
+  const saveOutcomesList = () => {
+    console.log(getValues().content_list);
+    changeModalDate({ openStatus: false });
+  };
+
+  const learingOutcomeDatas: LearningContentListForm = {
+    search_type: "",
+    search_value: "",
+    is_assumed: true,
+    content_list: learingOutcomeData,
+  };
+
+  const handeLearingOutcome = () => {
+    changeModalDate({
+      enableCustomization: true,
+      customizeTemplate: (
+        <LearingOutcome
+          handleClose={() => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          }}
+          learingOutcomeData={learingOutcomeDatas}
+          conditionFormMethods={conditionFormMethods}
+          searchOutcomesList={searchOutcomesList}
+          saveOutcomesList={saveOutcomesList}
+        />
+      ),
+      openStatus: true,
+      handleClose: () => {
+        changeModalDate({ openStatus: false });
+      },
+      showScheduleInfo: true,
+    });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -1635,7 +1692,7 @@ function EditBox(props: CalendarStateProps) {
           {menuItemListClassType(scheduleMockOptions.classTypeList)}
         </TextField>
         {scheduleList.class_type === "Homework" && (
-          <Box>
+          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <FormGroup row>
               <FormControlLabel
                 disabled={isScheduleExpired() || isLimit()}
@@ -1643,6 +1700,19 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
             </FormGroup>
+            {checkedStatus.homeFunCheck && (
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
+                onClick={() => {
+                  handeLearingOutcome();
+                }}
+              >
+                <span>{"Set Learning Outcome"}</span>
+                <div className={css.learnOutcomeCounter}>4</div>
+              </Button>
+            )}
           </Box>
         )}
         <Box className={css.fieldBox}>
@@ -2187,6 +2257,7 @@ interface CalendarStateProps {
   filterOption: filterOptionItem;
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
+  learingOutcomeData: LearningContentList[];
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2230,6 +2301,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
+    learingOutcomeData,
   } = props;
 
   const template = (
@@ -2268,6 +2340,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           filterOption={filterOption}
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
+          learingOutcomeData={learingOutcomeData}
         />
       </Box>
       <Box
@@ -2311,6 +2384,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           filterOption={filterOption}
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
+          learingOutcomeData={learingOutcomeData}
         />
       </Box>
     </>

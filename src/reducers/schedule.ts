@@ -69,6 +69,7 @@ import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 import { Maybe, SchoolMembership } from "../api/api-ko-schema.auto";
+import { GetOutcomeList } from "../api/type";
 
 const MOCK = false;
 
@@ -107,6 +108,8 @@ export interface ScheduleState {
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   mediaList: EntityContentInfoWithDetails[];
   ScheduleViewInfo: EntityScheduleViewDetail;
+  outcomeList: GetOutcomeList;
+  outcomeTotal: number;
 }
 
 interface Rootstate {
@@ -228,6 +231,8 @@ const initialState: ScheduleState = {
   schoolByOrgOrUserData: [],
   mediaList: [],
   ScheduleViewInfo: {},
+  outcomeList: [],
+  outcomeTotal: 0,
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -672,6 +677,16 @@ export const getScheduleViewInfo = createAsyncThunk<GetScheduleViewInfoResult, G
   }
 );
 
+type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
+export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    return { list, total };
+  }
+);
+
 const { actions, reducer } = createSlice({
   name: "schedule",
   initialState,
@@ -697,6 +712,10 @@ const { actions, reducer } = createSlice({
     },
   },
   extraReducers: {
+    [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = payload.list;
+      state.outcomeTotal = payload.total;
+    },
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
       // state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.searchScheduleList = payload.data;
