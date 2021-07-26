@@ -1,6 +1,8 @@
 import { makeStyles } from "@material-ui/core";
 import React from "react";
+import { EntityQueryLiveClassesSummaryResult } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
+import { LiveClassesReport, NoDataCom } from "./LiveClassesReport";
 import { ReportType } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -48,7 +50,8 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 export interface ReportInfoProps {
-  reportType: string;
+  reportType: ReportType;
+  liveClassesSummary: EntityQueryLiveClassesSummaryResult[];
   onChangeReportType: (value: ReportType) => void;
 }
 export function ReportInfo(props: ReportInfoProps) {
@@ -61,10 +64,16 @@ export function ReportInfo(props: ReportInfoProps) {
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportCon}>
         <div className={css.pieCon}>
-          <div className={isLive ? css.leftPieItem : css.leftNotActive} onClick={handleClickLive}></div>
-          <div className={isLive ? css.rightNoActive : css.rightPieItem} onClick={handleClickAssignment}></div>
+          <div className={isLive ? css.leftPieItem : css.leftNotActive} onClick={handleClickLive}>
+            <NoDataCom isPie={true} />
+          </div>
+          <div className={isLive ? css.rightNoActive : css.rightPieItem} onClick={handleClickAssignment}>
+            <NoDataCom isPie={false} />
+          </div>
         </div>
-        <div className={css.infoCon}></div>
+        <div className={css.infoCon}>
+          <LiveClassesReport data={[]} reportType={reportType}/>
+        </div>
       </div>
     </LayoutBox>
   );

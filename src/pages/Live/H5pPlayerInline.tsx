@@ -5,7 +5,7 @@ import React, { memo, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
-import { h5pEvent } from "../../reducers/content";
+// import { h5pEvent } from "../../reducers/content";
 import { InlineIframeManager, InlineIframeManagerInjectHandler } from "./InlineIframeManager";
 import l10n from "./l10n.json";
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
@@ -126,12 +126,12 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
         local_library_version,
         local_content_id: libraryContentId,
       };
-      dispatch(h5pEvent(resultInfo));
+      // dispatch(h5pEvent(resultInfo));
     } else {
       if (!statement) return;
       const info = { ...baseInfo, ...extractH5pStatement(statement) };
       const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
-      dispatch(h5pEvent(resultInfo));
+      // dispatch(h5pEvent(resultInfo));
     }
   };
   /* eslint-disable-next-line react-hooks/exhaustive-deps */

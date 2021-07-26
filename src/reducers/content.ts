@@ -8,7 +8,7 @@ import {
   OrganizationsQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
-  QeuryMeQueryVariables,
+  QeuryMeQueryVariables
 } from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
@@ -18,7 +18,7 @@ import {
   EntityFolderContentData,
   EntityFolderItemInfo,
   EntityOrganizationInfo,
-  EntityOrganizationProperty,
+  EntityOrganizationProperty
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import {
@@ -28,7 +28,7 @@ import {
   GetOutcomeList,
   OutcomePublishStatus,
   PublishStatus,
-  SearchContentsRequestContentType,
+  SearchContentsRequestContentType
 } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -927,11 +927,11 @@ export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRe
     return res;
   }
 );
-type IQueryH5pEventParams = Parameters<typeof api.h5P.createH5PEvent>[0];
-type IQueryH5pEventResult = AsyncReturnType<typeof api.h5P.createH5PEvent>;
-export const h5pEvent = createAsyncThunk<IQueryH5pEventResult, IQueryH5pEventParams>("content/h5pEvent", async (h5pSegment) => {
-  return await api.h5P.createH5PEvent(h5pSegment);
-});
+// type IQueryH5pEventParams = Parameters<typeof api.h5P.createH5PEvent>[0];
+// type IQueryH5pEventResult = AsyncReturnType<typeof api.h5P.createH5PEvent>;
+// export const h5pEvent = createAsyncThunk<IQueryH5pEventResult, IQueryH5pEventParams>("content/h5pEvent", async (h5pSegment) => {
+//   return await api.h5P.createH5PEvent(h5pSegment);
+// });
 type IGetDownloadPathParams = Parameters<typeof api.contentsResources.getDownloadPath>[0];
 type IGetDownloadPathResult = AsyncReturnType<typeof api.contentsResources.getDownloadPath>;
 export const getDownloadPath = createAsyncThunk<IGetDownloadPathResult, IGetDownloadPathParams>("content/getDownloadPath", (query) => {

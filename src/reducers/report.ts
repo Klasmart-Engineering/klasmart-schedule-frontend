@@ -35,10 +35,10 @@ import {
   TeacherByOrgIdQueryVariables,
   TeacherListBySchoolIdDocument,
   TeacherListBySchoolIdQuery,
-  TeacherListBySchoolIdQueryVariables,
+  TeacherListBySchoolIdQueryVariables
 } from "../api/api-ko.auto";
 import {
-  EntityReportListTeachingLoadResult,
+  EntityQueryLiveClassesSummaryResult, EntityReportListTeachingLoadResult,
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
   EntityStudentAchievementReportItem,
@@ -46,7 +46,7 @@ import {
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
-  ExternalSubject,
+  ExternalSubject
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -83,6 +83,7 @@ interface IreportState {
     studentList: [];
     subjectList: [];
   };
+  liveClassesSummary: EntityQueryLiveClassesSummaryResult[];
 }
 const initialState: IreportState = {
   reportList: [],
@@ -132,6 +133,7 @@ const initialState: IreportState = {
     studentList: [],
     subjectList: [],
   },
+  liveClassesSummary: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1016,6 +1018,7 @@ export const onLoadLearningSummary = createAsyncThunk<LearningSummaryResponse, Q
       // 不需要拉取student 可以看到 year week  subject
     }
     console.log(studentList);
+    const res = await api.reports.queryLiveClassesSummary();
     return {
       studentList,
       subjectList,

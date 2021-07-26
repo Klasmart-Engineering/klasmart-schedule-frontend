@@ -10,6 +10,97 @@
  * ---------------------------------------------------------------
  */
 
+
+export interface EntityActivityFlashCards {
+  cards_number?: number;
+  play_records?: EntityActivityFlashCardsPlayRecord[];
+}
+
+export interface EntityActivityFlashCardsPlayRecord {
+  correct_cards_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
+}
+
+export interface EntityActivityImagePair {
+  paris_number?: number;
+  play_records?: EntityActivityImagePairPlayRecord[];
+  play_times?: number;
+}
+
+export interface EntityActivityImagePairPlayRecord {
+  correct_pairs_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
+}
+
+export interface EntityActivityImageSequencing {
+  cards_number?: number;
+  play_records?: EntityActivityImageSequencingPlayRecord[];
+  play_times?: number;
+}
+
+export interface EntityActivityImageSequencingPlayRecord {
+  correct_cards_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
+}
+
+export interface EntityActivityMemoryGame {
+  pairs_number?: number;
+  play_records?: EntityActivityMemoryGamePlayRecord[];
+  play_times?: number;
+}
+
+export interface EntityActivityMemoryGamePlayRecord {
+  clicks_count?: number;
+  duration?: number;
+  end_time?: number;
+  start_time?: number;
+}
+
+export interface EntityCreateH5PEventRequest {
+  extends?: object;
+  local_content_id?: string;
+  local_library_name?: string;
+  local_library_version?: string;
+  material_id?: string;
+  play_id?: string;
+  schedule_id?: string;
+  time?: number;
+  user_id?: string;
+  verb_id?: string;
+}
+
+export interface EntityGetStudentPerformanceH5PReportResponse {
+  items?: EntityStudentPerformanceH5PReportItem[];
+}
+
+export interface EntityListStudentsPerformanceH5PReportResponse {
+  items?: EntityStudentsPerformanceH5PReportItem[];
+}
+
+export interface EntityStudentPerformanceH5PReportItem {
+  activity_flash_cards?: EntityActivityFlashCards;
+  activity_image_pair?: EntityActivityImagePair;
+  activity_image_sequencing?: EntityActivityImageSequencing;
+  activity_memory_game?: EntityActivityMemoryGame;
+  activity_type?: "H5P.ImageSequencing" | "H5P.MemoryGame" | "H5P.ImagePair" | "H5P.Flashcards";
+  avg_spent_time?: number;
+  material_id?: string;
+  material_name?: string;
+  total_spent_time?: number;
+}
+
+export interface EntityStudentsPerformanceH5PReportItem {
+  attend?: boolean;
+  spent_time?: number;
+  student_id?: string;
+  student_name?: string;
+}
 export interface ApiBadRequestResponse {
   data?: object;
   label?: string;

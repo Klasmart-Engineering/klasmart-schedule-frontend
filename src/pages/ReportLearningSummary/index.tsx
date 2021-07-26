@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { t } from "../../locale/LocaleManager";
 import { formatTimeToMonDay } from "../../models/ModelReports";
+import { RootState } from "../../reducers";
 import { onLoadLearningSummary } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary } from "./FilterLearningSummary";
@@ -67,6 +68,7 @@ export function ReportLearningSummary() {
   //   PermissionType.report_learning_summary_student_649,
   // ]);
   const weeks = getWeeks();
+  const { liveClassesSummary } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const defaultWeeksValue = useMemo(() => {
     if (condition.week_start && condition.week_end) {
       return `${formatTimeToMonDay(condition.week_start)}~${formatTimeToMonDay(condition.week_end)}`;
@@ -89,7 +91,7 @@ export function ReportLearningSummary() {
     <>
       <ReportTitle title={t("report_learning_summary_report")} info={t("report_msg_lsr")} />
       <FilterLearningSummary value={condition} weeks={weeks} defaultWeeksValue={defaultWeeksValue} years={years} onChange={handleChange} />
-      <ReportInfo reportType={reportType} onChangeReportType={handleChangeReportType} />
+      <ReportInfo reportType={reportType} onChangeReportType={handleChangeReportType} liveClassesSummary={liveClassesSummary} />
     </>
   );
 }
