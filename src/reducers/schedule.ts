@@ -134,6 +134,7 @@ export const initScheduleDetial: EntityScheduleDetailsView = {
   is_all_day: true,
   is_repeat: false,
   real_time_status: {},
+  outcome_ids: [],
 };
 
 const initialState: ScheduleState = {
@@ -710,10 +711,13 @@ const { actions, reducer } = createSlice({
     resetScheduleTimeViewData: (state, { payload }: PayloadAction<ScheduleState["scheduleTimeViewData"]>) => {
       state.scheduleTimeViewData = payload;
     },
+    resetActOutcomeList: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = payload;
+    },
   },
   extraReducers: {
     [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.outcomeList = payload.list;
+      state.outcomeList = [...state.outcomeList, ...payload.list];
       state.outcomeTotal = payload.total;
     },
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
@@ -829,5 +833,5 @@ const { actions, reducer } = createSlice({
     },
   },
 });
-export const { resetScheduleDetial, resetParticipantList, changeParticipants, resetScheduleTimeViewData } = actions;
+export const { resetScheduleDetial, resetParticipantList, changeParticipants, resetScheduleTimeViewData, resetActOutcomeList } = actions;
 export default reducer;

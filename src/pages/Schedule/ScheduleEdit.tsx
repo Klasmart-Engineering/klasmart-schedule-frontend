@@ -68,7 +68,6 @@ import {
   EntityScheduleSchoolInfo,
   filterOptionItem,
   FilterQueryTypeProps,
-  LearningContentList,
   memberType,
   modeViewType,
   ParticipantsData,
@@ -256,6 +255,11 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
 }));
 
+const toQueryString = (hash: Record<string, any>): string => {
+  const search = new URLSearchParams(hash);
+  return `?${search.toString()}`;
+};
+
 function SmallCalendar(props: CalendarStateProps) {
   const {
     timesTamp,
@@ -370,7 +374,6 @@ function EditBox(props: CalendarStateProps) {
     isShowAnyTime,
     stateCurrentCid,
     stateMaterialArr,
-    learingOutcomeData,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -501,6 +504,7 @@ function EditBox(props: CalendarStateProps) {
       subject_id: "",
       teacher_ids: [],
       title: "",
+      outcome_ids: [],
       ...timesTampDada,
     };
     setClassItem(defaults);
@@ -905,6 +909,10 @@ function EditBox(props: CalendarStateProps) {
       addData["is_home_fun"] = checkedStatus.homeFunCheck;
     } else {
       addData["is_home_fun"] = false;
+    }
+
+    if (scheduleList.class_type === "Homework" && checkedStatus.homeFunCheck) {
+      addData["outcome_ids"] = outComeIds;
     }
 
     if (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") addData["is_force"] = true;
@@ -1601,21 +1609,38 @@ function EditBox(props: CalendarStateProps) {
 
   const conditionFormMethods = useForm<LearningContentListForm>();
   const { getValues } = conditionFormMethods;
+  const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
+  const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all" });
 
   const searchOutcomesList = () => {
-    console.log(123);
+    const query = {
+      exect_search: getValues().search_type,
+      search_key: getValues().search_value,
+      assumed: getValues().is_assumed ? 1 : -1,
+      page: getValues().page,
+    };
+    setCondition({ ...query });
+    history.push({ search: toQueryString({ ...query }) });
   };
 
   const saveOutcomesList = () => {
-    console.log(getValues().content_list);
+    const outcome_ids = getValues()
+      .content_list.filter((item) => {
+        return item.select;
+      })
+      .map((item) => {
+        return item.id;
+      });
+    setOutcomeIds(outcome_ids);
     changeModalDate({ openStatus: false });
   };
 
   const learingOutcomeDatas: LearningContentListForm = {
-    search_type: "",
-    search_value: "",
-    is_assumed: true,
-    content_list: learingOutcomeData,
+    search_type: condition.exect_search ?? "all",
+    search_value: condition.search_key ?? "",
+    is_assumed: condition.assumed ?? false,
+    content_list: [],
+    page: 1,
   };
 
   const handeLearingOutcome = () => {
@@ -1630,6 +1655,8 @@ function EditBox(props: CalendarStateProps) {
           conditionFormMethods={conditionFormMethods}
           searchOutcomesList={searchOutcomesList}
           saveOutcomesList={saveOutcomesList}
+          outComeIds={outComeIds}
+          scheduleDetial={scheduleDetial}
         />
       ),
       openStatus: true,
@@ -1710,7 +1737,7 @@ function EditBox(props: CalendarStateProps) {
                 }}
               >
                 <span>{"Set Learning Outcome"}</span>
-                <div className={css.learnOutcomeCounter}>4</div>
+                <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>
               </Button>
             )}
           </Box>
@@ -2257,7 +2284,6 @@ interface CalendarStateProps {
   filterOption: filterOptionItem;
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
-  learingOutcomeData: LearningContentList[];
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2301,7 +2327,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
-    learingOutcomeData,
   } = props;
 
   const template = (
@@ -2340,7 +2365,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           filterOption={filterOption}
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
-          learingOutcomeData={learingOutcomeData}
         />
       </Box>
       <Box
@@ -2384,7 +2408,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           filterOption={filterOption}
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
-          learingOutcomeData={learingOutcomeData}
         />
       </Box>
     </>

@@ -46,21 +46,12 @@ import {
   searchAuthContentLists,
   actOutcomeList,
 } from "../../reducers/schedule";
-import {
-  AlertDialogProps,
-  LearningContentList,
-  memberType,
-  modeViewType,
-  ParticipantsShortInfo,
-  RouteParams,
-  timestampType,
-} from "../../types/scheduleTypes";
+import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { useHistory } from "react-router-dom";
 import { OutcomeListExectSearch, OutcomeQueryCondition } from "../OutcomeList/types";
 import { OrderBy } from "../../api/type";
 
@@ -70,13 +61,6 @@ const useQuery = () => {
   const scheduleId = query.get("schedule_id") || "";
   const teacherName = query.get("name") || "";
   return { scheduleId, teacherName };
-};
-
-const clearNull = (obj: Record<string, any>) => {
-  Object.keys(obj).forEach((key) => {
-    if (obj[key] == null) delete obj[key];
-  });
-  return obj;
 };
 
 const useOutcomeQuery = (): OutcomeQueryCondition => {
@@ -90,13 +74,17 @@ const useOutcomeQuery = (): OutcomeQueryCondition => {
     const order_by = (query.get("order_by") as OrderBy | null) || undefined;
     const is_unpub = query.get("is_unpub");
     const exect_search = query.get("exect_search") || OutcomeListExectSearch.all;
-    return clearNull({ search_key, publish_status, author_name, page, order_by, is_unpub, exect_search });
+    const assumed = query.get("assumed") || -1;
+    const page_size = 10;
+    return clearNull({ search_key, publish_status, author_name, page, order_by, is_unpub, exect_search, assumed, page_size });
   }, [search]);
 };
 
-const toQueryString = (hash: Record<string, any>): string => {
-  const search = new URLSearchParams(hash);
-  return `?${search.toString()}`;
+const clearNull = (obj: Record<string, any>) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == null) delete obj[key];
+  });
+  return obj;
 };
 
 const parseRightside = (rightside: RouteParams["rightside"]) => ({
@@ -130,8 +118,6 @@ function ScheduleContent() {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
-    outcomeList,
-    outcomeTotal,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -146,7 +132,6 @@ function ScheduleContent() {
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
   const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
   const condition = useOutcomeQuery();
-  const history = useHistory();
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -406,23 +391,10 @@ function ScheduleContent() {
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
   useEffect(() => {
-    let page = condition.page;
-    if (outcomeList.length === 0 && outcomeTotal && outcomeTotal > 1) {
-      page = 1;
-      history.push({ search: toQueryString({ ...condition, page }) });
-    }
-  }, [condition, condition.page, history, outcomeList.length, outcomeTotal]);
-
-  useEffect(() => {
     (async () => {
       await dispatch(actOutcomeList({ ...condition, metaLoading: true }));
     })();
   }, [condition, dispatch]);
-
-  const content_list = useMemo(() => {
-    console.log(outcomeList);
-    return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
-  }, [outcomeList]);
 
   return (
     <>
@@ -478,7 +450,6 @@ function ScheduleContent() {
               filterOption={filterOption}
               user_id={user_id}
               schoolByOrgOrUserData={schoolByOrgOrUserData}
-              learingOutcomeData={content_list}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

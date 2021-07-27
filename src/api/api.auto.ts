@@ -1025,6 +1025,7 @@ export interface EntityScheduleDetailsView {
   teachers?: EntityScheduleAccessibleUserView[];
   title?: string;
   version?: number;
+  outcome_ids: string[];
 }
 
 export interface EntityScheduleFeedbackAddInput {

@@ -255,7 +255,6 @@ export interface FilterSchoolInfo {
   onlyMine: boolean;
 }
 
-export type searchType = "Admin" | "School" | "Teacher" | "Student" | "";
 export interface LearningContentList {
   id: string;
   name: string;
@@ -265,8 +264,9 @@ export interface LearningContentList {
   select: boolean;
 }
 export interface LearningContentListForm {
-  search_type: searchType;
+  search_type: string;
   search_value: string;
   is_assumed: boolean;
   content_list: LearningContentList[];
+  page: number;
 }

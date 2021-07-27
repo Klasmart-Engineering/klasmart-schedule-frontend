@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import { SearchOutlined } from "@material-ui/icons";
-import React from "react";
+import React, { useMemo } from "react";
 import { d } from "../../locale/LocaleManager";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
@@ -19,6 +19,11 @@ import Paper from "@material-ui/core/Paper";
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import { LearningContentListForm, LearningContentList } from "../../types/scheduleTypes";
 import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../reducers";
+import { modelSchedule } from "../../models/ModelSchedule";
+import { EntityScheduleDetailsView } from "../../api/api.auto";
+import { resetActOutcomeList } from "../../reducers/schedule";
 
 const useStyles = makeStyles((theme) => ({
   previewContainer: {
@@ -89,14 +94,25 @@ interface InfoProps {
   searchOutcomesList: () => void;
   learingOutcomeData: LearningContentListForm;
   handleClose: () => void;
+  outComeIds: string[];
+  scheduleDetial: EntityScheduleDetailsView;
 }
 
 export default function LearingOutcome(props: InfoProps) {
   const classes = useStyles();
-  const { conditionFormMethods, saveOutcomesList, searchOutcomesList, learingOutcomeData, handleClose } = props;
+  const dispatch = useDispatch();
+  const { conditionFormMethods, saveOutcomesList, searchOutcomesList, learingOutcomeData, handleClose, outComeIds, scheduleDetial } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
   const [selectNum, setSelectNum] = React.useState<number>(learingOutcomeData.content_list.filter((item) => item.select).length);
+  const { outcomeList, outcomeTotal } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const content_list = useMemo(() => {
+    return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
+  }, [outcomeList]);
+
+  const content_lists = content_list.map((item) => {
+    return { ...item, select: outComeIds.includes(item.id) || scheduleDetial.outcome_ids.includes(item.id) };
+  });
 
   const handleOnScroll = () => {
     if (dom) {
@@ -104,25 +120,36 @@ export default function LearingOutcome(props: InfoProps) {
       const clientHeight = dom.clientHeight; //可视区域
       const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
       if (contentScrollTop + clientHeight >= scrollHeight) {
-        console.log("到底了");
+        const maxPage = Math.ceil(Number(outcomeTotal) / 10);
+        const page = getValues().page + 1;
+        if (page > maxPage) return;
+        setValue(`page`, page);
+        searchOutcomesList();
       }
     }
   };
 
   const getSelectStatus = (index: number, item: LearningContentList) => {
+    dispatch(resetActOutcomeList([]));
     setValue(`content_list[${index}]`, { ...item, select: !item.select });
     const num = getValues().content_list.filter((item) => item.select).length;
     setSelectNum(num);
   };
 
+  const checkAssume = (value: boolean) => {
+    dispatch(resetActOutcomeList([]));
+    setValue(`is_assumed`, value);
+    searchOutcomesList();
+  };
+
   const filterCode = [
-    { lable: "All", value: "All" },
+    { lable: "All", value: "all" },
     { lable: "author", value: "author" },
-    { lable: "code", value: "code" },
+    { lable: "code", value: "shortCode" },
     { lable: "description", value: "description" },
-    { lable: "keywords", value: "keywords" },
-    { lable: "name", value: "name" },
-    { lable: "set", value: "set" },
+    { lable: "keywords", value: "keyWord" },
+    { lable: "name", value: "loName" },
+    { lable: "set", value: "loSet" },
   ];
   const templateOption = filterCode.map((item, index) => {
     return (
@@ -143,11 +170,22 @@ export default function LearingOutcome(props: InfoProps) {
         >
           <div className={classes.searchCon}>
             <Controller
+              style={{
+                borderLeft: 0,
+                width: "180px",
+                display: "none",
+              }}
+              as={TextField}
+              defaultValue={learingOutcomeData.page}
+              name="page"
+              control={control}
+            />
+            <Controller
               as={TextField}
               control={control}
               name="search_type"
               className={classes.exectSearchInput}
-              defaultValue={learingOutcomeData.search_type || "All"}
+              defaultValue={learingOutcomeData.search_type || "all"}
               size="small"
               select
               SelectProps={{
@@ -190,7 +228,19 @@ export default function LearingOutcome(props: InfoProps) {
           control={control}
           defaultValue={learingOutcomeData.is_assumed}
           render={(props: { value: boolean | undefined }) => (
-            <FormControlLabel control={<Checkbox checked={props.value} name="checkedB" color="primary" />} label="Assumed" />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  onChange={(e) => {
+                    checkAssume(e.target.checked);
+                  }}
+                  checked={props.value}
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label="Assumed"
+            />
           )}
         />
       </Box>
@@ -214,7 +264,7 @@ export default function LearingOutcome(props: InfoProps) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {learingOutcomeData.content_list.map((item, index) => (
+              {content_lists.map((item, index) => (
                 <Controller
                   name={`content_list[${index}]`}
                   control={control}
@@ -227,9 +277,11 @@ export default function LearingOutcome(props: InfoProps) {
                       <TableCell align="center">{props.value.shortCode}</TableCell>
                       <TableCell align="center">{props.value.assumed ? "Yes" : ""}</TableCell>
                       <TableCell align="center">
-                        {props.value.learningOutcomeSet.map((set) => {
-                          return <span>{set.set_name + ";"}</span>;
-                        })}
+                        <ul>
+                          {props.value.learningOutcomeSet.map((set) => {
+                            return <li style={{ marginTop: "10px" }}>{set.set_name}</li>;
+                          })}
+                        </ul>
                       </TableCell>
                       <TableCell align="center">
                         {!props.value.select && (
