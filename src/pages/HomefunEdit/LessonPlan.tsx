@@ -144,7 +144,7 @@ export function LessonPlan(props: AssignmentProps) {
                 defaultValue={row || []}
                 key={row.outcome_id}
                 render={({ value, onChange }) => (
-                  <TableRow style={{ display: handFilter(value.assumed) ? "" : "none" }}>
+                  <TableRow style={{ display: handFilter(value.assumed as boolean) ? "" : "none" }}>
                     <TableCell component="th" scope="row" align="center">
                       {value.outcome_name}
                     </TableCell>
