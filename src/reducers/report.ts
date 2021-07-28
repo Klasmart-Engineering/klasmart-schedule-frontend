@@ -33,15 +33,13 @@ import {
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
   EntityStudentAchievementReportItem,
-  EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
-  EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { ModelReport } from "../models/ModelReports";
-import { ALL_STUDENT, ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
+import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
@@ -56,11 +54,11 @@ interface IreportState {
     teacherList: Pick<User, "user_id" | "user_name">[];
     categories: EntityTeacherReportCategory[];
   };
-  stuReportMockOptions: GetStuReportMockOptionsResponse;
-  h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
+  // stuReportMockOptions: GetStuReportMockOptionsResponse;
+  // h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
   stuReportList?: EntityStudentPerformanceReportItem[];
   stuReportDetail?: EntityStudentPerformanceReportItem[];
-  h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
+  // h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
   studentList: Pick<User, "user_id" | "user_name">[];
   teachingLoadOnload: TeachingLoadResponse;
 }
@@ -80,20 +78,20 @@ const initialState: IreportState = {
     teacherList: [],
     categories: [],
   },
-  stuReportMockOptions: {
-    teacherList: [],
-    classList: [],
-    lessonPlanList: [],
-    teacher_id: "",
-    class_id: "",
-    lesson_plan_id: "",
-    student_id: "",
-    studentList: [],
-  },
-  h5pReportList: [],
+  // stuReportMockOptions: {
+  //   teacherList: [],
+  //   classList: [],
+  //   lessonPlanList: [],
+  //   teacher_id: "",
+  //   class_id: "",
+  //   lesson_plan_id: "",
+  //   student_id: "",
+  //   studentList: [],
+  // },
+  // h5pReportList: [],
   stuReportList: [],
   stuReportDetail: [],
-  h5pReportDetail: [],
+  // h5pReportDetail: [],
   lessonPlanList: [],
   studentList: [],
   teachingLoadOnload: {
@@ -404,222 +402,222 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
   }
 );
 
-interface GetStuReportListResponse {
-  stuReportList?: EntityStudentPerformanceReportItem[];
-  h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
-}
-interface GetStuReportListPayload {
-  teacher_id: string;
-  class_id: string;
-  lesson_plan_id: string;
-}
-export const getStuReportList = createAsyncThunk<GetStuReportListResponse, GetStuReportListPayload & LoadingMetaPayload>(
-  "getStuReportList",
-  async ({ teacher_id, class_id, lesson_plan_id }) => {
-    const stuItems = await api.reports.listStudentsPerformanceReport({ teacher_id, class_id, lesson_plan_id });
-    const h5pItems = await api.reports.listStudentsPerformanceH5PReport({ teacher_id, class_id, lesson_plan_id });
-    return { stuReportList: stuItems.items, h5pReportList: h5pItems.items };
-  }
-);
+// interface GetStuReportListResponse {
+//   stuReportList?: EntityStudentPerformanceReportItem[];
+//   h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
+// }
+// interface GetStuReportListPayload {
+//   teacher_id: string;
+//   class_id: string;
+//   lesson_plan_id: string;
+// }
+// export const getStuReportList = createAsyncThunk<GetStuReportListResponse, GetStuReportListPayload & LoadingMetaPayload>(
+//   "getStuReportList",
+//   async ({ teacher_id, class_id, lesson_plan_id }) => {
+//     const stuItems = await api.reports.listStudentsPerformanceReport({ teacher_id, class_id, lesson_plan_id });
+//     const h5pItems = await api.reports.listStudentsPerformanceH5PReport({ teacher_id, class_id, lesson_plan_id });
+//     return { stuReportList: stuItems.items, h5pReportList: h5pItems.items };
+//   }
+// );
 
-interface GetStuReportDetailResponse {
-  stuReportDetail?: EntityStudentPerformanceReportItem[];
-  h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
-}
-interface GetStuReportDetailPayload {
-  teacher_id: string;
-  class_id: string;
-  lesson_plan_id: string;
-  id: string;
-}
-export const getStuReportDetail = createAsyncThunk<GetStuReportDetailResponse, GetStuReportDetailPayload & LoadingMetaPayload>(
-  "getStuReportDetail",
-  async ({ teacher_id, class_id, lesson_plan_id, id }) => {
-    const stuItems = await api.reports.getStudentPerformanceReport(id, { teacher_id, class_id, lesson_plan_id });
-    const h5pItems = await api.reports.getStudentPerformanceH5PReport(id, { teacher_id, class_id, lesson_plan_id });
-    return { stuReportDetail: stuItems.items, h5pReportDetail: h5pItems.items };
-  }
-);
+// interface GetStuReportDetailResponse {
+//   stuReportDetail?: EntityStudentPerformanceReportItem[];
+//   h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
+// }
+// interface GetStuReportDetailPayload {
+//   teacher_id: string;
+//   class_id: string;
+//   lesson_plan_id: string;
+//   id: string;
+// }
+// export const getStuReportDetail = createAsyncThunk<GetStuReportDetailResponse, GetStuReportDetailPayload & LoadingMetaPayload>(
+//   "getStuReportDetail",
+//   async ({ teacher_id, class_id, lesson_plan_id, id }) => {
+//     const stuItems = await api.reports.getStudentPerformanceReport(id, { teacher_id, class_id, lesson_plan_id });
+//     const h5pItems = await api.reports.getStudentPerformanceH5PReport(id, { teacher_id, class_id, lesson_plan_id });
+//     return { stuReportDetail: stuItems.items, h5pReportDetail: h5pItems.items };
+//   }
+// );
 
-export interface GetStuReportMockOptionsResponse {
-  teacherList: Pick<User, "user_id" | "user_name">[];
-  classList: Pick<Class, "class_id" | "class_name">[];
-  lessonPlanList: EntityScheduleShortInfo[];
-  teacher_id: string;
-  class_id: string;
-  lesson_plan_id: string;
-  student_id?: string;
-  reportList?: EntityStudentAchievementReportItem[];
-  studentList?: Pick<User, "user_id" | "user_name">[];
-  h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
-  stuReportList?: EntityStudentPerformanceReportItem[];
-  stuReportDetail?: EntityStudentPerformanceReportItem[];
-  h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
-}
-interface GetStuReportMockOptionsPayLoad {
-  teacher_id?: string;
-  class_id?: string;
-  lesson_plan_id?: string;
-  view_my_report?: boolean;
-  status?: ReportFilter;
-  sort_by?: ReportOrderBy;
-  student_id: string;
-}
+// export interface GetStuReportMockOptionsResponse {
+//   teacherList: Pick<User, "user_id" | "user_name">[];
+//   classList: Pick<Class, "class_id" | "class_name">[];
+//   lessonPlanList: EntityScheduleShortInfo[];
+//   teacher_id: string;
+//   class_id: string;
+//   lesson_plan_id: string;
+//   student_id?: string;
+//   reportList?: EntityStudentAchievementReportItem[];
+//   studentList?: Pick<User, "user_id" | "user_name">[];
+//   h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
+//   stuReportList?: EntityStudentPerformanceReportItem[];
+//   stuReportDetail?: EntityStudentPerformanceReportItem[];
+//   h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
+// }
+// interface GetStuReportMockOptionsPayLoad {
+//   teacher_id?: string;
+//   class_id?: string;
+//   lesson_plan_id?: string;
+//   view_my_report?: boolean;
+//   status?: ReportFilter;
+//   sort_by?: ReportOrderBy;
+//   student_id: string;
+// }
 
-export const stuPerformanceReportOnload = createAsyncThunk<
-  GetStuReportMockOptionsResponse,
-  GetStuReportMockOptionsPayLoad & LoadingMetaPayload
->("stuPerformanceReportOnload", async ({ teacher_id, class_id, lesson_plan_id, student_id }) => {
-  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-  let reportList: EntityStudentAchievementReportItem[] = [];
-  let lessonPlanList: EntityScheduleShortInfo[] = [];
-  let teacherList: Pick<User, "user_id" | "user_name">[] | undefined = [];
-  let finalTearchId: string = "";
-  let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
-  let h5pReportList: EntityStudentsPerformanceH5PReportItem[] = [];
-  let stuReportList: EntityStudentPerformanceReportItem[] = [];
-  let stuReportDetail: EntityStudentPerformanceReportItem[] = [];
-  let h5pReportDetail: EntityStudentPerformanceH5PReportItem[] = [];
-  // 拉取我的user_id
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  const myTearchId = meInfo.me?.user_id || "";
-  const meInfoPerm = await apiGetPermission();
-  const perm = hasPermissionOfMe(
-    [
-      PermissionType.view_my_reports_614,
-      PermissionType.view_reports_610,
-      PermissionType.view_my_organizations_reports_612,
-      PermissionType.view_my_school_reports_611,
-    ],
-    meInfoPerm.me
-  );
-  if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
-    teacherList = [];
-    finalTearchId = myTearchId;
-  } else {
-    if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
-      const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
-        query: TeacherByOrgIdDocument,
-        variables: {
-          organization_id,
-        },
-      });
-      data.organization?.classes?.forEach((classItem) => {
-        teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-      });
-    }
-    if (perm.view_my_school_reports_611 || perm.view_reports_610) {
-      const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
-        query: GetSchoolTeacherDocument,
-        variables: {
-          user_id: myTearchId,
-        },
-      });
-      data.user?.school_memberships
-        ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
-        .map((schoolItem) =>
-          schoolItem?.school?.classes?.forEach(
-            (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
-          )
-        );
-    }
-    teacherList = ModelReport.teacherListSetDiff(teacherList);
-    finalTearchId = teacher_id || (teacherList && teacherList[0]?.user_id) || "";
-    if (!teacherList || !teacherList[0])
-      return {
-        teacherList: [],
-        classList: [],
-        lessonPlanList: [],
-        teacher_id: "",
-        class_id: "",
-        lesson_plan_id: "",
-        student_id,
-      };
-  }
-  const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
-    query: ClassesTeachingQueryDocument,
-    variables: {
-      user_id: finalTearchId,
-      organization_id,
-    },
-  });
-  // const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
-  const classList = result.user && (result.user.membership?.classesTeaching as Pick<Class, "class_id" | "class_name">[]);
-  const firstClassId = classList && classList[0]?.class_id;
-  const finalClassId = class_id ? class_id : firstClassId;
-  //获取plan_id
-  if (finalTearchId && finalClassId) {
-    const data = await api.schedulesLessonPlans.getLessonPlans({
-      teacher_id: (finalTearchId as string) || "",
-      class_id: (finalClassId as string) || "",
-    });
-    lessonPlanList = data || [];
-  }
-  const finalPlanId = lesson_plan_id ? lesson_plan_id : lessonPlanList[0]?.id || "";
-  // 用finalClassId 拉取studetlist
-  if (finalTearchId && finalClassId) {
-    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
-      query: ParticipantsByClassDocument,
-      variables: { class_id: finalClassId },
-    });
-    studentList = studentList.concat(data.class?.students as Pick<User, "user_id" | "user_name">[]) || [];
-  }
-  const finalStudentId = student_id ? student_id : ALL_STUDENT;
-  if (finalPlanId) {
-    if (finalStudentId === ALL_STUDENT) {
-      const stuItems = await api.reports.listStudentsPerformanceReport({
-        teacher_id: finalTearchId,
-        class_id: finalClassId || "",
-        lesson_plan_id: finalPlanId as string,
-      });
-      stuReportList = stuItems.items || [];
-      // stuReportList = stuPerformaceList;
-      const h5pItems = await api.reports.listStudentsPerformanceH5PReport({
-        teacher_id: finalTearchId,
-        class_id: finalClassId || "",
-        lesson_plan_id: finalPlanId as string,
-      });
-      h5pReportList = h5pItems.items || [];
-      // h5pReportList = stuPerformanceH5pList;
-    } else {
-      const stuItems = await api.reports.getStudentPerformanceReport(student_id, {
-        teacher_id: finalTearchId,
-        class_id: finalClassId || "",
-        lesson_plan_id: finalPlanId as string,
-      });
-      stuReportDetail = stuItems.items || [];
-      // stuReportDetail = stuPerformanceDetail;
-      const h5pItems = await api.reports.getStudentPerformanceH5PReport(student_id, {
-        teacher_id: finalTearchId,
-        class_id: finalClassId || "",
-        lesson_plan_id: finalPlanId as string,
-      });
-      h5pReportDetail = h5pItems.items || [];
-      // h5pReportDetail = stuPerformanceH5pDetail;
-    }
-  }
+// export const stuPerformanceReportOnload = createAsyncThunk<
+//   GetStuReportMockOptionsResponse,
+//   GetStuReportMockOptionsPayLoad & LoadingMetaPayload
+// >("stuPerformanceReportOnload", async ({ teacher_id, class_id, lesson_plan_id, student_id }) => {
+//   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+//   let reportList: EntityStudentAchievementReportItem[] = [];
+//   let lessonPlanList: EntityScheduleShortInfo[] = [];
+//   let teacherList: Pick<User, "user_id" | "user_name">[] | undefined = [];
+//   let finalTearchId: string = "";
+//   let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
+//   let h5pReportList: EntityStudentsPerformanceH5PReportItem[] = [];
+//   let stuReportList: EntityStudentPerformanceReportItem[] = [];
+//   let stuReportDetail: EntityStudentPerformanceReportItem[] = [];
+//   let h5pReportDetail: EntityStudentPerformanceH5PReportItem[] = [];
+//   // 拉取我的user_id
+//   const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+//     query: QeuryMeDocument,
+//     variables: {
+//       organization_id,
+//     },
+//   });
+//   const myTearchId = meInfo.me?.user_id || "";
+//   const meInfoPerm = await apiGetPermission();
+//   const perm = hasPermissionOfMe(
+//     [
+//       PermissionType.view_my_reports_614,
+//       PermissionType.view_reports_610,
+//       PermissionType.view_my_organizations_reports_612,
+//       PermissionType.view_my_school_reports_611,
+//     ],
+//     meInfoPerm.me
+//   );
+//   if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
+//     teacherList = [];
+//     finalTearchId = myTearchId;
+//   } else {
+//     if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
+//       const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
+//         query: TeacherByOrgIdDocument,
+//         variables: {
+//           organization_id,
+//         },
+//       });
+//       data.organization?.classes?.forEach((classItem) => {
+//         teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+//       });
+//     }
+//     if (perm.view_my_school_reports_611 || perm.view_reports_610) {
+//       const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
+//         query: GetSchoolTeacherDocument,
+//         variables: {
+//           user_id: myTearchId,
+//         },
+//       });
+//       data.user?.school_memberships
+//         ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
+//         .map((schoolItem) =>
+//           schoolItem?.school?.classes?.forEach(
+//             (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
+//           )
+//         );
+//     }
+//     teacherList = ModelReport.teacherListSetDiff(teacherList);
+//     finalTearchId = teacher_id || (teacherList && teacherList[0]?.user_id) || "";
+//     if (!teacherList || !teacherList[0])
+//       return {
+//         teacherList: [],
+//         classList: [],
+//         lessonPlanList: [],
+//         teacher_id: "",
+//         class_id: "",
+//         lesson_plan_id: "",
+//         student_id,
+//       };
+//   }
+//   const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+//     query: ClassesTeachingQueryDocument,
+//     variables: {
+//       user_id: finalTearchId,
+//       organization_id,
+//     },
+//   });
+//   // const mockClassResult: ClassesByTeacherQuery = classListByTeacher;
+//   const classList = result.user && (result.user.membership?.classesTeaching as Pick<Class, "class_id" | "class_name">[]);
+//   const firstClassId = classList && classList[0]?.class_id;
+//   const finalClassId = class_id ? class_id : firstClassId;
+//   //获取plan_id
+//   if (finalTearchId && finalClassId) {
+//     const data = await api.schedulesLessonPlans.getLessonPlans({
+//       teacher_id: (finalTearchId as string) || "",
+//       class_id: (finalClassId as string) || "",
+//     });
+//     lessonPlanList = data || [];
+//   }
+//   const finalPlanId = lesson_plan_id ? lesson_plan_id : lessonPlanList[0]?.id || "";
+//   // 用finalClassId 拉取studetlist
+//   if (finalTearchId && finalClassId) {
+//     const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
+//       query: ParticipantsByClassDocument,
+//       variables: { class_id: finalClassId },
+//     });
+//     studentList = studentList.concat(data.class?.students as Pick<User, "user_id" | "user_name">[]) || [];
+//   }
+//   const finalStudentId = student_id ? student_id : ALL_STUDENT;
+//   if (finalPlanId) {
+//     if (finalStudentId === ALL_STUDENT) {
+//       const stuItems = await api.reports.listStudentsPerformanceReport({
+//         teacher_id: finalTearchId,
+//         class_id: finalClassId || "",
+//         lesson_plan_id: finalPlanId as string,
+//       });
+//       stuReportList = stuItems.items || [];
+//       // stuReportList = stuPerformaceList;
+//       const h5pItems = await api.reports.listStudentsPerformanceH5PReport({
+//         teacher_id: finalTearchId,
+//         class_id: finalClassId || "",
+//         lesson_plan_id: finalPlanId as string,
+//       });
+//       h5pReportList = h5pItems.items || [];
+//       // h5pReportList = stuPerformanceH5pList;
+//     } else {
+//       const stuItems = await api.reports.getStudentPerformanceReport(student_id, {
+//         teacher_id: finalTearchId,
+//         class_id: finalClassId || "",
+//         lesson_plan_id: finalPlanId as string,
+//       });
+//       stuReportDetail = stuItems.items || [];
+//       // stuReportDetail = stuPerformanceDetail;
+//       const h5pItems = await api.reports.getStudentPerformanceH5PReport(student_id, {
+//         teacher_id: finalTearchId,
+//         class_id: finalClassId || "",
+//         lesson_plan_id: finalPlanId as string,
+//       });
+//       h5pReportDetail = h5pItems.items || [];
+//       // h5pReportDetail = stuPerformanceH5pDetail;
+//     }
+//   }
 
-  return {
-    teacherList,
-    classList: classList || [],
-    lessonPlanList: lessonPlanList,
-    teacher_id: finalTearchId,
-    class_id: finalClassId || "",
-    lesson_plan_id: finalPlanId || "",
-    student_id: finalStudentId,
-    reportList,
-    studentList,
-    h5pReportList,
-    stuReportList,
-    h5pReportDetail,
-    stuReportDetail,
-  };
-});
+//   return {
+//     teacherList,
+//     classList: classList || [],
+//     lessonPlanList: lessonPlanList,
+//     teacher_id: finalTearchId,
+//     class_id: finalClassId || "",
+//     lesson_plan_id: finalPlanId || "",
+//     student_id: finalStudentId,
+//     reportList,
+//     studentList,
+//     h5pReportList,
+//     stuReportList,
+//     h5pReportDetail,
+//     stuReportDetail,
+//   };
+// });
 
 type IQueryGetStudentsByClassIdParams = {
   class_id: string;
@@ -977,11 +975,11 @@ const { reducer } = createSlice({
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
-      state.reportMockOptions.lessonPlanList = payload;
-      state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
-      state.stuReportMockOptions.lessonPlanList = payload;
-    },
+    // [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
+    //   state.reportMockOptions.lessonPlanList = payload;
+    //   state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
+    //   state.stuReportMockOptions.lessonPlanList = payload;
+    // },
     [getLessonPlan.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
@@ -1022,48 +1020,48 @@ const { reducer } = createSlice({
     [reportCategoriesOnload.pending.type]: (state) => {
       state.categoriesPage = cloneDeep(initialState.categoriesPage);
     },
-    [stuPerformanceReportOnload.fulfilled.type]: (
-      state,
-      { payload }: PayloadAction<AsyncTrunkReturned<typeof stuPerformanceReportOnload>>
-    ) => {
-      const { h5pReportList, stuReportList, h5pReportDetail, stuReportDetail, ...stuReportMockOptions } = payload;
-      state.stuReportMockOptions = { ...stuReportMockOptions };
-      state.h5pReportList = h5pReportList;
-      state.stuReportList = stuReportList;
-      state.h5pReportDetail = h5pReportDetail;
-      state.stuReportDetail = stuReportDetail;
-    },
-    [stuPerformanceReportOnload.pending.type]: (state) => {
-      state.stuReportMockOptions = cloneDeep(initialState.stuReportMockOptions);
-      state.h5pReportList = cloneDeep(initialState.h5pReportList);
-      state.stuReportList = cloneDeep(initialState.stuReportList);
-      state.h5pReportDetail = cloneDeep(initialState.h5pReportDetail);
-      state.stuReportDetail = cloneDeep(initialState.stuReportDetail);
-    },
-    [getStuReportList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportList>>) => {
-      state.stuReportList = payload.stuReportList;
-      state.h5pReportList = payload.h5pReportList;
-    },
-    [getStuReportList.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
-    },
-    [getStuReportList.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
-      state.stuReportList = initialState.stuReportList;
-      state.h5pReportList = initialState.h5pReportList;
-    },
-    [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
-      state.stuReportMockOptions.studentList = payload.participantList.class?.students as Pick<User, "user_id" | "user_name">[];
-    },
-    [getStuReportDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportDetail>>) => {
-      state.stuReportDetail = payload.stuReportDetail;
-      state.h5pReportDetail = payload.h5pReportDetail;
-    },
-    [getStuReportDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
-      state.stuReportDetail = initialState.stuReportDetail;
-      state.h5pReportDetail = initialState.h5pReportDetail;
-    },
+    // [stuPerformanceReportOnload.fulfilled.type]: (
+    //   state,
+    //   { payload }: PayloadAction<AsyncTrunkReturned<typeof stuPerformanceReportOnload>>
+    // ) => {
+    //   const { h5pReportList, stuReportList, h5pReportDetail, stuReportDetail, ...stuReportMockOptions } = payload;
+    //   state.stuReportMockOptions = { ...stuReportMockOptions };
+    //   state.h5pReportList = h5pReportList;
+    //   state.stuReportList = stuReportList;
+    //   state.h5pReportDetail = h5pReportDetail;
+    //   state.stuReportDetail = stuReportDetail;
+    // },
+    // [stuPerformanceReportOnload.pending.type]: (state) => {
+    //   state.stuReportMockOptions = cloneDeep(initialState.stuReportMockOptions);
+    //   state.h5pReportList = cloneDeep(initialState.h5pReportList);
+    //   state.stuReportList = cloneDeep(initialState.stuReportList);
+    //   state.h5pReportDetail = cloneDeep(initialState.h5pReportDetail);
+    //   state.stuReportDetail = cloneDeep(initialState.stuReportDetail);
+    // },
+    // [getStuReportList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportList>>) => {
+    //   state.stuReportList = payload.stuReportList;
+    //   state.h5pReportList = payload.h5pReportList;
+    // },
+    // [getStuReportList.rejected.type]: (state, { error }: any) => {
+    //   // alert(JSON.stringify(error));
+    // },
+    // [getStuReportList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    //   // alert("success");
+    //   state.stuReportList = initialState.stuReportList;
+    //   state.h5pReportList = initialState.h5pReportList;
+    // },
+    // [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
+    //   state.stuReportMockOptions.studentList = payload.participantList.class?.students as Pick<User, "user_id" | "user_name">[];
+    // },
+    // [getStuReportDetail.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStuReportDetail>>) => {
+    //   state.stuReportDetail = payload.stuReportDetail;
+    //   state.h5pReportDetail = payload.h5pReportDetail;
+    // },
+    // [getStuReportDetail.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    //   // alert("success");
+    //   state.stuReportDetail = initialState.stuReportDetail;
+    //   state.h5pReportDetail = initialState.h5pReportDetail;
+    // },
     [teachingLoadOnload.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof teachingLoadOnload>>) => {
       state.teachingLoadOnload = payload;
     },
