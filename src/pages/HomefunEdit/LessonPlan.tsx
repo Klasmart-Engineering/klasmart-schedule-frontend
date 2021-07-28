@@ -4,7 +4,6 @@ import {
   FormControlLabel,
   makeStyles,
   withStyles,
-  RadioGroup,
   Table,
   TableBody,
   TableCell,
@@ -27,6 +26,7 @@ import NativeSelect from "@material-ui/core/NativeSelect";
 import InputBase from "@material-ui/core/InputBase";
 import { Box } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
+import FormGroup from "@material-ui/core/FormGroup";
 
 const useStyle = makeStyles((theme) =>
   createStyles({
@@ -147,32 +147,52 @@ export function LessonPlan(props: AssignmentProps) {
                     </TableCell>
                     <TableCell align="center">{value.assumed ? "Yes" : "No"}</TableCell>
                     <TableCell align="center" style={{ display: "flex", justifyContent: "center" }}>
-                      <RadioGroup row aria-label="position" name="position" defaultValue="top">
-                        <FormControlLabel
-                          onChange={(e) => {
-                            updateStatus(e.target.value, index, value);
-                          }}
-                          value="end"
-                          control={<Checkbox value="achieved" checked={value.status === "achieved"} color="primary" />}
-                          label="Achieved"
-                        />
-                        <FormControlLabel
-                          onChange={(e) => {
-                            updateStatus(e.target.value, index, value);
-                          }}
-                          value="end"
-                          control={<Checkbox value="not_achieved" checked={value.status === "not_achieved"} color="primary" />}
-                          label="Not Achieved"
-                        />
-                        <FormControlLabel
-                          onChange={(e) => {
-                            updateStatus(e.target.value, index, value);
-                          }}
-                          value="end"
-                          control={<Checkbox value="not_attempted" checked={value.status === "not_attempted"} color="primary" />}
-                          label="Not Attempted"
-                        />
-                      </RadioGroup>
+                      <FormControl component="fieldset">
+                        <FormGroup aria-label="position" row>
+                          <FormControlLabel
+                            value="end"
+                            control={
+                              <Checkbox
+                                onChange={(e) => {
+                                  updateStatus(e.target.value, index, value);
+                                }}
+                                value="achieved"
+                                checked={value.status === "achieved"}
+                                color="primary"
+                              />
+                            }
+                            label="Achieved"
+                          />
+                          <FormControlLabel
+                            value="end"
+                            control={
+                              <Checkbox
+                                onChange={(e) => {
+                                  updateStatus(e.target.value, index, value);
+                                }}
+                                value="not_achieved"
+                                checked={value.status === "not_achieved"}
+                                color="primary"
+                              />
+                            }
+                            label="Not Achieved"
+                          />
+                          <FormControlLabel
+                            value="end"
+                            control={
+                              <Checkbox
+                                onChange={(e) => {
+                                  updateStatus(e.target.value, index, value);
+                                }}
+                                value="not_attempted"
+                                checked={value.status === "not_attempted"}
+                                color="primary"
+                              />
+                            }
+                            label="Not Attempted"
+                          />
+                        </FormGroup>
+                      </FormControl>
                     </TableCell>
                   </TableRow>
                 )}
