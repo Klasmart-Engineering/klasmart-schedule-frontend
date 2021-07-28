@@ -439,21 +439,21 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
 //   }
 // );
 
-// export interface GetStuReportMockOptionsResponse {
-//   teacherList: Pick<User, "user_id" | "user_name">[];
-//   classList: Pick<Class, "class_id" | "class_name">[];
-//   lessonPlanList: EntityScheduleShortInfo[];
-//   teacher_id: string;
-//   class_id: string;
-//   lesson_plan_id: string;
-//   student_id?: string;
-//   reportList?: EntityStudentAchievementReportItem[];
-//   studentList?: Pick<User, "user_id" | "user_name">[];
-//   h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
-//   stuReportList?: EntityStudentPerformanceReportItem[];
-//   stuReportDetail?: EntityStudentPerformanceReportItem[];
-//   h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
-// }
+export interface GetStuReportMockOptionsResponse {
+  teacherList: Pick<User, "user_id" | "user_name">[];
+  classList: Pick<Class, "class_id" | "class_name">[];
+  lessonPlanList: EntityScheduleShortInfo[];
+  teacher_id: string;
+  class_id: string;
+  lesson_plan_id: string;
+  student_id?: string;
+  reportList?: EntityStudentAchievementReportItem[];
+  studentList?: Pick<User, "user_id" | "user_name">[];
+  // h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
+  stuReportList?: EntityStudentPerformanceReportItem[];
+  stuReportDetail?: EntityStudentPerformanceReportItem[];
+  // h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
+}
 // interface GetStuReportMockOptionsPayLoad {
 //   teacher_id?: string;
 //   class_id?: string;
