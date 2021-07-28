@@ -35,10 +35,11 @@ import {
   TeacherByOrgIdQueryVariables,
   TeacherListBySchoolIdDocument,
   TeacherListBySchoolIdQuery,
-  TeacherListBySchoolIdQueryVariables
+  TeacherListBySchoolIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
-  EntityQueryLiveClassesSummaryResult, EntityReportListTeachingLoadResult,
+  EntityQueryLiveClassesSummaryResult,
+  EntityReportListTeachingLoadResult,
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
   EntityStudentAchievementReportItem,
@@ -46,12 +47,14 @@ import {
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
-  ExternalSubject
+  ExternalSubject,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { ModelReport } from "../models/ModelReports";
 import { ALL_STUDENT, ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
+import { getWeeks, IWeeks } from "../pages/ReportLearningSummary";
+import { LearningSummartOptionsProps } from "../pages/ReportLearningSummary/FilterLearningSummary";
 import { QueryLearningSummaryCondition } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
@@ -74,16 +77,11 @@ interface IreportState {
   h5pReportDetail?: [];
   studentList: Pick<User, "user_id" | "user_name">[];
   teachingLoadOnload: TeachingLoadResponse;
-  learningSummartOptions: {
-    year: number[];
-    week: [];
-    schoolList: [];
-    classList: [];
-    teacherList: [];
-    studentList: [];
-    subjectList: [];
-  };
-  liveClassesSummary: EntityQueryLiveClassesSummaryResult[];
+  learningSummartOptions: LearningSummartOptionsProps;
+  liveClassSummary: EntityQueryLiveClassesSummaryResult;
+}
+interface RootState {
+  report: IreportState;
 }
 const initialState: IreportState = {
   reportList: [],
@@ -125,15 +123,15 @@ const initialState: IreportState = {
     user_id: "",
   },
   learningSummartOptions: {
-    year: [2021],
+    year: [],
     week: [],
-    schoolList: [],
-    classList: [],
-    teacherList: [],
+    // schoolList: [],
+    // classList: [],
+    // teacherList: [],
     studentList: [],
     subjectList: [],
   },
-  liveClassesSummary: [],
+  liveClassSummary: {},
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -945,86 +943,117 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     };
   }
 );
+export type IParamsQueryLiveClassSummary = Parameters<typeof api.reports.queryLiveClassesSummary>[0];
+export type IResultQueryLiveClassSummary = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;
+export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSummary, IParamsQueryLiveClassSummary & LoadingMetaPayload>(
+  "getLiveClassesSummary",
+  async (query) => {
+    console.log(2);
+    const res = await api.reports.queryLiveClassesSummary({ ...query });
+    return res;
+  }
+);
 
 export interface LearningSummaryResponse {
+  year?: number[];
+  week?: IWeeks[];
   studentList?: Pick<User, "user_id" | "user_name">[];
-  // subjectList?: ExternalSubject[];
+  subjectList?: ExternalSubject[];
 }
 
-export const onLoadLearningSummary = createAsyncThunk<LearningSummaryResponse, QueryLearningSummaryCondition & LoadingMetaPayload>(
-  "onLoadLearningSummary",
-  async () => {
-    const subjectList: ExternalSubject[] = await api.subjects.getSubject();
-    let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
+export const onLoadLearningSummary = createAsyncThunk<
+  LearningSummaryResponse,
+  QueryLearningSummaryCondition & LoadingMetaPayload,
+  { state: RootState }
+>("onLoadLearningSummary", async (query, { getState, dispatch }) => {
+  let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
+  // let liveClassSummary: EntityQueryLiveClassesSummaryResult[] =[];
+  const {
+    report: { learningSummartOptions },
+  } = getState();
+  if (learningSummartOptions.week.length) {
+    // liveClassSummary = await api.reports.queryLiveClassesSummary({...query});
+    await dispatch(getLiveClassesSummary(query));
+    return learningSummartOptions;
+  }
+  const week = getWeeks();
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  const perm = hasPermissionOfMe(
+    [
+      PermissionType.report_learning_summary_org_652,
+      PermissionType.report_learning_summary_school_651,
+      PermissionType.report_learning_summary_teacher_650,
+      PermissionType.report_learning_summary_student_649,
+    ],
+    meInfo.me
+  );
+  if (perm.report_learning_summary_org_652) {
+    // todo 拉取所有选项并且 默认置位第一个
+    // 通过org拉取student 可以看到 year week school teacher class student subject
+    const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
+      query: ParticipantsByOrganizationDocument,
       variables: {
         organization_id,
       },
     });
-    const perm = {
-      report_learning_summary_org_652: true,
-      report_learning_summary_school_651: true,
-      report_learning_summary_teacher_650: true,
-      report_learning_summary_student_649: true,
-    };
-    // const perm = hasPermissionOfMe([
-    //   PermissionType.report_learning_summary_org_652,
-    //   PermissionType.report_learning_summary_school_651,
-    //   PermissionType.report_learning_summary_teacher_650,
-    //   PermissionType.report_learning_summary_student_649,
-    // ], meInfo.me);
-    if (perm.report_learning_summary_org_652) {
-      // todo 拉取所有选项并且 默认置位第一个
-      // 通过org拉取student 可以看到 year week school teacher class student subject
-      const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
-        query: ParticipantsByOrganizationDocument,
+    data.organization?.classes?.forEach((classItem) => {
+      studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
+    });
+  } else if (perm.report_learning_summary_school_651) {
+    // 通过school拉取student 可以看到 year week teacher class student subject
+    const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+      query: MySchoolIDsDocument,
+      variables: { organization_id },
+    });
+    if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
+      const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
+        query: ParticipantsBySchoolDocument,
         variables: {
-          organization_id,
+          school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
         },
       });
-      data.organization?.classes?.forEach((classItem) => {
+      data.school?.classes?.forEach((classItem) => {
         studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
       });
-    } else if (perm.report_learning_summary_school_651) {
-      // 通过school拉取student 可以看到 year week teacher class student subject
-      const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
-        query: MySchoolIDsDocument,
-        variables: { organization_id },
-      });
-      if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
-        const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
-          query: ParticipantsBySchoolDocument,
-          variables: {
-            school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
-          },
-        });
-        data.school?.classes?.forEach((classItem) => {
-          studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
-        });
-      }
-    } else if (perm.report_learning_summary_teacher_650) {
-      // 通过classteaching拉取student 可以看到 year week class student subject
-      const { data } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
-        query: ClassesTeachingQueryDocument,
-        variables: {
-          user_id: meInfo.me?.user_id as string,
-          organization_id,
-        },
-      });
-      console.log(data);
-    } else if (perm.report_learning_summary_student_649) {
-      // 不需要拉取student 可以看到 year week  subject
     }
-    console.log(studentList);
-    const res = await api.reports.queryLiveClassesSummary();
-    return {
-      studentList,
-      subjectList,
-    };
+  } else if (perm.report_learning_summary_teacher_650) {
+    // 通过classteaching拉取student 可以看到 year week class student subject
+    const { data } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+      query: ClassesTeachingQueryDocument,
+      variables: {
+        user_id: meInfo.me?.user_id as string,
+        organization_id,
+      },
+    });
+    data.user?.membership?.classesTeaching?.forEach((item) => {
+      studentList = studentList?.concat(item?.students as Pick<User, "user_id" | "user_name">[]);
+    });
+  } else if (perm.report_learning_summary_student_649) {
+    // 不需要拉取student 可以看到 year week  subject
   }
-);
+  studentList = studentList.map((item) => {
+    return {
+      user_id: item.user_id,
+      user_name: item.user_name,
+    };
+  });
+  // const res = await api.reports.queryLearningSummaryFilterItems({type: "subject"});
+  // console.log(res)
+  const subjectList: ExternalSubject[] = await api.subjects.getSubject();
+  return {
+    studentList,
+    subjectList,
+    year: [2021],
+    week,
+  };
+});
+
 interface GetClassListPayload {
   school_id: string;
   teacher_ids: string;
@@ -1193,8 +1222,15 @@ const { reducer } = createSlice({
       state.reportMockOptions = initialState.reportMockOptions;
     },
     [onLoadLearningSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadLearningSummary>>) => {
-      state.studentList = payload.studentList || [];
-      // state.subjectList = payload.subjectList || [];
+      if (payload.studentList) {
+        state.learningSummartOptions.studentList = payload.studentList || [];
+        state.learningSummartOptions.subjectList = payload.subjectList || [];
+        state.learningSummartOptions.year = payload.year || [];
+        state.learningSummartOptions.week = payload.week || [];
+      }
+    },
+    [getLiveClassesSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveClassesSummary>>) => {
+      state.liveClassSummary = payload;
     },
   },
 });

@@ -1,14 +1,21 @@
-export type QueryLearningSummaryCondition = {
-  year?: string | undefined;
-  week?: string | undefined;
-  school?: string | undefined;
-  class_id?: string | undefined;
-  teacher_id?: string | undefined;
-  student_id?: string | undefined;
-  subject_id?: string | undefined;
+import api from "../../../api";
+type NonOnlyNull<T> = T extends null ? never : T;
+type NonNullRecordValue<T> = {
+  [K in keyof T]: NonOnlyNull<T[K]>;
 };
-
+type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
+  ? U
+  : T extends (...args: any) => infer U
+  ? U
+  : any;
+export type QueryLearningSummaryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.reports.queryLiveClassesSummary>[0]>>;
+export type QueryLearningSummaryConditionChangeHandler = (value: QueryLearningSummaryCondition) => any;
+export type QueryLearningSummaryConditionBaseProps = {
+  onChange: QueryLearningSummaryConditionChangeHandler;
+  value: QueryLearningSummaryCondition;
+};
 export enum ReportType {
   live = "live",
   assignment = "assignment",
 }
+export type LiveClassesSummaryResult = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;

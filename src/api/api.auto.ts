@@ -10,7 +10,6 @@
  * ---------------------------------------------------------------
  */
 
-
 export interface EntityActivityFlashCards {
   cards_number?: number;
   play_records?: EntityActivityFlashCardsPlayRecord[];
@@ -3346,7 +3345,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityQueryLiveClassesSummaryResult[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityQueryLiveClassesSummaryResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learning_summary/live_classes${this.addQueryParams(query)}`,
         "GET",
         params

@@ -1,17 +1,32 @@
 import { Collapse, IconButton, makeStyles, styled } from "@material-ui/core";
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import clsx from "clsx";
 import React, { useState } from "react";
 import { EntityLiveClassSummaryItem } from "../../api/api.auto";
+import liveBackUrl from "../../assets/icons/report_reca.svg";
+import assessmentBackUrl from "../../assets/icons/report_recl.svg";
 import { d } from "../../locale/LocaleManager";
-import { ReportType } from "./types";
-const useStyles = makeStyles(({ breakpoints , props}) => ({
-  divider: {
-    marginTop: "20px",
+import { LiveClassesSummaryResult, ReportType } from "./types";
+const useStyles = makeStyles(({ breakpoints, props }) => ({
+  scrollCss: {
+    "&::-webkit-scrollbar": {
+      width: "4px",
+    },
+    "&::-webkit-scrollbar-track": {
+      // boxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "4px",
+      backgroundColor: "#d1d1d1",
+      // boxShadow: "inset 0 0 3px rgba(0,0,0,0.5)",
+    },
+    "&::-webkit-scrollbar-thumb:window-inactive": {
+      backgroundColor: "rgba(220,220,220,0.4)",
+    },
   },
   liveClassWrap: {
     display: "flex",
-    height: 604,     
+    height: 604,
     padding: "20px 58px",
   },
   leftWrap: {
@@ -24,15 +39,12 @@ const useStyles = makeStyles(({ breakpoints , props}) => ({
   rightWrap: {
     flex: 1,
     height: "100%",
-    overflowY: "scroll",
     paddingLeft: 50,
     display: "flex",
-    flexDirection: "column",   
+    flexDirection: "column",
     borderLeft: "1px dashed #d7d7d7",
   },
-  liveItem: {
-
-  },
+  liveItem: {},
   titleCon: {
     display: "flex",
     alignItems: "center",
@@ -103,7 +115,7 @@ const useStyles = makeStyles(({ breakpoints , props}) => ({
     height: 28,
     opacity: 1,
     background: "linear-gradient(to bottom right, #fff 0%, #fff 49.9%, #fff 50%, #8693f0 100%)",
-    transform: "rotate(-45deg)"
+    transform: "rotate(-45deg)",
   },
   attendLiveArrow: {
     background: "linear-gradient(to bottom right, #fff 0%, #fff 49.9%, #fff 50%, #8693f0 100%)",
@@ -131,7 +143,7 @@ const useStyles = makeStyles(({ breakpoints , props}) => ({
     fontWeight: 600,
     color: "#fff",
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   },
   rightItemContent: {
     flex: 5,
@@ -149,7 +161,7 @@ const useStyles = makeStyles(({ breakpoints , props}) => ({
     backgroundColor: "#8693f0",
     marginRight: 15,
   },
-  learningOutcomeName:{
+  learningOutcomeName: {
     fontSize: 16,
     fontWeight: 400,
     color: "#666",
@@ -221,30 +233,72 @@ const useStyles = makeStyles(({ breakpoints , props}) => ({
     width: 276,
     height: 276,
     borderRadius: "50%",
-    
   },
   noDataSquareCon: {
     width: "100%",
     height: "100%",
     borderRadius: "15px",
-  }
-}))
+  },
+  rectCon: {
+    display: "inline-block",
+    width: 210,
+    height: 40,
+    color: "#fff",
+    lineHeight: "40px",
+    fontSize: 18,
+    fontWeight: 600,
+    position: "relative",
+  },
+  attentLiveClassColor: {
+    color: "#8693f0",
+  },
+  absentLiveClassColor: {
+    color: "#fe9b9b",
+  },
+  attentLiveClassBackColor: {
+    backgroundColor: "#8693f0",
+  },
+  absentLiveClassBackColor: {
+    backgroundColor: "#fe9b9b",
+  },
+  completeAssignmentColor: {
+    color: "#89c4f9",
+  },
+  inCompleteAssignmentColor: {
+    color: "#a4ddff",
+  },
+  completeAssignmentBackColor: {
+    backgroundColor: "#89c4f9",
+  },
+  inCompleteAssignmentBackColor: {
+    backgroundColor: "#a4ddff",
+  },
+  liveBackImg: {
+    backgroundImage: `url(${liveBackUrl})`,
+  },
+  assessmentBackImg: {
+    backgroundImage: `url(${assessmentBackUrl})`,
+  },
+}));
 export interface LiveClassesReportProps {
   data: EntityLiveClassSummaryItem[];
   reportType: ReportType;
+  liveClassSummary: LiveClassesSummaryResult;
 }
 export function LiveClassesReport(props: LiveClassesReportProps) {
   const css = useStyles();
-  const { data, reportType } = props;
+  const { data, reportType, liveClassSummary } = props;
+  const { items } = liveClassSummary;
   return (
     <div className={css.liveClassWrap}>
-      <div className={css.leftWrap}>
-        {reportType === ReportType.live && <div style={{marginTop: 20}}></div>}
-        {reportType === ReportType.live && (
-          [1,2,3].map(item => (
-            <LiveItem liveItem = {data[0]} />
-          ))
+      <div className={clsx(css.scrollCss, css.leftWrap)}>
+        {reportType === ReportType.live && <div style={{ marginTop: 20 }}></div>}
+        {!items && (
+          <div style={{ height: "calc(100% - 40px)" }}>
+            <NoDataCom isPie={false} />
+          </div>
         )}
+        {items && items.length && reportType === ReportType.live && [1, 2, 3].map((item) => <LiveItem liveItem={data[0]} />)}
         {reportType === ReportType.assignment && <AssessmentCom />}
       </div>
       <div className={css.rightWrap}>
@@ -253,14 +307,12 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
             Learning Outcomes Covered
           </span>
           <div className={css.rightItemContent}>
-            {
-              [1,2,3].map(item => (
-                <div className={css.outcomeCon}>
-                  <span className={clsx(css.spot, reportType === ReportType.assignment ? css.studyLessonCon : "")}></span>
-                  <span className={css.learningOutcomeName}>Learning outcomes1</span>
-                </div>
-              ))
-            }
+            {[1, 2, 3].map((item) => (
+              <div className={css.outcomeCon}>
+                <span className={clsx(css.spot, reportType === ReportType.assignment ? css.studyLessonCon : "")}></span>
+                <span className={css.learningOutcomeName}>Learning outcomes1</span>
+              </div>
+            ))}
           </div>
         </div>
         <div className={clsx(css.rightItem)}>
@@ -268,22 +320,20 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
             Teachers's Feedback
           </span>
           <div className={css.rightItemContent}>
-            <div className={css.teacherFeedback}>
-              No feedback is available.
-            </div>
+            <div className={css.teacherFeedback}>No feedback is available.</div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export interface LiveItemProps {
-  liveItem: EntityLiveClassSummaryItem
+  liveItem: EntityLiveClassSummaryItem;
 }
 export function LiveItem(props: LiveItemProps) {
   const css = useStyles();
-  const { liveItem } = props;
+  // const { liveItem } = props;
   return (
     <div className={css.liveItem}>
       <div className={css.titleCon}>
@@ -291,7 +341,7 @@ export function LiveItem(props: LiveItemProps) {
         <span className={css.labelCon}>Jul 12, Monday</span>
       </div>
       <div className={css.contentCon}>
-        {[1,2].map(item => (
+        {[1, 2].map((item) => (
           <div className={css.lessonCon}>
             <span className={css.timeCon}>10:00 AM</span>
             <div className={clsx(css.lessonInfoCon, css.liveLessonCon)}>
@@ -305,7 +355,7 @@ export function LiveItem(props: LiveItemProps) {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export function Arrow() {
@@ -314,7 +364,7 @@ export function Arrow() {
     <div className={css.arrowCon}>
       <div className={css.arrow}></div>
     </div>
-  )
+  );
 }
 
 const useExpand = () => {
@@ -322,14 +372,15 @@ const useExpand = () => {
   const toggle = () => setOpen(!open);
   const [open2, setOpen2] = useState(false);
   const toggle2 = () => {
-    console.log(2)
-    return setOpen2(!open2)
+    console.log(2);
+    return setOpen2(!open2);
   };
-  return { collapse: { in: open }, 
-          expandMore: { open, onClick: toggle }, 
-          collaspe2: { in: open2 },
-          expandMore2: { open2, onClick: toggle2}
-        };
+  return {
+    collapse: { in: open },
+    expandMore: { open, onClick: toggle },
+    collaspe2: { in: open2 },
+    expandMore2: { open2, onClick: toggle2 },
+  };
 };
 interface ExpandBtnProps {
   open?: boolean;
@@ -346,7 +397,7 @@ export function AssessmentCom() {
     <div className={css.assessmentCon}>
       <div className={css.studyCon}>
         <div className={css.studyTitle}>Study</div>
-        {[1,2].map(item => (
+        {[1, 2].map((item) => (
           <div className={clsx(css.lessonCon, css.assessmentLessonCon)}>
             <div className={clsx(css.lessonInfoCon, css.studyLessonCon)}>
               <div className={css.lessonName}>Lesson Name</div>
@@ -364,7 +415,7 @@ export function AssessmentCom() {
           </ExpandBtn>
         </div>
         <Collapse {...expand.collapse} unmountOnExit>
-          {[1,2,3].map(item => (
+          {[1, 2, 3].map((item) => (
             <div className={clsx(css.lessonCon, css.assessmentLessonCon)}>
               <div className={clsx(css.lessonInfoCon, css.studyLessonCon)}>
                 <div className={css.lessonName}>Lesson Name</div>
@@ -379,7 +430,7 @@ export function AssessmentCom() {
       </div>
       <div className={css.homefunStudyCon}>
         <div className={css.studyTitle}>Home Fun Study</div>
-        {[1,2].map(item => (
+        {[1, 2].map((item) => (
           <div className={css.homeFunLessonWrap}>
             <div className={clsx(css.homeFunLessonCon)}>
               <span className={css.lessonName}>Lesson Name</span>
@@ -389,23 +440,23 @@ export function AssessmentCom() {
         ))}
       </div>
       <div className={css.expandCon}>
-          {expand.expandMore2.open2 ? d("See Less").t("assess_detail_see_less") : d("See More").t("assess_detail_see_more")}
-          <ExpandBtn {...expand.expandMore2}>
-            <ArrowDropDownIcon />
-          </ExpandBtn>
-        </div>
-        <Collapse {...expand.collaspe2} unmountOnExit>
-          {[1,2,3].map(item => (
-             <div className={css.homeFunLessonWrap}>
-              <div className={clsx(css.homeFunLessonCon)}>
-                <span className={css.lessonName}>Lesson Name</span>
-              </div>
-              <Arrow />
-           </div>
-          ))}
-        </Collapse>
+        {expand.expandMore2.open2 ? d("See Less").t("assess_detail_see_less") : d("See More").t("assess_detail_see_more")}
+        <ExpandBtn {...expand.expandMore2}>
+          <ArrowDropDownIcon />
+        </ExpandBtn>
+      </div>
+      <Collapse {...expand.collaspe2} unmountOnExit>
+        {[1, 2, 3].map((item) => (
+          <div className={css.homeFunLessonWrap}>
+            <div className={clsx(css.homeFunLessonCon)}>
+              <span className={css.lessonName}>Lesson Name</span>
+            </div>
+            <Arrow />
+          </div>
+        ))}
+      </Collapse>
     </div>
-  )
+  );
 }
 
 export interface NoDataProps {
@@ -415,8 +466,17 @@ export interface NoDataProps {
 export function NoDataCom(props: NoDataProps) {
   const { isPie } = props;
   const css = useStyles();
-  
-  return (
-    <div className={clsx(css.noDataCon, isPie ? css.noDataPieCon : css.noDataSquareCon)}>No Data Available</div>
-  )
+
+  return <div className={clsx(css.noDataCon, isPie ? css.noDataPieCon : css.noDataSquareCon)}>No Data Available</div>;
+}
+
+export interface RectProps {
+  title: string;
+  reportType: ReportType;
+}
+export function RectCom(props: RectProps) {
+  const css = useStyles();
+  const { title, reportType } = props;
+  const isLiveClass = reportType === ReportType.live;
+  return <div className={clsx(css.rectCon, isLiveClass ? css.liveBackImg : css.assessmentBackImg)}>{title}</div>;
 }

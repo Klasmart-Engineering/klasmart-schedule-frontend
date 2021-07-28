@@ -1,14 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { t } from "../../locale/LocaleManager";
+import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { formatTimeToMonDay } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
 import { onLoadLearningSummary } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary } from "./FilterLearningSummary";
 import { ReportInfo } from "./ReportInfo";
-import { ReportType } from "./types";
+import { QueryLearningSummaryCondition, ReportType } from "./types";
 
 export interface IWeeks {
   week_start: number;
@@ -39,9 +40,9 @@ export const useQuery = () => {
   const { search } = useLocation();
   return useMemo(() => {
     const query = new URLSearchParams(search);
-    const year = query.get("year") || 2021;
-    const week_start = query.get("week_start") || "";
-    const week_end = query.get("week_end") || "";
+    const year = Number(query.get("year")) || 2021;
+    const week_start = Number(query.get("week_start"));
+    const week_end = Number(query.get("week_end"));
     const school_id = query.get("school_id") || "";
     const class_id = query.get("class_id") || "";
     const teacher_id = query.get("teacher_id") || "";
@@ -50,48 +51,61 @@ export const useQuery = () => {
     return clearNull({ year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id });
   }, [search]);
 };
-
-// const toQueryString = (hash: Record<string, any>): string => {
-//   const search = new URLSearchParams(hash);
-//   return `?${search.toString()}`;
-// };
-
 export function ReportLearningSummary() {
   const condition = useQuery();
-  // const history = useHistory();
+  const history = useHistory();
   const dispatch = useDispatch();
   const [reportType, setReportType] = useState<ReportType>(ReportType.live);
-  // const perm = usePermission([
-  //   PermissionType.report_learning_summary_org_652,
-  //   PermissionType.report_learning_summary_school_651,
-  //   PermissionType.report_learning_summary_teacher_650,
-  //   PermissionType.report_learning_summary_student_649,
-  // ]);
-  const weeks = getWeeks();
-  const { liveClassesSummary } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { liveClassSummary, learningSummartOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { week } = learningSummartOptions;
   const defaultWeeksValue = useMemo(() => {
     if (condition.week_start && condition.week_end) {
       return `${formatTimeToMonDay(condition.week_start)}~${formatTimeToMonDay(condition.week_end)}`;
     }
-    const lastweek = weeks[weeks.length - 1];
-    return `${formatTimeToMonDay(lastweek.week_start)}~${formatTimeToMonDay(lastweek.week_end)}`;
-  }, [condition.week_end, condition.week_start, weeks]);
-  const years = [2021];
-
-  const handleChange = () => {
-    // history.replace({ search: toQueryString({ ...condition, page }) });
+    if (week.length) {
+      const lastweek = week[week.length - 1];
+      return `${formatTimeToMonDay(lastweek.week_start)}~${formatTimeToMonDay(lastweek.week_end)}`;
+    }
+    return "";
+  }, [condition.week_end, condition.week_start, week]);
+  const handleChange = (value: QueryLearningSummaryCondition) => {
+    history.replace({ search: toQueryString(clearNull(value)) });
   };
   const handleChangeReportType = (value: ReportType) => {
     setReportType(value);
   };
   useEffect(() => {
-    dispatch(onLoadLearningSummary(condition));
+    if (learningSummartOptions.studentList.length || learningSummartOptions.subjectList.length) {
+      const student_id = learningSummartOptions.studentList[0].user_id;
+      const subject_id = learningSummartOptions.subjectList[0].id!;
+      const { week } = learningSummartOptions;
+      const { week_start, week_end } = week[week.length - 1];
+      const year = learningSummartOptions.year[0];
+      history.push({
+        search: setQuery(history.location.search, { student_id, subject_id, week_start, week_end, year }),
+      });
+    }
+  }, [
+    history,
+    learningSummartOptions,
+    learningSummartOptions.studentList,
+    learningSummartOptions.subjectList,
+    learningSummartOptions.week,
+    learningSummartOptions.year,
+  ]);
+  useEffect(() => {
+    dispatch(onLoadLearningSummary({ ...condition, metaLoading: true }));
   }, [condition, dispatch]);
   return (
     <>
       <ReportTitle title={t("report_learning_summary_report")} info={t("report_msg_lsr")} />
-      <FilterLearningSummary value={condition} weeks={weeks} defaultWeeksValue={defaultWeeksValue} years={years} onChange={handleChange} />
-      <ReportInfo reportType={reportType} onChangeReportType={handleChangeReportType} liveClassesSummary={liveClassesSummary} />
+      <FilterLearningSummary
+        learningSummartOptions={learningSummartOptions}
+        value={condition}
+        defaultWeeksValue={defaultWeeksValue}
+        onChange={handleChange}
+      />
+      <ReportInfo reportType={reportType} onChangeReportType={handleChangeReportType} liveClassSummary={liveClassSummary} />
     </>
   );
 }
