@@ -111,7 +111,7 @@ export default function LearingOutcome(props: InfoProps) {
   }, [outcomeList]);
 
   const content_lists = content_list.map((item) => {
-    return { ...item, select: outComeIds.includes(item.id) || scheduleDetial.outcome_ids.includes(item.id) };
+    return { ...item, select: outComeIds.includes(item.id) || scheduleDetial.outcome_ids?.includes(item.id) };
   });
 
   const handleOnScroll = () => {
