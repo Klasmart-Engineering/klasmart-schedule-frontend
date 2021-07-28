@@ -12,7 +12,7 @@ import {
   TableRow,
   Typography,
 } from "@material-ui/core";
-import React, { useMemo } from "react";
+import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import {
   EntityAssessHomeFunStudyArgs,
@@ -91,14 +91,11 @@ export function LessonPlan(props: AssignmentProps) {
   const css = useStyle();
   const { control, setValue } = formMethods;
 
-  const handFilter = useMemo<boolean>(
-    () => (assumed: boolean) => {
-      if (status === "0") return !assumed;
-      if (status === "1") return assumed;
-      return true;
-    },
-    [status]
-  );
+  const handFilter = (assumed: boolean) => {
+    if (status === "0") return !assumed;
+    if (status === "1") return assumed;
+    return true;
+  };
 
   const updateStatus = (value: string, index: number, item: EntityHomeFunStudyOutcome) => {
     setValue(`outcomes[${index}]`, { ...item, status: value });
