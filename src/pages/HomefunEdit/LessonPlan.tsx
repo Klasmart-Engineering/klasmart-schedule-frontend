@@ -95,7 +95,7 @@ export function LessonPlan(props: AssignmentProps) {
     () => (assumed: boolean) => {
       if (status === "0") return !assumed;
       if (status === "1") return assumed;
-      if (status === "2") return true;
+      return true;
     },
     [status]
   );
