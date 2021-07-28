@@ -2,7 +2,6 @@ import { createStyles, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import { iframeResizer } from "iframe-resizer";
 import React, { memo, useEffect, useMemo, useRef } from "react";
-import { useDispatch } from "react-redux";
 import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
 // import { h5pEvent } from "../../reducers/content";
@@ -75,7 +74,7 @@ interface H5pPlayerInlineProps {
   onReady?: () => any;
 }
 export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { valueSource, id, scheduleId, userId, onReady, isPreview } = props;
   const xApiRef = useRef<{ (s?: H5PStatement, _?: boolean): void }>();
   const onReadyRef = useRef(onReady);
@@ -127,11 +126,13 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
         local_content_id: libraryContentId,
       };
       // dispatch(h5pEvent(resultInfo));
+      console.log(resultInfo);
     } else {
       if (!statement) return;
       const info = { ...baseInfo, ...extractH5pStatement(statement) };
       const resultInfo = info.extends.additionanProp1.sub_content_id ? { ...info, local_library_name, local_library_version } : info;
       // dispatch(h5pEvent(resultInfo));
+      console.log(resultInfo);
     }
   };
   /* eslint-disable-next-line react-hooks/exhaustive-deps */
