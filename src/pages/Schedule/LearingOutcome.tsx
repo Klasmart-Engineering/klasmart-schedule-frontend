@@ -130,7 +130,6 @@ export default function LearingOutcome(props: InfoProps) {
   };
 
   const getSelectStatus = (index: number, item: LearningContentList) => {
-    dispatch(resetActOutcomeList([]));
     setValue(`content_list[${index}]`, { ...item, select: !item.select });
     const num = getValues().content_list.filter((item) => item.select).length;
     setSelectNum(num);
@@ -218,7 +217,10 @@ export default function LearingOutcome(props: InfoProps) {
             color="primary"
             className={classes.button}
             startIcon={<SearchOutlined />}
-            onClick={searchOutcomesList}
+            onClick={() => {
+              dispatch(resetActOutcomeList([]));
+              searchOutcomesList();
+            }}
           >
             Search
           </Button>

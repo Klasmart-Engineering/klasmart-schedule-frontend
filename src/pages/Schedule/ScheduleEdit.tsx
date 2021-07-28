@@ -985,6 +985,7 @@ function EditBox(props: CalendarStateProps) {
         return;
       }
       dispatch(ScheduleFilterPrograms());
+      setOutcomeIds([]);
       dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
       dispatchRepeat({
         type: "changeData",
@@ -1638,7 +1639,7 @@ function EditBox(props: CalendarStateProps) {
   const learingOutcomeDatas: LearningContentListForm = {
     search_type: condition.exect_search ?? "all",
     search_value: condition.search_key ?? "",
-    is_assumed: condition.assumed ?? false,
+    is_assumed: condition.assumed === 1 ? true : false,
     content_list: [],
     page: 1,
   };
