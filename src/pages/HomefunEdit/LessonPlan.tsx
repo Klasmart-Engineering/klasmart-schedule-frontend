@@ -10,8 +10,9 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Typography,
 } from "@material-ui/core";
-import React from "react";
+import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import {
   EntityAssessHomeFunStudyArgs,
@@ -81,22 +82,36 @@ interface AssignmentProps {
   detail: EntityGetHomeFunStudyResult;
   feedbacks: EntityScheduleFeedbackView[];
   formMethods: UseFormMethods<EntityAssessHomeFunStudyArgs>;
-  outcomesList: EntityHomeFunStudyOutcome[];
+  outcomesList?: EntityHomeFunStudyOutcome[];
 }
 
 export function LessonPlan(props: AssignmentProps) {
   const { detail, formMethods, outcomesList } = props;
-  const [status, setStatus] = React.useState(10);
+  const [status, setStatus] = React.useState<string>("2");
   const css = useStyle();
-  const { control } = formMethods;
+  const { control, setValue } = formMethods;
+
+  const handFilter = useMemo<boolean>(
+    () => (assumed: boolean) => {
+      if (status === "0") return !assumed;
+      if (status === "1") return assumed;
+      if (status === "2") return true;
+    },
+    [status]
+  );
+
+  const updateStatus = (value: string, index: number, item: EntityHomeFunStudyOutcome) => {
+    setValue(`outcomes[${index}]`, { ...item, status: value });
+  };
+
   return (
     <div className={css.assignment}>
-      <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0px 0px 16px 0px" }}>
-        <span style={{ fontSize: "20px", fontWeight: "bold" }}>
+      <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "-10px 0 10px 0" }}>
+        <Typography variant="h5">
           {d("Assignment of {studentname}").t("assess_assignment_of_student", {
             studentname: detail.student_name ?? d("Student").t("schedule_time_conflict_student"),
           })}
-        </span>
+        </Typography>
         <FormControl className={css.margin}>
           <NativeSelect
             id="demo-customized-select-native"
@@ -106,48 +121,69 @@ export function LessonPlan(props: AssignmentProps) {
             }}
             input={<BootstrapInput />}
           >
-            <option value={10}>All</option>
-            <option value={20}>Assumed</option>
-            <option value={30}>Unassumed</option>
+            <option value="2">All</option>
+            <option value="1">Assumed</option>
+            <option value="0">Unassumed</option>
           </NativeSelect>
         </FormControl>
       </Box>
-      <Controller
-        name="outcomes"
-        control={control}
-        defaultValue={outcomesList || []}
-        key={`assess_score:${outcomesList}`}
-        render={({ value, onChange }) => (
-          <TableContainer component={Paper}>
-            <Table className={css.table} aria-label="simple table">
-              <TableHead style={{ backgroundColor: "#F2F5F7" }}>
-                <TableRow>
-                  <TableCell align="center">Learning Outcomes</TableCell>
-                  <TableCell align="center">Assumed</TableCell>
-                  <TableCell align="center">Assessing Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {value.map((row) => (
-                  <TableRow key={row.outcome_id}>
+      <TableContainer component={Paper}>
+        <Table className={css.table} aria-label="simple table">
+          <TableHead style={{ backgroundColor: "#F2F5F7" }}>
+            <TableRow>
+              <TableCell align="center">Learning Outcomes</TableCell>
+              <TableCell align="center">Assumed</TableCell>
+              <TableCell align="center">Assessing Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {outcomesList?.map((row, index) => (
+              <Controller
+                name={`outcomes[${index}]`}
+                control={control}
+                defaultValue={row || []}
+                key={row.outcome_id}
+                render={({ value, onChange }) => (
+                  <TableRow style={{ display: handFilter(value.assumed) ? "" : "none" }}>
                     <TableCell component="th" scope="row" align="center">
-                      {row.outcome_name}
+                      {value.outcome_name}
                     </TableCell>
-                    <TableCell align="center">{row.assumed ? "Yes" : "No"}</TableCell>
+                    <TableCell align="center">{value.assumed ? "Yes" : "No"}</TableCell>
                     <TableCell align="center" style={{ display: "flex", justifyContent: "center" }}>
                       <RadioGroup row aria-label="position" name="position" defaultValue="top">
-                        <FormControlLabel value="end" control={<Checkbox color="primary" />} label="Achieved" />
-                        <FormControlLabel value="end" control={<Checkbox color="primary" />} label="Not Achieved" />
-                        <FormControlLabel value="end" control={<Checkbox color="primary" />} label="Not Attempted" />
+                        <FormControlLabel
+                          onChange={(e) => {
+                            updateStatus(e.target.value, index, value);
+                          }}
+                          value="end"
+                          control={<Checkbox value="achieved" checked={value.status === "achieved"} color="primary" />}
+                          label="Achieved"
+                        />
+                        <FormControlLabel
+                          onChange={(e) => {
+                            updateStatus(e.target.value, index, value);
+                          }}
+                          value="end"
+                          control={<Checkbox value="not_achieved" checked={value.status === "not_achieved"} color="primary" />}
+                          label="Not Achieved"
+                        />
+                        <FormControlLabel
+                          onChange={(e) => {
+                            updateStatus(e.target.value, index, value);
+                          }}
+                          value="end"
+                          control={<Checkbox value="not_attempted" checked={value.status === "not_attempted"} color="primary" />}
+                          label="Not Attempted"
+                        />
                       </RadioGroup>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      />
+                )}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
