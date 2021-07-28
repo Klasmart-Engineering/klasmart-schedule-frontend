@@ -522,7 +522,7 @@
   "schedule_preview_live": "키즈룹 라이브",
   "schedule_preview_class": "키즈룹 수업",
   "schedule_preview_study": "키즈룹 학습",
-  "schedule_detail_participants": "모든 참석자",
+  "schedule_detail_participants": "참석자 추가",
   "scheudule_filter_all_my_schedule": "내 시간표",
   "schedule_filter_schools": "학교",
   "schedule_filter_teachers": "교사",
@@ -867,5 +867,6 @@
   "assess_locked_location": "잠긴 위치",
   "assess_date_edited": "수정된 날짜",
   "assess_time_edited": "편집된 시간",
-  "assess_msg_approve_milestone": "이 마일스톤을 승인하시겠습니까?"
+  "assess_msg_approve_milestone": "이 마일스톤을 승인하시겠습니까?",
+  "schedule_set_learning_outcome": "Set Learning Outcome"
 }
