@@ -24,7 +24,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { enAU, id, ko, vi, zhCN, es } from "date-fns/esm/locale";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Maybe, User } from "../../api/api-ko-schema.auto";
@@ -756,13 +756,15 @@ function EditBox(props: CalendarStateProps) {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
     if (name === "title" && (event.target.value as string).trim().split(/\s+/).length > 60) return;
     if (name === "description" && (event.target.value as string).length > 100) return;
-    if (name === "class_type")
+    if (name === "class_type") {
+      setOutcomeIds([]);
       setStatus({
         allDayCheck: false,
         repeatCheck: false,
         dueDateCheck: false,
         homeFunCheck: false,
       });
+    }
     setScheduleData(name, value);
   };
 
@@ -1613,6 +1615,10 @@ function EditBox(props: CalendarStateProps) {
   const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
   const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all" });
 
+  useEffect(() => {
+    setOutcomeIds(scheduleDetial.outcome_ids ?? []);
+  }, [scheduleDetial.outcome_ids, setOutcomeIds]);
+
   const searchOutcomesList = () => {
     const query = {
       exect_search: getValues().search_type,
@@ -1621,7 +1627,8 @@ function EditBox(props: CalendarStateProps) {
       page: getValues().page,
     };
     setCondition({ ...query });
-    history.push({ search: toQueryString({ ...query }) });
+    const condition = scheduleDetial.id ? { ...query, schedule_id: scheduleDetial.id } : query;
+    history.push({ search: toQueryString({ ...condition }) });
   };
 
   const saveOutcomesList = () => {
@@ -1639,7 +1646,7 @@ function EditBox(props: CalendarStateProps) {
   const learingOutcomeDatas: LearningContentListForm = {
     search_type: condition.exect_search ?? "all",
     search_value: condition.search_key ?? "",
-    is_assumed: condition.assumed === 1 ? true : false,
+    is_assumed: condition.assumed === 1,
     content_list: [],
     page: 1,
   };
@@ -1707,6 +1714,17 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Grid>
         </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
+          onClick={() => {
+            handeLearingOutcome();
+          }}
+        >
+          <span>{"Set Learning Outcome"}</span>
+          <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>
+        </Button>
         <TextField
           className={css.fieldset}
           label={d("Class Type").t("schedule_detail_class_type")}
@@ -1728,7 +1746,7 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
             </FormGroup>
-            {checkedStatus.homeFunCheck && (
+            {checkedStatus.homeFunCheck && !privilegedMembers("Student") && (
               <Button
                 variant="contained"
                 color="primary"
@@ -1738,7 +1756,7 @@ function EditBox(props: CalendarStateProps) {
                 }}
               >
                 <span>{"Set Learning Outcome"}</span>
-                <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>
+                {outComeIds.length > 0 && <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>}
               </Button>
             )}
           </Box>

@@ -392,9 +392,9 @@ function ScheduleContent() {
 
   useEffect(() => {
     (async () => {
-      await dispatch(actOutcomeList({ ...condition, metaLoading: true }));
+      if (!privilegedMembers("Student")) await dispatch(actOutcomeList({ ...condition, metaLoading: true }));
     })();
-  }, [condition, dispatch]);
+  }, [condition, privilegedMembers, dispatch]);
 
   return (
     <>

@@ -45,8 +45,11 @@ const useStyles = makeStyles({
   },
   emptyBox: {
     textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
     "& img": {
-      marginTop: "10%",
+      marginTop: "15%",
     },
   },
   scoreEditBox: {
@@ -577,6 +580,7 @@ export function DynamicTable(props: tableProps) {
       {(!studentViewItems || !studentViewItems.length) && (
         <div className={classes.emptyBox}>
           <img alt="empty" src={noDataIconUrl} />
+          <span style={{ marginTop: "10px" }}>{d("No achievement data is available.").t("report_msg_no_data")}</span>
         </div>
       )}
       <ResourcesView elasticLayerControlData={elasticLayerControlData} handleElasticLayerControl={handleElasticLayerControl} />

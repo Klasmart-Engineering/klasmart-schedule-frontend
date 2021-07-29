@@ -24,6 +24,7 @@ import { RootState } from "../../reducers";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { EntityScheduleDetailsView } from "../../api/api.auto";
 import { resetActOutcomeList } from "../../reducers/schedule";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
   previewContainer: {
@@ -104,15 +105,35 @@ export default function LearingOutcome(props: InfoProps) {
   const { conditionFormMethods, saveOutcomesList, searchOutcomesList, learingOutcomeData, handleClose, outComeIds, scheduleDetial } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
-  const [selectNum, setSelectNum] = React.useState<number>(learingOutcomeData.content_list.filter((item) => item.select).length);
+  const [selectNum, setSelectNum] = React.useState<number>(outComeIds.length);
   const { outcomeList, outcomeTotal } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const content_list = useMemo(() => {
     return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
   }, [outcomeList]);
 
   const content_lists = content_list.map((item) => {
-    return { ...item, select: outComeIds.includes(item.id) || scheduleDetial.outcome_ids?.includes(item.id) };
+    return { ...item, select: outComeIds.includes(item.id) };
   });
+
+  const handleGoOutcomeDetail = (id: string) => {
+    window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
+  };
+
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 10;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
 
   const handleOnScroll = () => {
     if (dom) {
@@ -272,9 +293,16 @@ export default function LearingOutcome(props: InfoProps) {
                   control={control}
                   defaultValue={item}
                   render={(props: { value: LearningContentList }) => (
-                    <TableRow key={props.value.id}>
+                    <TableRow
+                      key={props.value.id}
+                      onClick={() => {
+                        handleGoOutcomeDetail(props.value.name);
+                      }}
+                    >
                       <TableCell component="th" scope="row" align="center">
-                        {props.value.name}
+                        <Tooltip title={props.value.name as string} placement="top-start">
+                          <span>{textEllipsis(props.value.name)}</span>
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="center">{props.value.shortCode}</TableCell>
                       <TableCell align="center">{props.value.assumed ? "Yes" : ""}</TableCell>
@@ -288,13 +316,19 @@ export default function LearingOutcome(props: InfoProps) {
                       <TableCell align="center">
                         {!props.value.select && (
                           <AddCircleOutlinedIcon
-                            onClick={() => getSelectStatus(index, props.value)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              getSelectStatus(index, props.value);
+                            }}
                             style={{ color: "#4CAF50", cursor: "pointer" }}
                           />
                         )}
                         {props.value.select && (
                           <RemoveCircleOutlinedIcon
-                            onClick={() => getSelectStatus(index, props.value)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              getSelectStatus(index, props.value);
+                            }}
                             style={{ color: "#D32F2F", cursor: "pointer" }}
                           />
                         )}
@@ -321,7 +355,14 @@ export default function LearingOutcome(props: InfoProps) {
           <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={saveOutcomesList} variant="contained" size="large" color="primary" className={classes.margin}>
+          <Button
+            disabled={scheduleDetial.exist_assessment}
+            onClick={saveOutcomesList}
+            variant="contained"
+            size="large"
+            color="primary"
+            className={classes.margin}
+          >
             Save
           </Button>
         </div>
