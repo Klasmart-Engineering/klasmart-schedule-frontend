@@ -251,7 +251,7 @@ export class modelSchedule {
           const isExistTeacher = classs.teachers.filter((teacher: RolesData) => {
             return teacher.user_id === userId;
           });
-          onlyMine = !role && (isExistTeacher.length > 0 || isExistStudent.length > 0);
+          if (!onlyMine) onlyMine = !role && (isExistTeacher.length > 0 || isExistStudent.length > 0);
           if (classs.status === "active")
             data.push({ class_id: classs.class_id, class_name: classs.class_name, showIcon: isExistStudent.length > 0 });
         });
