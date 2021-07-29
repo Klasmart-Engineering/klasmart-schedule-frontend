@@ -19,3 +19,10 @@ export enum ReportType {
   assignment = "assignment",
 }
 export type LiveClassesSummaryResult = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;
+export type AssignmentSummaryResult = AsyncReturnType<typeof api.reports.queryAssignmentsSummary>;
+
+export type ReportInfoBaseProps = {
+  liveClassSummary: LiveClassesSummaryResult;
+  assignmentSummary: AssignmentSummaryResult;
+  reportType: ReportType;
+}

@@ -49,7 +49,7 @@ query classesByOrganization($organization_id: ID!) {
         }
         students {
           user_id
-          username
+          user_name
         }
     }
   }

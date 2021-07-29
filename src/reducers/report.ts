@@ -35,10 +35,10 @@ import {
   TeacherByOrgIdQueryVariables,
   TeacherListBySchoolIdDocument,
   TeacherListBySchoolIdQuery,
-  TeacherListBySchoolIdQueryVariables,
+  TeacherListBySchoolIdQueryVariables
 } from "../api/api-ko.auto";
 import {
-  EntityQueryLiveClassesSummaryResult,
+  EntityQueryAssignmentsSummaryResult, EntityQueryLiveClassesSummaryResult,
   EntityReportListTeachingLoadResult,
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
@@ -47,7 +47,7 @@ import {
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
-  ExternalSubject,
+  ExternalSubject
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -79,6 +79,7 @@ interface IreportState {
   teachingLoadOnload: TeachingLoadResponse;
   learningSummartOptions: LearningSummartOptionsProps;
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
+  assignmentSummary: EntityQueryAssignmentsSummaryResult;
 }
 interface RootState {
   report: IreportState;
@@ -132,6 +133,7 @@ const initialState: IreportState = {
     subjectList: [],
   },
   liveClassSummary: {},
+  assignmentSummary: {},
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -948,11 +950,20 @@ export type IResultQueryLiveClassSummary = AsyncReturnType<typeof api.reports.qu
 export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSummary, IParamsQueryLiveClassSummary & LoadingMetaPayload>(
   "getLiveClassesSummary",
   async (query) => {
-    console.log(2);
     const res = await api.reports.queryLiveClassesSummary({ ...query });
     return res;
   }
 );
+
+export type IParamsQueryAssignmentSummary = Parameters<typeof api.reports.queryAssignmentsSummary>[0];
+export type IResultQueryAssignmentSummary = AsyncReturnType<typeof api.reports.queryAssignmentsSummary>;
+export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSummary, IParamsQueryAssignmentSummary & LoadingMetaPayload>(
+  "getAssingmentSummary",
+  async (query) => {
+    const res = await api.reports.queryAssignmentsSummary({...query});
+    return res;
+  }
+)
 
 export interface LearningSummaryResponse {
   year?: number[];
@@ -974,6 +985,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   if (learningSummartOptions.week.length) {
     // liveClassSummary = await api.reports.queryLiveClassesSummary({...query});
     await dispatch(getLiveClassesSummary(query));
+    await dispatch(getAssignmentSummary(query));
     return learningSummartOptions;
   }
   const week = getWeeks();
@@ -1231,6 +1243,9 @@ const { reducer } = createSlice({
     },
     [getLiveClassesSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveClassesSummary>>) => {
       state.liveClassSummary = payload;
+    },
+    [getAssignmentSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentSummary>>) => {
+      state.assignmentSummary = payload;
     },
   },
 });

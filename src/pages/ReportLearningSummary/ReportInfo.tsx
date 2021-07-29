@@ -4,7 +4,7 @@ import React from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { LiveClassesReport, NoDataCom, RectCom } from "./LiveClassesReport";
 import { PieChart } from "./PieChart";
-import { LiveClassesSummaryResult, ReportType } from "./types";
+import { ReportInfoBaseProps, ReportType } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   reportCon: {
@@ -71,14 +71,13 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     marginTop: -10,
   },
 }));
-export interface ReportInfoProps {
-  reportType: ReportType;
-  liveClassSummary: LiveClassesSummaryResult;
+
+export interface ReportInfoProps extends ReportInfoBaseProps {
   onChangeReportType: (value: ReportType) => void;
 }
 export function ReportInfo(props: ReportInfoProps) {
   const css = useStyles();
-  const { reportType, liveClassSummary, onChangeReportType } = props;
+  const { reportType, liveClassSummary, assignmentSummary, onChangeReportType } = props;
   console.log(liveClassSummary);
   const isLiveClass = reportType === ReportType.live;
   const handleClickLive = () => onChangeReportType(ReportType.live);
@@ -96,7 +95,7 @@ export function ReportInfo(props: ReportInfoProps) {
             )}
             {!liveClassSummary.items && (
               <div className={css.noDataCon}>
-                <NoDataCom isPie={true} />
+                <NoDataCom isPie={true} reportType={reportType} />
               </div>
             )}
           </div>
@@ -106,7 +105,7 @@ export function ReportInfo(props: ReportInfoProps) {
           </div>
         </div>
         <div className={css.infoCon}>
-          <LiveClassesReport data={[]} reportType={reportType} liveClassSummary={liveClassSummary} />
+          <LiveClassesReport data={[]} reportType={reportType} liveClassSummary={liveClassSummary} assignmentSummary={assignmentSummary} />
         </div>
       </div>
     </LayoutBox>

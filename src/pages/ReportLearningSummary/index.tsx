@@ -56,7 +56,7 @@ export function ReportLearningSummary() {
   const history = useHistory();
   const dispatch = useDispatch();
   const [reportType, setReportType] = useState<ReportType>(ReportType.live);
-  const { liveClassSummary, learningSummartOptions } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { liveClassSummary, learningSummartOptions, assignmentSummary } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const { week } = learningSummartOptions;
   const defaultWeeksValue = useMemo(() => {
     if (condition.week_start && condition.week_end) {
@@ -105,7 +105,7 @@ export function ReportLearningSummary() {
         defaultWeeksValue={defaultWeeksValue}
         onChange={handleChange}
       />
-      <ReportInfo reportType={reportType} onChangeReportType={handleChangeReportType} liveClassSummary={liveClassSummary} />
+      <ReportInfo reportType={reportType} onChangeReportType={handleChangeReportType} liveClassSummary={liveClassSummary} assignmentSummary={assignmentSummary} />
     </>
   );
 }

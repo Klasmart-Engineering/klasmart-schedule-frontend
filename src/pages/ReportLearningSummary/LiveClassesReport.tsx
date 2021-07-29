@@ -6,7 +6,7 @@ import { EntityLiveClassSummaryItem } from "../../api/api.auto";
 import liveBackUrl from "../../assets/icons/report_reca.svg";
 import assessmentBackUrl from "../../assets/icons/report_recl.svg";
 import { d } from "../../locale/LocaleManager";
-import { LiveClassesSummaryResult, ReportType } from "./types";
+import { ReportInfoBaseProps, ReportType } from "./types";
 const useStyles = makeStyles(({ breakpoints, props }) => ({
   scrollCss: {
     "&::-webkit-scrollbar": {
@@ -33,7 +33,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     flex: 1,
     // background: "red",
     height: "100%",
-    overflowY: "scroll",
+    overflowY: "auto",
     paddingRight: 20,
   },
   rightWrap: {
@@ -135,16 +135,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     flexDirection: "column",
     marginTop: 50,
   },
-  rightItemTitle: {
-    flex: 1,
-    backgroundColor: "#8693f0",
-    paddingLeft: 26,
-    fontSize: 18,
-    fontWeight: 600,
-    color: "#fff",
-    display: "flex",
-    alignItems: "center",
-  },
+ 
   rightItemContent: {
     flex: 5,
     backgroundColor: "#f6f6f6",
@@ -153,14 +144,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   outcomeCon: {
     marginTop: 15,
   },
-  spot: {
-    display: "inline-block",
-    width: 10,
-    height: 10,
-    borderRadius: "50%",
-    backgroundColor: "#8693f0",
-    marginRight: 15,
-  },
+ 
   learningOutcomeName: {
     fontSize: 16,
     fontWeight: 400,
@@ -226,7 +210,6 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     alignItems: "center",
     backgroundColor: "#f6f6f6",
     border: "2px dashed #8693f0",
-    color: "#8693fc",
     fontSize: 20,
   },
   noDataPieCon: {
@@ -280,60 +263,111 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     backgroundImage: `url(${assessmentBackUrl})`,
   },
 }));
-export interface LiveClassesReportProps {
-  data: EntityLiveClassSummaryItem[];
+const usePropsStyles = makeStyles(() => ({
+  noDataCon: (props: ReportTypeProps) => ({
+    color: props.reportType === ReportType.live ? "#8693f0" : "#89c4f9",
+    border: `2px dashed ${props.reportType === ReportType.live ? "#8693f0" : "#89c4f9"}`
+  }),
+  rightItemTitle: (props: ReportTypeProps) => ({
+    flex: 1,
+    backgroundColor: props.reportType === ReportType.live ? "#8693f0" : "#89c4f9",
+    paddingLeft: 26,
+    fontSize: 18,
+    fontWeight: 600,
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+  }),
+  spot: (props: ReportTypeProps) => ({
+    display: "inline-block",
+    width: 10,
+    height: 10,
+    borderRadius: "50%",
+    backgroundColor: "#8693f0",
+    marginRight: 15,
+  }),
+}));
+export type ReportTypeProps = {
   reportType: ReportType;
-  liveClassSummary: LiveClassesSummaryResult;
+}
+export interface LiveClassesReportProps extends ReportInfoBaseProps {
+  data: EntityLiveClassSummaryItem[];
+  // liveClassSummary: LiveClassesSummaryResult;
+  // assignmentSummary: AssignmentSummaryResult;
 }
 export function LiveClassesReport(props: LiveClassesReportProps) {
   const css = useStyles();
-  const { data, reportType, liveClassSummary } = props;
+  const { reportType, liveClassSummary} = props;
+  // const cssProps = usePropsStyles({reportType});
   const { items } = liveClassSummary;
+  const [currentIndex] = useState(0);
+  const liveData: EntityLiveClassSummaryItem | undefined =  items ? items[currentIndex] : undefined;
+  // const outcomes = useMemo(() => {
+    
+  // }, []);
+  // const feedback = useMemo(() => {
+
+  // }, []);
   return (
     <div className={css.liveClassWrap}>
       <div className={clsx(css.scrollCss, css.leftWrap)}>
         {reportType === ReportType.live && <div style={{ marginTop: 20 }}></div>}
-        {!items && (
+        {!items && false && (
           <div style={{ height: "calc(100% - 40px)" }}>
-            <NoDataCom isPie={false} />
+            <NoDataCom isPie={false} reportType={reportType} />
           </div>
         )}
-        {items && items.length && reportType === ReportType.live && [1, 2, 3].map((item) => <LiveItem liveItem={data[0]} />)}
+        {/* items && items.length && reportType === ReportType.live  */}
+        {true && [1, 2, 3].map((item) => <LiveItem key={item} liveItem={liveData} />)}
         {reportType === ReportType.assignment && <AssessmentCom />}
       </div>
       <div className={css.rightWrap}>
-        <div className={clsx(css.rightItem)}>
-          <span className={clsx(css.rightItemTitle, reportType === ReportType.assignment ? css.studyLessonCon : "")}>
-            Learning Outcomes Covered
-          </span>
-          <div className={css.rightItemContent}>
-            {[1, 2, 3].map((item) => (
-              <div className={css.outcomeCon}>
-                <span className={clsx(css.spot, reportType === ReportType.assignment ? css.studyLessonCon : "")}></span>
-                <span className={css.learningOutcomeName}>Learning outcomes1</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className={clsx(css.rightItem)}>
-          <span className={clsx(css.rightItemTitle, reportType === ReportType.assignment ? css.studyLessonCon : "")}>
-            Teachers's Feedback
-          </span>
-          <div className={css.rightItemContent}>
-            <div className={css.teacherFeedback}>No feedback is available.</div>
-          </div>
-        </div>
+        <RightCom reportType={reportType} />
       </div>
     </div>
   );
 }
 
+export interface RightComProps extends ReportTypeProps {
+
+}
+export function RightCom(props: RightComProps) {
+  const { reportType } = props;
+  const css = useStyles();
+  const cssProps = usePropsStyles({reportType});
+  return (
+    <>
+      <div className={clsx(css.rightItem)}>
+        <span className={clsx(cssProps.rightItemTitle)}>
+          {"Learning Outcomes Covered"}
+        </span>
+        <div className={css.rightItemContent}>
+          {[1, 2, 3].map((item) => (
+            <div className={css.outcomeCon}>
+              <span className={clsx(cssProps.spot)}></span>
+              <span className={css.learningOutcomeName}>Learning outcomes1</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className={clsx(css.rightItem)}>
+        <span className={clsx(cssProps.rightItemTitle)}>
+          {"Teachers's Feedback"}
+        </span>
+        <div className={css.rightItemContent}>
+          <div className={css.teacherFeedback}>No feedback is available.</div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 export interface LiveItemProps {
-  liveItem: EntityLiveClassSummaryItem;
+  liveItem?: EntityLiveClassSummaryItem;
 }
 export function LiveItem(props: LiveItemProps) {
   const css = useStyles();
-  // const { liveItem } = props;
+  const { liveItem } = props;
   return (
     <div className={css.liveItem}>
       <div className={css.titleCon}>
@@ -341,18 +375,16 @@ export function LiveItem(props: LiveItemProps) {
         <span className={css.labelCon}>Jul 12, Monday</span>
       </div>
       <div className={css.contentCon}>
-        {[1, 2].map((item) => (
-          <div className={css.lessonCon}>
-            <span className={css.timeCon}>10:00 AM</span>
-            <div className={clsx(css.lessonInfoCon, css.liveLessonCon)}>
-              <div className={css.lessonName}>Lesson Name</div>
-              <div>
-                <span className={css.lessonPlanName}>Lesson Plan Name</span>
-              </div>
+        <div className={css.lessonCon}>
+          <span className={css.timeCon}>10:00 AM</span>
+          <div className={clsx(css.lessonInfoCon, css.liveLessonCon)}>
+              <div className={css.lessonName}>{liveItem?.schedule_title || "zhanwei"}</div>
+            <div>
+              <span className={css.lessonPlanName}>{liveItem?.lesson_plan_name || "zhanwei"}</span>
             </div>
-            <Arrow />
           </div>
-        ))}
+          <Arrow />
+        </div>
       </div>
     </div>
   );
@@ -459,15 +491,15 @@ export function AssessmentCom() {
   );
 }
 
-export interface NoDataProps {
+export interface NoDataProps extends ReportTypeProps {
   isPie?: boolean;
   isSquare?: boolean;
 }
 export function NoDataCom(props: NoDataProps) {
-  const { isPie } = props;
+  const { isPie, reportType } = props;
   const css = useStyles();
-
-  return <div className={clsx(css.noDataCon, isPie ? css.noDataPieCon : css.noDataSquareCon)}>No Data Available</div>;
+  const cssProps = usePropsStyles({reportType});
+  return <div className={clsx(css.noDataCon, cssProps.noDataCon,isPie ? css.noDataPieCon : css.noDataSquareCon )}>No Data Available</div>;
 }
 
 export interface RectProps {
