@@ -684,7 +684,15 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
     const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
-    return { list, total };
+    return { list, total, page: query.page };
+  }
+);
+
+export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    return { list, total, page: query.page };
   }
 );
 
@@ -716,8 +724,11 @@ const { actions, reducer } = createSlice({
     },
   },
   extraReducers: {
-    [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [actOutcomeListLoading.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeList = [...state.outcomeList, ...payload.list];
+    },
+    [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = payload.page > 1 ? [...state.outcomeList, ...payload.list] : payload.list;
       state.outcomeTotal = payload.total;
     },
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {

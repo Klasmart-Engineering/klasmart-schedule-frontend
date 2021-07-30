@@ -698,7 +698,7 @@ function FilterTemplate(props: FilterProps) {
     });
   };
 
-  const handleSelect = (event, nodeIds) => {
+  const handleSelect = (event: any, nodeIds: any) => {
     if (nodeIds[0] === "School+1") setShowClassMenu(false);
   };
 

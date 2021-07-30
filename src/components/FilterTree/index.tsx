@@ -350,7 +350,7 @@ function FilterOverall(props: FilterTreeProps) {
       </ul>
 
       <Pagination
-        count={total < pageSize ? 1 : total / pageSize}
+        count={total < pageSize ? 1 : Math.ceil(total / pageSize)}
         style={{ display: "flex", justifyContent: "center", padding: "12px" }}
         size="small"
         page={page}
