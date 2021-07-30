@@ -26,6 +26,7 @@ import InputBase from "@material-ui/core/InputBase";
 import { Box } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
+import { d } from "../../locale/LocaleManager";
 
 const useStyle = makeStyles((theme) =>
   createStyles({
@@ -113,9 +114,9 @@ export function LessonPlan(props: AssignmentProps) {
             }}
             input={<BootstrapInput />}
           >
-            <option value="2">All</option>
-            <option value="1">Assumed</option>
-            <option value="0">Unassumed</option>
+            <option value="2">{d("All").t("assess_filter_all")}</option>
+            <option value="1">{d("Assumed").t("assess_label_assumed")}</option>
+            <option value="0">{d("Assumed").t("assess_label_assumed")}</option>
           </NativeSelect>
         </FormControl>
       </Box>
@@ -123,9 +124,9 @@ export function LessonPlan(props: AssignmentProps) {
         <Table className={css.table} aria-label="simple table">
           <TableHead style={{ backgroundColor: "#F2F5F7" }}>
             <TableRow>
-              <TableCell align="center">Learning Outcomes</TableCell>
-              <TableCell align="center">Assumed</TableCell>
-              <TableCell align="center">Assessing Action</TableCell>
+              <TableCell align="center">{d("Learning Outcomes").t("assess_column_lo")}</TableCell>
+              <TableCell align="center">{d("Assumed").t("assess_label_assumed")}</TableCell>
+              <TableCell align="center">{d("Assessing Actions").t("assess_option_assessing_actions")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -156,7 +157,7 @@ export function LessonPlan(props: AssignmentProps) {
                                 color="primary"
                               />
                             }
-                            label="Achieved"
+                            label={d("Achieved").t("report_label_achieved")}
                           />
                           <FormControlLabel
                             value="end"
@@ -170,7 +171,7 @@ export function LessonPlan(props: AssignmentProps) {
                                 color="primary"
                               />
                             }
-                            label="Not Achieved"
+                            label={d("Not Achieved").t("report_label_not_achieved")}
                           />
                           <FormControlLabel
                             value="end"
@@ -184,7 +185,7 @@ export function LessonPlan(props: AssignmentProps) {
                                 color="primary"
                               />
                             }
-                            label="Not Attempted"
+                            label={d("Not Attempted").t("assess_option_not_attempted")}
                           />
                         </FormGroup>
                       </FormControl>

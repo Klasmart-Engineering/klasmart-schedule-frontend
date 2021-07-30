@@ -173,13 +173,13 @@ export default function LearingOutcome(props: InfoProps) {
   };
 
   const filterCode = [
-    { lable: "All", value: "all" },
-    { lable: "author", value: "author" },
-    { lable: "code", value: "shortCode" },
-    { lable: "description", value: "description" },
-    { lable: "keywords", value: "keyWord" },
-    { lable: "name", value: "loName" },
-    { lable: "set", value: "loSet" },
+    { lable: d("All").t("assess_filter_all"), value: "all" },
+    { lable: d("Author").t("assess_label_author"), value: "author" },
+    { lable: d("Short Code").t("assess_label_short_code"), value: "shortCode" },
+    { lable: d("Description").t("assess_label_description"), value: "description" },
+    { lable: d("Keywords").t("assess_label_keywords"), value: "keyWord" },
+    { lable: d("Learning Outcome Name").t("assess_label_learning_outcome_name"), value: "loName" },
+    { lable: d("Learning Outcome Set").t("assess_set_learning_outcome_set"), value: "loSet" },
   ];
   const templateOption = filterCode.map((item, index) => {
     return (
@@ -273,7 +273,7 @@ export default function LearingOutcome(props: InfoProps) {
                   color="primary"
                 />
               }
-              label="Assumed"
+              label={d("Assumed").t("assess_filter_assumed")}
             />
           )}
         />
@@ -290,10 +290,10 @@ export default function LearingOutcome(props: InfoProps) {
           <Table className={classes.table} aria-label="simple table">
             <TableHead style={{ backgroundColor: "#F2F5F7" }}>
               <TableRow>
-                <TableCell align="center">Learning Outcomes</TableCell>
-                <TableCell align="center">Short Code</TableCell>
-                <TableCell align="center">Assumed</TableCell>
-                <TableCell align="center">Learning Outcome Set</TableCell>
+                <TableCell align="center">{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
+                <TableCell align="center">{d("Short Code").t("assess_label_short_code")}</TableCell>
+                <TableCell align="center">{d("Assumed").t("assess_filter_assumed")}</TableCell>
+                <TableCell align="center">{d("Learning Outcome Set").t("assess_set_learning_outcome_set")}</TableCell>
                 <TableCell align="center">&nbsp;</TableCell>
               </TableRow>
             </TableHead>
@@ -369,7 +369,7 @@ export default function LearingOutcome(props: InfoProps) {
         </span>
         <div>
           <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={handleClose}>
-            Cancel
+            {d("Cancel").t("library_label_cancel")}
           </Button>
           <Button
             disabled={scheduleDetial.complete_assessment}
@@ -379,7 +379,7 @@ export default function LearingOutcome(props: InfoProps) {
             color="primary"
             className={classes.margin}
           >
-            Save
+            {d("Save").t("library_label_save")}
           </Button>
         </div>
       </Box>
