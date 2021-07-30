@@ -384,6 +384,7 @@ function FilterOverall(props: FilterTreeProps) {
           )}
         </span>
         <CloseIcon
+          style={{ cursor: "pointer" }}
           onClick={() => {
             hideClassMenu();
           }}

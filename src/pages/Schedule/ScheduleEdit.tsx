@@ -1420,9 +1420,6 @@ function EditBox(props: CalendarStateProps) {
    */
 
   const closeEdit = () => {
-    dispatch(resetActOutcomeList([]));
-    setCondition({ page: 1, exect_search: "all", assumed: -1 });
-    setOutcomeIds([]);
     changeModalDate({
       enableCustomization: false,
     });
@@ -1461,6 +1458,9 @@ function EditBox(props: CalendarStateProps) {
               start: currentTime,
               end: currentTime,
             });
+            dispatch(resetActOutcomeList([]));
+            setCondition({ page: 1, exect_search: "all", assumed: -1 });
+            setOutcomeIds([]);
             history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
           },
         },

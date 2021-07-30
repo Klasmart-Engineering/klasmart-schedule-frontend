@@ -527,7 +527,7 @@ function FilterTemplate(props: FilterProps) {
         name: schoolItem.school_name,
         isCheck: false,
         child: [],
-        isOnlyMine: is_exists,
+        isOnlyMine: false,
         existData: existData,
         isHide: false,
         onLyMineData: onLyMineData,
