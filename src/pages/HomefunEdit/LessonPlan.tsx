@@ -19,7 +19,6 @@ import {
   EntityHomeFunStudyOutcome,
   EntityScheduleFeedbackView,
 } from "../../api/api.auto";
-import { d } from "../../locale/LocaleManager";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import NativeSelect from "@material-ui/core/NativeSelect";
@@ -104,11 +103,7 @@ export function LessonPlan(props: AssignmentProps) {
   return (
     <div className={css.assignment}>
       <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "-10px 0 10px 0" }}>
-        <Typography variant="h5">
-          {d("Assignment of {studentname}").t("assess_assignment_of_student", {
-            studentname: detail.student_name ?? d("Student").t("schedule_time_conflict_student"),
-          })}
-        </Typography>
+        <Typography variant="h5">{`Learning Outcomes Achievement of ${detail.student_name}`}</Typography>
         <FormControl className={css.margin}>
           <NativeSelect
             id="demo-customized-select-native"
@@ -145,7 +140,7 @@ export function LessonPlan(props: AssignmentProps) {
                     <TableCell component="th" scope="row" align="center">
                       {value.outcome_name}
                     </TableCell>
-                    <TableCell align="center">{value.assumed ? "Yes" : "No"}</TableCell>
+                    <TableCell align="center">{value.assumed ? "Yes" : ""}</TableCell>
                     <TableCell align="center" style={{ display: "flex", justifyContent: "center" }}>
                       <FormControl component="fieldset">
                         <FormGroup aria-label="position" row>

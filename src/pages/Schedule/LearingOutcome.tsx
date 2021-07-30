@@ -111,9 +111,18 @@ export default function LearingOutcome(props: InfoProps) {
     return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
   }, [outcomeList]);
 
-  const content_lists = content_list.map((item) => {
-    return { ...item, select: outComeIds.includes(item.id) };
-  });
+  const content_lists = (): LearningContentList[] => {
+    const check: LearningContentList[] = [];
+    const unCheck: LearningContentList[] = [];
+    content_list.forEach((item) => {
+      if (outComeIds.includes(item.id)) {
+        check.push({ ...item, select: true });
+      } else {
+        unCheck.push({ ...item, select: false });
+      }
+    });
+    return check.concat(unCheck);
+  };
 
   const handleGoOutcomeDetail = (id: string) => {
     window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
@@ -289,8 +298,9 @@ export default function LearingOutcome(props: InfoProps) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {content_lists.map((item, index) => (
+              {content_lists().map((item, index) => (
                 <Controller
+                  key={item.id}
                   name={`content_list[${index}]`}
                   control={control}
                   defaultValue={item}
@@ -298,7 +308,7 @@ export default function LearingOutcome(props: InfoProps) {
                     <TableRow
                       key={props.value.id}
                       onClick={() => {
-                        handleGoOutcomeDetail(props.value.name);
+                        handleGoOutcomeDetail(props.value.id);
                       }}
                     >
                       <TableCell component="th" scope="row" align="center">
@@ -311,7 +321,11 @@ export default function LearingOutcome(props: InfoProps) {
                       <TableCell align="center">
                         <ul>
                           {props.value.learningOutcomeSet.map((set) => {
-                            return <li style={{ marginTop: "10px" }}>{set.set_name}</li>;
+                            return (
+                              <li key={`${set.set_id}+${item.id}`} style={{ marginTop: "10px" }}>
+                                {set.set_name}
+                              </li>
+                            );
                           })}
                         </ul>
                       </TableCell>
