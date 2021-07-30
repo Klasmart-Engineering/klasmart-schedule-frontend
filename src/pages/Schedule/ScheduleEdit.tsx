@@ -44,6 +44,7 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
+  actOutcomeList,
   changeParticipants,
   getScheduleLiveToken,
   getScheduleMockOptionsResponse,
@@ -58,6 +59,7 @@ import {
   saveScheduleData,
   ScheduleFilterPrograms,
   scheduleShowOption,
+  resetActOutcomeList,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -255,11 +257,6 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
 }));
 
-const toQueryString = (hash: Record<string, any>): string => {
-  const search = new URLSearchParams(hash);
-  return `?${search.toString()}`;
-};
-
 function SmallCalendar(props: CalendarStateProps) {
   const {
     timesTamp,
@@ -375,7 +372,9 @@ function EditBox(props: CalendarStateProps) {
     stateCurrentCid,
     stateMaterialArr,
   } = props;
-  const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { contentsAuthList, classOptions, mySchoolId, outcomeList } = useSelector<RootState, RootState["schedule"]>(
+    (state) => state.schedule
+  );
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -472,7 +471,8 @@ function EditBox(props: CalendarStateProps) {
       setAttachmentName("");
       setAttachmentId("");
     }
-  }, [scheduleDetial, scheduleDetial.attachment, scheduleId]);
+    dispatch(resetActOutcomeList([]));
+  }, [scheduleDetial, dispatch, scheduleDetial.attachment, scheduleId]);
 
   React.useEffect(() => {
     const defaults: EntityScheduleShortInfo = {
@@ -757,6 +757,8 @@ function EditBox(props: CalendarStateProps) {
     if (name === "title" && (event.target.value as string).trim().split(/\s+/).length > 60) return;
     if (name === "description" && (event.target.value as string).length > 100) return;
     if (name === "class_type") {
+      dispatch(resetActOutcomeList([]));
+      setCondition({ page: 1, exect_search: "all", assumed: -1 });
       setOutcomeIds([]);
       setStatus({
         allDayCheck: false,
@@ -987,6 +989,8 @@ function EditBox(props: CalendarStateProps) {
         return;
       }
       dispatch(ScheduleFilterPrograms());
+      dispatch(resetActOutcomeList([]));
+      setCondition({ page: 1, exect_search: "all", assumed: -1 });
       setOutcomeIds([]);
       dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
       dispatchRepeat({
@@ -1416,6 +1420,9 @@ function EditBox(props: CalendarStateProps) {
    */
 
   const closeEdit = () => {
+    dispatch(resetActOutcomeList([]));
+    setCondition({ page: 1, exect_search: "all", assumed: -1 });
+    setOutcomeIds([]);
     changeModalDate({
       enableCustomization: false,
     });
@@ -1613,13 +1620,17 @@ function EditBox(props: CalendarStateProps) {
   const conditionFormMethods = useForm<LearningContentListForm>();
   const { getValues } = conditionFormMethods;
   const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
-  const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all" });
+  const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all", assumed: -1 });
 
   useEffect(() => {
     setOutcomeIds(scheduleDetial.outcome_ids ?? []);
   }, [scheduleDetial.outcome_ids, setOutcomeIds]);
 
-  const searchOutcomesList = () => {
+  const getLearingOuctomeData = async (conditionOt: any, loading: boolean) => {
+    await dispatch(actOutcomeList({ ...conditionOt, page_size: 10, metaLoading: true }));
+  };
+
+  const searchOutcomesList = async () => {
     const query = {
       exect_search: getValues().search_type,
       search_key: getValues().search_value,
@@ -1628,7 +1639,8 @@ function EditBox(props: CalendarStateProps) {
     };
     setCondition({ ...query });
     const condition = scheduleDetial.id ? { ...query, schedule_id: scheduleDetial.id } : query;
-    history.push({ search: toQueryString({ ...condition }) });
+    const isLoading = getValues().page > 1;
+    await getLearingOuctomeData(condition, isLoading);
   };
 
   const saveOutcomesList = () => {
@@ -1648,10 +1660,11 @@ function EditBox(props: CalendarStateProps) {
     search_value: condition.search_key ?? "",
     is_assumed: condition.assumed === 1,
     content_list: [],
-    page: 1,
+    page: condition.page ?? 1,
   };
 
-  const handeLearingOutcome = () => {
+  const handeLearingOutcome = async () => {
+    if (outcomeList.length < 1) await getLearingOuctomeData(condition, false);
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -1714,17 +1727,6 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Grid>
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
-          onClick={() => {
-            handeLearingOutcome();
-          }}
-        >
-          <span>{"Set Learning Outcome"}</span>
-          <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>
-        </Button>
         <TextField
           className={css.fieldset}
           label={d("Class Type").t("schedule_detail_class_type")}

@@ -159,6 +159,7 @@ export default function LearingOutcome(props: InfoProps) {
   const checkAssume = (value: boolean) => {
     dispatch(resetActOutcomeList([]));
     setValue(`is_assumed`, value);
+    setValue(`page`, 1);
     searchOutcomesList();
   };
 
@@ -240,6 +241,7 @@ export default function LearingOutcome(props: InfoProps) {
             startIcon={<SearchOutlined />}
             onClick={() => {
               dispatch(resetActOutcomeList([]));
+              setValue(`page`, 1);
               searchOutcomesList();
             }}
           >
@@ -356,7 +358,7 @@ export default function LearingOutcome(props: InfoProps) {
             Cancel
           </Button>
           <Button
-            disabled={scheduleDetial.exist_assessment}
+            disabled={scheduleDetial.complete_assessment}
             onClick={saveOutcomesList}
             variant="contained"
             size="large"

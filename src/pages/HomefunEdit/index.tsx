@@ -105,21 +105,21 @@ function AssessmentsHomefunEditIner() {
             defaultValue="top"
           >
             <FormControlLabel
-              value="Assignment"
-              control={<Radio color="primary" />}
-              label={
-                <Typography variant={radioTypography} style={{ fontWeight: 700 }}>
-                  Assignment Assessment
-                </Typography>
-              }
-              labelPlacement="end"
-            />
-            <FormControlLabel
               value="LessonPlan"
               control={<Radio color="primary" />}
               label={
                 <Typography variant={radioTypography} style={{ fontWeight: 700 }}>
                   Learning Outcomes Assessment
+                </Typography>
+              }
+              labelPlacement="end"
+            />
+            <FormControlLabel
+              value="Assignment"
+              control={<Radio color="primary" />}
+              label={
+                <Typography variant={radioTypography} style={{ fontWeight: 700 }}>
+                  Assignment Assessment
                 </Typography>
               }
               labelPlacement="end"

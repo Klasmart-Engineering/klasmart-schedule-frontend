@@ -1033,6 +1033,7 @@ export interface EntityScheduleDetailsView {
   teachers?: EntityScheduleAccessibleUserView[];
   title?: string;
   version?: number;
+  complete_assessment?: boolean;
 }
 
 export interface EntityScheduleFeedbackAddInput {

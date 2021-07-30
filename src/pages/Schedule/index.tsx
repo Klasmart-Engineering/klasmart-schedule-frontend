@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
@@ -44,7 +44,6 @@ import {
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   searchAuthContentLists,
-  actOutcomeList,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -52,8 +51,6 @@ import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import { OutcomeListExectSearch, OutcomeQueryCondition } from "../OutcomeList/types";
-import { OrderBy } from "../../api/type";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -61,30 +58,6 @@ const useQuery = () => {
   const scheduleId = query.get("schedule_id") || "";
   const teacherName = query.get("name") || "";
   return { scheduleId, teacherName };
-};
-
-const useOutcomeQuery = (): OutcomeQueryCondition => {
-  const { search } = useLocation();
-  return useMemo(() => {
-    const query = new URLSearchParams(search);
-    const search_key = query.get("search_key");
-    const publish_status = query.get("publish_status");
-    const author_name = query.get("author_name");
-    const page = Number(query.get("page")) || 1;
-    const order_by = (query.get("order_by") as OrderBy | null) || undefined;
-    const is_unpub = query.get("is_unpub");
-    const exect_search = query.get("exect_search") || OutcomeListExectSearch.all;
-    const assumed = query.get("assumed") || -1;
-    const page_size = 10;
-    return clearNull({ search_key, publish_status, author_name, page, order_by, is_unpub, exect_search, assumed, page_size });
-  }, [search]);
-};
-
-const clearNull = (obj: Record<string, any>) => {
-  Object.keys(obj).forEach((key) => {
-    if (obj[key] == null) delete obj[key];
-  });
-  return obj;
 };
 
 const parseRightside = (rightside: RouteParams["rightside"]) => ({
@@ -131,7 +104,6 @@ function ScheduleContent() {
   const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
   const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
-  const condition = useOutcomeQuery();
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -389,12 +361,6 @@ function ScheduleContent() {
     });
   }, [scheduleId, setModalDate, privilegedMembers, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
-
-  useEffect(() => {
-    (async () => {
-      if (!privilegedMembers("Student")) await dispatch(actOutcomeList({ ...condition, metaLoading: true }));
-    })();
-  }, [condition, privilegedMembers, dispatch]);
 
   return (
     <>
