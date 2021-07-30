@@ -1745,17 +1745,6 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Grid>
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
-          onClick={() => {
-            handeLearingOutcome();
-          }}
-        >
-          <span>{"Set Learning Outcome"}</span>
-          {outComeIds.length > 0 && <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>}
-        </Button>
         <TextField
           className={css.fieldset}
           label={d("Class Type").t("schedule_detail_class_type")}
