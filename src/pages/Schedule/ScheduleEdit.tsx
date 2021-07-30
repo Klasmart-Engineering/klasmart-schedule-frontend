@@ -257,6 +257,13 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
 }));
 
+const clearNull = (obj: Record<string, any>) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == null) delete obj[key];
+  });
+  return obj;
+};
+
 function SmallCalendar(props: CalendarStateProps) {
   const {
     timesTamp,
@@ -1627,7 +1634,18 @@ function EditBox(props: CalendarStateProps) {
   }, [scheduleDetial.outcome_ids, setOutcomeIds]);
 
   const getLearingOuctomeData = async (conditionOt: any, loading: boolean) => {
-    await dispatch(actOutcomeList({ ...conditionOt, page_size: 10, metaLoading: true }));
+    await dispatch(
+      actOutcomeList(
+        clearNull({
+          ...conditionOt,
+          [conditionOt.exect_search]: conditionOt.search_key,
+          page_size: 10,
+          exect_search: "",
+          search_key: "",
+          metaLoading: true,
+        })
+      )
+    );
   };
 
   const searchOutcomesList = async () => {
@@ -1727,6 +1745,17 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Grid>
         </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
+          onClick={() => {
+            handeLearingOutcome();
+          }}
+        >
+          <span>{"Set Learning Outcome"}</span>
+          {outComeIds.length > 0 && <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>}
+        </Button>
         <TextField
           className={css.fieldset}
           label={d("Class Type").t("schedule_detail_class_type")}
