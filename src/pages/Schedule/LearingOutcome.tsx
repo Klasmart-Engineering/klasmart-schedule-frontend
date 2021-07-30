@@ -114,10 +114,15 @@ export default function LearingOutcome(props: InfoProps) {
   const content_lists = (): LearningContentList[] => {
     const check: LearningContentList[] = [];
     const unCheck: LearningContentList[] = [];
+    //outComeIds.reverse()
+    outComeIds.forEach((id) => {
+      const is_exist = content_list.filter((item) => {
+        return item.id === id;
+      });
+      if (is_exist.length > 0) check.unshift({ ...is_exist[0], select: true });
+    });
     content_list.forEach((item) => {
-      if (outComeIds.includes(item.id)) {
-        check.push({ ...item, select: true });
-      } else {
+      if (!outComeIds.includes(item.id)) {
         unCheck.push({ ...item, select: false });
       }
     });
