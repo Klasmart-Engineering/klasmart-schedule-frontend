@@ -1,12 +1,11 @@
-import { Collapse, IconButton, makeStyles, styled } from "@material-ui/core";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { EntityLiveClassSummaryItem } from "../../api/api.auto";
 import liveBackUrl from "../../assets/icons/report_reca.svg";
 import assessmentBackUrl from "../../assets/icons/report_recl.svg";
-import { d } from "../../locale/LocaleManager";
-import { ReportInfoBaseProps, ReportType } from "./types";
+import { formatTimeToEng, formatTimeToMonWek } from "../../models/ModelReports";
+import { AssignmentSummaryResultItem, LiveClassesSummaryResultItem, ReportInfoBaseProps, ReportType } from "./types";
 const useStyles = makeStyles(({ breakpoints, props }) => ({
   scrollCss: {
     "&::-webkit-scrollbar": {
@@ -35,6 +34,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     height: "100%",
     overflowY: "auto",
     paddingRight: 20,
+    paddingTop: 20,
   },
   rightWrap: {
     flex: 1,
@@ -72,15 +72,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     display: "flex",
     borderLeft: "1px dashed #d7d7d7",
   },
-  timeCon: {
-    marginLeft: 9,
-    fontSize: 14,
-    flex: 2,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#8693f0",
-  },
+
   lessonInfoCon: {
     flex: 8,
     height: 90,
@@ -135,7 +127,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     flexDirection: "column",
     marginTop: 50,
   },
- 
+
   rightItemContent: {
     flex: 5,
     backgroundColor: "#f6f6f6",
@@ -144,7 +136,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   outcomeCon: {
     marginTop: 15,
   },
- 
+
   learningOutcomeName: {
     fontSize: 16,
     fontWeight: 400,
@@ -266,7 +258,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
 const usePropsStyles = makeStyles(() => ({
   noDataCon: (props: ReportTypeProps) => ({
     color: props.reportType === ReportType.live ? "#8693f0" : "#89c4f9",
-    border: `2px dashed ${props.reportType === ReportType.live ? "#8693f0" : "#89c4f9"}`
+    border: `2px dashed ${props.reportType === ReportType.live ? "#8693f0" : "#89c4f9"}`,
   }),
   rightItemTitle: (props: ReportTypeProps) => ({
     flex: 1,
@@ -283,13 +275,34 @@ const usePropsStyles = makeStyles(() => ({
     width: 10,
     height: 10,
     borderRadius: "50%",
-    backgroundColor: "#8693f0",
+    backgroundColor: props.reportType === ReportType.live ? "#8693f0" : "#89c4f9",
     marginRight: 15,
+  }),
+  infoFont: (props: ReportTypeProps) => ({
+    fontSize: 16,
+    fontWeight: 400,
+    padding: "10px 0",
+    lineHeight: "22px",
+    color: props.reportType === ReportType.live ? "#8693f0" : "#89c4f9",
+  }),
+  timeCon: (props: ReportTypeProps) => ({
+    marginLeft: 9,
+    fontSize: 14,
+    flex: props.reportType === ReportType.live ? 2 : 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#8693f0",
+  }),
+}));
+const useLessonStyles = makeStyles(() => ({
+  lessonCon: (props: LeftDataProps | undefined) => ({
+    background: props?.type ? (props.type === "home_fun_study" ? "#89c4f9" : "#a4ddff") : props?.absent ? "#fe9b9b" : "#8693f0",
   }),
 }));
 export type ReportTypeProps = {
   reportType: ReportType;
-}
+};
 export interface LiveClassesReportProps extends ReportInfoBaseProps {
   data: EntityLiveClassSummaryItem[];
   // liveClassSummary: LiveClassesSummaryResult;
@@ -297,134 +310,226 @@ export interface LiveClassesReportProps extends ReportInfoBaseProps {
 }
 export function LiveClassesReport(props: LiveClassesReportProps) {
   const css = useStyles();
-  const { reportType, liveClassSummary} = props;
-  // const cssProps = usePropsStyles({reportType});
-  const { items } = liveClassSummary;
-  const [currentIndex] = useState(0);
-  const liveData: EntityLiveClassSummaryItem | undefined =  items ? items[currentIndex] : undefined;
-  // const outcomes = useMemo(() => {
-    
-  // }, []);
-  // const feedback = useMemo(() => {
-
-  // }, []);
+  const { reportType, liveClassSummary, assignmentSummary } = props;
+  const liveitems = liveClassSummary.items;
+  const assessmentitems = assignmentSummary.items;
+  const [currentIndex, setCurrentIndex] = useState<number>();
+  const isLive = reportType === ReportType.live;
+  const outcomes = useMemo(() => {
+    if (isLive) {
+      if (liveitems && currentIndex !== undefined && currentIndex >= 0) {
+        return liveitems[currentIndex].outcomes;
+      }
+    } else {
+      if (assessmentitems && currentIndex !== undefined && currentIndex >= 0) {
+        return assessmentitems[currentIndex].outcomes;
+      }
+    }
+  }, [assessmentitems, currentIndex, isLive, liveitems]);
+  const feedback = useMemo(() => {
+    if (liveitems && currentIndex !== undefined && currentIndex >= 0) {
+      return liveitems[currentIndex].teacher_feedback;
+    }
+  }, [currentIndex, liveitems]);
+  const handleClickLessonPlan = (index: number) => {
+    setCurrentIndex(index);
+  };
   return (
     <div className={css.liveClassWrap}>
       <div className={clsx(css.scrollCss, css.leftWrap)}>
-        {reportType === ReportType.live && <div style={{ marginTop: 20 }}></div>}
-        {!items && false && (
-          <div style={{ height: "calc(100% - 40px)" }}>
+        {isLive ? (
+          liveitems && liveitems.length ? (
+            liveitems.map((item, index) => {
+              const showTime =
+                index > 0
+                  ? formatTimeToMonWek(item.class_start_time || 0) !== formatTimeToMonWek(liveitems[index - 1].class_start_time || 0)
+                  : true;
+              return (
+                <LiveItem
+                  reportType={reportType}
+                  key={item.schedule_id}
+                  showArrow={index === currentIndex}
+                  liveItem={item}
+                  showTime={showTime}
+                  onClickLessonPlan={() => handleClickLessonPlan(index)}
+                />
+              );
+            })
+          ) : (
+            <div style={{ height: "calc(100% - 58px)", marginTop: 30 }}>
+              <NoDataCom isPie={false} reportType={reportType} />
+            </div>
+          )
+        ) : assessmentitems && assessmentitems.length ? (
+          assessmentitems.map((item, index) => {
+            const showTime =
+              index > 0
+                ? formatTimeToMonWek(item.complete_at || 0) !== formatTimeToMonWek(assessmentitems[index - 1].complete_at || 0)
+                : true;
+            return (
+              <LiveItem
+                reportType={reportType}
+                key={item.schedule_id}
+                showArrow={index === currentIndex}
+                assignmentItem={item}
+                showTime={showTime}
+                onClickLessonPlan={() => handleClickLessonPlan(index)}
+              />
+            );
+          })
+        ) : (
+          <div style={{ height: "calc(100% - 58px)", marginTop: 30 }}>
             <NoDataCom isPie={false} reportType={reportType} />
           </div>
         )}
-        {/* items && items.length && reportType === ReportType.live  */}
-        {true && [1, 2, 3].map((item) => <LiveItem key={item} liveItem={liveData} />)}
-        {reportType === ReportType.assignment && <AssessmentCom />}
       </div>
       <div className={css.rightWrap}>
-        <RightCom reportType={reportType} />
+        <RightCom reportType={reportType} outcomes={outcomes} feedBack={feedback} />
       </div>
     </div>
   );
 }
 
 export interface RightComProps extends ReportTypeProps {
-
+  outcomes: EntityLiveClassSummaryItem["outcomes"];
+  feedBack: EntityLiveClassSummaryItem["teacher_feedback"];
 }
 export function RightCom(props: RightComProps) {
-  const { reportType } = props;
+  const { reportType, outcomes, feedBack } = props;
   const css = useStyles();
-  const cssProps = usePropsStyles({reportType});
+  const cssProps = usePropsStyles({ reportType });
   return (
     <>
       <div className={clsx(css.rightItem)}>
-        <span className={clsx(cssProps.rightItemTitle)}>
-          {"Learning Outcomes Covered"}
-        </span>
+        <span className={clsx(cssProps.rightItemTitle)}>{"Learning Outcomes Covered"}</span>
         <div className={css.rightItemContent}>
-          {[1, 2, 3].map((item) => (
-            <div className={css.outcomeCon}>
-              <span className={clsx(cssProps.spot)}></span>
-              <span className={css.learningOutcomeName}>Learning outcomes1</span>
-            </div>
-          ))}
+          {outcomes?.length ? (
+            outcomes.map((item) => (
+              <div key={item.id} className={css.outcomeCon}>
+                <span className={clsx(cssProps.spot)}></span>
+                <span className={css.learningOutcomeName}>{item.name}</span>
+              </div>
+            ))
+          ) : (
+            <div className={cssProps.infoFont}>{"No Data Available"}</div>
+          )}
         </div>
       </div>
       <div className={clsx(css.rightItem)}>
-        <span className={clsx(cssProps.rightItemTitle)}>
-          {"Teachers's Feedback"}
-        </span>
+        <span className={clsx(cssProps.rightItemTitle)}>{"Teachers's Feedback"}</span>
         <div className={css.rightItemContent}>
-          <div className={css.teacherFeedback}>No feedback is available.</div>
+          <div className={cssProps.infoFont}>{feedBack ? feedBack : "No feedback is available."}</div>
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export interface LiveItemProps {
-  liveItem?: EntityLiveClassSummaryItem;
+  showTime: boolean;
+  showArrow: boolean;
+  liveItem?: LiveClassesSummaryResultItem;
+  assignmentItem?: AssignmentSummaryResultItem;
+  reportType: ReportType;
+  onClickLessonPlan: () => void;
 }
+export type LeftDataProps = {
+  time?: number;
+  lpname?: string;
+  title?: string;
+  absent?: boolean;
+  type?: string;
+};
 export function LiveItem(props: LiveItemProps) {
   const css = useStyles();
-  const { liveItem } = props;
+  const { showArrow, showTime, reportType, liveItem, assignmentItem, onClickLessonPlan } = props;
+  const cssProps = usePropsStyles({ reportType });
+  const currentData: LeftDataProps | undefined = useMemo(() => {
+    if (liveItem)
+      return {
+        time: liveItem.class_start_time,
+        lpname: liveItem.lesson_plan_name,
+        title: liveItem.schedule_title,
+        absent: liveItem.absent,
+      };
+    if (assignmentItem)
+      return {
+        time: assignmentItem.complete_at,
+        lpname: assignmentItem.lesson_plan_name,
+        title: assignmentItem.assessment_title,
+        type: assignmentItem.assessment_type,
+      };
+  }, [assignmentItem, liveItem]);
+  const cssLessonProps = useLessonStyles(currentData);
+
+  const handleClick = () => {
+    onClickLessonPlan();
+  };
   return (
     <div className={css.liveItem}>
-      <div className={css.titleCon}>
-        <span className={css.iconCon}></span>
-        <span className={css.labelCon}>Jul 12, Monday</span>
-      </div>
+      {showTime && (
+        <div className={css.titleCon}>
+          <span className={css.iconCon}></span>
+          <span className={css.labelCon}>{formatTimeToMonWek(currentData?.time || 0)}</span>
+        </div>
+      )}
       <div className={css.contentCon}>
         <div className={css.lessonCon}>
-          <span className={css.timeCon}>10:00 AM</span>
-          <div className={clsx(css.lessonInfoCon, css.liveLessonCon)}>
-              <div className={css.lessonName}>{liveItem?.schedule_title || "zhanwei"}</div>
+          {
+            <span className={cssProps.timeCon}>
+              {reportType === ReportType.live ? formatTimeToEng(currentData?.time || 0, "time") : ""}
+            </span>
+          }
+          <div className={clsx(css.lessonInfoCon, cssLessonProps.lessonCon)} onClick={handleClick}>
+            <div className={css.lessonName}>{currentData?.title}</div>
             <div>
-              <span className={css.lessonPlanName}>{liveItem?.lesson_plan_name || "zhanwei"}</span>
+              <span className={css.lessonPlanName}>{currentData?.lpname}</span>
             </div>
           </div>
-          <Arrow />
+          <Arrow showArrow={showArrow} />
         </div>
       </div>
     </div>
   );
 }
-
-export function Arrow() {
+export interface ArrowProps {
+  showArrow: boolean;
+}
+export function Arrow(props: ArrowProps) {
   const css = useStyles();
+  const { showArrow } = props;
   return (
-    <div className={css.arrowCon}>
+    <div className={css.arrowCon} style={{ visibility: showArrow ? "visible" : "hidden" }}>
       <div className={css.arrow}></div>
     </div>
   );
 }
 
-const useExpand = () => {
-  const [open, setOpen] = useState(false);
-  const toggle = () => setOpen(!open);
-  const [open2, setOpen2] = useState(false);
-  const toggle2 = () => {
-    console.log(2);
-    return setOpen2(!open2);
-  };
-  return {
-    collapse: { in: open },
-    expandMore: { open, onClick: toggle },
-    collaspe2: { in: open2 },
-    expandMore2: { open2, onClick: toggle2 },
-  };
-};
-interface ExpandBtnProps {
-  open?: boolean;
-  open2?: boolean;
-}
-const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
-  color: "#0e78d5",
-  transform: props.open ? "rotate(180deg)" : "none",
-}));
+// const useExpand = () => {
+//   const [open, setOpen] = useState(false);
+//   const toggle = () => setOpen(!open);
+//   const [open2, setOpen2] = useState(false);
+//   const toggle2 = () => {
+//     return setOpen2(!open2);
+//   };
+//   return {
+//     collapse: { in: open },
+//     expandMore: { open, onClick: toggle },
+//     collaspe2: { in: open2 },
+//     expandMore2: { open2, onClick: toggle2 },
+//   };
+// };
+// interface ExpandBtnProps {
+//   open?: boolean;
+//   open2?: boolean;
+// }
+// const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
+//   color: "#0e78d5",
+//   transform: props.open ? "rotate(180deg)" : "none",
+// }));
 export function AssessmentCom() {
   const css = useStyles();
-  const expand = useExpand();
+  // const expand = useExpand();
   return (
     <div className={css.assessmentCon}>
       <div className={css.studyCon}>
@@ -437,28 +542,9 @@ export function AssessmentCom() {
                 <span className={css.lessonPlanName}>Lesson Plan Name</span>
               </div>
             </div>
-            <Arrow />
+            <Arrow showArrow={false} />
           </div>
         ))}
-        <div className={css.expandCon}>
-          {expand.expandMore.open ? d("See Less").t("assess_detail_see_less") : d("See More").t("assess_detail_see_more")}
-          <ExpandBtn {...expand.expandMore}>
-            <ArrowDropDownIcon />
-          </ExpandBtn>
-        </div>
-        <Collapse {...expand.collapse} unmountOnExit>
-          {[1, 2, 3].map((item) => (
-            <div className={clsx(css.lessonCon, css.assessmentLessonCon)}>
-              <div className={clsx(css.lessonInfoCon, css.studyLessonCon)}>
-                <div className={css.lessonName}>Lesson Name</div>
-                <div>
-                  <span className={css.lessonPlanName}>Lesson Plan Name</span>
-                </div>
-              </div>
-              <Arrow />
-            </div>
-          ))}
-        </Collapse>
       </div>
       <div className={css.homefunStudyCon}>
         <div className={css.studyTitle}>Home Fun Study</div>
@@ -467,26 +553,10 @@ export function AssessmentCom() {
             <div className={clsx(css.homeFunLessonCon)}>
               <span className={css.lessonName}>Lesson Name</span>
             </div>
-            <Arrow />
+            {/* <Arrow /> */}
           </div>
         ))}
       </div>
-      <div className={css.expandCon}>
-        {expand.expandMore2.open2 ? d("See Less").t("assess_detail_see_less") : d("See More").t("assess_detail_see_more")}
-        <ExpandBtn {...expand.expandMore2}>
-          <ArrowDropDownIcon />
-        </ExpandBtn>
-      </div>
-      <Collapse {...expand.collaspe2} unmountOnExit>
-        {[1, 2, 3].map((item) => (
-          <div className={css.homeFunLessonWrap}>
-            <div className={clsx(css.homeFunLessonCon)}>
-              <span className={css.lessonName}>Lesson Name</span>
-            </div>
-            <Arrow />
-          </div>
-        ))}
-      </Collapse>
     </div>
   );
 }
@@ -498,8 +568,8 @@ export interface NoDataProps extends ReportTypeProps {
 export function NoDataCom(props: NoDataProps) {
   const { isPie, reportType } = props;
   const css = useStyles();
-  const cssProps = usePropsStyles({reportType});
-  return <div className={clsx(css.noDataCon, cssProps.noDataCon,isPie ? css.noDataPieCon : css.noDataSquareCon )}>No Data Available</div>;
+  const cssProps = usePropsStyles({ reportType });
+  return <div className={clsx(css.noDataCon, cssProps.noDataCon, isPie ? css.noDataPieCon : css.noDataSquareCon)}>No Data Available</div>;
 }
 
 export interface RectProps {
@@ -511,4 +581,8 @@ export function RectCom(props: RectProps) {
   const { title, reportType } = props;
   const isLiveClass = reportType === ReportType.live;
   return <div className={clsx(css.rectCon, isLiveClass ? css.liveBackImg : css.assessmentBackImg)}>{title}</div>;
+}
+
+export function AssingmentCom() {
+  return <div></div>;
 }

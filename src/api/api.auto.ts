@@ -312,26 +312,20 @@ export interface EntityAssessmentsSummary {
   in_progress?: number;
 }
 
-export interface EntityAssignmentsSummaryHomeFunStudyItem {
+export interface EntityAssignmentsSummaryItem {
   assessment_id?: string;
   assessment_title?: string;
-  outcomes?: EntityLearningSummaryOutcome[];
+  assessment_type?: "class" | "live" | "study" | "home_fun_study";
 
-  /** for debug */
-  schedule_id?: string;
-  status?: string;
-  teacher_feedback?: string;
-}
-
-export interface EntityAssignmentsSummaryStudyItem {
-  assessment_id?: string;
-  assessment_title?: string;
+  /** for sorting */
+  complete_at?: number;
+  create_at?: number;
   lesson_plan_name?: string;
   outcomes?: EntityLearningSummaryOutcome[];
 
   /** for debug */
   schedule_id?: string;
-  status?: string;
+  status?: "in_progress" | "complete";
   teacher_feedback?: string;
 }
 
@@ -742,13 +736,17 @@ export interface EntityLiveClassSummaryItem {
   absent?: boolean;
   assessment_id?: string;
   class_start_time?: number;
+
+  /** for sorting */
+  complete_at?: number;
+  create_at?: number;
   lesson_plan_name?: string;
   outcomes?: EntityLearningSummaryOutcome[];
 
   /** for debug */
   schedule_id?: string;
   schedule_title?: string;
-  status?: string;
+  status?: "in_progress" | "complete";
   teacher_feedback?: string;
 }
 
@@ -852,9 +850,9 @@ export interface EntityOutcome {
 }
 
 export interface EntityQueryAssignmentsSummaryResult {
-  completed?: number;
-  home_fun_study_items?: EntityAssignmentsSummaryHomeFunStudyItem[];
-  study_items?: EntityAssignmentsSummaryStudyItem[];
+  home_fun_study_count?: number;
+  items?: EntityAssignmentsSummaryItem[];
+  study_count?: number;
 }
 
 export interface EntityQueryLearningSummaryFilterResultItem {
@@ -1024,6 +1022,7 @@ export interface EntityScheduleDetailsView {
   class_roster_teachers?: EntityScheduleAccessibleUserView[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
+  complete_assessment?: boolean;
   description?: string;
   due_at?: number;
   end_at?: number;

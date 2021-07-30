@@ -192,7 +192,7 @@ export function PieChart(props: PieChartProps) {
       });
     };
     return (
-      <g key={"test"}>
+      <g key={arc.index}>
         <path
           d={pie.path({ ...arc }) || undefined}
           fill={colorScale(arc.index)}

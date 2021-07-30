@@ -5198,10 +5198,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.QueryAssignmentsSummaryResult"
-              }
+              "$ref": "#/definitions/entity.QueryAssignmentsSummaryResult"
             }
           },
           "400": {
@@ -5378,10 +5375,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.QueryLiveClassesSummaryResult"
-              }
+              "$ref": "#/definitions/entity.QueryLiveClassesSummaryResult"
             }
           },
           "400": {
@@ -8628,7 +8622,7 @@
         }
       }
     },
-    "entity.AssignmentsSummaryHomeFunStudyItem": {
+    "entity.AssignmentsSummaryItem": {
       "type": "object",
       "properties": {
         "assessment_id": {
@@ -8637,32 +8631,16 @@
         "assessment_title": {
           "type": "string"
         },
-        "outcomes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.LearningSummaryOutcome"
-          }
+        "assessment_type": {
+          "type": "string",
+          "enum": ["class", "live", "study", "home_fun_study"]
         },
-        "schedule_id": {
-          "description": "for debug",
-          "type": "string"
+        "complete_at": {
+          "description": "for sorting",
+          "type": "integer"
         },
-        "status": {
-          "type": "string"
-        },
-        "teacher_feedback": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.AssignmentsSummaryStudyItem": {
-      "type": "object",
-      "properties": {
-        "assessment_id": {
-          "type": "string"
-        },
-        "assessment_title": {
-          "type": "string"
+        "create_at": {
+          "type": "integer"
         },
         "lesson_plan_name": {
           "type": "string"
@@ -8678,7 +8656,8 @@
           "type": "string"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": ["in_progress", "complete"]
         },
         "teacher_feedback": {
           "type": "string"
@@ -9912,6 +9891,13 @@
         "class_start_time": {
           "type": "integer"
         },
+        "complete_at": {
+          "description": "for sorting",
+          "type": "integer"
+        },
+        "create_at": {
+          "type": "integer"
+        },
         "lesson_plan_name": {
           "type": "string"
         },
@@ -9929,7 +9915,8 @@
           "type": "string"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": ["in_progress", "complete"]
         },
         "teacher_feedback": {
           "type": "string"
@@ -10249,20 +10236,17 @@
     "entity.QueryAssignmentsSummaryResult": {
       "type": "object",
       "properties": {
-        "completed": {
-          "type": "number"
+        "home_fun_study_count": {
+          "type": "integer"
         },
-        "home_fun_study_items": {
+        "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.AssignmentsSummaryHomeFunStudyItem"
+            "$ref": "#/definitions/entity.AssignmentsSummaryItem"
           }
         },
-        "study_items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.AssignmentsSummaryStudyItem"
-          }
+        "study_count": {
+          "type": "integer"
         }
       }
     },
@@ -10742,6 +10726,9 @@
         },
         "class_type_label": {
           "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "complete_assessment": {
+          "type": "boolean"
         },
         "description": {
           "type": "string"

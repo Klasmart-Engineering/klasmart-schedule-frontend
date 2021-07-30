@@ -5,7 +5,6 @@ import { t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { formatTimeToMonDay } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
-import { onLoadLearningSummary } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary } from "./FilterLearningSummary";
 import { ReportInfo } from "./ReportInfo";
@@ -56,7 +55,9 @@ export function ReportLearningSummary() {
   const history = useHistory();
   const dispatch = useDispatch();
   const [reportType, setReportType] = useState<ReportType>(ReportType.live);
-  const { liveClassSummary, learningSummartOptions, assignmentSummary } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { liveClassSummary, learningSummartOptions, assignmentSummary } = useSelector<RootState, RootState["report"]>(
+    (state) => state.report
+  );
   const { week } = learningSummartOptions;
   const defaultWeeksValue = useMemo(() => {
     if (condition.week_start && condition.week_end) {
@@ -77,7 +78,7 @@ export function ReportLearningSummary() {
   useEffect(() => {
     if (learningSummartOptions.studentList.length || learningSummartOptions.subjectList.length) {
       const student_id = learningSummartOptions.studentList[0].user_id;
-      const subject_id = learningSummartOptions.subjectList[0].id!;
+      const subject_id = "all";
       const { week } = learningSummartOptions;
       const { week_start, week_end } = week[week.length - 1];
       const year = learningSummartOptions.year[0];
@@ -94,7 +95,7 @@ export function ReportLearningSummary() {
     learningSummartOptions.year,
   ]);
   useEffect(() => {
-    dispatch(onLoadLearningSummary({ ...condition, metaLoading: true }));
+    // dispatch(onLoadLearningSummary({ ...condition, metaLoading: true }));
   }, [condition, dispatch]);
   return (
     <>
@@ -105,7 +106,12 @@ export function ReportLearningSummary() {
         defaultWeeksValue={defaultWeeksValue}
         onChange={handleChange}
       />
-      <ReportInfo reportType={reportType} onChangeReportType={handleChangeReportType} liveClassSummary={liveClassSummary} assignmentSummary={assignmentSummary} />
+      <ReportInfo
+        reportType={reportType}
+        onChangeReportType={handleChangeReportType}
+        liveClassSummary={liveClassSummary}
+        assignmentSummary={assignmentSummary}
+      />
     </>
   );
 }

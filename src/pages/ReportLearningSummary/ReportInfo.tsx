@@ -78,9 +78,10 @@ export interface ReportInfoProps extends ReportInfoBaseProps {
 export function ReportInfo(props: ReportInfoProps) {
   const css = useStyles();
   const { reportType, liveClassSummary, assignmentSummary, onChangeReportType } = props;
-  console.log(liveClassSummary);
   const isLiveClass = reportType === ReportType.live;
-  const handleClickLive = () => onChangeReportType(ReportType.live);
+  const handleClickLive = () => {
+    onChangeReportType(ReportType.live);
+  };
   const handleClickAssignment = () => onChangeReportType(ReportType.assignment);
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>

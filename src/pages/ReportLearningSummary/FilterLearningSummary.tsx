@@ -67,7 +67,9 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
     ));
   };
   const getSubject = () => {
-    return subjectList.map((item) => (
+    const allSubject: ExternalSubject[] = [{ id: "all", name: "All" }];
+    const newSubjectList = allSubject.concat(subjectList);
+    return newSubjectList.map((item) => (
       <MenuItem key={item.id} value={item.id}>
         {item.name}
       </MenuItem>
@@ -86,7 +88,6 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
     const [s, e] = week.split("~");
     const week_start = new Date(`${value.year}.${s}`).getTime() / 1000;
     const week_end = new Date(`${value.year}.${e}`).getTime() / 1000;
-    console.log(`${value.year}.${s}`, week_start);
     onChange(
       produce(value, (draft) => {
         draft.week_start = week_start;
@@ -119,7 +120,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             className={css.selectButton}
             onChange={handleChangeYear}
             label={t("report_filter_year")}
-            value={value.year}
+            value={value.year || ""}
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >

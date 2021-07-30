@@ -35,10 +35,11 @@ import {
   TeacherByOrgIdQueryVariables,
   TeacherListBySchoolIdDocument,
   TeacherListBySchoolIdQuery,
-  TeacherListBySchoolIdQueryVariables
+  TeacherListBySchoolIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
-  EntityQueryAssignmentsSummaryResult, EntityQueryLiveClassesSummaryResult,
+  EntityQueryAssignmentsSummaryResult,
+  EntityQueryLiveClassesSummaryResult,
   EntityReportListTeachingLoadResult,
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
@@ -47,7 +48,7 @@ import {
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
-  ExternalSubject
+  ExternalSubject,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -132,8 +133,106 @@ const initialState: IreportState = {
     studentList: [],
     subjectList: [],
   },
-  liveClassSummary: {},
-  assignmentSummary: {},
+  liveClassSummary: {
+    attend: 7,
+    items: [
+      {
+        absent: false,
+        assessment_id: "111",
+        class_start_time: 1623979200,
+        complete_at: 1623979200,
+        create_at: 1623979200,
+        lesson_plan_name: "lesson plan name 1",
+        outcomes: [],
+        schedule_id: "schedule111",
+        schedule_title: "scheduletitle 111",
+        teacher_feedback: "teacher feedback 111",
+      },
+      {
+        absent: true,
+        assessment_id: "222",
+        class_start_time: 1624001400,
+        complete_at: 1624001400,
+        create_at: 1624001400,
+        lesson_plan_name: "lesson plan name 2",
+        outcomes: [
+          {
+            id: "outcome 111",
+            name: "outcome 111",
+          },
+          {
+            id: "outcome 222",
+            name: "outcome 222",
+          },
+        ],
+        schedule_id: "schedule222",
+        schedule_title: "scheduletitle 222",
+        teacher_feedback: "teacher feedback 222",
+      },
+      {
+        absent: true,
+        assessment_id: "333",
+        class_start_time: 1623897600,
+        complete_at: 1623897600,
+        create_at: 1623897600,
+        lesson_plan_name: "lesson plan name 1",
+        outcomes: [],
+        schedule_id: "schedule333",
+        schedule_title: "scheduletitle 333",
+        teacher_feedback: "teacher feedback 333",
+      },
+      {
+        absent: false,
+        assessment_id: "444",
+        class_start_time: 1623828600,
+        complete_at: 1623828600,
+        create_at: 1623828600,
+        lesson_plan_name: "lesson plan name 1",
+        outcomes: [
+          {
+            id: "outcome 333",
+            name: "outcome 333",
+          },
+          {
+            id: "outcome 444",
+            name: "outcome 444",
+          },
+        ],
+        schedule_id: "schedule444",
+        schedule_title: "scheduletitle 444",
+        teacher_feedback: "teacher feedback 444",
+      },
+    ],
+  },
+  assignmentSummary: {
+    home_fun_study_count: 2,
+    study_count: 4,
+    items: [
+      {
+        assessment_id: "assessment id 111",
+        assessment_title: "assessment title 111",
+        assessment_type: "study",
+        complete_at: 1623979200,
+        create_at: 1623979200,
+        lesson_plan_name: "lesson plan name 111",
+        outcomes: [{ id: "outcome id 1", name: "outcome name 1" }],
+        schedule_id: "schedule id 111",
+        status: "complete",
+        teacher_feedback: "teacher feedback 111",
+      },
+      {
+        assessment_id: "assessment id 222",
+        assessment_title: "assessment title 222",
+        assessment_type: "home_fun_study",
+        complete_at: 1623979200,
+        create_at: 1623979200,
+        lesson_plan_name: "lesson plan name 222",
+        outcomes: [{ id: "outcome id 2", name: "outcome name 2" }],
+        schedule_id: "schedule id 222",
+        teacher_feedback: "teacher feedback 222",
+      },
+    ],
+  },
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -960,10 +1059,10 @@ export type IResultQueryAssignmentSummary = AsyncReturnType<typeof api.reports.q
 export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSummary, IParamsQueryAssignmentSummary & LoadingMetaPayload>(
   "getAssingmentSummary",
   async (query) => {
-    const res = await api.reports.queryAssignmentsSummary({...query});
+    const res = await api.reports.queryAssignmentsSummary({ ...query });
     return res;
   }
-)
+);
 
 export interface LearningSummaryResponse {
   year?: number[];
@@ -983,9 +1082,9 @@ export const onLoadLearningSummary = createAsyncThunk<
     report: { learningSummartOptions },
   } = getState();
   if (learningSummartOptions.week.length) {
-    // liveClassSummary = await api.reports.queryLiveClassesSummary({...query});
-    await dispatch(getLiveClassesSummary(query));
-    await dispatch(getAssignmentSummary(query));
+    const { subject_id } = query;
+    if (subject_id === "all") await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }));
+    await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
     return learningSummartOptions;
   }
   const week = getWeeks();
