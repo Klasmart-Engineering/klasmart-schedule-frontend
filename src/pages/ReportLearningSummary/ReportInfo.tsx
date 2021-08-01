@@ -70,15 +70,52 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     boxShadow: "-5px 5px 10px -4px rgba(0,0,0,0.20),5px 5px 10px -4px rgba(0,0,0,0.12)",
     marginTop: -10,
   },
+  assignmentWrap: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "calc(100% - 40px)",
+  },
+  studyWrap: {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+    marginTop: -10,
+  },
+  numberWrap: {
+    fontSize: 90,
+    fontWeight: 600,
+    marginTop: -10,
+  },
+  wordWrap: {
+    fontSize: 26,
+    fontWeight: 700,
+  }
 }));
 
 export interface ReportInfoProps extends ReportInfoBaseProps {
   onChangeReportType: (value: ReportType) => void;
+  lessonIndex: number;
 }
 export function ReportInfo(props: ReportInfoProps) {
   const css = useStyles();
-  const { reportType, liveClassSummary, assignmentSummary, onChangeReportType } = props;
+  const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeReportType, onChangeLessonIndex } = props;
+  const attend = liveClassSummary?.attend ? liveClassSummary.attend * 100 : 10;
+  const pieData = [attend, 100-attend];
   const isLiveClass = reportType === ReportType.live;
+  const assignment = (
+    <div className={css.assignmentWrap}>
+      <div className={css.studyWrap} style={{borderRight: "1px dashed #bcbcbc"}}>
+        <span className={css.numberWrap} style={{color: "#a4ddff"}}>{assignmentSummary.study_count}</span>
+        <span className={css.wordWrap}>{"Study"}</span>
+      </div>
+      <div className={css.studyWrap} style={{borderLeft: "1px dashed #bcbcbc"}}>
+        <span  className={css.numberWrap} style={{color: "#89c4f9"}}>{assignmentSummary.home_fun_study_count}</span>
+        <span className={css.wordWrap}>{"Home Fun"}</span>
+      </div>
+    </div>
+  );
   const handleClickLive = () => {
     onChangeReportType(ReportType.live);
   };
@@ -91,7 +128,7 @@ export function ReportInfo(props: ReportInfoProps) {
             <RectCom title={"Live Classes"} reportType={ReportType.live} />
             {liveClassSummary.items && (
               <div className={css.pieWrap}>
-                <PieChart px={1} data={[7, 3]} />
+                <PieChart px={1} data={pieData} />
               </div>
             )}
             {!liveClassSummary.items && (
@@ -103,10 +140,11 @@ export function ReportInfo(props: ReportInfoProps) {
           <div className={isLiveClass ? css.rightNoActive : css.rightPieItem} onClick={handleClickAssignment}>
             <RectCom title={"Assignments"} reportType={ReportType.assignment} />
             {/* <NoDataCom isPie={false} /> */}
+            {assignment}
           </div>
         </div>
         <div className={css.infoCon}>
-          <LiveClassesReport data={[]} reportType={reportType} liveClassSummary={liveClassSummary} assignmentSummary={assignmentSummary} />
+          <LiveClassesReport data={[]} lessonIndex={lessonIndex} reportType={reportType} liveClassSummary={liveClassSummary} assignmentSummary={assignmentSummary} onChangeLessonIndex={onChangeLessonIndex} />
         </div>
       </div>
     </LayoutBox>

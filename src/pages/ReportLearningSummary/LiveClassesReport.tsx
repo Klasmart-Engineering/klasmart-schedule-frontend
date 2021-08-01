@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { EntityLiveClassSummaryItem } from "../../api/api.auto";
 import liveBackUrl from "../../assets/icons/report_reca.svg";
 import assessmentBackUrl from "../../assets/icons/report_recl.svg";
@@ -305,34 +305,35 @@ export type ReportTypeProps = {
 };
 export interface LiveClassesReportProps extends ReportInfoBaseProps {
   data: EntityLiveClassSummaryItem[];
+  lessonIndex: number;
+  // onChangeLessonIndex: (index: number) => void;
   // liveClassSummary: LiveClassesSummaryResult;
   // assignmentSummary: AssignmentSummaryResult;
 }
 export function LiveClassesReport(props: LiveClassesReportProps) {
   const css = useStyles();
-  const { reportType, liveClassSummary, assignmentSummary } = props;
+  const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeLessonIndex } = props;
   const liveitems = liveClassSummary.items;
   const assessmentitems = assignmentSummary.items;
-  const [currentIndex, setCurrentIndex] = useState<number>();
   const isLive = reportType === ReportType.live;
   const outcomes = useMemo(() => {
     if (isLive) {
-      if (liveitems && currentIndex !== undefined && currentIndex >= 0) {
-        return liveitems[currentIndex].outcomes;
+      if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
+        return liveitems[lessonIndex].outcomes;
       }
     } else {
-      if (assessmentitems && currentIndex !== undefined && currentIndex >= 0) {
-        return assessmentitems[currentIndex].outcomes;
+      if (assessmentitems && lessonIndex !== -1 && lessonIndex >= 0) {
+        return assessmentitems[lessonIndex].outcomes;
       }
     }
-  }, [assessmentitems, currentIndex, isLive, liveitems]);
+  }, [assessmentitems, lessonIndex, isLive, liveitems]);
   const feedback = useMemo(() => {
-    if (liveitems && currentIndex !== undefined && currentIndex >= 0) {
-      return liveitems[currentIndex].teacher_feedback;
+    if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
+      return liveitems[lessonIndex].teacher_feedback;
     }
-  }, [currentIndex, liveitems]);
+  }, [lessonIndex, liveitems]);
   const handleClickLessonPlan = (index: number) => {
-    setCurrentIndex(index);
+    onChangeLessonIndex(index);
   };
   return (
     <div className={css.liveClassWrap}>
@@ -348,7 +349,7 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
                 <LiveItem
                   reportType={reportType}
                   key={item.schedule_id}
-                  showArrow={index === currentIndex}
+                  showArrow={index === lessonIndex}
                   liveItem={item}
                   showTime={showTime}
                   onClickLessonPlan={() => handleClickLessonPlan(index)}
@@ -370,7 +371,7 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
               <LiveItem
                 reportType={reportType}
                 key={item.schedule_id}
-                showArrow={index === currentIndex}
+                showArrow={index === lessonIndex}
                 assignmentItem={item}
                 showTime={showTime}
                 onClickLessonPlan={() => handleClickLessonPlan(index)}
@@ -418,7 +419,13 @@ export function RightCom(props: RightComProps) {
       <div className={clsx(css.rightItem)}>
         <span className={clsx(cssProps.rightItemTitle)}>{"Teachers's Feedback"}</span>
         <div className={css.rightItemContent}>
-          <div className={cssProps.infoFont}>{feedBack ? feedBack : "No feedback is available."}</div>
+          {
+            feedBack
+            ?
+            <div className={css.teacherFeedback}>{feedBack ? feedBack : "No feedback is available."}</div>
+            :
+            <div className={cssProps.infoFont}>{"No Data Available"}</div>
+          }
         </div>
       </div>
     </>
@@ -583,6 +590,3 @@ export function RectCom(props: RectProps) {
   return <div className={clsx(css.rectCon, isLiveClass ? css.liveBackImg : css.assessmentBackImg)}>{title}</div>;
 }
 
-export function AssingmentCom() {
-  return <div></div>;
-}

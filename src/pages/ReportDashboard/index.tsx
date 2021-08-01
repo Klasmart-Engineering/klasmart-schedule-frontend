@@ -6,7 +6,7 @@ import {
   CategoryOutlined,
   ChevronRight,
   InfoOutlined,
-  KeyboardBackspace,
+  KeyboardBackspace
 } from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
@@ -137,7 +137,7 @@ export function ReportDashboard() {
     },
     {
       title: "report_learning_summary_report",
-      url: ReportLearningSummary.routeBasePath,
+      url: ReportLearningSummary.routeRedirectDefault,
       icon: <AssignmentTurnedInOutlined />,
       bgColor: "#FE9494",
     },

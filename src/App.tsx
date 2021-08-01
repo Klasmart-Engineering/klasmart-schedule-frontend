@@ -113,7 +113,7 @@ function App() {
                   {/* <Route path={ReportStudentPerformance.routeBasePath}>
                     <ReportStudentPerformance />
                   </Route> */}
-                  <Route path={ReportLearningSummary.routeBasePath}>
+                  <Route path={ReportLearningSummary.routeMatchPath}>
                     <ReportLearningSummary />
                   </Route>
                   <Route path={H5pEditor.routeBasePath}>

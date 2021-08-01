@@ -35,7 +35,7 @@ import {
   TeacherByOrgIdQueryVariables,
   TeacherListBySchoolIdDocument,
   TeacherListBySchoolIdQuery,
-  TeacherListBySchoolIdQueryVariables,
+  TeacherListBySchoolIdQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityQueryAssignmentsSummaryResult,
@@ -48,7 +48,7 @@ import {
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
-  ExternalSubject,
+  ExternalSubject
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -134,7 +134,7 @@ const initialState: IreportState = {
     subjectList: [],
   },
   liveClassSummary: {
-    attend: 7,
+    attend: 0,
     items: [
       {
         absent: false,
@@ -1079,12 +1079,18 @@ export const onLoadLearningSummary = createAsyncThunk<
   let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
   // let liveClassSummary: EntityQueryLiveClassesSummaryResult[] =[];
   const {
-    report: { learningSummartOptions },
+    report: { learningSummartOptions }, 
   } = getState();
   if (learningSummartOptions.week.length) {
     const { subject_id } = query;
-    if (subject_id === "all") await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }));
-    await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
+    if (subject_id === "all") {
+      await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }));
+      await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
+    } else {
+      await dispatch(getLiveClassesSummary({ ...query}));
+      await dispatch(getAssignmentSummary({ ...query}));
+    }
+    
     return learningSummartOptions;
   }
   const week = getWeeks();

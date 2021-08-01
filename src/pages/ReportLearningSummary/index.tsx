@@ -1,19 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { formatTimeToMonDay } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
+import { onLoadLearningSummary } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary } from "./FilterLearningSummary";
 import { ReportInfo } from "./ReportInfo";
 import { QueryLearningSummaryCondition, ReportType } from "./types";
-
 export interface IWeeks {
   week_start: number;
   week_end: number;
   value: string;
+}
+interface RouteParams {
+  tab: ReportType.live | ReportType.assignment;
 }
 export const getWeeks = (): IWeeks[] => {
   let week_start = new Date("2021-01-04").getTime() / 1000;
@@ -35,7 +38,7 @@ const clearNull = (obj: Record<string, any>) => {
   return obj;
 };
 
-export const useQuery = () => {
+export const useQuery = (): QueryLearningSummaryCondition => {
   const { search } = useLocation();
   return useMemo(() => {
     const query = new URLSearchParams(search);
@@ -47,14 +50,17 @@ export const useQuery = () => {
     const teacher_id = query.get("teacher_id") || "";
     const student_id = query.get("student_id") || "";
     const subject_id = query.get("subject_id") || "";
-    return clearNull({ year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id });
+    const lessonIndex = Number(query.get("lessonIndex"));
+    return { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, lessonIndex};
   }, [search]);
 };
 export function ReportLearningSummary() {
-  const condition = useQuery();
-  const history = useHistory();
   const dispatch = useDispatch();
-  const [reportType, setReportType] = useState<ReportType>(ReportType.live);
+  const { routeBasePath } = ReportLearningSummary;
+  const condition = useQuery();
+  const { lessonIndex } = condition;
+  const history = useHistory();
+  const { tab } = useParams<RouteParams>();
   const { liveClassSummary, learningSummartOptions, assignmentSummary } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
@@ -72,9 +78,18 @@ export function ReportLearningSummary() {
   const handleChange = (value: QueryLearningSummaryCondition) => {
     history.replace({ search: toQueryString(clearNull(value)) });
   };
-  const handleChangeReportType = (value: ReportType) => {
-    setReportType(value);
-  };
+  const handleChangeReportType = useMemo(
+    () => (value: ReportType) => {
+      history.replace({
+        pathname: `${routeBasePath}/tab/${value}`,
+        search: setQuery(history.location.search, { lessonIndex: -1 })
+      })
+    },
+    [history, routeBasePath]
+  );
+  const handleChangeLessonIndex = (index: number) => {
+    history.replace({search: setQuery(history.location.search, { lessonIndex: index })})
+  }
   useEffect(() => {
     if (learningSummartOptions.studentList.length || learningSummartOptions.subjectList.length) {
       const student_id = learningSummartOptions.studentList[0].user_id;
@@ -95,7 +110,7 @@ export function ReportLearningSummary() {
     learningSummartOptions.year,
   ]);
   useEffect(() => {
-    // dispatch(onLoadLearningSummary({ ...condition, metaLoading: true }));
+    dispatch(onLoadLearningSummary({ ...condition, metaLoading: true }));
   }, [condition, dispatch]);
   return (
     <>
@@ -107,13 +122,16 @@ export function ReportLearningSummary() {
         onChange={handleChange}
       />
       <ReportInfo
-        reportType={reportType}
+        lessonIndex={lessonIndex}
+        reportType={tab}
         onChangeReportType={handleChangeReportType}
         liveClassSummary={liveClassSummary}
         assignmentSummary={assignmentSummary}
+        onChangeLessonIndex={handleChangeLessonIndex}
       />
     </>
   );
 }
 ReportLearningSummary.routeBasePath = "/report/learning-summary";
-ReportLearningSummary.routeRedirectDefault = `/report/learning-summary`;
+ReportLearningSummary.routeMatchPath = `/report/learning-summary/tab/:tab`;
+ReportLearningSummary.routeRedirectDefault = `/report/learning-summary/tab/live?lessonIndex=-1`;
