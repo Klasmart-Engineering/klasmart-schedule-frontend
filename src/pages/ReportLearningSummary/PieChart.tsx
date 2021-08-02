@@ -217,7 +217,7 @@ export function PieChart(props: PieChartProps) {
       <div className={css.legend}>
         {dataLegend.map((item, index) => (
           <div className={css.legendItem} key={item}>
-            <div className={css.legendIcon} style={{ backgroundColor: colorScale(index) }} />
+            <div className={css.legendIcon} style={{ backgroundColor: categoryColors[index] }} />
             <div className={css.legendTitle}>{item}</div>
           </div>
         ))}

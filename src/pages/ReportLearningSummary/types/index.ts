@@ -9,7 +9,7 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any)
   ? U
   : any;
 export type QueryLearningSummaryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.reports.queryLiveClassesSummary>[0]>> & {
-  lessonIndex: number;
+  lessonIndex?: number;
 };
 export type QueryLearningSummaryConditionChangeHandler = (value: QueryLearningSummaryCondition) => any;
 export type QueryLearningSummaryConditionBaseProps = {

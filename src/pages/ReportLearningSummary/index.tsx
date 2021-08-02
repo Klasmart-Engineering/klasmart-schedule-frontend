@@ -50,15 +50,16 @@ export const useQuery = (): QueryLearningSummaryCondition => {
     const teacher_id = query.get("teacher_id") || "";
     const student_id = query.get("student_id") || "";
     const subject_id = query.get("subject_id") || "";
-    const lessonIndex = Number(query.get("lessonIndex"));
-    return { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, lessonIndex};
+    const idx = Number(query.get("lessonIndex"));
+    const lessonIndex = idx >= 0 ? idx : -1;
+    return { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, lessonIndex };
   }, [search]);
 };
 export function ReportLearningSummary() {
   const dispatch = useDispatch();
   const { routeBasePath } = ReportLearningSummary;
   const condition = useQuery();
-  const { lessonIndex } = condition;
+  const { lessonIndex, year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id } = condition;
   const history = useHistory();
   const { tab } = useParams<RouteParams>();
   const { liveClassSummary, learningSummartOptions, assignmentSummary } = useSelector<RootState, RootState["report"]>(
@@ -76,30 +77,37 @@ export function ReportLearningSummary() {
     return "";
   }, [condition.week_end, condition.week_start, week]);
   const handleChange = (value: QueryLearningSummaryCondition) => {
-    history.replace({ search: toQueryString(clearNull(value)) });
+    const newValue = { ...value, lessonIndex: -1 };
+    history.replace({ search: toQueryString(clearNull(newValue)) });
   };
   const handleChangeReportType = useMemo(
     () => (value: ReportType) => {
       history.replace({
         pathname: `${routeBasePath}/tab/${value}`,
-        search: setQuery(history.location.search, { lessonIndex: -1 })
-      })
+        search: setQuery(history.location.search, { lessonIndex: -1 }),
+      });
     },
     [history, routeBasePath]
   );
   const handleChangeLessonIndex = (index: number) => {
-    history.replace({search: setQuery(history.location.search, { lessonIndex: index })})
-  }
+    history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });
+  };
   useEffect(() => {
     if (learningSummartOptions.studentList.length || learningSummartOptions.subjectList.length) {
-      const student_id = learningSummartOptions.studentList[0].user_id;
-      const subject_id = "all";
-      const { week } = learningSummartOptions;
-      const { week_start, week_end } = week[week.length - 1];
-      const year = learningSummartOptions.year[0];
-      history.push({
-        search: setQuery(history.location.search, { student_id, subject_id, week_start, week_end, year }),
-      });
+      if (year && week_start && week_end && student_id && subject_id) {
+        history.push({
+          search: setQuery(history.location.search, { student_id, subject_id, week_start, week_end, year }),
+        });
+      } else {
+        const stu_id = learningSummartOptions.studentList[0].user_id;
+        const sub_id = "all";
+        const { week } = learningSummartOptions;
+        const { week_start, week_end } = week[week.length - 1];
+        const year = learningSummartOptions.year[0];
+        history.push({
+          search: setQuery(history.location.search, { student_id: stu_id, subject_id: sub_id, week_start, week_end, year }),
+        });
+      }
     }
   }, [
     history,
@@ -108,10 +116,17 @@ export function ReportLearningSummary() {
     learningSummartOptions.subjectList,
     learningSummartOptions.week,
     learningSummartOptions.year,
+    student_id,
+    subject_id,
+    week_end,
+    week_start,
+    year,
   ]);
   useEffect(() => {
-    dispatch(onLoadLearningSummary({ ...condition, metaLoading: true }));
-  }, [condition, dispatch]);
+    dispatch(
+      onLoadLearningSummary({ year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, metaLoading: true })
+    );
+  }, [year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, dispatch, learningSummartOptions.year]);
   return (
     <>
       <ReportTitle title={t("report_learning_summary_report")} info={t("report_msg_lsr")} />
@@ -122,7 +137,7 @@ export function ReportLearningSummary() {
         onChange={handleChange}
       />
       <ReportInfo
-        lessonIndex={lessonIndex}
+        lessonIndex={lessonIndex!}
         reportType={tab}
         onChangeReportType={handleChangeReportType}
         liveClassSummary={liveClassSummary}

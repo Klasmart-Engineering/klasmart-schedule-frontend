@@ -27,19 +27,17 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     display: "flex",
     height: 604,
     padding: "20px 58px",
+    boxSizing: "border-box",
   },
   leftWrap: {
     flex: 1,
-    // background: "red",
     height: "100%",
     overflowY: "auto",
-    paddingRight: 20,
     paddingTop: 20,
   },
   rightWrap: {
     flex: 1,
     height: "100%",
-    paddingLeft: 50,
     display: "flex",
     flexDirection: "column",
     borderLeft: "1px dashed #d7d7d7",
@@ -72,7 +70,6 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     display: "flex",
     borderLeft: "1px dashed #d7d7d7",
   },
-
   lessonInfoCon: {
     flex: 8,
     height: 90,
@@ -126,8 +123,8 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     flex: 1,
     flexDirection: "column",
     marginTop: 50,
+    marginLeft: 50,
   },
-
   rightItemContent: {
     flex: 5,
     backgroundColor: "#f6f6f6",
@@ -136,7 +133,6 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   outcomeCon: {
     marginTop: 15,
   },
-
   learningOutcomeName: {
     fontSize: 16,
     fontWeight: 400,
@@ -149,53 +145,53 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     padding: "10px 0",
     lineHeight: "22px",
   },
-  assessmentCon: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  studyCon: {
-    flex: 2,
-  },
-  homefunStudyCon: {
-    flex: 1,
-  },
-  liveLessonCon: {
-    background: "#8693f0",
-  },
-  studyLessonCon: {
-    backgroundColor: "#89c4f9",
-  },
-  assignmentColor: {
-    color: "#89c4f9",
-  },
-  studyTitle: {
-    fontSize: 18,
-    fontWeight: 600,
-    color: "#333",
-    marginTop: 10,
-  },
-  assessmentLessonCon: {
-    border: "none",
-    paddingTop: 0,
-    paddingBottom: 0,
-    marginTop: 20,
-  },
-  expandCon: {
-    textAlign: "center",
-    color: "#89c4f9",
-  },
-  homeFunLessonWrap: {
-    display: "flex",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  homeFunLessonCon: {
-    flex: 8,
-    paddingLeft: 20,
-    height: 48,
-    backgroundColor: "#89c4f9",
-    lineHeight: "48px",
-  },
+  // assessmentCon: {
+  //   display: "flex",
+  //   flexDirection: "column",
+  // },
+  // studyCon: {
+  //   flex: 2,
+  // },
+  // homefunStudyCon: {
+  //   flex: 1,
+  // },
+  // liveLessonCon: {
+  //   background: "#8693f0",
+  // },
+  // studyLessonCon: {
+  //   backgroundColor: "#89c4f9",
+  // },
+  // assignmentColor: {
+  //   color: "#89c4f9",
+  // },
+  // studyTitle: {
+  //   fontSize: 18,
+  //   fontWeight: 600,
+  //   color: "#333",
+  //   marginTop: 10,
+  // },
+  // assessmentLessonCon: {
+  //   border: "none",
+  //   paddingTop: 0,
+  //   paddingBottom: 0,
+  //   marginTop: 20,
+  // },
+  // expandCon: {
+  //   textAlign: "center",
+  //   color: "#89c4f9",
+  // },
+  // homeFunLessonWrap: {
+  //   display: "flex",
+  //   alignItems: "center",
+  //   marginTop: 20,
+  // },
+  // homeFunLessonCon: {
+  //   flex: 8,
+  //   paddingLeft: 20,
+  //   height: 48,
+  //   backgroundColor: "#89c4f9",
+  //   lineHeight: "48px",
+  // },
   noDataCon: {
     display: "flex",
     justifyContent: "center",
@@ -224,35 +220,40 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     fontWeight: 600,
     position: "relative",
   },
-  attentLiveClassColor: {
-    color: "#8693f0",
-  },
-  absentLiveClassColor: {
-    color: "#fe9b9b",
-  },
-  attentLiveClassBackColor: {
-    backgroundColor: "#8693f0",
-  },
-  absentLiveClassBackColor: {
-    backgroundColor: "#fe9b9b",
-  },
-  completeAssignmentColor: {
-    color: "#89c4f9",
-  },
-  inCompleteAssignmentColor: {
-    color: "#a4ddff",
-  },
-  completeAssignmentBackColor: {
-    backgroundColor: "#89c4f9",
-  },
-  inCompleteAssignmentBackColor: {
-    backgroundColor: "#a4ddff",
-  },
+  // attentLiveClassColor: {
+  //   color: "#8693f0",
+  // },
+  // absentLiveClassColor: {
+  //   color: "#fe9b9b",
+  // },
+  // attentLiveClassBackColor: {
+  //   backgroundColor: "#8693f0",
+  // },
+  // absentLiveClassBackColor: {
+  //   backgroundColor: "#fe9b9b",
+  // },
+  // completeAssignmentColor: {
+  //   color: "#89c4f9",
+  // },
+  // inCompleteAssignmentColor: {
+  //   color: "#a4ddff",
+  // },
+  // completeAssignmentBackColor: {
+  //   backgroundColor: "#89c4f9",
+  // },
+  // inCompleteAssignmentBackColor: {
+  //   backgroundColor: "#a4ddff",
+  // },
   liveBackImg: {
     backgroundImage: `url(${liveBackUrl})`,
   },
   assessmentBackImg: {
     backgroundImage: `url(${assessmentBackUrl})`,
+  },
+  noDataWrap: {
+    height: "calc(100% - 58px)",
+    marginTop: 30,
+    width: "calc(100% - 50px)",
   },
 }));
 const usePropsStyles = makeStyles(() => ({
@@ -306,13 +307,11 @@ export type ReportTypeProps = {
 export interface LiveClassesReportProps extends ReportInfoBaseProps {
   data: EntityLiveClassSummaryItem[];
   lessonIndex: number;
-  // onChangeLessonIndex: (index: number) => void;
-  // liveClassSummary: LiveClassesSummaryResult;
-  // assignmentSummary: AssignmentSummaryResult;
 }
 export function LiveClassesReport(props: LiveClassesReportProps) {
   const css = useStyles();
   const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeLessonIndex } = props;
+  console.log(lessonIndex);
   const liveitems = liveClassSummary.items;
   const assessmentitems = assignmentSummary.items;
   const isLive = reportType === ReportType.live;
@@ -357,7 +356,7 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
               );
             })
           ) : (
-            <div style={{ height: "calc(100% - 58px)", marginTop: 30 }}>
+            <div className={css.noDataWrap}>
               <NoDataCom isPie={false} reportType={reportType} />
             </div>
           )
@@ -379,7 +378,7 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
             );
           })
         ) : (
-          <div style={{ height: "calc(100% - 58px)", marginTop: 30 }}>
+          <div className={css.noDataWrap}>
             <NoDataCom isPie={false} reportType={reportType} />
           </div>
         )}
@@ -419,13 +418,11 @@ export function RightCom(props: RightComProps) {
       <div className={clsx(css.rightItem)}>
         <span className={clsx(cssProps.rightItemTitle)}>{"Teachers's Feedback"}</span>
         <div className={css.rightItemContent}>
-          {
-            feedBack
-            ?
+          {feedBack ? (
             <div className={css.teacherFeedback}>{feedBack ? feedBack : "No feedback is available."}</div>
-            :
+          ) : (
             <div className={cssProps.infoFont}>{"No Data Available"}</div>
-          }
+          )}
         </div>
       </div>
     </>
@@ -468,7 +465,7 @@ export function LiveItem(props: LiveItemProps) {
       };
   }, [assignmentItem, liveItem]);
   const cssLessonProps = useLessonStyles(currentData);
-
+  const isLive = reportType === ReportType.live;
   const handleClick = () => {
     onClickLessonPlan();
   };
@@ -482,18 +479,28 @@ export function LiveItem(props: LiveItemProps) {
       )}
       <div className={css.contentCon}>
         <div className={css.lessonCon}>
-          {
-            <span className={cssProps.timeCon}>
-              {reportType === ReportType.live ? formatTimeToEng(currentData?.time || 0, "time") : ""}
-            </span>
-          }
+          {<span className={cssProps.timeCon}>{isLive ? formatTimeToEng(currentData?.time || 0, "time") : ""}</span>}
           <div className={clsx(css.lessonInfoCon, cssLessonProps.lessonCon)} onClick={handleClick}>
             <div className={css.lessonName}>{currentData?.title}</div>
             <div>
               <span className={css.lessonPlanName}>{currentData?.lpname}</span>
             </div>
           </div>
-          <Arrow showArrow={showArrow} />
+          {/* <Arrow showArrow={showArrow} /> */}
+          <div className={css.arrowCon} style={{ visibility: showArrow ? "visible" : "hidden" }}>
+            <div
+              className={clsx(
+                css.arrow,
+                isLive
+                  ? currentData?.absent
+                    ? css.absentLiveArrow
+                    : css.attendLiveArrow
+                  : currentData?.type === "study"
+                  ? css.completedStudyArrow
+                  : css.inCompleteStudyArrow
+              )}
+            ></div>
+          </div>
         </div>
       </div>
     </div>
@@ -511,63 +518,6 @@ export function Arrow(props: ArrowProps) {
     </div>
   );
 }
-
-// const useExpand = () => {
-//   const [open, setOpen] = useState(false);
-//   const toggle = () => setOpen(!open);
-//   const [open2, setOpen2] = useState(false);
-//   const toggle2 = () => {
-//     return setOpen2(!open2);
-//   };
-//   return {
-//     collapse: { in: open },
-//     expandMore: { open, onClick: toggle },
-//     collaspe2: { in: open2 },
-//     expandMore2: { open2, onClick: toggle2 },
-//   };
-// };
-// interface ExpandBtnProps {
-//   open?: boolean;
-//   open2?: boolean;
-// }
-// const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
-//   color: "#0e78d5",
-//   transform: props.open ? "rotate(180deg)" : "none",
-// }));
-export function AssessmentCom() {
-  const css = useStyles();
-  // const expand = useExpand();
-  return (
-    <div className={css.assessmentCon}>
-      <div className={css.studyCon}>
-        <div className={css.studyTitle}>Study</div>
-        {[1, 2].map((item) => (
-          <div className={clsx(css.lessonCon, css.assessmentLessonCon)}>
-            <div className={clsx(css.lessonInfoCon, css.studyLessonCon)}>
-              <div className={css.lessonName}>Lesson Name</div>
-              <div>
-                <span className={css.lessonPlanName}>Lesson Plan Name</span>
-              </div>
-            </div>
-            <Arrow showArrow={false} />
-          </div>
-        ))}
-      </div>
-      <div className={css.homefunStudyCon}>
-        <div className={css.studyTitle}>Home Fun Study</div>
-        {[1, 2].map((item) => (
-          <div className={css.homeFunLessonWrap}>
-            <div className={clsx(css.homeFunLessonCon)}>
-              <span className={css.lessonName}>Lesson Name</span>
-            </div>
-            {/* <Arrow /> */}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export interface NoDataProps extends ReportTypeProps {
   isPie?: boolean;
   isSquare?: boolean;
@@ -589,4 +539,3 @@ export function RectCom(props: RectProps) {
   const isLiveClass = reportType === ReportType.live;
   return <div className={clsx(css.rectCon, isLiveClass ? css.liveBackImg : css.assessmentBackImg)}>{title}</div>;
 }
-

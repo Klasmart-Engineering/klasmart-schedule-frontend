@@ -91,7 +91,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   wordWrap: {
     fontSize: 26,
     fontWeight: 700,
-  }
+  },
 }));
 
 export interface ReportInfoProps extends ReportInfoBaseProps {
@@ -101,17 +101,21 @@ export interface ReportInfoProps extends ReportInfoBaseProps {
 export function ReportInfo(props: ReportInfoProps) {
   const css = useStyles();
   const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeReportType, onChangeLessonIndex } = props;
-  const attend = liveClassSummary?.attend ? liveClassSummary.attend * 100 : 10;
-  const pieData = [attend, 100-attend];
+  const attend = liveClassSummary?.attend ? liveClassSummary.attend * 100 : 0;
+  const pieData = [attend, 100 - attend];
   const isLiveClass = reportType === ReportType.live;
   const assignment = (
     <div className={css.assignmentWrap}>
-      <div className={css.studyWrap} style={{borderRight: "1px dashed #bcbcbc"}}>
-        <span className={css.numberWrap} style={{color: "#a4ddff"}}>{assignmentSummary.study_count}</span>
+      <div className={css.studyWrap} style={{ borderRight: "1px dashed #bcbcbc" }}>
+        <span className={css.numberWrap} style={{ color: "#a4ddff" }}>
+          {assignmentSummary.study_count}
+        </span>
         <span className={css.wordWrap}>{"Study"}</span>
       </div>
-      <div className={css.studyWrap} style={{borderLeft: "1px dashed #bcbcbc"}}>
-        <span  className={css.numberWrap} style={{color: "#89c4f9"}}>{assignmentSummary.home_fun_study_count}</span>
+      <div className={css.studyWrap} style={{ borderLeft: "1px dashed #bcbcbc" }}>
+        <span className={css.numberWrap} style={{ color: "#89c4f9" }}>
+          {assignmentSummary.home_fun_study_count}
+        </span>
         <span className={css.wordWrap}>{"Home Fun"}</span>
       </div>
     </div>
@@ -144,7 +148,14 @@ export function ReportInfo(props: ReportInfoProps) {
           </div>
         </div>
         <div className={css.infoCon}>
-          <LiveClassesReport data={[]} lessonIndex={lessonIndex} reportType={reportType} liveClassSummary={liveClassSummary} assignmentSummary={assignmentSummary} onChangeLessonIndex={onChangeLessonIndex} />
+          <LiveClassesReport
+            data={[]}
+            lessonIndex={lessonIndex}
+            reportType={reportType}
+            liveClassSummary={liveClassSummary}
+            assignmentSummary={assignmentSummary}
+            onChangeLessonIndex={onChangeLessonIndex}
+          />
         </div>
       </div>
     </LayoutBox>
