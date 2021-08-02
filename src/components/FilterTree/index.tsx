@@ -168,14 +168,16 @@ interface FilterLabelProps {
   hideActive: boolean;
   handleChangeClassId: (id: string, checked: boolean) => void;
   check: boolean;
+  disabled: boolean;
 }
 
 function FilterLabel(props: FilterLabelProps) {
-  const { class_name, class_id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check } = props;
+  const { class_name, class_id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check, disabled } = props;
   const css = useStyles();
   const name = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{class_name}</span>;
   const primeElement = (
     <Checkbox
+      disabled={disabled && !check}
       checked={check}
       color="primary"
       onClick={(e) => {
@@ -253,8 +255,9 @@ function FilterLabel(props: FilterLabelProps) {
 function FilterOverall(props: FilterTreeProps) {
   const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine } = props;
   const total = classDataBySchool.classes.length;
-  const pageSize = 10;
+  const pageSize = 5;
   const [page, setPage] = React.useState(1);
+  const [checkMine, setCheckMine] = React.useState(false);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
@@ -286,7 +289,7 @@ function FilterOverall(props: FilterTreeProps) {
     let data: string[] = [];
     if (checked) {
       if (["Mine", "All"].includes(id)) {
-        data = [...stateOnlyMine, ...getCLassData(id)];
+        data = getCLassData(id);
       } else {
         const classId = `class+${id}+${classDataBySchool.school_id}`;
         data = [...stateOnlyMine, classId];
@@ -331,6 +334,7 @@ function FilterOverall(props: FilterTreeProps) {
           handleChangeShowAnyTime={handleChangeShowAnyTime}
           hideActive={false}
           check={stateOnlyMineCheckAll()}
+          disabled={checkMine}
         />
       )}
       <ul style={{ margin: "0px 0px 0px -26px" }}>
@@ -344,6 +348,7 @@ function FilterOverall(props: FilterTreeProps) {
               handleChangeShowAnyTime={handleChangeShowAnyTime}
               handleChangeClassId={handleChangeClassId}
               check={stateOnlyMineCheck(item.class_id)}
+              disabled={checkMine}
             />
           );
         })}
@@ -376,7 +381,17 @@ function FilterOverall(props: FilterTreeProps) {
           {classDataBySchool.onlyMine && (
             <Typography variant="caption" color="inherit">
               <FormControlLabel
-                control={<Checkbox name="Only Mine" color="primary" style={{ marginTop: "-4px" }} />}
+                control={
+                  <Checkbox
+                    name="Only Mine"
+                    onClick={(e) => {
+                      setCheckMine((e.target as HTMLInputElement).checked);
+                      handleChangeClassId("Mine", (e.target as HTMLInputElement).checked);
+                    }}
+                    color="primary"
+                    style={{ marginTop: "-4px" }}
+                  />
+                }
                 label={d("Only Mine").t("schedule_filter_only_mine")}
                 style={{ transform: "scale(0.7)", marginRight: "0px" }}
               />
