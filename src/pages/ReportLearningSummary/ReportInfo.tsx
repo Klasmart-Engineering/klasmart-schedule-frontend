@@ -108,13 +108,13 @@ export function ReportInfo(props: ReportInfoProps) {
     <div className={css.assignmentWrap}>
       <div className={css.studyWrap} style={{ borderRight: "1px dashed #bcbcbc" }}>
         <span className={css.numberWrap} style={{ color: "#a4ddff" }}>
-          {assignmentSummary.study_count}
+          {assignmentSummary.study_count || 0}
         </span>
         <span className={css.wordWrap}>{"Study"}</span>
       </div>
       <div className={css.studyWrap} style={{ borderLeft: "1px dashed #bcbcbc" }}>
         <span className={css.numberWrap} style={{ color: "#89c4f9" }}>
-          {assignmentSummary.home_fun_study_count}
+          {assignmentSummary.home_fun_study_count || 0}
         </span>
         <span className={css.wordWrap}>{"Home Fun"}</span>
       </div>
