@@ -17,19 +17,25 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     [breakpoints.up("md")]: {
       paddingRight: LEGEND_WIDTH,
     },
+    display: "flex",
   },
   legend: {
-    [breakpoints.up("md")]: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      width: LEGEND_WIDTH,
-    },
-    [breakpoints.down("sm")]: {
-      width: "100%",
-      display: "flex",
-      flexWrap: "wrap",
-    },
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+    // [breakpoints.up("md")]: {
+    //   // position: "absolute",
+    //   // top: 0,
+    //   // right: 0,
+    //   width: LEGEND_WIDTH,
+    // },
+    // [breakpoints.down("sm")]: {
+    //   width: "100%",
+    //   display: "flex",
+    //   flexWrap: "wrap",
+    // },
   },
   legendItem: {
     display: "flex",
@@ -215,6 +221,15 @@ export function PieChart(props: PieChartProps) {
   const dataLegend = () => [d("Attended").t("report_liveclass_attended"), d("Absent").t("report_liveclass_absent")];
   return (
     <div className={css.chart}>
+      <div style={{ flex: 1 }}>
+        <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
+          <Group top={0.5 * viewPort[3]} left={0.5 * viewPort[2]}>
+            <Pie data={data} pieValue={pieValue} outerRadius={pixels.outerRadius} innerRadius={pixels.innerRadius}>
+              {(pie) => pie.arcs.map((arc) => pieItem({ pie, arc }))}
+            </Pie>
+          </Group>
+        </svg>
+      </div>
       <div className={css.legend}>
         {dataLegend().map((item, index) => (
           <div className={css.legendItem} key={item}>
@@ -223,13 +238,6 @@ export function PieChart(props: PieChartProps) {
           </div>
         ))}
       </div>
-      <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
-        <Group top={0.5 * viewPort[3]} left={0.5 * viewPort[2]}>
-          <Pie data={data} pieValue={pieValue} outerRadius={pixels.outerRadius} innerRadius={pixels.innerRadius}>
-            {(pie) => pie.arcs.map((arc) => pieItem({ pie, arc }))}
-          </Pie>
-        </Group>
-      </svg>
       {tooltipOpen && tooltipData && (
         <Tooltip top={tooltipTop} left={tooltipLeft} offsetTop={0} offsetLeft={0} style={{ position: "absolute" }}>
           <div style={{ ...inlineStyles.tooltip, [tooltipData.yProperty]: 0, [tooltipData.xProperty]: 0 }}>
