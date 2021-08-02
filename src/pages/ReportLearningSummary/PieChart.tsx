@@ -6,6 +6,7 @@ import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import React, { useMemo, useState } from "react";
 import { EntityQueryLiveClassesSummaryResult } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
 const categoryColors = ["#8693f0", "#fe9b9b", "#A4DDFF", "#CB9BFF", "#8693F0", "#FFA966", "#FB7575", "#9E46FF", "#77DCB7", "#FBD775"];
 const LEGEND_WIDTH = 53;
 const useStyle = makeStyles(({ breakpoints }) => ({
@@ -211,11 +212,11 @@ export function PieChart(props: PieChartProps) {
       </g>
     );
   };
-  const dataLegend = ["Attended", "Absent"];
+  const dataLegend = () => [d("Attended").t("report_liveclass_attended"), d("Absent").t("report_liveclass_absent")];
   return (
     <div className={css.chart}>
       <div className={css.legend}>
-        {dataLegend.map((item, index) => (
+        {dataLegend().map((item, index) => (
           <div className={css.legendItem} key={item}>
             <div className={css.legendIcon} style={{ backgroundColor: categoryColors[index] }} />
             <div className={css.legendTitle}>{item}</div>
