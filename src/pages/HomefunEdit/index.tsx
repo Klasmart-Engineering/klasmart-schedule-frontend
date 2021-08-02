@@ -16,6 +16,12 @@ import { AssessmentHeader } from "../AssessmentEdit/AssessmentHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import { Assignment } from "./Assignment";
 import { Summary } from "./Summary";
+import { LessonPlan } from "./LessonPlan";
+import { Box, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { NoOutcome } from "../../components/TipImages";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -67,6 +73,12 @@ function AssessmentsHomefunEditIner() {
     id && dispatch(onLoadHomefunDetail({ id, metaLoading: true }));
   }, [dispatch, id, editindex]);
 
+  const [check, setCheck] = React.useState("LessonPlan");
+
+  const { breakpoints } = useTheme();
+  const xs = useMediaQuery(breakpoints.down("xs"));
+  const radioTypography = xs ? "subtitle2" : "h6";
+
   return (
     <>
       <AssessmentHeader
@@ -81,7 +93,56 @@ function AssessmentsHomefunEditIner() {
       />
       <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
         <Summary detail={homefunDetail} feedbacks={homefunFeedbacks} />
-        <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} editable={editable} />
+        <Box style={{ marginBottom: "20px" }}>
+          <RadioGroup
+            value={check}
+            onChange={(e) => {
+              setCheck(e.target.value);
+            }}
+            row
+            aria-label="position"
+            name="position"
+            defaultValue="top"
+            style={{ marginBottom: "20px" }}
+          >
+            <FormControlLabel
+              value="LessonPlan"
+              control={<Radio color="primary" />}
+              label={
+                <Typography variant={radioTypography} style={{ fontWeight: 700 }}>
+                  Learning Outcomes Assessment
+                </Typography>
+              }
+              labelPlacement="end"
+            />
+            <FormControlLabel
+              value="Assignment"
+              control={<Radio color="primary" />}
+              label={
+                <Typography variant={radioTypography} style={{ fontWeight: 700 }}>
+                  Assignment Assessment
+                </Typography>
+              }
+              labelPlacement="end"
+              style={{ marginLeft: "8%" }}
+            />
+          </RadioGroup>
+          <Box style={{ display: check === "Assignment" ? "block" : "none" }}>
+            <Assignment feedbacks={homefunFeedbacks} detail={homefunDetail} formMethods={formMethods} editable={editable} />
+          </Box>
+          <Box style={{ display: check === "LessonPlan" ? "block" : "none" }}>
+            {homefunDetail.outcomes && homefunDetail.outcomes.length && (
+              <LessonPlan
+                feedbacks={homefunFeedbacks}
+                detail={homefunDetail}
+                formMethods={formMethods}
+                editable={editable}
+                outcomesList={homefunDetail.outcomes}
+              />
+            )}
+            {(!homefunDetail.outcomes || homefunDetail.outcomes.length < 1) && <NoOutcome />}
+          </Box>
+        </Box>
       </LayoutPair>
       {/* <Prompt message={handleLeave} when={isDirty} /> */}
     </>

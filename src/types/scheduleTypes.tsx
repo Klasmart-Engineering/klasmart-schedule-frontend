@@ -5,6 +5,7 @@ import {
   EntityScheduleLessonPlan,
   EntityScheduleListView,
   EntityScheduleViewDetail,
+  ModelOutcomeSetCreateView,
 } from "../api/api.auto";
 
 export type timestampType = {
@@ -252,4 +253,20 @@ export interface FilterSchoolInfo {
   school_id: string;
   classes: FilterClasses[];
   onlyMine: boolean;
+}
+
+export interface LearningContentList {
+  id: string;
+  name: string;
+  shortCode: string;
+  assumed: boolean;
+  learningOutcomeSet: ModelOutcomeSetCreateView[];
+  select: boolean;
+}
+export interface LearningContentListForm {
+  search_type: string;
+  search_value: string;
+  is_assumed: boolean;
+  content_list: LearningContentList[];
+  page: number;
 }

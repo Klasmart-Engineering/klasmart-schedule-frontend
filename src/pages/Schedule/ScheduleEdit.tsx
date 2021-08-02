@@ -24,7 +24,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { enAU, id, ko, vi, zhCN, es } from "date-fns/esm/locale";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Maybe, User } from "../../api/api-ko-schema.auto";
@@ -44,6 +44,7 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
+  actOutcomeList,
   changeParticipants,
   getScheduleLiveToken,
   getScheduleMockOptionsResponse,
@@ -58,6 +59,7 @@ import {
   saveScheduleData,
   ScheduleFilterPrograms,
   scheduleShowOption,
+  resetActOutcomeList,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -74,6 +76,7 @@ import {
   ParticipantsShortInfo,
   repeatOptionsType,
   timestampType,
+  LearningContentListForm,
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -84,6 +87,8 @@ import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import { domainSwitch } from "../../api/extra";
+import LearingOutcome from "./LearingOutcome";
+import { useForm } from "react-hook-form";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -239,7 +244,25 @@ const useStyles = makeStyles(({ shadows }) => ({
     zIndex: 10,
     padding: "0 5px 0 5px",
   },
+  learnOutcomeCounter: {
+    width: "1.5rem",
+    height: "1.5rem",
+    backgroundColor: "white",
+    color: "blue",
+    fontWeight: "bold",
+    borderRadius: "1.5rem",
+    textAlign: "center",
+    lineHeight: "1.5rem",
+    marginLeft: "4px",
+  },
 }));
+
+const clearNull = (obj: Record<string, any>) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == null) delete obj[key];
+  });
+  return obj;
+};
 
 function SmallCalendar(props: CalendarStateProps) {
   const {
@@ -356,7 +379,9 @@ function EditBox(props: CalendarStateProps) {
     stateCurrentCid,
     stateMaterialArr,
   } = props;
-  const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { contentsAuthList, classOptions, mySchoolId, outcomeList } = useSelector<RootState, RootState["schedule"]>(
+    (state) => state.schedule
+  );
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -453,7 +478,8 @@ function EditBox(props: CalendarStateProps) {
       setAttachmentName("");
       setAttachmentId("");
     }
-  }, [scheduleDetial, scheduleDetial.attachment, scheduleId]);
+    dispatch(resetActOutcomeList([]));
+  }, [scheduleDetial, dispatch, scheduleDetial.attachment, scheduleId]);
 
   React.useEffect(() => {
     const defaults: EntityScheduleShortInfo = {
@@ -485,6 +511,7 @@ function EditBox(props: CalendarStateProps) {
       subject_id: "",
       teacher_ids: [],
       title: "",
+      outcome_ids: [],
       ...timesTampDada,
     };
     setClassItem(defaults);
@@ -736,13 +763,17 @@ function EditBox(props: CalendarStateProps) {
     const value = name === "start_at" || name === "end_at" ? timeToTimestamp(event.target.value as string) : (event.target.value as string);
     if (name === "title" && (event.target.value as string).trim().split(/\s+/).length > 60) return;
     if (name === "description" && (event.target.value as string).length > 100) return;
-    if (name === "class_type")
+    if (name === "class_type") {
+      dispatch(resetActOutcomeList([]));
+      setCondition({ page: 1, exect_search: "all", assumed: -1 });
+      setOutcomeIds([]);
       setStatus({
         allDayCheck: false,
         repeatCheck: false,
         dueDateCheck: false,
         homeFunCheck: false,
       });
+    }
     setScheduleData(name, value);
   };
 
@@ -891,6 +922,10 @@ function EditBox(props: CalendarStateProps) {
       addData["is_home_fun"] = false;
     }
 
+    if (scheduleList.class_type === "Homework" && checkedStatus.homeFunCheck) {
+      addData["outcome_ids"] = outComeIds;
+    }
+
     if (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") addData["is_force"] = true;
 
     // participants && class roster collision detection
@@ -961,6 +996,9 @@ function EditBox(props: CalendarStateProps) {
         return;
       }
       dispatch(ScheduleFilterPrograms());
+      dispatch(resetActOutcomeList([]));
+      setCondition({ page: 1, exect_search: "all", assumed: -1 });
+      setOutcomeIds([]);
       dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
       dispatchRepeat({
         type: "changeData",
@@ -1427,6 +1465,9 @@ function EditBox(props: CalendarStateProps) {
               start: currentTime,
               end: currentTime,
             });
+            dispatch(resetActOutcomeList([]));
+            setCondition({ page: 1, exect_search: "all", assumed: -1 });
+            setOutcomeIds([]);
             history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
           },
         },
@@ -1583,6 +1624,104 @@ function EditBox(props: CalendarStateProps) {
     return scheduleList.class_type === "Task" && checkedStatus.repeatCheck;
   };
 
+  const conditionFormMethods = useForm<LearningContentListForm>();
+  const { getValues } = conditionFormMethods;
+  const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
+  const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all", assumed: -1 });
+
+  useEffect(() => {
+    setOutcomeIds(scheduleDetial.outcome_ids ?? []);
+  }, [scheduleDetial.outcome_ids, setOutcomeIds]);
+
+  const getLearingOuctomeData = async (conditionOt: any, loading: boolean) => {
+    const query =
+      conditionOt.exect_search === "all"
+        ? {
+            ...conditionOt,
+            page_size: -1,
+            search_key: conditionOt.search_key,
+            metaLoading: true,
+            exect_search: null,
+            page: null,
+            publish_status: "published",
+          }
+        : {
+            ...conditionOt,
+            [conditionOt.exect_search]: conditionOt.search_key,
+            page_size: -1,
+            exect_search: null,
+            search_key: null,
+            metaLoading: true,
+            page: null,
+            publish_status: "published",
+          };
+    await dispatch(actOutcomeList(clearNull(query)));
+  };
+
+  const searchOutcomesList = async () => {
+    const query = {
+      exect_search: getValues().search_type,
+      search_key: getValues().search_value,
+      assumed: getValues().is_assumed ? 1 : -1,
+      page: getValues().page,
+    };
+    setCondition({ ...query });
+    const condition = scheduleDetial.id ? { ...query, schedule_id: scheduleDetial.id } : query;
+    const isLoading = getValues().page > 1;
+    await getLearingOuctomeData(condition, isLoading);
+  };
+
+  const saveOutcomesList = () => {
+    const outcome_ids = getValues()
+      .content_list.filter((item) => {
+        return item.select;
+      })
+      .map((item) => {
+        return item.id;
+      });
+
+    const old_outcome_ids = outComeIds.filter((id) => {
+      return !getValues().content_list.filter((item) => {
+        return item.id === id;
+      }).length;
+    });
+    setOutcomeIds(outcome_ids.concat(old_outcome_ids));
+    changeModalDate({ openStatus: false });
+  };
+
+  const learingOutcomeDatas: LearningContentListForm = {
+    search_type: condition.exect_search ?? "all",
+    search_value: condition.search_key ?? "",
+    is_assumed: condition.assumed === 1,
+    content_list: [],
+    page: condition.page ?? 1,
+  };
+
+  const handeLearingOutcome = async () => {
+    if (outcomeList.length < 1) await getLearingOuctomeData(condition, false);
+    changeModalDate({
+      enableCustomization: true,
+      customizeTemplate: (
+        <LearingOutcome
+          handleClose={() => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          }}
+          learingOutcomeData={learingOutcomeDatas}
+          conditionFormMethods={conditionFormMethods}
+          searchOutcomesList={searchOutcomesList}
+          saveOutcomesList={saveOutcomesList}
+          outComeIds={outComeIds}
+          scheduleDetial={scheduleDetial}
+        />
+      ),
+      openStatus: true,
+      handleClose: () => {
+        changeModalDate({ openStatus: false });
+      },
+      showScheduleInfo: true,
+    });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -1635,7 +1774,7 @@ function EditBox(props: CalendarStateProps) {
           {menuItemListClassType(scheduleMockOptions.classTypeList)}
         </TextField>
         {scheduleList.class_type === "Homework" && (
-          <Box>
+          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <FormGroup row>
               <FormControlLabel
                 disabled={isScheduleExpired() || isLimit()}
@@ -1643,6 +1782,19 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
             </FormGroup>
+            {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
+                onClick={() => {
+                  handeLearingOutcome();
+                }}
+              >
+                <span>{"Set Learning Outcome"}</span>
+                {outComeIds.length > 0 && <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>}
+              </Button>
+            )}
           </Box>
         )}
         <Box className={css.fieldBox}>

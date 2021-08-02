@@ -11480,6 +11480,14 @@
         },
         "score": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.StudentAssessmentAttachment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
         },
         "status": {
           "type": "string"
@@ -11492,17 +11500,6 @@
         },
         "update_at": {
           "type": "integer"
-        }
-      }
-    },
-    "entity.StudentAssessmentAttachment": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
         }
       }
     },

@@ -867,5 +867,6 @@
   "assess_locked_location": "Vị trí bị khóa",
   "assess_date_edited": "Đã chỉnh sửa ngày",
   "assess_time_edited": "Đã chỉnh sửa thời gian",
-  "assess_msg_approve_milestone": "Bạn có chắc chắn muốn phê duyệt các cột mốc quan trọng này không?"
+  "assess_msg_approve_milestone": "Bạn có chắc chắn muốn phê duyệt các cột mốc quan trọng này không?",
+  "schedule_set_learning_outcome": "Set Learning Outcome"
 }

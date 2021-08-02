@@ -11,6 +11,7 @@ import {
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/api.auto";
 import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import { ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { GetOutcomeList } from "../api/type";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -178,6 +179,19 @@ export class modelSchedule {
     return set;
   }
 
+  static AssemblyLearningOutcome(outcomeList: GetOutcomeList) {
+    return outcomeList.map((item) => {
+      return {
+        id: item.outcome_id,
+        name: item.outcome_name,
+        shortCode: item.shortcode,
+        assumed: item.assumed,
+        learningOutcomeSet: item.sets,
+        select: false,
+      };
+    });
+  }
+
   static FilterParticipants(
     ParticipantsDatas: ParticipantsData | undefined,
     ClassRoster: ParticipantsByClassQuery,
@@ -237,7 +251,7 @@ export class modelSchedule {
           const isExistTeacher = classs.teachers.filter((teacher: RolesData) => {
             return teacher.user_id === userId;
           });
-          onlyMine = !role && (isExistTeacher.length > 0 || isExistStudent.length > 0);
+          if (!onlyMine) onlyMine = !role && (isExistTeacher.length > 0 || isExistStudent.length > 0);
           if (classs.status === "active")
             data.push({ class_id: classs.class_id, class_name: classs.class_name, showIcon: isExistStudent.length > 0 });
         });

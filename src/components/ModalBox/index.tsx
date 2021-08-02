@@ -20,6 +20,11 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  dialogContainer1: {
+    "& .MuiDialog-paperWidthSm": {
+      maxWidth: "800px",
+    },
+  },
   header: {
     paddingTop: "40px",
   },
@@ -71,7 +76,8 @@ export default function AlertDialog(props: dateProps) {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        className={showScheduleInfo ? "" : classes.dialogContainer}
+        style={{ zIndex: 99 }}
+        className={showScheduleInfo ? classes.dialogContainer1 : classes.dialogContainer}
       >
         {!enableCustomization ? (
           <>

@@ -69,6 +69,7 @@ import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
 import { Maybe, SchoolMembership } from "../api/api-ko-schema.auto";
+import { GetOutcomeList } from "../api/type";
 
 const MOCK = false;
 
@@ -107,6 +108,8 @@ export interface ScheduleState {
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   mediaList: EntityContentInfoWithDetails[];
   ScheduleViewInfo: EntityScheduleViewDetail;
+  outcomeList: GetOutcomeList;
+  outcomeTotal: number;
 }
 
 interface Rootstate {
@@ -131,6 +134,7 @@ export const initScheduleDetial: EntityScheduleDetailsView = {
   is_all_day: true,
   is_repeat: false,
   real_time_status: {},
+  outcome_ids: [],
 };
 
 const initialState: ScheduleState = {
@@ -228,6 +232,8 @@ const initialState: ScheduleState = {
   schoolByOrgOrUserData: [],
   mediaList: [],
   ScheduleViewInfo: {},
+  outcomeList: [],
+  outcomeTotal: 0,
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -672,6 +678,24 @@ export const getScheduleViewInfo = createAsyncThunk<GetScheduleViewInfoResult, G
   }
 );
 
+type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
+export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    return { list, total, page: query.page };
+  }
+);
+
+export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
+  "outcome/outcomeList",
+  async ({ metaLoading, ...query }) => {
+    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    return { list, total, page: query.page };
+  }
+);
+
 const { actions, reducer } = createSlice({
   name: "schedule",
   initialState,
@@ -695,8 +719,18 @@ const { actions, reducer } = createSlice({
     resetScheduleTimeViewData: (state, { payload }: PayloadAction<ScheduleState["scheduleTimeViewData"]>) => {
       state.scheduleTimeViewData = payload;
     },
+    resetActOutcomeList: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = payload;
+    },
   },
   extraReducers: {
+    [actOutcomeListLoading.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = [...state.outcomeList, ...payload.list];
+    },
+    [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.outcomeList = payload.page > 1 ? [...state.outcomeList, ...payload.list] : payload.list;
+      state.outcomeTotal = payload.total;
+    },
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
       // state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.searchScheduleList = payload.data;
@@ -810,5 +844,5 @@ const { actions, reducer } = createSlice({
     },
   },
 });
-export const { resetScheduleDetial, resetParticipantList, changeParticipants, resetScheduleTimeViewData } = actions;
+export const { resetScheduleDetial, resetParticipantList, changeParticipants, resetScheduleTimeViewData, resetActOutcomeList } = actions;
 export default reducer;

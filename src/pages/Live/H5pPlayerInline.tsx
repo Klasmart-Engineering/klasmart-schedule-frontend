@@ -4,7 +4,6 @@ import { iframeResizer } from "iframe-resizer";
 import React, { memo, useEffect, useMemo, useRef } from "react";
 import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
-// import { h5pEvent } from "../../reducers/content";
 import { InlineIframeManager, InlineIframeManagerInjectHandler } from "./InlineIframeManager";
 import l10n from "./l10n.json";
 interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {

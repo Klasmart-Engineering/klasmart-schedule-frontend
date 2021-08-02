@@ -867,5 +867,6 @@
   "assess_locked_location": "Locked location",
   "assess_date_edited": "Date edited",
   "assess_time_edited": "Time edited",
-  "assess_msg_approve_milestone": "Are you sure you want to approve these milestones?"
+  "assess_msg_approve_milestone": "Are you sure you want to approve these milestones?",
+  "schedule_set_learning_outcome": "Set Learning Outcome"
 }

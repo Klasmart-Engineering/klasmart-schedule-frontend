@@ -167,15 +167,16 @@ interface FilterLabelProps {
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
   hideActive: boolean;
   handleChangeClassId: (id: string, checked: boolean) => void;
+  check: boolean;
 }
 
 function FilterLabel(props: FilterLabelProps) {
-  const { class_name, class_id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId } = props;
+  const { class_name, class_id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check } = props;
   const css = useStyles();
   const name = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{class_name}</span>;
   const primeElement = (
     <Checkbox
-      defaultChecked
+      checked={check}
       color="primary"
       onClick={(e) => {
         handleChangeClassId(class_id, (e.target as HTMLInputElement).checked);
@@ -304,6 +305,19 @@ function FilterOverall(props: FilterTreeProps) {
     }
     handleChangeOnlyMine(data);
   };
+
+  const stateOnlyMineCheckAll = () => {
+    return classDataBySchool.classes.every((item) => {
+      const cid = `class+${item.class_id}+${classDataBySchool.school_id}`;
+      return stateOnlyMine.includes(cid);
+    });
+  };
+
+  const stateOnlyMineCheck = (id: string) => {
+    const cid = `class+${id}+${classDataBySchool.school_id}`;
+    return stateOnlyMine.includes(cid);
+  };
+
   const template = !total ? (
     <div style={{ textAlign: "center", padding: "16px" }}>{d("No Data").t("schedule_filter_no_data")}</div>
   ) : (
@@ -311,11 +325,12 @@ function FilterOverall(props: FilterTreeProps) {
       {classDataBySchool.classes.length > 1 && (
         <FilterLabel
           handleChangeClassId={handleChangeClassId}
-          class_name="全部班级"
-          class_id="ALL"
+          class_name={d("All").t("assess_filter_all")}
+          class_id="All"
           showIcon={false}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
           hideActive={false}
+          check={stateOnlyMineCheckAll()}
         />
       )}
       <ul style={{ margin: "0px 0px 0px -26px" }}>
@@ -328,13 +343,14 @@ function FilterOverall(props: FilterTreeProps) {
               showIcon={item.showIcon}
               handleChangeShowAnyTime={handleChangeShowAnyTime}
               handleChangeClassId={handleChangeClassId}
+              check={stateOnlyMineCheck(item.class_id)}
             />
           );
         })}
       </ul>
 
       <Pagination
-        count={total < pageSize ? 1 : total / pageSize}
+        count={total < pageSize ? 1 : Math.ceil(total / pageSize)}
         style={{ display: "flex", justifyContent: "center", padding: "12px" }}
         size="small"
         page={page}
@@ -347,7 +363,7 @@ function FilterOverall(props: FilterTreeProps) {
       style={{
         position: "absolute",
         width: "300px",
-        left: "22rem",
+        left: "23.1%",
         top: pageY + "px",
         zIndex: 999,
         boxShadow: "10px 10px 5px #888888",
@@ -368,6 +384,7 @@ function FilterOverall(props: FilterTreeProps) {
           )}
         </span>
         <CloseIcon
+          style={{ cursor: "pointer" }}
           onClick={() => {
             hideClassMenu();
           }}
