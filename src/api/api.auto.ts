@@ -10,7 +10,10 @@
  * ---------------------------------------------------------------
  */
 
-export type ApiBadRequestResponse = ApiResponse;
+export interface ApiBadRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiBulkBindOutcomeSetRequest {
   outcome_ids?: string[];
@@ -21,7 +24,10 @@ export interface ApiCheckAccountResponse {
   status?: string;
 }
 
-export type ApiConflictResponse = ApiResponse;
+export interface ApiConflictResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiCreateContentResponse {
   id?: string;
@@ -44,7 +50,10 @@ export interface ApiFolderItemsResponseWithTotal {
   total?: number;
 }
 
-export type ApiForbiddenResponse = ApiResponse;
+export interface ApiForbiddenResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiForgottenPasswordRequest {
   auth_code?: string;
@@ -62,7 +71,10 @@ export interface ApiIDResponse {
   id?: string;
 }
 
-export type ApiInternalServerErrorResponse = ApiResponse;
+export interface ApiInternalServerErrorResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiLoginRequest {
   auth_code?: string;
@@ -74,7 +86,10 @@ export interface ApiLoginResponse {
   token?: string;
 }
 
-export type ApiNotFoundResponse = ApiResponse;
+export interface ApiNotFoundResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiOrganizationRegionInfoResponse {
   orgs?: EntityRegionOrganizationInfo[];
@@ -118,11 +133,6 @@ export interface ApiResetPasswordRequest {
   old_password?: string;
 }
 
-export interface ApiResponse {
-  data?: object;
-  label?: string;
-}
-
 export interface ApiSendCodeRequest {
   email?: string;
   mobile?: string;
@@ -140,13 +150,19 @@ export interface ApiSignatureResponse {
   url?: string;
 }
 
-export type ApiSuccessRequestResponse = ApiResponse;
+export interface ApiSuccessRequestResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiTokenResponse {
   token?: string;
 }
 
-export type ApiUnAuthorizedResponse = ApiResponse;
+export interface ApiUnAuthorizedResponse {
+  data?: object;
+  label?: string;
+}
 
 export interface ApiContentBulkOperateRequest {
   id?: string[];
@@ -296,26 +312,20 @@ export interface EntityAssessmentsSummary {
   in_progress?: number;
 }
 
-export interface EntityAssignmentsSummaryHomeFunStudyItem {
+export interface EntityAssignmentsSummaryItem {
   assessment_id?: string;
   assessment_title?: string;
-  outcomes?: EntityLearningSummaryOutcome[];
+  assessment_type?: "class" | "live" | "study" | "home_fun_study";
 
-  /** for debug */
-  schedule_id?: string;
-  status?: string;
-  teacher_feedback?: string;
-}
-
-export interface EntityAssignmentsSummaryStudyItem {
-  assessment_id?: string;
-  assessment_title?: string;
+  /** for sorting */
+  complete_at?: number;
+  create_at?: number;
   lesson_plan_name?: string;
   outcomes?: EntityLearningSummaryOutcome[];
 
   /** for debug */
   schedule_id?: string;
-  status?: string;
+  status?: "in_progress" | "complete";
   teacher_feedback?: string;
 }
 
@@ -726,13 +736,17 @@ export interface EntityLiveClassSummaryItem {
   absent?: boolean;
   assessment_id?: string;
   class_start_time?: number;
+
+  /** for sorting */
+  complete_at?: number;
+  create_at?: number;
   lesson_plan_name?: string;
   outcomes?: EntityLearningSummaryOutcome[];
 
   /** for debug */
   schedule_id?: string;
   schedule_title?: string;
-  status?: string;
+  status?: "in_progress" | "complete";
   teacher_feedback?: string;
 }
 
@@ -836,9 +850,9 @@ export interface EntityOutcome {
 }
 
 export interface EntityQueryAssignmentsSummaryResult {
-  completed?: number;
-  home_fun_study_items?: EntityAssignmentsSummaryHomeFunStudyItem[];
-  study_items?: EntityAssignmentsSummaryStudyItem[];
+  home_fun_study_count?: number;
+  items?: EntityAssignmentsSummaryItem[];
+  study_count?: number;
 }
 
 export interface EntityQueryLearningSummaryFilterResultItem {
@@ -1008,6 +1022,7 @@ export interface EntityScheduleDetailsView {
   class_roster_teachers?: EntityScheduleAccessibleUserView[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
+  complete_assessment?: boolean;
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -1033,7 +1048,6 @@ export interface EntityScheduleDetailsView {
   teachers?: EntityScheduleAccessibleUserView[];
   title?: string;
   version?: number;
-  complete_assessment?: boolean;
 }
 
 export interface EntityScheduleFeedbackAddInput {
@@ -3278,7 +3292,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityQueryAssignmentsSummaryResult[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityQueryAssignmentsSummaryResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learning_summary/assignments${this.addQueryParams(query)}`,
         "GET",
         params
@@ -3329,7 +3343,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityQueryLiveClassesSummaryResult[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityQueryLiveClassesSummaryResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learning_summary/live_classes${this.addQueryParams(query)}`,
         "GET",
         params

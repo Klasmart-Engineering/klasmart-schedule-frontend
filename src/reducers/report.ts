@@ -9,12 +9,21 @@ import {
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
+  MySchoolIDsDocument,
+  MySchoolIDsQuery,
+  MySchoolIDsQueryVariables,
   NotParticipantsByOrganizationDocument,
   NotParticipantsByOrganizationQuery,
   NotParticipantsByOrganizationQueryVariables,
   ParticipantsByClassDocument,
   ParticipantsByClassQuery,
   ParticipantsByClassQueryVariables,
+  ParticipantsByOrganizationDocument,
+  ParticipantsByOrganizationQuery,
+  ParticipantsByOrganizationQueryVariables,
+  ParticipantsBySchoolDocument,
+  ParticipantsBySchoolQuery,
+  ParticipantsBySchoolQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -29,17 +38,25 @@ import {
   TeacherListBySchoolIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
+  EntityQueryAssignmentsSummaryResult,
+  EntityQueryLiveClassesSummaryResult,
   EntityReportListTeachingLoadResult,
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
   EntityStudentAchievementReportItem,
+  // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
+  // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
+  ExternalSubject,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
-import { ModelReport } from "../models/ModelReports";
+import { deDuplicate, ModelReport } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
+import { getWeeks, IWeeks } from "../pages/ReportLearningSummary";
+import { LearningSummartOptionsProps } from "../pages/ReportLearningSummary/FilterLearningSummary";
+import { QueryLearningSummaryCondition } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
@@ -54,13 +71,19 @@ interface IreportState {
     teacherList: Pick<User, "user_id" | "user_name">[];
     categories: EntityTeacherReportCategory[];
   };
-  // stuReportMockOptions: GetStuReportMockOptionsResponse;
-  // h5pReportList?: EntityStudentsPerformanceH5PReportItem[];
+  stuReportMockOptions: GetStuReportMockOptionsResponse;
+  h5pReportList?: [];
   stuReportList?: EntityStudentPerformanceReportItem[];
   stuReportDetail?: EntityStudentPerformanceReportItem[];
-  // h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
+  h5pReportDetail?: [];
   studentList: Pick<User, "user_id" | "user_name">[];
   teachingLoadOnload: TeachingLoadResponse;
+  learningSummartOptions: LearningSummartOptionsProps;
+  liveClassSummary: EntityQueryLiveClassesSummaryResult;
+  assignmentSummary: EntityQueryAssignmentsSummaryResult;
+}
+interface RootState {
+  report: IreportState;
 }
 const initialState: IreportState = {
   reportList: [],
@@ -78,16 +101,16 @@ const initialState: IreportState = {
     teacherList: [],
     categories: [],
   },
-  // stuReportMockOptions: {
-  //   teacherList: [],
-  //   classList: [],
-  //   lessonPlanList: [],
-  //   teacher_id: "",
-  //   class_id: "",
-  //   lesson_plan_id: "",
-  //   student_id: "",
-  //   studentList: [],
-  // },
+  stuReportMockOptions: {
+    teacherList: [],
+    classList: [],
+    lessonPlanList: [],
+    teacher_id: "",
+    class_id: "",
+    lesson_plan_id: "",
+    student_id: "",
+    studentList: [],
+  },
   // h5pReportList: [],
   stuReportList: [],
   stuReportDetail: [],
@@ -100,6 +123,115 @@ const initialState: IreportState = {
     classList: [],
     teachingLoadList: {},
     user_id: "",
+  },
+  learningSummartOptions: {
+    year: [],
+    week: [],
+    // schoolList: [],
+    // classList: [],
+    // teacherList: [],
+    studentList: [],
+    subjectList: [],
+  },
+  liveClassSummary: {
+    // attend: 0,
+    // items: [
+    //   {
+    //     absent: false,
+    //     assessment_id: "111",
+    //     class_start_time: 1623979200,
+    //     complete_at: 1623979200,
+    //     create_at: 1623979200,
+    //     lesson_plan_name: "lesson plan name 1",
+    //     outcomes: [],
+    //     schedule_id: "schedule111",
+    //     schedule_title: "scheduletitle 111",
+    //     teacher_feedback: "teacher feedback 111",
+    //   },
+    //   {
+    //     absent: true,
+    //     assessment_id: "222",
+    //     class_start_time: 1624001400,
+    //     complete_at: 1624001400,
+    //     create_at: 1624001400,
+    //     lesson_plan_name: "lesson plan name 2",
+    //     outcomes: [
+    //       {
+    //         id: "outcome 111",
+    //         name: "outcome 111",
+    //       },
+    //       {
+    //         id: "outcome 222",
+    //         name: "outcome 222",
+    //       },
+    //     ],
+    //     schedule_id: "schedule222",
+    //     schedule_title: "scheduletitle 222",
+    //     teacher_feedback: "teacher feedback 222",
+    //   },
+    //   {
+    //     absent: true,
+    //     assessment_id: "333",
+    //     class_start_time: 1623897600,
+    //     complete_at: 1623897600,
+    //     create_at: 1623897600,
+    //     lesson_plan_name: "lesson plan name 1",
+    //     outcomes: [],
+    //     schedule_id: "schedule333",
+    //     schedule_title: "scheduletitle 333",
+    //     teacher_feedback: "teacher feedback 333",
+    //   },
+    //   {
+    //     absent: false,
+    //     assessment_id: "444",
+    //     class_start_time: 1623828600,
+    //     complete_at: 1623828600,
+    //     create_at: 1623828600,
+    //     lesson_plan_name: "lesson plan name 1",
+    //     outcomes: [
+    //       {
+    //         id: "outcome 333",
+    //         name: "outcome 333",
+    //       },
+    //       {
+    //         id: "outcome 444",
+    //         name: "outcome 444",
+    //       },
+    //     ],
+    //     schedule_id: "schedule444",
+    //     schedule_title: "scheduletitle 444",
+    //     teacher_feedback: "teacher feedback 444",
+    //   },
+    // ],
+  },
+  assignmentSummary: {
+    // home_fun_study_count: 2,
+    // study_count: 4,
+    // items: [
+    //   {
+    //     assessment_id: "assessment id 111",
+    //     assessment_title: "assessment title 111",
+    //     assessment_type: "study",
+    //     complete_at: 1623979200,
+    //     create_at: 1623979200,
+    //     lesson_plan_name: "lesson plan name 111",
+    //     outcomes: [{ id: "outcome id 1", name: "outcome name 1" }],
+    //     schedule_id: "schedule id 111",
+    //     status: "complete",
+    //     teacher_feedback: "teacher feedback 111",
+    //   },
+    //   {
+    //     assessment_id: "assessment id 222",
+    //     assessment_title: "assessment title 222",
+    //     assessment_type: "home_fun_study",
+    //     complete_at: 1623979200,
+    //     create_at: 1623979200,
+    //     lesson_plan_name: "lesson plan name 222",
+    //     outcomes: [{ id: "outcome id 2", name: "outcome name 2" }],
+    //     schedule_id: "schedule id 222",
+    //     teacher_feedback: "teacher feedback 222",
+    //   },
+    // ],
   },
 };
 
@@ -914,6 +1046,132 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     };
   }
 );
+export type IParamsQueryLiveClassSummary = Parameters<typeof api.reports.queryLiveClassesSummary>[0];
+export type IResultQueryLiveClassSummary = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;
+export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSummary, IParamsQueryLiveClassSummary & LoadingMetaPayload>(
+  "getLiveClassesSummary",
+  async (query) => {
+    const res = await api.reports.queryLiveClassesSummary({ ...query });
+    return res;
+  }
+);
+
+export type IParamsQueryAssignmentSummary = Parameters<typeof api.reports.queryAssignmentsSummary>[0];
+export type IResultQueryAssignmentSummary = AsyncReturnType<typeof api.reports.queryAssignmentsSummary>;
+export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSummary, IParamsQueryAssignmentSummary & LoadingMetaPayload>(
+  "getAssingmentSummary",
+  async (query) => {
+    const res = await api.reports.queryAssignmentsSummary({ ...query });
+    return res;
+  }
+);
+
+export interface LearningSummaryResponse {
+  year?: number[];
+  week?: IWeeks[];
+  studentList?: Pick<User, "user_id" | "user_name">[];
+  subjectList?: ExternalSubject[];
+}
+
+export const onLoadLearningSummary = createAsyncThunk<
+  LearningSummaryResponse,
+  QueryLearningSummaryCondition & LoadingMetaPayload,
+  { state: RootState }
+>("onLoadLearningSummary", async (query, { getState, dispatch }) => {
+  let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
+  // let liveClassSummary: EntityQueryLiveClassesSummaryResult[] =[];
+  const {
+    report: { learningSummartOptions },
+  } = getState();
+  if (learningSummartOptions.week.length) {
+    const { subject_id } = query;
+    if (subject_id === "all") {
+      await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }));
+      await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
+    } else {
+      await dispatch(getLiveClassesSummary({ ...query }));
+      await dispatch(getAssignmentSummary({ ...query }));
+    }
+
+    return learningSummartOptions;
+  }
+  const week = getWeeks();
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  const perm = hasPermissionOfMe(
+    [
+      PermissionType.report_learning_summary_org_652,
+      PermissionType.report_learning_summary_school_651,
+      PermissionType.report_learning_summary_teacher_650,
+      PermissionType.report_learning_summary_student_649,
+    ],
+    meInfo.me
+  );
+  if (perm.report_learning_summary_org_652) {
+    // todo 拉取所有选项并且 默认置位第一个
+    // 通过org拉取student 可以看到 year week school teacher class student subject
+    const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
+      query: ParticipantsByOrganizationDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    data.organization?.classes?.forEach((classItem) => {
+      studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
+    });
+  } else if (perm.report_learning_summary_school_651) {
+    // 通过school拉取student 可以看到 year week teacher class student subject
+    const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+      query: MySchoolIDsDocument,
+      variables: { organization_id },
+    });
+    if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
+      const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
+        query: ParticipantsBySchoolDocument,
+        variables: {
+          school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
+        },
+      });
+      data.school?.classes?.forEach((classItem) => {
+        studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
+      });
+    }
+  } else if (perm.report_learning_summary_teacher_650) {
+    // 通过classteaching拉取student 可以看到 year week class student subject
+    const { data } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
+      query: ClassesTeachingQueryDocument,
+      variables: {
+        user_id: meInfo.me?.user_id as string,
+        organization_id,
+      },
+    });
+    data.user?.membership?.classesTeaching?.forEach((item) => {
+      studentList = studentList?.concat(item?.students as Pick<User, "user_id" | "user_name">[]);
+    });
+  } else if (perm.report_learning_summary_student_649) {
+    // 不需要拉取student 可以看到 year week  subject
+  }
+  studentList = studentList.map((item) => {
+    return {
+      user_id: item.user_id,
+      user_name: item.user_name,
+    };
+  });
+  console.log(deDuplicate(studentList));
+  const subjectList: ExternalSubject[] = await api.subjects.getSubject();
+  return {
+    studentList: deDuplicate(studentList),
+    subjectList,
+    year: [2021],
+    week,
+  };
+});
+
 interface GetClassListPayload {
   school_id: string;
   teacher_ids: string;
@@ -1080,6 +1338,20 @@ const { reducer } = createSlice({
     },
     [resetReportMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof resetReportMockOptions>>) => {
       state.reportMockOptions = initialState.reportMockOptions;
+    },
+    [onLoadLearningSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadLearningSummary>>) => {
+      if (payload.studentList) {
+        state.learningSummartOptions.studentList = payload.studentList || [];
+        state.learningSummartOptions.subjectList = payload.subjectList || [];
+        state.learningSummartOptions.year = payload.year || [];
+        state.learningSummartOptions.week = payload.week || [];
+      }
+    },
+    [getLiveClassesSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveClassesSummary>>) => {
+      state.liveClassSummary = payload;
+    },
+    [getAssignmentSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentSummary>>) => {
+      state.assignmentSummary = payload;
     },
   },
 });

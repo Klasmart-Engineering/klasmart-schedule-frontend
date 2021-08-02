@@ -175,7 +175,7 @@ function AssignmentTable(props: AssignmentTableProps) {
   ));
   return (
     <div className={css.assignmentTableContainer}>
-      <Typography variant="h5">{title}</Typography>
+      <Typography variant="h6">{title}</Typography>
       <Table className={css.assignmentTable}>
         <TableHead className={css.assignmentTableHeader}>
           <TableRow>

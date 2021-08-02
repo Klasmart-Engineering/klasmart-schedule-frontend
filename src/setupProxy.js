@@ -3,6 +3,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const proxy = {
   [`/${process.env.REACT_APP_BASE_API}`]: {
     changeOrigin: true,
+    headers: { Origin: "https://cms.alpha.kidsloop.net" },
     target: decodeURIComponent(process.env.REACT_APP_BASE_API),
     pathRewrite: {
       [`^/${process.env.REACT_APP_BASE_API}`]: "",
