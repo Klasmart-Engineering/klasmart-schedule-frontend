@@ -150,3 +150,14 @@ export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[])
 export function getAchievementDetailEmptyStatus(data: EntityStudentAchievementReportCategoryItem[]): boolean {
   return data && data.length ? data.every((item) => !item.achieved_items && !item.not_achieved_items && !item.not_attempted_items) : false;
 }
+
+export function deDuplicate(arr: Pick<User, "user_id" | "user_name">[]) {
+  let obj: { [key: string]: boolean } = {};
+  return arr.reduce<Pick<User, "user_id" | "user_name">[]>((item, next) => {
+    if (!obj[next.user_id]) {
+      item.push(next);
+      obj[next.user_id] = true;
+    }
+    return item;
+  }, []);
+}

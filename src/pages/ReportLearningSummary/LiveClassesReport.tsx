@@ -145,53 +145,6 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     padding: "10px 0",
     lineHeight: "22px",
   },
-  // assessmentCon: {
-  //   display: "flex",
-  //   flexDirection: "column",
-  // },
-  // studyCon: {
-  //   flex: 2,
-  // },
-  // homefunStudyCon: {
-  //   flex: 1,
-  // },
-  // liveLessonCon: {
-  //   background: "#8693f0",
-  // },
-  // studyLessonCon: {
-  //   backgroundColor: "#89c4f9",
-  // },
-  // assignmentColor: {
-  //   color: "#89c4f9",
-  // },
-  // studyTitle: {
-  //   fontSize: 18,
-  //   fontWeight: 600,
-  //   color: "#333",
-  //   marginTop: 10,
-  // },
-  // assessmentLessonCon: {
-  //   border: "none",
-  //   paddingTop: 0,
-  //   paddingBottom: 0,
-  //   marginTop: 20,
-  // },
-  // expandCon: {
-  //   textAlign: "center",
-  //   color: "#89c4f9",
-  // },
-  // homeFunLessonWrap: {
-  //   display: "flex",
-  //   alignItems: "center",
-  //   marginTop: 20,
-  // },
-  // homeFunLessonCon: {
-  //   flex: 8,
-  //   paddingLeft: 20,
-  //   height: 48,
-  //   backgroundColor: "#89c4f9",
-  //   lineHeight: "48px",
-  // },
   noDataCon: {
     display: "flex",
     justifyContent: "center",
@@ -220,30 +173,6 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     fontWeight: 600,
     position: "relative",
   },
-  // attentLiveClassColor: {
-  //   color: "#8693f0",
-  // },
-  // absentLiveClassColor: {
-  //   color: "#fe9b9b",
-  // },
-  // attentLiveClassBackColor: {
-  //   backgroundColor: "#8693f0",
-  // },
-  // absentLiveClassBackColor: {
-  //   backgroundColor: "#fe9b9b",
-  // },
-  // completeAssignmentColor: {
-  //   color: "#89c4f9",
-  // },
-  // inCompleteAssignmentColor: {
-  //   color: "#a4ddff",
-  // },
-  // completeAssignmentBackColor: {
-  //   backgroundColor: "#89c4f9",
-  // },
-  // inCompleteAssignmentBackColor: {
-  //   backgroundColor: "#a4ddff",
-  // },
   liveBackImg: {
     backgroundImage: `url(${liveBackUrl})`,
   },
@@ -311,7 +240,6 @@ export interface LiveClassesReportProps extends ReportInfoBaseProps {
 export function LiveClassesReport(props: LiveClassesReportProps) {
   const css = useStyles();
   const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeLessonIndex } = props;
-  console.log(lessonIndex);
   const liveitems = liveClassSummary.items;
   const assessmentitems = assignmentSummary.items;
   const isLive = reportType === ReportType.live;
@@ -486,7 +414,6 @@ export function LiveItem(props: LiveItemProps) {
               <span className={css.lessonPlanName}>{currentData?.lpname}</span>
             </div>
           </div>
-          {/* <Arrow showArrow={showArrow} /> */}
           <div className={css.arrowCon} style={{ visibility: showArrow ? "visible" : "hidden" }}>
             <div
               className={clsx(
@@ -503,18 +430,6 @@ export function LiveItem(props: LiveItemProps) {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-export interface ArrowProps {
-  showArrow: boolean;
-}
-export function Arrow(props: ArrowProps) {
-  const css = useStyles();
-  const { showArrow } = props;
-  return (
-    <div className={css.arrowCon} style={{ visibility: showArrow ? "visible" : "hidden" }}>
-      <div className={css.arrow}></div>
     </div>
   );
 }

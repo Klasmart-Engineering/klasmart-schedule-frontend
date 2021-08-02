@@ -52,7 +52,7 @@ import {
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
-import { ModelReport } from "../models/ModelReports";
+import { deDuplicate, ModelReport } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { getWeeks, IWeeks } from "../pages/ReportLearningSummary";
 import { LearningSummartOptionsProps } from "../pages/ReportLearningSummary/FilterLearningSummary";
@@ -134,104 +134,104 @@ const initialState: IreportState = {
     subjectList: [],
   },
   liveClassSummary: {
-    attend: 0,
-    items: [
-      {
-        absent: false,
-        assessment_id: "111",
-        class_start_time: 1623979200,
-        complete_at: 1623979200,
-        create_at: 1623979200,
-        lesson_plan_name: "lesson plan name 1",
-        outcomes: [],
-        schedule_id: "schedule111",
-        schedule_title: "scheduletitle 111",
-        teacher_feedback: "teacher feedback 111",
-      },
-      {
-        absent: true,
-        assessment_id: "222",
-        class_start_time: 1624001400,
-        complete_at: 1624001400,
-        create_at: 1624001400,
-        lesson_plan_name: "lesson plan name 2",
-        outcomes: [
-          {
-            id: "outcome 111",
-            name: "outcome 111",
-          },
-          {
-            id: "outcome 222",
-            name: "outcome 222",
-          },
-        ],
-        schedule_id: "schedule222",
-        schedule_title: "scheduletitle 222",
-        teacher_feedback: "teacher feedback 222",
-      },
-      {
-        absent: true,
-        assessment_id: "333",
-        class_start_time: 1623897600,
-        complete_at: 1623897600,
-        create_at: 1623897600,
-        lesson_plan_name: "lesson plan name 1",
-        outcomes: [],
-        schedule_id: "schedule333",
-        schedule_title: "scheduletitle 333",
-        teacher_feedback: "teacher feedback 333",
-      },
-      {
-        absent: false,
-        assessment_id: "444",
-        class_start_time: 1623828600,
-        complete_at: 1623828600,
-        create_at: 1623828600,
-        lesson_plan_name: "lesson plan name 1",
-        outcomes: [
-          {
-            id: "outcome 333",
-            name: "outcome 333",
-          },
-          {
-            id: "outcome 444",
-            name: "outcome 444",
-          },
-        ],
-        schedule_id: "schedule444",
-        schedule_title: "scheduletitle 444",
-        teacher_feedback: "teacher feedback 444",
-      },
-    ],
+    // attend: 0,
+    // items: [
+    //   {
+    //     absent: false,
+    //     assessment_id: "111",
+    //     class_start_time: 1623979200,
+    //     complete_at: 1623979200,
+    //     create_at: 1623979200,
+    //     lesson_plan_name: "lesson plan name 1",
+    //     outcomes: [],
+    //     schedule_id: "schedule111",
+    //     schedule_title: "scheduletitle 111",
+    //     teacher_feedback: "teacher feedback 111",
+    //   },
+    //   {
+    //     absent: true,
+    //     assessment_id: "222",
+    //     class_start_time: 1624001400,
+    //     complete_at: 1624001400,
+    //     create_at: 1624001400,
+    //     lesson_plan_name: "lesson plan name 2",
+    //     outcomes: [
+    //       {
+    //         id: "outcome 111",
+    //         name: "outcome 111",
+    //       },
+    //       {
+    //         id: "outcome 222",
+    //         name: "outcome 222",
+    //       },
+    //     ],
+    //     schedule_id: "schedule222",
+    //     schedule_title: "scheduletitle 222",
+    //     teacher_feedback: "teacher feedback 222",
+    //   },
+    //   {
+    //     absent: true,
+    //     assessment_id: "333",
+    //     class_start_time: 1623897600,
+    //     complete_at: 1623897600,
+    //     create_at: 1623897600,
+    //     lesson_plan_name: "lesson plan name 1",
+    //     outcomes: [],
+    //     schedule_id: "schedule333",
+    //     schedule_title: "scheduletitle 333",
+    //     teacher_feedback: "teacher feedback 333",
+    //   },
+    //   {
+    //     absent: false,
+    //     assessment_id: "444",
+    //     class_start_time: 1623828600,
+    //     complete_at: 1623828600,
+    //     create_at: 1623828600,
+    //     lesson_plan_name: "lesson plan name 1",
+    //     outcomes: [
+    //       {
+    //         id: "outcome 333",
+    //         name: "outcome 333",
+    //       },
+    //       {
+    //         id: "outcome 444",
+    //         name: "outcome 444",
+    //       },
+    //     ],
+    //     schedule_id: "schedule444",
+    //     schedule_title: "scheduletitle 444",
+    //     teacher_feedback: "teacher feedback 444",
+    //   },
+    // ],
   },
   assignmentSummary: {
-    home_fun_study_count: 2,
-    study_count: 4,
-    items: [
-      {
-        assessment_id: "assessment id 111",
-        assessment_title: "assessment title 111",
-        assessment_type: "study",
-        complete_at: 1623979200,
-        create_at: 1623979200,
-        lesson_plan_name: "lesson plan name 111",
-        outcomes: [{ id: "outcome id 1", name: "outcome name 1" }],
-        schedule_id: "schedule id 111",
-        status: "complete",
-        teacher_feedback: "teacher feedback 111",
-      },
-      {
-        assessment_id: "assessment id 222",
-        assessment_title: "assessment title 222",
-        assessment_type: "home_fun_study",
-        complete_at: 1623979200,
-        create_at: 1623979200,
-        lesson_plan_name: "lesson plan name 222",
-        outcomes: [{ id: "outcome id 2", name: "outcome name 2" }],
-        schedule_id: "schedule id 222",
-        teacher_feedback: "teacher feedback 222",
-      },
-    ],
+    // home_fun_study_count: 2,
+    // study_count: 4,
+    // items: [
+    //   {
+    //     assessment_id: "assessment id 111",
+    //     assessment_title: "assessment title 111",
+    //     assessment_type: "study",
+    //     complete_at: 1623979200,
+    //     create_at: 1623979200,
+    //     lesson_plan_name: "lesson plan name 111",
+    //     outcomes: [{ id: "outcome id 1", name: "outcome name 1" }],
+    //     schedule_id: "schedule id 111",
+    //     status: "complete",
+    //     teacher_feedback: "teacher feedback 111",
+    //   },
+    //   {
+    //     assessment_id: "assessment id 222",
+    //     assessment_title: "assessment title 222",
+    //     assessment_type: "home_fun_study",
+    //     complete_at: 1623979200,
+    //     create_at: 1623979200,
+    //     lesson_plan_name: "lesson plan name 222",
+    //     outcomes: [{ id: "outcome id 2", name: "outcome name 2" }],
+    //     schedule_id: "schedule id 222",
+    //     teacher_feedback: "teacher feedback 222",
+    //   },
+    // ],
   },
 };
 
@@ -1162,11 +1162,10 @@ export const onLoadLearningSummary = createAsyncThunk<
       user_name: item.user_name,
     };
   });
-  // const res = await api.reports.queryLearningSummaryFilterItems({type: "subject"});
-  // console.log(res)
+  console.log(deDuplicate(studentList));
   const subjectList: ExternalSubject[] = await api.subjects.getSubject();
   return {
-    studentList: Array.from(new Set(studentList)),
+    studentList: deDuplicate(studentList),
     subjectList,
     year: [2021],
     week,

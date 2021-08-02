@@ -6,7 +6,7 @@ import {
   CategoryOutlined,
   ChevronRight,
   InfoOutlined,
-  KeyboardBackspace
+  KeyboardBackspace,
 } from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
@@ -45,6 +45,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     flexWrap: "wrap",
     "&:nth-child(n+4)": {
       marginTop: 32,
+      visibility: "hidden",
     },
   },
   reportItemMb: {
