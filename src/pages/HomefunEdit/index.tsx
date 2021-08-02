@@ -103,6 +103,7 @@ function AssessmentsHomefunEditIner() {
             aria-label="position"
             name="position"
             defaultValue="top"
+            style={{ marginBottom: "20px" }}
           >
             <FormControlLabel
               value="LessonPlan"
@@ -123,6 +124,7 @@ function AssessmentsHomefunEditIner() {
                 </Typography>
               }
               labelPlacement="end"
+              style={{ marginLeft: "8%" }}
             />
           </RadioGroup>
           <Box style={{ display: check === "Assignment" ? "block" : "none" }}>
