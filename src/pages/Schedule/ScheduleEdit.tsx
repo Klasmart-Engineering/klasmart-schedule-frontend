@@ -1634,18 +1634,28 @@ function EditBox(props: CalendarStateProps) {
   }, [scheduleDetial.outcome_ids, setOutcomeIds]);
 
   const getLearingOuctomeData = async (conditionOt: any, loading: boolean) => {
-    await dispatch(
-      actOutcomeList(
-        clearNull({
-          ...conditionOt,
-          [conditionOt.exect_search]: conditionOt.search_key,
-          page_size: 10,
-          exect_search: "",
-          search_key: "",
-          metaLoading: true,
-        })
-      )
-    );
+    const query =
+      conditionOt.exect_search === "all"
+        ? {
+            ...conditionOt,
+            page_size: -1,
+            search_key: conditionOt.search_key,
+            metaLoading: true,
+            exect_search: null,
+            page: null,
+            publish_status: "published",
+          }
+        : {
+            ...conditionOt,
+            [conditionOt.exect_search]: conditionOt.search_key,
+            page_size: -1,
+            exect_search: null,
+            search_key: null,
+            metaLoading: true,
+            page: null,
+            publish_status: "published",
+          };
+    await dispatch(actOutcomeList(clearNull(query)));
   };
 
   const searchOutcomesList = async () => {
@@ -1669,7 +1679,13 @@ function EditBox(props: CalendarStateProps) {
       .map((item) => {
         return item.id;
       });
-    setOutcomeIds(outcome_ids);
+
+    const old_outcome_ids = outComeIds.filter((id) => {
+      return !getValues().content_list.filter((item) => {
+        return item.id === id;
+      }).length;
+    });
+    setOutcomeIds(outcome_ids.concat(old_outcome_ids));
     changeModalDate({ openStatus: false });
   };
 
@@ -1766,7 +1782,7 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
             </FormGroup>
-            {checkedStatus.homeFunCheck && !privilegedMembers("Student") && (
+            {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
               <Button
                 variant="contained"
                 color="primary"

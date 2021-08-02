@@ -325,7 +325,7 @@ function FilterOverall(props: FilterTreeProps) {
       {classDataBySchool.classes.length > 1 && (
         <FilterLabel
           handleChangeClassId={handleChangeClassId}
-          class_name="全部班级"
+          class_name={d("All").t("assess_filter_all")}
           class_id="All"
           showIcon={false}
           handleChangeShowAnyTime={handleChangeShowAnyTime}

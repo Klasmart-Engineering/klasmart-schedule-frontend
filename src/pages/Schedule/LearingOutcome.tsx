@@ -19,11 +19,10 @@ import Paper from "@material-ui/core/Paper";
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import { LearningContentListForm, LearningContentList } from "../../types/scheduleTypes";
 import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { EntityScheduleDetailsView } from "../../api/api.auto";
-import { resetActOutcomeList } from "../../reducers/schedule";
 import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
@@ -101,7 +100,6 @@ interface InfoProps {
 
 export default function LearingOutcome(props: InfoProps) {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const { conditionFormMethods, saveOutcomesList, searchOutcomesList, learingOutcomeData, handleClose, outComeIds, scheduleDetial } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
@@ -159,7 +157,7 @@ export default function LearingOutcome(props: InfoProps) {
         const page = getValues().page + 1;
         if (page > maxPage) return;
         setValue(`page`, page);
-        searchOutcomesList();
+        // searchOutcomesList();
       }
     }
   };
@@ -171,7 +169,7 @@ export default function LearingOutcome(props: InfoProps) {
   };
 
   const checkAssume = (value: boolean) => {
-    dispatch(resetActOutcomeList([]));
+    //  dispatch(resetActOutcomeList([]));
     setValue(`is_assumed`, value);
     setValue(`page`, 1);
     searchOutcomesList();
@@ -179,12 +177,12 @@ export default function LearingOutcome(props: InfoProps) {
 
   const filterCode = [
     { lable: d("All").t("assess_filter_all"), value: "all" },
-    { lable: d("Author").t("assess_label_author"), value: "author" },
-    { lable: d("Short Code").t("assess_label_short_code"), value: "shortCode" },
+    { lable: d("Author").t("assess_label_author"), value: "author_name" },
+    { lable: d("Short Code").t("assess_label_short_code"), value: "shortcode" },
     { lable: d("Description").t("assess_label_description"), value: "description" },
-    { lable: d("Keywords").t("assess_label_keywords"), value: "keyWord" },
-    { lable: d("Learning Outcome Name").t("assess_label_learning_outcome_name"), value: "loName" },
-    { lable: d("Learning Outcome Set").t("assess_set_learning_outcome_set"), value: "loSet" },
+    { lable: d("Keywords").t("assess_label_keywords"), value: "keywords" },
+    { lable: d("Learning Outcome Name").t("assess_label_learning_outcome_name"), value: "outcome_name" },
+    { lable: d("Learning Outcome Set").t("assess_set_learning_outcome_set"), value: "set_name" },
   ];
   const templateOption = filterCode.map((item, index) => {
     return (
@@ -254,7 +252,7 @@ export default function LearingOutcome(props: InfoProps) {
             className={classes.button}
             startIcon={<SearchOutlined />}
             onClick={() => {
-              dispatch(resetActOutcomeList([]));
+              // dispatch(resetActOutcomeList([]));
               setValue(`page`, 1);
               searchOutcomesList();
             }}
