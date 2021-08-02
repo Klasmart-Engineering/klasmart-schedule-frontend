@@ -6,6 +6,7 @@ import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import React, { useMemo, useState } from "react";
 import { EntityQueryLiveClassesSummaryResult } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
 const categoryColors = ["#8693f0", "#fe9b9b", "#A4DDFF", "#CB9BFF", "#8693F0", "#FFA966", "#FB7575", "#9E46FF", "#77DCB7", "#FBD775"];
 const LEGEND_WIDTH = 53;
 const useStyle = makeStyles(({ breakpoints }) => ({
@@ -16,19 +17,25 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     [breakpoints.up("md")]: {
       paddingRight: LEGEND_WIDTH,
     },
+    display: "flex",
   },
   legend: {
-    [breakpoints.up("md")]: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      width: LEGEND_WIDTH,
-    },
-    [breakpoints.down("sm")]: {
-      width: "100%",
-      display: "flex",
-      flexWrap: "wrap",
-    },
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+    // [breakpoints.up("md")]: {
+    //   // position: "absolute",
+    //   // top: 0,
+    //   // right: 0,
+    //   width: LEGEND_WIDTH,
+    // },
+    // [breakpoints.down("sm")]: {
+    //   width: "100%",
+    //   display: "flex",
+    //   flexWrap: "wrap",
+    // },
   },
   legendItem: {
     display: "flex",
@@ -211,24 +218,26 @@ export function PieChart(props: PieChartProps) {
       </g>
     );
   };
-  const dataLegend = ["Attended", "Absent"];
+  const dataLegend = () => [d("Attended").t("report_liveclass_attended"), d("Absent").t("report_liveclass_absent")];
   return (
     <div className={css.chart}>
+      <div style={{ flex: 1 }}>
+        <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
+          <Group top={0.5 * viewPort[3]} left={0.5 * viewPort[2]}>
+            <Pie data={data} pieValue={pieValue} outerRadius={pixels.outerRadius} innerRadius={pixels.innerRadius}>
+              {(pie) => pie.arcs.map((arc) => pieItem({ pie, arc }))}
+            </Pie>
+          </Group>
+        </svg>
+      </div>
       <div className={css.legend}>
-        {dataLegend.map((item, index) => (
+        {dataLegend().map((item, index) => (
           <div className={css.legendItem} key={item}>
             <div className={css.legendIcon} style={{ backgroundColor: categoryColors[index] }} />
             <div className={css.legendTitle}>{item}</div>
           </div>
         ))}
       </div>
-      <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
-        <Group top={0.5 * viewPort[3]} left={0.5 * viewPort[2]}>
-          <Pie data={data} pieValue={pieValue} outerRadius={pixels.outerRadius} innerRadius={pixels.innerRadius}>
-            {(pie) => pie.arcs.map((arc) => pieItem({ pie, arc }))}
-          </Pie>
-        </Group>
-      </svg>
       {tooltipOpen && tooltipData && (
         <Tooltip top={tooltipTop} left={tooltipLeft} offsetTop={0} offsetLeft={0} style={{ position: "absolute" }}>
           <div style={{ ...inlineStyles.tooltip, [tooltipData.yProperty]: 0, [tooltipData.xProperty]: 0 }}>

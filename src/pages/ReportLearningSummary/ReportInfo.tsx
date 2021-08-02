@@ -2,6 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
 import LayoutBox from "../../components/LayoutBox";
+import { d } from "../../locale/LocaleManager";
 import { LiveClassesReport, NoDataCom, RectCom } from "./LiveClassesReport";
 import { PieChart } from "./PieChart";
 import { ReportInfoBaseProps, ReportType } from "./types";
@@ -110,13 +111,13 @@ export function ReportInfo(props: ReportInfoProps) {
         <span className={css.numberWrap} style={{ color: "#a4ddff" }}>
           {assignmentSummary.study_count || 0}
         </span>
-        <span className={css.wordWrap}>{"Study"}</span>
+        <span className={css.wordWrap}>{d("Study").t("schedule_detail_homework")}</span>
       </div>
       <div className={css.studyWrap} style={{ borderLeft: "1px dashed #bcbcbc" }}>
         <span className={css.numberWrap} style={{ color: "#89c4f9" }}>
           {assignmentSummary.home_fun_study_count || 0}
         </span>
-        <span className={css.wordWrap}>{"Home Fun"}</span>
+        <span className={css.wordWrap}>{d("Home Fun").t("schedule_checkbox_home_fun")}</span>
       </div>
     </div>
   );
@@ -129,7 +130,7 @@ export function ReportInfo(props: ReportInfoProps) {
       <div className={css.reportCon}>
         <div className={css.pieCon}>
           <div className={clsx(isLiveClass ? css.leftPieItem : css.leftNotActive)} onClick={handleClickLive}>
-            <RectCom title={"Live Classes"} reportType={ReportType.live} />
+            <RectCom title={d("Live Classes").t("report_tab_live_classes")} reportType={ReportType.live} />
             {liveClassSummary.items && (
               <div className={css.pieWrap}>
                 <PieChart px={1} data={pieData} />
@@ -142,7 +143,7 @@ export function ReportInfo(props: ReportInfoProps) {
             )}
           </div>
           <div className={isLiveClass ? css.rightNoActive : css.rightPieItem} onClick={handleClickAssignment}>
-            <RectCom title={"Assignments"} reportType={ReportType.assignment} />
+            <RectCom title={d("Assessments Completed").t("report_tab_assessments_completed")} reportType={ReportType.assignment} />
             {/* <NoDataCom isPie={false} /> */}
             {assignment}
           </div>

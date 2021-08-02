@@ -51,7 +51,7 @@ enum formatTimeToMonWekType {
 }
 export function formatTimeToMonWek(seconds: number, type?: string) {
   const date = new Date(seconds * 1000);
-  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const weekFullNameArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const month = monthArr[date.getMonth()];

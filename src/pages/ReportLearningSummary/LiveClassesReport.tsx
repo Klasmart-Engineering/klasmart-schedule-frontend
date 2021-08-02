@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { EntityLiveClassSummaryItem } from "../../api/api.auto";
 import liveBackUrl from "../../assets/icons/report_reca.svg";
 import assessmentBackUrl from "../../assets/icons/report_recl.svg";
+import { d } from "../../locale/LocaleManager";
 import { formatTimeToEng, formatTimeToMonWek } from "../../models/ModelReports";
 import { AssignmentSummaryResultItem, LiveClassesSummaryResultItem, ReportInfoBaseProps, ReportType } from "./types";
 const useStyles = makeStyles(({ breakpoints, props }) => ({
@@ -222,12 +223,14 @@ const usePropsStyles = makeStyles(() => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: "#8693f0",
   }),
 }));
 const useLessonStyles = makeStyles(() => ({
   lessonCon: (props: LeftDataProps | undefined) => ({
     background: props?.type ? (props.type === "home_fun_study" ? "#89c4f9" : "#a4ddff") : props?.absent ? "#fe9b9b" : "#8693f0",
+  }),
+  timeCon: (props: LeftDataProps | undefined) => ({
+    color: props?.type ? (props.type === "home_fun_study" ? "#89c4f9" : "#a4ddff") : props?.absent ? "#fe9b9b" : "#8693f0",
   }),
 }));
 export type ReportTypeProps = {
@@ -329,7 +332,7 @@ export function RightCom(props: RightComProps) {
   return (
     <>
       <div className={clsx(css.rightItem)}>
-        <span className={clsx(cssProps.rightItemTitle)}>{"Learning Outcomes Covered"}</span>
+        <span className={clsx(cssProps.rightItemTitle)}>{d("Learning Outcomes Covered").t("report_learning_outcomes_covered")}</span>
         <div className={css.rightItemContent}>
           {outcomes?.length ? (
             outcomes.map((item) => (
@@ -339,17 +342,17 @@ export function RightCom(props: RightComProps) {
               </div>
             ))
           ) : (
-            <div className={cssProps.infoFont}>{"No Data Available"}</div>
+            <div className={cssProps.infoFont}>{d("No Data Available.").t("report_no_data_available")}</div>
           )}
         </div>
       </div>
       <div className={clsx(css.rightItem)}>
-        <span className={clsx(cssProps.rightItemTitle)}>{"Teachers's Feedback"}</span>
+        <span className={clsx(cssProps.rightItemTitle)}>{d("Teacher’s Feedback").t("report_teacher_feedback")}</span>
         <div className={css.rightItemContent}>
           {feedBack ? (
-            <div className={css.teacherFeedback}>{feedBack ? feedBack : "No feedback is available."}</div>
+            <div className={css.teacherFeedback}>{feedBack ? feedBack : d("No feedback is available.").t("report_no_feedback")}</div>
           ) : (
-            <div className={cssProps.infoFont}>{"No Data Available"}</div>
+            <div className={cssProps.infoFont}>{d("No Data Available.").t("report_no_data_available")}</div>
           )}
         </div>
       </div>
@@ -407,7 +410,11 @@ export function LiveItem(props: LiveItemProps) {
       )}
       <div className={css.contentCon}>
         <div className={css.lessonCon}>
-          {<span className={cssProps.timeCon}>{isLive ? formatTimeToEng(currentData?.time || 0, "time") : ""}</span>}
+          {
+            <span className={clsx(cssProps.timeCon, cssLessonProps.timeCon)}>
+              {isLive ? formatTimeToEng(currentData?.time || 0, "time") : ""}
+            </span>
+          }
           <div className={clsx(css.lessonInfoCon, cssLessonProps.lessonCon)} onClick={handleClick}>
             <div className={css.lessonName}>{currentData?.title}</div>
             <div>
@@ -441,7 +448,11 @@ export function NoDataCom(props: NoDataProps) {
   const { isPie, reportType } = props;
   const css = useStyles();
   const cssProps = usePropsStyles({ reportType });
-  return <div className={clsx(css.noDataCon, cssProps.noDataCon, isPie ? css.noDataPieCon : css.noDataSquareCon)}>No Data Available</div>;
+  return (
+    <div className={clsx(css.noDataCon, cssProps.noDataCon, isPie ? css.noDataPieCon : css.noDataSquareCon)}>
+      {d("No Data Available.").t("report_no_data_available")}
+    </div>
+  );
 }
 
 export interface RectProps {

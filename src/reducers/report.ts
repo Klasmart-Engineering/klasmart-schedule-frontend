@@ -1084,15 +1084,16 @@ export const onLoadLearningSummary = createAsyncThunk<
     report: { learningSummartOptions },
   } = getState();
   if (learningSummartOptions.week.length) {
-    const { subject_id } = query;
-    if (subject_id === "all") {
-      await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }));
-      await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
-    } else {
-      await dispatch(getLiveClassesSummary({ ...query }));
-      await dispatch(getAssignmentSummary({ ...query }));
+    const { subject_id, student_id } = query;
+    if (student_id) {
+      if (subject_id === "all") {
+        await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }));
+        await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
+      } else {
+        await dispatch(getLiveClassesSummary({ ...query }));
+        await dispatch(getAssignmentSummary({ ...query }));
+      }
     }
-
     return learningSummartOptions;
   }
   const week = getWeeks();
@@ -1162,7 +1163,6 @@ export const onLoadLearningSummary = createAsyncThunk<
       user_name: item.user_name,
     };
   });
-  console.log(deDuplicate(studentList));
   const subjectList: ExternalSubject[] = await api.subjects.getSubject();
   return {
     studentList: deDuplicate(studentList),
