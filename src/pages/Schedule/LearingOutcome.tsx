@@ -109,10 +109,9 @@ export default function LearingOutcome(props: InfoProps) {
     return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
   }, [outcomeList]);
 
-  const content_lists = (): LearningContentList[] => {
+  const content_lists = useMemo(() => {
     const check: LearningContentList[] = [];
     const unCheck: LearningContentList[] = [];
-    //outComeIds.reverse()
     outComeIds.forEach((id) => {
       const is_exist = content_list.filter((item) => {
         return item.id === id;
@@ -125,7 +124,7 @@ export default function LearingOutcome(props: InfoProps) {
       }
     });
     return check.concat(unCheck);
-  };
+  }, [outComeIds, content_list]);
 
   const handleGoOutcomeDetail = (id: string) => {
     window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
@@ -301,7 +300,7 @@ export default function LearingOutcome(props: InfoProps) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {content_lists().map((item, index) => (
+              {content_lists.map((item, index) => (
                 <Controller
                   key={item.id}
                   name={`content_list[${index}]`}

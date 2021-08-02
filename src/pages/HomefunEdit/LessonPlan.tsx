@@ -27,6 +27,7 @@ import {
   EntityScheduleFeedbackView,
 } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyle = makeStyles((theme) =>
   createStyles({
@@ -97,6 +98,22 @@ export function LessonPlan(props: AssignmentProps) {
     return true;
   };
 
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 16;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
+
   const updateStatus = (value: string, index: number, item: EntityHomeFunStudyOutcome) => {
     setValue(`outcomes[${index}]`, { ...item, status: value });
   };
@@ -104,7 +121,11 @@ export function LessonPlan(props: AssignmentProps) {
   return (
     <div className={css.assignment}>
       <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "-10px 0 10px 0" }}>
-        <Typography variant="h6">{`Learning Outcomes Achievement of ${detail.student_name}`}</Typography>
+        <Typography variant="h6">
+          {d("Learning Outcomes Achievement of {StudentName}").t("assessment_learning_outcomes_achievement", {
+            StudentName: detail.student_name ?? d("Student").t("schedule_time_conflict_student"),
+          })}
+        </Typography>
         <FormControl className={css.margin}>
           <NativeSelect
             id="demo-customized-select-native"
@@ -139,7 +160,9 @@ export function LessonPlan(props: AssignmentProps) {
                 render={({ value, onChange }) => (
                   <TableRow style={{ display: handFilter(value.assumed as boolean) ? "" : "none" }}>
                     <TableCell component="th" scope="row" align="center">
-                      {value.outcome_name}
+                      <Tooltip title={value.outcome_name as string} placement="top-start">
+                        <span>{textEllipsis(value.outcome_name)}</span>
+                      </Tooltip>
                     </TableCell>
                     <TableCell align="center">{value.assumed ? "Yes" : ""}</TableCell>
                     <TableCell align="center" style={{ display: "flex", justifyContent: "center" }}>
