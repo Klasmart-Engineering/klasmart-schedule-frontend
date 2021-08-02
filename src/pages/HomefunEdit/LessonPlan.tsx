@@ -1,16 +1,23 @@
 import {
+  Box,
   createStyles,
   FormControl,
   FormControlLabel,
   makeStyles,
-  withStyles,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   Typography,
+  withStyles,
 } from "@material-ui/core";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormGroup from "@material-ui/core/FormGroup";
+import InputBase from "@material-ui/core/InputBase";
+import NativeSelect from "@material-ui/core/NativeSelect";
+import Paper from "@material-ui/core/Paper";
+import TableContainer from "@material-ui/core/TableContainer";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import {
@@ -19,13 +26,6 @@ import {
   EntityHomeFunStudyOutcome,
   EntityScheduleFeedbackView,
 } from "../../api/api.auto";
-import TableContainer from "@material-ui/core/TableContainer";
-import Paper from "@material-ui/core/Paper";
-import NativeSelect from "@material-ui/core/NativeSelect";
-import InputBase from "@material-ui/core/InputBase";
-import { Box } from "@material-ui/core";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormGroup from "@material-ui/core/FormGroup";
 import { d } from "../../locale/LocaleManager";
 
 const useStyle = makeStyles((theme) =>
@@ -104,7 +104,7 @@ export function LessonPlan(props: AssignmentProps) {
   return (
     <div className={css.assignment}>
       <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "-10px 0 10px 0" }}>
-        <Typography variant="h5">{`Learning Outcomes Achievement of ${detail.student_name}`}</Typography>
+        <Typography variant="h6">{`Learning Outcomes Achievement of ${detail.student_name}`}</Typography>
         <FormControl className={css.margin}>
           <NativeSelect
             id="demo-customized-select-native"
