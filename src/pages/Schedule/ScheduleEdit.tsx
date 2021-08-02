@@ -1685,7 +1685,7 @@ function EditBox(props: CalendarStateProps) {
         return item.id === id;
       }).length;
     });
-    setOutcomeIds(old_outcome_ids.concat(outcome_ids));
+    setOutcomeIds(outcome_ids.concat(old_outcome_ids));
     changeModalDate({ openStatus: false });
   };
 
