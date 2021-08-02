@@ -1,10 +1,10 @@
 import { IntlFormatters, MessageDescriptor } from "react-intl";
 
 type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
-export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es";
+export type LangName = "en" | "ko" | "zh" | "vi" | "id";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id", "es"].includes(name)) throw new TypeError();
+  if (!name || !["en", "ko", "zh", "vi", "id"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -353,6 +353,13 @@ type LangRecord<T = string> =
   | { id: "assess_detail_view_by_lesson_material"; description: "View by Lesson Material"; values: undefined }
   | { id: "assess_detail_all_lesson_materials"; description: "All Lesson Materials"; values: undefined }
   | { id: "assess_detail_please_select_here"; description: "Please select here"; values: undefined }
+  | { id: "assessment_assignment_assessment"; description: "Assignment Assessment"; values: undefined }
+  | { id: "assessment_learning_outcomes_assessment"; description: "Learning Outcomes Assessment"; values: undefined }
+  | {
+      id: "assessment_learning_outcomes_achievement";
+      description: "Learning Outcomes Achievement of {StudentName}";
+      values: { StudentName: string | number };
+    }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -742,6 +749,9 @@ type LangRecord<T = string> =
       description: "This event cannot be deleted because some students already made progress for Study activities.";
       values: undefined;
     }
+  | { id: "schedule_set_learning_outcome"; description: "Set Learning Outcome"; values: undefined }
+  | { id: "schedule_lo_number_added"; description: "Added"; values: undefined }
+  | { id: "schedule_filter_select_all_classes"; description: "Select All Classes"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Overall Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
@@ -797,6 +807,34 @@ type LangRecord<T = string> =
   | { id: "report_button_create_plan"; description: "Create a Lesson Plan"; values: undefined }
   | { id: "report_label_0_hour"; description: "0 Hour"; values: undefined }
   | { id: "report_achieved_lo"; description: "Achieved of All Learning Outcomes"; values: undefined }
+  | { id: "report_learning_summary_report"; description: "Learning Summary Report"; values: undefined }
+  | {
+      id: "report_msg_lsr";
+      description: "This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly.";
+      values: undefined;
+    }
+  | { id: "report_filter_year"; description: "Year"; values: undefined }
+  | { id: "report_filter_week"; description: "Week"; values: undefined }
+  | { id: "report_filter_subject"; description: "Subject"; values: undefined }
+  | { id: "report_filter_class"; description: "Class"; values: undefined }
+  | { id: "report_filter_student"; description: "Student"; values: undefined }
+  | { id: "report_filter_teacher"; description: "Teacher"; values: undefined }
+  | { id: "report_filter_school"; description: "School"; values: undefined }
+  | { id: "report_tab_live_classes"; description: "Live Classes"; values: undefined }
+  | { id: "report_liveclass_attended"; description: "Attended"; values: undefined }
+  | { id: "report_liveclass_absent"; description: "Absent"; values: undefined }
+  | { id: "report_tab_assessments_completed"; description: "Assessments Completed"; values: undefined }
+  | { id: "report_learning_outcomes_covered"; description: "Learning Outcomes Covered"; values: undefined }
+  | { id: "report_no_class"; description: "Please select a class from the list on the left to view the results."; values: undefined }
+  | {
+      id: "report_no_assessment";
+      description: "Please select an assessment from the list on the left to view the results.";
+      values: undefined;
+    }
+  | { id: "report_no_learning_outcome"; description: "No learning outcomes are available."; values: undefined }
+  | { id: "report_teacher_feedback"; description: "Teacher’s Feedback"; values: undefined }
+  | { id: "report_no_feedback"; description: "No feedback is available."; values: undefined }
+  | { id: "report_no_data_available"; description: "No Data Available."; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }
@@ -1217,20 +1255,7 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "h5p_label_coursepresentation_noTitle"; description: "no title"; values: undefined }
-  | { id: "h5p_label_link"; description: "Link"; values: undefined }
-  | { id: "report_learning_summary_report"; description: "Learning Summary Report"; values: undefined }
-  | {
-      id: "report_msg_lsr";
-      description: "This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly";
-      values: undefined;
-    }
-  | { id: "report_filter_year"; description: "Year"; values: undefined }
-  | { id: "report_filter_week"; description: "Week"; values: undefined }
-  | { id: "report_filter_school"; description: "School"; values: undefined }
-  | { id: "report_filter_class"; description: "Class"; values: undefined }
-  | { id: "report_filter_teacher"; description: "Teacher"; values: undefined }
-  | { id: "report_filter_student"; description: "Student"; values: undefined }
-  | { id: "report_filter_subject"; description: "Subject"; values: undefined };
+  | { id: "h5p_label_link"; description: "Link"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

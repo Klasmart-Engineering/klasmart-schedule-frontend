@@ -328,7 +328,7 @@ function FilterOverall(props: FilterTreeProps) {
       {classDataBySchool.classes.length > 1 && (
         <FilterLabel
           handleChangeClassId={handleChangeClassId}
-          class_name={d("All").t("assess_filter_all")}
+          class_name={d("Select All Classes").t("schedule_filter_select_all_classes")}
           class_id="All"
           showIcon={false}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
