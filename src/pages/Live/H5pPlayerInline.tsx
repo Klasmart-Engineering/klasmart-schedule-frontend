@@ -124,8 +124,8 @@ export const H5pPlayerInline = memo((props: H5pPlayerInlineProps) => {
         local_library_version,
         local_content_id: libraryContentId,
       };
-      console.log(resultInfo);
       // dispatch(h5pEvent(resultInfo));
+      console.log(resultInfo);
     } else {
       if (!statement) return;
       const info = { ...baseInfo, ...extractH5pStatement(statement) };

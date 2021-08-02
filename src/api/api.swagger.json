@@ -5,7 +5,6 @@
     "title": "KidsLoop 2.0 REST API",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {},
-    "license": {},
     "version": "1.0.0"
   },
   "host": "https://kl2-test.kidsloop.net/v1",
@@ -5199,10 +5198,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.QueryAssignmentsSummaryResult"
-              }
+              "$ref": "#/definitions/entity.QueryAssignmentsSummaryResult"
             }
           },
           "400": {
@@ -5379,10 +5375,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.QueryLiveClassesSummaryResult"
-              }
+              "$ref": "#/definitions/entity.QueryLiveClassesSummaryResult"
             }
           },
           "400": {
@@ -7560,7 +7553,9 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "409": {},
+          "409": {
+            "description": ""
+          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -7590,7 +7585,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -7726,7 +7723,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -7762,7 +7761,9 @@
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": ""
+          },
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -7862,7 +7863,16 @@
   },
   "definitions": {
     "api.BadRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.BulkBindOutcomeSetRequest": {
       "type": "object",
@@ -7890,7 +7900,16 @@
       }
     },
     "api.ConflictResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.CreateContentResponse": {
       "type": "object",
@@ -7942,7 +7961,16 @@
       }
     },
     "api.ForbiddenResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.ForgottenPasswordRequest": {
       "type": "object",
@@ -7984,7 +8012,16 @@
       }
     },
     "api.InternalServerErrorResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.LoginRequest": {
       "type": "object",
@@ -8009,7 +8046,16 @@
       }
     },
     "api.NotFoundResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.OrganizationRegionInfoResponse": {
       "type": "object",
@@ -8110,18 +8156,6 @@
         }
       }
     },
-    "api.Response": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object"
-        },
-        "label": {
-          "type": "string",
-          "example": "unknown"
-        }
-      }
-    },
     "api.SendCodeRequest": {
       "type": "object",
       "properties": {
@@ -8158,7 +8192,16 @@
       }
     },
     "api.SuccessRequestResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.TokenResponse": {
       "type": "object",
@@ -8169,7 +8212,16 @@
       }
     },
     "api.UnAuthorizedResponse": {
-      "$ref": "#/definitions/api.Response"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "label": {
+          "type": "string",
+          "example": "unknown"
+        }
+      }
     },
     "api.contentBulkOperateRequest": {
       "type": "object",
@@ -8267,7 +8319,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentClass"
         },
         "class_end_time": {
@@ -8289,7 +8340,6 @@
           }
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentDetailContent"
         },
         "outcomes": {
@@ -8299,7 +8349,6 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "remaining_time": {
@@ -8309,7 +8358,6 @@
           "type": "string"
         },
         "schedule": {
-          "type": "object",
           "$ref": "#/definitions/entity.Schedule"
         },
         "status": {
@@ -8409,11 +8457,9 @@
           "type": "string"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentLessonPlan"
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentProgram"
         },
         "status": {
@@ -8576,7 +8622,7 @@
         }
       }
     },
-    "entity.AssignmentsSummaryHomeFunStudyItem": {
+    "entity.AssignmentsSummaryItem": {
       "type": "object",
       "properties": {
         "assessment_id": {
@@ -8585,32 +8631,16 @@
         "assessment_title": {
           "type": "string"
         },
-        "outcomes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.LearningSummaryOutcome"
-          }
+        "assessment_type": {
+          "type": "string",
+          "enum": ["class", "live", "study", "home_fun_study"]
         },
-        "schedule_id": {
-          "description": "for debug",
-          "type": "string"
+        "complete_at": {
+          "description": "for sorting",
+          "type": "integer"
         },
-        "status": {
-          "type": "string"
-        },
-        "teacher_feedback": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.AssignmentsSummaryStudyItem": {
-      "type": "object",
-      "properties": {
-        "assessment_id": {
-          "type": "string"
-        },
-        "assessment_title": {
-          "type": "string"
+        "create_at": {
+          "type": "integer"
         },
         "lesson_plan_name": {
           "type": "string"
@@ -8626,7 +8656,8 @@
           "type": "string"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": ["in_progress", "complete"]
         },
         "teacher_feedback": {
           "type": "string"
@@ -8770,7 +8801,6 @@
           }
         },
         "permission": {
-          "type": "object",
           "$ref": "#/definitions/entity.ContentPermission"
         },
         "program": {
@@ -9087,7 +9117,6 @@
           }
         },
         "permission": {
-          "type": "object",
           "$ref": "#/definitions/entity.ContentPermission"
         },
         "program": {
@@ -9434,7 +9463,6 @@
           "type": "string"
         },
         "permission": {
-          "type": "object",
           "$ref": "#/definitions/entity.ContentPermission"
         },
         "publish_status": {
@@ -9755,7 +9783,6 @@
           "type": "integer"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentLessonPlan"
         },
         "schedule_id": {
@@ -9832,7 +9859,6 @@
           "type": "string"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.AssessmentLessonPlan"
         },
         "remaining_time": {
@@ -9865,6 +9891,13 @@
         "class_start_time": {
           "type": "integer"
         },
+        "complete_at": {
+          "description": "for sorting",
+          "type": "integer"
+        },
+        "create_at": {
+          "type": "integer"
+        },
         "lesson_plan_name": {
           "type": "string"
         },
@@ -9882,7 +9915,8 @@
           "type": "string"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": ["in_progress", "complete"]
         },
         "teacher_feedback": {
           "type": "string"
@@ -10202,20 +10236,17 @@
     "entity.QueryAssignmentsSummaryResult": {
       "type": "object",
       "properties": {
-        "completed": {
-          "type": "number"
+        "home_fun_study_count": {
+          "type": "integer"
         },
-        "home_fun_study_items": {
+        "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.AssignmentsSummaryHomeFunStudyItem"
+            "$ref": "#/definitions/entity.AssignmentsSummaryItem"
           }
         },
-        "study_items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.AssignmentsSummaryStudyItem"
-          }
+        "study_count": {
+          "type": "integer"
         }
       }
     },
@@ -10303,7 +10334,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -10330,7 +10360,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -10357,11 +10386,9 @@
       "type": "object",
       "properties": {
         "daily": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatDaily"
         },
         "monthly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatMonthly"
         },
         "type": {
@@ -10369,11 +10396,9 @@
           "enum": ["daily", "weekly", "monthly", "yearly"]
         },
         "weekly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatWeekly"
         },
         "yearly": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatYearly"
         }
       }
@@ -10382,7 +10407,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -10401,7 +10425,6 @@
       "type": "object",
       "properties": {
         "end": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatEnd"
         },
         "interval": {
@@ -10584,7 +10607,6 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -10655,7 +10677,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "start_at": {
@@ -10682,11 +10703,9 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "class_roster_students": {
@@ -10706,8 +10725,10 @@
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "class_type_label": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "complete_assessment": {
+          "type": "boolean"
         },
         "description": {
           "type": "string"
@@ -10740,7 +10761,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "org_id": {
@@ -10765,15 +10785,12 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "real_time_status": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleRealTimeView"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "role_type": {
@@ -10921,7 +10938,6 @@
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "class_type_label": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "complete_assessment": {
@@ -10998,7 +11014,6 @@
       "type": "object",
       "properties": {
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
         "end_at": {
@@ -11008,7 +11023,6 @@
           "type": "string"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "member_teachers": {
@@ -11018,7 +11032,6 @@
           }
         },
         "program": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "start_at": {
@@ -11121,7 +11134,6 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
@@ -11195,7 +11207,6 @@
           "type": "string"
         },
         "repeat": {
-          "type": "object",
           "$ref": "#/definitions/entity.RepeatOptions"
         },
         "repeat_edit_options": {
@@ -11226,22 +11237,18 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_id": {
           "type": "string"
         },
         "class_type": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "class_type_label": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleShortInfo"
         },
         "complete_assessment": {
@@ -11276,7 +11283,6 @@
           "type": "boolean"
         },
         "lesson_plan": {
-          "type": "object",
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
         "lesson_plan_id": {
@@ -11470,23 +11476,9 @@
           "type": "string"
         },
         "schedule": {
-          "type": "object",
           "$ref": "#/definitions/entity.StudentAssessmentSchedule"
         },
         "score": {
-          "type": "integer"
-        },
-        "status": {
-          "type": "string"
-        },
-        "teacher": {
-          "type": "object",
-          "$ref": "#/definitions/entity.StudentAssessmentTeacher"
-        },
-        "title": {
-          "type": "string"
-        },
-        "update_at": {
           "type": "integer"
         }
       }
@@ -11497,8 +11489,17 @@
         "id": {
           "type": "string"
         },
-        "name": {
+        "status": {
           "type": "string"
+        },
+        "teacher": {
+          "$ref": "#/definitions/entity.StudentAssessmentTeacher"
+        },
+        "title": {
+          "type": "string"
+        },
+        "update_at": {
+          "type": "integer"
         }
       }
     },
@@ -11506,7 +11507,6 @@
       "type": "object",
       "properties": {
         "attachment": {
-          "type": "object",
           "$ref": "#/definitions/entity.StudentAssessmentAttachment"
         },
         "id": {
@@ -12067,7 +12067,6 @@
           "type": "string"
         },
         "author": {
-          "type": "object",
           "$ref": "#/definitions/model.AuthorView"
         },
         "category": {
@@ -12125,7 +12124,6 @@
           "type": "string"
         },
         "organization": {
-          "type": "object",
           "$ref": "#/definitions/model.OrganizationView"
         },
         "outcome_ancestor_ids": {

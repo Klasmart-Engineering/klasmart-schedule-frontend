@@ -8,7 +8,7 @@ import {
   OrganizationsQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
-  QeuryMeQueryVariables,
+  QeuryMeQueryVariables
 } from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
@@ -18,7 +18,7 @@ import {
   EntityFolderContentData,
   EntityFolderItemInfo,
   EntityOrganizationInfo,
-  EntityOrganizationProperty,
+  EntityOrganizationProperty
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import {
@@ -28,7 +28,7 @@ import {
   GetOutcomeList,
   OutcomePublishStatus,
   PublishStatus,
-  SearchContentsRequestContentType,
+  SearchContentsRequestContentType
 } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";

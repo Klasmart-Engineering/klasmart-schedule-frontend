@@ -177,7 +177,7 @@ function MilestoneRow(props: MilestoneProps) {
           <LightTooltip
             title={
               <>
-                <div className={clsx(css.lockInfoWrap, css.lockTitle)}>In-lock Status</div>
+                <div className={clsx(css.lockInfoWrap, css.lockTitle)}>{d("Lock Status").t("assess_in_lock_status")}</div>
                 <div className={css.lockInfoWrap}>
                   <span>{d("Last edited by").t("assess_last_edited_by")}: </span>
                   <span className={css.lightGrayColor}>{milestone.last_edited_by}</span>
