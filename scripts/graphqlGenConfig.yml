@@ -1,5 +1,5 @@
 overwrite: true
-schema: "https://api.kidsloop.net/user/"
+schema: "https://api.alpha.kidsloop.net/user/"
 documents: "src/api/*.gql"
 generates:
   src/api/api-ko-schema.auto.ts:

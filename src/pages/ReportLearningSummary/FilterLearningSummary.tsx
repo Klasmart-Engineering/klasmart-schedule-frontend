@@ -5,6 +5,7 @@ import { IWeeks } from ".";
 import { User } from "../../api/api-ko-schema.auto";
 import { ExternalSubject } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { t } from "../../locale/LocaleManager";
 import { QueryLearningSummaryConditionBaseProps } from "./types";
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
@@ -36,13 +37,12 @@ export interface FilterLearningSummaryProps extends QueryLearningSummaryConditio
 }
 export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   const css = useStyles();
-  // const perm = usePermission([
-  //   PermissionType.report_learning_summary_org_652,
-  //   PermissionType.report_learning_summary_school_651,
-  //   PermissionType.report_learning_summary_teacher_650,
-  //   PermissionType.report_learning_summary_student_649,
-  // ]);
-  // console.log(perm)
+  const perm = usePermission([
+    PermissionType.report_learning_summary_org_652,
+    PermissionType.report_learning_summary_school_651,
+    PermissionType.report_learning_summary_teacher_650,
+    PermissionType.report_learning_summary_student_649,
+  ]);
   const { value, defaultWeeksValue, learningSummartOptions, onChange } = props;
   const { year, week, studentList, subjectList } = learningSummartOptions;
   const getYear = () => {
@@ -172,17 +172,21 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
           >
             {getYear()}
           </TextField> */}
-          <TextField
-            size="small"
-            className={css.selectButton}
-            onChange={handleChangeStudent}
-            label={t("report_filter_student")}
-            value={value.student_id}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getStudent()}
-          </TextField>
+          {(perm.report_learning_summary_org_652 ||
+            perm.report_learning_summary_school_651 ||
+            perm.report_learning_summary_teacher_650) && (
+            <TextField
+              size="small"
+              className={css.selectButton}
+              onChange={handleChangeStudent}
+              label={t("report_filter_student")}
+              value={value.student_id}
+              select
+              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+            >
+              {getStudent()}
+            </TextField>
+          )}
           <TextField
             size="small"
             className={css.selectButton}

@@ -103,7 +103,10 @@ export function ReportInfo(props: ReportInfoProps) {
   const css = useStyles();
   const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeReportType, onChangeLessonIndex } = props;
   const attend = liveClassSummary?.attend ? liveClassSummary.attend * 100 : 0;
-  const pieData = [attend, 100 - attend];
+  const pieData = [
+    { name: "attended", value: attend },
+    { name: "Absent", value: 100 - attend },
+  ];
   const isLiveClass = reportType === ReportType.live;
   const assignment = (
     <div className={css.assignmentWrap}>
