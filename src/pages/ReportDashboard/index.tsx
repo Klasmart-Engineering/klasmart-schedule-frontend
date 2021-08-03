@@ -154,9 +154,14 @@ export function ReportDashboard() {
     PermissionType.view_my_reports_614,
     PermissionType.view_my_organizations_reports_612,
     PermissionType.view_my_school_reports_611,
+    PermissionType.learning_summary_report_653,
   ]);
   const hasPerm =
-    perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organizations_reports_612 || perm.view_my_school_reports_611;
+    perm.view_reports_610 ||
+    perm.view_my_reports_614 ||
+    perm.view_my_organizations_reports_612 ||
+    perm.view_my_school_reports_611 ||
+    perm.learning_summary_report_653;
   const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
   return (
     <Fragment>
