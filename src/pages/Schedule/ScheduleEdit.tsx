@@ -1671,21 +1671,8 @@ function EditBox(props: CalendarStateProps) {
     await getLearingOuctomeData(condition, isLoading);
   };
 
-  const saveOutcomesList = () => {
-    const outcome_ids = getValues()
-      .content_list.filter((item) => {
-        return item.select;
-      })
-      .map((item) => {
-        return item.id;
-      });
-
-    const old_outcome_ids = outComeIds.filter((id) => {
-      return !getValues().content_list.filter((item) => {
-        return item.id === id;
-      }).length;
-    });
-    setOutcomeIds(outcome_ids.concat(old_outcome_ids));
+  const saveOutcomesList = (value: string[]) => {
+    setOutcomeIds(value);
     changeModalDate({ openStatus: false });
   };
 

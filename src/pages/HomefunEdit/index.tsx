@@ -41,6 +41,7 @@ function AssessmentsHomefunEditIner() {
   const formMethods = useForm<EntityAssessHomeFunStudyArgs>();
   const { handleSubmit } = formMethods;
   const editable = hasPermissionOfHomefun && homefunDetail.status === AssessmentStatus.in_progress;
+  const isComplete = homefunDetail.status === AssessmentStatus.complete;
   const handleAssessmentSaveOrComplete = (action: AssessmentUpdateAction, message: string) =>
     handleSubmit(async (value) => {
       if (!id) return;
@@ -138,6 +139,7 @@ function AssessmentsHomefunEditIner() {
                 formMethods={formMethods}
                 editable={editable}
                 outcomesList={homefunDetail.outcomes}
+                isComplete={isComplete}
               />
             )}
             {(!homefunDetail.outcomes || homefunDetail.outcomes.length < 1) && <NoOutcome />}

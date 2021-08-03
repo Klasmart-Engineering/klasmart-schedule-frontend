@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
 
 interface InfoProps {
   conditionFormMethods: UseFormMethods<LearningContentListForm>;
-  saveOutcomesList: () => void;
+  saveOutcomesList: (value: string[]) => void;
   searchOutcomesList: () => void;
   learingOutcomeData: LearningContentListForm;
   handleClose: () => void;
@@ -103,7 +103,7 @@ export default function LearingOutcome(props: InfoProps) {
   const { conditionFormMethods, saveOutcomesList, searchOutcomesList, learingOutcomeData, handleClose, outComeIds, scheduleDetial } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
-  const [selectNum, setSelectNum] = React.useState<number>(outComeIds.length);
+  const [selectIds, setSelectIds] = React.useState<string[]>(outComeIds);
   const { outcomeList, outcomeTotal } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const content_list = useMemo(() => {
     return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
@@ -120,11 +120,11 @@ export default function LearingOutcome(props: InfoProps) {
     });
     content_list.forEach((item) => {
       if (!outComeIds.includes(item.id)) {
-        unCheck.push({ ...item, select: false });
+        unCheck.push({ ...item, select: selectIds.includes(item.id) });
       }
     });
     return check.concat(unCheck);
-  }, [outComeIds, content_list]);
+  }, [outComeIds, selectIds, content_list]);
 
   const handleGoOutcomeDetail = (id: string) => {
     window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");
@@ -163,8 +163,13 @@ export default function LearingOutcome(props: InfoProps) {
 
   const getSelectStatus = (index: number, item: LearningContentList) => {
     setValue(`content_list[${index}]`, { ...item, select: !item.select });
-    const num = getValues().content_list.filter((item) => item.select).length;
-    setSelectNum(num);
+    if (!item.select) {
+      const data = [...selectIds, item.id];
+      setSelectIds(data);
+    } else {
+      const data = selectIds.filter((id) => id !== item.id);
+      setSelectIds(data);
+    }
   };
 
   const checkAssume = (value: boolean) => {
@@ -256,7 +261,7 @@ export default function LearingOutcome(props: InfoProps) {
               searchOutcomesList();
             }}
           >
-            Search
+            {d("Search").t("library_label_search")}
           </Button>
         </div>
         <Controller
@@ -367,7 +372,7 @@ export default function LearingOutcome(props: InfoProps) {
             marginLeft: "20px",
           }}
         >
-          {selectNum} Added
+          {selectIds.length} {d("Added").t("schedule_lo_number_added")}
         </span>
         <div>
           <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={handleClose}>
@@ -375,7 +380,9 @@ export default function LearingOutcome(props: InfoProps) {
           </Button>
           <Button
             disabled={scheduleDetial.complete_assessment}
-            onClick={saveOutcomesList}
+            onClick={() => {
+              saveOutcomesList(selectIds);
+            }}
             variant="contained"
             size="large"
             color="primary"
