@@ -75,8 +75,8 @@ export type ClassesByOrganizationQuery = { __typename?: "Query" } & {
           Types.Maybe<
             { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                 schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
-                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
-                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
               }
           >
         >
@@ -227,8 +227,8 @@ export type ClassesBySchoolQuery = { __typename?: "Query" } & {
           Types.Maybe<
             { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                 schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
-                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
-                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
               }
           >
         >
@@ -359,7 +359,7 @@ export type ClassesTeachingQueryQuery = { __typename?: "Query" } & {
                 { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                     schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
                     teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
-                    students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                    students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
                   }
               >
             >
@@ -385,8 +385,8 @@ export type ClassesStudentQueryQuery = { __typename?: "Query" } & {
               Types.Maybe<
                 { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                     schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
-                    teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
-                    students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>>;
+                    teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
+                    students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
                   }
               >
             >
@@ -418,10 +418,10 @@ export type SchoolByUserQueryQuery = { __typename?: "Query" } & {
                             Types.Maybe<
                               { __typename?: "Class" } & Pick<Types.Class, "status" | "class_id" | "class_name"> & {
                                   teachers?: Types.Maybe<
-                                    Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>
+                                    Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>
                                   >;
                                   students?: Types.Maybe<
-                                    Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "username">>>
+                                    Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>
                                   >;
                                 }
                             >
@@ -555,6 +555,30 @@ export type SchoolAndTeacherByOrgQuery = { __typename?: "Query" } & {
           >
         >
       >;
+    }
+  >;
+};
+
+export type SchoolByOrganizationQueryVariables = Types.Exact<{
+  organization_id?: Types.Maybe<Types.Scalars["ID"]>;
+}>;
+
+export type SchoolByOrganizationQuery = { __typename?: "Query" } & {
+  organization?: Types.Maybe<
+    { __typename?: "Organization" } & {
+      schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+    }
+  >;
+};
+
+export type ClassBySchoolQueryVariables = Types.Exact<{
+  school_id?: Types.Maybe<Types.Scalars["ID"]>;
+}>;
+
+export type ClassBySchoolQuery = { __typename?: "Query" } & {
+  school?: Types.Maybe<
+    { __typename?: "School" } & {
+      classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">>>>;
     }
   >;
 };
@@ -712,11 +736,11 @@ export const ClassesByOrganizationDocument = gql`
         }
         teachers {
           user_id
-          username
+          user_name
         }
         students {
           user_id
-          username
+          user_name
         }
       }
     }
@@ -1029,11 +1053,11 @@ export const ClassesBySchoolDocument = gql`
         }
         teachers {
           user_id
-          username
+          user_name
         }
         students {
           user_id
-          username
+          user_name
         }
       }
     }
@@ -1248,7 +1272,7 @@ export const ClassesTeachingQueryDocument = gql`
           }
           students {
             user_id
-            username
+            user_name
           }
         }
       }
@@ -1302,11 +1326,11 @@ export const ClassesStudentQueryDocument = gql`
           }
           teachers {
             user_id
-            username
+            user_name
           }
           students {
             user_id
-            username
+            user_name
           }
         }
       }
@@ -1360,11 +1384,11 @@ export const SchoolByUserQueryDocument = gql`
               class_name
               teachers {
                 user_id
-                username
+                user_name
               }
               students {
                 user_id
-                username
+                user_name
               }
             }
           }
@@ -1620,3 +1644,83 @@ export function useSchoolAndTeacherByOrgLazyQuery(
 export type SchoolAndTeacherByOrgQueryHookResult = ReturnType<typeof useSchoolAndTeacherByOrgQuery>;
 export type SchoolAndTeacherByOrgLazyQueryHookResult = ReturnType<typeof useSchoolAndTeacherByOrgLazyQuery>;
 export type SchoolAndTeacherByOrgQueryResult = Apollo.QueryResult<SchoolAndTeacherByOrgQuery, SchoolAndTeacherByOrgQueryVariables>;
+export const SchoolByOrganizationDocument = gql`
+  query schoolByOrganization($organization_id: ID = "92db7ddd-1f23-4f64-bd47-94f6d34a50c0") {
+    organization(organization_id: $organization_id) {
+      schools {
+        school_id
+        school_name
+      }
+    }
+  }
+`;
+
+/**
+ * __useSchoolByOrganizationQuery__
+ *
+ * To run a query within a React component, call `useSchoolByOrganizationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSchoolByOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSchoolByOrganizationQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useSchoolByOrganizationQuery(
+  baseOptions?: Apollo.QueryHookOptions<SchoolByOrganizationQuery, SchoolByOrganizationQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SchoolByOrganizationQuery, SchoolByOrganizationQueryVariables>(SchoolByOrganizationDocument, options);
+}
+export function useSchoolByOrganizationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SchoolByOrganizationQuery, SchoolByOrganizationQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SchoolByOrganizationQuery, SchoolByOrganizationQueryVariables>(SchoolByOrganizationDocument, options);
+}
+export type SchoolByOrganizationQueryHookResult = ReturnType<typeof useSchoolByOrganizationQuery>;
+export type SchoolByOrganizationLazyQueryHookResult = ReturnType<typeof useSchoolByOrganizationLazyQuery>;
+export type SchoolByOrganizationQueryResult = Apollo.QueryResult<SchoolByOrganizationQuery, SchoolByOrganizationQueryVariables>;
+export const ClassBySchoolDocument = gql`
+  query classBySchool($school_id: ID = "5f848fdc-3bbd-47ae-981a-57ae95cf4235") {
+    school(school_id: $school_id) {
+      classes {
+        class_id
+        class_name
+      }
+    }
+  }
+`;
+
+/**
+ * __useClassBySchoolQuery__
+ *
+ * To run a query within a React component, call `useClassBySchoolQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClassBySchoolQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClassBySchoolQuery({
+ *   variables: {
+ *      school_id: // value for 'school_id'
+ *   },
+ * });
+ */
+export function useClassBySchoolQuery(baseOptions?: Apollo.QueryHookOptions<ClassBySchoolQuery, ClassBySchoolQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ClassBySchoolQuery, ClassBySchoolQueryVariables>(ClassBySchoolDocument, options);
+}
+export function useClassBySchoolLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ClassBySchoolQuery, ClassBySchoolQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ClassBySchoolQuery, ClassBySchoolQueryVariables>(ClassBySchoolDocument, options);
+}
+export type ClassBySchoolQueryHookResult = ReturnType<typeof useClassBySchoolQuery>;
+export type ClassBySchoolLazyQueryHookResult = ReturnType<typeof useClassBySchoolLazyQuery>;
+export type ClassBySchoolQueryResult = Apollo.QueryResult<ClassBySchoolQuery, ClassBySchoolQueryVariables>;

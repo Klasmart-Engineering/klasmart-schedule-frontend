@@ -5,7 +5,6 @@ import Pie, { PieArcDatum, ProvidedProps } from "@visx/shape/lib/shapes/Pie";
 import { Text } from "@visx/text";
 import { Tooltip, useTooltip } from "@visx/tooltip";
 import React, { useMemo, useState } from "react";
-import { EntityQueryLiveClassesSummaryResult } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 const categoryColors = ["#8693f0", "#fe9b9b", "#A4DDFF", "#CB9BFF", "#8693F0", "#FFA966", "#FB7575", "#9E46FF", "#77DCB7", "#FBD775"];
 const LEGEND_WIDTH = 53;
@@ -13,18 +12,27 @@ const useStyle = makeStyles(({ breakpoints }) => ({
   chart: {
     // marginTop: 24,
     // marginBottom: 300,
+    width: "100%",
+    height: "100%",
     position: "relative",
+    boxSizing: "border-box",
     [breakpoints.up("md")]: {
       paddingRight: LEGEND_WIDTH,
     },
     display: "flex",
   },
-  legend: {
-    flex: 1,
+  pieCon: {
+    flex: 3,
     display: "flex",
     alignItems: "center",
-    flexDirection: "column",
+    justifyContent: "flex-end",
+  },
+  legend: {
+    flex: 2,
+    display: "flex",
+    alignItems: "flex-start",
     justifyContent: "center",
+    flexDirection: "column",
     // [breakpoints.up("md")]: {
     //   // position: "absolute",
     //   // top: 0,
@@ -41,22 +49,25 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     display: "flex",
     alignItems: "center",
     marginBottom: 12,
-    width: LEGEND_WIDTH,
+    width: "100%",
+    marginLeft: 65,
     [breakpoints.down("sm")]: {
       marginRight: 24,
       width: "auto",
       height: 25,
     },
   },
+
   legendIcon: {
-    width: 32,
-    height: 20,
+    width: 53,
+    height: 25,
     marginRight: 12,
   },
   legendTitle: {
-    width: LEGEND_WIDTH - 32 - 12,
+    width: "calc(100% - 118px)",
     fontSize: 14,
     fontWeight: "lighter",
+    textAlign: "left",
     lineHeight: 20 / 16,
     [breakpoints.down("sm")]: {
       width: "auto",
@@ -123,12 +134,17 @@ const getPixels = (px: number) => ({
 //   attend?: number;
 //   items?: EntityLiveClassSummaryItem[];
 // }
-const mapRatio = (data: number[]): RatioExtendedEntityTeacherReportCategory[] => {
-  const sum = data.reduce((r, item) => r + (item || 0), 0);
+
+export interface PieDataProps {
+  name: string;
+  value: number;
+}
+const mapRatio = (data: PieDataProps[]): RatioExtendedEntityTeacherReportCategory[] => {
+  const sum = data.reduce((r, item) => r + (item.value || 0), 0);
   return data.map((item) => {
     return {
-      item,
-      items_ratio: sum === 0 ? 0 : (item || 0) / sum,
+      ...item,
+      items_ratio: sum === 0 ? 0 : (item.value || 0) / sum,
     };
   });
 };
@@ -143,14 +159,14 @@ const computed = (props: PieChartProps) => {
     // 2 * (pixels.viewMargin + pixels.tooltipWidth + pixels.tooltipMargin + pixels.outerRadius),
     // 2 * (pixels.viewMargin + pixels.outerRadius),
   ];
-  const colorScale = scaleOrdinal({ domain: data.map((item) => item), range: categoryColors.slice(0, data.length) });
+  const colorScale = scaleOrdinal({ domain: data.map((item) => item.name), range: categoryColors.slice(0, data.length) });
   const radiusScale = (radius: number) => (2 * radius) / (pixels.outerRadius + pixels.innerRadius);
   const pieValue = (item: RatioExtendedEntityTeacherReportCategory) => item.items_ratio;
   return { viewPort, colorScale, pieValue, radiusScale };
 };
 const sig = (x: boolean) => (x ? 1 : -1);
 export interface PieChartProps {}
-interface RatioExtendedEntityTeacherReportCategory extends EntityQueryLiveClassesSummaryResult {
+interface RatioExtendedEntityTeacherReportCategory extends PieDataProps {
   items_ratio: number;
 }
 interface PieItemProps {
@@ -159,7 +175,7 @@ interface PieItemProps {
 }
 export interface PieChartProps {
   px: number;
-  data: number[];
+  data: PieDataProps[];
 }
 interface TooltipData {
   yProperty: "top" | "bottom";
@@ -202,7 +218,7 @@ export function PieChart(props: PieChartProps) {
       <g key={arc.index}>
         <path
           d={pie.path({ ...arc }) || undefined}
-          fill={colorScale(arc.index)}
+          fill={colorScale(arc.data.name)}
           onMouseOver={showPieTooltip}
           onMouseLeave={() => {
             hideTooltip();
@@ -212,8 +228,8 @@ export function PieChart(props: PieChartProps) {
         <Text x={centroidX} y={centroidY} style={inlineStyles.pieText}>
           {arc.data.items_ratio < 0.05 ? "" : (100 * arc.data.items_ratio).toFixed(1) + "%"}
         </Text>
-        {activeCategoryName === "" && (
-          <path d={`M${x0},${y0} L${x1},${y1} H${x2}`} stroke={colorScale(arc.index)} {...inlineStyles.tooltipLinker} />
+        {activeCategoryName === "none" && (
+          <path d={`M${x0},${y0} L${x1},${y1} H${x2}`} stroke={colorScale(arc.data.name)} {...inlineStyles.tooltipLinker} />
         )}
       </g>
     );
@@ -221,7 +237,7 @@ export function PieChart(props: PieChartProps) {
   const dataLegend = () => [d("Attended").t("report_liveclass_attended"), d("Absent").t("report_liveclass_absent")];
   return (
     <div className={css.chart}>
-      <div style={{ flex: 1 }}>
+      <div className={css.pieCon}>
         <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
           <Group top={0.5 * viewPort[3]} left={0.5 * viewPort[2]}>
             <Pie data={data} pieValue={pieValue} outerRadius={pixels.outerRadius} innerRadius={pixels.innerRadius}>
@@ -243,13 +259,14 @@ export function PieChart(props: PieChartProps) {
           <div style={{ ...inlineStyles.tooltip, [tooltipData.yProperty]: 0, [tooltipData.xProperty]: 0 }}>
             <div style={inlineStyles.tooltipTitle}>
               {(tooltipData.data.items_ratio * 100).toFixed(1)}%&nbsp;
-              {tooltipData.data.items?.length}&nbsp;
+              {tooltipData.data.name}
+              {/* {tooltipData.data?.value}&nbsp; */}
             </div>
-            {tooltipData.data.items?.map((desc, idx) => (
+            {/* {tooltipData.data.items?.map((desc, idx) => (
               <div key={idx} style={inlineStyles.tooltipContent}>
                 {desc}
               </div>
-            ))}
+            ))} */}
           </div>
         </Tooltip>
       )}

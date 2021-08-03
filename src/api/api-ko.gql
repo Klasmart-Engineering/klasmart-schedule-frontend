@@ -45,7 +45,7 @@ query classesByOrganization($organization_id: ID!) {
       }
         teachers {
           user_id
-          username
+          user_name
         }
         students {
           user_id
@@ -150,11 +150,11 @@ query classesBySchool($school_id: ID!) {
       }
         teachers {
           user_id
-          username
+          user_name
         }
         students {
           user_id
-          username
+          user_name
         }
     }
   }
@@ -234,7 +234,7 @@ query classesTeachingQuery($user_id: ID!, $organization_id: ID!) {
                }
                students {
                  user_id
-                 username
+                 user_name
                }
             }
         }
@@ -254,11 +254,11 @@ query classesStudentQuery($user_id: ID!, $organization_id: ID!) {
                }
                teachers {
                  user_id
-                 username
+                 user_name
                }
                students {
                  user_id
-                 username
+                 user_name
                }
             }
         }
@@ -278,11 +278,11 @@ query schoolByUserQuery($user_id: ID!, $organization_id: ID!) {
               class_name
               teachers {
                 user_id
-                username
+                user_name
               }
               students {
                 user_id
-                username
+                user_name
               }
             }
           }
