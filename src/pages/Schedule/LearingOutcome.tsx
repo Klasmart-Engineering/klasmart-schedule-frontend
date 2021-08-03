@@ -182,11 +182,11 @@ export default function LearingOutcome(props: InfoProps) {
   const filterCode = [
     { lable: d("All").t("assess_filter_all"), value: "all" },
     { lable: d("Author").t("assess_label_author"), value: "author_name" },
-    { lable: d("Short Code").t("assess_label_short_code"), value: "shortcode" },
     { lable: d("Description").t("assess_label_description"), value: "description" },
     { lable: d("Keywords").t("assess_label_keywords"), value: "keywords" },
     { lable: d("Learning Outcome Name").t("assess_label_learning_outcome_name"), value: "outcome_name" },
     { lable: d("Learning Outcome Set").t("assess_set_learning_outcome_set"), value: "set_name" },
+    { lable: d("Short Code").t("assess_label_short_code"), value: "shortcode" },
   ];
   const templateOption = filterCode.map((item, index) => {
     return (

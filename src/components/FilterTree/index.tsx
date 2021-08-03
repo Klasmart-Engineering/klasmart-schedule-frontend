@@ -13,6 +13,7 @@ import { d } from "../../locale/LocaleManager";
 import { FilterDataItemsProps, memberType, FilterItemInfo, FilterSchoolInfo } from "../../types/scheduleTypes";
 import CloseIcon from "@material-ui/icons/Close";
 import Pagination from "@material-ui/lab/Pagination";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -196,6 +197,7 @@ function FilterLabel(props: FilterLabelProps) {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const rgb = Math.floor(Math.random() * 256);
   return (
     <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -260,6 +262,21 @@ function FilterOverall(props: FilterTreeProps) {
   const [checkMine, setCheckMine] = React.useState(false);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
+  };
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 16;
+    return value ? reBytesStr(value, CharacterCount) : "";
   };
   const getClassDataBySchool = useMemo(() => {
     const classes = classDataBySchool.classes.filter((item, index) => {
@@ -377,7 +394,9 @@ function FilterOverall(props: FilterTreeProps) {
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 10px 10px 10px" }}>
         <span style={{ fontSize: "17px", fontWeight: "bold" }}>
-          {classDataBySchool.school_name}
+          <Tooltip title={classDataBySchool.school_name as string} placement="top-start">
+            <span>{textEllipsis(classDataBySchool.school_name)}</span>
+          </Tooltip>
           {classDataBySchool.onlyMine && (
             <Typography variant="caption" color="inherit">
               <FormControlLabel
