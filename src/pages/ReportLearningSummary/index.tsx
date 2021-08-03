@@ -19,9 +19,9 @@ interface RouteParams {
   tab: ReportType.live | ReportType.assignment;
 }
 export const getWeeks = (): IWeeks[] => {
-  let week_start = new Date("2021-01-04").getTime() / 1000;
+  let week_start = new Date("2021-01-04 00:00").getTime() / 1000;
   const currentTime = new Date().getTime() / 1000;
-  let week_end = week_start + 7 * 24 * 60 * 60;
+  let week_end = week_start + 7 * 24 * 60 * 60 - 1;
   const weeks: IWeeks[] = [];
   while (week_end < currentTime) {
     const item = `${formatTimeToMonDay(week_start)}~${formatTimeToMonDay(week_end)}`;
