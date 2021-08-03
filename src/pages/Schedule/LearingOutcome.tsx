@@ -120,12 +120,11 @@ export default function LearingOutcome(props: InfoProps) {
     });
     content_list.forEach((item) => {
       if (!outComeIds.includes(item.id)) {
-        unCheck.push({ ...item, select: false });
+        unCheck.push({ ...item, select: selectIds.includes(item.id) });
       }
     });
-    console.log(check.concat(unCheck));
     return check.concat(unCheck);
-  }, [outComeIds, content_list]);
+  }, [outComeIds, selectIds, content_list]);
 
   const handleGoOutcomeDetail = (id: string) => {
     window.open(`#/assessments/outcome-edit?outcome_id=${id}&readonly=true`, "_blank");

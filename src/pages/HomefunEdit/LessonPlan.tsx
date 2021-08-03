@@ -84,10 +84,11 @@ interface AssignmentProps {
   feedbacks: EntityScheduleFeedbackView[];
   formMethods: UseFormMethods<EntityAssessHomeFunStudyArgs>;
   outcomesList?: EntityHomeFunStudyOutcome[];
+  isComplete: boolean;
 }
 
 export function LessonPlan(props: AssignmentProps) {
-  const { detail, formMethods, outcomesList } = props;
+  const { detail, formMethods, outcomesList, isComplete } = props;
   const [status, setStatus] = React.useState<string>("2");
   const css = useStyle();
   const { control, setValue } = formMethods;
@@ -178,6 +179,7 @@ export function LessonPlan(props: AssignmentProps) {
                                 value="achieved"
                                 checked={value.status === "achieved"}
                                 color="primary"
+                                disabled={isComplete}
                               />
                             }
                             label={d("Achieved").t("report_label_achieved")}
@@ -192,6 +194,7 @@ export function LessonPlan(props: AssignmentProps) {
                                 value="not_achieved"
                                 checked={value.status === "not_achieved"}
                                 color="primary"
+                                disabled={isComplete}
                               />
                             }
                             label={d("Not Achieved").t("report_label_not_achieved")}
@@ -206,6 +209,7 @@ export function LessonPlan(props: AssignmentProps) {
                                 value="not_attempted"
                                 checked={value.status === "not_attempted"}
                                 color="primary"
+                                disabled={isComplete}
                               />
                             }
                             label={d("Not Attempted").t("assess_option_not_attempted")}
