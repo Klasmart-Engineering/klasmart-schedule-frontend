@@ -116,7 +116,7 @@ export default function LearingOutcome(props: InfoProps) {
       const is_exist = content_list.filter((item) => {
         return item.id === id;
       });
-      if (is_exist.length > 0) check.unshift({ ...is_exist[0], select: true });
+      if (is_exist.length > 0) check.unshift({ ...is_exist[0], select: selectIds.includes(id) });
     });
     content_list.forEach((item) => {
       if (!outComeIds.includes(item.id)) {
