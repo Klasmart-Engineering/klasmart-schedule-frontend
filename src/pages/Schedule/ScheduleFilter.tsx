@@ -533,7 +533,7 @@ function FilterTemplate(props: FilterProps) {
         onLyMineData: onLyMineData,
       });
     });
-    if (classResult.length > 1)
+    /*    if (classResult.length > 1)
       classResult.unshift({
         id: "All_My_Schools",
         name: `${d("All My Schools").t("schedule_filter_all_my_schools")}`,
@@ -543,7 +543,7 @@ function FilterTemplate(props: FilterProps) {
         existData: AllExistData,
         isHide: false,
         onLyMineData: [],
-      });
+      });*/
     return classResult;
   };
 
