@@ -52,16 +52,16 @@ enum formatTimeToMonWekType {
 export function formatTimeToMonWek(seconds: number, type?: string) {
   const date = new Date(seconds * 1000);
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
-  const weekArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  // const weekArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const weekFullNameArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const month = monthArr[date.getMonth()];
   const day = date.getDate();
-  const week = weekArr[date.getDay()];
+  // const week = weekArr[date.getDay()];
   const weekFullName = weekFullNameArr[date.getDay()];
   if (type === formatTimeToMonWekType.hasTh) {
     return `${month} ${day}th,${weekFullName}`;
   }
-  return `${month}  ${day},  ${week}`;
+  return `${month}  ${day},  ${weekFullName}`;
 }
 
 enum Type {

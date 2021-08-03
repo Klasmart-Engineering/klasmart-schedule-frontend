@@ -258,10 +258,16 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
     }
   }, [assessmentitems, lessonIndex, isLive, liveitems]);
   const feedback = useMemo(() => {
-    if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
-      return liveitems[lessonIndex].teacher_feedback;
+    if (isLive) {
+      if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
+        return liveitems[lessonIndex].teacher_feedback;
+      }
+    } else {
+      if (assessmentitems && lessonIndex !== -1 && lessonIndex >= 0) {
+        return assessmentitems[lessonIndex].teacher_feedback;
+      }
     }
-  }, [lessonIndex, liveitems]);
+  }, [assessmentitems, isLive, lessonIndex, liveitems]);
   const handleClickLessonPlan = (index: number) => {
     onChangeLessonIndex(index);
   };

@@ -26,8 +26,8 @@ export const getWeeks = (): IWeeks[] => {
   while (week_end < currentTime) {
     const item = `${formatTimeToMonDay(week_start)}~${formatTimeToMonDay(week_end)}`;
     weeks.push({ week_start, week_end, value: item });
-    week_start = week_end + 24 * 60 * 60;
-    week_end = week_start + 7 * 24 * 60 * 60;
+    week_start = week_end + 1;
+    week_end = week_start + 7 * 24 * 60 * 60 - 1;
   }
   return weeks;
 };
