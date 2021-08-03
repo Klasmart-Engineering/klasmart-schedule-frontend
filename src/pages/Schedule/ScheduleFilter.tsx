@@ -22,13 +22,11 @@ import { AsyncTrunkReturned } from "../../reducers/content";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
   classTypeLabel,
-  EntityScheduleClassesInfo,
   EntityScheduleSchoolInfo,
   FilterDataItemsProps,
   FilterQueryTypeProps,
   memberType,
   modeViewType,
-  RolesData,
   timestampType,
   filterOptionItem,
   FilterItemInfo,
@@ -482,46 +480,9 @@ function FilterTemplate(props: FilterProps) {
 
   const getClassBySchool = (): FilterDataItemsProps[] => {
     const classResult: FilterDataItemsProps[] = [];
-    const AllExistData: string[] = [];
     schoolByOrgOrUserData?.forEach((schoolItem: EntityScheduleSchoolInfo) => {
-      let is_exists: boolean = false;
       const existData: string[] = [];
       const onLyMineData: string[] = [];
-      const classesChild = [];
-      schoolItem.classes.forEach((classItem: EntityScheduleClassesInfo) => {
-        if (classItem.status === "active") {
-          const isExistTeacher = classItem.teachers.filter((teacher: RolesData) => {
-            return teacher.user_id === user_id;
-          });
-          const isExistStudent = classItem.students.filter((studen: RolesData) => {
-            return studen.user_id === user_id;
-          });
-          if ((privilegedMembers("Teacher") || privilegedMembers("Student")) && !isExistTeacher.length && !isExistStudent.length) return;
-          if (!is_exists)
-            is_exists =
-              !(privilegedMembers("Teacher") || privilegedMembers("Student")) && (isExistTeacher.length > 0 || isExistStudent.length > 0);
-          existData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-          AllExistData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-          if (isExistTeacher.length > 0 || isExistStudent.length > 0)
-            onLyMineData.push(`class+${classItem.class_id}+${schoolItem.school_id}` as string);
-          classesChild.push(
-            subDataStructures(
-              `${classItem.class_id}+${schoolItem.school_id}`,
-              classItem.class_name,
-              "class",
-              isExistStudent.length > 0,
-              [],
-              onLyMineData
-            )
-          );
-        }
-      });
-      if (classesChild.length > 1) {
-        classesChild.unshift(subDataStructures(`All+${schoolItem.school_id}`, d("All").t("assess_filter_all"), "class", false, existData));
-        existData.push(`class+All+${schoolItem.school_id}`);
-        AllExistData.push(`class+All+${schoolItem.school_id}`);
-      }
-      if (classesChild.length < 1 && (privilegedMembers("Teacher") || privilegedMembers("Student"))) return;
       classResult.push({
         id: `${schoolItem.school_id}`,
         name: schoolItem.school_name,
@@ -533,17 +494,6 @@ function FilterTemplate(props: FilterProps) {
         onLyMineData: onLyMineData,
       });
     });
-    /*    if (classResult.length > 1)
-      classResult.unshift({
-        id: "All_My_Schools",
-        name: `${d("All My Schools").t("schedule_filter_all_my_schools")}`,
-        isCheck: false,
-        child: [],
-        isOnlyMine: false,
-        existData: AllExistData,
-        isHide: false,
-        onLyMineData: [],
-      });*/
     return classResult;
   };
 

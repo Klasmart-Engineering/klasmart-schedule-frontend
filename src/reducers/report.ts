@@ -1156,6 +1156,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     });
   } else if (perm.report_learning_summary_student_649) {
     // 不需要拉取student 可以看到 year week  subject
+    studentList = [{ user_id: meInfo.me?.user_id!, user_name: "" }];
   }
   studentList = studentList.map((item) => {
     return {
