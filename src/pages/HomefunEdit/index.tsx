@@ -111,7 +111,7 @@ function AssessmentsHomefunEditIner() {
               control={<Radio color="primary" />}
               label={
                 <Typography variant={radioTypography} style={{ fontWeight: 700 }}>
-                  {t("Learning Outcomes Assessment").d("assessment_learning_outcomes_assessment")}
+                  {d("Learning Outcomes Assessment").t("assessment_learning_outcomes_assessment")}
                 </Typography>
               }
               labelPlacement="end"
@@ -121,7 +121,7 @@ function AssessmentsHomefunEditIner() {
               control={<Radio color="primary" />}
               label={
                 <Typography variant={radioTypography} style={{ fontWeight: 700 }}>
-                  {t("Assignment Assessment").d("assessment_assignment_assessment")}
+                  {d("Assignment Assessment").t("assessment_assignment_assessment")}
                 </Typography>
               }
               labelPlacement="end"
