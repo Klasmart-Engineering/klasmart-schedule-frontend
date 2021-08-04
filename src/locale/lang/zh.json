@@ -888,13 +888,13 @@
   "report_teacher_feedback": "教师反馈",
   "report_no_feedback": "尚无老师反馈",
   "report_no_data_available": "无可用数据",
-  "assessment_assignment_assessment": "Assignment Assessment",
-  "assessment_learning_outcomes_assessment": "Learning Outcomes Assessment",
-  "assessment_learning_outcomes_achievement": "Learning Outcomes Achievement of {StudentName}",
-  "schedule_lo_number_added": "Added",
-  "schedule_filter_select_all_classes": "Select All Classes",
-  "report_filter_student": "Student",
-  "report_tab_assessments_completed": "Assessments Completed",
-  "report_no_class": "Please select a class from the list on the left to view the results.",
-  "report_no_assessment": "Please select an assessment from the list on the left to view the results."
+  "assessment_assignment_assessment": "作业评估",
+  "assessment_learning_outcomes_assessment": "学习成果评估",
+  "assessment_learning_outcomes_achievement": "{StudentName}的学习成果评估",
+  "schedule_lo_number_added": "已添加",
+  "schedule_filter_select_all_classes": "所有班级",
+  "report_filter_student": "学生",
+  "report_tab_assessments_completed": "已完成评估",
+  "report_no_class": "请在左边选择一节课以查看该结果",
+  "report_no_assessment": "请在左边选择一份评估以查看该结果"
 }

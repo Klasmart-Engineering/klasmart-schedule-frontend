@@ -888,13 +888,13 @@
   "report_teacher_feedback": "Phản hồi của giáo viên",
   "report_no_feedback": "Không có thông tin phản hồi",
   "report_no_data_available": "Không có dữ liệu",
-  "assessment_assignment_assessment": "Assignment Assessment",
-  "assessment_learning_outcomes_assessment": "Learning Outcomes Assessment",
-  "assessment_learning_outcomes_achievement": "Learning Outcomes Achievement of {StudentName}",
-  "schedule_lo_number_added": "Added",
-  "schedule_filter_select_all_classes": "Select All Classes",
-  "report_filter_student": "Student",
-  "report_tab_assessments_completed": "Assessments Completed",
-  "report_no_class": "Please select a class from the list on the left to view the results.",
-  "report_no_assessment": "Please select an assessment from the list on the left to view the results."
+  "assessment_assignment_assessment": "Đánh giá bài tập phân công",
+  "assessment_learning_outcomes_assessment": "Đánh giá kết quả học tập",
+  "assessment_learning_outcomes_achievement": "Kết quả Học tập đạt được của {StudentName}",
+  "schedule_lo_number_added": "Thêm",
+  "schedule_filter_select_all_classes": "Chọn tất cả các lớp",
+  "report_filter_student": "Học sinh",
+  "report_tab_assessments_completed": "Đánh giá đã hoàn thành",
+  "report_no_class": "Vui lòng chọn một lớp từ danh sách bên trái để xem kết quả.",
+  "report_no_assessment": "Vui lòng chọn một đánh giá từ danh sách bên trái để xem kết quả."
 }
