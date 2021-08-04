@@ -87,16 +87,16 @@ interface ScheduleAttachmentProps {
 }
 
 const useQuery = () => {
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
   const query = new URLSearchParams(search);
   const schedule_id = query.get("schedule_id") || "";
-  return { schedule_id };
+  return { schedule_id, pathname };
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
   const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent, isDisabled } = props;
   const css = useStyles();
-  const { schedule_id } = useQuery();
+  const { schedule_id, pathname } = useQuery();
   const dispatch = useDispatch();
   const [fileName, setFileName] = React.useState<Pick<FileLikeWithId, "id" | "name">[] | undefined>([]);
   const handleOnChange = (value: Pick<FileLikeWithId, "id" | "name">[] | undefined): void => {
@@ -122,9 +122,11 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
 
   React.useEffect(() => {
     if (!schedule_id) {
+      setAttachmentId("");
       setAttachmentName("");
+      setFileName([]);
     }
-  }, [schedule_id, setAttachmentName]);
+  }, [schedule_id, pathname, setAttachmentName, setFileName, setAttachmentId]);
 
   const reBytesStr = (str: string, len: number) => {
     let bytesNum = 0;

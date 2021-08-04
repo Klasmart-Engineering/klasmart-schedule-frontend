@@ -86,7 +86,6 @@ import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import { domainSwitch } from "../../api/extra";
 import LearingOutcome from "./LearingOutcome";
 import { useForm } from "react-hook-form";
 
@@ -314,22 +313,20 @@ function SmallCalendar(props: CalendarStateProps) {
         <Grid container justify="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
-        {!domainSwitch() && (
-          <ScheduleFilter
-            handleChangeLoadScheduleView={handleChangeLoadScheduleView}
-            mockOptions={mockOptions}
-            scheduleMockOptions={scheduleMockOptions}
-            handleChangeShowAnyTime={handleChangeShowAnyTime}
-            stateOnlyMine={stateOnlyMine}
-            handleChangeOnlyMine={handleChangeOnlyMine}
-            modelView={modelView}
-            timesTamp={timesTamp}
-            privilegedMembers={privilegedMembers}
-            filterOption={filterOption}
-            user_id={user_id}
-            schoolByOrgOrUserData={schoolByOrgOrUserData}
-          />
-        )}
+        <ScheduleFilter
+          handleChangeLoadScheduleView={handleChangeLoadScheduleView}
+          mockOptions={mockOptions}
+          scheduleMockOptions={scheduleMockOptions}
+          handleChangeShowAnyTime={handleChangeShowAnyTime}
+          stateOnlyMine={stateOnlyMine}
+          handleChangeOnlyMine={handleChangeOnlyMine}
+          modelView={modelView}
+          timesTamp={timesTamp}
+          privilegedMembers={privilegedMembers}
+          filterOption={filterOption}
+          user_id={user_id}
+          schoolByOrgOrUserData={schoolByOrgOrUserData}
+        />
       </MuiPickersUtilsProvider>
     </Box>
   );
@@ -734,10 +731,11 @@ function EditBox(props: CalendarStateProps) {
     if (name === "program_id") {
       if (value?.id) {
         const LinkageProgramData: any = await handleChangeProgramId(value.id);
-        setSubjectItem(LinkageProgramData ? [LinkageProgramData[0]] : []);
+        setSubjectItem(LinkageProgramData && LinkageProgramData.length ? [LinkageProgramData[0]] : []);
       }
       setProgramItem(value);
     }
+
     if (name === "lesson_plan_id") {
       if (value?.id) {
         const LinkageLessonData: any = await LinkageLessonPlan(value["id"]);
