@@ -236,7 +236,8 @@ const usePropsStyles = makeStyles(() => ({
 }));
 const useLessonStyles = makeStyles(() => ({
   lessonCon: (props: LeftDataProps | undefined) => ({
-    background: props?.type ? (props.type === "home_fun_study" ? "#89c4f9" : "#a4ddff") : props?.absent ? "#fe9b9b" : "#8693f0",
+    // (props.type === "home_fun_study" ? "#89c4f9" : "#a4ddff")
+    background: props?.type ? "#89c4f9" : props?.absent ? "#fe9b9b" : "#8693f0",
   }),
   timeCon: (props: LeftDataProps | undefined) => ({
     color: props?.type ? (props.type === "home_fun_study" ? "#89c4f9" : "#a4ddff") : props?.absent ? "#fe9b9b" : "#8693f0",
@@ -255,14 +256,13 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
   const liveitems = liveClassSummary.items;
   const assessmentitems = assignmentSummary.items;
   const isLive = reportType === ReportType.live;
-  const key =
-    isLive && lessonIndex >= 0
-      ? liveitems
-        ? liveitems[lessonIndex].schedule_id
-        : "liveitems"
-      : assessmentitems
-      ? assessmentitems[lessonIndex].assessment_id
-      : "assessmentitems";
+  const key = isLive
+    ? liveitems && lessonIndex >= 0
+      ? liveitems[lessonIndex].schedule_id
+      : "liveitems"
+    : assessmentitems && lessonIndex >= 0
+    ? assessmentitems[lessonIndex].assessment_id
+    : "assessmentitems";
   const outcomes = useMemo(() => {
     if (isLive) {
       if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
@@ -363,7 +363,6 @@ export interface RightComProps extends ReportTypeProps {
 export function RightCom(props: RightComProps) {
   const { reportType, outcomes, feedBack, hasLiveItems, hasAssessmentItems, lessonIndex, rightComkey } = props;
   const css = useStyles();
-  console.log(outcomes);
   const cssProps = usePropsStyles({ reportType });
   const isLive = reportType === ReportType.live;
   const noOutcomesDataText = useMemo(() => {
@@ -506,13 +505,10 @@ export function LiveItem(props: LiveItemProps) {
             <div
               className={clsx(
                 css.arrow,
-                isLive
-                  ? currentData?.absent
-                    ? css.absentLiveArrow
-                    : css.attendLiveArrow
-                  : currentData?.type === "study"
-                  ? css.completedStudyArrow
-                  : css.inCompleteStudyArrow
+                isLive ? (currentData?.absent ? css.absentLiveArrow : css.attendLiveArrow) : css.completedStudyArrow
+                // : currentData?.type === "study"
+                // ? css.completedStudyArrow
+                // : css.inCompleteStudyArrow
               )}
             ></div>
           </div>
