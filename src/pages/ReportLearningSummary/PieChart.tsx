@@ -126,7 +126,7 @@ const getPixels = (px: number) => ({
   innerRadius: 0 * px,
   extendRadius: 0 * px,
   tooltipWidth: 240 * px,
-  tooltipMargin: 80 * px,
+  tooltipMargin: 0 * px,
   viewMargin: 80 * px,
 });
 // EntityQueryLiveClassesSummaryResult
@@ -205,7 +205,7 @@ export function PieChart(props: PieChartProps) {
       setActiveCategoryName("test" as string);
       setActiveCategoryName("test");
       showTooltip({
-        tooltipLeft: x2 + viewPort[2] / 2,
+        tooltipLeft: x2 + viewPort[3],
         tooltipTop: y1 + viewPort[3] / 2,
         tooltipData: {
           data: arc.data,

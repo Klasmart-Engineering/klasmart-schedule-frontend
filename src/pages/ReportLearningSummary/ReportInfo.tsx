@@ -78,7 +78,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     height: "calc(100% - 40px)",
   },
   studyWrap: {
-    flex: 1,
+    // flex: 1,
     display: "flex",
     alignItems: "center",
     flexDirection: "column",
@@ -108,9 +108,16 @@ export function ReportInfo(props: ReportInfoProps) {
     { name: "Absent", value: 100 - attend },
   ];
   const isLiveClass = reportType === ReportType.live;
+  const assessmentsCount = (assignmentSummary.study_count || 0) + (assignmentSummary.home_fun_study_count || 0);
   const assignment = (
     <div className={css.assignmentWrap}>
-      <div className={css.studyWrap} style={{ borderRight: "1px dashed #bcbcbc" }}>
+      <div className={css.studyWrap}>
+        <span className={css.numberWrap} style={{ color: "#89c4f9" }}>
+          {assessmentsCount}
+        </span>
+        <span className={css.wordWrap}>{d("Assessments").t("assess_label_assessments")}</span>
+      </div>
+      {/* <div className={css.studyWrap} style={{ borderRight: "1px dashed #bcbcbc" }}>
         <span className={css.numberWrap} style={{ color: "#a4ddff" }}>
           {assignmentSummary.study_count || 0}
         </span>
@@ -121,7 +128,7 @@ export function ReportInfo(props: ReportInfoProps) {
           {assignmentSummary.home_fun_study_count || 0}
         </span>
         <span className={css.wordWrap}>{d("Home Fun").t("schedule_checkbox_home_fun")}</span>
-      </div>
+      </div> */}
     </div>
   );
   const handleClickLive = () => {
