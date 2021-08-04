@@ -324,7 +324,7 @@ export default function LearingOutcome(props: InfoProps) {
                         </Tooltip>
                       </TableCell>
                       <TableCell align="center">{props.value.shortCode}</TableCell>
-                      <TableCell align="center">{props.value.assumed ? "Yes" : ""}</TableCell>
+                      <TableCell align="center">{props.value.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
                       <TableCell align="center">
                         <ul>
                           {props.value.learningOutcomeSet.map((set) => {

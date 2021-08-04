@@ -35,7 +35,7 @@ function OutComeRow(props: OutcomeProps) {
         {outcome.outcome_name}
       </TableCell>
       <TableCell className={css.tableCell}>{outcome.shortcode}</TableCell>
-      <TableCell className={css.tableCell}>{outcome.assumed ? "Yes" : ""}</TableCell>
+      <TableCell className={css.tableCell}>{outcome.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
       <TableCell className={css.tableCell}>{outcome.author_name}</TableCell>
     </TableRow>
   );

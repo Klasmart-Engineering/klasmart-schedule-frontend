@@ -1776,7 +1776,7 @@ function EditBox(props: CalendarStateProps) {
                   handeLearingOutcome();
                 }}
               >
-                <span>{"Set Learning Outcome"}</span>
+                <span>{d("Set Learning Outcome").t("schedule_set_learning_outcome")}</span>
                 {outComeIds.length > 0 && <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>}
               </Button>
             )}

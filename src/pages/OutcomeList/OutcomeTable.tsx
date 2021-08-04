@@ -229,7 +229,7 @@ function OutomeRow(props: OutcomeProps) {
       {/* <TableCell className={clsx(css.tableCell)}>{outcome.subject?.map((item) => item.subject_name).join(",")}</TableCell> */}
       {/* <TableCell className={clsx(css.tableCell)}></TableCell> */}
       {/* <TableCell className={clsx(css.tableCell)}></TableCell> */}
-      <TableCell className={clsx(css.tableCell)}>{outcome.assumed ? "Yes" : ""}</TableCell>
+      <TableCell className={clsx(css.tableCell)}>{outcome.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{outcome.author_name}</TableCell>
       <TableCell className={clsx(css.tableCell)}>{formattedTime(outcome.update_at)}</TableCell>
       <TableCell className={clsx(css.tableCell)}>

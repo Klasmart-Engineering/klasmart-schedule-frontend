@@ -73,7 +73,7 @@ export default function OutcomeTable(props: OutcomeTableProps) {
       <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
-        <TableCell className={css.tableCell}>{item.assumed ? "Yes" : ""}</TableCell>
+        <TableCell className={css.tableCell}>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
         <TableCell className={css.tableCell}>
           <ul>
             {item.sets?.map((item, index) => (

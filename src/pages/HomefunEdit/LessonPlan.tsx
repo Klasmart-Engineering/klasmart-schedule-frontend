@@ -165,7 +165,7 @@ export function LessonPlan(props: AssignmentProps) {
                         <span>{textEllipsis(value.outcome_name)}</span>
                       </Tooltip>
                     </TableCell>
-                    <TableCell align="center">{value.assumed ? "Yes" : ""}</TableCell>
+                    <TableCell align="center">{value.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
                     <TableCell align="center" style={{ display: "flex", justifyContent: "center" }}>
                       <FormControl component="fieldset">
                         <FormGroup aria-label="position" row>

@@ -84,7 +84,7 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
         <TableCell className={css.tableCell}>{item.program && item.program[0] ? item.program[0].program_name : ""}</TableCell>
         <TableCell className={css.tableCell}>{item.developmental?.map((v) => v.developmental_name).join(",")}</TableCell>
-        <TableCell className={css.tableCell}>{item.assumed ? "Yes" : ""}</TableCell>
+        <TableCell className={css.tableCell}>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
         <TableCell className={css.tableCell}>
           <ul>
             {item.sets?.map((item, index) => (

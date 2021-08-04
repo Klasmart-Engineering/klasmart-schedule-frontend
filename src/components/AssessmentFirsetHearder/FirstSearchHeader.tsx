@@ -140,7 +140,7 @@ export function FirstSearchHeader() {
               </Permission>
               <Permission value={PermissionType.milestones_page_405}>
                 <Button className={clsx(css.nav, { [css.actives]: false })} startIcon={<TuneOutlinedIcon />}>
-                  {"Standards"}
+                  {d("Standards").t("assess_label_Standard")}
                 </Button>
               </Permission>
               <Permission value={PermissionType.assessments_page_406}>
@@ -204,7 +204,11 @@ export function FirstSearchHeaderMb() {
                     onClick={() => history.push(MilestonesList.routeBasePath)}
                   />
                 )}
-                <Tab value={"Standards"} label={"Standards"} className={classes.capitalize} />
+                <Tab
+                  value={d("Standards").t("assess_label_Standard")}
+                  label={d("Standards").t("assess_label_Standard")}
+                  className={classes.capitalize}
+                />
                 {perm.assessments_page_406 && !isLiveList && !isStudyList && !isHomeFunList && (
                   <Tab
                     component={Button}
