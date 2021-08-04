@@ -367,21 +367,3 @@ query schoolAndTeacherByOrg($organization_id: ID!) {
     }
 }
 
-query schoolByOrganization ($organization_id: ID="92db7ddd-1f23-4f64-bd47-94f6d34a50c0") {
-  organization(organization_id: $organization_id) {
-    schools{
-      school_id,
-      school_name
-    }
-  }
-}
-
-
-query classBySchool($school_id: ID="5f848fdc-3bbd-47ae-981a-57ae95cf4235") {
-  school(school_id: $school_id) {
-    classes {
-      class_id,
-      class_name
-    }
-  }
-}
