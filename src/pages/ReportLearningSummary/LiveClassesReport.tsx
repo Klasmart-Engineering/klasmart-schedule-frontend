@@ -42,6 +42,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     display: "flex",
     flexDirection: "column",
     borderLeft: "1px dashed #d7d7d7",
+    maxHeight: 584,
   },
   liveItem: {},
   titleCon: {
@@ -73,14 +74,18 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   },
   lessonInfoCon: {
     flex: 8,
-    height: 90,
+    minHeight: 45,
     paddingLeft: 20,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   lessonName: {
     fontSize: 16,
     color: "#fff",
     fontWeight: 600,
-    marginTop: 15,
   },
   lessonPlanName: {
     display: "inline-block",
@@ -121,7 +126,8 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   },
   rightItem: {
     display: "flex",
-    flex: 1,
+    // flex: 1,
+    height: "50%",
     flexDirection: "column",
     marginTop: 50,
     marginLeft: 50,
@@ -130,6 +136,8 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     flex: 5,
     backgroundColor: "#f6f6f6",
     paddingLeft: 26,
+    overflowY: "auto",
+    paddingBottom: 10,
   },
   outcomeCon: {
     marginTop: 15,
@@ -145,6 +153,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     color: "#666",
     padding: "10px 0",
     lineHeight: "22px",
+    wordBreak: "break-all",
   },
   noDataCon: {
     display: "flex",
@@ -246,6 +255,14 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
   const liveitems = liveClassSummary.items;
   const assessmentitems = assignmentSummary.items;
   const isLive = reportType === ReportType.live;
+  const key =
+    isLive && lessonIndex >= 0
+      ? liveitems
+        ? liveitems[lessonIndex].schedule_id
+        : "liveitems"
+      : assessmentitems
+      ? assessmentitems[lessonIndex].assessment_id
+      : "assessmentitems";
   const outcomes = useMemo(() => {
     if (isLive) {
       if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
@@ -321,7 +338,15 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
         )}
       </div>
       <div className={css.rightWrap}>
-        <RightCom reportType={reportType} outcomes={outcomes} feedBack={feedback} />
+        <RightCom
+          reportType={reportType}
+          outcomes={outcomes}
+          feedBack={feedback}
+          hasLiveItems={!!liveitems}
+          hasAssessmentItems={!!assessmentitems}
+          lessonIndex={lessonIndex}
+          rightComkey={key!}
+        />
       </div>
     </div>
   );
@@ -330,16 +355,68 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
 export interface RightComProps extends ReportTypeProps {
   outcomes: EntityLiveClassSummaryItem["outcomes"];
   feedBack: EntityLiveClassSummaryItem["teacher_feedback"];
+  hasLiveItems: boolean;
+  hasAssessmentItems: boolean;
+  lessonIndex: number;
+  rightComkey: string;
 }
 export function RightCom(props: RightComProps) {
-  const { reportType, outcomes, feedBack } = props;
+  const { reportType, outcomes, feedBack, hasLiveItems, hasAssessmentItems, lessonIndex, rightComkey } = props;
   const css = useStyles();
+  console.log(outcomes);
   const cssProps = usePropsStyles({ reportType });
+  const isLive = reportType === ReportType.live;
+  const noOutcomesDataText = useMemo(() => {
+    if (isLive) {
+      if (hasLiveItems) {
+        if (lessonIndex === -1) {
+          return d("Please select a class from the list on the left to view the results.").t("report_no_class");
+        } else {
+          return d("No learning outcomes are available.").t("report_no_learning_outcome");
+        }
+      } else {
+        return d("No Data Available.").t("report_no_data_available");
+      }
+    } else {
+      if (hasAssessmentItems) {
+        if (lessonIndex === -1) {
+          return d("Please select an assessment from the list on the left to view the results.").t("report_no_assessment");
+        } else {
+          return d("No learning outcomes are available.").t("report_no_learning_outcome");
+        }
+      } else {
+        return d("No Data Available.").t("report_no_data_available");
+      }
+    }
+  }, [hasAssessmentItems, hasLiveItems, isLive, lessonIndex]);
+  const noFeedbackDataText = useMemo(() => {
+    if (isLive) {
+      if (hasLiveItems) {
+        if (lessonIndex === -1) {
+          return d("Please select a class from the list on the left to view the results.").t("report_no_class");
+        } else {
+          return d("No feedback is available.").t("report_no_feedback");
+        }
+      } else {
+        return d("No Data Available.").t("report_no_data_available");
+      }
+    } else {
+      if (hasAssessmentItems) {
+        if (lessonIndex === -1) {
+          return d("Please select an assessment from the list on the left to view the results.").t("report_no_assessment");
+        } else {
+          return d("No feedback is available.").t("report_no_feedback");
+        }
+      } else {
+        return d("No Data Available.").t("report_no_data_available");
+      }
+    }
+  }, [isLive, hasLiveItems, lessonIndex, hasAssessmentItems]);
   return (
     <>
-      <div className={clsx(css.rightItem)}>
+      <div className={css.rightItem} key={rightComkey}>
         <span className={clsx(cssProps.rightItemTitle)}>{d("Learning Outcomes Covered").t("report_learning_outcomes_covered")}</span>
-        <div className={css.rightItemContent}>
+        <div className={clsx(css.scrollCss, css.rightItemContent)}>
           {outcomes?.length ? (
             outcomes.map((item) => (
               <div key={item.id} className={css.outcomeCon}>
@@ -348,18 +425,14 @@ export function RightCom(props: RightComProps) {
               </div>
             ))
           ) : (
-            <div className={cssProps.infoFont}>{d("No Data Available.").t("report_no_data_available")}</div>
+            <div className={cssProps.infoFont}>{noOutcomesDataText}</div>
           )}
         </div>
       </div>
       <div className={clsx(css.rightItem)}>
         <span className={clsx(cssProps.rightItemTitle)}>{d("Teacher’s Feedback").t("report_teacher_feedback")}</span>
         <div className={css.rightItemContent}>
-          {feedBack ? (
-            <div className={css.teacherFeedback}>{feedBack ? feedBack : d("No feedback is available.").t("report_no_feedback")}</div>
-          ) : (
-            <div className={cssProps.infoFont}>{d("No Data Available.").t("report_no_data_available")}</div>
-          )}
+          {feedBack ? <div className={css.teacherFeedback}>{feedBack}</div> : <div className={cssProps.infoFont}>{noFeedbackDataText}</div>}
         </div>
       </div>
     </>
@@ -423,9 +496,11 @@ export function LiveItem(props: LiveItemProps) {
           }
           <div className={clsx(css.lessonInfoCon, cssLessonProps.lessonCon)} onClick={handleClick}>
             <div className={css.lessonName}>{currentData?.title}</div>
-            <div>
-              <span className={css.lessonPlanName}>{currentData?.lpname}</span>
-            </div>
+            {currentData?.lpname && (
+              <div>
+                <span className={css.lessonPlanName}>{currentData?.lpname}</span>
+              </div>
+            )}
           </div>
           <div className={css.arrowCon} style={{ visibility: showArrow ? "visible" : "hidden" }}>
             <div
