@@ -93,7 +93,7 @@ export function ReportLearningSummary() {
     history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });
   };
   useEffect(() => {
-    if (learningSummartOptions.studentList.length || learningSummartOptions.subjectList.length) {
+    if (learningSummartOptions.studentList.length && learningSummartOptions.subjectList.length) {
       if (year && week_start && week_end && student_id && subject_id) {
         history.push({
           search: setQuery(history.location.search, { student_id, subject_id, week_start, week_end, year }),
