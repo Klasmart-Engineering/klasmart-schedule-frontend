@@ -400,7 +400,7 @@ type LangRecord<T = string> =
   | { id: "assess_label_created_on_oldtonew"; description: "Created On (Old-New)"; values: undefined }
   | { id: "assess_label_learning_outcome"; description: "Learning Outcome"; values: undefined }
   | { id: "assess_label_milestone"; description: "Milestones"; values: undefined }
-  | { id: "assess_label_Standard"; description: "Standard"; values: undefined }
+  | { id: "assess_label_Standard"; description: "Standards"; values: undefined }
   | { id: "assess_label_yes"; description: "Yes"; values: undefined }
   | { id: "assess_label_created_on"; description: "Created On"; values: undefined }
   | { id: "assess_label_author"; description: "Author"; values: undefined }
