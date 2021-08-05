@@ -45,7 +45,6 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     flexWrap: "wrap",
     "&:nth-child(n+4)": {
       marginTop: 32,
-      visibility: "hidden",
     },
   },
   reportItemMb: {
