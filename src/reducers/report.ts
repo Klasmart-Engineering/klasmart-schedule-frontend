@@ -15,9 +15,6 @@ import {
   NotParticipantsByOrganizationDocument,
   NotParticipantsByOrganizationQuery,
   NotParticipantsByOrganizationQueryVariables,
-  ParticipantsByClassDocument,
-  ParticipantsByClassQuery,
-  ParticipantsByClassQueryVariables,
   ParticipantsByOrganizationDocument,
   ParticipantsByOrganizationQuery,
   ParticipantsByOrganizationQueryVariables,
@@ -58,7 +55,6 @@ import { getWeeks, IWeeks } from "../pages/ReportLearningSummary";
 import { LearningSummartOptionsProps } from "../pages/ReportLearningSummary/FilterLearningSummary";
 import { QueryLearningSummaryCondition } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad } from "./schedule";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
 
 interface IreportState {
@@ -751,20 +747,20 @@ export interface GetStuReportMockOptionsResponse {
 //   };
 // });
 
-type IQueryGetStudentsByClassIdParams = {
-  class_id: string;
-};
-export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
-  "getParticipant",
-  async ({ class_id }) => {
-    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
-      query: ParticipantsByClassDocument,
-      variables: { class_id },
-    });
-    const participantList = data;
-    return { participantList };
-  }
-);
+// type IQueryGetStudentsByClassIdParams = {
+//   class_id: string;
+// };
+// export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
+//   "getParticipant",
+//   async ({ class_id }) => {
+//     const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
+//       query: ParticipantsByClassDocument,
+//       variables: { class_id },
+//     });
+//     const participantList = data;
+//     return { participantList };
+//   }
+// );
 export interface GetTeachingLoadListPayLoad {
   school_id?: string;
   teacher_ids?: string;
@@ -1234,11 +1230,11 @@ const { reducer } = createSlice({
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    // [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
-    //   state.reportMockOptions.lessonPlanList = payload;
-    //   state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
-    //   state.stuReportMockOptions.lessonPlanList = payload;
-    // },
+    [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
+      state.reportMockOptions.lessonPlanList = payload;
+      state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
+      state.stuReportMockOptions.lessonPlanList = payload;
+    },
     [getLessonPlan.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
