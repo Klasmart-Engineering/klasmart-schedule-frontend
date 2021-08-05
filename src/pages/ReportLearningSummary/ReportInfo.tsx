@@ -148,7 +148,7 @@ export function ReportInfo(props: ReportInfoProps) {
             )}
             {!liveClassSummary.items && (
               <div className={css.noDataCon}>
-                <NoDataCom isPie={true} reportType={reportType} />
+                <NoDataCom isPie={true} reportType={ReportType.live} />
               </div>
             )}
           </div>
