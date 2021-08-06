@@ -7,7 +7,7 @@ import { GetOutcomeDetail, GetOutcomeList, GetOutcomeListResult, OutcomePublishS
 import { LangRecordId } from "../locale/lang/type";
 import { d } from "../locale/LocaleManager";
 import { isUnpublish } from "../pages/OutcomeList/ThirdSearchHeader";
-import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
+import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -255,14 +255,8 @@ export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult,
       order_by,
       page_size: PAGE_SIZE,
       assumed: -1,
+      [exect_search === "all" ? "search_key" : exect_search!]: search_key,
     };
-    if (exect_search === OutcomeListExectSearch.all) params.search_key = search_key;
-    if (exect_search === OutcomeListExectSearch.loName) params.outcome_name = search_key;
-    if (exect_search === OutcomeListExectSearch.shortCode) params.shortcode = search_key;
-    if (exect_search === OutcomeListExectSearch.author) params.author_name = search_key;
-    if (exect_search === OutcomeListExectSearch.keyWord) params.keywords = search_key;
-    if (exect_search === OutcomeListExectSearch.description) params.description = search_key;
-    if (exect_search === OutcomeListExectSearch.loSet) params.set_name = search_key;
     if (publish_status === OutcomePublishStatus.pending && !is_unpub) {
       resObj.pendingRes = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(params);
     } else if (isUnpublish({ ...query })) {

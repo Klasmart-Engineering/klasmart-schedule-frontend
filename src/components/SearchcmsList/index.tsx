@@ -187,13 +187,13 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
                         className={css.exactSerch}
                         size="small"
                       >
-                        <MenuItem value="all">{d("All").t("assess_filter_all")}</MenuItem>
-                        <MenuItem value="author">{d("Author").t("assess_label_author")}</MenuItem>
-                        <MenuItem value="shortCode">{d("Code").t("assess_search_code")}</MenuItem>
+                        <MenuItem value="search_key">{d("All").t("assess_filter_all")}</MenuItem>
+                        <MenuItem value="author_name">{d("Author").t("assess_label_author")}</MenuItem>
+                        <MenuItem value="shortcode">{d("Code").t("assess_search_code")}</MenuItem>
                         <MenuItem value="description">{d("Description").t("assess_label_description")}</MenuItem>
-                        <MenuItem value="keyWord">{d("Keywords").t("assess_label_keywords")}</MenuItem>
-                        <MenuItem value="loName">{d("Name").t("assess_search_name")}</MenuItem>
-                        <MenuItem value="loSet">{d("Set").t("assess_search_set")}</MenuItem>
+                        <MenuItem value="keywords">{d("Keywords").t("assess_label_keywords")}</MenuItem>
+                        <MenuItem value="outcome_name">{d("Name").t("assess_search_name")}</MenuItem>
+                        <MenuItem value="set_name">{d("Set").t("assess_search_set")}</MenuItem>
                       </TextField>
                       <TextField
                         {...valueProps}

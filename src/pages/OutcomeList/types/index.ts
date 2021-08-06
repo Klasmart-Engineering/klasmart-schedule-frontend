@@ -43,11 +43,11 @@ export enum HeaderCategory {
 }
 
 export enum OutcomeListExectSearch {
-  all = "all",
-  loName = "loName",
-  shortCode = "shortCode",
-  author = "author",
-  loSet = "loSet",
-  keyWord = "keyWord",
+  all = "search_key",
+  loName = "outcome_name",
+  shortCode = "shortcode",
+  author = "author_name",
+  loSet = "set_name",
+  keyWord = "keywords",
   description = "description",
 }
