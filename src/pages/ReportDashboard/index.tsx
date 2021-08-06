@@ -45,6 +45,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     flexWrap: "wrap",
     "&:nth-child(n+4)": {
       marginTop: 32,
+      visibility: "hidden",
     },
   },
   reportItemMb: {
@@ -55,6 +56,9 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     boxSizing: "border-box",
     padding: "32px 28px",
     minWidth: 140,
+    "&:nth-child(n+4)": {
+      visibility: "hidden",
+    },
   },
   iconBox: {
     backgroundColor: "#89c4f9",
