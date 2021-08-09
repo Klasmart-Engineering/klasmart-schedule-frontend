@@ -297,11 +297,11 @@ export default function LearingOutcome(props: InfoProps) {
           <Table className={classes.table} aria-label="simple table">
             <TableHead style={{ backgroundColor: "#F2F5F7" }}>
               <TableRow>
+                <TableCell align="center">&nbsp;</TableCell>
                 <TableCell align="center">{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
                 <TableCell align="center">{d("Short Code").t("assess_label_short_code")}</TableCell>
                 <TableCell align="center">{d("Assumed").t("assess_filter_assumed")}</TableCell>
                 <TableCell align="center">{d("Learning Outcome Set").t("assess_set_learning_outcome_set")}</TableCell>
-                <TableCell align="center">&nbsp;</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -318,24 +318,6 @@ export default function LearingOutcome(props: InfoProps) {
                         handleGoOutcomeDetail(props.value.id);
                       }}
                     >
-                      <TableCell component="th" scope="row" align="center">
-                        <Tooltip title={props.value.name as string} placement="top-start">
-                          <span>{textEllipsis(props.value.name)}</span>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell align="center">{props.value.shortCode}</TableCell>
-                      <TableCell align="center">{props.value.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
-                      <TableCell align="center">
-                        <ul>
-                          {props.value.learningOutcomeSet.map((set) => {
-                            return (
-                              <li key={`${set.set_id}+${item.id}`} style={{ marginTop: "10px" }}>
-                                {set.set_name}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </TableCell>
                       <TableCell align="center">
                         {!props.value.select && (
                           <AddCircleOutlinedIcon
@@ -355,6 +337,36 @@ export default function LearingOutcome(props: InfoProps) {
                             style={{ color: "#D32F2F", cursor: "pointer" }}
                           />
                         )}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Tooltip title={props.value.name as string} placement="top-start">
+                          <span
+                            style={{
+                              wordBreak: "break-word",
+                              textAlign: props.value.name.length > 40 ? "left" : "center",
+                              display: "block",
+                              maxWidth: "300px",
+                              margin: "auto",
+                            }}
+                          >
+                            {props.value.name}
+                          </span>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell align="center">{props.value.shortCode}</TableCell>
+                      <TableCell align="center">{props.value.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
+                      <TableCell align="center" style={{ width: "160px" }}>
+                        <ul>
+                          {props.value.learningOutcomeSet.map((set) => {
+                            return (
+                              <li key={`${set.set_id}+${item.id}`} style={{ marginTop: "10px" }}>
+                                <Tooltip title={set.set_name as string} placement="top-start">
+                                  <span>{textEllipsis(set.set_name)}</span>
+                                </Tooltip>
+                              </li>
+                            );
+                          })}
+                        </ul>
                       </TableCell>
                     </TableRow>
                   )}

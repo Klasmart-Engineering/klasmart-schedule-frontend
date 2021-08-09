@@ -16,7 +16,7 @@ import { modeViewType, timestampType } from "../../types/scheduleTypes";
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
     input: {
-      width: "220px",
+      width: "190px",
       borderRadius: 6,
       position: "relative",
       backgroundColor: theme.palette.background.paper,
@@ -176,11 +176,6 @@ function Tool(props: ToolProps) {
         />
         <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
           {!includeList && (
-            <Button size="large" variant="outlined" color="primary" style={{ marginRight: "12px" }} onClick={selectToday}>
-              {d("Today").t("schedule_button_today")}
-            </Button>
-          )}
-          {!includeList && (
             <FormControl className={css.selectControl}>
               <NativeSelect
                 id="demo-customized-select-native"
@@ -195,6 +190,11 @@ function Tool(props: ToolProps) {
                 <option value="year">{d("Year").t("schedule_detail_year")}</option>
               </NativeSelect>
             </FormControl>
+          )}
+          {!includeList && (
+            <Button size="large" variant="outlined" color="primary" style={{ margin: "0 12px 0 16px" }} onClick={selectToday}>
+              {d("Today").t("schedule_button_today")}
+            </Button>
           )}
         </Grid>
       </Grid>
