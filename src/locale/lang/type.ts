@@ -201,7 +201,7 @@ type LangRecord<T = string> =
   | { id: "library_error_plan_duration"; description: "Plan's duration should be greater than lesson materials' sum"; values: undefined }
   | {
       id: "library_label_uploadInfo1";
-      description: "Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MOV, MP4, MP3, WAV";
+      description: "Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MP4, MP3, WAV";
       values: undefined;
     }
   | {
