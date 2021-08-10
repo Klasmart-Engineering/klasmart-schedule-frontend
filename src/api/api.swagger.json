@@ -308,6 +308,12 @@
           },
           {
             "type": "string",
+            "description": "scheduls ids search",
+            "name": "schedule_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "create_at greater search",
             "name": "create_at_ge",
             "in": "query"
@@ -5222,97 +5228,6 @@
         }
       }
     },
-    "/reports/learning_summary/filters": {
-      "get": {
-        "description": "list specified learning summary filter items",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["reports/learningSummary"],
-        "summary": "query specified learning summary filter items",
-        "operationId": "queryLearningSummaryFilterItems",
-        "parameters": [
-          {
-            "enum": ["year", "week", "school", "class", "teacher", "student", "subject"],
-            "type": "string",
-            "description": "filter type",
-            "name": "type",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "description": "year",
-            "name": "year",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "week start timestamp(unit: second)",
-            "name": "week_start",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "week end timestamp(unit: second)",
-            "name": "week_end",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "school id",
-            "name": "school_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "class id",
-            "name": "class_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "teacher_id",
-            "name": "teacher_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "student_id",
-            "name": "student_id",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.QueryLearningSummaryFilterResultItem"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/reports/learning_summary/live_classes": {
       "get": {
         "description": "query live classes summary",
@@ -5376,6 +5291,148 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/entity.QueryLiveClassesSummaryResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/learning_summary/remaining_filter": {
+      "get": {
+        "description": "query remaining learning summary filter",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/learningSummary"],
+        "summary": "query remaining learning summary filter",
+        "operationId": "queryLearningSummaryRemainingFilter",
+        "parameters": [
+          {
+            "enum": ["live_class", "assignment"],
+            "type": "string",
+            "description": "learning summary type",
+            "name": "summary_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": ["school", "class", "teacher", "student", "subject"],
+            "type": "string",
+            "description": "filter type",
+            "name": "filter_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "week start timestamp(unit: second)",
+            "name": "week_start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "week end timestamp(unit: second)",
+            "name": "week_end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "school id",
+            "name": "school_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "class id",
+            "name": "class_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher_id",
+            "name": "teacher_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "student_id",
+            "name": "student_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.QueryLearningSummaryRemainingFilterResultItem"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/learning_summary/time_filter": {
+      "get": {
+        "description": "query learning summary time filter",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/learningSummary"],
+        "summary": "query learning summary time filter",
+        "operationId": "queryLearningSummaryTimeFilter",
+        "parameters": [
+          {
+            "enum": ["live_class", "assignment"],
+            "type": "string",
+            "description": "learning summary type",
+            "name": "summary_type",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.LearningSummaryFilterYear"
+              }
             }
           },
           "400": {
@@ -9693,6 +9750,31 @@
         }
       }
     },
+    "entity.LearningSummaryFilterWeek": {
+      "type": "object",
+      "properties": {
+        "week_end": {
+          "type": "integer"
+        },
+        "week_start": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.LearningSummaryFilterYear": {
+      "type": "object",
+      "properties": {
+        "weeks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.LearningSummaryFilterWeek"
+          }
+        },
+        "year": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.LearningSummaryOutcome": {
       "type": "object",
       "properties": {
@@ -10250,7 +10332,7 @@
         }
       }
     },
-    "entity.QueryLearningSummaryFilterResultItem": {
+    "entity.QueryLearningSummaryRemainingFilterResultItem": {
       "type": "object",
       "properties": {
         "class_id": {
@@ -11454,23 +11536,11 @@
     "entity.StudentAssessment": {
       "type": "object",
       "properties": {
-        "comment": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "complete_at": {
           "type": "integer"
         },
         "create_at": {
           "type": "integer"
-        },
-        "feedback_attachments": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.StudentAssessmentAttachment"
-          }
         },
         "id": {
           "type": "string"
@@ -11479,6 +11549,27 @@
           "$ref": "#/definitions/entity.StudentAssessmentSchedule"
         },
         "score": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "student_attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.StudentAssessmentAttachment"
+          }
+        },
+        "teacher_comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.StudentAssessmentTeacher"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "update_at": {
           "type": "integer"
         }
       }
@@ -11489,17 +11580,8 @@
         "id": {
           "type": "string"
         },
-        "status": {
+        "name": {
           "type": "string"
-        },
-        "teacher": {
-          "$ref": "#/definitions/entity.StudentAssessmentTeacher"
-        },
-        "title": {
-          "type": "string"
-        },
-        "update_at": {
-          "type": "integer"
         }
       }
     },
@@ -11523,6 +11605,20 @@
     "entity.StudentAssessmentTeacher": {
       "type": "object",
       "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "teacher": {
+          "$ref": "#/definitions/entity.StudentAssessmentTeacherInfo"
+        }
+      }
+    },
+    "entity.StudentAssessmentTeacherInfo": {
+      "type": "object",
+      "properties": {
+        "avatar": {
+          "type": "string"
+        },
         "family_name": {
           "type": "string"
         },

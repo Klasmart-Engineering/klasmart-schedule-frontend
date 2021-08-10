@@ -17,7 +17,7 @@ export type QueryLearningSummaryConditionBaseProps = {
   value: QueryLearningSummaryCondition;
 };
 export enum ReportType {
-  live = "live",
+  live = "live_class",
   assignment = "assignment",
 }
 export type LiveClassesSummaryResult = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;
@@ -30,4 +30,12 @@ export type ReportInfoBaseProps = {
   assignmentSummary: AssignmentSummaryResult;
   reportType: ReportType;
   onChangeLessonIndex: (index: number) => void;
+};
+
+export type QueryLearningSummaryRemainingFilterCondition = NonNullRecordValue<
+  NonNullable<Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0]>
+>;
+export type ArrProps = {
+  id: string | undefined;
+  name: string | undefined;
 };
