@@ -62,9 +62,13 @@ export function ReportLearningSummary() {
   const { lessonIndex, year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id } = condition;
   const history = useHistory();
   const { tab } = useParams<RouteParams>();
-  const { liveClassSummary, learningSummartOptions, assignmentSummary } = useSelector<RootState, RootState["report"]>(
-    (state) => state.report
-  );
+  // const isLiveClass = tab === ReportType.live
+  const { liveClassSummary, learningSummartOptions, assignmentSummary, assessmentFilterValues, summaryReportOptions } = useSelector<
+    RootState,
+    RootState["report"]
+  >((state) => state.report);
+  // const filterValues = useMemo(() => isLiveClass ? liveClassFilterValues : assessmentFilterValues, [assessmentFilterValues, isLiveClass, liveClassFilterValues])
+  console.log(assessmentFilterValues);
   const { week } = learningSummartOptions;
   const defaultWeeksValue = useMemo(() => {
     if (condition.week_start && condition.week_end) {
@@ -80,61 +84,49 @@ export function ReportLearningSummary() {
     const newValue = { ...value, lessonIndex: -1 };
     history.replace({ search: toQueryString(clearNull(newValue)) });
   };
+  // const handleChangeTime = (value: QueryLearningSummaryCondition) => {
+  //   const newValue = { ...value, lessonIndex: -1 };
+  //   // const { week_start, week_end } = value
+  //   // dispatch(getInfoFilter({summary_type: tab, week_start, week_end}))
+  //   history.replace({ search: toQueryString(clearNull(newValue)) });
+  // }
   const handleChangeReportType = useMemo(
     () => (value: ReportType) => {
-      history.replace({
-        pathname: `${routeBasePath}/tab/${value}`,
-        search: setQuery(history.location.search, { lessonIndex: -1 }),
-      });
+      history.replace(`${routeBasePath}/tab/${value}?lessonIndex=-1`);
     },
     [history, routeBasePath]
   );
   const handleChangeLessonIndex = (index: number) => {
     history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });
   };
-  useEffect(() => {
-    if (learningSummartOptions.studentList.length && learningSummartOptions.subjectList.length) {
-      if (year && week_start && week_end && student_id && subject_id) {
-        history.push({
-          search: setQuery(history.location.search, { student_id, subject_id, week_start, week_end, year }),
-        });
-      } else {
-        const stu_id = learningSummartOptions.studentList[0].user_id;
-        const sub_id = "all";
-        const { week } = learningSummartOptions;
-        const { week_start, week_end } = week[week.length - 1];
-        const year = learningSummartOptions.year[0];
-        history.push({
-          search: setQuery(history.location.search, { student_id: stu_id, subject_id: sub_id, week_start, week_end, year }),
-        });
-      }
-    }
-  }, [
-    history,
-    learningSummartOptions,
-    learningSummartOptions.studentList,
-    learningSummartOptions.subjectList,
-    learningSummartOptions.week,
-    learningSummartOptions.year,
-    student_id,
-    subject_id,
-    week_end,
-    week_start,
-    year,
-  ]);
+  useEffect(() => {}, []);
   useEffect(() => {
     dispatch(
-      onLoadLearningSummary({ year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, metaLoading: true })
+      onLoadLearningSummary({
+        summary_type: tab,
+        year,
+        week_start,
+        week_end,
+        school_id,
+        class_id,
+        teacher_id,
+        student_id,
+        subject_id,
+        metaLoading: true,
+      })
     );
-  }, [year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, dispatch, learningSummartOptions.year]);
+  }, [year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, dispatch, learningSummartOptions.year, tab]);
   return (
     <>
       <ReportTitle title={t("report_learning_summary_report")} info={t("report_msg_lsr")} />
       <FilterLearningSummary
-        learningSummartOptions={learningSummartOptions}
+        // learningSummartOptions={learningSummartOptions}
         value={condition}
         defaultWeeksValue={defaultWeeksValue}
         onChange={handleChange}
+        // filterValues={filterValues}
+        // timeFilter={filterValues.timeFilter}
+        summaryReportOptions={summaryReportOptions}
       />
       <ReportInfo
         lessonIndex={lessonIndex!}
@@ -149,4 +141,4 @@ export function ReportLearningSummary() {
 }
 ReportLearningSummary.routeBasePath = "/report/learning-summary";
 ReportLearningSummary.routeMatchPath = `/report/learning-summary/tab/:tab`;
-ReportLearningSummary.routeRedirectDefault = `/report/learning-summary/tab/live?lessonIndex=-1`;
+ReportLearningSummary.routeRedirectDefault = `/report/learning-summary/tab/${ReportType.live}?lessonIndex=-1`;

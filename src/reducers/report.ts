@@ -9,18 +9,9 @@ import {
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
-  MySchoolIDsDocument,
-  MySchoolIDsQuery,
-  MySchoolIDsQueryVariables,
   NotParticipantsByOrganizationDocument,
   NotParticipantsByOrganizationQuery,
   NotParticipantsByOrganizationQueryVariables,
-  ParticipantsByOrganizationDocument,
-  ParticipantsByOrganizationQuery,
-  ParticipantsByOrganizationQueryVariables,
-  ParticipantsBySchoolDocument,
-  ParticipantsBySchoolQuery,
-  ParticipantsBySchoolQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -45,15 +36,19 @@ import {
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
-  ExternalSubject,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
-import { deDuplicate, ModelReport } from "../models/ModelReports";
+import { formatTimeToMonDay, ModelReport } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
-import { getWeeks, IWeeks } from "../pages/ReportLearningSummary";
+import { IWeeks } from "../pages/ReportLearningSummary";
 import { LearningSummartOptionsProps } from "../pages/ReportLearningSummary/FilterLearningSummary";
-import { QueryLearningSummaryCondition } from "../pages/ReportLearningSummary/types";
+import {
+  ArrProps,
+  QueryLearningSummaryCondition,
+  QueryLearningSummaryRemainingFilterCondition,
+  ReportType,
+} from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
 
@@ -77,6 +72,11 @@ interface IreportState {
   learningSummartOptions: LearningSummartOptionsProps;
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
   assignmentSummary: EntityQueryAssignmentsSummaryResult;
+  liveClassTimeFilter: IResultQueryLoadLearningSummary["timeFilter"];
+  assessmentClassTimeFilter: IResultQueryLoadLearningSummary["timeFilter"];
+  liveClassFilterValues: IResultQueryLoadLearningSummary;
+  assessmentFilterValues: IResultQueryLoadLearningSummary;
+  summaryReportOptions: IResultLearningSummary;
 }
 interface RootState {
   report: IreportState;
@@ -129,105 +129,231 @@ const initialState: IreportState = {
     studentList: [],
     subjectList: [],
   },
-  liveClassSummary: {
-    // attend: 0,
-    // items: [
-    //   {
-    //     absent: false,
-    //     assessment_id: "111",
-    //     class_start_time: 1623979200,
-    //     complete_at: 1623979200,
-    //     create_at: 1623979200,
-    //     lesson_plan_name: "lesson plan name 1",
-    //     outcomes: [],
-    //     schedule_id: "schedule111",
-    //     schedule_title: "scheduletitle 111",
-    //     teacher_feedback: "teacher feedback 111",
-    //   },
-    //   {
-    //     absent: true,
-    //     assessment_id: "222",
-    //     class_start_time: 1624001400,
-    //     complete_at: 1624001400,
-    //     create_at: 1624001400,
-    //     lesson_plan_name: "lesson plan name 2",
-    //     outcomes: [
-    //       {
-    //         id: "outcome 111",
-    //         name: "outcome 111",
-    //       },
-    //       {
-    //         id: "outcome 222",
-    //         name: "outcome 222",
-    //       },
-    //     ],
-    //     schedule_id: "schedule222",
-    //     schedule_title: "scheduletitle 222",
-    //     teacher_feedback: "teacher feedback 222",
-    //   },
-    //   {
-    //     absent: true,
-    //     assessment_id: "333",
-    //     class_start_time: 1623897600,
-    //     complete_at: 1623897600,
-    //     create_at: 1623897600,
-    //     lesson_plan_name: "lesson plan name 1",
-    //     outcomes: [],
-    //     schedule_id: "schedule333",
-    //     schedule_title: "scheduletitle 333",
-    //     teacher_feedback: "teacher feedback 333",
-    //   },
-    //   {
-    //     absent: false,
-    //     assessment_id: "444",
-    //     class_start_time: 1623828600,
-    //     complete_at: 1623828600,
-    //     create_at: 1623828600,
-    //     lesson_plan_name: "lesson plan name 1",
-    //     outcomes: [
-    //       {
-    //         id: "outcome 333",
-    //         name: "outcome 333",
-    //       },
-    //       {
-    //         id: "outcome 444",
-    //         name: "outcome 444",
-    //       },
-    //     ],
-    //     schedule_id: "schedule444",
-    //     schedule_title: "scheduletitle 444",
-    //     teacher_feedback: "teacher feedback 444",
-    //   },
-    // ],
+  liveClassSummary: {},
+  assignmentSummary: {},
+  liveClassFilterValues: {
+    timeFilter: [],
+    infoFilter: [],
   },
-  assignmentSummary: {
-    // home_fun_study_count: 2,
-    // study_count: 4,
-    // items: [
-    //   {
-    //     assessment_id: "assessment id 111",
-    //     assessment_title: "assessment title 111",
-    //     assessment_type: "study",
-    //     complete_at: 1623979200,
-    //     create_at: 1623979200,
-    //     lesson_plan_name: "lesson plan name 111",
-    //     outcomes: [{ id: "outcome id 1", name: "outcome name 1" }],
-    //     schedule_id: "schedule id 111",
-    //     status: "complete",
-    //     teacher_feedback: "teacher feedback 111",
-    //   },
-    //   {
-    //     assessment_id: "assessment id 222",
-    //     assessment_title: "assessment title 222",
-    //     assessment_type: "home_fun_study",
-    //     complete_at: 1623979200,
-    //     create_at: 1623979200,
-    //     lesson_plan_name: "lesson plan name 222",
-    //     outcomes: [{ id: "outcome id 2", name: "outcome name 2" }],
-    //     schedule_id: "schedule id 222",
-    //     teacher_feedback: "teacher feedback 222",
-    //   },
-    // ],
+  assessmentFilterValues: {
+    timeFilter: [
+      {
+        year: 2021,
+        weeks: [
+          { week_start: 1609689600, week_end: 1610294399 },
+          { week_start: 1610294400, week_end: 1610899199 },
+          { week_start: 1610899200, week_end: 1611503999 },
+          { week_start: 1611504000, week_end: 1612108799 },
+          { week_start: 1612108800, week_end: 1612713599 },
+          { week_start: 1612713600, week_end: 1613318399 },
+          { week_start: 1613318400, week_end: 1613923199 },
+          { week_start: 1613923200, week_end: 1614527999 },
+          { week_start: 1614528000, week_end: 1615132799 },
+          { week_start: 1615132800, week_end: 1615737599 },
+          { week_start: 1615737600, week_end: 1616342399 },
+          { week_start: 1616342400, week_end: 1616947199 },
+          { week_start: 1616947200, week_end: 1617551999 },
+          { week_start: 1617552000, week_end: 1618156799 },
+          { week_start: 1618156800, week_end: 1618761599 },
+          { week_start: 1618761600, week_end: 1619366399 },
+          { week_start: 1619366400, week_end: 1619971199 },
+          { week_start: 1619971200, week_end: 1620575999 },
+          { week_start: 1620576000, week_end: 1621180799 },
+          { week_start: 1621180800, week_end: 1621785599 },
+          { week_start: 1621785600, week_end: 1622390399 },
+          { week_start: 1622390400, week_end: 1622995199 },
+          { week_start: 1622995200, week_end: 1623599999 },
+          { week_start: 1623600000, week_end: 1624204799 },
+          { week_start: 1624204800, week_end: 1624809599 },
+          { week_start: 1624809600, week_end: 1625414399 },
+          { week_start: 1625414400, week_end: 1626019199 },
+          { week_start: 1626019200, week_end: 1626623999 },
+          { week_start: 1626624000, week_end: 1627228799 },
+          { week_start: 1627228800, week_end: 1627833599 },
+          { week_start: 1627833600, week_end: 1628438399 },
+        ],
+      },
+    ],
+    infoFilter: [
+      {
+        id: "5f848fdc-3bbd-47ae-981a-57ae95cf4235",
+        name: "sch 1",
+        classes: [
+          {
+            id: "8f43ccbd-6fd5-43bc-a577-e3a936adcb28",
+            name: "class 1",
+            teachers: [
+              {
+                id: "4a0ccee4-082b-4398-9731-a25504163934",
+                name: "teach 1",
+                students: [
+                  // {
+                  //   id: "2522eae0-5f72-45d1-98f6-35827ab816a7",
+                  //   name: "org kidsloop",
+                  //   subjects: [
+                  //     {id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71",name: "None Specified"},
+                  //     {id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa",name: "Language/Literacy"},
+                  //     {id: "fab745e8-9e31-4d0c-b780-c40120c98b27",name: "Science"},
+                  //     {id: "66a453b0-d38f-472e-b055-7a94a94d66c4",name: "Language/Literacy"},
+                  //   ]
+                  // },
+                  {
+                    id: "98d1ea8c-6bb6-4611-8447-b9fb722b3cce",
+                    name: "org stu",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                  {
+                    id: "150de04b-6777-4cab-a381-5f36a9b750ef",
+                    name: "brilliant yang",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                  {
+                    id: "70eb76d1-91d3-4edf-9bf6-a2dfcfb51407",
+                    name: "stu 1",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: "150de04b-6777-4cab-a381-5f36a9b750ef",
+                name: "brilliant yang",
+                students: [
+                  {
+                    id: "2522eae0-5f72-45d1-98f6-35827ab816a7",
+                    name: "org kidsloop",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                  {
+                    id: "98d1ea8c-6bb6-4611-8447-b9fb722b3cce",
+                    name: "org stu",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                  {
+                    id: "150de04b-6777-4cab-a381-5f36a9b750ef",
+                    name: "brilliant yang",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                  {
+                    id: "70eb76d1-91d3-4edf-9bf6-a2dfcfb51407",
+                    name: "stu 1",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "7be80293-a7ce-4caa-82f9-d392a6504cda",
+            name: "class m",
+            teachers: [
+              {
+                id: "2522eae0-5f72-45d1-98f6-35827ab816a7",
+                name: "org kidsloop",
+                students: [
+                  {
+                    id: "4271a55d-431e-4c6e-aef2-813438fa3a18",
+                    name: "bada 1",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                  {
+                    id: "150de04b-6777-4cab-a381-5f36a9b750ef",
+                    name: "brilliant yang",
+                    subjects: [
+                      { id: "subjects_id_1", name: "subjects_name_1" },
+                      { id: "subjects_id_2", name: "subjects_name_2" },
+                      { id: "subjects_id_3", name: "subjects_name_3" },
+                      { id: "subjects_id_4", name: "subjects_name_4" },
+                    ],
+                  },
+                  {
+                    id: "98d1ea8c-6bb6-4611-8447-b9fb722b3cce",
+                    name: "org stu",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                  {
+                    id: "70eb76d1-91d3-4edf-9bf6-a2dfcfb51407",
+                    name: "stu 1",
+                    subjects: [
+                      { id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" },
+                      { id: "20d6ca2f-13df-4a7a-8dcb-955908db7baa", name: "Language/Literacy" },
+                      { id: "fab745e8-9e31-4d0c-b780-c40120c98b27", name: "Science" },
+                      { id: "66a453b0-d38f-472e-b055-7a94a94d66c4", name: "Language/Literacy" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  liveClassTimeFilter: [],
+  assessmentClassTimeFilter: [],
+  summaryReportOptions: {
+    years: [],
+    weeks: [],
+    schools: [
+      { id: "1", name: "1" },
+      { id: "2", name: "2" },
+    ],
+    classes: [],
+    teachers: [],
+    students: [],
+    subjects: [],
+    year: 2021,
+    week_start: 0,
+    week_end: 0,
+    school_id: "",
+    class_id: "",
+    teacher_id: "",
+    student_id: "",
+    subject_id: "",
   },
 };
 
@@ -1062,112 +1188,401 @@ export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSumma
   }
 );
 
-export interface LearningSummaryResponse {
-  year?: number[];
-  week?: IWeeks[];
-  studentList?: Pick<User, "user_id" | "user_name">[];
-  subjectList?: ExternalSubject[];
-}
+export type IParamQueryTimeFilter = Parameters<typeof api.reports.queryLearningSummaryTimeFilter>[0];
+export type IResultQueryTimeFilter = {
+  liveClassTimeFilter?: AsyncReturnType<typeof api.reports.queryLearningSummaryTimeFilter>;
+  assessmentTimeFilter?: AsyncReturnType<typeof api.reports.queryLearningSummaryTimeFilter>;
+};
+export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQueryTimeFilter>("getTimeFilter", async (query) => {
+  const { summary_type } = query;
+  const res = await api.reports.queryLearningSummaryTimeFilter({ ...query });
+  return summary_type === ReportType.live ? { liveClassTimeFilter: res } : { assessmentTimeFilter: res };
+});
 
+export type IParamQueryRemainFilter = Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0];
+export type IResultQueryRemainFilter = {
+  liveClassRemainFilter?: AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
+  assessmentRemainFilter?: AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
+};
+export const getRemainFilter = createAsyncThunk<IResultQueryRemainFilter, IParamQueryRemainFilter>("getTimeFilter", async (query) => {
+  const { summary_type } = query;
+  const res = await api.reports.queryLearningSummaryRemainingFilter({ ...query });
+  return summary_type === ReportType.live ? { liveClassRemainFilter: res } : { assessmentRemainFilter: res };
+});
+
+export type IResultQueryLoadLearningSummary = {
+  timeFilter: AsyncReturnType<typeof api.reports.queryLearningSummaryTimeFilter>;
+  infoFilter: AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
+};
+export interface LearningSummaryResponse {
+  liveClassFilterValues: IResultQueryLoadLearningSummary;
+  assessmentFilterValues: IResultQueryLoadLearningSummary;
+}
+export interface IParamsOnLoadLearningSummary {
+  summary_type: string;
+}
 export const onLoadLearningSummary = createAsyncThunk<
-  LearningSummaryResponse,
-  QueryLearningSummaryCondition & LoadingMetaPayload,
+  any,
+  IParamsOnLoadLearningSummary & QueryLearningSummaryCondition & LoadingMetaPayload,
   { state: RootState }
 >("onLoadLearningSummary", async (query, { getState, dispatch }) => {
-  let studentList: Pick<User, "user_id" | "user_name">[] | undefined = [];
-  // let liveClassSummary: EntityQueryLiveClassesSummaryResult[] =[];
   const {
-    report: { learningSummartOptions },
+    report: { liveClassFilterValues, assessmentFilterValues },
   } = getState();
-  if (learningSummartOptions.week.length) {
-    const { subject_id, student_id } = query;
+  const { summary_type, student_id, subject_id } = query;
+  if (
+    liveClassFilterValues.timeFilter.length &&
+    liveClassFilterValues.infoFilter.length &&
+    assessmentFilterValues.timeFilter.length &&
+    assessmentFilterValues.infoFilter.length
+  ) {
+    const isLiveClass = summary_type === ReportType.live;
     if (student_id) {
       if (subject_id === "all") {
-        await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }));
-        await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
+        isLiveClass
+          ? await dispatch(getLiveClassesSummary({ ...query, subject_id: "" }))
+          : await dispatch(getAssignmentSummary({ ...query, subject_id: "" }));
       } else {
-        await dispatch(getLiveClassesSummary({ ...query }));
-        await dispatch(getAssignmentSummary({ ...query }));
+        isLiveClass ? await dispatch(getLiveClassesSummary({ ...query })) : await dispatch(getAssignmentSummary({ ...query }));
       }
     }
-    return learningSummartOptions;
+  } else {
+    dispatch(getTimeFilter({ summary_type: ReportType.live }));
+    dispatch(getTimeFilter({ summary_type: ReportType.assignment }));
+    // dispatch(getRemainFilter({summary_type: ReportType.live}));
+    // dispatch(getRemainFilter({summary_type: ReportType.assignment}))
   }
-  const week = getWeeks();
-  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  const perm = hasPermissionOfMe(
-    [
-      PermissionType.report_learning_summary_org_652,
-      PermissionType.report_learning_summary_school_651,
-      PermissionType.report_learning_summary_teacher_650,
-      PermissionType.report_learning_summary_student_649,
-    ],
-    meInfo.me
-  );
-  if (perm.report_learning_summary_org_652) {
-    // todo 拉取所有选项并且 默认置位第一个
-    // 通过org拉取student 可以看到 year week school teacher class student subject
-    const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
-      query: ParticipantsByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    });
-    data.organization?.classes?.forEach((classItem) => {
-      studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
-    });
-  } else if (perm.report_learning_summary_school_651) {
-    // 通过school拉取student 可以看到 year week teacher class student subject
-    const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
-      query: MySchoolIDsDocument,
-      variables: { organization_id },
-    });
-    if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
-      const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
-        query: ParticipantsBySchoolDocument,
-        variables: {
-          school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
-        },
-      });
-      data.school?.classes?.forEach((classItem) => {
-        studentList = studentList?.concat(classItem?.students as Pick<User, "user_id" | "user_name">[]);
-      });
-    }
-  } else if (perm.report_learning_summary_teacher_650) {
-    // 通过classteaching拉取student 可以看到 year week class student subject
-    const { data } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
-      query: ClassesTeachingQueryDocument,
-      variables: {
-        user_id: meInfo.me?.user_id as string,
-        organization_id,
-      },
-    });
-    data.user?.membership?.classesTeaching?.forEach((item) => {
-      studentList = studentList?.concat(item?.students as Pick<User, "user_id" | "user_name">[]);
-    });
-  } else if (perm.report_learning_summary_student_649) {
-    // 不需要拉取student 可以看到 year week  subject
-    studentList = [{ user_id: meInfo.me?.user_id!, user_name: "" }];
-  }
-  studentList = studentList.map((item) => {
-    return {
-      user_id: item.user_id,
-      user_name: item.user_name,
-    };
-  });
-  const subjectList: ExternalSubject[] = await api.subjects.getSubject();
-  return {
-    studentList: deDuplicate(studentList),
-    subjectList,
-    year: [2021],
-    week,
-  };
 });
+export interface IParamsLearningSummary extends QueryLearningSummaryRemainingFilterCondition {
+  isOrg: boolean;
+  isSchool: boolean;
+  isTeacher: boolean;
+  isStudent: boolean;
+  year?: number;
+  subject_id?: string;
+}
+export interface IResultLearningSummary {
+  years?: number[];
+  weeks?: IWeeks[];
+  schools?: ArrProps[];
+  classes?: ArrProps[];
+  teachers?: ArrProps[];
+  students?: ArrProps[];
+  subjects?: ArrProps[];
+  year?: number;
+  week_start?: number;
+  week_end?: number;
+  school_id?: string;
+  class_id?: string;
+  teacher_id?: string;
+  student_id?: string;
+  subject_id?: string;
+}
+export const onLoadLearningSummary2 = createAsyncThunk<any, IParamsLearningSummary>(
+  "onLoadLearningSummary2",
+  async (query, { dispatch }) => {
+    const currentYear = new Date().getFullYear();
+    const {
+      isOrg,
+      isSchool,
+      isTeacher,
+      isStudent,
+      year = currentYear,
+      summary_type,
+      week_start,
+      week_end,
+      school_id,
+      class_id,
+      teacher_id,
+      student_id,
+      subject_id,
+    } = query;
+    let subjects: ArrProps[] = [];
+    let schools: ArrProps[] = [];
+    let classes: ArrProps[] = [];
+    let teachers: ArrProps[] = [];
+    let students: ArrProps[] = [];
+    let _school_id: string | undefined = "";
+    let _class_id: string | undefined = "";
+    let _teacher_id: string | undefined = "";
+    let _student_id: string | undefined = "";
+    let _subject_id: string | undefined = "";
+    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // 拉取我的user_id
+    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+      query: QeuryMeDocument,
+      variables: {
+        organization_id,
+      },
+    });
+    const myUserId = meInfo.me?.user_id;
+    const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ summary_type });
+    const years = timeFilter.length && timeFilter.map((item) => item.year);
+    const _weeks = timeFilter.length && timeFilter.find((item) => item.year === year)?.weeks;
+    const weeks =
+      _weeks &&
+      _weeks.map((item) => {
+        const { week_start, week_end } = item;
+        return {
+          week_start,
+          week_end,
+          value: `${formatTimeToMonDay(week_start as number)} ~ ${formatTimeToMonDay(week_end as number)}`,
+        };
+      });
+    const lastWeek = weeks && weeks[weeks.length - 1];
+    const _week_start = week_start ? week_start : lastWeek && lastWeek.week_start;
+    const _week_end = week_end ? week_end : lastWeek && lastWeek.week_end;
+    if (isOrg) {
+      const _schools = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "school",
+        week_start: _week_start,
+        week_end: _week_end,
+      });
+      schools =
+        _schools &&
+        _schools.map((item) => {
+          return {
+            id: item.school_id,
+            name: item.school_name,
+          };
+        });
+      _school_id = school_id ? school_id : schools[schools.length - 1].id;
+      const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "class",
+        week_start: _week_start,
+        week_end: _week_end,
+        school_id: _school_id,
+      });
+      classes =
+        _classes &&
+        _classes.map((item) => {
+          return {
+            id: item.class_id,
+            name: item.class_name,
+          };
+        });
+      _class_id = class_id ? class_id : classes[classes.length - 1].id;
+      const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "teacher",
+        week_start: _week_start,
+        week_end: _week_end,
+        class_id: _class_id,
+      });
+      teachers =
+        _teachers &&
+        _teachers.map((item) => {
+          return {
+            id: item.teacher_id,
+            name: item.teacher_name,
+          };
+        });
+      _teacher_id = teacher_id ? teacher_id : teachers[teachers.length - 1].id;
+      const _students = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "student",
+        week_start: _week_start,
+        week_end: _week_end,
+        teacher_id: _teacher_id,
+      });
+      students =
+        _students &&
+        _students.map((item) => {
+          return {
+            id: item.student_id,
+            name: item.student_name,
+          };
+        });
+      _student_id = student_id ? student_id : students[students.length - 1].id;
+      const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "subject",
+        week_start,
+        week_end,
+        student_id: _student_id,
+      });
+      subjects =
+        _subjects &&
+        _subjects.map((item) => {
+          return {
+            id: item.subject_id,
+            name: item.subject_name,
+          };
+        });
+      _subject_id = subject_id ? subject_id : subjects[subjects.length - 1].id;
+    } else if (isSchool) {
+      const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "class",
+        week_start: _week_start,
+        week_end: _week_end,
+        school_id: myUserId,
+      });
+      classes =
+        _classes &&
+        _classes.map((item) => {
+          return {
+            id: item.class_id,
+            name: item.class_name,
+          };
+        });
+      _class_id = class_id ? class_id : classes[classes.length - 1].id;
+      const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "teacher",
+        week_start: _week_start,
+        week_end: _week_end,
+        school_id: _school_id,
+        class_id: _class_id,
+      });
+      teachers =
+        _teachers &&
+        _teachers.map((item) => {
+          return {
+            id: item.teacher_id,
+            name: item.teacher_name,
+          };
+        });
+      _teacher_id = teacher_id ? teacher_id : teachers[teachers.length - 1].id;
+      const _students = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "student",
+        week_start: _week_start,
+        week_end: _week_end,
+        teacher_id: _teacher_id,
+      });
+      students =
+        _students &&
+        _students.map((item) => {
+          return {
+            id: item.student_id,
+            name: item.student_name,
+          };
+        });
+      _student_id = student_id ? student_id : students[students.length - 1].id;
+      const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "subject",
+        week_start,
+        week_end,
+        student_id: _student_id,
+      });
+      subjects =
+        _subjects &&
+        _subjects.map((item) => {
+          return {
+            id: item.subject_id,
+            name: item.subject_name,
+          };
+        });
+      _subject_id = subject_id ? subject_id : subjects[subjects.length - 1].id;
+    } else if (isTeacher) {
+      const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "class",
+        week_start: _week_start,
+        week_end: _week_end,
+        teacher_id: myUserId,
+      });
+      classes =
+        _classes &&
+        _classes.map((item) => {
+          return {
+            id: item.class_id,
+            name: item.class_name,
+          };
+        });
+      _class_id = class_id ? class_id : classes[classes.length - 1].id;
+      const _students = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "student",
+        week_start: _week_start,
+        week_end: _week_end,
+        class_id: _class_id,
+      });
+      students =
+        _students &&
+        _students.map((item) => {
+          return {
+            id: item.student_id,
+            name: item.student_name,
+          };
+        });
+      _student_id = student_id ? student_id : students[students.length - 1].id;
+      const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "subject",
+        week_start,
+        week_end,
+        student_id: _student_id,
+      });
+      subjects =
+        _subjects &&
+        _subjects.map((item) => {
+          return {
+            id: item.subject_id,
+            name: item.subject_name,
+          };
+        });
+      _subject_id = subject_id ? subject_id : subjects[subjects.length - 1].id;
+    } else if (isStudent) {
+      const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "subject",
+        week_start,
+        week_end,
+        student_id: student_id ? student_id : myUserId,
+      });
+      subjects =
+        _subjects &&
+        _subjects.map((item) => {
+          return {
+            id: item.subject_id,
+            name: item.subject_name,
+          };
+        });
+      _subject_id = subject_id ? subject_id : subjects[subjects.length - 1].id;
+    }
+    const isLiveClass = summary_type === ReportType.live;
+    const params = {
+      year,
+      week_start: _week_start,
+      week_end: _week_end,
+      school_id: _school_id,
+      class_id: _class_id,
+      teacher_id: _teacher_id,
+      student_id: _student_id,
+      subject_id: _subject_id,
+    };
+    if (subject_id === "all") {
+      isLiveClass
+        ? await dispatch(getLiveClassesSummary({ ...params, subject_id: "" }))
+        : await dispatch(getAssignmentSummary({ ...params, subject_id: "" }));
+    } else {
+      isLiveClass ? await dispatch(getLiveClassesSummary({ ...params })) : await dispatch(getAssignmentSummary({ ...params }));
+    }
+    return {
+      years,
+      weeks,
+      schools,
+      classes,
+      teachers,
+      students,
+      subjects,
+      ...params,
+      // year,
+      // week_start: _week_start,
+      // week_end: _week_end,
+      // school_id: _school_id,
+      // class_id: _class_id,
+      // teacher_id: _teacher_id,
+      // student_id: _student_id,
+      // subject_id: _subject_id,
+    };
+  }
+);
 
 interface GetClassListPayload {
   school_id: string;
@@ -1337,18 +1752,32 @@ const { reducer } = createSlice({
       state.reportMockOptions = initialState.reportMockOptions;
     },
     [onLoadLearningSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadLearningSummary>>) => {
-      if (payload.studentList) {
-        state.learningSummartOptions.studentList = payload.studentList || [];
-        state.learningSummartOptions.subjectList = payload.subjectList || [];
-        state.learningSummartOptions.year = payload.year || [];
-        state.learningSummartOptions.week = payload.week || [];
-      }
+      // if (payload.studentList) {
+      //   state.learningSummartOptions.studentList = payload.studentList || [];
+      //   state.learningSummartOptions.subjectList = payload.subjectList || [];
+      //   state.learningSummartOptions.year = payload.year || [];
+      //   state.learningSummartOptions.week = payload.week || [];
+      // }
     },
     [getLiveClassesSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveClassesSummary>>) => {
       state.liveClassSummary = payload;
     },
     [getAssignmentSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentSummary>>) => {
       state.assignmentSummary = payload;
+    },
+    [getTimeFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTimeFilter>>) => {
+      if (payload.liveClassTimeFilter) {
+        state.liveClassFilterValues.timeFilter = payload.liveClassTimeFilter;
+      } else if (payload.assessmentTimeFilter) {
+        state.assessmentFilterValues.timeFilter = payload.assessmentTimeFilter;
+      }
+    },
+    [getRemainFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>) => {
+      if (payload.liveClassRemainFilter) {
+        state.liveClassFilterValues.infoFilter = payload.liveClassRemainFilter;
+      } else if (payload.assessmentRemainFilter) {
+        state.assessmentFilterValues.infoFilter = payload.assessmentRemainFilter;
+      }
     },
   },
 });

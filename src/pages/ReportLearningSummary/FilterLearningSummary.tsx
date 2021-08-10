@@ -7,7 +7,8 @@ import { ExternalSubject } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { t } from "../../locale/LocaleManager";
-import { QueryLearningSummaryConditionBaseProps } from "./types";
+import { IResultLearningSummary } from "../../reducers/report";
+import { ArrProps, QueryLearningSummaryCondition, QueryLearningSummaryConditionBaseProps } from "./types";
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   selectButton: {
     width: 200,
@@ -25,6 +26,19 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
     marginTop: "30px",
   },
 }));
+
+// export enum ArrPropTypes {
+//   EntityLearningSummaryFilterSchool,
+//   EntityLearningSummaryFilterClass,
+//   EntityLearningSummaryFilterTeacher,
+//   EntityLearningSummaryFilterStudent,
+//   EntityLearningSummaryFilterSubject
+// }
+// export type ArrPropTypes = EntityLearningSummaryFilterSchool |
+//                            EntityLearningSummaryFilterClass |
+//                            EntityLearningSummaryFilterTeacher |
+//                            EntityLearningSummaryFilterStudent |
+//                            EntityLearningSummaryFilterSubject
 export interface LearningSummartOptionsProps {
   year: number[];
   week: IWeeks[];
@@ -33,7 +47,11 @@ export interface LearningSummartOptionsProps {
 }
 export interface FilterLearningSummaryProps extends QueryLearningSummaryConditionBaseProps {
   defaultWeeksValue: string;
-  learningSummartOptions: LearningSummartOptionsProps;
+  // learningSummartOptions: LearningSummartOptionsProps;
+  // timeFilter: EntityLearningSummaryFilterYear[];
+  // filterValues: IResultQueryLoadLearningSummary;
+  summaryReportOptions: IResultLearningSummary;
+  // onChangeMenu: (value: string, tab: keyof QueryLearningSummaryCondition) => any;
 }
 export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   const css = useStyles();
@@ -43,37 +61,68 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
     PermissionType.report_learning_summary_teacher_650,
     PermissionType.report_learning_summary_student_649,
   ]);
-  const { value, defaultWeeksValue, learningSummartOptions, onChange } = props;
-  const { year, week, studentList, subjectList } = learningSummartOptions;
+  const isOrg = perm.report_learning_summary_org_652;
+  const isSchoolAdmin = perm.report_learning_summary_school_651;
+  const isTeacher = perm.report_learning_summary_teacher_650;
+  const isStudent = perm.report_learning_summary_student_649;
+  const { value, defaultWeeksValue, summaryReportOptions, onChange } = props;
+  const { years, weeks, schools, classes, teachers, students, subjects } = summaryReportOptions;
+  // const { timeFilter, infoFilter } = filterValues;
+  // console.log(timeFilter)
+  // const { year, week, studentList, subjectList } = learningSummartOptions;
+  // const weeks = useMemo(() => {
+  //   const _weeks = timeFilter.find(item => item.year === value.year)?.weeks
+  //   return _weeks && _weeks.length && _weeks.map(item => {
+  //     const { week_start, week_end } = item;
+  //     return {
+  //       week_start: week_start,
+  //       ween_end: week_end,
+  //       value: `${formatTimeToMonDay(week_start as number)}~${formatTimeToMonDay(week_end as number)}`
+  //     }
+  //   })
+  // }, [timeFilter, value.year]);
+
+  // const classes =  useMemo(() => {
+  //   return infoFilter.find(item => item.id === value.school_id)?.classes || [];
+  // }, [infoFilter, value.school_id])
+  // const teachers = useMemo(() => {
+  //   return classes?.find(item => item.id === value.class_id)?.teachers || [];
+  // }, [classes, value.class_id]);
+  // const students = useMemo(() => {
+  //   return teachers?.find(item => item.id === value.teacher_id)?.students || [];
+  // }, [teachers, value.teacher_id])
+  // const subjects = useMemo(() => {
+  //   return students?.find(item => item.id === value.student_id)?.subjects || [];
+  // }, [students, value.student_id])
   const getYear = () => {
-    return year.map((item) => (
-      <MenuItem key={item} value={item}>
-        {item}
-      </MenuItem>
-    ));
+    return (
+      years &&
+      years.map((item) => (
+        <MenuItem key={item} value={item}>
+          {item}
+        </MenuItem>
+      ))
+    );
   };
   const getWeekElement = () => {
-    return week.map((item) => (
-      <MenuItem key={item.value} value={item.value}>
-        {item.value}
-      </MenuItem>
-    ));
+    return (
+      weeks &&
+      weeks.map((item) => (
+        <MenuItem key={item.value} value={item.value}>
+          {item.value}
+        </MenuItem>
+      ))
+    );
   };
-  const getStudent = () => {
-    return studentList.map((item) => (
-      <MenuItem key={item.user_id} value={item.user_id}>
-        {item.user_name}
-      </MenuItem>
-    ));
-  };
-  const getSubject = () => {
-    const allSubject: ExternalSubject[] = [{ id: "all", name: "All" }];
-    const newSubjectList = allSubject.concat(subjectList);
-    return newSubjectList.map((item) => (
-      <MenuItem key={item.id} value={item.id}>
-        {item.name}
-      </MenuItem>
-    ));
+  const getInfos = (arr: ArrProps[]) => {
+    return (
+      arr &&
+      arr.map((item) => (
+        <MenuItem key={item.id} value={item.id}>
+          {item.name}
+        </MenuItem>
+      ))
+    );
   };
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     const year = Number(event.target.value);
@@ -95,109 +144,109 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
       })
     );
   };
-  const handleChangeStudent = (event: ChangeEvent<HTMLInputElement>) => {
-    const student_id = event.target.value;
-    onChange(
-      produce(value, (draft) => {
-        draft.student_id = student_id;
-      })
-    );
-  };
-  const handleChangeSubject = (event: ChangeEvent<HTMLInputElement>) => {
-    const subject_id = event.target.value;
-    onChange(
-      produce(value, (draft) => {
-        draft.subject_id = subject_id;
-      })
-    );
+  const handleChange = (val: string | undefined, tab: keyof QueryLearningSummaryCondition) => {
+    console.log(val, tab);
+    // onChange(
+    //   produce(value, (draft) => {
+    //     draft[tab] = val
+    //   })
+    // )
   };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div>
-        <div>
-          <TextField
-            size="small"
-            className={css.selectButton}
-            onChange={handleChangeYear}
-            label={t("report_filter_year")}
-            value={value.year || ""}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getYear()}
-          </TextField>
-          <TextField
-            size="small"
-            className={css.selectButton}
-            onChange={handleChangeWeek}
-            label={t("report_filter_week")}
-            value={defaultWeeksValue}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getWeekElement()}
-          </TextField>
-        </div>
-        <div style={{ marginTop: 20 }}>
-          {/* <TextField
-            size="small"
-            className={css.selectButton}
-            // onChange={(e) => onChange()}
-            label={t("report_filter_school")}
-            value={value.year}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getYear()}
-          </TextField>
-          <TextField
-            size="small"
-            className={css.selectButton}
-            // onChange={(e) => onChange()}
-            label={t("report_filter_class")}
-            value={value.year}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getYear()}
-          </TextField>
-          <TextField
-            size="small"
-            className={css.selectButton}
-            // onChange={(e) => onChange()}
-            label={t("report_filter_teacher")}
-            value={value.year}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getYear()}
-          </TextField> */}
-          {(perm.report_learning_summary_org_652 ||
-            perm.report_learning_summary_school_651 ||
-            perm.report_learning_summary_teacher_650) && (
+        {isStudent && (
+          <div>
             <TextField
               size="small"
               className={css.selectButton}
-              onChange={handleChangeStudent}
+              onChange={handleChangeYear}
+              label={t("report_filter_year")}
+              value={value.year || ""}
+              select
+              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+            >
+              {getYear()}
+            </TextField>
+            <TextField
+              size="small"
+              className={css.selectButton}
+              onChange={handleChangeWeek}
+              label={t("report_filter_week")}
+              value={defaultWeeksValue}
+              select
+              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+            >
+              {getWeekElement()}
+            </TextField>
+          </div>
+        )}
+        <div style={{ marginTop: 20 }}>
+          {isOrg && (
+            <TextField
+              size="small"
+              className={css.selectButton}
+              onChange={(e) => handleChange(e.target.value, "school_id")}
+              label={t("report_filter_school")}
+              value={value.school_id}
+              select
+              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+            >
+              {getInfos(schools || [])}
+            </TextField>
+          )}
+          {(isOrg || isSchoolAdmin || isTeacher) && (
+            <TextField
+              size="small"
+              className={css.selectButton}
+              // onChange={handleChange}
+              label={t("report_filter_class")}
+              value={value.class_id}
+              select
+              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+            >
+              {getInfos(classes || [])}
+            </TextField>
+          )}
+          {(isOrg || isSchoolAdmin) && (
+            <TextField
+              size="small"
+              className={css.selectButton}
+              // onChange={handleChange}
+              label={t("report_filter_teacher")}
+              value={value.teacher_id}
+              select
+              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+            >
+              {getInfos(teachers || [])}
+            </TextField>
+          )}
+          {(isOrg || isSchoolAdmin || isTeacher) && (
+            <TextField
+              size="small"
+              className={css.selectButton}
+              // onChange={handleChange}
               label={t("report_filter_student")}
               value={value.student_id}
               select
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {getStudent()}
+              {getInfos(students || [])}
             </TextField>
           )}
-          <TextField
-            size="small"
-            className={css.selectButton}
-            onChange={handleChangeSubject}
-            label={t("report_filter_subject")}
-            value={value.subject_id}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getSubject()}
-          </TextField>
+          {isStudent && (
+            <TextField
+              size="small"
+              className={css.selectButton}
+              // onChange={handleChange}
+              label={t("report_filter_subject")}
+              value={value.subject_id}
+              select
+              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+            >
+              {getInfos(subjects || [])}
+            </TextField>
+          )}
         </div>
       </div>
       <Divider className={css.divider} />
