@@ -51,4 +51,14 @@ function genLangTypeFileContent (enJson) {
   return `${header}${body}${footer}`;
 }
 
+function genLangTypeFileContentSyncLocal (enData) {
+  const body = enData
+    .map(({id, description}) => `| { id: "${id}"; description: "${description}"; values: ${getValuesByDescription(description)} }`)
+    .concat(';')
+    .join('\n')
+
+  return `${header}${body}${footer}`;
+}
+
 exports.genLangTypeFileContent = genLangTypeFileContent;
+exports.genLangTypeFileContentSyncLocal = genLangTypeFileContentSyncLocal;
