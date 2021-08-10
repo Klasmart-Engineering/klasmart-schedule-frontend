@@ -30,6 +30,7 @@ import "moment/locale/es";
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
     boxShadow: shadows[3],
+    width: document.body.clientWidth < 450 ? document.body.clientWidth - 40 + "px" : "100%",
   },
   calendarNav: {
     height: "50px",
