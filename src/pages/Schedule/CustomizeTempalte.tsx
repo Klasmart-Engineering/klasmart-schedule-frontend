@@ -14,6 +14,7 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import ScheduleButton from "./ScheduleButton";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -356,10 +357,28 @@ export default function CustomizeTempalte(props: InfoProps) {
       : scheduleInfo.status === "NotStart";
   };
 
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 10;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
+
   return (
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
-        <span>{ScheduleViewInfo.title}</span>
+        <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
+          <span>{textEllipsis(ScheduleViewInfo.title)}</span>
+        </Tooltip>
         <div className={classes.iconPart}>
           <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
           {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && !privilegedMembers("Student") && (

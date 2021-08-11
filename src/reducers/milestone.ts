@@ -378,14 +378,8 @@ export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult,
       order_by: "-created_at",
       page_size: 10,
       assumed,
+      [exect_search === "all" ? "search_key" : exect_search!]: search_key,
     };
-    if (exect_search === OutcomeListExectSearch.all) params.search_key = search_key;
-    if (exect_search === OutcomeListExectSearch.loName) params.outcome_name = search_key;
-    if (exect_search === OutcomeListExectSearch.shortCode) params.shortcode = search_key;
-    if (exect_search === OutcomeListExectSearch.author) params.author_name = search_key;
-    if (exect_search === OutcomeListExectSearch.keyWord) params.keywords = search_key;
-    if (exect_search === OutcomeListExectSearch.description) params.description = search_key;
-    if (exect_search === OutcomeListExectSearch.loSet) params.set_name = search_key;
     resObj.outcomeRes = await api.learningOutcomes.searchLearningOutcomes(params);
     return resObj;
   }

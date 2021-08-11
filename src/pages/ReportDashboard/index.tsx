@@ -56,6 +56,8 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     boxSizing: "border-box",
     padding: "32px 28px",
     minWidth: 140,
+  },
+  gridCon: {
     "&:nth-child(n+4)": {
       visibility: "hidden",
     },
@@ -193,7 +195,7 @@ export function ReportDashboard() {
           <Hidden mdUp>
             <Grid container spacing={4}>
               {reportList.map((item) => (
-                <Grid key={item.title} item xs={6}>
+                <Grid key={item.title} item xs={6} className={css.gridCon}>
                   <div className={css.reportItemMb} onClick={() => handleClick(item.url)}>
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>

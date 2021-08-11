@@ -210,7 +210,7 @@ export function AssessmentDetail() {
                 editable={editable}
               />
             ) : (
-              <NoOutcome />
+              filteredOutcomelist && <NoOutcome />
             )}
           </div>
         </div>

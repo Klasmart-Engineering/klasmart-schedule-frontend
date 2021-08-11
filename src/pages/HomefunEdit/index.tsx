@@ -80,6 +80,8 @@ function AssessmentsHomefunEditIner() {
   const xs = useMediaQuery(breakpoints.down("xs"));
   const radioTypography = xs ? "subtitle2" : "h6";
 
+  console.log(homefunDetail.outcomes, 88);
+
   return (
     <>
       <AssessmentHeader
@@ -142,7 +144,7 @@ function AssessmentsHomefunEditIner() {
                 isComplete={isComplete}
               />
             )}
-            {(!homefunDetail.outcomes || homefunDetail.outcomes.length < 1) && <NoOutcome />}
+            {homefunDetail.outcomes && homefunDetail.outcomes.length < 1 && <NoOutcome />}
           </Box>
         </Box>
       </LayoutPair>

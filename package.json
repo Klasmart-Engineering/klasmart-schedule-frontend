@@ -95,7 +95,8 @@
     "eject": "react-scripts eject",
     "styleguide": "styleguidist server",
     "styleguide:build": "styleguidist build",
-    "analyzeCode": "source-map-explorer build/static/js/main.*"
+    "analyzeCode": "source-map-explorer build/static/js/main.*",
+    "syncLangType": "node ./scripts/syncLangType.js"
   },
   "eslintConfig": {
     "extends": "react-app"

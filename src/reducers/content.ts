@@ -8,7 +8,7 @@ import {
   OrganizationsQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
-  QeuryMeQueryVariables
+  QeuryMeQueryVariables,
 } from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
@@ -18,7 +18,7 @@ import {
   EntityFolderContentData,
   EntityFolderItemInfo,
   EntityOrganizationInfo,
-  EntityOrganizationProperty
+  EntityOrganizationProperty,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import {
@@ -28,7 +28,7 @@ import {
   GetOutcomeList,
   OutcomePublishStatus,
   PublishStatus,
-  SearchContentsRequestContentType
+  SearchContentsRequestContentType,
 } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -37,7 +37,7 @@ import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
-import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
+import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -500,14 +500,8 @@ export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQuer
       page_size: 10,
       assumed,
       page,
+      [exactSerch === "all" ? "search_key" : exactSerch!]: search_key,
     };
-    if (exactSerch === OutcomeListExectSearch.all) params.search_key = search_key;
-    if (exactSerch === OutcomeListExectSearch.loName) params.outcome_name = search_key;
-    if (exactSerch === OutcomeListExectSearch.shortCode) params.shortcode = search_key;
-    if (exactSerch === OutcomeListExectSearch.author) params.author_name = search_key;
-    if (exactSerch === OutcomeListExectSearch.keyWord) params.keywords = search_key;
-    if (exactSerch === OutcomeListExectSearch.description) params.description = search_key;
-    if (exactSerch === OutcomeListExectSearch.loSet) params.set_name = search_key;
     const { list, total } = await api.learningOutcomes.searchLearningOutcomes(params);
     return { list, total };
   }
