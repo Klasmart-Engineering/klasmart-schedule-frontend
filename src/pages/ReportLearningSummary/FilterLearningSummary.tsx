@@ -51,7 +51,7 @@ export interface FilterLearningSummaryProps extends QueryLearningSummaryConditio
   // timeFilter: EntityLearningSummaryFilterYear[];
   // filterValues: IResultQueryLoadLearningSummary;
   summaryReportOptions: IResultLearningSummary;
-  // onChangeMenu: (value: string, tab: keyof QueryLearningSummaryCondition) => any;
+  onChangeFilter: (value: string, tab: keyof QueryLearningSummaryCondition) => any;
 }
 export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   const css = useStyles();
@@ -65,7 +65,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   const isSchoolAdmin = perm.report_learning_summary_school_651;
   const isTeacher = perm.report_learning_summary_teacher_650;
   const isStudent = perm.report_learning_summary_student_649;
-  const { value, defaultWeeksValue, summaryReportOptions, onChange } = props;
+  const { value, defaultWeeksValue, summaryReportOptions, onChange, onChangeFilter } = props;
   const { years, weeks, schools, classes, teachers, students, subjects } = summaryReportOptions;
   // const { timeFilter, infoFilter } = filterValues;
   // console.log(timeFilter)
@@ -144,13 +144,8 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
       })
     );
   };
-  const handleChange = (val: string | undefined, tab: keyof QueryLearningSummaryCondition) => {
-    console.log(val, tab);
-    // onChange(
-    //   produce(value, (draft) => {
-    //     draft[tab] = val
-    //   })
-    // )
+  const handleChange = (val: string, tab: keyof QueryLearningSummaryCondition) => {
+    onChangeFilter(val, tab);
   };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -199,7 +194,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              // onChange={handleChange}
+              onChange={(e) => handleChange(e.target.value, "class_id")}
               label={t("report_filter_class")}
               value={value.class_id}
               select
@@ -212,7 +207,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              // onChange={handleChange}
+              onChange={(e) => handleChange(e.target.value, "teacher_id")}
               label={t("report_filter_teacher")}
               value={value.teacher_id}
               select
@@ -225,7 +220,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              // onChange={handleChange}
+              onChange={(e) => handleChange(e.target.value, "student_id")}
               label={t("report_filter_student")}
               value={value.student_id}
               select
@@ -238,7 +233,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             <TextField
               size="small"
               className={css.selectButton}
-              // onChange={handleChange}
+              onChange={(e) => handleChange(e.target.value, "subject_id")}
               label={t("report_filter_subject")}
               value={value.subject_id}
               select

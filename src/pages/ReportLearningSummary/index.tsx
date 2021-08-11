@@ -1,22 +1,23 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
+import { PermissionType, usePermission } from "../../components/Permission";
 import { t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
-import { formatTimeToMonDay } from "../../models/ModelReports";
+import { formatTimeToMonDay, getTimeOffSecond } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
-import { onLoadLearningSummary } from "../../reducers/report";
+import { getTimeFilter, onLoadLearningSummary } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
-import { FilterLearningSummary } from "./FilterLearningSummary";
+import { FilterLearningSummary, FilterLearningSummaryProps } from "./FilterLearningSummary";
 import { ReportInfo } from "./ReportInfo";
-import { QueryLearningSummaryCondition, ReportType } from "./types";
+import { QueryLearningSummaryCondition, QueryLearningSummaryRemainingFilterCondition, ReportType } from "./types";
 export interface IWeeks {
   week_start: number;
   week_end: number;
   value: string;
 }
 interface RouteParams {
-  tab: ReportType.live | ReportType.assignment;
+  tab: QueryLearningSummaryRemainingFilterCondition["summary_type"];
 }
 export const getWeeks = (): IWeeks[] => {
   let week_start = new Date("2021-01-04 00:00").getTime() / 1000;
@@ -63,27 +64,59 @@ export function ReportLearningSummary() {
   const history = useHistory();
   const { tab } = useParams<RouteParams>();
   // const isLiveClass = tab === ReportType.live
-  const { liveClassSummary, learningSummartOptions, assignmentSummary, assessmentFilterValues, summaryReportOptions } = useSelector<
-    RootState,
-    RootState["report"]
-  >((state) => state.report);
-  // const filterValues = useMemo(() => isLiveClass ? liveClassFilterValues : assessmentFilterValues, [assessmentFilterValues, isLiveClass, liveClassFilterValues])
-  console.log(assessmentFilterValues);
-  const { week } = learningSummartOptions;
+  const { liveClassSummary, assignmentSummary, summaryReportOptions } = useSelector<RootState, RootState["report"]>(
+    (state) => state.report
+  );
+  const perm = usePermission([
+    PermissionType.report_learning_summary_org_652,
+    PermissionType.report_learning_summary_school_651,
+    PermissionType.report_learning_summary_teacher_650,
+    PermissionType.report_learning_summary_student_649,
+  ]);
+  const isOrg = perm.report_learning_summary_org_652;
+  const isSchool = perm.report_learning_summary_school_651;
+  const isTeacher = perm.report_learning_summary_teacher_650;
+  const isStudent = perm.report_learning_summary_student_649;
+  const { weeks } = summaryReportOptions;
   const defaultWeeksValue = useMemo(() => {
     if (condition.week_start && condition.week_end) {
       return `${formatTimeToMonDay(condition.week_start)}~${formatTimeToMonDay(condition.week_end)}`;
     }
-    if (week.length) {
-      const lastweek = week[week.length - 1];
-      return `${formatTimeToMonDay(lastweek.week_start)}~${formatTimeToMonDay(lastweek.week_end)}`;
+    if (weeks && weeks.length) {
+      const lastweek = weeks[weeks.length - 1];
+      return `${lastweek.value}`;
     }
     return "";
-  }, [condition.week_end, condition.week_start, week]);
+  }, [condition.week_end, condition.week_start, weeks]);
   const handleChange = (value: QueryLearningSummaryCondition) => {
     const newValue = { ...value, lessonIndex: -1 };
     history.replace({ search: toQueryString(clearNull(newValue)) });
   };
+  const handleChangeFilter: FilterLearningSummaryProps["onChangeFilter"] = (value, tab) => {
+    computeFilterChange(value, tab);
+  };
+  const computeFilterChange = useMemo(
+    () => (value: string, tab: keyof QueryLearningSummaryCondition) => {
+      if (tab === "school_id") {
+        history.push({
+          search: setQuery(history.location.search, { school_id: value, class_id: "", teacher_id: "", student_id: "", subject_id: "" }),
+        });
+      }
+      if (tab === "class_id") {
+        history.push({ search: setQuery(history.location.search, { class_id: value, teacher_id: "", student_id: "", subject_id: "" }) });
+      }
+      if (tab === "teacher_id") {
+        history.push({ search: setQuery(history.location.search, { teacher_id: value, student_id: "", subject_id: "" }) });
+      }
+      if (tab === "student_id") {
+        history.push({ search: setQuery(history.location.search, { student_id: value, subject_id: "" }) });
+      }
+      if (tab === "subject_id") {
+        history.push({ search: setQuery(history.location.search, { subject_id: value }) });
+      }
+    },
+    [history]
+  );
   // const handleChangeTime = (value: QueryLearningSummaryCondition) => {
   //   const newValue = { ...value, lessonIndex: -1 };
   //   // const { week_start, week_end } = value
@@ -99,10 +132,55 @@ export function ReportLearningSummary() {
   const handleChangeLessonIndex = (index: number) => {
     history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });
   };
-  useEffect(() => {}, []);
   useEffect(() => {
+    // 调拉取时间的接口
+    if (!summaryReportOptions.years.length || !summaryReportOptions.weeks.length) {
+      console.log(1);
+      const time_offset = getTimeOffSecond();
+      dispatch(getTimeFilter({ time_offset, summary_type: tab, metaLoading: true }));
+    } else {
+      console.log(2);
+      const {
+        year = "",
+        week_start = "",
+        week_end = "",
+        school_id = "",
+        class_id = "",
+        teacher_id = "",
+        student_id = "",
+        subject_id = "",
+      } = summaryReportOptions;
+      history.push({
+        search: setQuery(history.location.search, { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id }),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, summaryReportOptions.weeks, summaryReportOptions.years, tab]);
+  useEffect(() => {
+    if (summaryReportOptions.year && summaryReportOptions.week_start && summaryReportOptions.week_end) {
+      const {
+        year,
+        week_start,
+        week_end,
+        school_id = "",
+        class_id = "",
+        teacher_id = "",
+        student_id = "",
+        subject_id = "",
+      } = summaryReportOptions;
+      history.push({
+        search: setQuery(history.location.search, { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id }),
+      });
+    }
+  }, [history, summaryReportOptions]);
+  useEffect(() => {
+    console.log(3);
     dispatch(
       onLoadLearningSummary({
+        isOrg,
+        isSchool,
+        isTeacher,
+        isStudent,
         summary_type: tab,
         year,
         week_start,
@@ -115,17 +193,16 @@ export function ReportLearningSummary() {
         metaLoading: true,
       })
     );
-  }, [year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, dispatch, learningSummartOptions.year, tab]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, year, week_end, school_id, tab]);
   return (
     <>
       <ReportTitle title={t("report_learning_summary_report")} info={t("report_msg_lsr")} />
       <FilterLearningSummary
-        // learningSummartOptions={learningSummartOptions}
         value={condition}
         defaultWeeksValue={defaultWeeksValue}
         onChange={handleChange}
-        // filterValues={filterValues}
-        // timeFilter={filterValues.timeFilter}
+        onChangeFilter={handleChangeFilter}
         summaryReportOptions={summaryReportOptions}
       />
       <ReportInfo

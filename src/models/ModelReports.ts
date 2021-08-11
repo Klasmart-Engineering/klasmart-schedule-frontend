@@ -161,3 +161,8 @@ export function deDuplicate(arr: Pick<User, "user_id" | "user_name">[]) {
     return item;
   }, []);
 }
+
+export function getTimeOffSecond() {
+  const timeOff = new Date().getTimezoneOffset();
+  return timeOff * 60;
+}

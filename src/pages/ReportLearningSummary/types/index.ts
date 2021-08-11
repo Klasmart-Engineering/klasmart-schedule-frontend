@@ -28,7 +28,7 @@ export type AssignmentSummaryResultItem = NonNullable<AssignmentSummaryResult["i
 export type ReportInfoBaseProps = {
   liveClassSummary: LiveClassesSummaryResult;
   assignmentSummary: AssignmentSummaryResult;
-  reportType: ReportType;
+  reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
   onChangeLessonIndex: (index: number) => void;
 };
 
