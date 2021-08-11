@@ -6,7 +6,13 @@ import liveBackUrl from "../../assets/icons/report_reca.svg";
 import assessmentBackUrl from "../../assets/icons/report_recl.svg";
 import { d } from "../../locale/LocaleManager";
 import { formatTimeToEng, formatTimeToMonWek } from "../../models/ModelReports";
-import { AssignmentSummaryResultItem, LiveClassesSummaryResultItem, ReportInfoBaseProps, ReportType } from "./types";
+import {
+  AssignmentSummaryResultItem,
+  LiveClassesSummaryResultItem,
+  QueryLearningSummaryRemainingFilterCondition,
+  ReportInfoBaseProps,
+  ReportType,
+} from "./types";
 const useStyles = makeStyles(({ breakpoints, props }) => ({
   scrollCss: {
     "&::-webkit-scrollbar": {
@@ -244,7 +250,7 @@ const useLessonStyles = makeStyles(() => ({
   }),
 }));
 export type ReportTypeProps = {
-  reportType: ReportType;
+  reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
 };
 export interface LiveClassesReportProps extends ReportInfoBaseProps {
   data: EntityLiveClassSummaryItem[];
@@ -443,7 +449,7 @@ export interface LiveItemProps {
   showArrow: boolean;
   liveItem?: LiveClassesSummaryResultItem;
   assignmentItem?: AssignmentSummaryResultItem;
-  reportType: ReportType;
+  reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
   onClickLessonPlan: () => void;
 }
 export type LeftDataProps = {

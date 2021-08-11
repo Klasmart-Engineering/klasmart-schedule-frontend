@@ -5417,6 +5417,13 @@
         "operationId": "queryLearningSummaryTimeFilter",
         "parameters": [
           {
+            "type": "integer",
+            "description": "time offset (unit: second)",
+            "name": "time_offset",
+            "in": "query",
+            "required": true
+          },
+          {
             "enum": ["live_class", "assignment"],
             "type": "string",
             "description": "learning summary type",
