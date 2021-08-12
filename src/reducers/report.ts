@@ -24,6 +24,9 @@ import {
   TeacherListBySchoolIdDocument,
   TeacherListBySchoolIdQuery,
   TeacherListBySchoolIdQueryVariables,
+  UserSchoolIDsDocument,
+  UserSchoolIDsQuery,
+  UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityQueryAssignmentsSummaryResult,
@@ -39,7 +42,7 @@ import {
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
-import { formatTimeToMonDay, ModelReport } from "../models/ModelReports";
+import { formatTimeToMonDay, getTimeOffSecond, ModelReport } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
 import { LearningSummartOptionsProps } from "../pages/ReportLearningSummary/FilterLearningSummary";
@@ -962,7 +965,8 @@ export type IResultQueryLiveClassSummary = AsyncReturnType<typeof api.reports.qu
 export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSummary, IParamsQueryLiveClassSummary & LoadingMetaPayload>(
   "getLiveClassesSummary",
   async (query) => {
-    const res = await api.reports.queryLiveClassesSummary({ ...query });
+    const { subject_id } = query;
+    const res = await api.reports.queryLiveClassesSummary({ ...query, subject_id: subject_id === "all" ? "" : subject_id });
     return res;
   }
 );
@@ -972,7 +976,8 @@ export type IResultQueryAssignmentSummary = AsyncReturnType<typeof api.reports.q
 export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSummary, IParamsQueryAssignmentSummary & LoadingMetaPayload>(
   "getAssingmentSummary",
   async (query) => {
-    const res = await api.reports.queryAssignmentsSummary({ ...query });
+    const { subject_id } = query;
+    const res = await api.reports.queryAssignmentsSummary({ ...query, subject_id: subject_id === "all" ? "" : subject_id });
     return res;
   }
 );
@@ -981,7 +986,7 @@ export type IParamQueryTimeFilter = Parameters<typeof api.reports.queryLearningS
 export type IResultQueryTimeFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryTimeFilter>;
 export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQueryTimeFilter & LoadingMetaPayload>(
   "getTimeFilter",
-  async (query) => {
+  async ({ metaLoading, ...query }) => {
     return await api.reports.queryLearningSummaryTimeFilter({ ...query });
   }
 );
@@ -1035,107 +1040,268 @@ export interface IResultLearningSummary {
   student_id?: string;
   subject_id?: string;
 }
-export const onLoadLearningSummary = createAsyncThunk<IResultLearningSummary, IParamsLearningSummary & LoadingMetaPayload>(
-  "onLoadLearningSummary2",
-  async (query, { dispatch }) => {
-    // const currentYear = new Date().getFullYear();
-    const {
-      isOrg,
-      isSchool,
-      isTeacher,
-      isStudent,
-      year,
+export const onLoadLearningSummary = createAsyncThunk<
+  IResultLearningSummary,
+  IParamsLearningSummary & LoadingMetaPayload,
+  { state: RootState }
+>("onLoadLearningSummary", async ({ metaLoading, ...query }, { getState, dispatch }) => {
+  const { week_end, week_start, year, summary_type, school_id, class_id, teacher_id, student_id, subject_id } = query;
+  let years: number[] = [];
+  let weeks: IWeeks[] = [];
+  let subjects: ArrProps[] = [];
+  let schools: ArrProps[] = [];
+  let classes: ArrProps[] = [];
+  let teachers: ArrProps[] = [];
+  let students: ArrProps[] = [];
+  let _year: number = 2021;
+  let _school_id: string | undefined = "";
+  let _class_id: string | undefined = "";
+  let _teacher_id: string | undefined = "";
+  let _student_id: string | undefined = "";
+  let _subject_id: string | undefined = "";
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  // 拉取我的user_id
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  const myUserId = meInfo.me?.user_id;
+  const perm = hasPermissionOfMe(
+    [
+      PermissionType.report_learning_summary_org_652,
+      PermissionType.report_learning_summary_school_651,
+      PermissionType.report_learning_summary_teacher_650,
+      PermissionType.report_learning_summary_student_649,
+    ],
+    meInfo.me
+  );
+  const isOrg = perm.report_learning_summary_org_652;
+  const isSchool = perm.report_learning_summary_school_651;
+  const isTeacher = perm.report_learning_summary_teacher_650;
+  const isStudent = perm.report_learning_summary_student_649;
+  const {
+    report: { summaryReportOptions },
+  } = getState();
+  // const { years, weeks } = summaryReportOptions;
+  // await dispatch(getTimeFilter({time_offset: getTimeOffSecond(), summary_type}))
+  // const _year = year ? year : years[years.length - 1];
+  // const lastWeek = weeks && weeks[weeks.length - 1];
+  // const _week_start = week_start ? week_start : lastWeek && lastWeek.week_start;
+  // const _week_end = week_end ? week_end : lastWeek && lastWeek.week_end;
+  if (!summaryReportOptions.years && !summaryReportOptions.weeks.length) {
+    const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ time_offset: getTimeOffSecond(), summary_type });
+    years = timeFilter.length ? timeFilter.map((item) => item.year as number) : [2021];
+    const _weeks = timeFilter.length ? timeFilter.find((item) => item.year === _year)?.weeks : [];
+    weeks = _weeks
+      ? _weeks.map((item) => {
+          const week_start = item.week_start as number;
+          const week_end = item.week_end as number;
+          return {
+            week_start,
+            week_end,
+            value: `${formatTimeToMonDay(week_start as number)}~${formatTimeToMonDay(week_end as number)}`,
+          };
+        })
+      : [];
+  } else {
+    years = summaryReportOptions.years;
+    weeks = summaryReportOptions.weeks;
+  }
+  _year = year ? year : years[years.length - 1];
+  const lastWeek = weeks[weeks.length - 1];
+  const _week_start = week_start ? week_start : lastWeek.week_start;
+  const _week_end = week_end ? week_end : lastWeek.week_end;
+  if (isOrg) {
+    const _schools = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
-      week_start,
-      week_end,
-      school_id,
-      class_id,
-      teacher_id,
-      student_id,
-      subject_id,
-    } = query;
-    let years: number[] = [];
-    let weeks: IWeeks[] = [];
-    let subjects: ArrProps[] = [];
-    let schools: ArrProps[] = [];
-    let classes: ArrProps[] = [];
-    let teachers: ArrProps[] = [];
-    let students: ArrProps[] = [];
-    let _school_id: string | undefined = "";
-    let _class_id: string | undefined = "";
-    let _teacher_id: string | undefined = "";
-    let _student_id: string | undefined = "";
-    let _subject_id: string | undefined = "";
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
+      filter_type: "school",
+      week_start: _week_start,
+      week_end: _week_end,
+    });
+    schools =
+      _schools &&
+      _schools.map((item) => {
+        return {
+          id: item.school_id,
+          name: item.school_name,
+        };
+      });
+    _school_id = school_id ? school_id : schools[0].id;
+  }
+  if (isSchool) {
+    const data = await gqlapi.query<UserSchoolIDsQuery, UserSchoolIDsQueryVariables>({
+      query: UserSchoolIDsDocument,
       variables: {
-        organization_id,
+        user_id: myUserId as string,
       },
     });
-    const myUserId = meInfo.me?.user_id;
-    // const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ time_offset: getTimeOffSecond(), summary_type });
-    // years = timeFilter.length ? timeFilter.map((item) => item.year as number) : [];
-    // const _weeks = timeFilter.length ? timeFilter.find((item) => item.year === year)?.weeks : [];
-    // weeks =
-    //   _weeks ?
-    //   _weeks.map((item) => {
-    //     const week_start = item.week_start as number;
-    //     const week_end = item.week_end as number;
-    //     return {
-    //       week_start,
-    //       week_end,
-    //       value: `${formatTimeToMonDay(week_start)}~${formatTimeToMonDay(week_end)}`,
-    //     };
-    //   }) : [];
-    // const _year = year ? year : years[years.length - 1];
-    // const lastWeek = weeks && weeks[weeks.length - 1];
-    // const _week_start = week_start ? week_start : lastWeek && lastWeek.week_start;
-    // const _week_end = week_end ? week_end : lastWeek && lastWeek.week_end;
-    const _year = year;
-    const _week_start = week_start;
-    const _week_end = week_end;
-    if (isOrg) {
-      const _schools = await api.reports.queryLearningSummaryRemainingFilter({
-        summary_type,
-        filter_type: "school",
-        week_start: _week_start,
-        week_end: _week_end,
+    const mySchoolId = data.data.user?.school_memberships?.map((item) => item?.school_id)[0];
+    const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type: "class",
+      week_start: _week_start,
+      week_end: _week_end,
+      school_id: _school_id ? _school_id : mySchoolId,
+    });
+    classes =
+      _classes &&
+      _classes.map((item) => {
+        return {
+          id: item.class_id,
+          name: item.class_name,
+        };
       });
-      schools =
-        _schools &&
-        _schools.map((item) => {
-          return {
-            id: item.school_id,
-            name: item.school_name,
-          };
-        });
-      _school_id = school_id ? school_id : schools[0].id;
+    _class_id = class_id ? class_id : classes[0].id;
+    const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type: "teacher",
+      week_start: _week_start,
+      week_end: _week_end,
+      class_id: _class_id,
+    });
+    teachers =
+      _teachers &&
+      _teachers.map((item) => {
+        return {
+          id: item.teacher_id,
+          name: item.teacher_name,
+        };
+      });
+    _teacher_id = teacher_id ? teacher_id : teachers[0].id;
+  }
+  if (isTeacher && !isOrg && !isSchool) {
+    const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type: "class",
+      week_start: _week_start,
+      week_end: _week_end,
+      teacher_id: myUserId,
+    });
+    classes =
+      _classes &&
+      _classes.map((item) => {
+        return {
+          id: item.class_id,
+          name: item.class_name,
+        };
+      });
+    _class_id = class_id ? class_id : classes[0].id;
+    const _students = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type: "student",
+      week_start: _week_start,
+      week_end: _week_end,
+      class_id: _class_id,
+    });
+    students =
+      _students &&
+      _students.map((item) => {
+        return {
+          id: item.student_id,
+          name: item.student_name,
+        };
+      });
+    _student_id = student_id ? student_id : students[0].id;
+  }
+  if (isTeacher && isOrg && isSchool) {
+    const _students = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type: "student",
+      week_start: _week_start,
+      week_end: _week_end,
+      teacher_id: _teacher_id,
+    });
+    students =
+      _students &&
+      _students.map((item) => {
+        return {
+          id: item.student_id,
+          name: item.student_name,
+        };
+      });
+    _student_id = student_id ? student_id : students[0].id;
+  }
+  if (isStudent) {
+    const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type: "subject",
+      week_start: _week_start,
+      week_end: _week_end,
+      student_id: _student_id ? _student_id : myUserId,
+    });
+    subjects =
+      _subjects &&
+      _subjects.map((item) => {
+        return {
+          id: item.subject_id,
+          name: item.subject_name,
+        };
+      });
+    subjects.unshift({ id: "all", name: "All" });
+    _subject_id = subject_id ? subject_id : subjects[0].id;
+  }
+  const isLiveClass = summary_type === ReportType.live;
+  const params = {
+    year: _year,
+    week_start: _week_start,
+    week_end: _week_end,
+    school_id: _school_id,
+    class_id: _class_id,
+    teacher_id: _teacher_id,
+    student_id: _student_id,
+    subject_id: _subject_id,
+  };
+  if (_year && _week_start && _week_end && _student_id && _subject_id) {
+    if (subject_id === "all") {
+      isLiveClass
+        ? await dispatch(getLiveClassesSummary({ ...params, subject_id: "", metaLoading }))
+        : await dispatch(getAssignmentSummary({ ...params, subject_id: "", metaLoading }));
+    } else {
+      isLiveClass
+        ? await dispatch(getLiveClassesSummary({ ...params, metaLoading }))
+        : await dispatch(getAssignmentSummary({ ...params, metaLoading }));
     }
-    if (isSchool) {
-      const _classes = await api.reports.queryLearningSummaryRemainingFilter({
-        summary_type,
-        filter_type: "class",
-        week_start: _week_start,
-        week_end: _week_end,
-        school_id: _school_id ? _school_id : myUserId,
-      });
-      classes =
-        _classes &&
-        _classes.map((item) => {
-          return {
-            id: item.class_id,
-            name: item.class_name,
-          };
-        });
-      _class_id = class_id ? class_id : classes[0].id;
+  }
+  return { years, weeks, schools, classes, teachers, students, subjects, ...params };
+});
+
+export interface IParamsGetAfterClassFilter extends IParamQueryRemainFilter {
+  isOrg: boolean;
+  isSchool: boolean;
+  isTeacher: boolean;
+  isStudent: boolean;
+}
+export type IResultGetAfterClassFilter = {
+  teachers?: ArrProps[];
+  students?: ArrProps[];
+  subjects?: ArrProps[];
+  class_id?: string;
+  teacher_id?: string;
+  student_id?: string;
+  subject_id?: string;
+};
+export const getAfterClassFilter = createAsyncThunk<
+  IResultGetAfterClassFilter,
+  IParamsGetAfterClassFilter & LoadingMetaPayload,
+  { state: RootState }
+>("getAfterClassFilter", async (query, { getState }) => {
+  const { summary_type, filter_type, class_id, teacher_id, student_id, week_start, week_end, isOrg, isSchool, isTeacher } = query;
+  let teachers: ArrProps[] = [];
+  let students: ArrProps[] = [];
+  let subjects: ArrProps[] = [];
+  let _teacher_id: string | undefined = "";
+  let _student_id: string | undefined = "";
+  let _subject_id: string | undefined = "";
+  if (filter_type === "teacher") {
+    if (isOrg || isSchool) {
       const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
         summary_type,
-        filter_type: "teacher",
-        week_start: _week_start,
-        week_end: _week_end,
-        class_id: _class_id,
+        filter_type,
+        week_start,
+        week_end,
+        class_id,
       });
       teachers =
         _teachers &&
@@ -1146,47 +1312,11 @@ export const onLoadLearningSummary = createAsyncThunk<IResultLearningSummary, IP
           };
         });
       _teacher_id = teacher_id ? teacher_id : teachers[0].id;
-    }
-    if (isTeacher && !isOrg && !isSchool) {
-      const _classes = await api.reports.queryLearningSummaryRemainingFilter({
-        summary_type,
-        filter_type: "class",
-        week_start: _week_start,
-        week_end: _week_end,
-        teacher_id: myUserId,
-      });
-      classes =
-        _classes &&
-        _classes.map((item) => {
-          return {
-            id: item.class_id,
-            name: item.class_name,
-          };
-        });
-      _class_id = class_id ? class_id : classes[0].id;
       const _students = await api.reports.queryLearningSummaryRemainingFilter({
         summary_type,
         filter_type: "student",
-        week_start: _week_start,
-        week_end: _week_end,
-        class_id: _class_id,
-      });
-      students =
-        _students &&
-        _students.map((item) => {
-          return {
-            id: item.student_id,
-            name: item.student_name,
-          };
-        });
-      _student_id = student_id ? student_id : students[0].id;
-    }
-    if (isTeacher && isOrg && isSchool) {
-      const _students = await api.reports.queryLearningSummaryRemainingFilter({
-        summary_type,
-        filter_type: "student",
-        week_start: _week_start,
-        week_end: _week_end,
+        week_start,
+        week_end,
         teacher_id: _teacher_id,
       });
       students =
@@ -1197,51 +1327,147 @@ export const onLoadLearningSummary = createAsyncThunk<IResultLearningSummary, IP
             name: item.student_name,
           };
         });
-      _student_id = student_id ? student_id : students[0].id;
+      _student_id = students[0].id;
+    } else if (isTeacher) {
+      const _students = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "student",
+        week_start,
+        week_end,
+        class_id,
+      });
+      students =
+        _students &&
+        _students.map((item) => {
+          return {
+            id: item.student_id,
+            name: item.student_name,
+          };
+        });
+      _student_id = students[0].id;
     }
-    if (isStudent) {
-      // const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
-      //   summary_type,
-      //   filter_type: "subject",
-      //   week_start: _week_start,
-      //   week_end: week_end,
-      //   student_id: _student_id ? _student_id : myUserId,
-      // });
-      // subjects =
-      //   _subjects &&
-      //   _subjects.map((item) => {
-      //     return {
-      //       id: item.subject_id,
-      //       name: item.subject_name,
-      //     };
-      //   });
-      // _subject_id = subject_id ? subject_id : subjects[0].id;
-      subjects = [{ id: "all", name: "All" }];
-      _subject_id = subject_id ? subject_id : subjects[0].id;
+  }
+  if (filter_type === "student") {
+    if (isOrg || isSchool) {
+      const _students = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "student",
+        week_start,
+        week_end,
+        teacher_id,
+      });
+      students =
+        _students &&
+        _students.map((item) => {
+          return {
+            id: item.student_id,
+            name: item.student_name,
+          };
+        });
+      _student_id = students[0].id;
+    } else if (isTeacher) {
+      const _students = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "student",
+        week_start,
+        week_end,
+        class_id,
+      });
+      students =
+        _students &&
+        _students.map((item) => {
+          return {
+            id: item.student_id,
+            name: item.student_name,
+          };
+        });
+      _student_id = students[0].id;
     }
-    const isLiveClass = summary_type === ReportType.live;
-    const params = {
-      year: _year,
-      week_start: _week_start,
-      week_end: _week_end,
-      school_id: _school_id,
-      class_id: _class_id,
+  }
+  if (filter_type === "teacher" || filter_type === "student") {
+    const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type: "subject",
+      week_start,
+      week_end,
+      student_id: _student_id,
+    });
+    subjects =
+      _subjects &&
+      _subjects.map((item) => {
+        return {
+          id: item.subject_id,
+          name: item.subject_name,
+        };
+      });
+    subjects.unshift({ id: "all", name: "All" });
+    _subject_id = subjects[0].id;
+  }
+  if (filter_type === "subject") {
+    if (isOrg || isSchool || isTeacher) {
+      const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type: "subject",
+        week_start,
+        week_end,
+        student_id: _student_id,
+      });
+      subjects =
+        _subjects &&
+        _subjects.map((item) => {
+          return {
+            id: item.subject_id,
+            name: item.subject_name,
+          };
+        });
+      subjects.unshift({ id: "all", name: "All" });
+      _subject_id = subjects[0].id;
+    } else {
+      const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+        summary_type,
+        filter_type,
+        week_start,
+        week_end,
+        student_id,
+      });
+      subjects =
+        _subjects &&
+        _subjects.map((item) => {
+          return {
+            id: item.subject_id,
+            name: item.subject_name,
+          };
+        });
+      subjects.unshift({ id: "all", name: "All" });
+      _subject_id = subjects[0].id;
+    }
+  }
+  if (class_id) {
+    return {
+      teachers,
+      students,
+      subjects,
+      class_id,
       teacher_id: _teacher_id,
       student_id: _student_id,
       subject_id: _subject_id,
     };
-    if (year && week_start && week_end && _student_id && _subject_id) {
-      if (subject_id === "all") {
-        isLiveClass
-          ? await dispatch(getLiveClassesSummary({ ...params, subject_id: "" }))
-          : await dispatch(getAssignmentSummary({ ...params, subject_id: "" }));
-      } else {
-        isLiveClass ? await dispatch(getLiveClassesSummary({ ...params })) : await dispatch(getAssignmentSummary({ ...params }));
-      }
-    }
-    return { years, weeks, schools, classes, teachers, students, subjects, ...params };
+  } else if (teacher_id) {
+    return {
+      students,
+      subjects,
+      teacher_id,
+      student_id: _student_id,
+      subject_id: _subject_id,
+    };
+  } else {
+    return {
+      student_id,
+      subjects,
+      subject_id: _subject_id,
+    };
   }
-);
+});
 
 interface GetClassListPayload {
   school_id: string;
@@ -1440,6 +1666,27 @@ const { reducer } = createSlice({
       state.summaryReportOptions.week_start = _week.week_start;
     },
     [getRemainFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>) => {},
+    [getAfterClassFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>) => {
+      if (payload.class_id) {
+        state.summaryReportOptions.class_id = payload.class_id;
+      }
+      if (payload.teachers?.length) {
+        state.summaryReportOptions.teachers = payload.teachers;
+      }
+      if (payload.teacher_id) {
+        state.summaryReportOptions.teacher_id = payload.teacher_id;
+      }
+      if (payload.students?.length) {
+        state.summaryReportOptions.students = payload.students;
+      }
+      if (payload.student_id) {
+        state.summaryReportOptions.student_id = payload.student_id;
+      }
+      if (payload.subjects?.length) {
+        state.summaryReportOptions.subjects = payload.subjects;
+        state.summaryReportOptions.subject_id = payload.subject_id;
+      }
+    },
   },
 });
 export default reducer;
