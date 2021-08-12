@@ -26,7 +26,7 @@ import {
   TeacherListBySchoolIdQueryVariables,
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables,
+  UserSchoolIDsQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityQueryAssignmentsSummaryResult,
@@ -38,7 +38,7 @@ import {
   // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -50,7 +50,7 @@ import {
   ArrProps,
   QueryLearningSummaryCondition,
   QueryLearningSummaryRemainingFilterCondition,
-  ReportType,
+  ReportType
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
@@ -992,14 +992,9 @@ export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQuer
 );
 
 export type IParamQueryRemainFilter = Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0];
-export type IResultQueryRemainFilter = {
-  liveClassRemainFilter?: AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
-  assessmentRemainFilter?: AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
-};
-export const getRemainFilter = createAsyncThunk<IResultQueryRemainFilter, IParamQueryRemainFilter>("getRemainFilter", async (query) => {
-  const { summary_type } = query;
-  const res = await api.reports.queryLearningSummaryRemainingFilter({ ...query });
-  return summary_type === ReportType.live ? { liveClassRemainFilter: res } : { assessmentRemainFilter: res };
+export type IResultQueryRemainFilter =  AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
+export const getRemainFilter = createAsyncThunk<IResultQueryRemainFilter, IParamQueryRemainFilter & LoadingMetaPayload>("getRemainFilter", async (query) => {
+  return await api.reports.queryLearningSummaryRemainingFilter({ ...query });
 });
 
 // export type IResultQueryLoadLearningSummary = {
@@ -1114,15 +1109,16 @@ export const onLoadLearningSummary = createAsyncThunk<
   const _week_start = week_start ? week_start : lastWeek.week_start;
   const _week_end = week_end ? week_end : lastWeek.week_end;
   if (isOrg) {
-    const _schools = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "school",
-      week_start: _week_start,
-      week_end: _week_end,
-    });
+    const _schools = (await dispatch(getRemainFilter({summary_type, filter_type: "school", week_start: _week_start, week_end: _week_end, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+    // const _schools = await api.reports.queryLearningSummaryRemainingFilter({
+    //   summary_type,
+    //   filter_type: "school",
+    //   week_start: _week_start,
+    //   week_end: _week_end,
+    // });
     schools =
-      _schools &&
-      _schools.map((item) => {
+      _schools.payload &&
+      _schools.payload.map((item) => {
         return {
           id: item.school_id,
           name: item.school_name,
@@ -1138,32 +1134,34 @@ export const onLoadLearningSummary = createAsyncThunk<
       },
     });
     const mySchoolId = data.data.user?.school_memberships?.map((item) => item?.school_id)[0];
-    const _classes = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "class",
-      week_start: _week_start,
-      week_end: _week_end,
-      school_id: _school_id ? _school_id : mySchoolId,
-    });
+    const _classes = (await dispatch(getRemainFilter({summary_type, filter_type: "class", week_start: _week_start, week_end: _week_end,school_id: _school_id ? _school_id : mySchoolId, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+    // const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+    //   summary_type,
+    //   filter_type: "class",
+    //   week_start: _week_start,
+    //   week_end: _week_end,
+    //   school_id: _school_id ? _school_id : mySchoolId,
+    // });
     classes =
-      _classes &&
-      _classes.map((item) => {
+      _classes.payload &&
+      _classes.payload.map((item) => {
         return {
           id: item.class_id,
           name: item.class_name,
         };
       });
     _class_id = class_id ? class_id : classes[0].id;
-    const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "teacher",
-      week_start: _week_start,
-      week_end: _week_end,
-      class_id: _class_id,
-    });
+    const _teachers = (await dispatch(getRemainFilter({summary_type, filter_type: "teacher", week_start: _week_start, week_end: _week_end, class_id: _class_id, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+    // const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
+    //   summary_type,
+    //   filter_type: "teacher",
+    //   week_start: _week_start,
+    //   week_end: _week_end,
+    //   class_id: _class_id,
+    // });
     teachers =
-      _teachers &&
-      _teachers.map((item) => {
+      _teachers.payload &&
+      _teachers.payload.map((item) => {
         return {
           id: item.teacher_id,
           name: item.teacher_name,
@@ -1172,32 +1170,34 @@ export const onLoadLearningSummary = createAsyncThunk<
     _teacher_id = teacher_id ? teacher_id : teachers[0].id;
   }
   if (isTeacher && !isOrg && !isSchool) {
-    const _classes = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "class",
-      week_start: _week_start,
-      week_end: _week_end,
-      teacher_id: myUserId,
-    });
+    const _classes = (await dispatch(getRemainFilter({summary_type, filter_type: "class", week_start: _week_start, week_end: _week_end, teacher_id: myUserId, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+    // const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+    //   summary_type,
+    //   filter_type: "class",
+    //   week_start: _week_start,
+    //   week_end: _week_end,
+    //   teacher_id: myUserId,
+    // });
     classes =
-      _classes &&
-      _classes.map((item) => {
+      _classes.payload &&
+      _classes.payload.map((item) => {
         return {
           id: item.class_id,
           name: item.class_name,
         };
       });
     _class_id = class_id ? class_id : classes[0].id;
-    const _students = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "student",
-      week_start: _week_start,
-      week_end: _week_end,
-      class_id: _class_id,
-    });
+    const _students = (await dispatch(getRemainFilter({summary_type, filter_type: "student", week_start: _week_start, week_end: _week_end, class_id: _class_id, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+    // const _students = await api.reports.queryLearningSummaryRemainingFilter({
+    //   summary_type,
+    //   filter_type: "student",
+    //   week_start: _week_start,
+    //   week_end: _week_end,
+    //   class_id: _class_id,
+    // });
     students =
-      _students &&
-      _students.map((item) => {
+      _students.payload &&
+      _students.payload.map((item) => {
         return {
           id: item.student_id,
           name: item.student_name,
@@ -1206,16 +1206,17 @@ export const onLoadLearningSummary = createAsyncThunk<
     _student_id = student_id ? student_id : students[0].id;
   }
   if (isTeacher && isOrg && isSchool) {
-    const _students = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "student",
-      week_start: _week_start,
-      week_end: _week_end,
-      teacher_id: _teacher_id,
-    });
+    const _students = (await dispatch(getRemainFilter({summary_type, filter_type: "student", week_start: _week_start, week_end: _week_end, teacher_id: _teacher_id, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+    // const _students = await api.reports.queryLearningSummaryRemainingFilter({
+    //   summary_type,
+    //   filter_type: "student",
+    //   week_start: _week_start,
+    //   week_end: _week_end,
+    //   teacher_id: _teacher_id,
+    // });
     students =
-      _students &&
-      _students.map((item) => {
+      _students.payload &&
+      _students.payload.map((item) => {
         return {
           id: item.student_id,
           name: item.student_name,
@@ -1224,16 +1225,17 @@ export const onLoadLearningSummary = createAsyncThunk<
     _student_id = student_id ? student_id : students[0].id;
   }
   if (isStudent) {
-    const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "subject",
-      week_start: _week_start,
-      week_end: _week_end,
-      student_id: _student_id ? _student_id : myUserId,
-    });
+    const _subjects = (await dispatch(getRemainFilter({summary_type, filter_type: "subject", week_start: _week_start, week_end: _week_end, student_id: _student_id ? _student_id : myUserId, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+    // const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
+    //   summary_type,
+    //   filter_type: "subject",
+    //   week_start: _week_start,
+    //   week_end: _week_end,
+    //   student_id: _student_id ? _student_id : myUserId,
+    // });
     subjects =
-      _subjects &&
-      _subjects.map((item) => {
+      _subjects.payload &&
+      _subjects.payload.map((item) => {
         return {
           id: item.subject_id,
           name: item.subject_name,
