@@ -217,7 +217,7 @@ export function AssessmentsEdit() {
               editable={editable as boolean}
             />
           ) : (
-            <NoOutcome />
+            filteredOutcomelist && <NoOutcome />
           )}
         </div>
       ) : (
@@ -233,7 +233,7 @@ export function AssessmentsEdit() {
               editable={editable as boolean}
             />
           ) : (
-            <NoOutcome />
+            filteredOutcomelist && <NoOutcome />
           )}
         </>
       )}
