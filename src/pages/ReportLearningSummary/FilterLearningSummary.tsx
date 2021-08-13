@@ -54,6 +54,8 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   // const isStudent = perm.report_learning_summary_student_649;
   const { value, defaultWeeksValue, summaryReportOptions, onChangeYearFilter, onChangeWeekFilter, onChangeFilter } = props;
   const { years, weeks, schools, classes, teachers, students, subjects } = summaryReportOptions;
+  console.log(defaultWeeksValue);
+  console.log(weeks);
   const getYear = () => {
     return (
       years &&
@@ -90,9 +92,8 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   };
   const handleChangeWeek = (event: ChangeEvent<HTMLInputElement>) => {
     const week = event.target.value;
-    const [s, e] = week.split("~");
-    const week_start = new Date(`${value.year}.${s}`).getTime() / 1000;
-    const week_end = new Date(`${value.year}.${e}`).getTime() / 1000;
+    const index = weeks.findIndex((item) => item.value === week);
+    const { week_start, week_end } = weeks[index];
     onChangeWeekFilter(week_start, week_end);
   };
   const handleChange = (val: string, tab: keyof QueryLearningSummaryCondition) => {

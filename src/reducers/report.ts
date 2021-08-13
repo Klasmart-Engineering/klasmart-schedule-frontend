@@ -844,6 +844,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     },
   });
   const myUserId = meInfo.me?.user_id;
+
   const perm = hasPermissionOfMe(
     [
       PermissionType.report_learning_summary_org_652,
@@ -860,8 +861,28 @@ export const onLoadLearningSummary = createAsyncThunk<
   const {
     report: { summaryReportOptions },
   } = getState();
+  if (isSchool && !isOrg) {
+    const data = await gqlapi.query<UserSchoolIDsQuery, UserSchoolIDsQueryVariables>({
+      query: UserSchoolIDsDocument,
+      variables: {
+        user_id: myUserId as string,
+      },
+    });
+    mySchoolId = data.data.user?.school_memberships?.map((item) => item?.school_id).join(",");
+  }
   if (!summaryReportOptions.years.length && !summaryReportOptions.weeks.length) {
-    const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ time_offset: getTimeOffSecond(), summary_type });
+    const params = { time_offset: getTimeOffSecond(), summary_type };
+    let timeFilterParams: IParamQueryTimeFilter = { ...params };
+    if (!isOrg && isSchool) {
+      timeFilterParams = { ...params, school_ids: mySchoolId };
+    }
+    if (!isOrg && !isSchool && isTeacher) {
+      timeFilterParams = { ...params, teacher_id: myUserId };
+    }
+    if (!isOrg && !isSchool && !isTeacher && isStudent) {
+      timeFilterParams = { ...params, student_id: myUserId };
+    }
+    const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ ...timeFilterParams });
     years = timeFilter.length ? timeFilter.map((item) => item.year as number) : [2021];
     const _weeks = timeFilter.length ? timeFilter.find((item) => item.year === _year)?.weeks : [];
     weeks = _weeks
@@ -883,8 +904,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   const lastWeek = weeks[weeks.length - 1];
   const _week_start = week_start ? week_start : lastWeek.week_start;
   const _week_end = week_end ? week_end : lastWeek.week_end;
-  if (isOrg && !summaryReportOptions.schools?.length) {
-    // const _schools = (await dispatch(getRemainFilter({summary_type, filter_type: "school", week_start: _week_start, week_end: _week_end, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
+  if (isOrg) {
     const _schools = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "school",
@@ -900,21 +920,8 @@ export const onLoadLearningSummary = createAsyncThunk<
         };
       });
     _school_id = school_id ? school_id : schools[0].id;
-  } else {
-    schools = summaryReportOptions.schools as ArrProps[];
-    _school_id = school_id;
-  }
-  if (isSchool && !isOrg) {
-    const data = await gqlapi.query<UserSchoolIDsQuery, UserSchoolIDsQueryVariables>({
-      query: UserSchoolIDsDocument,
-      variables: {
-        user_id: myUserId as string,
-      },
-    });
-    mySchoolId = data.data.user?.school_memberships?.map((item) => item?.school_id)[0];
   }
   if (isSchool) {
-    // const _classes = (await dispatch(getRemainFilter({summary_type, filter_type: "class", week_start: _week_start, week_end: _week_end,school_id: _school_id ? _school_id : mySchoolId, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
     const _classes = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "class",
@@ -931,7 +938,6 @@ export const onLoadLearningSummary = createAsyncThunk<
         };
       });
     _class_id = class_id ? class_id : classes[0].id;
-    // const _teachers = (await dispatch(getRemainFilter({summary_type, filter_type: "teacher", week_start: _week_start, week_end: _week_end, class_id: _class_id, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
     const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "teacher",
@@ -950,7 +956,6 @@ export const onLoadLearningSummary = createAsyncThunk<
     _teacher_id = teacher_id ? teacher_id : teachers[0].id;
   }
   if (isTeacher && !isOrg && !isSchool) {
-    // const _classes = (await dispatch(getRemainFilter({summary_type, filter_type: "class", week_start: _week_start, week_end: _week_end, teacher_id: myUserId, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
     const _classes = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "class",
@@ -967,7 +972,6 @@ export const onLoadLearningSummary = createAsyncThunk<
         };
       });
     _class_id = class_id ? class_id : classes[0].id;
-    // const _students = (await dispatch(getRemainFilter({summary_type, filter_type: "student", week_start: _week_start, week_end: _week_end, class_id: _class_id, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
     const _students = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "student",
@@ -986,7 +990,6 @@ export const onLoadLearningSummary = createAsyncThunk<
     _student_id = student_id ? student_id : students[0].id;
   }
   if (isTeacher && isOrg && isSchool) {
-    // const _students = (await dispatch(getRemainFilter({summary_type, filter_type: "student", week_start: _week_start, week_end: _week_end, teacher_id: _teacher_id, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
     const _students = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "student",
@@ -1005,7 +1008,6 @@ export const onLoadLearningSummary = createAsyncThunk<
     _student_id = student_id ? student_id : students[0].id;
   }
   if (isStudent) {
-    // const _subjects = (await dispatch(getRemainFilter({summary_type, filter_type: "subject", week_start: _week_start, week_end: _week_end, student_id: _student_id ? _student_id : myUserId, metaLoading: true}))) as PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>;
     const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "subject",
@@ -1057,6 +1059,8 @@ export interface IParamsGetAfterClassFilter extends IParamQueryRemainFilter {
   isStudent: boolean;
 }
 export type IResultGetAfterClassFilter = {
+  classes?: ArrProps[];
+  school_id?: string;
   teachers?: ArrProps[];
   students?: ArrProps[];
   subjects?: ArrProps[];
@@ -1069,22 +1073,54 @@ export const getAfterClassFilter = createAsyncThunk<
   IResultGetAfterClassFilter,
   IParamsGetAfterClassFilter & LoadingMetaPayload,
   { state: RootState }
->("getAfterClassFilter", async (query, { getState }) => {
-  const { summary_type, filter_type, class_id, teacher_id, student_id, week_start, week_end, isOrg, isSchool, isTeacher } = query;
+>("getAfterClassFilter", async (query, { getState, dispatch }) => {
+  const {
+    summary_type,
+    filter_type,
+    school_id,
+    class_id,
+    teacher_id,
+    student_id,
+    week_start,
+    week_end,
+    isOrg,
+    isSchool,
+    isTeacher,
+  } = query;
+  let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
   let students: ArrProps[] = [];
   let subjects: ArrProps[] = [];
+  let _class_id: string | undefined = "";
   let _teacher_id: string | undefined = "";
   let _student_id: string | undefined = "";
   let _subject_id: string | undefined = "";
-  if (filter_type === "teacher") {
+  if (filter_type === "class") {
+    const _classes = await api.reports.queryLearningSummaryRemainingFilter({
+      summary_type,
+      filter_type,
+      week_start,
+      week_end,
+      school_id,
+    });
+    classes =
+      _classes &&
+      _classes.map((item) => {
+        return {
+          id: item.class_id,
+          name: item.class_name,
+        };
+      });
+    _class_id = classes[0].id;
+  }
+  if (filter_type === "teacher" || filter_type === "class") {
     if (isOrg || isSchool) {
       const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
         summary_type,
-        filter_type,
+        filter_type: "teacher",
         week_start,
         week_end,
-        class_id,
+        class_id: filter_type === "teacher" ? class_id : _class_id,
       });
       teachers =
         _teachers &&
@@ -1094,7 +1130,7 @@ export const getAfterClassFilter = createAsyncThunk<
             name: item.teacher_name,
           };
         });
-      _teacher_id = teacher_id ? teacher_id : teachers[0].id;
+      _teacher_id = teachers[0].id;
       const _students = await api.reports.queryLearningSummaryRemainingFilter({
         summary_type,
         filter_type: "student",
@@ -1167,7 +1203,7 @@ export const getAfterClassFilter = createAsyncThunk<
       _student_id = students[0].id;
     }
   }
-  if (filter_type === "teacher" || filter_type === "student") {
+  if (filter_type === "teacher" || filter_type === "student" || filter_type === "class") {
     const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "subject",
@@ -1225,7 +1261,33 @@ export const getAfterClassFilter = createAsyncThunk<
       _subject_id = subjects[0].id;
     }
   }
-  if (class_id) {
+  const {
+    report: { summaryReportOptions },
+  } = getState();
+  const params = {
+    week_start,
+    week_end,
+    school_id: school_id ? school_id : summaryReportOptions.school_id,
+    class_id: school_id ? _class_id : class_id ? class_id : summaryReportOptions.class_id,
+    teacher_id: school_id || class_id ? _teacher_id : teacher_id ? teacher_id : summaryReportOptions.teacher_id,
+    student_id: school_id || class_id || teacher_id ? _student_id : student_id,
+    subject_id: _subject_id,
+    metaLoading: true,
+  };
+  summary_type === ReportType.live ? dispatch(getLiveClassesSummary({ ...params })) : dispatch(getAssignmentSummary({ ...params }));
+  if (school_id) {
+    return {
+      classes,
+      teachers,
+      students,
+      subjects,
+      school_id,
+      class_id: _class_id,
+      teacher_id: _teacher_id,
+      student_id: _student_id,
+      subject_id: _subject_id,
+    };
+  } else if (class_id) {
     return {
       teachers,
       students,
@@ -1293,10 +1355,10 @@ const { actions, reducer } = createSlice({
       state.summaryReportOptions.year = payload.year ? payload.year : state.summaryReportOptions.year;
       state.summaryReportOptions.week_start = payload.week_start;
       state.summaryReportOptions.week_end = payload.week_end;
-      state.summaryReportOptions.years = payload.years?.length ? payload.years : state.summaryReportOptions.years;
-      state.summaryReportOptions.weeks = payload.weeks?.length ? payload.weeks : state.summaryReportOptions.weeks;
+      state.summaryReportOptions.years = payload.years ? payload.years : state.summaryReportOptions.years;
+      state.summaryReportOptions.weeks = payload.weeks ? payload.weeks : state.summaryReportOptions.weeks;
       state.summaryReportOptions.schools = [];
-      state.summaryReportOptions.school_id = "";
+      state.summaryReportOptions.school_id = payload.school_id ? payload.school_id : "";
       state.summaryReportOptions.classes = [];
       state.summaryReportOptions.class_id = "";
       state.summaryReportOptions.teachers = [];
@@ -1394,6 +1456,7 @@ const { actions, reducer } = createSlice({
     },
     [resetReportMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof resetReportMockOptions>>) => {
       state.reportMockOptions = initialState.reportMockOptions;
+      state.summaryReportOptions = initialState.summaryReportOptions;
     },
     [onLoadLearningSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadLearningSummary>>) => {
       state.summaryReportOptions = payload;
@@ -1426,6 +1489,12 @@ const { actions, reducer } = createSlice({
     },
     [getRemainFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>) => {},
     [getAfterClassFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>) => {
+      if (payload.school_id) {
+        state.summaryReportOptions.school_id = payload.school_id;
+      }
+      if (payload.classes?.length) {
+        state.summaryReportOptions.classes = payload.classes;
+      }
       if (payload.class_id) {
         state.summaryReportOptions.class_id = payload.class_id;
       }
