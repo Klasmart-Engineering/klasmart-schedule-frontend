@@ -663,6 +663,16 @@ export interface EntityHomeFunStudyOutcome {
   status?: "achieved" | "not_achieved" | "not_attempted";
 }
 
+export interface EntityLearningSummaryFilterWeek {
+  week_end?: number;
+  week_start?: number;
+}
+
+export interface EntityLearningSummaryFilterYear {
+  weeks?: EntityLearningSummaryFilterWeek[];
+  year?: number;
+}
+
 export interface EntityLearningSummaryOutcome {
   id?: string;
   name?: string;
@@ -855,7 +865,7 @@ export interface EntityQueryAssignmentsSummaryResult {
   study_count?: number;
 }
 
-export interface EntityQueryLearningSummaryFilterResultItem {
+export interface EntityQueryLearningSummaryRemainingFilterResultItem {
   class_id?: string;
   class_name?: string;
   school_id?: string;
@@ -1256,15 +1266,14 @@ export interface EntityStudentAchievementReportResponse {
 }
 
 export interface EntityStudentAssessment {
-  comment?: string[];
   complete_at?: number;
   create_at?: number;
-  feedback_attachments?: EntityStudentAssessmentAttachment[];
   id?: string;
   schedule?: EntityStudentAssessmentSchedule;
   score?: number;
   status?: string;
-  teacher?: EntityStudentAssessmentTeacher;
+  student_attachments?: EntityStudentAssessmentAttachment[];
+  teacher_comments?: EntityStudentAssessmentTeacher[];
   title?: string;
   update_at?: number;
 }
@@ -1282,6 +1291,12 @@ export interface EntityStudentAssessmentSchedule {
 }
 
 export interface EntityStudentAssessmentTeacher {
+  comment?: string;
+  teacher?: EntityStudentAssessmentTeacherInfo;
+}
+
+export interface EntityStudentAssessmentTeacherInfo {
+  avatar?: string;
   family_name?: string;
   given_name?: string;
   id?: string;
@@ -1851,6 +1866,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         order_by?: string;
         teacher_id?: string;
         assessment_id?: string;
+        schedule_ids?: string;
         create_at_ge?: string;
         create_at_le?: string;
         update_at_le?: string;
@@ -3300,31 +3316,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports/learningSummary
-     * @name queryLearningSummaryFilterItems
-     * @summary query specified learning summary filter items
-     * @request GET:/reports/learning_summary/filters
-     * @description list specified learning summary filter items
-     */
-    queryLearningSummaryFilterItems: (
-      query: {
-        type: "year" | "week" | "school" | "class" | "teacher" | "student" | "subject";
-        year?: number;
-        week_start?: number;
-        week_end?: number;
-        school_id?: string;
-        class_id?: string;
-        teacher_id?: string;
-        student_id?: string;
-      },
-      params?: RequestParams
-    ) =>
-      this.request<
-        EntityQueryLearningSummaryFilterResultItem[],
-        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
-      >(`/reports/learning_summary/filters${this.addQueryParams(query)}`, "GET", params),
-
-    /**
-     * @tags reports/learningSummary
      * @name queryLiveClassesSummary
      * @summary query live classes summary
      * @request GET:/reports/learning_summary/live_classes
@@ -3345,6 +3336,45 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityQueryLiveClassesSummaryResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learning_summary/live_classes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags reports/learningSummary
+     * @name queryLearningSummaryRemainingFilter
+     * @summary query remaining learning summary filter
+     * @request GET:/reports/learning_summary/remaining_filter
+     * @description query remaining learning summary filter
+     */
+    queryLearningSummaryRemainingFilter: (
+      query: {
+        summary_type: "live_class" | "assignment";
+        filter_type: "school" | "class" | "teacher" | "student" | "subject";
+        week_start?: number;
+        week_end?: number;
+        school_id?: string;
+        class_id?: string;
+        teacher_id?: string;
+        student_id?: string;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<
+        EntityQueryLearningSummaryRemainingFilterResultItem[],
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/learning_summary/remaining_filter${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports/learningSummary
+     * @name queryLearningSummaryTimeFilter
+     * @summary query learning summary time filter
+     * @request GET:/reports/learning_summary/time_filter
+     * @description query learning summary time filter
+     */
+    queryLearningSummaryTimeFilter: (query: { time_offset: number; summary_type: "live_class" | "assignment" }, params?: RequestParams) =>
+      this.request<EntityLearningSummaryFilterYear[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learning_summary/time_filter${this.addQueryParams(query)}`,
         "GET",
         params
       ),

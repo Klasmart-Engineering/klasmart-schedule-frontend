@@ -1,3 +1,4 @@
+import { IWeeks } from "..";
 import api from "../../../api";
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
@@ -17,7 +18,7 @@ export type QueryLearningSummaryConditionBaseProps = {
   value: QueryLearningSummaryCondition;
 };
 export enum ReportType {
-  live = "live",
+  live = "live_class",
   assignment = "assignment",
 }
 export type LiveClassesSummaryResult = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;
@@ -28,6 +29,21 @@ export type AssignmentSummaryResultItem = NonNullable<AssignmentSummaryResult["i
 export type ReportInfoBaseProps = {
   liveClassSummary: LiveClassesSummaryResult;
   assignmentSummary: AssignmentSummaryResult;
-  reportType: ReportType;
+  reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
   onChangeLessonIndex: (index: number) => void;
+};
+
+export type QueryLearningSummaryRemainingFilterCondition = NonNullRecordValue<
+  NonNullable<Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0]>
+>;
+export type ArrProps = {
+  id: string | undefined;
+  name: string | undefined;
+};
+export type TimeFilter = {
+  week_start?: number;
+  week_end?: number;
+  year?: number;
+  years?: number[];
+  weeks?: IWeeks[];
 };

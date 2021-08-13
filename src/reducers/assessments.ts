@@ -15,7 +15,7 @@ import { d } from "../locale/LocaleManager";
 import { ModelAssessment } from "../models/ModelAssessment";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { actInfo } from "./notify";
+import { actInfo, actWarning } from "./notify";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
@@ -215,6 +215,11 @@ export const updateStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyA
 export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStudyAssessmentParams>(
   "assessments/completeStudyAssessment",
   async ({ id, data, filter_student_view_items }, { dispatch }) => {
+    const errorlist =
+      data.outcomes &&
+      data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
+    if (errorlist && errorlist.length > 0)
+      return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
     let hasNotAttempt = false;
     filter_student_view_items?.forEach((item) => {
       const { all, attempt } = ModelAssessment.toGetCompleteRate([item]);
