@@ -27,18 +27,6 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   },
 }));
 
-// export enum ArrPropTypes {
-//   EntityLearningSummaryFilterSchool,
-//   EntityLearningSummaryFilterClass,
-//   EntityLearningSummaryFilterTeacher,
-//   EntityLearningSummaryFilterStudent,
-//   EntityLearningSummaryFilterSubject
-// }
-// export type ArrPropTypes = EntityLearningSummaryFilterSchool |
-//                            EntityLearningSummaryFilterClass |
-//                            EntityLearningSummaryFilterTeacher |
-//                            EntityLearningSummaryFilterStudent |
-//                            EntityLearningSummaryFilterSubject
 export interface LearningSummartOptionsProps {
   year: number[];
   week: IWeeks[];
@@ -47,9 +35,6 @@ export interface LearningSummartOptionsProps {
 }
 export interface FilterLearningSummaryProps extends QueryLearningSummaryConditionBaseProps {
   defaultWeeksValue: string;
-  // learningSummartOptions: LearningSummartOptionsProps;
-  // timeFilter: EntityLearningSummaryFilterYear[];
-  // filterValues: IResultQueryLoadLearningSummary;
   summaryReportOptions: IResultLearningSummary;
   onChangeYearFilter: (year: number) => any;
   onChangeWeekFilter: (week_start: number, week_end: number) => any;
@@ -69,33 +54,6 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   // const isStudent = perm.report_learning_summary_student_649;
   const { value, defaultWeeksValue, summaryReportOptions, onChangeYearFilter, onChangeWeekFilter, onChangeFilter } = props;
   const { years, weeks, schools, classes, teachers, students, subjects } = summaryReportOptions;
-  // const { timeFilter, infoFilter } = filterValues;
-  // console.log(timeFilter)
-  // const { year, week, studentList, subjectList } = learningSummartOptions;
-  // const weeks = useMemo(() => {
-  //   const _weeks = timeFilter.find(item => item.year === value.year)?.weeks
-  //   return _weeks && _weeks.length && _weeks.map(item => {
-  //     const { week_start, week_end } = item;
-  //     return {
-  //       week_start: week_start,
-  //       ween_end: week_end,
-  //       value: `${formatTimeToMonDay(week_start as number)}~${formatTimeToMonDay(week_end as number)}`
-  //     }
-  //   })
-  // }, [timeFilter, value.year]);
-
-  // const classes =  useMemo(() => {
-  //   return infoFilter.find(item => item.id === value.school_id)?.classes || [];
-  // }, [infoFilter, value.school_id])
-  // const teachers = useMemo(() => {
-  //   return classes?.find(item => item.id === value.class_id)?.teachers || [];
-  // }, [classes, value.class_id]);
-  // const students = useMemo(() => {
-  //   return teachers?.find(item => item.id === value.teacher_id)?.students || [];
-  // }, [teachers, value.teacher_id])
-  // const subjects = useMemo(() => {
-  //   return students?.find(item => item.id === value.student_id)?.subjects || [];
-  // }, [students, value.student_id])
   const getYear = () => {
     return (
       years &&
@@ -129,12 +87,6 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     const year = Number(event.target.value);
     onChangeYearFilter(year);
-    // onChangeTimeFilter(year)
-    // onChange(
-    //   produce(value, (draft) => {
-    //     draft.year = year;
-    //   })
-    // );
   };
   const handleChangeWeek = (event: ChangeEvent<HTMLInputElement>) => {
     const week = event.target.value;
@@ -142,12 +94,6 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
     const week_start = new Date(`${value.year}.${s}`).getTime() / 1000;
     const week_end = new Date(`${value.year}.${e}`).getTime() / 1000;
     onChangeWeekFilter(week_start, week_end);
-    // onChange(
-    //   produce(value, (draft) => {
-    //     draft.week_start = week_start;
-    //     draft.week_end = week_end;
-    //   })
-    // );
   };
   const handleChange = (val: string, tab: keyof QueryLearningSummaryCondition) => {
     onChangeFilter(val, tab);

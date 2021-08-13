@@ -5,15 +5,15 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
-import { formatTimeToMonDay, getTimeOffSecond } from "../../models/ModelReports";
+import { formatTimeToMonDay } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
 import {
   AsyncTrunkReturned,
   getAfterClassFilter,
   getAssignmentSummary,
   getLiveClassesSummary,
-  getTimeFilter,
   onLoadLearningSummary,
+  resetSummaryOptions,
 } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary, FilterLearningSummaryProps } from "./FilterLearningSummary";
@@ -100,45 +100,99 @@ export function ReportLearningSummary() {
     const newValue = { ...value, lessonIndex: -1 };
     history.replace({ search: toQueryString(clearNull(newValue)) });
   };
+
   const handleChangeWeekFilter: FilterLearningSummaryProps["onChangeWeekFilter"] = (week_start, week_end) => {
-    const { year } = condition;
-    dispatch(onLoadLearningSummary({ summary_type: tab, year, week_start, week_end }));
-    history.push(`${routeBasePath}/tab/${tab}?lessonIndex=-1&year=${year}&week_start=${week_start}&week_end=${week_end}`);
+    dispatch(resetSummaryOptions({ week_start, week_end }));
+    history.push({
+      search: setQuery(history.location.search, {
+        week_start,
+        week_end,
+        school_id: "",
+        class_id: "",
+        teacher_id: "",
+        student_id: "",
+        subject_id: "",
+      }),
+    });
   };
   const handleChangeYearFilter: FilterLearningSummaryProps["onChangeYearFilter"] = (year) => {
-    dispatch(onLoadLearningSummary({ summary_type: tab, year }));
+    dispatch(resetSummaryOptions({ year }));
+    history.push({
+      search: setQuery(history.location.search, {
+        year,
+        week_start: 0,
+        week_end: 0,
+        school_id: "",
+        class_id: "",
+        teacher_id: "",
+        student_id: "",
+        subject_id: "",
+      }),
+    });
   };
   const handleChangeFilter: FilterLearningSummaryProps["onChangeFilter"] = (value, tab) => {
     computeFilterChange(value, tab);
   };
-  const changeAfterClassFilter = useMemo(
+  const filterParams = { summary_type: tab, week_end, week_start, isOrg, isSchool, isTeacher, isStudent };
+  const summaryParams = useMemo(() => {
+    return { year, week_start, week_end, school_id };
+  }, [school_id, week_end, week_start, year]);
+  const changeSchoolFilter = useMemo(
+    () => async (school_id: string) => {
+      const { payload } = ((await dispatch(
+        getAfterClassFilter({
+          filter_type: "class",
+          school_id,
+          ...filterParams,
+        })
+      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
+      if (payload && payload.students?.length) {
+        const { class_id = "", teacher_id = "", student_id = "", subject_id = "" } = summaryReportOptions;
+        history.push({ search: setQuery(history.location.search, { school_id, class_id, teacher_id, student_id, subject_id }) });
+        tab === ReportType.live
+          ? dispatch(
+              getLiveClassesSummary({
+                ...summaryParams,
+                school_id,
+                class_id,
+                teacher_id,
+                student_id,
+                subject_id,
+                metaLoading: true,
+              })
+            )
+          : dispatch(
+              getAssignmentSummary({
+                ...summaryParams,
+                school_id,
+                class_id,
+                teacher_id,
+                student_id,
+                subject_id,
+                metaLoading: true,
+              })
+            );
+      }
+    },
+    [dispatch, filterParams, history, summaryParams, summaryReportOptions, tab]
+  );
+  const changeClassFilter = useMemo(
     () => async (class_id: string) => {
       if (isOrg || isSchool) {
         const { payload } = ((await dispatch(
           getAfterClassFilter({
-            summary_type: tab,
             filter_type: "teacher",
             class_id,
-            week_start,
-            week_end,
-            isOrg,
-            isSchool,
-            isTeacher,
-            isStudent,
-            metaLoading: true,
+            ...filterParams,
           })
         )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
         if (payload && payload.students?.length) {
-          console.log("class_id", class_id);
           const { teacher_id = "", student_id = "", subject_id = "" } = summaryReportOptions;
           history.push({ search: setQuery(history.location.search, { class_id, teacher_id, student_id, subject_id }) });
           tab === ReportType.live
             ? dispatch(
                 getLiveClassesSummary({
-                  year,
-                  week_start,
-                  week_end,
-                  school_id,
+                  ...summaryParams,
                   class_id,
                   teacher_id,
                   student_id,
@@ -148,10 +202,7 @@ export function ReportLearningSummary() {
               )
             : dispatch(
                 getAssignmentSummary({
-                  year,
-                  week_start,
-                  week_end,
-                  school_id,
+                  ...summaryParams,
                   class_id,
                   teacher_id,
                   student_id,
@@ -163,15 +214,9 @@ export function ReportLearningSummary() {
       } else if (isTeacher) {
         const { payload } = ((await dispatch(
           getAfterClassFilter({
-            summary_type: tab,
-            filter_type: "student",
             class_id,
-            week_start,
-            week_end,
-            isOrg,
-            isSchool,
-            isTeacher,
-            isStudent,
+            filter_type: "student",
+            ...filterParams,
             metaLoading: true,
           })
         )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
@@ -181,10 +226,7 @@ export function ReportLearningSummary() {
           tab === ReportType.live
             ? dispatch(
                 getLiveClassesSummary({
-                  year,
-                  week_start,
-                  week_end,
-                  school_id,
+                  ...summaryParams,
                   class_id,
                   teacher_id,
                   student_id,
@@ -194,10 +236,7 @@ export function ReportLearningSummary() {
               )
             : dispatch(
                 getAssignmentSummary({
-                  year,
-                  week_start,
-                  week_end,
-                  school_id,
+                  ...summaryParams,
                   class_id,
                   teacher_id,
                   student_id,
@@ -208,21 +247,15 @@ export function ReportLearningSummary() {
         }
       }
     },
-    [dispatch, history, isOrg, isSchool, isStudent, isTeacher, school_id, summaryReportOptions, tab, teacher_id, week_end, week_start, year]
+    [dispatch, filterParams, history, isOrg, isSchool, isTeacher, summaryParams, summaryReportOptions, tab, teacher_id]
   );
-  const changeAfterTeacher = useMemo(
+  const changeTeacher = useMemo(
     () => async (teacher_id: string) => {
       const { payload } = ((await dispatch(
         getAfterClassFilter({
-          summary_type: tab,
           filter_type: "student",
           teacher_id,
-          week_start,
-          week_end,
-          isOrg,
-          isSchool,
-          isTeacher,
-          isStudent,
+          ...filterParams,
           metaLoading: true,
         })
       )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
@@ -232,10 +265,7 @@ export function ReportLearningSummary() {
         tab === ReportType.live
           ? dispatch(
               getLiveClassesSummary({
-                year,
-                week_start,
-                week_end,
-                school_id,
+                ...summaryParams,
                 class_id,
                 teacher_id,
                 student_id,
@@ -245,10 +275,7 @@ export function ReportLearningSummary() {
             )
           : dispatch(
               getAssignmentSummary({
-                year,
-                week_start,
-                week_end,
-                school_id,
+                ...summaryParams,
                 class_id,
                 teacher_id,
                 student_id,
@@ -258,35 +285,25 @@ export function ReportLearningSummary() {
             );
       }
     },
-    [class_id, dispatch, history, isOrg, isSchool, isStudent, isTeacher, school_id, summaryReportOptions, tab, week_end, week_start, year]
+    [class_id, dispatch, filterParams, history, summaryParams, summaryReportOptions, tab]
   );
-  const changeAfterStudent = useMemo(
+  const changeStudent = useMemo(
     () => async (student_id: string) => {
       const { payload } = ((await dispatch(
         getAfterClassFilter({
-          summary_type: tab,
-          filter_type: "subject",
           student_id,
-          week_start,
-          week_end,
-          isOrg,
-          isSchool,
-          isTeacher,
-          isStudent,
+          filter_type: "subject",
+          ...filterParams,
           metaLoading: true,
         })
       )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
       if (payload && payload.subjects?.length) {
         const { subject_id = "" } = summaryReportOptions;
-        console.log(class_id);
         history.push({ search: setQuery(history.location.search, { student_id, subject_id }) });
         tab === ReportType.live
           ? dispatch(
               getLiveClassesSummary({
-                year,
-                week_start,
-                week_end,
-                school_id,
+                ...summaryParams,
                 class_id,
                 teacher_id,
                 student_id,
@@ -296,10 +313,7 @@ export function ReportLearningSummary() {
             )
           : dispatch(
               getAssignmentSummary({
-                year,
-                week_start,
-                week_end,
-                school_id,
+                ...summaryParams,
                 class_id,
                 teacher_id,
                 student_id,
@@ -309,22 +323,7 @@ export function ReportLearningSummary() {
             );
       }
     },
-    [
-      class_id,
-      dispatch,
-      history,
-      isOrg,
-      isSchool,
-      isStudent,
-      isTeacher,
-      school_id,
-      summaryReportOptions,
-      tab,
-      teacher_id,
-      week_end,
-      week_start,
-      year,
-    ]
+    [class_id, dispatch, filterParams, history, summaryParams, summaryReportOptions, tab, teacher_id]
   );
   const changeSubject = useMemo(
     () => async (subject_id: string) => {
@@ -332,10 +331,7 @@ export function ReportLearningSummary() {
       tab === ReportType.live
         ? dispatch(
             getLiveClassesSummary({
-              year,
-              week_start,
-              week_end,
-              school_id,
+              ...summaryParams,
               class_id,
               teacher_id,
               student_id,
@@ -343,11 +339,9 @@ export function ReportLearningSummary() {
               metaLoading: true,
             })
           )
-        : dispatch(
-            getAssignmentSummary({ year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, metaLoading: true })
-          );
+        : dispatch(getAssignmentSummary({ ...summaryParams, class_id, teacher_id, student_id, subject_id, metaLoading: true }));
     },
-    [class_id, dispatch, history, school_id, student_id, tab, teacher_id, week_end, week_start, year]
+    [class_id, dispatch, history, student_id, summaryParams, tab, teacher_id]
   );
   const computeFilterChange = useMemo(
     () => (value: string, filter: keyof QueryLearningSummaryCondition) => {
@@ -355,41 +349,34 @@ export function ReportLearningSummary() {
         history.push({
           search: setQuery(history.location.search, { school_id: value, class_id: "", teacher_id: "", student_id: "", subject_id: "" }),
         });
+        changeSchoolFilter(value);
       }
       if (filter === "class_id") {
-        changeAfterClassFilter(value);
+        changeClassFilter(value);
       }
       if (filter === "teacher_id") {
-        changeAfterTeacher(value);
+        changeTeacher(value);
       }
       if (filter === "student_id") {
-        changeAfterStudent(value);
+        changeStudent(value);
       }
       if (filter === "subject_id") {
         changeSubject(value);
       }
     },
-    [changeAfterClassFilter, changeAfterStudent, changeAfterTeacher, changeSubject, history]
+    [changeClassFilter, changeSchoolFilter, changeStudent, changeSubject, changeTeacher, history]
   );
   const handleChangeReportType = useMemo(
-    () => (value: ReportType) => {
+    () => async (value: ReportType) => {
+      await dispatch(resetSummaryOptions({ years: [], weeks: [] }));
       history.replace(`${routeBasePath}/tab/${value}?lessonIndex=-1`);
     },
-    [history, routeBasePath]
+    [dispatch, history, routeBasePath]
   );
   const handleChangeLessonIndex = (index: number) => {
     history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });
   };
   useEffect(() => {
-    // 调拉取时间的接口
-    console.log(1);
-    const time_offset = getTimeOffSecond();
-    dispatch(getTimeFilter({ time_offset, summary_type: tab, metaLoading: true }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, tab]);
-  useEffect(() => {
-    console.log("condition", condition);
-    console.log(2);
     dispatch(
       onLoadLearningSummary({
         summary_type: tab,
@@ -405,11 +392,9 @@ export function ReportLearningSummary() {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, school_id, tab]);
+  }, [dispatch, week_start, tab]);
   useEffect(() => {
-    console.log(3);
-    console.log("summaryReportOptions", summaryReportOptions);
-    if (summaryReportOptions) {
+    if (summaryReportOptions.week_start) {
       const {
         year = "",
         week_start = "",
@@ -426,6 +411,12 @@ export function ReportLearningSummary() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, summaryReportOptions]);
+  // useEffect(() => {
+  //   // 调拉取时间的接口
+  //   const time_offset = getTimeOffSecond();
+  //   dispatch(getTimeFilter({ time_offset, summary_type: tab, metaLoading: true }));
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dispatch, tab]);
   return (
     <>
       <ReportTitle title={t("report_learning_summary_report")} info={t("report_msg_lsr")} />

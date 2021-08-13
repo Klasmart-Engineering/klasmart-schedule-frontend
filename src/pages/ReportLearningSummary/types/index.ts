@@ -1,3 +1,4 @@
+import { IWeeks } from "..";
 import api from "../../../api";
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
@@ -38,4 +39,11 @@ export type QueryLearningSummaryRemainingFilterCondition = NonNullRecordValue<
 export type ArrProps = {
   id: string | undefined;
   name: string | undefined;
+};
+export type TimeFilter = {
+  week_start?: number;
+  week_end?: number;
+  year?: number;
+  years?: number[];
+  weeks?: IWeeks[];
 };
