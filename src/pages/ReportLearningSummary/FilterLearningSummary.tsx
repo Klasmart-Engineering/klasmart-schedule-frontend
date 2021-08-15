@@ -54,8 +54,6 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   // const isStudent = perm.report_learning_summary_student_649;
   const { value, defaultWeeksValue, summaryReportOptions, onChangeYearFilter, onChangeWeekFilter, onChangeFilter } = props;
   const { years, weeks, schools, classes, teachers, students, subjects } = summaryReportOptions;
-  console.log(defaultWeeksValue);
-  console.log(weeks);
   const getYear = () => {
     return (
       years &&
@@ -70,7 +68,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
     return (
       weeks &&
       weeks.map((item) => (
-        <MenuItem key={item.value} value={item.value}>
+        <MenuItem key={item.week_start} value={item.value}>
           {item.value}
         </MenuItem>
       ))
@@ -120,7 +118,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             className={css.selectButton}
             onChange={handleChangeWeek}
             label={t("report_filter_week")}
-            value={defaultWeeksValue}
+            value={defaultWeeksValue || ""}
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >

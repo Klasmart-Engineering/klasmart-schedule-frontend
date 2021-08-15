@@ -11,7 +11,7 @@ import {
   getAssignmentSummary,
   getLiveClassesSummary,
   onLoadLearningSummary,
-  resetSummaryOptions,
+  resetSummaryOptions
 } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary, FilterLearningSummaryProps } from "./FilterLearningSummary";
@@ -87,7 +87,6 @@ export function ReportLearningSummary() {
   const defaultWeeksValue = useMemo(() => {
     if (weeks.length && condition.week_start) {
       const index = weeks.findIndex((item) => item.week_start === Number(condition.week_start));
-      console.log(index);
       return weeks && weeks[index] ? `${weeks[index].value}` : weeks[weeks.length - 1].value;
     }
   }, [condition.week_start, weeks]);
@@ -184,39 +183,6 @@ export function ReportLearningSummary() {
           metaLoading: true,
         })
       );
-      // const { payload } = ((await dispatch(
-      //   getAfterClassFilter({
-      //     student_id,
-      //     filter_type: "subject",
-      //     ...filterParams,
-      //     metaLoading: true,
-      //   })
-      // )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
-      // if (payload && payload.subjects?.length) {
-      //   const { subject_id = "" } = summaryReportOptions;
-      //   history.push({ search: setQuery(history.location.search, { student_id, subject_id }) });
-      //   tab === ReportType.live
-      //     ? dispatch(
-      //         getLiveClassesSummary({
-      //           ...summaryParams,
-      //           class_id,
-      //           teacher_id,
-      //           student_id,
-      //           subject_id,
-      //           metaLoading: true,
-      //         })
-      //       )
-      //     : dispatch(
-      //         getAssignmentSummary({
-      //           ...summaryParams,
-      //           class_id,
-      //           teacher_id,
-      //           student_id,
-      //           subject_id,
-      //           metaLoading: true,
-      //         })
-      //       );
-      // }
     },
     [dispatch, filterParams]
   );
@@ -274,8 +240,6 @@ export function ReportLearningSummary() {
     history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });
   };
   useEffect(() => {
-    console.log(1);
-    console.log(history.location);
     dispatch(
       onLoadLearningSummary({
         summary_type: tab,
