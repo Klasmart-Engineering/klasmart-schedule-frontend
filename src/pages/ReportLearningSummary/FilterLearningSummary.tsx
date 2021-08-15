@@ -68,7 +68,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
     return (
       weeks &&
       weeks.map((item) => (
-        <MenuItem key={item.value} value={item.value}>
+        <MenuItem key={item.week_start} value={item.value}>
           {item.value}
         </MenuItem>
       ))
@@ -90,9 +90,8 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   };
   const handleChangeWeek = (event: ChangeEvent<HTMLInputElement>) => {
     const week = event.target.value;
-    const [s, e] = week.split("~");
-    const week_start = new Date(`${value.year}.${s}`).getTime() / 1000;
-    const week_end = new Date(`${value.year}.${e}`).getTime() / 1000;
+    const index = weeks.findIndex((item) => item.value === week);
+    const { week_start, week_end } = weeks[index];
     onChangeWeekFilter(week_start, week_end);
   };
   const handleChange = (val: string, tab: keyof QueryLearningSummaryCondition) => {
@@ -119,7 +118,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             className={css.selectButton}
             onChange={handleChangeWeek}
             label={t("report_filter_week")}
-            value={defaultWeeksValue}
+            value={defaultWeeksValue || ""}
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >

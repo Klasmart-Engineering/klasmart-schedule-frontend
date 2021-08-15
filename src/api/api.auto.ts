@@ -3372,7 +3372,16 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/reports/learning_summary/time_filter
      * @description query learning summary time filter
      */
-    queryLearningSummaryTimeFilter: (query: { time_offset: number; summary_type: "live_class" | "assignment" }, params?: RequestParams) =>
+    queryLearningSummaryTimeFilter: (
+      query: {
+        time_offset: number;
+        summary_type: "live_class" | "assignment";
+        school_ids?: string;
+        teacher_id?: string;
+        student_id?: string;
+      },
+      params?: RequestParams
+    ) =>
       this.request<EntityLearningSummaryFilterYear[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learning_summary/time_filter${this.addQueryParams(query)}`,
         "GET",

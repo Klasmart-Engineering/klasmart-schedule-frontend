@@ -46,4 +46,5 @@ export type TimeFilter = {
   year?: number;
   years?: number[];
   weeks?: IWeeks[];
+  school_id?: string;
 };
