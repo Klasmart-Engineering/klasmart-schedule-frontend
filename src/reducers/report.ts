@@ -1274,7 +1274,7 @@ export const getAfterClassFilter = createAsyncThunk<
     metaLoading: true,
   };
   summary_type === ReportType.live ? dispatch(getLiveClassesSummary({ ...params })) : dispatch(getAssignmentSummary({ ...params }));
-  if (school_id) {
+  if (filter_type === "class") {
     return {
       classes,
       teachers,
@@ -1286,7 +1286,7 @@ export const getAfterClassFilter = createAsyncThunk<
       student_id: _student_id,
       subject_id: _subject_id,
     };
-  } else if (class_id) {
+  } else if (filter_type === "teacher") {
     return {
       teachers,
       students,
@@ -1296,7 +1296,7 @@ export const getAfterClassFilter = createAsyncThunk<
       student_id: _student_id,
       subject_id: _subject_id,
     };
-  } else if (teacher_id) {
+  } else if (filter_type === "student") {
     return {
       students,
       subjects,
@@ -1491,25 +1491,25 @@ const { actions, reducer } = createSlice({
       if (payload.school_id) {
         state.summaryReportOptions.school_id = payload.school_id;
       }
-      if (payload.classes?.length) {
+      if (payload.classes) {
         state.summaryReportOptions.classes = payload.classes;
       }
       if (payload.class_id) {
         state.summaryReportOptions.class_id = payload.class_id;
       }
-      if (payload.teachers?.length) {
+      if (payload.teachers) {
         state.summaryReportOptions.teachers = payload.teachers;
       }
       if (payload.teacher_id) {
         state.summaryReportOptions.teacher_id = payload.teacher_id;
       }
-      if (payload.students?.length) {
+      if (payload.students) {
         state.summaryReportOptions.students = payload.students;
       }
       if (payload.student_id) {
         state.summaryReportOptions.student_id = payload.student_id;
       }
-      if (payload.subjects?.length) {
+      if (payload.subjects) {
         state.summaryReportOptions.subjects = payload.subjects;
         state.summaryReportOptions.subject_id = payload.subject_id;
       }
