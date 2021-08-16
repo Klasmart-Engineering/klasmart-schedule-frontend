@@ -9,7 +9,6 @@ import {
   FormControlLabel,
   InputLabel,
   LinearProgress,
-  ListSubheader,
   makeStyles,
   MenuItem,
   OutlinedInput,
@@ -20,6 +19,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { AccessTime, CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import { Autocomplete } from "@material-ui/lab";
 import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -33,7 +33,7 @@ import { FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../..
 import { SingleUploader } from "../../components/SingleUploader";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
-import { ContentDetailForm, formattedTime, toMapGroup, toMapVisibilitySettings } from "../../models/ModelContentDetailForm";
+import { ContentDetailForm, formattedTime, toMapGroup } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
@@ -125,6 +125,14 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     width: 32,
     margin: "0 10px",
   },
+  groupMenu: {
+    color: "rgba(0, 0, 0, 0.54)",
+    fontSize: "0.87rem",
+    boxSizing: "border-box",
+    fontWeight: 500,
+    lineHeight: "48px",
+    paddingLeft: 16,
+  },
 }));
 export function ProgressWithText(props: CircularProgressProps) {
   const css = useStyles();
@@ -210,6 +218,7 @@ export default function Details(props: DetailsProps) {
       control,
       errors,
       watch,
+      setValue,
       formState: { isDirty },
     },
     linkedMockOptions,
@@ -226,22 +235,30 @@ export default function Details(props: DetailsProps) {
   const defaultTheme = useTheme();
   const dispatch = useDispatch();
   const sm = useMediaQuery(defaultTheme.breakpoints.down("sm"));
-  const groupMenuItemList = (list?: LinkedMockOptionsItem[]) => {
-    const newArr: JSX.Element[] = [];
-    const newList = toMapVisibilitySettings(list);
-    newList.length &&
-      newList.forEach((item, index) => {
-        index === 0 && newArr.push(<ListSubheader key={`${item.id}+${index}`}>{toMapGroup(item.group)}</ListSubheader>);
-        index !== 0 &&
-          item.group !== newList[index - 1].group &&
-          newArr.push(<ListSubheader key={`${item.id}+${index}`}>{toMapGroup(item.group)}</ListSubheader>);
-        newArr.push(
-          <MenuItem style={{ paddingLeft: 28 }} key={item.id} value={item.id}>
-            {item.name}
-          </MenuItem>
-        );
-      });
-    return newArr;
+  // const groupMenuItemList = (list?: LinkedMockOptionsItem[]) => {
+  //   const newArr: JSX.Element[] = [];
+  //   const newList = toMapVisibilitySettings(list);
+  //   newList.length &&
+  //     newList.forEach((item, index) => {
+  //       index === 0 && newArr.push(<ListSubheader key={`${item.id}+${index}`}>{toMapGroup(item.group)}</ListSubheader>);
+  //       index !== 0 &&
+  //         item.group !== newList[index - 1].group &&
+  //         newArr.push(<ListSubheader key={`${item.id}+${index}`}>{toMapGroup(item.group)}</ListSubheader>);
+  //       newArr.push(
+  //         <MenuItem style={{ paddingLeft: 28 }} key={item.id} value={item.id}>
+  //           {item.name}
+  //         </MenuItem>
+  //       );
+  //     });
+  //   return newArr;
+  // };
+  const defaultVisibilityValue = (defaultValue: string[]): LinkedMockOptionsItem[] => {
+    const arr: LinkedMockOptionsItem[] = [];
+    defaultValue.forEach((item) => {
+      const aa = visibility_settings.find((i) => i.id === item);
+      aa && arr.push(aa);
+    });
+    return arr;
   };
   const menuItemList = (list?: LinkedMockOptionsItem[]) =>
     list &&
@@ -587,7 +604,7 @@ export default function Details(props: DetailsProps) {
             {menuItemList(linkedMockOptions.grade || [])}
           </Controller>
         </Box>
-        <Controller
+        {/* <Controller
           as={TextField}
           select
           SelectProps={{
@@ -608,7 +625,40 @@ export default function Details(props: DetailsProps) {
           helperText=""
         >
           {groupMenuItemList(visibility_settings)}
-        </Controller>
+        </Controller> */}
+        <Autocomplete
+          id="grouped-demo"
+          multiple
+          options={visibility_settings}
+          groupBy={(option) => toMapGroup(option.group) as string}
+          getOptionLabel={(option) => option.name as string}
+          onChange={(e: any, newValue) => {
+            setValue(
+              "publish_scope",
+              newValue.map((item) => item.id)
+            );
+          }}
+          defaultValue={defaultVisibilityValue(allDefaultValueAndKey.publish_scope?.value || []) || []}
+          renderInput={(params) => (
+            <Controller
+              disabled={disabled}
+              as={TextField}
+              name="publish_scope"
+              className={css.fieldset}
+              control={control}
+              {...params}
+              label={d("Visibility Settings").t("library_label_visibility_settings")}
+              variant="outlined"
+              required={true}
+              rules={{
+                validate: (value) => value.length > 0,
+              }}
+              error={errors.publish_scope ? true : false}
+              defaultValue={allDefaultValueAndKey.publish_scope?.value || []}
+              key={allDefaultValueAndKey.publish_scope?.key}
+            />
+          )}
+        />
         {lesson === "material" && (
           <Controller
             as={TextField}

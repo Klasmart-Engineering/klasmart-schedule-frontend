@@ -157,12 +157,13 @@ export function ReportLearningSummary() {
       await dispatch(
         getAfterClassFilter({
           filter_type: "student",
+          class_id,
           teacher_id,
           ...filterParams,
         })
       );
     },
-    [dispatch, filterParams]
+    [class_id, dispatch, filterParams]
   );
   const changeStudent = useMemo(
     () => async (student_id: string) => {
