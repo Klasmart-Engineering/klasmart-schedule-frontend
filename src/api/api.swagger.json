@@ -5314,7 +5314,7 @@
           },
           {
             "type": "string",
-            "description": "school id",
+            "description": "school ids, use commas to separate",
             "name": "school_id",
             "in": "query"
           },
@@ -5391,6 +5391,24 @@
             "name": "summary_type",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "school ids, use commas to separate",
+            "name": "school_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher_id",
+            "name": "teacher_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "student_id",
+            "name": "student_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8575,9 +8593,18 @@
         "attempted": {
           "type": "boolean"
         },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudentViewH5PLessonMaterial"
+          }
+        },
         "h5p_id": {
           "description": "add: 2021.06.24",
           "type": "string"
+        },
+        "has_sub_items": {
+          "type": "boolean"
         },
         "is_h5p": {
           "type": "boolean"
@@ -8587,6 +8614,10 @@
         },
         "lesson_material_name": {
           "type": "string"
+        },
+        "lesson_material_ordered_number": {
+          "description": "internal",
+          "type": "integer"
         },
         "lesson_material_type": {
           "type": "string"
@@ -8598,8 +8629,10 @@
           "type": "boolean"
         },
         "number": {
-          "description": "add: 2021.06.24",
           "type": "string"
+        },
+        "ordered_id": {
+          "type": "integer"
         },
         "outcome_names": {
           "type": "array",
@@ -8607,9 +8640,8 @@
             "type": "string"
           }
         },
-        "sub_content_number": {
-          "description": "add: 2021.06.24",
-          "type": "integer"
+        "parent_id": {
+          "type": "string"
         },
         "sub_h5p_id": {
           "description": "add: 2021.06.24",
