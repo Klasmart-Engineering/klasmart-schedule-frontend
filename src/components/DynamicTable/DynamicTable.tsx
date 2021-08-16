@@ -101,6 +101,7 @@ interface EditScoreProps {
   is_h5p?: boolean;
   student_id?: string;
   not_applicable_scoring?: boolean;
+  has_sub_items?: boolean;
 }
 
 function EditScore(props: EditScoreProps) {
@@ -116,13 +117,16 @@ function EditScore(props: EditScoreProps) {
     is_h5p,
     student_id,
     not_applicable_scoring,
+    has_sub_items,
   } = props;
   const [scoreNum, setScoreNum] = React.useState<number | string | undefined>(score);
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   return (
     <div className={classes.scoreEditBox}>
-      {attempted ? (
+      {has_sub_items ? (
+        "Attempted"
+      ) : attempted ? (
         <>
           {editable && !isComplete && isSubjectiveActivity ? (
             <>
@@ -132,7 +136,7 @@ function EditScore(props: EditScoreProps) {
                 id="standard-size-small"
                 size="small"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value as unknown as number;
+                  const value = (e.target.value as unknown) as number;
                   if (value! > maxScore!) {
                     dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
                   } else if (Number(value) + "" !== NaN + "") {
@@ -285,7 +289,7 @@ function BasicTable(props: BasicTableProps) {
             <TableBody>
               {studentViewItem?.lesson_materials?.map((row, index) => (
                 <TableRow key={`${row.sub_h5p_id ? row.sub_h5p_id : row.lesson_material_id}${index}`}>
-                  <TableCell component="th" scope="row" align="center">
+                  <TableCell component="th" scope="row" align="center" style={{ width: "50px" }}>
                     {row.number}
                   </TableCell>
                   <TableCell align="center">
@@ -324,12 +328,19 @@ function BasicTable(props: BasicTableProps) {
                       attempted={row.attempted}
                       is_h5p={row.is_h5p}
                       not_applicable_scoring={row.not_applicable_scoring}
+                      has_sub_items={row.has_sub_items}
                       isComplete={isComplete}
                     />
                   </TableCell>
                   <TableCell align="center">
                     {tableType === "study" && (
-                      <>{row?.max_score! === 0 ? "" : Math.ceil((row?.achieved_score! / row?.max_score!) * 100) + "%"}</>
+                      <>
+                        {row.has_sub_items
+                          ? "100%"
+                          : row?.max_score! === 0
+                          ? ""
+                          : Math.ceil((row?.achieved_score! / row?.max_score!) * 100) + "%"}
+                      </>
                     )}
                     {tableType === "live" && (
                       <ul className={classes.outcomesBox}>{row?.outcome_names?.map((name) => name && <li key={name}>{name}</li>)}</ul>
