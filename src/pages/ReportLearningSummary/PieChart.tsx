@@ -129,11 +129,6 @@ const getPixels = (px: number) => ({
   tooltipMargin: 0 * px,
   viewMargin: 80 * px,
 });
-// EntityQueryLiveClassesSummaryResult
-// export interface EntityQueryLiveClassesSummaryResult {
-//   attend?: number;
-//   items?: EntityLiveClassSummaryItem[];
-// }
 
 export interface PieDataProps {
   name: string;
