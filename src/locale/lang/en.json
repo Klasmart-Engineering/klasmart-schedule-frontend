@@ -891,6 +891,7 @@
   "assessment_assignment_assessment": "Assignment Assessment",
   "assessment_learning_outcomes_assessment": "Learning Outcomes Assessment",
   "assessment_learning_outcomes_achievement": "Learning Outcomes Achievement of {StudentName}",
+  "assessment_not_applicable": "Not Applicable",
   "schedule_lo_number_added": "Added",
   "schedule_filter_select_all_classes": "Select All Classes",
   "report_filter_student": "Student",
