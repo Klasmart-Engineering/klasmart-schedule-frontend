@@ -26,7 +26,7 @@ import {
   TeacherListBySchoolIdQueryVariables,
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables,
+  UserSchoolIDsQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityQueryAssignmentsSummaryResult,
@@ -38,7 +38,7 @@ import {
   // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -50,7 +50,7 @@ import {
   QueryLearningSummaryCondition,
   QueryLearningSummaryRemainingFilterCondition,
   ReportType,
-  TimeFilter,
+  TimeFilter
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
@@ -858,6 +858,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   const isSchool = perm.report_learning_summary_school_651;
   const isTeacher = perm.report_learning_summary_teacher_650;
   const isStudent = perm.report_learning_summary_student_649;
+  const isOnlyStudent = isStudent && !isOrg && !isSchool && !isTeacher
   const {
     report: { summaryReportOptions },
   } = getState();
@@ -1001,7 +1002,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     filter_type: "subject",
     week_start: _week_start,
     week_end: _week_end,
-    student_id: isStudent ? myUserId : _student_id,
+    student_id: (isStudent && !isTeacher && !isOrg && !isSchool) ? myUserId : _student_id,
   });
   subjects = _subjects.map((item) => {
     return {
@@ -1022,7 +1023,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     school_id: _school_id,
     class_id: _class_id,
     teacher_id: _teacher_id,
-    student_id: _student_id ? _student_id : myUserId,
+    student_id: _student_id ? _student_id : isOnlyStudent ? myUserId : "",
     subject_id: _subject_id,
   };
   if (_year && _week_start && _week_end && _student_id && _subject_id) {
@@ -1055,6 +1056,8 @@ export type IResultGetAfterClassFilter = {
   teacher_id?: string;
   student_id?: string;
   subject_id?: string;
+  summary_type: string;
+  filter_type: string;
 };
 export const getAfterClassFilter = createAsyncThunk<
   IResultGetAfterClassFilter,
@@ -1113,7 +1116,7 @@ export const getAfterClassFilter = createAsyncThunk<
           name: item.teacher_name,
         };
       });
-      _teacher_id = teachers ? teachers[0].id : "";
+      _teacher_id = teachers.length ? teachers[0].id : "";
       const _students = await api.reports.queryLearningSummaryRemainingFilter({
         summary_type,
         filter_type: "student",
@@ -1204,7 +1207,7 @@ export const getAfterClassFilter = createAsyncThunk<
         filter_type: "subject",
         week_start,
         week_end,
-        student_id: _student_id,
+        student_id: student_id,
       });
       subjects = _subjects.map((item) => {
         return {
@@ -1240,8 +1243,8 @@ export const getAfterClassFilter = createAsyncThunk<
     week_end,
     school_id: school_id ? school_id : summaryReportOptions.school_id,
     class_id: school_id ? _class_id : class_id ? class_id : summaryReportOptions.class_id,
-    teacher_id: school_id || class_id ? _teacher_id : teacher_id ? teacher_id : summaryReportOptions.teacher_id,
-    student_id: school_id || class_id || teacher_id ? _student_id : student_id,
+    teacher_id: (school_id) ? _teacher_id : filter_type === "student" ? teacher_id  : summaryReportOptions.teacher_id,
+    student_id: (school_id || class_id || teacher_id) ? _student_id : student_id,
     subject_id: _subject_id,
     metaLoading: true,
   };
@@ -1259,6 +1262,8 @@ export const getAfterClassFilter = createAsyncThunk<
       teacher_id: _teacher_id,
       student_id: _student_id,
       subject_id: _subject_id,
+      summary_type,
+      filter_type,
     };
   } else if (filter_type === "teacher") {
     return {
@@ -1269,6 +1274,8 @@ export const getAfterClassFilter = createAsyncThunk<
       teacher_id: _teacher_id,
       student_id: _student_id,
       subject_id: _subject_id,
+      summary_type,
+      filter_type,
     };
   } else if (filter_type === "student") {
     return {
@@ -1278,12 +1285,16 @@ export const getAfterClassFilter = createAsyncThunk<
       class_id,
       student_id: _student_id,
       subject_id: _subject_id,
+      summary_type,
+      filter_type,
     };
   } else {
     return {
       student_id,
       subjects,
       subject_id: _subject_id,
+      summary_type,
+      filter_type,
     };
   }
 });
@@ -1463,30 +1474,40 @@ const { actions, reducer } = createSlice({
     },
     [getRemainFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>) => {},
     [getAfterClassFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>) => {
-      if (payload.school_id) {
+      if (payload.filter_type === "class") {
         state.summaryReportOptions.school_id = payload.school_id;
+        state.summaryReportOptions.class_id = payload.class_id;
+        state.summaryReportOptions.teacher_id = payload.teacher_id;
+        state.summaryReportOptions.student_id = payload.student_id;
+      } else 
+      if(payload.filter_type === "teacher" || payload.filter_type === "student") {
+        state.summaryReportOptions.class_id = payload.class_id;
+        state.summaryReportOptions.teacher_id = payload.teacher_id;
+        state.summaryReportOptions.student_id = payload.student_id;
+        state.summaryReportOptions.student_id = payload.student_id;
+      } else {
+        state.summaryReportOptions.student_id = payload.student_id;
+        state.summaryReportOptions.student_id = payload.student_id;
       }
       if (payload.classes) {
         state.summaryReportOptions.classes = payload.classes;
       }
-      if (payload.class_id) {
-        state.summaryReportOptions.class_id = payload.class_id;
-      }
       if (payload.teachers) {
         state.summaryReportOptions.teachers = payload.teachers;
-      }
-      if (payload.teacher_id) {
-        state.summaryReportOptions.teacher_id = payload.teacher_id;
       }
       if (payload.students) {
         state.summaryReportOptions.students = payload.students;
       }
-      if (payload.student_id) {
-        state.summaryReportOptions.student_id = payload.student_id;
-      }
       if (payload.subjects) {
         state.summaryReportOptions.subjects = payload.subjects;
         state.summaryReportOptions.subject_id = payload.subject_id;
+      }
+      if (!payload.student_id){
+        payload.summary_type === ReportType.live
+        ?
+        state.liveClassSummary = {}
+        :
+        state.assignmentSummary = {}
       }
     },
   },
