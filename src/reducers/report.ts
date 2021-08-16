@@ -921,7 +921,7 @@ export const onLoadLearningSummary = createAsyncThunk<
       });
     _school_id = school_id ? school_id : schools[0].id;
   }
-  if (isSchool) {
+  if (isSchool || isOrg) {
     const _classes = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "class",
@@ -988,8 +988,7 @@ export const onLoadLearningSummary = createAsyncThunk<
         };
       });
     _student_id = student_id ? student_id : students[0].id;
-  }
-  if (isTeacher && isOrg && isSchool) {
+  } else if (isOrg || isSchool) {
     const _students = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "student",
@@ -1007,7 +1006,7 @@ export const onLoadLearningSummary = createAsyncThunk<
       });
     _student_id = student_id ? student_id : students[0].id;
   }
-  if (isStudent) {
+  if (isStudent || isOrg || isSchool || isTeacher) {
     const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
       filter_type: "subject",
