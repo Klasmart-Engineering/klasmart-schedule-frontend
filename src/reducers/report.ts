@@ -1302,6 +1302,7 @@ export const getAfterClassFilter = createAsyncThunk<
       students,
       subjects,
       teacher_id,
+      class_id,
       student_id: _student_id,
       subject_id: _subject_id,
     };

@@ -97,17 +97,6 @@ export function ReportLearningSummary() {
 
   const handleChangeWeekFilter: FilterLearningSummaryProps["onChangeWeekFilter"] = (week_start, week_end) => {
     dispatch(resetSummaryOptions({ week_start, week_end }));
-    history.push({
-      search: setQuery(history.location.search, {
-        week_start,
-        week_end,
-        school_id: "",
-        class_id: "",
-        teacher_id: "",
-        student_id: "",
-        subject_id: "",
-      }),
-    });
     dispatch(
       onLoadLearningSummary({
         summary_type: tab,
@@ -125,18 +114,20 @@ export function ReportLearningSummary() {
   };
   const handleChangeYearFilter: FilterLearningSummaryProps["onChangeYearFilter"] = (year) => {
     dispatch(resetSummaryOptions({ year }));
-    history.push({
-      search: setQuery(history.location.search, {
+    dispatch(
+      onLoadLearningSummary({
+        summary_type: tab,
         year,
-        week_start: 0,
-        week_end: 0,
+        week_start,
+        week_end,
         school_id: "",
         class_id: "",
         teacher_id: "",
         student_id: "",
         subject_id: "",
-      }),
-    });
+        metaLoading: true,
+      })
+    );
   };
   const handleChangeFilter: FilterLearningSummaryProps["onChangeFilter"] = (value, tab) => {
     computeFilterChange(value, tab);
@@ -188,7 +179,7 @@ export function ReportLearningSummary() {
   );
   const changeSubject = useMemo(
     () => async (subject_id: string) => {
-      history.push({ search: setQuery(history.location.search, { subject_id }) });
+      history.push({ search: setQuery(history.location.search, { subject_id, lessonIndex: -1 }) });
       tab === ReportType.live
         ? dispatch(
             getLiveClassesSummary({
@@ -269,7 +260,17 @@ export function ReportLearningSummary() {
         subject_id = "",
       } = summaryReportOptions;
       history.push({
-        search: setQuery(history.location.search, { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id }),
+        search: setQuery(history.location.search, {
+          year,
+          week_start,
+          week_end,
+          school_id,
+          class_id,
+          teacher_id,
+          student_id,
+          subject_id,
+          lessonIndex: -1,
+        }),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
