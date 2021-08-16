@@ -2795,45 +2795,6 @@
       }
     },
     "/folders/items": {
-      "post": {
-        "description": "create folder item",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["folder"],
-        "summary": "addFolderItem",
-        "operationId": "addFolderItem",
-        "parameters": [
-          {
-            "description": "create request",
-            "name": "content",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/entity.CreateFolderItemRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/api.CreateFolderResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      },
       "delete": {
         "description": "remove folder items bulk",
         "consumes": ["application/json"],
@@ -8633,6 +8594,9 @@
         "max_score": {
           "type": "number"
         },
+        "not_applicable_scoring": {
+          "type": "boolean"
+        },
         "number": {
           "description": "add: 2021.06.24",
           "type": "string"
@@ -9407,25 +9371,6 @@
           }
         },
         "thumbnail": {
-          "type": "string"
-        }
-      }
-    },
-    "entity.CreateFolderItemRequest": {
-      "type": "object",
-      "properties": {
-        "link": {
-          "type": "string"
-        },
-        "owner_type": {
-          "type": "integer"
-        },
-        "parent_folder_id": {
-          "description": "ID string `json:\"id\"`",
-          "type": "string"
-        },
-        "partition": {
-          "description": "ItemType  ItemType  `json:\"item_type\"`",
           "type": "string"
         }
       }

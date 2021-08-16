@@ -355,6 +355,7 @@ type LangRecord<T = string> =
   | { id: "assess_detail_please_select_here"; description: "Please select here"; values: undefined }
   | { id: "assessment_assignment_assessment"; description: "Assignment Assessment"; values: undefined }
   | { id: "assessment_learning_outcomes_assessment"; description: "Learning Outcomes Assessment"; values: undefined }
+  | { id: "assessment_not_applicable"; description: "Not Applicable"; values: undefined }
   | {
       id: "assessment_learning_outcomes_achievement";
       description: "Learning Outcomes Achievement of {StudentName}";

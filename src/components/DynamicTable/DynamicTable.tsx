@@ -100,10 +100,23 @@ interface EditScoreProps {
   isComplete?: boolean;
   is_h5p?: boolean;
   student_id?: string;
+  not_applicable_scoring?: boolean;
 }
 
 function EditScore(props: EditScoreProps) {
-  const { score, handleChangeScore, index, editable, isSubjectiveActivity, maxScore, attempted, isComplete, is_h5p, student_id } = props;
+  const {
+    score,
+    handleChangeScore,
+    index,
+    editable,
+    isSubjectiveActivity,
+    maxScore,
+    attempted,
+    isComplete,
+    is_h5p,
+    student_id,
+    not_applicable_scoring,
+  } = props;
   const [scoreNum, setScoreNum] = React.useState<number | string | undefined>(score);
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
@@ -119,7 +132,7 @@ function EditScore(props: EditScoreProps) {
                 id="standard-size-small"
                 size="small"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = (e.target.value as unknown) as number;
+                  const value = e.target.value as unknown as number;
                   if (value! > maxScore!) {
                     dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
                   } else if (Number(value) + "" !== NaN + "") {
@@ -137,8 +150,8 @@ function EditScore(props: EditScoreProps) {
             </>
           )}
         </>
-      ) : is_h5p ? (
-        d("Not Attempted").t("assess_option_not_attempted")
+      ) : is_h5p && not_applicable_scoring ? (
+        d("Not Applicable").t("assessment_not_applicable")
       ) : (
         ""
       )}
@@ -310,6 +323,7 @@ function BasicTable(props: BasicTableProps) {
                       isSubjectiveActivity={subjectiveActivity(row.lesson_material_type)}
                       attempted={row.attempted}
                       is_h5p={row.is_h5p}
+                      not_applicable_scoring={row.not_applicable_scoring}
                       isComplete={isComplete}
                     />
                   </TableCell>
