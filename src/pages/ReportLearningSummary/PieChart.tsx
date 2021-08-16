@@ -200,12 +200,12 @@ export function PieChart(props: PieChartProps) {
     const y0 = centroidY * radiusScale(pixels.outerRadius);
     const x1 = centroidX * radiusScale(pixels.extendRadius);
     const y1 = centroidY * radiusScale(pixels.extendRadius);
-    const x2 = sig(isRight) * (pixels.outerRadius + pixels.tooltipMargin);
+    const x2 = sig(isRight) * 20;
     const showPieTooltip = () => {
       setActiveCategoryName("test" as string);
       setActiveCategoryName("test");
       showTooltip({
-        tooltipLeft: x2 + viewPort[3],
+        tooltipLeft: 120 + x2 + viewPort[3] / 2,
         tooltipTop: y1 + viewPort[3] / 2,
         tooltipData: {
           data: arc.data,

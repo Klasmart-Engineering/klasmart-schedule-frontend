@@ -11,7 +11,7 @@ import {
   getAssignmentSummary,
   getLiveClassesSummary,
   onLoadLearningSummary,
-  resetSummaryOptions
+  resetSummaryOptions,
 } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary, FilterLearningSummaryProps } from "./FilterLearningSummary";
@@ -49,7 +49,7 @@ export const useQuery = (): QueryLearningSummaryCondition => {
   const { search } = useLocation();
   return useMemo(() => {
     const query = new URLSearchParams(search);
-    const year = Number(query.get("year")) || 2021;
+    const year = Number(query.get("year"));
     const week_start = Number(query.get("week_start"));
     const week_end = Number(query.get("week_end"));
     const school_id = query.get("school_id") || "";
