@@ -1,4 +1,3 @@
-import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
@@ -8,12 +7,11 @@ import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { formatTimeToMonDay } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
 import {
-  AsyncTrunkReturned,
   getAfterClassFilter,
   getAssignmentSummary,
   getLiveClassesSummary,
   onLoadLearningSummary,
-  resetSummaryOptions,
+  resetSummaryOptions
 } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary, FilterLearningSummaryProps } from "./FilterLearningSummary";
@@ -87,15 +85,11 @@ export function ReportLearningSummary() {
   const isStudent = perm.report_learning_summary_student_649 as boolean;
   const { weeks } = summaryReportOptions;
   const defaultWeeksValue = useMemo(() => {
-    if (condition.week_start && condition.week_end) {
-      return `${formatTimeToMonDay(condition.week_start)}~${formatTimeToMonDay(condition.week_end)}`;
+    if (weeks.length && condition.week_start) {
+      const index = weeks.findIndex((item) => item.week_start === Number(condition.week_start));
+      return weeks && weeks[index] ? `${weeks[index].value}` : weeks[weeks.length - 1].value;
     }
-    if (weeks && weeks.length) {
-      const lastweek = weeks[weeks.length - 1];
-      return `${lastweek.value}`;
-    }
-    return "";
-  }, [condition.week_end, condition.week_start, weeks]);
+  }, [condition.week_start, weeks]);
   const handleChange = (value: QueryLearningSummaryCondition) => {
     const newValue = { ...value, lessonIndex: -1 };
     history.replace({ search: toQueryString(clearNull(newValue)) });
@@ -114,6 +108,20 @@ export function ReportLearningSummary() {
         subject_id: "",
       }),
     });
+    dispatch(
+      onLoadLearningSummary({
+        summary_type: tab,
+        year,
+        week_start,
+        week_end,
+        school_id: "",
+        class_id: "",
+        teacher_id: "",
+        student_id: "",
+        subject_id: "",
+        metaLoading: true,
+      })
+    );
   };
   const handleChangeYearFilter: FilterLearningSummaryProps["onChangeYearFilter"] = (year) => {
     dispatch(resetSummaryOptions({ year }));
@@ -133,197 +141,50 @@ export function ReportLearningSummary() {
   const handleChangeFilter: FilterLearningSummaryProps["onChangeFilter"] = (value, tab) => {
     computeFilterChange(value, tab);
   };
-  const filterParams = { summary_type: tab, week_end, week_start, isOrg, isSchool, isTeacher, isStudent };
+  const filterParams = { summary_type: tab, week_end, week_start, isOrg, isSchool, isTeacher, isStudent, metaLoading: true };
   const summaryParams = useMemo(() => {
     return { year, week_start, week_end, school_id };
   }, [school_id, week_end, week_start, year]);
   const changeSchoolFilter = useMemo(
     () => async (school_id: string) => {
-      const { payload } = ((await dispatch(
-        getAfterClassFilter({
-          filter_type: "class",
-          school_id,
-          ...filterParams,
-        })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
-      if (payload && payload.students?.length) {
-        const { class_id = "", teacher_id = "", student_id = "", subject_id = "" } = summaryReportOptions;
-        history.push({ search: setQuery(history.location.search, { school_id, class_id, teacher_id, student_id, subject_id }) });
-        tab === ReportType.live
-          ? dispatch(
-              getLiveClassesSummary({
-                ...summaryParams,
-                school_id,
-                class_id,
-                teacher_id,
-                student_id,
-                subject_id,
-                metaLoading: true,
-              })
-            )
-          : dispatch(
-              getAssignmentSummary({
-                ...summaryParams,
-                school_id,
-                class_id,
-                teacher_id,
-                student_id,
-                subject_id,
-                metaLoading: true,
-              })
-            );
-      }
+      await dispatch(getAfterClassFilter({ filter_type: "class", school_id, ...filterParams }));
     },
-    [dispatch, filterParams, history, summaryParams, summaryReportOptions, tab]
+    [dispatch, filterParams]
   );
   const changeClassFilter = useMemo(
     () => async (class_id: string) => {
       if (isOrg || isSchool) {
-        const { payload } = ((await dispatch(
-          getAfterClassFilter({
-            filter_type: "teacher",
-            class_id,
-            ...filterParams,
-          })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
-        if (payload && payload.students?.length) {
-          const { teacher_id = "", student_id = "", subject_id = "" } = summaryReportOptions;
-          history.push({ search: setQuery(history.location.search, { class_id, teacher_id, student_id, subject_id }) });
-          tab === ReportType.live
-            ? dispatch(
-                getLiveClassesSummary({
-                  ...summaryParams,
-                  class_id,
-                  teacher_id,
-                  student_id,
-                  subject_id,
-                  metaLoading: true,
-                })
-              )
-            : dispatch(
-                getAssignmentSummary({
-                  ...summaryParams,
-                  class_id,
-                  teacher_id,
-                  student_id,
-                  subject_id,
-                  metaLoading: true,
-                })
-              );
-        }
+        await dispatch(getAfterClassFilter({ filter_type: "teacher", class_id, ...filterParams }));
       } else if (isTeacher) {
-        const { payload } = ((await dispatch(
-          getAfterClassFilter({
-            class_id,
-            filter_type: "student",
-            ...filterParams,
-            metaLoading: true,
-          })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
-        if (payload && payload.students?.length) {
-          const { student_id = "", subject_id = "" } = summaryReportOptions;
-          history.push({ search: setQuery(history.location.search, { class_id, student_id, subject_id }) });
-          tab === ReportType.live
-            ? dispatch(
-                getLiveClassesSummary({
-                  ...summaryParams,
-                  class_id,
-                  teacher_id,
-                  student_id,
-                  subject_id,
-                  metaLoading: true,
-                })
-              )
-            : dispatch(
-                getAssignmentSummary({
-                  ...summaryParams,
-                  class_id,
-                  teacher_id,
-                  student_id,
-                  subject_id,
-                  metaLoading: true,
-                })
-              );
-        }
+        await dispatch(getAfterClassFilter({ class_id, filter_type: "student", ...filterParams }));
       }
     },
-    [dispatch, filterParams, history, isOrg, isSchool, isTeacher, summaryParams, summaryReportOptions, tab, teacher_id]
+    [dispatch, filterParams, isOrg, isSchool, isTeacher]
   );
   const changeTeacher = useMemo(
     () => async (teacher_id: string) => {
-      const { payload } = ((await dispatch(
+      await dispatch(
         getAfterClassFilter({
           filter_type: "student",
           teacher_id,
           ...filterParams,
-          metaLoading: true,
         })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
-      if (payload && payload.students?.length) {
-        const { student_id = "", subject_id = "" } = summaryReportOptions;
-        history.push({ search: setQuery(history.location.search, { teacher_id, student_id, subject_id }) });
-        tab === ReportType.live
-          ? dispatch(
-              getLiveClassesSummary({
-                ...summaryParams,
-                class_id,
-                teacher_id,
-                student_id,
-                subject_id,
-                metaLoading: true,
-              })
-            )
-          : dispatch(
-              getAssignmentSummary({
-                ...summaryParams,
-                class_id,
-                teacher_id,
-                student_id,
-                subject_id,
-                metaLoading: true,
-              })
-            );
-      }
+      );
     },
-    [class_id, dispatch, filterParams, history, summaryParams, summaryReportOptions, tab]
+    [dispatch, filterParams]
   );
   const changeStudent = useMemo(
     () => async (student_id: string) => {
-      const { payload } = ((await dispatch(
+      await dispatch(
         getAfterClassFilter({
           student_id,
           filter_type: "subject",
           ...filterParams,
           metaLoading: true,
         })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>;
-      if (payload && payload.subjects?.length) {
-        const { subject_id = "" } = summaryReportOptions;
-        history.push({ search: setQuery(history.location.search, { student_id, subject_id }) });
-        tab === ReportType.live
-          ? dispatch(
-              getLiveClassesSummary({
-                ...summaryParams,
-                class_id,
-                teacher_id,
-                student_id,
-                subject_id,
-                metaLoading: true,
-              })
-            )
-          : dispatch(
-              getAssignmentSummary({
-                ...summaryParams,
-                class_id,
-                teacher_id,
-                student_id,
-                subject_id,
-                metaLoading: true,
-              })
-            );
-      }
+      );
     },
-    [class_id, dispatch, filterParams, history, summaryParams, summaryReportOptions, tab, teacher_id]
+    [dispatch, filterParams]
   );
   const changeSubject = useMemo(
     () => async (subject_id: string) => {
@@ -368,10 +229,12 @@ export function ReportLearningSummary() {
   );
   const handleChangeReportType = useMemo(
     () => async (value: ReportType) => {
-      await dispatch(resetSummaryOptions({ years: [], weeks: [] }));
+      if (value === tab) return;
+      await dispatch(resetSummaryOptions({ years: [], weeks: [], week_start: 0, week_end: 0 }));
+      dispatch(onLoadLearningSummary({ summary_type: value, metaLoading: true }));
       history.replace(`${routeBasePath}/tab/${value}?lessonIndex=-1`);
     },
-    [dispatch, history, routeBasePath]
+    [dispatch, history, routeBasePath, tab]
   );
   const handleChangeLessonIndex = (index: number) => {
     history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });
@@ -392,7 +255,7 @@ export function ReportLearningSummary() {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, week_start, tab]);
+  }, [dispatch]);
   useEffect(() => {
     if (summaryReportOptions.week_start) {
       const {
@@ -411,18 +274,12 @@ export function ReportLearningSummary() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, summaryReportOptions]);
-  // useEffect(() => {
-  //   // 调拉取时间的接口
-  //   const time_offset = getTimeOffSecond();
-  //   dispatch(getTimeFilter({ time_offset, summary_type: tab, metaLoading: true }));
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [dispatch, tab]);
   return (
     <>
       <ReportTitle title={t("report_learning_summary_report")} info={t("report_msg_lsr")} />
       <FilterLearningSummary
         value={condition}
-        defaultWeeksValue={defaultWeeksValue}
+        defaultWeeksValue={defaultWeeksValue as string}
         onChange={handleChange}
         onChangeFilter={handleChangeFilter}
         summaryReportOptions={summaryReportOptions}
