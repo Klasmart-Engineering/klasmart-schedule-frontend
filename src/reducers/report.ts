@@ -828,7 +828,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
   let students: ArrProps[] = [];
-  let _year: number = 2021;
+  let _year: number;
   let _school_id: string | undefined = "";
   let _class_id: string | undefined = "";
   let _teacher_id: string | undefined = "";
@@ -884,6 +884,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     }
     const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ ...timeFilterParams });
     years = timeFilter.length ? timeFilter.map((item) => item.year as number) : [2021];
+    _year = years[years.length - 1];
     const _weeks = timeFilter.length ? timeFilter.find((item) => item.year === _year)?.weeks : [];
     weeks = _weeks
       ? _weeks.map((item) => {
