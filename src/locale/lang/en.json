@@ -897,5 +897,6 @@
   "report_filter_student": "Student",
   "report_tab_assessments_completed": "Assessments Completed",
   "report_no_class": "Please select a class from the list on the left to view the results.",
-  "report_no_assessment": "Please select an assessment from the list on the left to view the results."
+  "report_no_assessment": "Please select an assessment from the list on the left to view the results.",
+  "assessment_activity_attempted": "Attempted"
 }
