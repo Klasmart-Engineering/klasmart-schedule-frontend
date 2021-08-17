@@ -164,5 +164,5 @@ export function deDuplicate(arr: Pick<User, "user_id" | "user_name">[]) {
 
 export function getTimeOffSecond() {
   const timeOff = new Date().getTimezoneOffset();
-  return timeOff * 60;
+  return -timeOff * 60;
 }

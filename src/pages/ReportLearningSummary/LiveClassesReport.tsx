@@ -152,6 +152,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     fontSize: 16,
     fontWeight: 400,
     color: "#666",
+    wordBreak: "break-all",
   },
   teacherFeedback: {
     fontSize: 16,
