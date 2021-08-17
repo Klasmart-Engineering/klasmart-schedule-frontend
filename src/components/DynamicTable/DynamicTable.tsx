@@ -139,7 +139,7 @@ function EditScore(props: EditScoreProps) {
                   id="standard-size-small"
                   size="small"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = (e.target.value as unknown) as number;
+                    const value = e.target.value as unknown as number;
                     if (value! > maxScore!) {
                       dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
                     } else if (Number(value) + "" !== NaN + "") {
@@ -476,6 +476,8 @@ function BasicTable2(props: BasicTableProps) {
                       attempted={row.attempted}
                       is_h5p={row.is_h5p}
                       student_id={row.student_id}
+                      not_applicable_scoring={row.not_applicable_scoring}
+                      has_sub_items={row.has_sub_items}
                       isComplete={isComplete}
                     />
                   </TableCell>
