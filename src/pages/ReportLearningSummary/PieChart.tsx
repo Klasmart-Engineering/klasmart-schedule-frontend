@@ -209,6 +209,7 @@ export function PieChart(props: PieChartProps) {
         },
       });
     };
+    console.log(centroidX, centroidY);
     return (
       <g key={arc.index}>
         <path
@@ -220,7 +221,7 @@ export function PieChart(props: PieChartProps) {
             setActiveCategoryName("");
           }}
         />
-        <Text x={centroidX} y={centroidY} style={inlineStyles.pieText}>
+        <Text x={centroidX + 1} y={arc.data.items_ratio === 1 ? 0 : centroidY} style={inlineStyles.pieText}>
           {arc.data.items_ratio < 0.05 ? "" : (100 * arc.data.items_ratio).toFixed(1) + "%"}
         </Text>
         {activeCategoryName === "none" && (
