@@ -277,22 +277,25 @@ export interface EntityAssessmentStudentViewH5PLessonMaterial {
   achieved_score?: number;
   answer?: string;
   attempted?: boolean;
+  children?: EntityAssessmentStudentViewH5PLessonMaterial[];
 
   /** add: 2021.06.24 */
   h5p_id?: string;
+  has_sub_items?: boolean;
   is_h5p?: boolean;
   lesson_material_id?: string;
   lesson_material_name?: string;
+
+  /** internal */
+  lesson_material_ordered_number?: number;
   lesson_material_type?: string;
   max_score?: number;
   not_applicable_scoring?: boolean;
 
-  /** add: 2021.06.24 */
   number?: string;
+  ordered_id?: number;
   outcome_names?: string[];
-
-  /** add: 2021.06.24 */
-  sub_content_number?: number;
+  parent_id?: string;
 
   /** add: 2021.06.24 */
   sub_h5p_id?: string;
@@ -539,6 +542,17 @@ export interface EntityCreateContentRequest {
    */
   teacher_manual_batch?: EntityTeacherManualFile[];
   thumbnail?: string;
+}
+
+export interface EntityCreateFolderItemRequest {
+  link?: string;
+  owner_type?: number;
+
+  /** ID string `json:"id"` */
+  parent_folder_id?: string;
+
+  /** ItemType  ItemType  `json:"item_type"` */
+  partition?: string;
 }
 
 export interface EntityCreateFolderRequest {
@@ -2589,6 +2603,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     createFolder: (content: EntityCreateFolderRequest, params?: RequestParams) =>
       this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders`, "POST", params, content),
+
+    /**
+     * @tags folder
+     * @name addFolderItem
+     * @summary addFolderItem
+     * @request POST:/folders/items
+     * @description create folder item
+     */
+    addFolderItem: (content: EntityCreateFolderItemRequest, params?: RequestParams) =>
+      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/folders/items`,
+        "POST",
+        params,
+        content
+      ),
 
     /**
      * @tags folder
