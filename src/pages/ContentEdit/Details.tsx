@@ -633,15 +633,16 @@ export default function Details(props: DetailsProps) {
           groupBy={(option) => toMapGroup(option.group) as string}
           getOptionLabel={(option) => option.name as string}
           onChange={(e: any, newValue) => {
+            console.log(newValue);
             setValue(
               "publish_scope",
-              newValue.map((item) => item.id)
+              newValue.map((item) => item.id),
+              { shouldDirty: true }
             );
           }}
           defaultValue={defaultVisibilityValue(allDefaultValueAndKey.publish_scope?.value || []) || []}
           renderInput={(params) => (
             <Controller
-              disabled={disabled}
               as={TextField}
               name="publish_scope"
               className={css.fieldset}
