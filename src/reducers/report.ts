@@ -148,6 +148,7 @@ const initialState: IreportState = {
     teacher_id: "",
     student_id: "",
     subject_id: "",
+    summary_type: ReportType.live,
   },
 };
 
@@ -814,6 +815,7 @@ export interface IResultLearningSummary {
   teacher_id?: string;
   student_id?: string;
   subject_id?: string;
+  summary_type: QueryLearningSummaryRemainingFilterCondition["summary_type"];
 }
 export const onLoadLearningSummary = createAsyncThunk<
   IResultLearningSummary,
@@ -1025,17 +1027,38 @@ export const onLoadLearningSummary = createAsyncThunk<
   subjects.length && subjects.unshift({ id: "all", name: "All" });
   _subject_id = subjects.length ? (subject_id ? subject_id : subjects[0].id) : "none";
   const isLiveClass = summary_type === ReportType.live;
-  const params = {
-    year: _year,
-    week_start: _week_start,
-    week_end: _week_end,
-    school_id: _school_id,
-    class_id: _class_id,
-    teacher_id: _teacher_id,
-    student_id: _student_id,
-    subject_id: _subject_id,
-  };
-  if (_year && _week_start && _week_end && _student_id && _subject_id) {
+  let params: IParamsQueryLiveClassSummary = {};
+  if (isOrg || isSchool) {
+    params = {
+      year: _year,
+      week_start: _week_start,
+      week_end: _week_end,
+      school_id: _school_id,
+      class_id: _class_id,
+      teacher_id: _teacher_id,
+      student_id: _student_id,
+      subject_id: _subject_id,
+    };
+  } else if (isTeacher) {
+    params = {
+      year: _year,
+      week_start: _week_start,
+      week_end: _week_end,
+      class_id: _class_id,
+      teacher_id: _teacher_id,
+      student_id: _student_id,
+      subject_id: _subject_id,
+    };
+  } else if (isStudent) {
+    params = {
+      year: _year,
+      week_start: _week_start,
+      week_end: _week_end,
+      student_id: _student_id,
+      subject_id: _subject_id,
+    };
+  }
+  if (_student_id && _subject_id && _student_id !== "none" && _subject_id !== "none" && _year && _week_start && _week_end) {
     if (subject_id === "all") {
       isLiveClass
         ? await dispatch(getLiveClassesSummary({ ...params, subject_id: "", metaLoading }))
@@ -1046,7 +1069,7 @@ export const onLoadLearningSummary = createAsyncThunk<
         : await dispatch(getAssignmentSummary({ ...params, metaLoading }));
     }
   }
-  return { years, weeks, schools, classes, teachers, students, subjects, ...params };
+  return { years, weeks, schools, classes, teachers, students, subjects, summary_type, ...params };
 });
 
 export interface IParamsGetAfterClassFilter extends IParamQueryRemainFilter {
@@ -1457,6 +1480,11 @@ const { actions, reducer } = createSlice({
     },
     [onLoadLearningSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadLearningSummary>>) => {
       state.summaryReportOptions = payload;
+      if (!payload.student_id || !payload.subject_id || payload.student_id === "none" || payload.subject_id === "none") {
+        payload.summary_type === ReportType.live
+          ? (state.liveClassSummary = initialState.liveClassSummary)
+          : (state.assignmentSummary = initialState.assignmentSummary);
+      }
     },
     [getLiveClassesSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveClassesSummary>>) => {
       state.liveClassSummary = payload;
