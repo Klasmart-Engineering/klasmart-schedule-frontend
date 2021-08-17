@@ -145,30 +145,34 @@ export function ReportLearningSummary() {
   const changeClassFilter = useMemo(
     () => async (class_id: string) => {
       if (isOrg || isSchool) {
-        await dispatch(getAfterClassFilter({ filter_type: "teacher", class_id, ...filterParams }));
+        await dispatch(getAfterClassFilter({ filter_type: "teacher", school_id, class_id, ...filterParams }));
       } else if (isTeacher) {
         await dispatch(getAfterClassFilter({ class_id, filter_type: "student", ...filterParams }));
       }
     },
-    [dispatch, filterParams, isOrg, isSchool, isTeacher]
+    [dispatch, filterParams, isOrg, isSchool, isTeacher, school_id]
   );
   const changeTeacher = useMemo(
     () => async (teacher_id: string) => {
       await dispatch(
         getAfterClassFilter({
           filter_type: "student",
+          school_id,
           class_id,
           teacher_id,
           ...filterParams,
         })
       );
     },
-    [class_id, dispatch, filterParams]
+    [class_id, dispatch, filterParams, school_id]
   );
   const changeStudent = useMemo(
     () => async (student_id: string) => {
       await dispatch(
         getAfterClassFilter({
+          school_id,
+          class_id,
+          teacher_id,
           student_id,
           filter_type: "subject",
           ...filterParams,
@@ -176,7 +180,7 @@ export function ReportLearningSummary() {
         })
       );
     },
-    [dispatch, filterParams]
+    [class_id, dispatch, filterParams, school_id, teacher_id]
   );
   const changeSubject = useMemo(
     () => async (subject_id: string) => {
