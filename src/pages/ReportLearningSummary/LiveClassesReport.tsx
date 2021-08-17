@@ -182,7 +182,7 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   },
   rectCon: {
     display: "inline-block",
-    width: 210,
+    width: 275,
     height: 40,
     color: "#fff",
     lineHeight: "40px",
