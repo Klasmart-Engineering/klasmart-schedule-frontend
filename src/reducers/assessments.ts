@@ -145,7 +145,7 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
     const hasPermissionOfHomefun =
       !!detail.teacher_ids?.includes(myUserId) && hasPermissionOfMe(PermissionType.edit_in_progress_assessment_439, meInfo.me);
     if (detail.assess_feedback_id && detail.assess_feedback_id !== feedbacks[0]?.id)
-      dispatch(actInfo(d("We update to get this student's newest assignment, please assess again. ").t("assess_new_version_comment")));
+      dispatch(actInfo(d("We update to get this student's newest assignment, please assess again.").t("assess_new_version_comment")));
     return { detail, feedbacks, hasPermissionOfHomefun };
   }
 );
@@ -237,7 +237,7 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
       return res;
     }
     const content = d(
-      "There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete"
+      "There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete!"
     ).t("assess_popup_students_not_started");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
     if (!isConfirmed) return Promise.reject();

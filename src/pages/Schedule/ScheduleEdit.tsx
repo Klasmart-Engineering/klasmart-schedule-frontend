@@ -1443,7 +1443,7 @@ function EditBox(props: CalendarStateProps) {
     changeModalDate({
       openStatus: true,
       enableCustomization: false,
-      text: d("Discard unsave changes?").t("schedule_msg_discard"),
+      text: d("Discard unsaved changes?").t("schedule_msg_discard"),
       buttons: [
         {
           label: d("CANCEL").t("schedule_button_cancel"),

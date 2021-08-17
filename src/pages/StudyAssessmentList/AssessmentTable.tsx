@@ -77,7 +77,7 @@ function AssessmentRow(props: AssessmentProps) {
       </TableCell>
       <TableCell className={css.tableCell} align="center">
         {assessment.remaining_time
-          ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s) ").t("assess_list_remaining_days")}`
+          ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s)").t("assess_list_remaining_days")}`
           : 0}
       </TableCell>
       <TableCell className={css.tableCell} align="center">

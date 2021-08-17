@@ -377,20 +377,20 @@ export function RightCom(props: RightComProps) {
         if (lessonIndex === -1) {
           return d("Please select a class from the list on the left to view the results.").t("report_no_class");
         } else {
-          return d("No learning outcomes are available.").t("report_no_learning_outcome");
+          return d("No learning outcomes are available").t("report_no_learning_outcome");
         }
       } else {
-        return d("No Data Available.").t("report_no_data_available");
+        return d("No Data Available").t("report_no_data_available");
       }
     } else {
       if (hasAssessmentItems) {
         if (lessonIndex === -1) {
           return d("Please select an assessment from the list on the left to view the results.").t("report_no_assessment");
         } else {
-          return d("No learning outcomes are available.").t("report_no_learning_outcome");
+          return d("No learning outcomes are available").t("report_no_learning_outcome");
         }
       } else {
-        return d("No Data Available.").t("report_no_data_available");
+        return d("No Data Available").t("report_no_data_available");
       }
     }
   }, [hasAssessmentItems, hasLiveItems, isLive, lessonIndex]);
@@ -400,20 +400,20 @@ export function RightCom(props: RightComProps) {
         if (lessonIndex === -1) {
           return d("Please select a class from the list on the left to view the results.").t("report_no_class");
         } else {
-          return d("No feedback is available.").t("report_no_feedback");
+          return d("No feedback is available").t("report_no_feedback");
         }
       } else {
-        return d("No Data Available.").t("report_no_data_available");
+        return d("No Data Available").t("report_no_data_available");
       }
     } else {
       if (hasAssessmentItems) {
         if (lessonIndex === -1) {
           return d("Please select an assessment from the list on the left to view the results.").t("report_no_assessment");
         } else {
-          return d("No feedback is available.").t("report_no_feedback");
+          return d("No feedback is available").t("report_no_feedback");
         }
       } else {
-        return d("No Data Available.").t("report_no_data_available");
+        return d("No Data Available").t("report_no_data_available");
       }
     }
   }, [isLive, hasLiveItems, lessonIndex, hasAssessmentItems]);
@@ -533,7 +533,7 @@ export function NoDataCom(props: NoDataProps) {
   const cssProps = usePropsStyles({ reportType });
   return (
     <div className={clsx(css.noDataCon, cssProps.noDataCon, isPie ? css.noDataPieCon : css.noDataSquareCon)}>
-      {d("No Data Available.").t("report_no_data_available")}
+      {d("No Data Available").t("report_no_data_available")}
     </div>
   );
 }

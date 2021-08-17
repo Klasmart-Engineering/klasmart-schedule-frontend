@@ -221,7 +221,7 @@ function AnyTimeSchedule(props: SearchListProps) {
           changeModalDate({
             title: "",
             // text: "You cannot delete this event after the due date",
-            text: d("You cannot delete this event after the due date. ").t("schedule_msg_delete_due_date"),
+            text: d("You cannot delete this event after the due date.").t("schedule_msg_delete_due_date"),
             openStatus: true,
             enableCustomization: false,
             buttons: [
@@ -357,7 +357,7 @@ function AnyTimeSchedule(props: SearchListProps) {
         changeModalDate({
           title: "",
           // text: "You cannot edit this event after the due date",
-          text: d("You cannot edit this event after the due date. ").t("schedule_msg_edit_due_date"),
+          text: d("You cannot edit this event after the due date.").t("schedule_msg_edit_due_date"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
@@ -502,7 +502,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       {anyTimeData.study.length < 1 && anyTimeData.homeFun.length < 1 && (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
           <img src={AnyTimeNoData} style={{ width: "20%", marginTop: "20%" }} alt="" />
-          <span>{d("No anytime study is available ").t("schedule_msg_no_available")}</span>
+          <span>{d("No anytime study is available").t("schedule_msg_no_available")}</span>
         </div>
       )}
       {anyTimeData.study.length > 0 && (

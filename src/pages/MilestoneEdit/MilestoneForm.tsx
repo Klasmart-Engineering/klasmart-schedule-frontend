@@ -125,7 +125,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           inputProps={{ maxLength: 5 }}
           error={!!errors["shortcode"]}
           rules={{ validate: shortCodeValidate }}
-          helperText={d("5 characters long, number 0-9 & letter A-Z only").t("assess_milestone_code_requirement")}
+          helperText={d("5 characters long, number 0-9 & letters A-Z only").t("assess_milestone_code_requirement")}
         />
       )}
       {milestone_id && (

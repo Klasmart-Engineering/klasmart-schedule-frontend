@@ -240,7 +240,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       return;
     }
     if (fileName!.length < 1) {
-      dispatch(actWarning(d("You can upload only one attachment. ").t("schedule_msg_one_attachment")));
+      dispatch(actWarning(d("You can upload only one attachment.").t("schedule_msg_one_attachment")));
       return;
     }
     changeModalDate({
@@ -322,7 +322,7 @@ function FeedbackTemplate(props: FeedbackProps) {
             dispatch(
               actError(
                 error.type === MultipleUploaderErrorType.MaxAmountError
-                  ? d("You can upload no more than three attachments. ").t("schedule_msg_three_attachment")
+                  ? d("You can upload no more than three attachments.").t("schedule_msg_three_attachment")
                   : d("The attachment you uploaded does not meet the requirement.").t("schedule_msg_attachment")
               )
             )
@@ -345,7 +345,7 @@ function FeedbackTemplate(props: FeedbackProps) {
                   <InfoOutlined className={css.iconField} style={{ left: "168px", position: "absolute", top: "36px" }} />
                 </HtmlTooltip>
                 <span style={{ color: "#999999", fontSize: "12px" }}>
-                  {d("You can upload no more than three attachments. ").t("schedule_msg_three_attachment")}
+                  {d("You can upload no more than three attachments.").t("schedule_msg_three_attachment")}
                 </span>
               </Box>
             )}
