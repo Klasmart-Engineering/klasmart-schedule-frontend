@@ -209,7 +209,6 @@ export function PieChart(props: PieChartProps) {
         },
       });
     };
-    console.log(centroidX, centroidY);
     return (
       <g key={arc.index}>
         <path
