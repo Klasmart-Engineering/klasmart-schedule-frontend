@@ -257,7 +257,7 @@ function MyCalendar(props: CalendarProps) {
           changeModalDate({
             title: "",
             // text: "You cannot delete this event after the due date",
-            text: d("You cannot delete this event after the due date. ").t("schedule_msg_delete_due_date"),
+            text: d("You cannot delete this event after the due date.").t("schedule_msg_delete_due_date"),
             openStatus: true,
             enableCustomization: false,
             buttons: [

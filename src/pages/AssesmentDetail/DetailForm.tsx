@@ -615,7 +615,7 @@ export default function DetailForm(props: DetailFormProps) {
               className={css.fieldset}
               label={d("Assessment Remaining").t("assess_list_assessment_remaining")}
             />
-            <Typography className={css.minutes}>{d("Day(s) ").t("assess_list_remaining_days")}</Typography>
+            <Typography className={css.minutes}>{d("Day(s)").t("assess_list_remaining_days")}</Typography>
           </Box>
           <TextField
             fullWidth

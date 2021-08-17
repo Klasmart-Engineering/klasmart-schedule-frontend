@@ -109,7 +109,7 @@ type LangRecord<T = string> =
   | { id: "library_label_upload_a"; description: "Upload a {fillfileType} here"; values: { fillfileType: string | number } }
   | { id: "library_label_upload"; description: "Upload"; values: undefined }
   | { id: "library_label_file_type"; description: "File Type"; values: undefined }
-  | { id: "library_label_h5p"; description: "Create Content "; values: undefined }
+  | { id: "library_label_h5p"; description: "Create Content"; values: undefined }
   | { id: "library_label_non_h5p"; description: "Upload from Device"; values: undefined }
   | { id: "library_label_select_a_file"; description: "Select a File"; values: undefined }
   | { id: "library_msg_drag_asset"; description: "Drag from Assets Library"; values: undefined }
@@ -214,12 +214,6 @@ type LangRecord<T = string> =
       description: "This lesson plan includes archived lesson material, please remove it and try publishing again.";
       values: undefined;
     }
-  | {
-      id: "library_error_cannot_delete_lesson_plan";
-      description: "This lesson plan cannot be deleted because it has already been used in Schedule. ";
-      values: undefined;
-    }
-  | { id: "library_label_visibility_schools"; description: "Schools"; values: undefined }
   | { id: "assess_tab_assessments"; description: "Assessments"; values: undefined }
   | { id: "assess_button_search"; description: "Search"; values: undefined }
   | { id: "assess_text_search teacher"; description: "Search Teacher"; values: undefined }
@@ -269,7 +263,7 @@ type LangRecord<T = string> =
   | { id: "assess_option_all_achieved"; description: "All Achieved"; values: undefined }
   | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
   | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
-  | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
+  | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature."; values: undefined }
   | { id: "assess_class_type"; description: "Class Type"; values: undefined }
   | { id: "assess_class_type_class_live"; description: "Class / Live"; values: undefined }
   | { id: "assess_class_type_homefun"; description: "Study / Home Fun"; values: undefined }
@@ -295,7 +289,7 @@ type LangRecord<T = string> =
   | { id: "assess_submit_old_new"; description: "Submit Time (Old-New)"; values: undefined }
   | {
       id: "assess_new_version_comment";
-      description: "We update to get this student's newest assignment, please assess again. ";
+      description: "We update to get this student's newest assignment, please assess again.";
       values: undefined;
     }
   | { id: "assess_detail_room_id"; description: "Room ID"; values: undefined }
@@ -322,7 +316,7 @@ type LangRecord<T = string> =
   | { id: "assess_list_study_title"; description: "Study Title"; values: undefined }
   | { id: "assess_list_completion_rate"; description: "Completion Rate"; values: undefined }
   | { id: "assess_list_assessment_remaining"; description: "Assessment Remaining"; values: undefined }
-  | { id: "assess_list_remaining_days"; description: "Day(s) "; values: undefined }
+  | { id: "assess_list_remaining_days"; description: "Day(s)"; values: undefined }
   | { id: "assess_detail_no"; description: "No"; values: undefined }
   | { id: "assess_detail_lesson_material_name"; description: "Lesson Material Name"; values: undefined }
   | { id: "assess_detail_lesson_material_type"; description: "Lesson Material Type"; values: undefined }
@@ -341,7 +335,7 @@ type LangRecord<T = string> =
   | { id: "assess_popup_detailed_answer"; description: "Detailed Answer"; values: undefined }
   | {
       id: "assess_popup_students_not_started";
-      description: "There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete";
+      description: "There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete!";
       values: undefined;
     }
   | { id: "assess_detail_lesson_plan_assessment"; description: "Lesson Plan Assessment"; values: undefined }
@@ -353,14 +347,6 @@ type LangRecord<T = string> =
   | { id: "assess_detail_view_by_lesson_material"; description: "View by Lesson Material"; values: undefined }
   | { id: "assess_detail_all_lesson_materials"; description: "All Lesson Materials"; values: undefined }
   | { id: "assess_detail_please_select_here"; description: "Please select here"; values: undefined }
-  | { id: "assessment_assignment_assessment"; description: "Assignment Assessment"; values: undefined }
-  | { id: "assessment_learning_outcomes_assessment"; description: "Learning Outcomes Assessment"; values: undefined }
-  | { id: "assessment_not_applicable"; description: "Not Applicable"; values: undefined }
-  | {
-      id: "assessment_learning_outcomes_achievement";
-      description: "Learning Outcomes Achievement of {StudentName}";
-      values: { StudentName: string | number };
-    }
   | { id: "assess_label_create"; description: "Create"; values: undefined }
   | { id: "assess_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "assess_label_cancel"; description: "Cancel"; values: undefined }
@@ -429,20 +415,20 @@ type LangRecord<T = string> =
   | { id: "assess_search_name"; description: "Name"; values: undefined }
   | { id: "assess_search_code"; description: "Code"; values: undefined }
   | { id: "assess_search_set"; description: "Set"; values: undefined }
-  | { id: "assess_msg_exist_short_code"; description: "This short code already exists, please enter again."; values: undefined }
+  | { id: "assess_msg_exist_short_code"; description: "This short code already exists, please enter it again."; values: undefined }
   | { id: "assess_msg_short_code_error"; description: "The short code needs to be five characters long, 0-9, A-Z."; values: undefined }
   | { id: "assess_msg_set_myonly"; description: "You can only do bulk action to your own learning outcomes."; values: undefined }
-  | { id: "assess_msg_locked_lo"; description: "You cannot do bulk action for locked learning outcomes."; values: undefined }
-  | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again. "; values: undefined }
-  | { id: "assess_msg_locked_milestone"; description: "You cannot do bulk action for locked milestones."; values: undefined }
+  | { id: "assess_msg_locked_lo"; description: "You cannot do bulk actions on locked learning outcomes."; values: undefined }
+  | { id: "assess_msg_existing_set"; description: "This set already exists in the system, please try again."; values: undefined }
+  | { id: "assess_msg_locked_milestone"; description: "You cannot do bulk actions on locked milestones."; values: undefined }
   | { id: "assess_milestone_details"; description: "Milestone Details"; values: undefined }
   | { id: "assess_milestone_detail_name"; description: "Milestone Name"; values: undefined }
   | { id: "assess_milestone_contained_lo"; description: "Contained Learning Outcomes"; values: undefined }
   | { id: "assess_milestone_detail_add"; description: "Add"; values: undefined }
-  | { id: "assess_milestone_code_requirement"; description: "5 characters long, number 0-9 & letter A-Z only"; values: undefined }
+  | { id: "assess_milestone_code_requirement"; description: "5 characters long, number 0-9 & letters A-Z only"; values: undefined }
   | {
       id: "assess_msg_exist_milestone_short_code";
-      description: "This milestone short code already exists, please enter again.";
+      description: "This milestone short code already exists, please enter it again.";
       values: undefined;
     }
   | { id: "assess_msg_deleted_successfully"; description: "Deleted Successfully"; values: undefined }
@@ -458,16 +444,10 @@ type LangRecord<T = string> =
   | { id: "assess_create_new_milestone"; description: "Create New Milestone"; values: undefined }
   | {
       id: "assess_msg_unlocked_milestone";
-      description: "This content has been republished with a new version, please refresh. ";
+      description: "This content has been republished with a new version, please refresh.";
       values: undefined;
     }
   | { id: "assess_approved_successfully"; description: "Approved Successfully"; values: undefined }
-  | { id: "assess_in_lock_status"; description: "Lock Status"; values: undefined }
-  | { id: "assess_last_edited_by"; description: "Last edited by"; values: undefined }
-  | { id: "assess_locked_location"; description: "Locked location"; values: undefined }
-  | { id: "assess_date_edited"; description: "Date edited"; values: undefined }
-  | { id: "assess_time_edited"; description: "Time edited"; values: undefined }
-  | { id: "assess_msg_approve_milestone"; description: "Are you sure you want to approve these milestones?"; values: undefined }
   | { id: "schedule_tab_schedule"; description: "Schedule"; values: undefined }
   | { id: "schedue_button_schedule_class"; description: "Schedule Class"; values: undefined }
   | { id: "schedule_button_search"; description: "Search"; values: undefined }
@@ -589,7 +569,7 @@ type LangRecord<T = string> =
   | { id: "schedule_msg_delete"; description: "Are you sure you want to delete this event?"; values: undefined }
   | { id: "schedule_button_delete"; description: "DELETE"; values: undefined }
   | { id: "schedule_button_cancel"; description: "CANCEL"; values: undefined }
-  | { id: "schedule_msg_discard"; description: "Discard unsave changes?"; values: undefined }
+  | { id: "schedule_msg_discard"; description: "Discard unsaved changes?"; values: undefined }
   | { id: "schedule_button_discard"; description: "DISCARD"; values: undefined }
   | { id: "schedule_msg_two_year"; description: "You cannot schedule a class beyond two years."; values: undefined }
   | { id: "schedule_button_ok"; description: "OK"; values: undefined }
@@ -636,7 +616,7 @@ type LangRecord<T = string> =
   | { id: "schedule_filter_subjects"; description: "Subjects"; values: undefined }
   | { id: "schedule_filter_programs"; description: "Programs"; values: undefined }
   | { id: "schedule_filter_no_data"; description: "No Data"; values: undefined }
-  | { id: "schedule_msg_no_permission"; description: "You do not have permission to access this feature. "; values: undefined }
+  | { id: "schedule_msg_no_permission"; description: "You do not have permission to access this feature."; values: undefined }
   | { id: "schedule_msg_no_student"; description: "There is no student in this class"; values: undefined }
   | {
       id: "schedule_msg_delete_minutes";
@@ -694,8 +674,8 @@ type LangRecord<T = string> =
       description: "Please confirm the fileld of ‘Add Participants’ by clicking OK";
       values: undefined;
     }
-  | { id: "schedule_msg_edit_due_date"; description: "You cannot edit this event after the due date. "; values: undefined }
-  | { id: "schedule_msg_delete_due_date"; description: "You cannot delete this event after the due date. "; values: undefined }
+  | { id: "schedule_msg_edit_due_date"; description: "You cannot edit this event after the due date."; values: undefined }
+  | { id: "schedule_msg_delete_due_date"; description: "You cannot delete this event after the due date."; values: undefined }
   | { id: "schedule_checkbox_home_fun"; description: "Home Fun"; values: undefined }
   | { id: "schedule_student_feedback"; description: "Student Feedback"; values: undefined }
   | { id: "schedule_detail_comment"; description: "Comment"; values: undefined }
@@ -721,8 +701,8 @@ type LangRecord<T = string> =
     }
   | { id: "schedule_detail_see_more"; description: "See More"; values: undefined }
   | { id: "schedule_msg_hidden"; description: "This event has been hidden"; values: undefined }
-  | { id: "schedule_msg_three_attachment"; description: "You can upload no more than three attachments. "; values: undefined }
-  | { id: "schedule_msg_one_attachment"; description: "You can upload only one attachment. "; values: undefined }
+  | { id: "schedule_msg_three_attachment"; description: "You can upload no more than three attachments."; values: undefined }
+  | { id: "schedule_msg_one_attachment"; description: "You can upload only one attachment."; values: undefined }
   | { id: "schedule_attachment_size_each"; description: "each"; values: undefined }
   | { id: "schedule_assignment_no_class"; description: "No Class"; values: undefined }
   | { id: "schedule_filter_all_my_schools"; description: "All My Schools"; values: undefined }
@@ -736,7 +716,7 @@ type LangRecord<T = string> =
   | { id: "schedule_detail_see_less"; description: "See Less"; values: undefined }
   | { id: "schedule_detail_students"; description: "Students"; values: undefined }
   | { id: "schedule_calendar_more"; description: "More"; values: undefined }
-  | { id: "schedule_msg_no_available"; description: "No anytime study is available "; values: undefined }
+  | { id: "schedule_msg_no_available"; description: "No anytime study is available"; values: undefined }
   | { id: "schedule_popup_room_id"; description: "Room ID"; values: undefined }
   | { id: "schedule_popup_class_name"; description: "Class Name"; values: undefined }
   | { id: "schedule_detail_lesson_material"; description: "Lesson Material"; values: undefined }
@@ -750,9 +730,6 @@ type LangRecord<T = string> =
       description: "This event cannot be deleted because some students already made progress for Study activities.";
       values: undefined;
     }
-  | { id: "schedule_set_learning_outcome"; description: "Set Learning Outcome"; values: undefined }
-  | { id: "schedule_lo_number_added"; description: "Added"; values: undefined }
-  | { id: "schedule_filter_select_all_classes"; description: "Select All Classes"; values: undefined }
   | { id: "report_label_student_achievement"; description: "Overall Student Achievement"; values: undefined }
   | { id: "report_label_teacher"; description: "Teacher"; values: undefined }
   | { id: "report_label_class"; description: "Class"; values: undefined }
@@ -791,51 +768,6 @@ type LangRecord<T = string> =
   | { id: "report_label_mins"; description: "Mins"; values: undefined }
   | { id: "report_label_go_back"; description: "Return to Reports List"; values: undefined }
   | { id: "report_label_individual_achievement"; description: "Individual Student Achievement"; values: undefined }
-  | { id: "report_msg_no_data"; description: "No achievement data is available."; values: undefined }
-  | { id: "report_navigation_class_view"; description: "Class View"; values: undefined }
-  | {
-      id: "report_msg_individual_infor";
-      description: "This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.";
-      values: undefined;
-    }
-  | {
-      id: "report_msg_overall_infor";
-      description: "The Overall Student Achievement Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.";
-      values: undefined;
-    }
-  | { id: "report_msg_no_achieve"; description: "No achievement data available for this lesson."; values: undefined }
-  | { id: "report_msg_no_plan"; description: "There are no lesson plans for this teacher. Would you like to add one?"; values: undefined }
-  | { id: "report_button_create_plan"; description: "Create a Lesson Plan"; values: undefined }
-  | { id: "report_label_0_hour"; description: "0 Hour"; values: undefined }
-  | { id: "report_achieved_lo"; description: "Achieved of All Learning Outcomes"; values: undefined }
-  | { id: "report_learning_summary_report"; description: "Learning Summary Report"; values: undefined }
-  | {
-      id: "report_msg_lsr";
-      description: "This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly.";
-      values: undefined;
-    }
-  | { id: "report_filter_year"; description: "Year"; values: undefined }
-  | { id: "report_filter_week"; description: "Week"; values: undefined }
-  | { id: "report_filter_subject"; description: "Subject"; values: undefined }
-  | { id: "report_filter_class"; description: "Class"; values: undefined }
-  | { id: "report_filter_student"; description: "Student"; values: undefined }
-  | { id: "report_filter_teacher"; description: "Teacher"; values: undefined }
-  | { id: "report_filter_school"; description: "School"; values: undefined }
-  | { id: "report_tab_live_classes"; description: "Live Classes"; values: undefined }
-  | { id: "report_liveclass_attended"; description: "Attended"; values: undefined }
-  | { id: "report_liveclass_absent"; description: "Absent"; values: undefined }
-  | { id: "report_tab_assessments_completed"; description: "Assessments Completed"; values: undefined }
-  | { id: "report_learning_outcomes_covered"; description: "Learning Outcomes Covered"; values: undefined }
-  | { id: "report_no_class"; description: "Please select a class from the list on the left to view the results."; values: undefined }
-  | {
-      id: "report_no_assessment";
-      description: "Please select an assessment from the list on the left to view the results.";
-      values: undefined;
-    }
-  | { id: "report_no_learning_outcome"; description: "No learning outcomes are available."; values: undefined }
-  | { id: "report_teacher_feedback"; description: "Teacher’s Feedback"; values: undefined }
-  | { id: "report_no_feedback"; description: "No feedback is available."; values: undefined }
-  | { id: "report_no_data_available"; description: "No Data Available."; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
   | { id: "general_error_no_organization"; description: "You have no organization"; values: undefined }
   | { id: "general_error_unknown"; description: "Server request failed"; values: undefined }
@@ -893,8 +825,8 @@ type LangRecord<T = string> =
   | { id: "h5p_label_desOwner"; description: "-"; values: undefined }
   | { id: "h5p_label_audioSummary"; description: "Here you can upload audio types like mp3, wav."; values: undefined }
   | { id: "h5p_label_audioDes"; description: "Here you can upload audio types like mp3, wav."; values: undefined }
-  | { id: "h5p_label_videoSummary"; description: "Here you can upload video types like avi, mov, mp4."; values: undefined }
-  | { id: "h5p_label_videoDes"; description: "Here you can upload video types like avi, mov, mp4."; values: undefined }
+  | { id: "h5p_label_videoSummary"; description: "Here you can upload video types like avi, mp4."; values: undefined }
+  | { id: "h5p_label_videoDes"; description: "Here you can upload video types like avi, mp4."; values: undefined }
   | { id: "h5p_label_pdf"; description: "Document"; values: undefined }
   | { id: "h5p_label_pdfSummary"; description: "Here you can upload document types like pdf."; values: undefined }
   | { id: "h5p_label_pdfDes"; description: "Here you can upload document types like pdf."; values: undefined }
@@ -1256,7 +1188,79 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "h5p_label_coursepresentation_noTitle"; description: "no title"; values: undefined }
-  | { id: "h5p_label_link"; description: "Link"; values: undefined };
+  | { id: "h5p_label_link"; description: "Link"; values: undefined }
+  | {
+      id: "library_error_cannot_delete_lesson_plan";
+      description: "This lesson plan cannot be deleted because it has already been used in Schedule.";
+      values: undefined;
+    }
+  | { id: "library_label_visibility_schools"; description: "Schools"; values: undefined }
+  | { id: "report_msg_no_data"; description: "No achievement data is available."; values: undefined }
+  | { id: "report_navigation_class_view"; description: "Class View"; values: undefined }
+  | {
+      id: "report_msg_individual_infor";
+      description: "This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_overall_infor";
+      description: "The Overall Student Achievement Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.";
+      values: undefined;
+    }
+  | { id: "report_msg_no_achieve"; description: "No achievement data available for this lesson."; values: undefined }
+  | { id: "report_msg_no_plan"; description: "There are no lesson plans for this teacher. Would you like to add one?"; values: undefined }
+  | { id: "report_button_create_plan"; description: "Create a Lesson Plan"; values: undefined }
+  | { id: "report_label_0_hour"; description: "0 Hour"; values: undefined }
+  | { id: "report_achieved_lo"; description: "Achieved of All Learning Outcomes"; values: undefined }
+  | { id: "assess_in_lock_status"; description: "Lock Status"; values: undefined }
+  | { id: "assess_last_edited_by"; description: "Last edited by"; values: undefined }
+  | { id: "assess_locked_location"; description: "Locked location"; values: undefined }
+  | { id: "assess_date_edited"; description: "Date edited"; values: undefined }
+  | { id: "assess_time_edited"; description: "Time edited"; values: undefined }
+  | { id: "assess_msg_approve_milestone"; description: "Are you sure you want to approve these milestones?"; values: undefined }
+  | { id: "schedule_set_learning_outcome"; description: "Set Learning Outcome"; values: undefined }
+  | { id: "report_learning_summary_report"; description: "Learning Summary Report"; values: undefined }
+  | {
+      id: "report_msg_lsr";
+      description: "This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly.";
+      values: undefined;
+    }
+  | { id: "report_filter_year"; description: "Year"; values: undefined }
+  | { id: "report_filter_week"; description: "Week"; values: undefined }
+  | { id: "report_filter_subject"; description: "Subject"; values: undefined }
+  | { id: "report_filter_class"; description: "Class"; values: undefined }
+  | { id: "report_filter_teacher"; description: "Teacher"; values: undefined }
+  | { id: "report_filter_school"; description: "School"; values: undefined }
+  | { id: "report_tab_live_classes"; description: "Live Classes"; values: undefined }
+  | { id: "report_liveclass_attended"; description: "Attended"; values: undefined }
+  | { id: "report_liveclass_absent"; description: "Absent"; values: undefined }
+  | { id: "report_tab_assignments"; description: "Assignments"; values: undefined }
+  | { id: "report_pie_completed"; description: "Completed"; values: undefined }
+  | { id: "report_pie_incomplete"; description: "Incomplete"; values: undefined }
+  | { id: "report_learning_outcomes_covered"; description: "Learning Outcomes Covered"; values: undefined }
+  | { id: "report_no_learning_outcome"; description: "No learning outcomes are available"; values: undefined }
+  | { id: "report_teacher_feedback"; description: "Teacher’s Feedback"; values: undefined }
+  | { id: "report_no_feedback"; description: "No feedback is available"; values: undefined }
+  | { id: "report_no_data_available"; description: "No Data Available"; values: undefined }
+  | { id: "assessment_assignment_assessment"; description: "Assignment Assessment"; values: undefined }
+  | { id: "assessment_learning_outcomes_assessment"; description: "Learning Outcomes Assessment"; values: undefined }
+  | {
+      id: "assessment_learning_outcomes_achievement";
+      description: "Learning Outcomes Achievement of {StudentName}";
+      values: { StudentName: string | number };
+    }
+  | { id: "assessment_not_applicable"; description: "Not Applicable"; values: undefined }
+  | { id: "schedule_lo_number_added"; description: "Added"; values: undefined }
+  | { id: "schedule_filter_select_all_classes"; description: "Select All Classes"; values: undefined }
+  | { id: "report_filter_student"; description: "Student"; values: undefined }
+  | { id: "report_tab_assessments_completed"; description: "Assessments Completed"; values: undefined }
+  | { id: "report_no_class"; description: "Please select a class from the list on the left to view the results."; values: undefined }
+  | {
+      id: "report_no_assessment";
+      description: "Please select an assessment from the list on the left to view the results.";
+      values: undefined;
+    }
+  | { id: "assessment_activity_attempted"; description: "Attempted"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

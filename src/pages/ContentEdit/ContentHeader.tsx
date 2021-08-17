@@ -478,7 +478,7 @@ export const SelectH5PRadio = forwardRef<HTMLDivElement, SelectH5PRadioProps>((p
           control={<Radio size={size} color="primary" value={1} />}
           label={
             <Typography variant={radioTypography} className={css.h5pRadio}>
-              {d("Create Content ").t("library_label_h5p")}
+              {d("Create Content").t("library_label_h5p")}
             </Typography>
           }
           disabled={disabled}
