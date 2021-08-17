@@ -11,7 +11,7 @@ import {
   getAssignmentSummary,
   getLiveClassesSummary,
   onLoadLearningSummary,
-  resetSummaryOptions
+  resetSummaryOptions,
 } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary, FilterLearningSummaryProps } from "./FilterLearningSummary";
@@ -49,7 +49,7 @@ export const useQuery = (): QueryLearningSummaryCondition => {
   const { search } = useLocation();
   return useMemo(() => {
     const query = new URLSearchParams(search);
-    const year = Number(query.get("year")) || 2021;
+    const year = Number(query.get("year"));
     const week_start = Number(query.get("week_start"));
     const week_end = Number(query.get("week_end"));
     const school_id = query.get("school_id") || "";
@@ -97,17 +97,6 @@ export function ReportLearningSummary() {
 
   const handleChangeWeekFilter: FilterLearningSummaryProps["onChangeWeekFilter"] = (week_start, week_end) => {
     dispatch(resetSummaryOptions({ week_start, week_end }));
-    history.push({
-      search: setQuery(history.location.search, {
-        week_start,
-        week_end,
-        school_id: "",
-        class_id: "",
-        teacher_id: "",
-        student_id: "",
-        subject_id: "",
-      }),
-    });
     dispatch(
       onLoadLearningSummary({
         summary_type: tab,
@@ -125,18 +114,20 @@ export function ReportLearningSummary() {
   };
   const handleChangeYearFilter: FilterLearningSummaryProps["onChangeYearFilter"] = (year) => {
     dispatch(resetSummaryOptions({ year }));
-    history.push({
-      search: setQuery(history.location.search, {
+    dispatch(
+      onLoadLearningSummary({
+        summary_type: tab,
         year,
-        week_start: 0,
-        week_end: 0,
+        week_start,
+        week_end,
         school_id: "",
         class_id: "",
         teacher_id: "",
         student_id: "",
         subject_id: "",
-      }),
-    });
+        metaLoading: true,
+      })
+    );
   };
   const handleChangeFilter: FilterLearningSummaryProps["onChangeFilter"] = (value, tab) => {
     computeFilterChange(value, tab);
@@ -154,29 +145,34 @@ export function ReportLearningSummary() {
   const changeClassFilter = useMemo(
     () => async (class_id: string) => {
       if (isOrg || isSchool) {
-        await dispatch(getAfterClassFilter({ filter_type: "teacher", class_id, ...filterParams }));
+        await dispatch(getAfterClassFilter({ filter_type: "teacher", school_id, class_id, ...filterParams }));
       } else if (isTeacher) {
         await dispatch(getAfterClassFilter({ class_id, filter_type: "student", ...filterParams }));
       }
     },
-    [dispatch, filterParams, isOrg, isSchool, isTeacher]
+    [dispatch, filterParams, isOrg, isSchool, isTeacher, school_id]
   );
   const changeTeacher = useMemo(
     () => async (teacher_id: string) => {
       await dispatch(
         getAfterClassFilter({
           filter_type: "student",
+          school_id,
+          class_id,
           teacher_id,
           ...filterParams,
         })
       );
     },
-    [dispatch, filterParams]
+    [class_id, dispatch, filterParams, school_id]
   );
   const changeStudent = useMemo(
     () => async (student_id: string) => {
       await dispatch(
         getAfterClassFilter({
+          school_id,
+          class_id,
+          teacher_id,
           student_id,
           filter_type: "subject",
           ...filterParams,
@@ -184,11 +180,11 @@ export function ReportLearningSummary() {
         })
       );
     },
-    [dispatch, filterParams]
+    [class_id, dispatch, filterParams, school_id, teacher_id]
   );
   const changeSubject = useMemo(
     () => async (subject_id: string) => {
-      history.push({ search: setQuery(history.location.search, { subject_id }) });
+      history.push({ search: setQuery(history.location.search, { subject_id, lessonIndex: -1 }) });
       tab === ReportType.live
         ? dispatch(
             getLiveClassesSummary({
@@ -269,7 +265,17 @@ export function ReportLearningSummary() {
         subject_id = "",
       } = summaryReportOptions;
       history.push({
-        search: setQuery(history.location.search, { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id }),
+        search: setQuery(history.location.search, {
+          year,
+          week_start,
+          week_end,
+          school_id,
+          class_id,
+          teacher_id,
+          student_id,
+          subject_id,
+          lessonIndex: -1,
+        }),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
