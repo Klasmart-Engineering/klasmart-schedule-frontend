@@ -122,36 +122,40 @@ function EditScore(props: EditScoreProps) {
   const classes = useStyles();
   return (
     <div className={classes.scoreEditBox}>
-      {attempted ? (
-        <>
-          {editable && !isComplete && isSubjectiveActivity ? (
-            <>
-              <TextField
-                style={{ width: "59px", transform: "scale(0.8)" }}
-                value={scoreNum}
-                id="standard-size-small"
-                size="small"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value as unknown as number;
-                  if (value! > maxScore!) {
-                    dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
-                  } else if (Number(value) + "" !== NaN + "") {
-                    const computerValue = String(value).replace(/^(.*\..{1}).*$/, "$1");
-                    handleChangeScore(Number(computerValue), index, student_id);
-                    setScoreNum(computerValue);
-                  }
-                }}
-              />{" "}
-              / {maxScore}
-            </>
-          ) : (
-            <>
-              {scoreNum} / {maxScore}
-            </>
-          )}
-        </>
-      ) : is_h5p && not_applicable_scoring ? (
-        d("Not Applicable").t("assessment_not_applicable")
+      {is_h5p ? (
+        not_applicable_scoring ? (
+          d("Not Applicable").t("assessment_not_applicable")
+        ) : attempted ? (
+          <>
+            {editable && !isComplete && isSubjectiveActivity ? (
+              <>
+                <TextField
+                  style={{ width: "59px", transform: "scale(0.8)" }}
+                  value={scoreNum}
+                  id="standard-size-small"
+                  size="small"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const value = e.target.value as unknown as number;
+                    if (value! > maxScore!) {
+                      dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
+                    } else if (Number(value) + "" !== NaN + "") {
+                      const computerValue = String(value).replace(/^(.*\..{1}).*$/, "$1");
+                      handleChangeScore(Number(computerValue), index, student_id);
+                      setScoreNum(computerValue);
+                    }
+                  }}
+                />{" "}
+                / {maxScore}
+              </>
+            ) : (
+              <>
+                {scoreNum} / {maxScore}
+              </>
+            )}
+          </>
+        ) : (
+          d("Not Attempted").t("assess_option_not_attempted")
+        )
       ) : (
         ""
       )}
