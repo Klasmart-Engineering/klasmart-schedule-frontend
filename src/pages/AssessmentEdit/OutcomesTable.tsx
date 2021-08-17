@@ -35,6 +35,7 @@ const useStyles = makeStyles({
     backgroundColor: "#F2F5F7",
   },
   tableCellLine: {
+    wordBreak: "break-all",
     "&:not(:last-child)": {
       borderRight: "1px solid #ebebeb",
     },
