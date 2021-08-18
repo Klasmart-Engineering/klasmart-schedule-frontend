@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { School, User } from "../api/api-ko-schema.auto";
 import { EntityReportListTeachingLoadItem, EntityStudentAchievementReportCategoryItem } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
+import { d } from "../locale/LocaleManager";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];
@@ -51,9 +52,30 @@ enum formatTimeToMonWekType {
 }
 export function formatTimeToMonWek(seconds: number, type?: string) {
   const date = new Date(seconds * 1000);
-  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const monthArr = [
+    d("Jan").t("schedule_calendar_jan"),
+    d("Feb").t("schedule_calendar_feb"),
+    d("Mar").t("schedule_calendar_mar"),
+    d("Apr").t("schedule_calendar_apr"),
+    d("May").t("schedule_calendar_may"),
+    d("Jun").t("schedule_calendar_jun"),
+    d("Jul").t("schedule_calendar_jul"),
+    d("Aug").t("schedule_calendar_aug"),
+    d("Sep").t("schedule_calendar_sep"),
+    d("Oct").t("schedule_calendar_oct"),
+    d("Nov").t("schedule_calendar_nov"),
+    d("Dec").t("schedule_calendar_dec"),
+  ];
   // const weekArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const weekFullNameArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const weekFullNameArr = [
+    d("Sunday").t("schedule_frequency_sunday"),
+    d("Monday").t("schedule_frequency_monday"),
+    d("Tuesday").t("schedule_frequency_tuesday"),
+    d("Wednesday").t("schedule_frequency_wednesday"),
+    d("Thursday").t("schedule_frequency_thursday"),
+    d("Friday").t("schedule_frequency_friday"),
+    d("Saturday").t("schedule_frequency_saturday"),
+  ];
   const month = monthArr[date.getMonth()];
   const day = date.getDate();
   // const week = weekArr[date.getDay()];

@@ -104,8 +104,8 @@ export function ReportInfo(props: ReportInfoProps) {
   const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeReportType, onChangeLessonIndex } = props;
   const attend = liveClassSummary?.attend ? liveClassSummary.attend * 100 : 0;
   const pieData = [
-    { name: "attended", value: attend },
-    { name: "Absent", value: 100 - attend },
+    { name: d("Attended").t("report_liveclass_attended"), value: attend },
+    { name: d("Absent").t("report_label_absent"), value: 100 - attend },
   ];
   const isLiveClass = reportType === ReportType.live;
   const assessmentsCount = (assignmentSummary.study_count || 0) + (assignmentSummary.home_fun_study_count || 0);
