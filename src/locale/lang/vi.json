@@ -896,5 +896,7 @@
   "report_filter_student": "Học sinh",
   "report_tab_assessments_completed": "Đánh giá đã hoàn thành",
   "report_no_class": "Vui lòng chọn một lớp từ danh sách bên trái để xem kết quả.",
-  "report_no_assessment": "Vui lòng chọn một đánh giá từ danh sách bên trái để xem kết quả."
+  "report_no_assessment": "Vui lòng chọn một đánh giá từ danh sách bên trái để xem kết quả.",
+  "assessment_not_applicable": "Không áp dụng",
+  "assessment_activity_attempted": "Đã cố gắng"
 }

@@ -896,5 +896,7 @@
   "report_filter_student": "学生",
   "report_tab_assessments_completed": "已完成评估",
   "report_no_class": "请在左边选择一节课以查看该结果",
-  "report_no_assessment": "请在左边选择一份评估以查看该结果"
+  "report_no_assessment": "请在左边选择一份评估以查看该结果",
+  "assessment_not_applicable": "不适用",
+  "assessment_activity_attempted": "已尝试"
 }

@@ -896,5 +896,7 @@
   "report_filter_student": "Estudiante",
   "report_tab_assessments_completed": "Evaluaciones completadas",
   "report_no_class": "Seleccione una clase de la lista de la izquierda para ver los resultados.",
-  "report_no_assessment": "Seleccione una evaluación de la lista de la izquierda para ver los resultados."
+  "report_no_assessment": "Seleccione una evaluación de la lista de la izquierda para ver los resultados.",
+  "assessment_not_applicable": "No aplicable",
+  "assessment_activity_attempted": "Attempted"
 }
