@@ -62,6 +62,7 @@ const useStyles = makeStyles({
     "& li": {
       textAlign: "left",
       marginTop: "10px",
+      wordBreak: "break-all",
     },
   },
 });
