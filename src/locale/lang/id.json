@@ -896,5 +896,7 @@
   "report_filter_student": "Siswa",
   "report_tab_assessments_completed": "Penilaian Selesai",
   "report_no_class": "Silakan pilih kelas dari daftar di sebelah kiri untuk melihat hasilnya.",
-  "report_no_assessment": "Silakan pilih penilaian dari daftar di sebelah kiri untuk melihat hasilnya."
+  "report_no_assessment": "Silakan pilih penilaian dari daftar di sebelah kiri untuk melihat hasilnya.",
+  "assessment_not_applicable": "Tidak Berlaku",
+  "assessment_activity_attempted": "Telah dicoba"
 }

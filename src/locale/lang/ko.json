@@ -896,5 +896,7 @@
   "report_filter_student": "학생",
   "report_tab_assessments_completed": "평가 완료",
   "report_no_class": "결과를 보려면 왼쪽 목록에서 클래스를 선택하세요.",
-  "report_no_assessment": "결과를 보려면 왼쪽 목록에서 평가를 선택하세요."
+  "report_no_assessment": "결과를 보려면 왼쪽 목록에서 평가를 선택하세요.",
+  "assessment_not_applicable": "해당 없음",
+  "assessment_activity_attempted": "시도함"
 }

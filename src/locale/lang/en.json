@@ -891,12 +891,12 @@
   "assessment_assignment_assessment": "Assignment Assessment",
   "assessment_learning_outcomes_assessment": "Learning Outcomes Assessment",
   "assessment_learning_outcomes_achievement": "Learning Outcomes Achievement of {StudentName}",
-  "assessment_not_applicable": "Not Applicable",
   "schedule_lo_number_added": "Added",
   "schedule_filter_select_all_classes": "Select All Classes",
   "report_filter_student": "Student",
   "report_tab_assessments_completed": "Assessments Completed",
   "report_no_class": "Please select a class from the list on the left to view the results.",
   "report_no_assessment": "Please select an assessment from the list on the left to view the results.",
+  "assessment_not_applicable": "Not Applicable",
   "assessment_activity_attempted": "Attempted"
 }
