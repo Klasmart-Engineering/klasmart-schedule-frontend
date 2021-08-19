@@ -138,7 +138,7 @@ export function LessonPlan(props: AssignmentProps) {
           >
             <option value="2">{d("All").t("assess_filter_all")}</option>
             <option value="1">{d("Assumed").t("assess_label_assumed")}</option>
-            <option value="0">{d("Assumed").t("assess_label_assumed")}</option>
+            <option value="0">{d("Unassumed").t("assess_filter_unassumed")}</option>
           </NativeSelect>
         </FormControl>
       </Box>
