@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -12,17 +11,16 @@ import {
   InputAdornment,
   makeStyles,
   Paper,
-  styled,
   TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { Close, ExpandMore } from "@material-ui/icons";
+import { Close } from "@material-ui/icons";
 import BorderColorOutlinedIcon from "@material-ui/icons/BorderColorOutlined";
 import MessageOutlinedIcon from "@material-ui/icons/MessageOutlined";
 import clsx from "clsx";
-import React, { forwardRef, Fragment, useCallback, useMemo, useReducer, useState } from "react";
+import React, { forwardRef, Fragment, useCallback, useMemo, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import {
@@ -103,11 +101,6 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
     borderRadius: "18px",
     fontSize: 16,
   },
-  expandCon: {
-    fontSize: 16,
-    marginBottom: -30,
-    color: "#0e78d5",
-  },
   subTitle: {
     fontSize: 18,
     color: "#666",
@@ -167,19 +160,6 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
   okBtn: {
     marginLeft: "40px !important",
   },
-}));
-
-const useExpand = () => {
-  const [open, setOpen] = useState(false);
-  const toggle = () => setOpen(!open);
-  return { collapse: { in: open }, expandMore: { open, onClick: toggle } };
-};
-interface ExpandBtnProps {
-  open: boolean;
-}
-const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
-  color: "#0e78d5",
-  transform: props.open ? "rotate(180deg)" : "none",
 }));
 export interface AttendanceInputProps {
   defaultValue: PopupInputProps["value"];
@@ -517,7 +497,6 @@ interface SummaryProps {
   outcomesList: IAssessmentState["assessmentDetail"]["outcomes"];
 }
 export function Summary(props: SummaryProps) {
-  const expand = useExpand();
   const { assessmentDetail, isMyAssessment, outcomesList, formMethods } = props;
   const { control, getValues, setValue } = formMethods;
   const { breakpoints } = useTheme();
@@ -617,31 +596,23 @@ export function Summary(props: SummaryProps) {
                 className={css.fieldset}
                 label={d("Lesson Plan").t("library_label_lesson_plan")}
               />
-              <div className={css.expandCon}>
-                {expand.expandMore.open ? d("See Less").t("assess_detail_see_less") : d("See More").t("assess_detail_see_more")}
-                <ExpandBtn {...expand.expandMore}>
-                  <ExpandMore fontSize="small"></ExpandMore>
-                </ExpandBtn>
-              </div>
-              <Collapse {...expand.collapse} unmountOnExit>
-                <Controller
-                  as={PopupLessonMaterial}
-                  name="lesson_materials"
-                  defaultValue={materials}
-                  value={materials}
-                  assessmentDetail={assessmentDetail}
-                  control={control}
-                  isMyAssessment={isMyAssessment}
-                  onChangeOA={handleClickOk}
-                />
-                <TextField
-                  fullWidth
-                  disabled
-                  value={outcomesList?.length || 0}
-                  className={css.fieldset}
-                  label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
-                />
-              </Collapse>
+              <Controller
+                as={PopupLessonMaterial}
+                name="lesson_materials"
+                defaultValue={materials}
+                value={materials}
+                assessmentDetail={assessmentDetail}
+                control={control}
+                isMyAssessment={isMyAssessment}
+                onChangeOA={handleClickOk}
+              />
+              <TextField
+                fullWidth
+                disabled
+                value={outcomesList?.length || 0}
+                className={css.fieldset}
+                label={d("Number of Learning Outcomes").t("assess_detail_number_lo")}
+              />
             </>
           )}
           <TextField
@@ -660,14 +631,6 @@ export function Summary(props: SummaryProps) {
             className={css.fieldset}
             label={d("Subject").t("library_label_subject")}
           />
-          {/* <TextField
-            fullWidth
-            disabled
-            name="numberofActivities"
-            value={assessmentDetail.number_of_activities || 0}
-            className={css.fieldset}
-            label={d("Number of Activities").t("assess_detail_number_activity")}
-          /> */}
           <TextField
             fullWidth
             disabled

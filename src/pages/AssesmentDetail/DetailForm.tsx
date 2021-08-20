@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -12,17 +11,16 @@ import {
   InputAdornment,
   makeStyles,
   Paper,
-  styled,
   TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
-import { Close, ExpandMore } from "@material-ui/icons";
+import { Close } from "@material-ui/icons";
 import BorderColorOutlinedIcon from "@material-ui/icons/BorderColorOutlined";
 import MessageOutlinedIcon from "@material-ui/icons/MessageOutlined";
 import clsx from "clsx";
-import React, { forwardRef, Fragment, useCallback, useMemo, useReducer, useState } from "react";
+import React, { forwardRef, Fragment, useCallback, useMemo, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AssessmentStatus, DetailStudyAssessment, UpdateStudyAssessmentStudentIds } from "../../api/type";
@@ -96,11 +94,6 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
     borderRadius: "18px",
     fontSize: 16,
   },
-  expandCon: {
-    fontSize: 16,
-    marginBottom: -30,
-    color: "#0e78d5",
-  },
   subTitle: {
     fontSize: 18,
     color: "#666",
@@ -160,19 +153,6 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
   okBtn: {
     marginLeft: "40px !important",
   },
-}));
-
-const useExpand = () => {
-  const [open, setOpen] = useState(false);
-  const toggle = () => setOpen(!open);
-  return { collapse: { in: open }, expandMore: { open, onClick: toggle } };
-};
-interface ExpandBtnProps {
-  open: boolean;
-}
-const ExpandBtn = styled(IconButton)((props: ExpandBtnProps) => ({
-  color: "#0e78d5",
-  transform: props.open ? "rotate(180deg)" : "none",
 }));
 export interface AttendanceInputProps {
   defaultValue: PopupInputProps["value"];
@@ -497,7 +477,7 @@ interface DetailFormProps {
   complete_rate: string;
 }
 export default function DetailForm(props: DetailFormProps) {
-  const expand = useExpand();
+  // const expand = useExpand();
   const { formMethods, assessmentDetail, isMyAssessment, editable, complete_rate } = props;
   const { control, getValues } = formMethods;
   const { breakpoints } = useTheme();
@@ -569,25 +549,17 @@ export default function DetailForm(props: DetailFormProps) {
                 className={css.fieldset}
                 label={d("Lesson Plan").t("library_label_lesson_plan")}
               />
-              <div className={css.expandCon}>
-                {expand.expandMore.open ? d("See Less").t("assess_detail_see_less") : d("See More").t("assess_detail_see_more")}
-                <ExpandBtn {...expand.expandMore}>
-                  <ExpandMore fontSize="small"></ExpandMore>
-                </ExpandBtn>
-              </div>
-              <Collapse {...expand.collapse} unmountOnExit>
-                <Controller
-                  as={PopupLessonMaterial}
-                  name="lesson_materials"
-                  defaultValue={materials}
-                  value={materials}
-                  assessmentDetail={assessmentDetail}
-                  control={control}
-                  isMyAssessment={isMyAssessment}
-                  onChangeOA={handleClickOk}
-                  editable={editable}
-                />
-              </Collapse>
+              <Controller
+                as={PopupLessonMaterial}
+                name="lesson_materials"
+                defaultValue={materials}
+                value={materials}
+                assessmentDetail={assessmentDetail}
+                control={control}
+                isMyAssessment={isMyAssessment}
+                onChangeOA={handleClickOk}
+                editable={editable}
+              />
             </>
           )}
           <TextField
