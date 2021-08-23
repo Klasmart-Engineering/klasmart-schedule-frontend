@@ -1,6 +1,18 @@
-import { makeStyles } from "@material-ui/core";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  makeStyles,
+  Theme,
+  Tooltip,
+  Typography,
+  withStyles,
+} from "@material-ui/core";
+import { ChangeHistoryOutlined, CheckOutlined, ClearOutlined, InfoOutlined } from "@material-ui/icons";
 import clsx from "clsx";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { EntityLiveClassSummaryItem } from "../../api/api.auto";
 import liveBackUrl from "../../assets/icons/report_reca.svg";
 import assessmentBackUrl from "../../assets/icons/report_recl.svg";
@@ -9,6 +21,7 @@ import { formatTimeToEng, formatTimeToMonWek } from "../../models/ModelReports";
 import {
   AssignmentSummaryResultItem,
   LiveClassesSummaryResultItem,
+  OutcomeStatus,
   QueryLearningSummaryRemainingFilterCondition,
   ReportInfoBaseProps,
   ReportType,
@@ -147,12 +160,15 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   },
   outcomeCon: {
     marginTop: 15,
+    display: "flex",
+    alignItems: "center",
   },
   learningOutcomeName: {
     fontSize: 16,
     fontWeight: 400,
     color: "#666",
     wordBreak: "break-all",
+    verticalAlign: "text-top",
   },
   teacherFeedback: {
     fontSize: 16,
@@ -201,6 +217,13 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     marginTop: 30,
     width: "calc(100% - 50px)",
   },
+  statusCon: {
+    display: "flex",
+    alignItems: "center",
+  },
+  customWidth: {
+    maxWidth: "343px",
+  },
 }));
 const usePropsStyles = makeStyles(() => ({
   noDataCon: (props: ReportTypeProps) => ({
@@ -240,6 +263,13 @@ const usePropsStyles = makeStyles(() => ({
     alignItems: "center",
     justifyContent: "center",
   }),
+  viewAllCon: (props: ReportTypeProps) => ({
+    height: "calc(100% - 108px)",
+    paddingRight: 10,
+    color: props.reportType === ReportType.live ? "#8693f0" : "#89c4f9",
+    lineHeight: "77px",
+    cursor: "pointer",
+  }),
 }));
 const useLessonStyles = makeStyles(() => ({
   lessonCon: (props: LeftDataProps | undefined) => ({
@@ -250,6 +280,15 @@ const useLessonStyles = makeStyles(() => ({
     color: props?.type ? (props.type === "home_fun_study" ? "#89c4f9" : "#a4ddff") : props?.absent ? "#fe9b9b" : "#8693f0",
   }),
 }));
+const LightTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    width: "343px",
+    backgroundColor: theme.palette.common.white,
+    color: "rgb(0, 0, 0)",
+    boxShadow: theme.shadows[1],
+    fontSize: 12,
+  },
+}))(Tooltip);
 export type ReportTypeProps = {
   reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
 };
@@ -358,7 +397,36 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
     </div>
   );
 }
-
+export interface AllOutcomesProps extends ReportTypeProps {
+  open: boolean;
+  outcomes: EntityLiveClassSummaryItem["outcomes"];
+  onClose: () => void;
+}
+export function AllOutcomes(props: AllOutcomesProps) {
+  const css = useStyles();
+  const { open, outcomes, onClose } = props;
+  // const cssProps = usePropsStyles({ reportType });
+  return (
+    <Dialog open={open}>
+      <DialogTitle>{d("Learning Outcomes Covered").t("report_learning_outcomes_covered")}</DialogTitle>
+      <DialogContent dividers style={{ maxHeight: 280 }}>
+        {outcomes?.map((item, index) => (
+          <div key={item.id} className={css.outcomeCon}>
+            {item.status === OutcomeStatus.achieved && <ChangeHistoryOutlined style={{ color: "#1aa21e", marginRight: 3 }} />}
+            {item.status === OutcomeStatus.partially && <CheckOutlined style={{ color: "#f1c621", marginRight: 3 }} />}
+            {item.status === OutcomeStatus.not_achieved && <ClearOutlined style={{ color: "#d52a2a", marginRight: 3 }} />}
+            <span className={css.learningOutcomeName}>{item.name}</span>
+          </div>
+        ))}
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" variant="contained" onClick={onClose}>
+          {d("OK").t("general_button_OK")}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
 export interface RightComProps extends ReportTypeProps {
   outcomes: EntityLiveClassSummaryItem["outcomes"];
   feedBack: EntityLiveClassSummaryItem["teacher_feedback"];
@@ -369,6 +437,7 @@ export interface RightComProps extends ReportTypeProps {
 }
 export function RightCom(props: RightComProps) {
   const { reportType, outcomes, feedBack, hasLiveItems, hasAssessmentItems, lessonIndex, rightComkey } = props;
+  const [open, setOpen] = useState(false);
   const css = useStyles();
   const cssProps = usePropsStyles({ reportType });
   const isLive = reportType === ReportType.live;
@@ -418,20 +487,64 @@ export function RightCom(props: RightComProps) {
       }
     }
   }, [isLive, hasLiveItems, lessonIndex, hasAssessmentItems]);
+  const handleClickViewAll = () => {
+    setOpen(true);
+  };
+  const handleCoseAllOutcomes = () => {
+    setOpen(false);
+  };
   return (
     <>
+      <AllOutcomes reportType={reportType} open={open} outcomes={outcomes} onClose={handleCoseAllOutcomes} />
       <div className={css.rightItem} key={rightComkey}>
-        <span className={clsx(cssProps.rightItemTitle)}>{d("Learning Outcomes Covered").t("report_learning_outcomes_covered")}</span>
+        <span className={clsx(cssProps.rightItemTitle)}>
+          {d("Learning Outcomes Covered").t("report_learning_outcomes_covered")}
+          <LightTooltip
+            placement="top-start"
+            classes={{ tooltip: css.customWidth }}
+            title={
+              <div style={{ fontSize: 14, color: "#000" }}>
+                <Typography variant="body1">
+                  {"Observable competency that can be demonstrated by the student by the end of the lesson."}
+                </Typography>
+                <div className={css.statusCon}>
+                  <>
+                    <CheckOutlined style={{ color: "#1aa21e" }} />
+                    <Typography>{d("Achieved").t("report_label_achieved")}</Typography>
+                  </>
+                  <>
+                    <ChangeHistoryOutlined style={{ color: "#f1c621", marginLeft: 3 }} />
+                    <Typography>{"In Progress"}</Typography>
+                  </>
+                  <>
+                    <ClearOutlined style={{ color: "#d52a2a", marginLeft: 3 }} />
+                    <Typography>{d("Not Achieved").t("report_label_not_achieved")}</Typography>
+                  </>
+                </div>
+              </div>
+            }
+          >
+            <InfoOutlined style={{ marginLeft: "10px" }} />
+          </LightTooltip>
+        </span>
         <div className={clsx(css.scrollCss, css.rightItemContent)}>
           {outcomes?.length ? (
-            outcomes.map((item) => (
+            outcomes.slice(0, 3).map((item, index) => (
               <div key={item.id} className={css.outcomeCon}>
-                <span className={clsx(cssProps.spot)}></span>
+                {/* <span className={clsx(cssProps.spot)}></span> */}
+                {item.status === OutcomeStatus.achieved && <CheckOutlined style={{ color: "#1aa21e", marginRight: 3 }} />}
+                {item.status === OutcomeStatus.partially && <ChangeHistoryOutlined style={{ color: "#f1c621", marginRight: 3 }} />}
+                {item.status === OutcomeStatus.not_achieved && <ClearOutlined style={{ color: "#d52a2a", marginRight: 3 }} />}
                 <span className={css.learningOutcomeName}>{item.name}</span>
               </div>
             ))
           ) : (
             <div className={cssProps.infoFont}>{noOutcomesDataText}</div>
+          )}
+          {outcomes && outcomes?.length > 3 && (
+            <Typography onClick={handleClickViewAll} className={cssProps.viewAllCon} align="right" variant="body1">
+              {"View All >"}
+            </Typography>
           )}
         </div>
       </div>

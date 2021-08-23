@@ -48,3 +48,8 @@ export type TimeFilter = {
   weeks?: IWeeks[];
   school_id?: string;
 };
+export enum OutcomeStatus {
+  achieved = "achieved",
+  not_achieved = "not_achieved",
+  partially = "partially",
+}

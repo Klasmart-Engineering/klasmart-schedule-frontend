@@ -32,7 +32,7 @@ const useQuery = (): AssessmentQueryCondition => {
     const status = query.get("status");
     const page = Number(query.get("page")) || 1;
     const order_by = (query.get("order_by") as AssessmentOrderBy | null) || undefined;
-    const class_type = query.get("class_type") || AssessmentTypeValues.class;
+    const class_type = query.get("class_type") || AssessmentTypeValues.live;
     return clearNull({ teacher_name, status, page, order_by, class_type });
   }, [search]);
 };
@@ -123,4 +123,4 @@ export function AssessmentList() {
 }
 
 AssessmentList.routeBasePath = "/assessments/assessment-list";
-AssessmentList.routeRedirectDefault = `/assessments/assessment-list?class_type=${AssessmentTypeValues.class}&status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`;
+AssessmentList.routeRedirectDefault = `/assessments/assessment-list?class_type=${AssessmentTypeValues.live}&status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`;
