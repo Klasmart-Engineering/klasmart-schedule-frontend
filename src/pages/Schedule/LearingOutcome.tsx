@@ -15,7 +15,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import { LearningContentListForm, LearningContentList } from "../../types/scheduleTypes";
 import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
@@ -24,6 +23,9 @@ import { RootState } from "../../reducers";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { EntityScheduleDetailsView } from "../../api/api.auto";
 import Tooltip from "@material-ui/core/Tooltip";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles((theme) => ({
   previewContainer: {
@@ -86,6 +88,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  fieldset: {
+    width: "100%",
+  },
+  root: {
+    marginTop: 10,
+    flexGrow: 1,
+  },
 }));
 
 interface InfoProps {
@@ -96,6 +105,123 @@ interface InfoProps {
   handleClose: () => void;
   outComeIds: string[];
   scheduleDetial: EntityScheduleDetailsView;
+}
+
+function SelectGroup() {
+  const classes = useStyles();
+  const data = [
+    { id: 1, name: "fasdfsadfsdfa" },
+    { id: 2, name: "vxzvzxvc" },
+    { id: 3, name: "3re132r" },
+    { id: 4, name: "sadvasdgf312" },
+    { id: 5, name: "fasdgasf213" },
+    { id: 6, name: "sdva32rvfsda" },
+  ];
+  return (
+    <div className={classes.root}>
+      <Grid container spacing={2}>
+        <Grid item xs={4}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={data}
+            getOptionLabel={(option: any) => option.name}
+            multiple
+            limitTags={1}
+            onChange={(e: any, newValue) => {
+              console.log(newValue);
+            }}
+            style={{ transform: "scale(0.9)" }}
+            renderInput={(params) => (
+              <TextField {...params} className={classes.fieldset} label={d("Programs").t("schedule_detail_program")} variant="outlined" />
+            )}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={data}
+            getOptionLabel={(option: any) => option.name}
+            multiple
+            onChange={(e: any, newValue) => {
+              console.log(newValue);
+            }}
+            style={{ transform: "scale(0.9)" }}
+            renderInput={(params) => (
+              <TextField {...params} className={classes.fieldset} label={d("Subject").t("schedule_detail_subject")} variant="outlined" />
+            )}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={data}
+            getOptionLabel={(option: any) => option.name}
+            multiple
+            onChange={(e: any, newValue) => {
+              console.log(newValue);
+            }}
+            style={{ transform: "scale(0.9)" }}
+            renderInput={(params) => (
+              <TextField {...params} className={classes.fieldset} label={d("Category").t("assess_label_category")} variant="outlined" />
+            )}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={data}
+            getOptionLabel={(option: any) => option.name}
+            multiple
+            limitTags={1}
+            onChange={(e: any, newValue) => {
+              console.log(newValue);
+            }}
+            style={{ transform: "scale(0.9)" }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className={classes.fieldset}
+                placeholder={d("Sub Category").t("schedule_sub_category")}
+                variant="outlined"
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={data}
+            getOptionLabel={(option: any) => option.name}
+            multiple
+            limitTags={1}
+            onChange={(e: any, newValue) => {
+              console.log(newValue);
+            }}
+            style={{ transform: "scale(0.9)" }}
+            renderInput={(params) => (
+              <TextField {...params} className={classes.fieldset} placeholder={d("Age").t("assess_label_age")} variant="outlined" />
+            )}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={data}
+            getOptionLabel={(option: any) => option.name}
+            multiple
+            limitTags={1}
+            onChange={(e: any, newValue) => {
+              console.log(newValue);
+            }}
+            style={{ transform: "scale(0.9)" }}
+            renderInput={(params) => (
+              <TextField {...params} className={classes.fieldset} placeholder={d("Grade").t("library_label_grade")} variant="outlined" />
+            )}
+          />
+        </Grid>
+      </Grid>
+    </div>
+  );
 }
 
 export default function LearingOutcome(props: InfoProps) {
@@ -284,6 +410,9 @@ export default function LearingOutcome(props: InfoProps) {
             />
           )}
         />
+      </Box>
+      <Box className={classes.flexBox}>
+        <SelectGroup />
       </Box>
       <div
         style={{ margin: "20px 0 20px 0" }}

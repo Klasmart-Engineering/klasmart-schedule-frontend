@@ -1767,19 +1767,6 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
             </FormGroup>
-            {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
-                onClick={() => {
-                  handeLearingOutcome();
-                }}
-              >
-                <span>{d("Set Learning Outcome").t("schedule_set_learning_outcome")}</span>
-                {outComeIds.length > 0 && <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>}
-              </Button>
-            )}
           </Box>
         )}
         <Box className={css.fieldBox}>
@@ -2210,6 +2197,27 @@ function EditBox(props: CalendarStateProps) {
               </Paper>
             </Collapse>
           </>
+        )}
+        {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
+          <Box className={css.fieldBox}>
+            <TextField
+              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+              multiline
+              label={d("Set Learning Outcome").t("schedule_set_learning_outcome")}
+              required
+              disabled
+              value={outComeIds.length > 0 ? outComeIds.length : ""}
+            ></TextField>
+            {!(isScheduleExpired() || isLimit()) && (
+              <AddCircleOutlineOutlined
+                onClick={() => {
+                  handeLearingOutcome();
+                }}
+                className={css.iconField}
+                style={{ top: "46%", cursor: "pointer" }}
+              />
+            )}
+          </Box>
         )}
         <TextField
           id="outlined-multiline-static"
