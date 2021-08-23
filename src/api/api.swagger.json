@@ -5314,7 +5314,7 @@
           },
           {
             "type": "string",
-            "description": "school id",
+            "description": "school ids, use commas to separate",
             "name": "school_id",
             "in": "query"
           },
@@ -5391,6 +5391,24 @@
             "name": "summary_type",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "school ids, use commas to separate",
+            "name": "school_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher_id",
+            "name": "teacher_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "student_id",
+            "name": "student_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8355,6 +8373,12 @@
         "complete_time": {
           "type": "integer"
         },
+        "content_outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentDetailContentOutcome"
+          }
+        },
         "id": {
           "type": "string"
         },
@@ -8440,9 +8464,45 @@
         }
       }
     },
+    "entity.AssessmentDetailContentOutcome": {
+      "type": "object",
+      "properties": {
+        "assumed": {
+          "type": "boolean"
+        },
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_id": {
+          "type": "string"
+        },
+        "none_achieved": {
+          "type": "boolean"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
     "entity.AssessmentDetailOutcome": {
       "type": "object",
       "properties": {
+        "assigned_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["lesson_plan", "lesson_material"]
+          }
+        },
         "assumed": {
           "type": "boolean"
         },
@@ -8466,6 +8526,17 @@
         },
         "skip": {
           "type": "boolean"
+        }
+      }
+    },
+    "entity.AssessmentIDNamePair": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },
@@ -8575,9 +8646,18 @@
         "attempted": {
           "type": "boolean"
         },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudentViewH5PLessonMaterial"
+          }
+        },
         "h5p_id": {
           "description": "add: 2021.06.24",
           "type": "string"
+        },
+        "has_sub_items": {
+          "type": "boolean"
         },
         "is_h5p": {
           "type": "boolean"
@@ -8587,6 +8667,10 @@
         },
         "lesson_material_name": {
           "type": "string"
+        },
+        "lesson_material_ordered_number": {
+          "description": "internal",
+          "type": "integer"
         },
         "lesson_material_type": {
           "type": "string"
@@ -8598,18 +8682,19 @@
           "type": "boolean"
         },
         "number": {
-          "description": "add: 2021.06.24",
           "type": "string"
         },
-        "outcome_names": {
+        "ordered_id": {
+          "type": "integer"
+        },
+        "outcomes": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/entity.AssessmentIDNamePair"
           }
         },
-        "sub_content_number": {
-          "description": "add: 2021.06.24",
-          "type": "integer"
+        "parent_id": {
+          "type": "string"
         },
         "sub_h5p_id": {
           "description": "add: 2021.06.24",
@@ -9735,6 +9820,10 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["achieved", "not_achieved", "partially"]
         }
       }
     },
@@ -11718,6 +11807,12 @@
             "type": "string"
           }
         },
+        "content_outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateAssessmentContentOutcomeArgs"
+          }
+        },
         "id": {
           "type": "string"
         },
@@ -11751,6 +11846,26 @@
           "type": "string"
         },
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.UpdateAssessmentContentOutcomeArgs": {
+      "type": "object",
+      "properties": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_id": {
+          "type": "string"
+        },
+        "none_achieved": {
+          "type": "boolean"
+        },
+        "outcome_id": {
           "type": "string"
         }
       }

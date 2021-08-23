@@ -204,6 +204,7 @@ export interface EntityAssessmentDetail {
   class_end_time?: number;
   class_length?: number;
   complete_time?: number;
+  content_outcomes?: EntityAssessmentDetailContentOutcome[];
   id?: string;
   lesson_materials?: EntityAssessmentDetailContent[];
   lesson_plan?: EntityAssessmentDetailContent;
@@ -228,7 +229,18 @@ export interface EntityAssessmentDetailContent {
   outcome_ids?: string[];
 }
 
+export interface EntityAssessmentDetailContentOutcome {
+  assumed?: boolean;
+  attendance_ids?: string[];
+  content_id?: string;
+  none_achieved?: boolean;
+  outcome_id?: string;
+  outcome_name?: string;
+  skip?: boolean;
+}
+
 export interface EntityAssessmentDetailOutcome {
+  assigned_to?: ("lesson_plan" | "lesson_material")[];
   assumed?: boolean;
   attendance_ids?: string[];
   checked?: boolean;
@@ -236,6 +248,11 @@ export interface EntityAssessmentDetailOutcome {
   outcome_id?: string;
   outcome_name?: string;
   skip?: boolean;
+}
+
+export interface EntityAssessmentIDNamePair {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityAssessmentItem {
@@ -291,10 +308,9 @@ export interface EntityAssessmentStudentViewH5PLessonMaterial {
   lesson_material_type?: string;
   max_score?: number;
   not_applicable_scoring?: boolean;
-
   number?: string;
   ordered_id?: number;
-  outcome_names?: string[];
+  outcomes?: EntityAssessmentIDNamePair[];
   parent_id?: string;
 
   /** add: 2021.06.24 */
@@ -544,17 +560,6 @@ export interface EntityCreateContentRequest {
   thumbnail?: string;
 }
 
-export interface EntityCreateFolderItemRequest {
-  link?: string;
-  owner_type?: number;
-
-  /** ID string `json:"id"` */
-  parent_folder_id?: string;
-
-  /** ItemType  ItemType  `json:"item_type"` */
-  partition?: string;
-}
-
 export interface EntityCreateFolderRequest {
   description?: string;
   keywords?: string[];
@@ -680,6 +685,7 @@ export interface EntityLearningSummaryFilterYear {
 export interface EntityLearningSummaryOutcome {
   id?: string;
   name?: string;
+  status?: "achieved" | "not_achieved" | "partially";
 }
 
 export interface EntityLessonType {
@@ -1348,6 +1354,7 @@ export interface EntityTeacherReportCategory {
 export interface EntityUpdateAssessmentArgs {
   action?: "save" | "complete";
   attendance_ids?: string[];
+  content_outcomes?: EntityUpdateAssessmentContentOutcomeArgs[];
   id?: string;
   lesson_materials?: EntityUpdateAssessmentContentArgs[];
   outcomes?: EntityUpdateAssessmentOutcomeArgs[];
@@ -1358,6 +1365,13 @@ export interface EntityUpdateAssessmentContentArgs {
   checked?: boolean;
   comment?: string;
   id?: string;
+}
+
+export interface EntityUpdateAssessmentContentOutcomeArgs {
+  attendance_ids?: string[];
+  content_id?: string;
+  none_achieved?: boolean;
+  outcome_id?: string;
 }
 
 export interface EntityUpdateAssessmentH5PLessonMaterial {
@@ -2603,21 +2617,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     createFolder: (content: EntityCreateFolderRequest, params?: RequestParams) =>
       this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/folders`, "POST", params, content),
-
-    /**
-     * @tags folder
-     * @name addFolderItem
-     * @summary addFolderItem
-     * @request POST:/folders/items
-     * @description create folder item
-     */
-    addFolderItem: (content: EntityCreateFolderItemRequest, params?: RequestParams) =>
-      this.request<ApiCreateFolderResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/folders/items`,
-        "POST",
-        params,
-        content
-      ),
 
     /**
      * @tags folder
