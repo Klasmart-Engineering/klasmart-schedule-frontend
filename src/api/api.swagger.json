@@ -8529,17 +8529,6 @@
         }
       }
     },
-    "entity.AssessmentIDNamePair": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "entity.AssessmentItem": {
       "type": "object",
       "properties": {
@@ -8687,10 +8676,10 @@
         "ordered_id": {
           "type": "integer"
         },
-        "outcomes": {
+        "outcome_names": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.AssessmentIDNamePair"
+            "type": "string"
           }
         },
         "parent_id": {

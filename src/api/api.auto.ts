@@ -250,11 +250,6 @@ export interface EntityAssessmentDetailOutcome {
   skip?: boolean;
 }
 
-export interface EntityAssessmentIDNamePair {
-  id?: string;
-  name?: string;
-}
-
 export interface EntityAssessmentItem {
   class_end_time?: number;
   complete_time?: number;
@@ -310,7 +305,7 @@ export interface EntityAssessmentStudentViewH5PLessonMaterial {
   not_applicable_scoring?: boolean;
   number?: string;
   ordered_id?: number;
-  outcomes?: EntityAssessmentIDNamePair[];
+  outcome_names?: string[];
   parent_id?: string;
 
   /** add: 2021.06.24 */
