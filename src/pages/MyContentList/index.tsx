@@ -232,8 +232,6 @@ export default function MyContentList() {
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
     const parent_id = (condition.path || "").split("/").pop() || "";
-    console.log("type:", condition.content_type, "asset:", SearchContentsRequestContentType, "path:", condition.path);
-
     if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
       if (condition.path && condition.path !== ROOT_PATH) {
         history.replace(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?parent_id=${parent_id}`);
