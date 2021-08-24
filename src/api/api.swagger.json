@@ -5103,6 +5103,171 @@
         }
       }
     },
+    "/published_learning_outcomes": {
+      "get": {
+        "description": "search published learning outcome with outcome sets",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["learning_outcomes"],
+        "summary": "search published learning outcome",
+        "operationId": "searchPublishedLearningOutcomes",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search by name",
+            "name": "outcome_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by description",
+            "name": "description",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by keywords",
+            "name": "keywords",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by shortcode",
+            "name": "shortcode",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by author_name",
+            "name": "author_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by set_name",
+            "name": "set_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search by search_key",
+            "name": "search_key",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search by assumed: 1 true, 0 false, -1 all",
+            "name": "assumed",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "search by program ids",
+            "name": "program_ids",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "search by subject ids",
+            "name": "subject_ids",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "search by category ids",
+            "name": "category_ids",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "search by sub category ids",
+            "name": "sub_category_ids",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "search by age ids",
+            "name": "age_ids",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "search by grade ids",
+            "name": "grade_ids",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/model.SearchPublishedOutcomeResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/reports/learning_summary/assignments": {
       "get": {
         "description": "query live classes summary",
@@ -5314,7 +5479,7 @@
           },
           {
             "type": "string",
-            "description": "school id",
+            "description": "school ids, use commas to separate",
             "name": "school_id",
             "in": "query"
           },
@@ -5391,6 +5556,24 @@
             "name": "summary_type",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "school ids, use commas to separate",
+            "name": "school_ids",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher_id",
+            "name": "teacher_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "student_id",
+            "name": "student_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8355,6 +8538,12 @@
         "complete_time": {
           "type": "integer"
         },
+        "content_outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentDetailContentOutcome"
+          }
+        },
         "id": {
           "type": "string"
         },
@@ -8440,9 +8629,45 @@
         }
       }
     },
+    "entity.AssessmentDetailContentOutcome": {
+      "type": "object",
+      "properties": {
+        "assumed": {
+          "type": "boolean"
+        },
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_id": {
+          "type": "string"
+        },
+        "none_achieved": {
+          "type": "boolean"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "skip": {
+          "type": "boolean"
+        }
+      }
+    },
     "entity.AssessmentDetailOutcome": {
       "type": "object",
       "properties": {
+        "assigned_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["lesson_plan", "lesson_material"]
+          }
+        },
         "assumed": {
           "type": "boolean"
         },
@@ -8575,9 +8800,18 @@
         "attempted": {
           "type": "boolean"
         },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.AssessmentStudentViewH5PLessonMaterial"
+          }
+        },
         "h5p_id": {
           "description": "add: 2021.06.24",
           "type": "string"
+        },
+        "has_sub_items": {
+          "type": "boolean"
         },
         "is_h5p": {
           "type": "boolean"
@@ -8587,6 +8821,10 @@
         },
         "lesson_material_name": {
           "type": "string"
+        },
+        "lesson_material_ordered_number": {
+          "description": "internal",
+          "type": "integer"
         },
         "lesson_material_type": {
           "type": "string"
@@ -8598,8 +8836,10 @@
           "type": "boolean"
         },
         "number": {
-          "description": "add: 2021.06.24",
           "type": "string"
+        },
+        "ordered_id": {
+          "type": "integer"
         },
         "outcome_names": {
           "type": "array",
@@ -8607,9 +8847,8 @@
             "type": "string"
           }
         },
-        "sub_content_number": {
-          "description": "add: 2021.06.24",
-          "type": "integer"
+        "parent_id": {
+          "type": "string"
         },
         "sub_h5p_id": {
           "description": "add: 2021.06.24",
@@ -9735,6 +9974,10 @@
         },
         "name": {
           "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["achieved", "not_achieved", "partially"]
         }
       }
     },
@@ -11718,6 +11961,12 @@
             "type": "string"
           }
         },
+        "content_outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.UpdateAssessmentContentOutcomeArgs"
+          }
+        },
         "id": {
           "type": "string"
         },
@@ -11751,6 +12000,26 @@
           "type": "string"
         },
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.UpdateAssessmentContentOutcomeArgs": {
+      "type": "object",
+      "properties": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_id": {
+          "type": "string"
+        },
+        "none_achieved": {
+          "type": "boolean"
+        },
+        "outcome_id": {
           "type": "string"
         }
       }
@@ -12633,6 +12902,127 @@
       "properties": {
         "scope": {
           "type": "string"
+        }
+      }
+    },
+    "model.PublishedOutcomeView": {
+      "type": "object",
+      "properties": {
+        "age_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "category_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "estimated_time": {
+          "type": "integer"
+        },
+        "grade_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "latest_id": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "reject_reason": {
+          "type": "string"
+        },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeSetCreateView"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "sub_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "model.SearchPublishedOutcomeResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.PublishedOutcomeView"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
