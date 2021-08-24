@@ -898,5 +898,6 @@
   "report_no_class": "Please select a class from the list on the left to view the results.",
   "report_no_assessment": "Please select an assessment from the list on the left to view the results.",
   "assessment_not_applicable": "Not Applicable",
-  "assessment_activity_attempted": "Attempted"
+  "assessment_activity_attempted": "Attempted",
+  "schedule_sub_category": "Sub Category"
 }

@@ -1249,7 +1249,6 @@ type LangRecord<T = string> =
       description: "Learning Outcomes Achievement of {StudentName}";
       values: { StudentName: string | number };
     }
-  | { id: "assessment_not_applicable"; description: "Not Applicable"; values: undefined }
   | { id: "schedule_lo_number_added"; description: "Added"; values: undefined }
   | { id: "schedule_filter_select_all_classes"; description: "Select All Classes"; values: undefined }
   | { id: "report_filter_student"; description: "Student"; values: undefined }
@@ -1260,7 +1259,9 @@ type LangRecord<T = string> =
       description: "Please select an assessment from the list on the left to view the results.";
       values: undefined;
     }
-  | { id: "assessment_activity_attempted"; description: "Attempted"; values: undefined };
+  | { id: "assessment_not_applicable"; description: "Not Applicable"; values: undefined }
+  | { id: "assessment_activity_attempted"; description: "Attempted"; values: undefined }
+  | { id: "schedule_sub_category"; description: "Sub Category"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
