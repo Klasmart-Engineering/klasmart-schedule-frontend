@@ -1697,6 +1697,9 @@ function EditBox(props: CalendarStateProps) {
           saveOutcomesList={saveOutcomesList}
           outComeIds={outComeIds}
           scheduleDetial={scheduleDetial}
+          programs={modelSchedule.Deduplication(
+            modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
+          )}
         />
       ),
       openStatus: true,

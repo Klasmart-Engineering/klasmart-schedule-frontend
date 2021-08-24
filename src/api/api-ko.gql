@@ -367,3 +367,36 @@ query schoolAndTeacherByOrg($organization_id: ID!) {
     }
 }
 
+query getPrograms($program_id: ID!){
+   program(id: $program_id) {
+    id
+    name
+    status
+    subjects{
+      id
+      name
+      status
+      categories{
+        id
+        name
+        status
+        subcategories{
+          id
+          name
+          status
+        }
+      }
+    }
+    age_ranges{
+      id
+      name
+      status
+    }
+    grades{
+      id
+      name
+      status
+    }
+  }
+}
+

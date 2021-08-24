@@ -57,6 +57,10 @@ export type AgeRangeDetail = {
 };
 
 export type AgeRangeFilter = {
+  ageRangeValueFrom?: Maybe<AgeRangeValueFilter>;
+  ageRangeUnitFrom?: Maybe<AgeRangeUnitFilter>;
+  ageRangeValueTo?: Maybe<AgeRangeValueFilter>;
+  ageRangeUnitTo?: Maybe<AgeRangeUnitFilter>;
   status?: Maybe<StringFilter>;
   system?: Maybe<BooleanFilter>;
   organizationId?: Maybe<UuidFilter>;
@@ -85,9 +89,19 @@ export enum AgeRangeUnit {
   Month = "month",
 }
 
+export type AgeRangeUnitFilter = {
+  operator: UuidOperator;
+  value: AgeRangeUnit;
+};
+
 export type AgeRangeValue = {
   value: Scalars["Int"];
   unit: AgeRangeUnit;
+};
+
+export type AgeRangeValueFilter = {
+  operator: NumberOrDateOperator;
+  value: Scalars["Int"];
 };
 
 export type AgeRangesConnectionEdge = IConnectionEdge & {
@@ -247,6 +261,58 @@ export type ClassConnection = {
   total?: Maybe<Scalars["Int"]>;
   edges: Array<Maybe<Class>>;
   pageInfo: PageInfo;
+};
+
+export type ClassConnectionNode = {
+  __typename?: "ClassConnectionNode";
+  id: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  status: Status;
+  schools?: Maybe<Array<SchoolSimplifiedSummaryNode>>;
+  ageRanges?: Maybe<Array<AgeRangeConnectionNode>>;
+  grades?: Maybe<Array<GradeSummaryNode>>;
+  subjects?: Maybe<Array<SubjectSummaryNode>>;
+  programs?: Maybe<Array<ProgramSummaryNode>>;
+};
+
+export type ClassFilter = {
+  id?: Maybe<UuidFilter>;
+  name?: Maybe<StringFilter>;
+  status?: Maybe<StringFilter>;
+  organizationId?: Maybe<UuidFilter>;
+  ageRangeValueFrom?: Maybe<AgeRangeValueFilter>;
+  ageRangeUnitFrom?: Maybe<AgeRangeUnitFilter>;
+  ageRangeValueTo?: Maybe<AgeRangeValueFilter>;
+  ageRangeUnitTo?: Maybe<AgeRangeUnitFilter>;
+  schoolId?: Maybe<UuidFilter>;
+  gradeId?: Maybe<UuidFilter>;
+  subjectId?: Maybe<UuidFilter>;
+  programId?: Maybe<UuidFilter>;
+  AND?: Maybe<Array<ClassFilter>>;
+  OR?: Maybe<Array<ClassFilter>>;
+};
+
+export enum ClassSortBy {
+  Id = "id",
+  Name = "name",
+}
+
+export type ClassSortInput = {
+  field: ClassSortBy;
+  order: SortOrder;
+};
+
+export type ClassesConnectionEdge = IConnectionEdge & {
+  __typename?: "ClassesConnectionEdge";
+  cursor?: Maybe<Scalars["String"]>;
+  node?: Maybe<ClassConnectionNode>;
+};
+
+export type ClassesConnectionResponse = IConnectionResponse & {
+  __typename?: "ClassesConnectionResponse";
+  totalCount?: Maybe<Scalars["Int"]>;
+  pageInfo?: Maybe<ConnectionPageInfo>;
+  edges?: Maybe<Array<Maybe<ClassesConnectionEdge>>>;
 };
 
 export enum ConnectionDirection {
@@ -914,6 +980,14 @@ export type ProgramSortInput = {
   order: SortOrder;
 };
 
+export type ProgramSummaryNode = {
+  __typename?: "ProgramSummaryNode";
+  id: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  status: Status;
+  system: Scalars["Boolean"];
+};
+
 export type ProgramsConnectionEdge = IConnectionEdge & {
   __typename?: "ProgramsConnectionEdge";
   cursor?: Maybe<Scalars["String"]>;
@@ -935,6 +1009,7 @@ export type Query = {
   category?: Maybe<Category>;
   classes?: Maybe<Array<Maybe<Class>>>;
   class?: Maybe<Class>;
+  classesConnection?: Maybe<ClassesConnectionResponse>;
   grade?: Maybe<Grade>;
   gradesConnection?: Maybe<GradesConnectionResponse>;
   organization?: Maybe<Organization>;
@@ -973,6 +1048,13 @@ export type QueryCategoryArgs = {
 
 export type QueryClassArgs = {
   class_id: Scalars["ID"];
+};
+
+export type QueryClassesConnectionArgs = {
+  direction: ConnectionDirection;
+  directionArgs?: Maybe<ConnectionsDirectionArgs>;
+  filter?: Maybe<ClassFilter>;
+  sort?: Maybe<ClassSortInput>;
 };
 
 export type QueryGradeArgs = {
@@ -1207,6 +1289,13 @@ export type SchoolMembershipRemoveRoleArgs = {
 
 export type SchoolMembershipLeaveArgs = {
   _?: Maybe<Scalars["Int"]>;
+};
+
+export type SchoolSimplifiedSummaryNode = {
+  __typename?: "SchoolSimplifiedSummaryNode";
+  id: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  status: Status;
 };
 
 export enum SchoolSortBy {

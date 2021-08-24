@@ -270,3 +270,12 @@ export interface LearningContentListForm {
   content_list: LearningContentList[];
   page: number;
 }
+
+export interface LearningComesFilterQuery {
+  programs: string[];
+  subject: string[];
+  category: string[];
+  sub: string[];
+  age: string[];
+  grade: string[];
+}

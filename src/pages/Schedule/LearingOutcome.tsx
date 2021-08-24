@@ -16,9 +16,9 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
-import { LearningContentListForm, LearningContentList } from "../../types/scheduleTypes";
+import { LearningContentListForm, LearningContentList, EntityScheduleShortInfo, LearningComesFilterQuery } from "../../types/scheduleTypes";
 import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { EntityScheduleDetailsView } from "../../api/api.auto";
@@ -26,6 +26,10 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import { getProgramChild } from "../../reducers/schedule";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { AsyncTrunkReturned } from "../../reducers/content";
+import { GetProgramsQuery } from "../../api/api-ko.auto";
 
 const useStyles = makeStyles((theme) => ({
   previewContainer: {
@@ -97,7 +101,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface InfoProps {
+interface filterGropProps {
+  programs: EntityScheduleShortInfo[];
+}
+
+interface InfoProps extends filterGropProps {
   conditionFormMethods: UseFormMethods<LearningContentListForm>;
   saveOutcomesList: (value: string[]) => void;
   searchOutcomesList: () => void;
@@ -107,8 +115,19 @@ interface InfoProps {
   scheduleDetial: EntityScheduleDetailsView;
 }
 
-function SelectGroup() {
+function SelectGroup(props: filterGropProps) {
   const classes = useStyles();
+  const { programs } = props;
+  const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>({
+    programs: [],
+    subject: [],
+    category: [],
+    sub: [],
+    age: [],
+    grade: [],
+  });
+  const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>();
+  const dispatch = useDispatch();
   const data = [
     { id: 1, name: "fasdfsadfsdfa" },
     { id: 2, name: "vxzvzxvc" },
@@ -117,22 +136,44 @@ function SelectGroup() {
     { id: 5, name: "fasdgasf213" },
     { id: 6, name: "sdva32rvfsda" },
   ];
+  const autocompleteChange = async (value: any | null, name: string) => {
+    const ids = value?.map((item: any) => {
+      return item.id;
+    });
+    if (name === "program") {
+      const program_id = ids.pop();
+      let resultInfo: any;
+      resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
+        AsyncTrunkReturned<typeof getProgramChild>
+      >;
+      if (resultInfo.payload.programChildInfo) {
+        setProgramChildInfo(
+          [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(programChildInfo ? (programChildInfo as GetProgramsQuery[]) : [])
+        );
+      }
+    }
+    setFilterQuery({ ...filterQuery, [name]: ids });
+  };
+  const filteredList = useMemo(() => {
+    return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo);
+  }, [filterQuery, programChildInfo]);
+  console.log(filteredList);
   return (
     <div className={classes.root}>
       <Grid container spacing={2}>
         <Grid item xs={4}>
           <Autocomplete
             id="combo-box-demo"
-            options={data}
+            options={programs}
             getOptionLabel={(option: any) => option.name}
             multiple
             limitTags={1}
             onChange={(e: any, newValue) => {
-              console.log(newValue);
+              autocompleteChange(newValue, "program");
             }}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Programs").t("schedule_detail_program")} variant="outlined" />
+              <TextField {...params} className={classes.fieldset} label={d("Programs").t("schedule_filter_programs")} variant="outlined" />
             )}
           />
         </Grid>
@@ -226,7 +267,16 @@ function SelectGroup() {
 
 export default function LearingOutcome(props: InfoProps) {
   const classes = useStyles();
-  const { conditionFormMethods, saveOutcomesList, searchOutcomesList, learingOutcomeData, handleClose, outComeIds, scheduleDetial } = props;
+  const {
+    programs,
+    conditionFormMethods,
+    saveOutcomesList,
+    searchOutcomesList,
+    learingOutcomeData,
+    handleClose,
+    outComeIds,
+    scheduleDetial,
+  } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
   const [selectIds, setSelectIds] = React.useState<string[]>(outComeIds);
@@ -412,7 +462,7 @@ export default function LearingOutcome(props: InfoProps) {
         />
       </Box>
       <Box className={classes.flexBox}>
-        <SelectGroup />
+        <SelectGroup programs={programs} />
       </Box>
       <div
         style={{ margin: "20px 0 20px 0" }}

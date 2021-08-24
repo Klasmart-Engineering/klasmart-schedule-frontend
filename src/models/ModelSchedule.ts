@@ -7,10 +7,11 @@ import {
   ParticipantsData,
   ParticipantsShortInfo,
   RolesData,
+  LearningComesFilterQuery,
 } from "../types/scheduleTypes";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/api.auto";
 import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
-import { ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { GetOutcomeList } from "../api/type";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
@@ -258,5 +259,9 @@ export class modelSchedule {
       }
     });
     return { school_name: school_name, school_id: school_id, classes: data, onlyMine: onlyMine };
+  }
+
+  static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {
+    console.log(programChildInfo, filterQuery);
   }
 }
