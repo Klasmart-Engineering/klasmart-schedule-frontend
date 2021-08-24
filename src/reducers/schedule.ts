@@ -256,29 +256,33 @@ export const saveScheduleData = createAsyncThunk<
   EntityScheduleAddView,
   SaveStatusResourseParams & LoadingMetaPayload,
   { state: Rootstate }
->("schedule/save", async ({ payload, is_new_schedule }, { getState }) => {
-  let {
-    schedule: {
-      scheduleDetial: { id },
-    },
-  } = getState();
-  if (!id || is_new_schedule) {
-    const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
-    // @ts-ignore
-    if (!result.data?.id) return result;
-    // @ts-ignore
-    id = result.data?.id;
-  } else {
-    // @ts-ignore
-    const result = await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label));
-    // @ts-ignore
-    if (!result.data?.id) return result;
-    // @ts-ignore
-    id = result.data?.id;
-  }
+>(
+  "schedule/save",
   // @ts-ignore
-  return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
-});
+  async ({ payload, is_new_schedule }, { getState }) => {
+    let {
+      schedule: {
+        scheduleDetial: { id },
+      },
+    } = getState();
+    if (!id || is_new_schedule) {
+      const result = await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
+      // @ts-ignore
+      if (!result.data?.id) return result;
+      // @ts-ignore
+      id = result.data?.id;
+    } else {
+      // @ts-ignore
+      const result = await api.schedules.updateSchedule(id, payload).catch((err) => Promise.reject(err.label));
+      // @ts-ignore
+      if (!result.data?.id) return result;
+      // @ts-ignore
+      id = result.data?.id;
+    }
+    // @ts-ignore
+    return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
+  }
+);
 
 export interface viewSchedulesResultResponse {
   scheduleTimeViewData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
@@ -369,34 +373,38 @@ export const getClassesByOrg = createAsyncThunk("getClassesByOrg", async () => {
   });
 });
 
-export const getParticipantsData = createAsyncThunk("getParticipantsData", async (is_org: boolean) => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  if (is_org) {
-    const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
-      query: ParticipantsByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    });
-    return data.organization;
-  } else {
-    const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
-      query: MySchoolIDsDocument,
-      variables: { organization_id },
-    });
-    if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
-      const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
-        query: ParticipantsBySchoolDocument,
+export const getParticipantsData = createAsyncThunk(
+  "getParticipantsData",
+  // @ts-ignore
+  async (is_org: boolean) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+    if (is_org) {
+      const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
+        query: ParticipantsByOrganizationDocument,
         variables: {
-          school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
+          organization_id,
         },
       });
-      return data.school;
+      return data.organization;
     } else {
-      return { classes: [{ students: [], teachers: [] }] };
+      const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+        query: MySchoolIDsDocument,
+        variables: { organization_id },
+      });
+      if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
+        const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
+          query: ParticipantsBySchoolDocument,
+          variables: {
+            school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
+          },
+        });
+        return data.school;
+      } else {
+        return { classes: [{ students: [], teachers: [] }] };
+      }
     }
   }
-});
+);
 
 export const getClassesBySchool = createAsyncThunk("getClassesBySchool", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
@@ -631,6 +639,7 @@ interface LiveSchedulePayload extends LoadingMetaPayload {
 type LiveScheduleResult = ReturnType<typeof api.schedules.getScheduleLiveToken>;
 export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSchedulePayload>(
   "schedule/live",
+  // @ts-ignore
   async ({ schedule_id, live_token_type }) => {
     return api.schedules.getScheduleLiveToken(schedule_id, { live_token_type: live_token_type }).catch((err) => Promise.reject(err.label));
   }

@@ -155,24 +155,46 @@ export default function FirstSearchHeader(props: FirstSearchHeaderProps) {
                   PermissionType.create_lesson_plan_221,
                 ]}
               >
-                <Button
-                  onClick={handleClickCreate}
-                  variant="contained"
-                  color="primary"
-                  className={css.createBtn}
-                  endIcon={<ArrowDropDownOutlinedIcon />}
-                >
-                  {d("Create").t("library_label_create")}
-                </Button>
-              </PermissionOr>
-              <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
-                <MenuItem onClick={onCreateContent}>{d("New Content").t("library_label_new_content")}</MenuItem>
                 {(value.publish_status === PublishStatus.published ||
                   value.content_type === SearchContentsRequestContentType.assetsandfolder) && (
-                  <Permission value={PermissionType.create_folder_289}>
-                    <MenuItem onClick={handleClickNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
-                  </Permission>
+                  <Button
+                    onClick={handleClickCreate}
+                    variant="contained"
+                    color="primary"
+                    className={css.createBtn}
+                    endIcon={<ArrowDropDownOutlinedIcon />}
+                  >
+                    {d("Create").t("library_label_create")}
+                  </Button>
                 )}
+              </PermissionOr>
+              <StyledMenu anchorEl={anchorCreate} keepMounted open={Boolean(anchorCreate)} onClose={handleCreateClose}>
+                {value.publish_status === PublishStatus.published && (
+                  <>
+                    <MenuItem
+                      onClick={() => {
+                        value.content_type = SearchContentsRequestContentType.material;
+                        onCreateContent();
+                      }}
+                    >
+                      {d("Lesson Material").t("library_label_lesson_material")}
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        value.content_type = SearchContentsRequestContentType.plan;
+                        onCreateContent();
+                      }}
+                    >
+                      {d("Lesson Plan").t("library_label_lesson_plan")}
+                    </MenuItem>
+                  </>
+                )}
+                {value.content_type === SearchContentsRequestContentType.assetsandfolder && (
+                  <MenuItem onClick={onCreateContent}>{d("Assets").t("library_label_assets")}</MenuItem>
+                )}
+                <Permission value={PermissionType.create_folder_289}>
+                  <MenuItem onClick={handleClickNewFolder}>{d("New Folder").t("library_label_new_folder")}</MenuItem>
+                </Permission>
               </StyledMenu>
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={10} lg={8} xl={7}>
