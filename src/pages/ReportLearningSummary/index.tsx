@@ -113,21 +113,9 @@ export function ReportLearningSummary() {
     );
   };
   const handleChangeYearFilter: FilterLearningSummaryProps["onChangeYearFilter"] = (year) => {
-    dispatch(resetSummaryOptions({ year }));
-    dispatch(
-      onLoadLearningSummary({
-        summary_type: tab,
-        year,
-        week_start,
-        week_end,
-        school_id: "",
-        class_id: "",
-        teacher_id: "",
-        student_id: "",
-        subject_id: "",
-        metaLoading: true,
-      })
-    );
+    dispatch(resetSummaryOptions({ year, years: [], weeks: [], week_start: 0, week_end: 0 }));
+    dispatch(onLoadLearningSummary({ summary_type: tab, year, metaLoading: true }));
+    history.replace(`${routeBasePath}/tab/${tab}?lessonIndex=-1&year=${year}`);
   };
   const handleChangeFilter: FilterLearningSummaryProps["onChangeFilter"] = (value, tab) => {
     computeFilterChange(value, tab);

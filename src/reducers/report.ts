@@ -873,7 +873,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     });
     mySchoolId = data.data.user?.school_memberships?.map((item) => item?.school_id).join(",");
   }
-  if (!summaryReportOptions.years.length && !summaryReportOptions.weeks.length) {
+  if (!summaryReportOptions.years.length || !summaryReportOptions.weeks.length) {
     const params = { time_offset: getTimeOffSecond(), summary_type };
     let timeFilterParams: IParamQueryTimeFilter = { ...params };
     if (!isOrg && isSchool) {
@@ -887,7 +887,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     }
     const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ ...timeFilterParams });
     years = timeFilter.length ? timeFilter.map((item) => item.year as number) : [2021];
-    _year = years[years.length - 1];
+    _year = year ? year : years[years.length - 1];
     const _weeks = timeFilter.length ? timeFilter.find((item) => item.year === _year)?.weeks : [];
     weeks = _weeks
       ? _weeks.map((item) => {
