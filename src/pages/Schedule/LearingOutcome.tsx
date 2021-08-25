@@ -30,6 +30,8 @@ import { getProgramChild } from "../../reducers/schedule";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { GetProgramsQuery } from "../../api/api-ko.auto";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
 const useStyles = makeStyles((theme) => ({
   previewContainer: {
@@ -120,11 +122,11 @@ function SelectGroup(props: filterGropProps) {
   const { programs, searchOutcomesList } = props;
   const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>({
     programs: [],
-    subject: [],
-    category: [],
-    sub: [],
-    age: [],
-    grade: [],
+    subjects: [],
+    categorys: [],
+    subs: [],
+    ages: [],
+    grades: [],
   });
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>();
   const dispatch = useDispatch();
@@ -133,7 +135,11 @@ function SelectGroup(props: filterGropProps) {
       return item.id;
     });
     const program_id = ids.pop();
-    if (name === "programs" && program_id) {
+    const is_exist = () =>
+      programChildInfo?.some((item) => {
+        return item?.program?.id === program_id;
+      });
+    if (name === "programs" && program_id && !is_exist()) {
       let resultInfo: any;
       resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getProgramChild>
@@ -150,21 +156,24 @@ function SelectGroup(props: filterGropProps) {
         return item.id;
       }),
     };
-    setFilterQuery(filterData);
+    setFilterQuery(programChildInfo?.length > 0 ? modelSchedule.learningOutcomeFilerGroup(filterData, programChildInfo).query : filterData);
     const values = (item: string[]) => (item.length > 0 ? item : null);
     const filterQueryAssembly = {
       program_ids: values(filterData.programs),
-      subject_ids: values(filterData.subject),
-      category_ids: values(filterData.category),
-      sub_category_ids: values(filterData.sub),
-      age_ids: values(filterData.age),
-      grade_ids: values(filterData.grade),
+      subject_ids: values(filterData.subjects),
+      category_ids: values(filterData.categorys),
+      sub_category_ids: values(filterData.subs),
+      age_ids: values(filterData.ages),
+      grade_ids: values(filterData.grades),
     };
     searchOutcomesList(filterQueryAssembly);
   };
   const filteredList = useMemo(() => {
-    return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo);
+    return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
   }, [filterQuery, programChildInfo]);
+  const defaultValues = (enumType: string) => filteredList[enumType]?.filter((item) => filterQuery[enumType]?.includes(item.id as string));
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
   return (
     <div className={classes.root}>
       <Grid container spacing={2}>
@@ -178,6 +187,13 @@ function SelectGroup(props: filterGropProps) {
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "programs");
             }}
+            disableCloseOnSelect
+            renderOption={(option, { selected }) => (
+              <React.Fragment>
+                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </React.Fragment>
+            )}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
               <TextField {...params} className={classes.fieldset} label={d("Programs").t("schedule_filter_programs")} variant="outlined" />
@@ -191,9 +207,17 @@ function SelectGroup(props: filterGropProps) {
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
+            value={defaultValues("subjects")}
             onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "subject");
+              autocompleteChange(newValue, "subjects");
             }}
+            disableCloseOnSelect
+            renderOption={(option, { selected }) => (
+              <React.Fragment>
+                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </React.Fragment>
+            )}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
               <TextField {...params} className={classes.fieldset} label={d("Subject").t("schedule_detail_subject")} variant="outlined" />
@@ -207,9 +231,17 @@ function SelectGroup(props: filterGropProps) {
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
+            value={defaultValues("categorys")}
             onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "category");
+              autocompleteChange(newValue, "categorys");
             }}
+            disableCloseOnSelect
+            renderOption={(option, { selected }) => (
+              <React.Fragment>
+                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </React.Fragment>
+            )}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
               <TextField {...params} className={classes.fieldset} label={d("Category").t("assess_label_category")} variant="outlined" />
@@ -223,9 +255,17 @@ function SelectGroup(props: filterGropProps) {
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
+            value={defaultValues("subs")}
             onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "sub");
+              autocompleteChange(newValue, "subs");
             }}
+            disableCloseOnSelect
+            renderOption={(option, { selected }) => (
+              <React.Fragment>
+                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </React.Fragment>
+            )}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
               <TextField {...params} className={classes.fieldset} label={d("Sub Category").t("schedule_sub_category")} variant="outlined" />
@@ -239,9 +279,17 @@ function SelectGroup(props: filterGropProps) {
             getOptionLabel={(option: any) => option.name}
             multiple
             limitTags={1}
+            value={defaultValues("ages")}
             onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "age");
+              autocompleteChange(newValue, "ages");
             }}
+            disableCloseOnSelect
+            renderOption={(option, { selected }) => (
+              <React.Fragment>
+                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </React.Fragment>
+            )}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
               <TextField {...params} className={classes.fieldset} label={d("Age").t("assess_label_age")} variant="outlined" />
@@ -255,9 +303,17 @@ function SelectGroup(props: filterGropProps) {
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
+            value={defaultValues("grades")}
             onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "grade");
+              autocompleteChange(newValue, "grades");
             }}
+            disableCloseOnSelect
+            renderOption={(option, { selected }) => (
+              <React.Fragment>
+                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </React.Fragment>
+            )}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
               <TextField {...params} className={classes.fieldset} label={d("Grade").t("library_label_grade")} variant="outlined" />

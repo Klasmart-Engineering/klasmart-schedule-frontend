@@ -264,9 +264,11 @@ export class modelSchedule {
 
   static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {
     const assembly = { subjects: [], categorys: [], subs: [], ages: [], grades: [] };
+    const query = { programs: [], subjects: [], categorys: [], subs: [], ages: filterQuery?.ages, grades: filterQuery?.grades };
     const is_active = (status: Status | null | undefined) => status === "active";
     programChildInfo?.forEach((item) => {
       if (!filterQuery?.programs.includes(item.program?.id as string)) return;
+      query.programs.push(item.program?.id as never);
       item.program?.age_ranges?.map((age) => {
         if (is_active(age.status)) assembly.ages.push(age as never);
       });
@@ -275,14 +277,20 @@ export class modelSchedule {
       });
       item.program?.subjects?.map((subject) => {
         if (is_active(subject.status)) assembly.subjects.push({ id: subject.id, name: subject.name } as never);
+        if (!filterQuery?.subjects.includes(subject.id as string)) return;
+        query.subjects.push(subject.id as never);
         subject.categories?.map((category) => {
           if (is_active(category.status)) assembly.categorys.push({ id: category.id, name: category.name } as never);
+          if (!filterQuery?.categorys.includes(category.id as string)) return;
+          query.categorys.push(category.id as never);
           category.subcategories?.map((sub) => {
             if (is_active(sub.status)) assembly.subs.push({ id: sub.id, name: sub.name } as never);
+            if (!filterQuery?.subs.includes(sub.id as string)) return;
+            query.subs.push(sub.id as never);
           });
         });
       });
     });
-    return assembly;
+    return { query, assembly };
   }
 }

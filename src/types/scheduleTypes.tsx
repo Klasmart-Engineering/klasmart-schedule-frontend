@@ -273,9 +273,9 @@ export interface LearningContentListForm {
 
 export interface LearningComesFilterQuery {
   programs: string[];
-  subject: string[];
-  category: string[];
-  sub: string[];
-  age: string[];
-  grade: string[];
+  subjects: string[];
+  categorys: string[];
+  subs: string[];
+  ages: string[];
+  grades: string[];
 }
