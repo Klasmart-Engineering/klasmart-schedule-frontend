@@ -13,6 +13,7 @@ import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/
 import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import { GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { GetOutcomeList } from "../api/type";
+import { Status } from "../api/api-ko-schema.auto";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -262,6 +263,26 @@ export class modelSchedule {
   }
 
   static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {
-    console.log(programChildInfo, filterQuery);
+    const assembly = { subjects: [], categorys: [], subs: [], ages: [], grades: [] };
+    const is_active = (status: Status | null | undefined) => status === "active";
+    programChildInfo?.forEach((item) => {
+      if (!filterQuery?.programs.includes(item.program?.id as string)) return;
+      item.program?.age_ranges?.map((age) => {
+        if (is_active(age.status)) assembly.ages.push(age as never);
+      });
+      item.program?.grades?.map((grade) => {
+        if (is_active(grade.status)) assembly.grades.push(grade as never);
+      });
+      item.program?.subjects?.map((subject) => {
+        if (is_active(subject.status)) assembly.subjects.push({ id: subject.id, name: subject.name } as never);
+        subject.categories?.map((category) => {
+          if (is_active(category.status)) assembly.categorys.push({ id: category.id, name: category.name } as never);
+          category.subcategories?.map((sub) => {
+            if (is_active(sub.status)) assembly.subs.push({ id: sub.id, name: sub.name } as never);
+          });
+        });
+      });
+    });
+    return assembly;
   }
 }

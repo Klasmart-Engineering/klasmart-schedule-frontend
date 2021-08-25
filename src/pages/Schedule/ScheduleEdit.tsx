@@ -1656,12 +1656,13 @@ function EditBox(props: CalendarStateProps) {
     await dispatch(actOutcomeList(clearNull(query)));
   };
 
-  const searchOutcomesList = async () => {
+  const searchOutcomesList = async (filterQueryAssembly: object) => {
     const query = {
       exect_search: getValues().search_type,
       search_key: getValues().search_value,
       assumed: getValues().is_assumed ? 1 : -1,
       page: getValues().page,
+      ...filterQueryAssembly,
     };
     setCondition({ ...query });
     const condition = scheduleDetial.id ? { ...query, schedule_id: scheduleDetial.id } : query;
@@ -1749,6 +1750,17 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Grid>
         </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ borderRadius: "20px", height: "36px", fontSize: "12px" }}
+          onClick={() => {
+            handeLearingOutcome();
+          }}
+        >
+          <span>{d("Set Learning Outcome").t("schedule_set_learning_outcome")}</span>
+          {outComeIds.length > 0 && <div className={css.learnOutcomeCounter}>{outComeIds.length}</div>}
+        </Button>
         <TextField
           className={css.fieldset}
           label={d("Class Type").t("schedule_detail_class_type")}

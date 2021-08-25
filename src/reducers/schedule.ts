@@ -704,12 +704,12 @@ export const getScheduleViewInfo = createAsyncThunk<GetScheduleViewInfoResult, G
   }
 );
 
-type IQueryOutcomeListParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
-type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
+type IQueryOutcomeListParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] & LoadingMetaPayload;
+type IQueryOutcomeListResult = AsyncReturnType<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>;
 export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
-  "outcome/outcomeList",
+  "publishedLearningOutcomes/searchPublishedLearningOutcomes",
   async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(query);
     return { list, total, page: query.page };
   }
 );

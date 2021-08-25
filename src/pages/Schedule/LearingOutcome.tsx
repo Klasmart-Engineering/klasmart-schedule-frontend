@@ -103,12 +103,12 @@ const useStyles = makeStyles((theme) => ({
 
 interface filterGropProps {
   programs: EntityScheduleShortInfo[];
+  searchOutcomesList: (filterQueryAssembly: object) => void;
 }
 
 interface InfoProps extends filterGropProps {
   conditionFormMethods: UseFormMethods<LearningContentListForm>;
   saveOutcomesList: (value: string[]) => void;
-  searchOutcomesList: () => void;
   learingOutcomeData: LearningContentListForm;
   handleClose: () => void;
   outComeIds: string[];
@@ -117,7 +117,7 @@ interface InfoProps extends filterGropProps {
 
 function SelectGroup(props: filterGropProps) {
   const classes = useStyles();
-  const { programs } = props;
+  const { programs, searchOutcomesList } = props;
   const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>({
     programs: [],
     subject: [],
@@ -128,20 +128,12 @@ function SelectGroup(props: filterGropProps) {
   });
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>();
   const dispatch = useDispatch();
-  const data = [
-    { id: 1, name: "fasdfsadfsdfa" },
-    { id: 2, name: "vxzvzxvc" },
-    { id: 3, name: "3re132r" },
-    { id: 4, name: "sadvasdgf312" },
-    { id: 5, name: "fasdgasf213" },
-    { id: 6, name: "sdva32rvfsda" },
-  ];
   const autocompleteChange = async (value: any | null, name: string) => {
     const ids = value?.map((item: any) => {
       return item.id;
     });
-    if (name === "program") {
-      const program_id = ids.pop();
+    const program_id = ids.pop();
+    if (name === "programs" && program_id) {
       let resultInfo: any;
       resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getProgramChild>
@@ -152,16 +144,31 @@ function SelectGroup(props: filterGropProps) {
         );
       }
     }
-    setFilterQuery({ ...filterQuery, [name]: ids });
+    const filterData = {
+      ...filterQuery,
+      [name]: value?.map((item: any) => {
+        return item.id;
+      }),
+    };
+    setFilterQuery(filterData);
+    const values = (item: string[]) => (item.length > 0 ? item : null);
+    const filterQueryAssembly = {
+      program_ids: values(filterData.programs),
+      subject_ids: values(filterData.subject),
+      category_ids: values(filterData.category),
+      sub_category_ids: values(filterData.sub),
+      age_ids: values(filterData.age),
+      grade_ids: values(filterData.grade),
+    };
+    searchOutcomesList(filterQueryAssembly);
   };
   const filteredList = useMemo(() => {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo);
   }, [filterQuery, programChildInfo]);
-  console.log(filteredList);
   return (
     <div className={classes.root}>
       <Grid container spacing={2}>
-        <Grid item xs={4}>
+        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
             options={programs}
@@ -169,7 +176,7 @@ function SelectGroup(props: filterGropProps) {
             multiple
             limitTags={1}
             onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "program");
+              autocompleteChange(newValue, "programs");
             }}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
@@ -177,14 +184,15 @@ function SelectGroup(props: filterGropProps) {
             )}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={data}
+            options={filteredList.subjects}
+            limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
             onChange={(e: any, newValue) => {
-              console.log(newValue);
+              autocompleteChange(newValue, "subject");
             }}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
@@ -192,14 +200,15 @@ function SelectGroup(props: filterGropProps) {
             )}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={data}
+            options={filteredList.categorys}
+            limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
             onChange={(e: any, newValue) => {
-              console.log(newValue);
+              autocompleteChange(newValue, "category");
             }}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
@@ -207,56 +216,51 @@ function SelectGroup(props: filterGropProps) {
             )}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={data}
+            options={filteredList.subs}
+            limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
-            limitTags={1}
             onChange={(e: any, newValue) => {
-              console.log(newValue);
+              autocompleteChange(newValue, "sub");
             }}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
-              <TextField
-                {...params}
-                className={classes.fieldset}
-                placeholder={d("Sub Category").t("schedule_sub_category")}
-                variant="outlined"
-              />
+              <TextField {...params} className={classes.fieldset} label={d("Sub Category").t("schedule_sub_category")} variant="outlined" />
             )}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={data}
+            options={filteredList.ages}
             getOptionLabel={(option: any) => option.name}
             multiple
             limitTags={1}
             onChange={(e: any, newValue) => {
-              console.log(newValue);
+              autocompleteChange(newValue, "age");
             }}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} placeholder={d("Age").t("assess_label_age")} variant="outlined" />
+              <TextField {...params} className={classes.fieldset} label={d("Age").t("assess_label_age")} variant="outlined" />
             )}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={data}
+            options={filteredList.grades}
+            limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
-            limitTags={1}
             onChange={(e: any, newValue) => {
-              console.log(newValue);
+              autocompleteChange(newValue, "grade");
             }}
             style={{ transform: "scale(0.9)" }}
             renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} placeholder={d("Grade").t("library_label_grade")} variant="outlined" />
+              <TextField {...params} className={classes.fieldset} label={d("Grade").t("library_label_grade")} variant="outlined" />
             )}
           />
         </Grid>
@@ -352,7 +356,7 @@ export default function LearingOutcome(props: InfoProps) {
     //  dispatch(resetActOutcomeList([]));
     setValue(`is_assumed`, value);
     setValue(`page`, 1);
-    searchOutcomesList();
+    searchOutcomesList({});
   };
 
   const filterCode = [
@@ -434,7 +438,7 @@ export default function LearingOutcome(props: InfoProps) {
             onClick={() => {
               // dispatch(resetActOutcomeList([]));
               setValue(`page`, 1);
-              searchOutcomesList();
+              searchOutcomesList({});
             }}
           >
             {d("Search").t("library_label_search")}
@@ -462,7 +466,7 @@ export default function LearingOutcome(props: InfoProps) {
         />
       </Box>
       <Box className={classes.flexBox}>
-        <SelectGroup programs={programs} />
+        <SelectGroup programs={programs} searchOutcomesList={searchOutcomesList} />
       </Box>
       <div
         style={{ margin: "20px 0 20px 0" }}

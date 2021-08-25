@@ -1662,6 +1662,39 @@ export interface ModelPublishOutcomeReq {
   scope?: string;
 }
 
+export interface ModelPublishedOutcomeView {
+  age_ids?: string[];
+  ancestor_id?: string;
+  assumed?: boolean;
+  author_id?: string;
+  category_ids?: string[];
+  created_at?: number;
+  description?: string;
+  estimated_time?: number;
+  grade_ids?: string[];
+  keywords?: string[];
+  latest_id?: string;
+  locked_by?: string;
+  organization_id?: string;
+  outcome_id?: string;
+  outcome_name?: string;
+  program_ids?: string[];
+  publish_scope?: string;
+  publish_status?: string;
+  reject_reason?: string;
+  sets?: ModelOutcomeSetCreateView[];
+  shortcode?: string;
+  source_id?: string;
+  sub_category_ids?: string[];
+  subject_ids?: string[];
+  update_at?: number;
+}
+
+export interface ModelSearchPublishedOutcomeResponse {
+  list?: ModelPublishedOutcomeView[];
+  total?: number;
+}
+
 export interface ModelSkill {
   skill_id?: string;
   skill_name?: string;
@@ -3284,6 +3317,41 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get program groups
      */
     getProgramGroup: (params?: RequestParams) => this.request<string[], ApiInternalServerErrorResponse>(`/programs_groups`, "GET", params),
+  };
+  publishedLearningOutcomes = {
+    /**
+     * @tags learning_outcomes
+     * @name searchPublishedLearningOutcomes
+     * @summary search published learning outcome
+     * @request GET:/published_learning_outcomes
+     * @description search published learning outcome with outcome sets
+     */
+    searchPublishedLearningOutcomes: (
+      query?: {
+        outcome_name?: string;
+        description?: string;
+        keywords?: string;
+        shortcode?: string;
+        author_name?: string;
+        set_name?: string;
+        search_key?: string;
+        assumed?: number;
+        program_ids?: string[];
+        subject_ids?: string[];
+        category_ids?: string[];
+        sub_category_ids?: string[];
+        age_ids?: string[];
+        grade_ids?: string[];
+        page?: number;
+        page_size?: number;
+        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<
+        ModelSearchPublishedOutcomeResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/published_learning_outcomes${this.addQueryParams(query)}`, "GET", params),
   };
   reports = {
     /**
