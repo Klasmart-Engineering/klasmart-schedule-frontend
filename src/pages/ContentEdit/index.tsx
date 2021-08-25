@@ -7,7 +7,7 @@ import {
   rectIntersection,
   TouchSensor,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import debounce from "lodash/debounce";
@@ -36,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchOutcomeList,
+  searchOutcomeList
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -53,7 +53,7 @@ import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import { Regulation } from "./type";
 const SCROLL_DETECT_INTERVAL = 100;
-interface RouteParams {
+export interface ContentEditRouteParams {
   lesson: "assets" | "material" | "plan";
   tab: "details" | "outcomes" | "media" | "assetDetails";
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
@@ -69,7 +69,7 @@ export const useQueryCms = () => {
   const isShare = query.get("isShare") || "org";
   const editindex: number = Number(query.get("editindex") || 0);
   const back = query.get("back") || "";
-  const exactSerch = query.get("exactSerch") || "all";
+  const exactSerch = query.get("exactSerch") || "";
   return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch };
 };
 
@@ -79,7 +79,7 @@ const setQuery = (search: string, hash: Record<string, string | number | boolean
   return query.toString();
 };
 
-const parseRightside = (rightside: RouteParams["rightside"]) => ({
+const parseRightside = (rightside: ContentEditRouteParams["rightside"]) => ({
   includePlanComposeGraphic: rightside.includes("planComposeGraphic"),
   includePlanComposeText: rightside.includes("planComposeText"),
   includeH5p: rightside.includes("H5p"),
@@ -102,7 +102,7 @@ function ContentEditForm() {
     visibility_settings,
     lesson_types,
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
-  const { lesson, tab, rightside } = useParams<RouteParams>();
+  const { lesson, tab, rightside } = useParams<ContentEditRouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
   const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
@@ -119,6 +119,7 @@ function ContentEditForm() {
   const { program, developmental, subject } = watch(["program", "subject", "developmental"]);
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
+  const addedLOLength = watch("outcome_entities")?.length;
   const activeRectRef = useRef<Active["rect"]>();
   const unmountRef = useRef<Function>();
   const isTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -254,7 +255,7 @@ function ContentEditForm() {
     [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => ({ value = "", exactSerch = "all", assumed }) => {
+    () => ({ value = "", exactSerch = "search_key", assumed }) => {
       history.replace({
         search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
       });
@@ -363,7 +364,7 @@ function ContentEditForm() {
   }, [scrollTop]);
   useEffect(() => {
     dispatch(
-      onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "badanamu" })
+      onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "badanamu", exactSerch })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch]);
@@ -379,7 +380,7 @@ function ContentEditForm() {
     />
   );
   const contentTabs = (
-    <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.name || errors.publish_scope || errors.subject}>
+    <ContentTabs tab={tab} addedLOLength={addedLOLength} onChangeTab={handleChangeTab} error={errors.name || errors.publish_scope || errors.subject}>
       <PermissionOr
         value={[
           PermissionType.edit_org_published_content_235,
@@ -413,6 +414,7 @@ function ContentEditForm() {
         list={outcomeList}
         onSearch={handleSearchOutcomes}
         searchName={searchOutcome}
+        exactSerch={exactSerch}
         assumed={assumed}
         total={OutcomesListTotal}
         onChangePage={handleChangePageOutCome}
@@ -618,18 +620,6 @@ function ContentEditForm() {
         inputSourceWatch={inputSource}
         teacherManualBatchLengthWatch={teacherManualBatchLengthWatch}
       />
-      {/* <PermissionOr
-        value={[
-          PermissionType.create_content_page_201,
-          PermissionType.edit_org_published_content_235,
-          PermissionType.create_asset_320,
-          PermissionType.create_lesson_material_220,
-          PermissionType.create_lesson_plan_221,
-          PermissionType.edit_lesson_material_metadata_and_content_236,
-          PermissionType.edit_lesson_plan_content_238,
-          PermissionType.edit_lesson_plan_metadata_237,
-        ]}
-        render={(value) => */}
       {(contentDetail.content_type !== ContentType.assets && id ? !!contentDetail.permission.allow_edit : hasPerm) ? (
         <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
           {
@@ -653,7 +643,7 @@ function ContentEditForm() {
 
 export default function ContentEdit() {
   const { id, editindex } = useQueryCms();
-  const { lesson } = useParams<RouteParams>();
+  const { lesson } = useParams<ContentEditRouteParams>();
   return (
     <div
       onContextMenu={(e) => {

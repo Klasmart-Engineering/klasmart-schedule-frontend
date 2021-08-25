@@ -8,7 +8,7 @@ import {
   OrganizationsQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
-  QeuryMeQueryVariables,
+  QeuryMeQueryVariables
 } from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
@@ -18,7 +18,7 @@ import {
   EntityFolderContentData,
   EntityFolderItemInfo,
   EntityOrganizationInfo,
-  EntityOrganizationProperty,
+  EntityOrganizationProperty
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import {
@@ -28,7 +28,7 @@ import {
   GetOutcomeList,
   OutcomePublishStatus,
   PublishStatus,
-  SearchContentsRequestContentType,
+  SearchContentsRequestContentType
 } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -328,6 +328,7 @@ interface onLoadContentEditPayload extends LoadingMetaPayload {
   searchOutcome?: string;
   assumed?: boolean;
   isShare?: boolean;
+  exactSerch?: string;
 }
 
 interface onLoadContentEditResult {
@@ -339,7 +340,7 @@ interface onLoadContentEditResult {
 }
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
-  async ({ id, type, searchMedia, searchOutcome, assumed, isShare }, { dispatch }) => {
+  async ({ id, type, searchMedia, searchOutcome, assumed, isShare,exactSerch }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
     const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
@@ -359,7 +360,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
             )
         : undefined,
       type === "material" || type === "plan"
-        ? dispatch(searchOutcomeList({ search_key: searchOutcome, page: 1, assumed: assumed ? 1 : -1 }))
+        ? dispatch(searchOutcomeList({ search_key: searchOutcome, exactSerch, page: 1, assumed: assumed ? 1 : -1 }))
         : undefined,
       dispatch(
         getLinkedMockOptions({

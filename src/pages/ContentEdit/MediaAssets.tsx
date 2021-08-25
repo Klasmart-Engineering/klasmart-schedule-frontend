@@ -5,6 +5,7 @@ import clsx from "clsx";
 import React, { useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
+import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType } from "../../api/type";
@@ -136,7 +137,7 @@ export interface MediaAssetsProps {
   permission: boolean;
 }
 export default function MediaAssets(props: MediaAssetsProps) {
-  const { lesson } = useParams();
+  const { lesson } = useParams<ContentEditRouteParams>();
   const css = useStyles();
   const { list, comingsoon, value, onSearch, total, onChangePage, mediaPage, isShare, permission } = props;
   const { active } = useDndContext();
@@ -208,8 +209,8 @@ export default function MediaAssets(props: MediaAssetsProps) {
       {comingsoon && lesson !== "plan" ? (
         comingsoonTip
       ) : (
-        <Box width="100%">
-          <SearchcmsList searchType="searchMedia" onSearch={onSearch} value={value} lesson={lesson} isShare={isShare} />
+        <Box width="100%" pt={3}>
+          <SearchcmsList onSearch={onSearch} value={value} lesson={lesson} isShare={isShare} />
           {list.length > 0 ? table : resultsTip}
           <div>{createPortal(overlay, document.body)}</div>
         </Box>

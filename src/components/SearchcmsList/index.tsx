@@ -9,14 +9,16 @@ import {
   RadioGroup,
   TextField,
   TextFieldProps,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
-const useStyles = makeStyles(({ breakpoints }) => ({
+import { menuItemList } from "../../pages/ContentEdit/Details";
+import { LinkedMockOptionsItem } from "../../reducers/content";
+const useStyles = makeStyles(({ breakpoints,shadows, palette }) => ({
   searchField: {
     flexGrow: 1,
     marginLeft: 24,
@@ -110,21 +112,31 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       display: "none",
     },
   },
+  searchTextField: {
+      width: 200,
+      height: 40,
+      backgroundColor: "white",
+      borderRadius: 4,
+      // boxShadow: shadows[3],
+      color: palette.text.primary,
+      marginRight: 20,
+  }
 }));
 export interface SearchItems {
   value?: string;
   exactSerch?: string;
   assumed?: boolean;
   isShare?: string;
+  program?: string;
+  subject?: string;
 }
 export interface SearchcmsListProps extends SearchItems {
-  searchType: "searchMedia" | "searchOutcome";
   lesson?: string;
   onSearch: (query: SearchItems) => any;
 }
 export const SearchcmsList = (props: SearchcmsListProps) => {
   const css = useStyles(props);
-  const { searchType, lesson, onSearch, exactSerch = "all", value, assumed, isShare } = props;
+  const { lesson, onSearch, exactSerch = "all", value,isShare } = props;
   const { getValues, control } = useForm<SearchItems>();
   const handleClickSearch = useCallback(() => {
     onSearch(getValues());
@@ -133,7 +145,7 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch();
   };
-  const selectRadio = searchType === "searchMedia" && lesson === "plan" && (
+  const selectRadio = lesson === "plan" && (
     <Controller
       name="isShare"
       control={control}
@@ -163,188 +175,204 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
   );
   return (
     <Box>
-      <Box display="flex" justifyContent="center" pt={3} pb={1} width="100%">
-        {searchType === "searchOutcome" && (
-          <>
+      <Box display="flex" justifyContent="center" pb={1} width="100%">
+        <Controller
+          control={control}
+          name="value"
+          defaultValue={value}
+          render={(valueProps) => (
             <Controller
+              name="exactSerch"
               control={control}
-              name="value"
-              defaultValue={value}
-              render={(valueProps) => (
-                <Controller
-                  name="exactSerch"
-                  control={control}
-                  defaultValue={exactSerch}
-                  render={(exactSerchProps) => (
-                    <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
-                      <TextField
-                        defaultValue={exactSerchProps.value}
-                        onChange={(e) => {
-                          exactSerchProps.onChange(e.target.value);
-                          handleClickSearch();
-                        }}
-                        select
-                        className={css.exactSerch}
-                        size="small"
-                      >
-                        <MenuItem value="search_key">{d("All").t("assess_filter_all")}</MenuItem>
-                        <MenuItem value="author_name">{d("Author").t("assess_label_author")}</MenuItem>
-                        <MenuItem value="shortcode">{d("Code").t("assess_search_code")}</MenuItem>
-                        <MenuItem value="description">{d("Description").t("assess_label_description")}</MenuItem>
-                        <MenuItem value="keywords">{d("Keywords").t("assess_label_keywords")}</MenuItem>
-                        <MenuItem value="outcome_name">{d("Name").t("assess_search_name")}</MenuItem>
-                        <MenuItem value="set_name">{d("Set").t("assess_search_set")}</MenuItem>
-                      </TextField>
-                      <TextField
-                        {...valueProps}
-                        size="small"
-                        fullWidth
-                        className={css.searchText}
-                        onKeyPress={handleKeyPress}
-                        placeholder={d("Search").t("library_label_search")}
-                      />
-                    </div>
-                  )}
-                />
-              )}
-            />
-            <Button
-              color="primary"
-              variant="contained"
-              size="small"
-              className={clsx(css.buttonMinWidth, css.fieldset)}
-              startIcon={<Search />}
-              onClick={handleClickSearch}
-            >
-              {d("Search").t("library_label_search")}
-            </Button>
-            {/* <Hidden smDown>
-              <Controller
-                as={TextField}
-                control={control}
-                onKeyPress={handleKeyPress}
-                name="value"
-                defaultValue={value}
-                size="small"
-                className={clsx(css.fieldset, css.searchField)}
-                placeholder={d("Search").t("library_label_search")}
-              />
-              <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                className={clsx(css.buttonMinWidth, css.fieldset)}
-                startIcon={<Search />}
-                onClick={handleClickSearch}
-              >
-                {d("Search").t("library_label_search")}
-              </Button>
-            </Hidden>
-            <Hidden mdUp>
-              <Controller
-                as={TextField}
-                control={control}
-                onKeyPress={handleKeyPress}
-                name="value"
-                defaultValue={value}
-                size="small"
-                className={clsx(css.fieldset, css.searchField)}
-                placeholder={d("Search").t("library_label_search")}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search
-                        style={{
-                          cursor: "pointer",
-                        }}
-                        onClick={handleClickSearch}
-                      />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Hidden> */}
-          </>
-        )}
-        {searchType === "searchMedia" && (
-          <>
-            <Controller
-              control={control}
-              name="value"
-              defaultValue={value}
-              render={(valueProps) => (
-                <Controller
-                  name="exactSerch"
-                  control={control}
-                  defaultValue={exactSerch}
-                  render={(exactSerchProps) => (
-                    <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
-                      <TextField
-                        defaultValue={exactSerchProps.value}
-                        onChange={(e) => {
-                          exactSerchProps.onChange(e.target.value);
-                          handleClickSearch();
-                        }}
-                        select
-                        className={css.exactSerch}
-                        size="small"
-                      >
-                        <MenuItem value="all">{d("All").t("assess_search_all")}</MenuItem>
-                        <MenuItem value="name">{d("Name").t("library_label_name")}</MenuItem>
-                      </TextField>
-                      <TextField
-                        {...valueProps}
-                        size="small"
-                        fullWidth
-                        className={css.searchText}
-                        onKeyPress={handleKeyPress}
-                        placeholder={d("Search").t("library_label_search")}
-                      />
-                    </div>
-                  )}
-                />
-              )}
-            />
-            <Button
-              color="primary"
-              variant="contained"
-              size="small"
-              className={clsx(css.buttonMinWidth, css.fieldset)}
-              startIcon={<Search />}
-              onClick={handleClickSearch}
-            >
-              {d("Search").t("library_label_search")}
-            </Button>
-          </>
-        )}
-
-        {searchType === "searchOutcome" && (
-          <Controller
-            name="assumed"
-            defaultValue={assumed}
-            control={control}
-            render={(assumedProps) => (
-              <FormControlLabel
-                className={css.checkField}
-                control={
-                  <Checkbox
-                    checked={assumedProps.value}
+              defaultValue={exactSerch}
+              render={(exactSerchProps) => (
+                <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
+                  <TextField
+                    defaultValue={exactSerchProps.value}
                     onChange={(e) => {
-                      assumedProps.onChange(e.target.checked);
+                      exactSerchProps.onChange(e.target.value);
                       handleClickSearch();
                     }}
-                    color="primary"
+                    select
+                    className={css.exactSerch}
+                    size="small"
+                  >
+                    <MenuItem value="all">{d("All").t("assess_search_all")}</MenuItem>
+                    <MenuItem value="name">{d("Name").t("library_label_name")}</MenuItem>
+                  </TextField>
+                  <TextField
+                    {...valueProps}
+                    size="small"
+                    fullWidth
+                    className={css.searchText}
+                    onKeyPress={handleKeyPress}
+                    placeholder={d("Search").t("library_label_search")}
                   />
-                }
-                label={d("Assumed").t("assess_filter_assumed")}
-              />
-            )}
-          />
-        )}
-
+                </div>
+              )}
+            />
+          )}
+        />
+        <Button
+          color="primary"
+          variant="contained"
+          size="small"
+          className={clsx(css.buttonMinWidth, css.fieldset)}
+          startIcon={<Search />}
+          onClick={handleClickSearch}
+        >
+          {d("Search").t("library_label_search")}
+        </Button>
         <div className={css.selectRadioInline}>{selectRadio}</div>
       </Box>
       <div className={css.selectRadioWrap}>{selectRadio}</div>
     </Box>
+  );
+};
+export interface SearchOutcomesProps extends SearchItems {
+  onSearch: (query: SearchItems) => any;
+  onChangeOutcomeProgram: (value: string) => any;
+  onChangeOutcomeSubject: (value: string[]) => any;
+  programList?: LinkedMockOptionsItem[];
+  subjectList?: LinkedMockOptionsItem[];
+}
+export const SearchOutcoms = (props: SearchOutcomesProps) => {
+  const css = useStyles(props);
+  const { onSearch, exactSerch , value, assumed,  program = "", subject = "",programList, 
+  subjectList,onChangeOutcomeProgram,onChangeOutcomeSubject } = props;
+  const { getValues, control } = useForm<SearchItems>();
+  const handleClickSearch = useCallback(() => {
+    onSearch(getValues());
+  }, [getValues, onSearch]);
+  const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
+    if (event.key === "Enter") handleClickSearch();
+  };
+  return (
+   <div>
+
+    <Box display="flex" justifyContent="center" pb={1} width="100%">
+      <Controller
+        control={control}
+        name="value"
+        defaultValue={value}
+        render={(valueProps) => (
+          <Controller
+            name="exactSerch"
+            control={control}
+            defaultValue={exactSerch}
+            render={(exactSerchProps) => (
+              <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
+                <TextField
+                  defaultValue={exactSerchProps.value}
+                  onChange={(e) => {
+                    exactSerchProps.onChange(e.target.value);
+                    handleClickSearch();
+                  }}
+                  select
+                  className={css.exactSerch}
+                  size="small"
+                >
+                  <MenuItem value="search_key">{d("All").t("assess_filter_all")}</MenuItem>
+                  <MenuItem value="author_name">{d("Author").t("assess_label_author")}</MenuItem>
+                  <MenuItem value="shortcode">{d("Code").t("assess_search_code")}</MenuItem>
+                  <MenuItem value="description">{d("Description").t("assess_label_description")}</MenuItem>
+                  <MenuItem value="keywords">{d("Keywords").t("assess_label_keywords")}</MenuItem>
+                  <MenuItem value="outcome_name">{d("Name").t("assess_search_name")}</MenuItem>
+                  <MenuItem value="set_name">{d("Set").t("assess_search_set")}</MenuItem>
+                </TextField>
+                <TextField
+                  {...valueProps}
+                  size="small"
+                  fullWidth
+                  className={css.searchText}
+                  onKeyPress={handleKeyPress}
+                  placeholder={d("Search").t("library_label_search")}
+                />
+              </div>
+            )}
+          />
+        )}
+      />
+      <Button
+        color="primary"
+        variant="contained"
+        size="small"
+        className={clsx(css.buttonMinWidth, css.fieldset)}
+        startIcon={<Search />}
+        onClick={handleClickSearch}
+      >
+        {d("Search").t("library_label_search")}
+      </Button>
+      <Controller
+        name="assumed"
+        defaultValue={assumed}
+        control={control}
+        render={(assumedProps) => (
+          <FormControlLabel
+            className={css.checkField}
+            control={
+              <Checkbox
+                checked={assumedProps.value}
+                onChange={(e) => {
+                  assumedProps.onChange(e.target.checked);
+                  handleClickSearch();
+                }}
+                color="primary"
+              />
+            }
+            label={d("Assumed").t("assess_filter_assumed")}
+          />
+        )}
+      />
+       </Box>
+      <Box display="flex" pb={1} width="100%">
+      <Controller
+        name="program"
+        defaultValue={program}
+        control={control}
+        render={(props) => (
+          <TextField
+            select
+            size="small"
+            className={css.searchTextField}
+            label={d("Program").t("library_label_program")}
+            {...props}
+            onChange={(e) => {
+              onChangeOutcomeProgram(e.target.value);
+              props.onChange(e.target.value);
+            }}
+          >
+            {menuItemList(programList || [])}
+          </TextField>
+        )}
+      />
+      <Controller
+        name="subject"
+        defaultValue={subject}
+        control={control}
+        render={(props) => (
+          <TextField
+            select
+            SelectProps={{
+              multiple: true,
+            }}
+            className={css.searchTextField}
+            size="small"
+            label={d("Subject").t("library_label_subject")}
+            {...props}
+            onChange={(e) => {
+              const value = (e.target.value as unknown) as string[];
+              value.length > 0 && onChangeOutcomeSubject(value);
+              value.length > 0 && props.onChange(value);
+            }}
+          >
+            {menuItemList(subjectList || [])}
+          </TextField>
+        )}
+      />
+
+      </Box>
+  </div>
+
   );
 };

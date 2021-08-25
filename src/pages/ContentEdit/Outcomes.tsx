@@ -1,29 +1,28 @@
 import {
-  Box,
-  Dialog,
+  Box, Button, Dialog,
   DialogContent,
   DialogTitle,
-  IconButton,
-  makeStyles,
+  IconButton, makeStyles,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { AddCircle, RemoveCircle } from "@material-ui/icons";
+import { AddCircle, RemoveCircle } from '@material-ui/icons';
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
 import React, { forwardRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import { ContentEditRouteParams } from ".";
 import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
-import { comingsoonTip, resultsTip } from "../../components/TipImages";
+import { SearchItems, SearchOutcoms } from "../../components/SearchcmsList";
+import { comingsoonTip, resultsTip, TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -41,11 +40,6 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     },
     position: "relative",
   },
-  tableContainer: {
-    marginTop: 5,
-    maxHeight: 700,
-    marginBottom: 20,
-  },
   table: {
     minWidth: 700 - 162,
   },
@@ -54,33 +48,21 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
   addGreen: createColor(palette.success, palette),
   removeRead: createColor(palette.error, palette),
-  pagination: {
-    marginBottom: 90,
-  },
   paginationUl: {
     justifyContent: "center",
   },
-  outcomsInput: {
-    position: "absolute",
-    bottom: 20,
-    width: "95%",
-  },
   addOutcomesButton: {
     width: "100%",
-    height: 54,
-    backgroundColor: palette.primary.main,
+    height: 48,
+    backgroundColor: "rgba(75,136,245,0.20)",
     borderRadius: 6,
-    padding: "5px 30px",
+    border: "1px solid #4b88f5",
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     boxSizing: "border-box",
     cursor: "pointer",
-    "&:hover": {
-      backgroundColor: palette.action.disabledOpacity,
-    },
-  },
-  addText: {
-    color: palette.common.white,
+    color: "#4b88f5",
   },
   indexUI: {
     width: 35,
@@ -114,6 +96,20 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     wordWrap: "break-word",
     wordBreak: "normal",
   },
+  addButton: {
+    width: "95%",
+    margin: "20px 0 14px"
+  },
+  dialogRoot: {
+  "& .MuiDialog-paper": {
+    height: "calc(100% - 64px)"
+  },
+  "& .MuiDialog-root .makeStyles-dialogRoot-290": {
+    zIndex: "2 !important",
+    color: "red"
+
+  }
+  }
 }));
 
 interface OutcomesTableProps {
@@ -121,10 +117,10 @@ interface OutcomesTableProps {
   value?: GetOutcomeList;
   onChange?: (value: GetOutcomeList) => any;
   onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
-  open?: boolean;
+  isDialog?: boolean;
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, onGoOutcomesDetail, open } = props;
+  const { list, value, onChange, onGoOutcomesDetail, isDialog } = props;
   const css = useStyles();
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
   const createContent = usePermission(PermissionType.create_content_page_201);
@@ -144,25 +140,11 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
       }
     }
   };
-
   const rows =
     list &&
     list.map((item, idx) => (
       <TableRow key={item.outcome_id}>
-        {open ? (
-          <TableCell>{item.outcome_name}</TableCell>
-        ) : (
-          <TableCell className={css.outcomeCursor} onClick={() => onGoOutcomesDetail(item.outcome_id) as any}>
-            {item.outcome_name}
-          </TableCell>
-        )}
-        <TableCell>{item.shortcode}</TableCell>
-        <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
-        {/* <TableCell>{item.author_name}</TableCell> */}
-        <TableCell>
-          <div className={css.outcomeSet}>{item.sets?.map((item) => item.set_name).join(";")}</div>
-        </TableCell>
-        {isPermission && (
+         {isPermission && (
           <TableCell>
             {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
               <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
@@ -171,20 +153,52 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
             )}
           </TableCell>
         )}
+          <TableCell className={css.outcomeCursor} onClick={() => isDialog && onGoOutcomesDetail(item.outcome_id) as any}>
+            <div style={{maxWidth:100, maxHeight:100,overflow:"auto"}}>
+             {item.outcome_name}
+            </div>
+          </TableCell>
+        <TableCell>{item.shortcode}</TableCell>
+        <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
+        {/* <TableCell>{item.author_name}</TableCell> */}
+        {isDialog && <>
+        <TableCell>{}</TableCell>
+        <TableCell>{}</TableCell>
+        </>}
+        <TableCell>
+          <div className={css.outcomeSet}>
+            {item.sets?.map((item, index) => (index<3 ? <Typography noWrap>·{item.set_name}</Typography> : ""))}
+            {item.sets && item.sets.length>3 && <div>...</div>}
+            </div>
+        </TableCell>
+       
       </TableRow>
     ));
   return (
     <>
-      <TableContainer className={css.tableContainer}>
+      <TableContainer style={{ marginBottom: 20, maxHeight: isDialog ? "" : 700,}}>
         <Table className={css.table} stickyHeader>
           <TableHead className={css.tableHead}>
             <TableRow>
-              <TableCell>{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
+              <TableCell></TableCell>
+              <TableCell sortDirection="desc">
+                <Box display="flex">
+                {d("Learning Outcomes").t("library_label_learning_outcomes")}
+                {/* <div >
+                  <ArrowDropDown/>
+                  <ArrowDropUp/>
+                </div> */}
+                
+                </Box>
+                </TableCell>
               <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
               <TableCell>{d("Assumed").t("assess_label_assumed")}</TableCell>
               {/* <TableCell>{d("Author").t("library_label_author")}</TableCell> */}
+              {isDialog && <>
+               <TableCell>{d("Program").t("library_label_program")}</TableCell>
+               <TableCell>{d("Subject").t("library_label_subject")}</TableCell>
+               </>}
               <TableCell>{d("Learning Outcome Set").t("assess_set_learning_outcome_set")}</TableCell>
-              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{rows}</TableBody>
@@ -194,41 +208,63 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
   );
 };
 
-interface OutcomesInputProps {
-  value?: GetOutcomeDetail[];
-  onChange?: (value: GetOutcomeDetail[]) => any;
-  onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
+interface OutcomesDialogProps extends OutcomesProps {
+  open: boolean;
+  toggle:  React.DispatchWithoutAction;
 }
-export const OutComesInput = (props: OutcomesInputProps) => {
+export const OutComesDialog = (props: OutcomesDialogProps) => {
   const css = useStyles();
-  const { value, onChange, onGoOutcomesDetail } = props;
-  const [open, setOpen] = React.useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const { open, toggle, value, onChange, onGoOutcomesDetail,list,total, amountPerPage = 10, outcomePage, onChangePage, onSearch, searchName, exactSerch, assumed } = props;
+  const handChangePage = useCallback(
+    (event: object, page: number) => {
+      onChangePage(page);
+    },
+    [onChangePage]
+  );
+  const handleChangeOutcomeProgram = useCallback(
+    () => {
+
+    }, []
+  );
+  const handleChangeOutcomeSubject = useCallback(
+    () => {
+
+    }, []
+  )
+  const pagination = (
+    <Pagination
+      style={{marginBottom: 20}}
+      classes={{ ul: css.paginationUl }}
+      onChange={handChangePage}
+      count={Math.ceil(total / amountPerPage)}
+      color="primary"
+      page={outcomePage}
+    />
+  );
 
   return (
-    <Box className={css.outcomsInput}>
-      <Box color="primary" className={css.addOutcomesButton} boxShadow={3} onClick={handleClickOpen}>
-        <Typography component="h6" className={css.addText}>
-          {d("Added Learning Outcomes").t("library_label_added_learning_outcomes")}
-        </Typography>
-        <Box mr={2} className={css.indexUI}>
-          <Typography variant="h6">{value && value.length}</Typography>
-        </Box>
-      </Box>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+    <Box>
+      <Dialog onClose={toggle} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth className={css.dialogRoot} >
         <DialogTitle id="customized-dialog-title">
-          {d("Added Learning Outcomes").t("library_label_added_learning_outcomes")}
-          <IconButton aria-label="close" className={css.closeButton} onClick={handleClose}>
+          {"Add Learning Outcomes"}
+          <IconButton aria-label="close" className={css.closeButton} onClick={toggle}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent dividers>
-          <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} open={open} />
+        <DialogContent dividers >
+          <div>
+            <SearchOutcoms 
+            onSearch={onSearch} 
+            exactSerch={exactSerch}
+            value={searchName} 
+            assumed={assumed} 
+            onChangeOutcomeProgram={handleChangeOutcomeProgram}
+            onChangeOutcomeSubject={handleChangeOutcomeSubject} />
+            {list.length ?(<>
+            <OutcomesTable list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} isDialog={open} />
+            {pagination}
+            </>) : resultsTip }
+          </div> 
         </DialogContent>
       </Dialog>
     </Box>
@@ -241,6 +277,7 @@ export interface OutcomesProps {
   total: number;
   amountPerPage?: number;
   searchName: string;
+  exactSerch: string;
   assumed: boolean;
   onSearch: (query: SearchItems) => any;
   onChangePage: (page: number) => any;
@@ -254,56 +291,36 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const css = useStyles();
   const {
     comingsoon,
-    list,
-    onSearch,
-    searchName,
-    assumed,
     value,
     onChange,
-    amountPerPage = 10,
-    onChangePage,
-    total,
     onGoOutcomesDetail,
-    outcomePage,
   } = props;
-  const { lesson } = useParams();
-  const handChangePage = useCallback(
-    (event: object, page: number) => {
-      onChangePage(page);
-    },
-    [onChangePage]
-  );
-
-  const pagination = (
-    <Pagination
-      className={css.pagination}
-      classes={{ ul: css.paginationUl }}
-      onChange={handChangePage}
-      count={Math.ceil(total / amountPerPage)}
-      color="primary"
-      page={outcomePage}
-    />
-  );
+  const { lesson } = useParams<ContentEditRouteParams>();
+  const [open, toggle] = React.useReducer((open)=> !open, false)
+  const addOutcomeButton = <Button className={css.addOutcomesButton} onClick={toggle}>
+      {"Add Learning Outcomes"}
+    </Button>
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
         comingsoonTip
       ) : (
         <>
-          <Box width="100%">
-            <SearchcmsList searchType="searchOutcome" onSearch={onSearch} value={searchName} assumed={assumed} />
-          </Box>
-          {list.length > 0 ? (
+          {value && value.length > 0 ? (
             <>
-              <OutcomesTable list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
-              {pagination}
+              <div className={css.addButton} >{addOutcomeButton}</div> 
+              <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail}  />
             </>
+             
           ) : (
-            resultsTip
+            <TipImages type={TipImagesType.empty}>
+              {addOutcomeButton}
+            </TipImages>
           )}
-          <OutComesInput value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
+
         </>
       )}
+      <OutComesDialog {...props} open={open} toggle={toggle} />
     </Box>
   );
 });
