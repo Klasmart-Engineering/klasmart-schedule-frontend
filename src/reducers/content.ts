@@ -18,15 +18,15 @@ import {
   EntityFolderContentData,
   EntityFolderItemInfo,
   EntityOrganizationInfo,
-  EntityOrganizationProperty
+  EntityOrganizationProperty,
+  ModelPublishedOutcomeView,
+  ModelSearchPublishedOutcomeResponse
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import {
   Author,
   ContentType,
-  FolderPartition,
-  GetOutcomeList,
-  OutcomePublishStatus,
+  FolderPartition, OutcomePublishStatus,
   PublishStatus,
   SearchContentsRequestContentType
 } from "../api/type";
@@ -37,7 +37,6 @@ import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
-import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
@@ -46,13 +45,14 @@ interface IContentState {
   history?: ReturnType<typeof useHistory>;
   contentDetail: Required<EntityContentInfoWithDetails>;
   mediaList: EntityContentInfoWithDetails[];
-  outcomeList: GetOutcomeList;
+  outcomeList: ModelPublishedOutcomeView[];
   total: number | undefined;
   contentsList: EntityFolderContentData[];
   contentPreview: EntityContentInfoWithDetails;
   mediaListTotal: number;
   OutcomesListTotal: number;
   linkedMockOptions: LinkedMockOptions;
+  searchLOListOptions: LinkedMockOptions;
   lesson_types: LinkedMockOptionsItem[];
   visibility_settings: LinkedMockOptionsItem[];
   token: string;
@@ -128,6 +128,16 @@ const initialState: IContentState = {
   OutcomesListTotal: 0,
   outcomeList: [],
   linkedMockOptions: {
+    program: [],
+    subject: [],
+    developmental: [],
+    age: [],
+    grade: [],
+    skills: [],
+    program_id: "",
+    developmental_id: "",
+  },
+  searchLOListOptions: {
     program: [],
     subject: [],
     developmental: [],
@@ -281,22 +291,28 @@ export interface LinkedMockOptions {
   program_id?: string;
   developmental_id?: string;
 }
+export enum  ILinkedMockOptionsType {
+  contents = "contents",
+  LearningOutcomes = "learningOutcomes",
+  all = "all"
+}
 export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
   default_program_id?: string;
   default_subject_ids?: string;
   default_developmental_id?: string;
+  type?: ILinkedMockOptionsType
 }
 
-export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMockOptionsPayload>(
-  "content/",
-  async ({ default_program_id, default_subject_ids, default_developmental_id }) => {
+export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions & {type?: ILinkedMockOptionsType } , LinkedMockOptionsPayload>(
+  "content/getLinkedMockOptions",
+  async ({ default_program_id, default_subject_ids, default_developmental_id, type }) => {
     const program = await api.programs.getProgram();
     const program_id = default_program_id ? default_program_id : program[0].id;
     if (program_id) {
       const subject = await api.subjects.getSubject({ program_id });
       const subject_ids = default_subject_ids ? default_subject_ids : subject.length ? subject[0].id : undefined;
       if (!subject_ids)
-        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
+        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "", type };
       const [developmental, age, grade] = await Promise.all([
         api.developmentals.getDevelopmental({ program_id, subject_ids }),
         api.ages.getAge({ program_id }),
@@ -305,12 +321,12 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
       const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
       if (developmental_id) {
         const skills = await api.skills.getSkill({ program_id, developmental_id });
-        return { program, subject, developmental, age, grade, skills, program_id, developmental_id };
+        return { program, subject, developmental, age, grade, skills, program_id, developmental_id , type};
       } else {
-        return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" };
+        return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" ,type };
       }
     } else {
-      return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
+      return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "", type };
     }
   }
 );
@@ -360,13 +376,14 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
             )
         : undefined,
       type === "material" || type === "plan"
-        ? dispatch(searchOutcomeList({ search_key: searchOutcome, exactSerch, page: 1, assumed: assumed ? 1 : -1 }))
+        ? dispatch(searchPublishedLearningOutcomes({ search_key: searchOutcome, exactSerch, page: 1, assumed: assumed ? 1 : -1 }))
         : undefined,
       dispatch(
         getLinkedMockOptions({
           default_program_id: contentDetail.program,
           default_developmental_id: contentDetail.developmental && contentDetail.developmental[0],
           default_subject_ids: contentDetail.subject?.join(","),
+          type: ILinkedMockOptionsType.all
         })
       ),
     ]);
@@ -489,24 +506,22 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
   }
 );
 // contentEdit搜索outcomeListist
-type IQueryOutcomeListParams = { exactSerch?: string } & Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] &
-  LoadingMetaPayload;
-type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
-export const searchOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
-  "content/searchOutcomeList",
+type ISearchPublishedLearningOutcomesParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] ;
+export const searchPublishedLearningOutcomes = createAsyncThunk<ModelSearchPublishedOutcomeResponse, { exactSerch?: string } & ISearchPublishedLearningOutcomesParams & LoadingMetaPayload>(
+  "content/searchPublishedLearningOutcomes",
   async ({ metaLoading, ...query }) => {
     const { exactSerch, search_key, assumed, page } = query;
-    const params: OutcomeQueryCondition = {
+    const params = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
       assumed,
       page,
-      [exactSerch === "all" ? "search_key" : exactSerch!]: search_key,
+      [exactSerch!]: search_key,
     };
-    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(params);
+    const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(params);
     return { list, total };
   }
-);
+)
 // contentEdit搜索contentlist
 export const searchContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
   "searchContentLists",
@@ -1016,9 +1031,19 @@ const { actions, reducer } = createSlice({
     [onLoadContentEdit.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>) => {
       // alert("success");
-      state.linkedMockOptions = payload;
+      const{type, ...resOptions} = payload
+      if(!type){
+        state.linkedMockOptions = resOptions;
+      }
+      if(type === ILinkedMockOptionsType.LearningOutcomes){
+        state.searchLOListOptions = resOptions;
+      }
+      if(type === ILinkedMockOptionsType.all){
+        state.searchLOListOptions = resOptions;
+        state.linkedMockOptions = resOptions;
+      }
     },
     [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1030,11 +1055,11 @@ const { actions, reducer } = createSlice({
     [getLinkedMockOptionsSkills.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [searchOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [searchPublishedLearningOutcomes.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeList = payload.list;
       state.OutcomesListTotal = payload.total;
     },
-    // [searchOutcomeList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    // [searchPublishedLearningOutcomes.pending.type]: (state, { payload }: PayloadAction<any>) => {
     //   state.outcomeList = initialState.outcomeList;
     //   state.OutcomesListTotal = initialState.OutcomesListTotal;
     // },
@@ -1075,9 +1100,7 @@ const { actions, reducer } = createSlice({
     },
     [contentLists.rejected.type]: (state, { error }: any) => {},
 
-    [searchOutcomeList.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
-    },
+
     [onLoadContentPreview.pending.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.contentPreview = initialState.contentPreview;

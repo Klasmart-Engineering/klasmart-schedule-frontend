@@ -17,7 +17,8 @@ import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
 import { menuItemList } from "../../pages/ContentEdit/Details";
-import { LinkedMockOptionsItem } from "../../reducers/content";
+import { LinkedMockOptions } from "../../reducers/content";
+import { decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../FormattedTextField";
 const useStyles = makeStyles(({ breakpoints,shadows, palette }) => ({
   searchField: {
     flexGrow: 1,
@@ -122,14 +123,21 @@ const useStyles = makeStyles(({ breakpoints,shadows, palette }) => ({
       marginRight: 20,
   }
 }));
-export interface SearchItems {
+interface ISearchOptions {
+  program_ids?: string[];
+  subject_ids?: string[];
+  category_ids?: string[];
+  sub_category_ids?: string[];
+  age_ids?: string[];
+  grade_ids?: string[];
+}
+export interface SearchItems extends ISearchOptions {
   value?: string;
   exactSerch?: string;
   assumed?: boolean;
   isShare?: string;
-  program?: string;
-  subject?: string;
 }
+
 export interface SearchcmsListProps extends SearchItems {
   lesson?: string;
   onSearch: (query: SearchItems) => any;
@@ -233,13 +241,22 @@ export interface SearchOutcomesProps extends SearchItems {
   onSearch: (query: SearchItems) => any;
   onChangeOutcomeProgram: (value: string) => any;
   onChangeOutcomeSubject: (value: string[]) => any;
-  programList?: LinkedMockOptionsItem[];
-  subjectList?: LinkedMockOptionsItem[];
+  onChangeDevelopmental: (value: string[]) => any
+  searchLOListOptions: LinkedMockOptions;
 }
 export const SearchOutcoms = (props: SearchOutcomesProps) => {
   const css = useStyles(props);
-  const { onSearch, exactSerch , value, assumed,  program = "", subject = "",programList, 
-  subjectList,onChangeOutcomeProgram,onChangeOutcomeSubject } = props;
+  const { onSearch, exactSerch , value, assumed, 
+    searchLOListOptions, 
+    onChangeOutcomeProgram, 
+    onChangeOutcomeSubject, 
+    onChangeDevelopmental,
+    program_ids,
+    subject_ids,
+    category_ids,
+    sub_category_ids,
+    age_ids,
+    grade_ids, } = props;
   const { getValues, control } = useForm<SearchItems>();
   const handleClickSearch = useCallback(() => {
     onSearch(getValues());
@@ -249,7 +266,6 @@ export const SearchOutcoms = (props: SearchOutcomesProps) => {
   };
   return (
    <div>
-
     <Box display="flex" justifyContent="center" pb={1} width="100%">
       <Controller
         control={control}
@@ -325,10 +341,10 @@ export const SearchOutcoms = (props: SearchOutcomesProps) => {
         )}
       />
        </Box>
-      <Box display="flex" pb={1} width="100%">
+      <Box display="flex" justifyContent="center" pb={1} width="100%">
       <Controller
-        name="program"
-        defaultValue={program}
+        name="program_ids"
+        defaultValue={program_ids||[]}
         control={control}
         render={(props) => (
           <TextField
@@ -342,13 +358,13 @@ export const SearchOutcoms = (props: SearchOutcomesProps) => {
               props.onChange(e.target.value);
             }}
           >
-            {menuItemList(programList || [])}
+            {menuItemList(searchLOListOptions.program || [])}
           </TextField>
         )}
       />
       <Controller
-        name="subject"
-        defaultValue={subject}
+        name="subject_ids"
+        defaultValue={subject_ids|| []}
         control={control}
         render={(props) => (
           <TextField
@@ -366,11 +382,83 @@ export const SearchOutcoms = (props: SearchOutcomesProps) => {
               value.length > 0 && props.onChange(value);
             }}
           >
-            {menuItemList(subjectList || [])}
+            {menuItemList(searchLOListOptions.subject || [])}
           </TextField>
         )}
       />
+      <Controller
+            name="category_ids"
+            defaultValue={category_ids||[]}
+            control={control}
+            rules={{
+              validate: (value) => !!value[0],
+            }}
+            render={(props) => (
+              <FormattedTextField
+                select
+                size="small"
+                className={css.searchTextField}
+                label={d("Category").t("library_label_category")}
+                encode={encodeOneItemArray}
+                decode={decodeOneItemArray}
+                {...props}
+                onChange={(value: ReturnType<typeof decodeOneItemArray>) => {
+                  onChangeDevelopmental(value);
+                  props.onChange(value);
+                }}
+              >
+                {menuItemList(searchLOListOptions.developmental || [])}
+              </FormattedTextField>
+            )}
+          />
 
+      </Box>
+      <Box display="flex" justifyContent="center" pb={1} width="100%">
+      <Controller
+            as={TextField}
+            name="sub_category_ids"
+            defaultValue={sub_category_ids || []}
+            control={control}
+            select
+            size="small"
+            className={css.searchTextField}
+            SelectProps={{
+              multiple: true,
+            }}
+            label={d("Subcategory").t("library_label_subcategory")}
+          >
+            {menuItemList(searchLOListOptions.skills || [])}
+          </Controller>
+          <Controller
+            as={TextField}
+            name="age_ids"
+            defaultValue={age_ids|| []}
+            control={control}
+            select
+            size="small"
+            className={css.searchTextField}
+            SelectProps={{
+              multiple: true,
+            }}
+            label={d("Age").t("library_label_age")}
+          >
+            {menuItemList(searchLOListOptions.age || [])}
+          </Controller>
+          <Controller
+            as={TextField}
+            name="grade"
+            defaultValue={grade_ids || []}
+            control={control}
+            select
+            size="small"
+            className={css.searchTextField}
+            SelectProps={{
+              multiple: true,
+            }}
+            label={d("Grade").t("library_label_grade")}
+          >
+            {menuItemList(searchLOListOptions.grade || [])}
+          </Controller>
       </Box>
   </div>
 

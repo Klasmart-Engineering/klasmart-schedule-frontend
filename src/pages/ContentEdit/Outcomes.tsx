@@ -8,8 +8,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  Typography
+  TableRow, Typography
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from '@material-ui/icons';
@@ -19,11 +18,14 @@ import { cloneDeep } from "lodash";
 import React, { forwardRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
+import { ModelPublishedOutcomeView } from "../../api/api.auto";
 import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { SearchItems, SearchOutcoms } from "../../components/SearchcmsList";
 import { comingsoonTip, resultsTip, TipImages, TipImagesType } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
+import { HtmlTooltip } from "../Schedule/ScheduleAttachment";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: paletteColor.main,
@@ -32,7 +34,7 @@ const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
     color: paletteColor.dark,
   },
 });
-const useStyles = makeStyles(({ breakpoints, palette }) => ({
+const useStyles = makeStyles(({ breakpoints, palette,typography }) => ({
   mediaAssets: {
     minHeight: 900,
     [breakpoints.down("sm")]: {
@@ -95,6 +97,7 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     maxWidth: 210,
     wordWrap: "break-word",
     wordBreak: "normal",
+    cursor: "poniter"
   },
   addButton: {
     width: "95%",
@@ -107,20 +110,28 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   "& .MuiDialog-root .makeStyles-dialogRoot-290": {
     zIndex: "2 !important",
     color: "red"
-
-  }
+  }},
+  toolTip: {
+    color: "rgba(1,1,1,.87)",
   }
 }));
 
 interface OutcomesTableProps {
-  list?: GetOutcomeList;
+  list?: ModelPublishedOutcomeView[];
   value?: GetOutcomeList;
   onChange?: (value: GetOutcomeList) => any;
   onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
   isDialog?: boolean;
+  searchLOListOptions?: LinkedMockOptions;
 }
+const getNameByIds = (list?:LinkedMockOptionsItem[],ids?: string[]) => {
+  return ids?.reduce((names:string[], id) => {
+    const name = list?.find(item => item.id ===id)?.name;
+    return name ? names.concat([name]): names
+   }, [])
+ }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, onGoOutcomesDetail, isDialog } = props;
+  const { list, value, onChange, onGoOutcomesDetail, isDialog,searchLOListOptions } = props;
   const css = useStyles();
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
   const createContent = usePermission(PermissionType.create_content_page_201);
@@ -160,16 +171,20 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
           </TableCell>
         <TableCell>{item.shortcode}</TableCell>
         <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
-        {/* <TableCell>{item.author_name}</TableCell> */}
         {isDialog && <>
-        <TableCell>{}</TableCell>
-        <TableCell>{}</TableCell>
+
+        <TableCell>{getNameByIds(searchLOListOptions?.program, item.program_ids)}</TableCell>
+        <TableCell>{getNameByIds(searchLOListOptions?.subject, item.subject_ids)}</TableCell>
         </>}
         <TableCell>
+          {item.sets && <HtmlTooltip placement="top" title={
+          <div className={css.toolTip}>{item.sets?.map(item=> (`·${item.set_name}`)).join("")}</div>
+          }>
           <div className={css.outcomeSet}>
-            {item.sets?.map((item, index) => (index<3 ? <Typography noWrap>·{item.set_name}</Typography> : ""))}
-            {item.sets && item.sets.length>3 && <div>...</div>}
+            {item.sets?.map((item, index) => (index<3 ? <Typography noWrap key={item.set_id}>·{item.set_name}</Typography> : ""))}
+            {item.sets && item.sets.length > 3 && <div>...</div>}
             </div>
+          </HtmlTooltip>}
         </TableCell>
        
       </TableRow>
@@ -193,7 +208,6 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
                 </TableCell>
               <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
               <TableCell>{d("Assumed").t("assess_label_assumed")}</TableCell>
-              {/* <TableCell>{d("Author").t("library_label_author")}</TableCell> */}
               {isDialog && <>
                <TableCell>{d("Program").t("library_label_program")}</TableCell>
                <TableCell>{d("Subject").t("library_label_subject")}</TableCell>
@@ -214,23 +228,20 @@ interface OutcomesDialogProps extends OutcomesProps {
 }
 export const OutComesDialog = (props: OutcomesDialogProps) => {
   const css = useStyles();
-  const { open, toggle, value, onChange, onGoOutcomesDetail,list,total, amountPerPage = 10, outcomePage, onChangePage, onSearch, searchName, exactSerch, assumed } = props;
+  const { open, toggle, value, onChange, onGoOutcomesDetail,list,total, amountPerPage = 10, outcomePage, onChangePage, onSearch, searchName,     
+     exactSerch,
+     assumed, 
+    searchLOListOptions,
+    onChangeDevelopmental,
+    onChangeProgram,
+    onChangeSubject,
+   } = props;
   const handChangePage = useCallback(
     (event: object, page: number) => {
       onChangePage(page);
     },
     [onChangePage]
   );
-  const handleChangeOutcomeProgram = useCallback(
-    () => {
-
-    }, []
-  );
-  const handleChangeOutcomeSubject = useCallback(
-    () => {
-
-    }, []
-  )
   const pagination = (
     <Pagination
       style={{marginBottom: 20}}
@@ -258,10 +269,12 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
             exactSerch={exactSerch}
             value={searchName} 
             assumed={assumed} 
-            onChangeOutcomeProgram={handleChangeOutcomeProgram}
-            onChangeOutcomeSubject={handleChangeOutcomeSubject} />
+            searchLOListOptions={searchLOListOptions}
+            onChangeOutcomeProgram={onChangeProgram}
+            onChangeDevelopmental={onChangeDevelopmental}
+            onChangeOutcomeSubject={onChangeSubject} />
             {list.length ?(<>
-            <OutcomesTable list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} isDialog={open} />
+            <OutcomesTable searchLOListOptions={searchLOListOptions}  list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} isDialog={open} />
             {pagination}
             </>) : resultsTip }
           </div> 
@@ -285,6 +298,10 @@ export interface OutcomesProps {
   onChange?: (value: GetOutcomeDetail[]) => any;
   onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
   outcomePage: number;
+  searchLOListOptions: LinkedMockOptions;
+  onChangeProgram: (value: string) => any;
+  onChangeDevelopmental: (value: string[]) => any;
+  onChangeSubject: (value: string[]) => any;
 }
 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
@@ -309,7 +326,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           {value && value.length > 0 ? (
             <>
               <div className={css.addButton} >{addOutcomeButton}</div> 
-              <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail}  />
+              <OutcomesTable   list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail}  />
             </>
              
           ) : (

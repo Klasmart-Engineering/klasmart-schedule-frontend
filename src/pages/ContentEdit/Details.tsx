@@ -348,7 +348,7 @@ export default function Details(props: DetailsProps) {
         size,
       },
       MuiSvgIcon: {
-        fontSize: sm ? "small" : "default",
+        fontSize: sm ? "small" : "medium",
       },
     },
   });
@@ -530,7 +530,7 @@ export default function Details(props: DetailsProps) {
             }}
             render={(props) => (
               <FormattedTextField
-                select
+                select 
                 error={errors.developmental ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Category").t("library_label_category")}

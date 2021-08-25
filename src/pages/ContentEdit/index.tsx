@@ -36,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchOutcomeList
+  searchPublishedLearningOutcomes
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -99,6 +99,7 @@ function ContentEditForm() {
     OutcomesListTotal,
     outcomeList,
     linkedMockOptions,
+    searchLOListOptions,
     visibility_settings,
     lesson_types,
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
@@ -119,7 +120,7 @@ function ContentEditForm() {
   const { program, developmental, subject } = watch(["program", "subject", "developmental"]);
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
-  const addedLOLength = watch("outcome_entities")?.length;
+  const addedLOLength = watch("outcome_entities")?.length || contentDetail.outcome_entities.length;
   const activeRectRef = useRef<Active["rect"]>();
   const unmountRef = useRef<Function>();
   const isTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -260,7 +261,7 @@ function ContentEditForm() {
         search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
       });
       dispatch(
-        searchOutcomeList({
+        searchPublishedLearningOutcomes({
           exactSerch,
           metaLoading: true,
           search_key: value,
@@ -302,7 +303,7 @@ function ContentEditForm() {
     () => (page: number) => {
       setOutcomePage(page);
       dispatch(
-        searchOutcomeList({
+        searchPublishedLearningOutcomes({
           metaLoading: true,
           page,
           search_key: searchOutcome,
@@ -417,6 +418,10 @@ function ContentEditForm() {
         exactSerch={exactSerch}
         assumed={assumed}
         total={OutcomesListTotal}
+        searchLOListOptions={searchLOListOptions}
+        onChangeProgram={ handleChangeProgram}
+        onChangeDevelopmental={handleChangeDevelopmental}
+        onChangeSubject={handleChangeSubject}
         onChangePage={handleChangePageOutCome}
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}

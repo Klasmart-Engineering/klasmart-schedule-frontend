@@ -152,7 +152,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
     const fileType: ContentFileType = item.data && JSON.parse(item.data)?.file_type;
     const dragType = apiIsEnableNewH5p() && lesson === "material" ? `LIBRARY_ITEM_FILE_TYPE_${fileType}` : "LIBRARY_ITEM";
     return (
-      <TableRow key={idx}>
+      <TableRow key={item.id}>
         <TableCell className={css.cellThumnbnail}>
           <DraggableImage type={dragType} item={item} lesson={lesson} permission={permission} />
         </TableCell>
