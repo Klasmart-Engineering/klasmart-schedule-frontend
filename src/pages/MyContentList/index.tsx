@@ -147,12 +147,19 @@ export default function MyContentList() {
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, selectedId), [folderTree, selectedId]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
-  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } =
-    useFolderTree<EntityFolderContentData[]>();
+  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
+    EntityFolderContentData[]
+  >();
   const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
   const filterOrgList = useMemo(() => excludeMyOrg(orgList, myOrgId), [myOrgId, orgList]);
-  const { organizationListActive, closeOrganizationList, openOrganizationList, organizationListShowIndex, shareFolder, setShareFolder } =
-    useOrganizationList<OrgInfoProps[]>();
+  const {
+    organizationListActive,
+    closeOrganizationList,
+    openOrganizationList,
+    organizationListShowIndex,
+    shareFolder,
+    setShareFolder,
+  } = useOrganizationList<OrgInfoProps[]>();
   const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
   const [folderForm, setFolderForm] = useState<EntityFolderContentData>();
   const [parentId, setParentId] = useState<string>();
@@ -277,6 +284,7 @@ export default function MyContentList() {
     // await dispatch(searchOrgFolderItems({ content_type: condition.content_type as string, metaLoading: true }));
   };
   const handleClickAddFolderBtn: SecondSearchHeaderProps["onNewFolder"] = async () => {
+    setParentId("");
     setFolderForm({});
     openFolderForm();
   };
