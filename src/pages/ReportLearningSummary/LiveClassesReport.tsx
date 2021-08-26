@@ -412,8 +412,8 @@ export function AllOutcomes(props: AllOutcomesProps) {
       <DialogContent dividers style={{ maxHeight: 280 }}>
         {outcomes?.map((item, index) => (
           <div key={item.id} className={css.outcomeCon}>
-            {item.status === OutcomeStatus.achieved && <ChangeHistoryOutlined style={{ color: "#1aa21e", marginRight: 3 }} />}
-            {item.status === OutcomeStatus.partially && <CheckOutlined style={{ color: "#f1c621", marginRight: 3 }} />}
+            {item.status === OutcomeStatus.achieved && <CheckOutlined style={{ color: "#1aa21e", marginRight: 3 }} />}
+            {item.status === OutcomeStatus.partially && <ChangeHistoryOutlined style={{ color: "#f1c621", marginRight: 3 }} />}
             {item.status === OutcomeStatus.not_achieved && <ClearOutlined style={{ color: "#d52a2a", marginRight: 3 }} />}
             <span className={css.learningOutcomeName}>{item.name}</span>
           </div>
