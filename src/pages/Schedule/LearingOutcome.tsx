@@ -156,7 +156,11 @@ function SelectGroup(props: filterGropProps) {
         return item.id;
       }),
     };
-    setFilterQuery(programChildInfo?.length > 0 ? modelSchedule.learningOutcomeFilerGroup(filterData, programChildInfo).query : filterData);
+    setFilterQuery(
+      programChildInfo?.length
+        ? (modelSchedule.learningOutcomeFilerGroup(filterData, programChildInfo).query as LearningComesFilterQuery)
+        : filterData
+    );
     const values = (item: string[]) => (item.length > 0 ? item : null);
     const filterQueryAssembly = {
       program_ids: values(filterData.programs),
@@ -171,7 +175,8 @@ function SelectGroup(props: filterGropProps) {
   const filteredList = useMemo(() => {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
   }, [filterQuery, programChildInfo]);
-  const defaultValues = (enumType: string) => filteredList[enumType]?.filter((item) => filterQuery[enumType]?.includes(item.id as string));
+  const defaultValues = (enumType: "subjects" | "categorys" | "subs" | "ages" | "grades") =>
+    filteredList[enumType]?.filter((item) => filterQuery[enumType]?.includes(item.id as string));
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   return (
@@ -188,7 +193,7 @@ function SelectGroup(props: filterGropProps) {
               autocompleteChange(newValue, "programs");
             }}
             disableCloseOnSelect
-            renderOption={(option, { selected }) => (
+            renderOption={(option: any, { selected }) => (
               <React.Fragment>
                 <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
                 {option.name}
@@ -212,7 +217,7 @@ function SelectGroup(props: filterGropProps) {
               autocompleteChange(newValue, "subjects");
             }}
             disableCloseOnSelect
-            renderOption={(option, { selected }) => (
+            renderOption={(option: any, { selected }) => (
               <React.Fragment>
                 <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
                 {option.name}
@@ -236,7 +241,7 @@ function SelectGroup(props: filterGropProps) {
               autocompleteChange(newValue, "categorys");
             }}
             disableCloseOnSelect
-            renderOption={(option, { selected }) => (
+            renderOption={(option: any, { selected }) => (
               <React.Fragment>
                 <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
                 {option.name}
@@ -260,7 +265,7 @@ function SelectGroup(props: filterGropProps) {
               autocompleteChange(newValue, "subs");
             }}
             disableCloseOnSelect
-            renderOption={(option, { selected }) => (
+            renderOption={(option: any, { selected }) => (
               <React.Fragment>
                 <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
                 {option.name}
@@ -284,7 +289,7 @@ function SelectGroup(props: filterGropProps) {
               autocompleteChange(newValue, "ages");
             }}
             disableCloseOnSelect
-            renderOption={(option, { selected }) => (
+            renderOption={(option: any, { selected }) => (
               <React.Fragment>
                 <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
                 {option.name}
@@ -308,7 +313,7 @@ function SelectGroup(props: filterGropProps) {
               autocompleteChange(newValue, "grades");
             }}
             disableCloseOnSelect
-            renderOption={(option, { selected }) => (
+            renderOption={(option: any, { selected }) => (
               <React.Fragment>
                 <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
                 {option.name}
