@@ -176,7 +176,7 @@ function SelectGroup(props: filterGropProps) {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
   }, [filterQuery, programChildInfo]);
   const defaultValues = (enumType: "subjects" | "categorys" | "subs" | "ages" | "grades") =>
-    filteredList[enumType]?.filter((item) => filterQuery[enumType]?.includes(item.id as string));
+    filteredList[enumType]?.filter((item: any) => filterQuery[enumType]?.includes(item.id as string));
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   return (
