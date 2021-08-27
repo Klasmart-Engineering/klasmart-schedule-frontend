@@ -1261,7 +1261,8 @@ type LangRecord<T = string> =
     }
   | { id: "assessment_not_applicable"; description: "Not Applicable"; values: undefined }
   | { id: "assessment_activity_attempted"; description: "Attempted"; values: undefined }
-  | { id: "schedule_sub_category"; description: "Sub Category"; values: undefined };
+  | { id: "schedule_sub_category"; description: "Sub Category"; values: undefined }
+  | { id: "schedule_add_learning_outcome"; description: "Add Learning Outcome"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
