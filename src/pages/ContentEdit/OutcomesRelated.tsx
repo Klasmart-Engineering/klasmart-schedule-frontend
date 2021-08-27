@@ -16,8 +16,7 @@ import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
 import React, { useCallback } from "react";
 import { Control } from "react-hook-form";
-import { ModelPublishedOutcomeView } from "../../api/api.auto";
-import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
+import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { ReactComponent as SortSvg } from "../../assets/icons/Slice 1.svg";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { resultsTip } from "../../components/TipImages";
@@ -25,6 +24,7 @@ import { d } from "../../locale/LocaleManager";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 import { ISearchOutcomeQuery, OutcomesProps } from "./Outcomes";
 import { OutcomesSearch } from "./OutcomesSearch";
+
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: paletteColor.main,
   cursor: "pointer",
@@ -82,15 +82,14 @@ const useStyles = makeStyles(({ breakpoints, palette,typography }) => ({
     color: "rgba(1,1,1,.87)",
   }
 }));
-
 interface OutcomesTableProps {
-  list?: ModelPublishedOutcomeView[];
-  value?: GetOutcomeList;
-  onChange?: (value: GetOutcomeList) => any;
-  onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
+  list?: EntityOutcome[];
+  value?: EntityOutcome[];
+  onChange?: (value: EntityOutcome[]) => any;
+  onGoOutcomesDetail: (id?: string) => any;
   onChangePageAndSort?: (props:ISearchOutcomeQuery) => any;
   isDialog?: boolean;
-  searchLOListOptions?: LinkedMockOptions;
+  outcomesFullOptions?: LinkedMockOptions;
 }
 const getNameByIds = (list?:LinkedMockOptionsItem[],ids?: string[]) => {
   return ids?.reduce((names:string[], id) => {
@@ -98,15 +97,15 @@ const getNameByIds = (list?:LinkedMockOptionsItem[],ids?: string[]) => {
     return name ? names.concat([name]): names
    }, [])
  }
-export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, onGoOutcomesDetail, isDialog, searchLOListOptions, onChangePageAndSort } = props;
+ export const OutcomesTable = (props: OutcomesTableProps) => {
+  const { list, value, onChange, onGoOutcomesDetail, isDialog, onChangePageAndSort, outcomesFullOptions } = props;
   const css = useStyles();
   const [sortUp, toggle] = React.useReducer((sortUp)=> !sortUp, true);
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
   const createContent = usePermission(PermissionType.create_content_page_201);
   const editAll = usePermission(PermissionType.edit_org_published_content_235);
   const isPermission = associateLOC || createContent || editAll;
-  const handleAction = (item: GetOutcomeDetail, type: "add" | "remove") => {
+  const handleAction = (item: EntityOutcome, type: "add" | "remove") => {
     const { outcome_id: id } = item;
     if (type === "add") {
       if (id && value) {
@@ -125,8 +124,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     toggle()
   },[onChangePageAndSort]);
   const rows =
-    list &&
-    list.map((item, idx) => (
+    list?.map((item, idx) => (
       <TableRow key={item.outcome_id}>
          {isPermission && (
           <TableCell>
@@ -143,21 +141,8 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
             </div>
           </TableCell>
         <TableCell>{item.shortcode}</TableCell>
-        {/* <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell> */}
-
-        <TableCell>{getNameByIds(searchLOListOptions?.developmental, item.category_ids)}</TableCell>
-        <TableCell>{getNameByIds(searchLOListOptions?.skills, item.sub_category_ids)}</TableCell>
-        {/* <TableCell>
-          {item.sets && <HtmlTooltip placement="top" title={
-          <div className={css.toolTip}>{item.sets?.map(item=> (`·${item.set_name}`)).join("")}</div>
-          }>
-          <div className={css.outcomeSet}>
-            {item.sets?.map((item, index) => (index<3 ? <Typography noWrap key={item.set_id}>·{item.set_name}</Typography> : ""))}
-            {item.sets && item.sets.length > 3 && <div>...</div>}
-            </div>
-          </HtmlTooltip>}
-        </TableCell> */}
-       
+        <TableCell>{getNameByIds(outcomesFullOptions?.developmental, item?.developmental?.split(","))}</TableCell>
+        <TableCell>{getNameByIds(outcomesFullOptions?.skills, item?.skills?.split(","))}</TableCell>
       </TableRow>
     ));
   return (
@@ -170,18 +155,12 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
               <TableCell sortDirection="desc">
                 <Box display="flex">
                 {d("Learning Outcomes").t("library_label_learning_outcomes")}
-                <div>
                 <SvgIcon component={SortSvg} onClick={handleClickSort} />
-                </div>
                 </Box>
                 </TableCell>
               <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
                 <TableCell>{d("Category").t("library_label_category")}</TableCell>
                <TableCell>{d("Subcategory").t("library_label_subcategory")}</TableCell>
-              {/* <TableCell>{d("Assumed").t("assess_label_assumed")}</TableCell> */}
-               {/* <TableCell>{d("Program").t("library_label_program")}</TableCell> */}
-               {/* <TableCell>{d("Subject").t("library_label_subject")}</TableCell> */}
-              {/* <TableCell>{d("Learning Outcome Set").t("assess_set_learning_outcome_set")}</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>{rows}</TableBody>
@@ -190,8 +169,17 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     </>
   );
 };
-
-
+const getOutcomeList = (list: ModelPublishedOutcomeView[]): EntityOutcome[]  => {
+  return list.map(({program_ids,subject_ids, sub_category_ids,category_ids,age_ids,grade_ids ,...item})=>({
+    ...item,
+    ages: age_ids,
+    developmental: category_ids?.join(","),
+    grades: grade_ids,
+    programs: program_ids,
+    skills: sub_category_ids?.join(","),
+    subjects: subject_ids,
+  } as EntityOutcome ))
+}
 // outcomes dialog
 interface OutcomesDialogProps extends OutcomesProps {
   open: boolean;
@@ -205,7 +193,7 @@ interface OutcomesDialogProps extends OutcomesProps {
 }
 export const OutComesDialog = (props: OutcomesDialogProps) => {
   const css = useStyles();
-  const { open, toggle, value, onChange, onGoOutcomesDetail,list,total, amountPerPage = 10, outcomePage, searchName,     
+  const { open, toggle, value, onChange, onGoOutcomesDetail, outcomesFullOptions, list,total, amountPerPage = 10, outcomePage, searchName,     
     exactSerch,
     assumed, 
     searchLOListOptions,
@@ -247,7 +235,7 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
             onChangeDevelopmental={onChangeDevelopmental}
             onChangeOutcomeSubject={onChangeOutcomeSubject}>
             {list.length ?(<>
-            <OutcomesTable onChangePageAndSort={({order_by}) => handleClickSearch({order_by})} searchLOListOptions={searchLOListOptions}  list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} isDialog={open} />
+            <OutcomesTable onChangePageAndSort={({order_by}) => handleClickSearch({order_by})}  list={getOutcomeList(list)} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} outcomesFullOptions={outcomesFullOptions} isDialog={open} />
             {pagination}
             </>) : resultsTip }
             </OutcomesSearch>

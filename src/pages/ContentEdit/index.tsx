@@ -102,6 +102,7 @@ function ContentEditForm() {
     searchLOListOptions,
     visibility_settings,
     lesson_types,
+    outcomesFullOptions,
   } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams<ContentEditRouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
@@ -410,6 +411,7 @@ function ContentEditForm() {
         searchLOListOptions={searchLOListOptions}
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}
+        outcomesFullOptions={outcomesFullOptions}
       />
       <PermissionOr
         value={[

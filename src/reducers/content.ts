@@ -53,6 +53,7 @@ interface IContentState {
   OutcomesListTotal: number;
   linkedMockOptions: LinkedMockOptions;
   searchLOListOptions: LinkedMockOptions;
+  outcomesFullOptions: LinkedMockOptions;
   lesson_types: LinkedMockOptionsItem[];
   visibility_settings: LinkedMockOptionsItem[];
   token: string;
@@ -146,6 +147,14 @@ const initialState: IContentState = {
     skills: [],
     program_id: "",
     developmental_id: "",
+  },
+  outcomesFullOptions: {
+    program: [],
+    subject: [],
+    developmental: [],
+    age: [],
+    grade: [],
+    skills: [],
   },
   lesson_types: [],
   visibility_settings: [],
@@ -358,8 +367,29 @@ export const getOutcomesOptions = createAsyncThunk<LinkedMockOptions , IQueryOut
       age,
       grade,
       skills,
-       program_id,
-       developmental_id,}
+      program_id,
+      developmental_id,}
+  }
+);
+export const getOutcomesFullOptions = createAsyncThunk<LinkedMockOptions,LoadingMetaPayload>(
+  "content/getOutcomesOptions",
+  async () => {
+    const program = await api.programs.getProgram();
+    const subject = await api.subjects.getSubject();
+    const [developmental, age, grade] = await Promise.all([
+      api.developmentals.getDevelopmental(),
+      api.ages.getAge(),
+      api.grades.getGrade(),
+    ]);
+    const skills = await api.skills.getSkill();
+    return { 
+      program,
+      subject,
+      developmental,
+      age,
+      grade,
+      skills,
+     }
   }
 );
 export const getOutcomesOptionSkills = createAsyncThunk<LinkedMockOptions["skills"], IQueryOutcomesOptions>(
@@ -417,6 +447,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
+      dispatch(getOutcomesFullOptions({}))
     ]);
 
     return { contentDetail, lesson_types, visibility_settings };
@@ -1074,6 +1105,11 @@ const { actions, reducer } = createSlice({
     [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.linkedMockOptions.skills = payload;
+    },
+    [getOutcomesFullOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+     state.outcomesFullOptions = payload;
+     state.searchLOListOptions = payload;
+      
     },
     [getOutcomesOptionSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");

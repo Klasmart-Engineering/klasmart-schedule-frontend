@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
+import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
 import { getOutcomesOptions, getOutcomesOptionSkills, ISearchPublishedLearningOutcomesParams, LinkedMockOptions } from "../../reducers/content";
@@ -47,18 +48,19 @@ export type ISearchOutcomeQuery = Exclude<ISearchPublishedLearningOutcomesParams
 }
 export interface OutcomesProps {
   comingsoon?: boolean;
-  list: GetOutcomeDetail[];
+  list: ModelPublishedOutcomeView[];
   total: number;
   amountPerPage?: number;
   searchName: string;
   exactSerch: string;
   assumed: boolean;
   onSearch: (query: ISearchOutcomeQuery) => any;
-  value?: GetOutcomeDetail[];
-  onChange?: (value: GetOutcomeDetail[]) => any;
+  value?: EntityOutcome[];
+  onChange?: (value: EntityOutcome[]) => any;
   onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
   outcomePage: number;
   searchLOListOptions: LinkedMockOptions;
+  outcomesFullOptions: LinkedMockOptions;
 }
 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
@@ -69,6 +71,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     onChange,
     onGoOutcomesDetail,
     onSearch,
+    outcomesFullOptions,
   } = props;
   const dispatch = useDispatch();
   const { lesson } = useParams<ContentEditRouteParams>();
@@ -99,10 +102,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
    },
    [dispatch]
  );
- React.useEffect(() => {
-   dispatch(getOutcomesOptions({metaLoading: true}))
-
- },[]);
   const addOutcomeButton = <Button className={css.addOutcomesButton} onClick={toggle}>
       {"Add Learning Outcomes"}
     </Button>
@@ -115,7 +114,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           {value && value.length > 0 ? (
             <>
               <div className={css.addButton} >{addOutcomeButton}</div> 
-              <OutcomesTable  list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail}  />
+              <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} outcomesFullOptions={outcomesFullOptions} />
             </>
              
           ) : (
