@@ -60,6 +60,7 @@ import {
   ScheduleFilterPrograms,
   scheduleShowOption,
   resetActOutcomeList,
+  getProgramChild,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -733,6 +734,16 @@ function EditBox(props: CalendarStateProps) {
       if (value?.id) {
         const LinkageProgramData: any = await handleChangeProgramId(value.id);
         setSubjectItem(LinkageProgramData && LinkageProgramData.length ? [LinkageProgramData[0]] : []);
+        const resultInfo = ((await dispatch(getProgramChild({ program_id: value.id, metaLoading: true }))) as unknown) as PayloadAction<
+          AsyncTrunkReturned<typeof getProgramChild>
+        >;
+        if (resultInfo.payload.programChildInfo) {
+          handelSetProgramChildInfo(
+            [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(
+              programChildInfo ? (programChildInfo as GetProgramsQuery[]) : []
+            )
+          );
+        }
       }
       setProgramItem(value);
     }
@@ -1687,9 +1698,13 @@ function EditBox(props: CalendarStateProps) {
     content_list: [],
     page: condition.page ?? 1,
   };
+  const subjectIds = subjectItem.map((item: EntityScheduleShortInfo) => {
+    return item.id;
+  });
+
   const filterGropuDatas: LearningComesFilterQuery = {
-    programs: condition.program_ids ?? [],
-    subjects: condition.subject_ids ?? [],
+    programs: Array.from(new Set((condition.program_ids ?? []).concat([scheduleList.program_id]))),
+    subjects: Array.from(new Set((condition.subject_ids ?? []).concat(subjectIds))),
     categorys: condition.category_ids ?? [],
     subs: condition.sub_category_ids ?? [],
     ages: condition.age_ids ?? [],

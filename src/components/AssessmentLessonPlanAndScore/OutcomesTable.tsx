@@ -103,8 +103,11 @@ const AssessAction = (props: AssessActionProps) => {
   );
 
   useEffect(() => {
-    setValue(`outcomes[${index}].attendance_ids`, attendance_ids);
-  }, [index, setValue, attendance_ids]);
+    console.log("index===========", index, attendance_ids);
+    let hasOutcome =
+      studentViewItems && studentViewItems[0]?.lesson_materials?.some((lm) => lm.outcomes?.some((oc) => oc.outcome_id === outcome_id));
+    if (hasOutcome) setValue(`outcomes[${index}].attendance_ids`, attendance_ids);
+  }, [index, setValue, attendance_ids, studentViewItems, outcome_id]);
 
   /** 更改下方的 student&content 中的数据 **/
   const transBottomToTop = (studentIds: string[]) => {
@@ -154,7 +157,7 @@ const AssessAction = (props: AssessActionProps) => {
     } else {
       arr = e.target.value ? [e.target.value] : [];
     }
-    console.log("arr===============", arr);
+    console.log("arr===============", arr, cloneDeep(formValue));
     transBottomToTop(arr);
   };
 
@@ -296,7 +299,7 @@ export function OutcomesTable(props: OutcomesTableProps) {
         </TableCell>
         <TableCell className={css.tableCellLine} align="center">
           {" "}
-          Lesson Plan{" "}
+          {outcome.assigned_to}{" "}
         </TableCell>
         <TableCell className={css.tableCellLine} align="center">
           {" "}

@@ -141,7 +141,7 @@ function SelectGroup(props: filterGropProps) {
       resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
         AsyncTrunkReturned<typeof getProgramChild>
       >;
-      if (resultInfo.payload.programChildInfo) {
+      if (resultInfo.payload) {
         handelSetProgramChildInfo(
           [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(programChildInfo ? (programChildInfo as GetProgramsQuery[]) : [])
         );
