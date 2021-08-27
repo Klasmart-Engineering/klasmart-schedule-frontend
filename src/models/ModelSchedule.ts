@@ -14,6 +14,7 @@ import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule
 import { GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { GetOutcomeList } from "../api/type";
 import { Status } from "../api/api-ko-schema.auto";
+import { d } from "../locale/LocaleManager";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -263,33 +264,53 @@ export class modelSchedule {
   }
 
   static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {
+    const initValue = { id: "1", name: d("Select All").t("schedule_detail_select_all") };
     const assembly = { subjects: [], categorys: [], subs: [], ages: [], grades: [] };
-    const query = { programs: [], subjects: [], categorys: [], subs: [], ages: filterQuery?.ages, grades: filterQuery?.grades };
+    const query = {
+      programs: [],
+      subjects: [],
+      categorys: [],
+      subs: [],
+      ages: filterQuery?.ages as string[],
+      grades: filterQuery?.grades as string[],
+    };
     const is_active = (status: Status | null | undefined) => status === "active";
     programChildInfo?.forEach((item) => {
       if (!filterQuery?.programs.includes(item.program?.id as string)) return;
       query.programs.push(item.program?.id as never);
       item.program?.age_ranges?.map((age) => {
         if (is_active(age.status)) assembly.ages.push(age as never);
+        if (filterQuery?.ages.includes("1")) query.ages?.push(age.id as never);
       });
       item.program?.grades?.map((grade) => {
         if (is_active(grade.status)) assembly.grades.push(grade as never);
+        if (filterQuery?.grades.includes("1")) query.grades?.push(grade.id as never);
       });
       item.program?.subjects?.map((subject) => {
         if (is_active(subject.status)) assembly.subjects.push({ id: subject.id, name: subject.name } as never);
-        if (!filterQuery?.subjects.includes(subject.id as string)) return;
+        if (!filterQuery?.subjects.includes(subject.id as string) && !filterQuery?.subjects.includes("1")) return;
         query.subjects.push(subject.id as never);
         subject.categories?.map((category) => {
           if (is_active(category.status)) assembly.categorys.push({ id: category.id, name: category.name } as never);
-          if (!filterQuery?.categorys.includes(category.id as string)) return;
+          if (!filterQuery?.categorys.includes(category.id as string) && !filterQuery?.categorys.includes("1")) return;
           query.categorys.push(category.id as never);
           category.subcategories?.map((sub) => {
             if (is_active(sub.status)) assembly.subs.push({ id: sub.id, name: sub.name } as never);
-            if (!filterQuery?.subs.includes(sub.id as string)) return;
+            if (!filterQuery?.subs.includes(sub.id as string) && !filterQuery?.subs.includes("1")) return;
             query.subs.push(sub.id as never);
           });
         });
       });
+    });
+    Object.keys(assembly).forEach((key) => {
+      if (assembly[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].length > 1) {
+        if (
+          assembly[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].length ===
+          query[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].length
+        )
+          query[key as "programs" | "subjects" | "categorys" | "subs" | "ages" | "grades"].unshift("1" as never);
+        assembly[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].unshift(initValue as never);
+      }
     });
     return { query, assembly };
   }

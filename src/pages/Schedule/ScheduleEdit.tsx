@@ -28,7 +28,7 @@ import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Maybe, User } from "../../api/api-ko-schema.auto";
-import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import { GetProgramsQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
   EntityScheduleAddView,
@@ -77,6 +77,7 @@ import {
   repeatOptionsType,
   timestampType,
   LearningContentListForm,
+  LearningComesFilterQuery,
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -1626,6 +1627,10 @@ function EditBox(props: CalendarStateProps) {
   const { getValues } = conditionFormMethods;
   const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
   const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all", assumed: -1 });
+  const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>();
+  const handelSetProgramChildInfo = (data: GetProgramsQuery[]) => {
+    setProgramChildInfo(data);
+  };
 
   useEffect(() => {
     setOutcomeIds(scheduleDetial.outcome_ids ?? []);
@@ -1682,7 +1687,14 @@ function EditBox(props: CalendarStateProps) {
     content_list: [],
     page: condition.page ?? 1,
   };
-
+  const filterGropuDatas: LearningComesFilterQuery = {
+    programs: condition.program_ids ?? [],
+    subjects: condition.subject_ids ?? [],
+    categorys: condition.category_ids ?? [],
+    subs: condition.sub_category_ids ?? [],
+    ages: condition.age_ids ?? [],
+    grades: condition.grade_ids ?? [],
+  };
   const handeLearingOutcome = async () => {
     if (outcomeList.length < 1) await getLearingOuctomeData(condition, false);
     changeModalDate({
@@ -1693,6 +1705,7 @@ function EditBox(props: CalendarStateProps) {
             changeModalDate({ openStatus: false, enableCustomization: false });
           }}
           learingOutcomeData={learingOutcomeDatas}
+          filterGropuData={filterGropuDatas}
           conditionFormMethods={conditionFormMethods}
           searchOutcomesList={searchOutcomesList}
           saveOutcomesList={saveOutcomesList}
@@ -1701,6 +1714,8 @@ function EditBox(props: CalendarStateProps) {
           programs={modelSchedule.Deduplication(
             modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
           )}
+          handelSetProgramChildInfo={handelSetProgramChildInfo}
+          programChildInfoParent={programChildInfo as GetProgramsQuery[]}
         />
       ),
       openStatus: true,
@@ -2207,7 +2222,7 @@ function EditBox(props: CalendarStateProps) {
             <TextField
               className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
               multiline
-              label={d("Set Learning Outcome").t("schedule_set_learning_outcome")}
+              label={d("Add Learning Outcome").t("schedule_add_learning_outcome")}
               required
               disabled
               value={outComeIds.length > 0 ? outComeIds.length : ""}

@@ -106,6 +106,9 @@ const useStyles = makeStyles((theme) => ({
 interface filterGropProps {
   programs: EntityScheduleShortInfo[];
   searchOutcomesList: (filterQueryAssembly: object) => void;
+  filterGropuData: LearningComesFilterQuery;
+  handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
+  programChildInfoParent: GetProgramsQuery[];
 }
 
 interface InfoProps extends filterGropProps {
@@ -119,18 +122,12 @@ interface InfoProps extends filterGropProps {
 
 function SelectGroup(props: filterGropProps) {
   const classes = useStyles();
-  const { programs, searchOutcomesList } = props;
-  const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>({
-    programs: [],
-    subjects: [],
-    categorys: [],
-    subs: [],
-    ages: [],
-    grades: [],
-  });
-  const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>();
+  const { programs, searchOutcomesList, filterGropuData, handelSetProgramChildInfo, programChildInfoParent } = props;
+  const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>(filterGropuData);
+  const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
+
   const dispatch = useDispatch();
-  const autocompleteChange = async (value: any | null, name: string) => {
+  const autocompleteChange = async (value: any | null, name: "subjects" | "categorys" | "subs" | "ages" | "grades" | "programs") => {
     const ids = value?.map((item: any) => {
       return item.id;
     });
@@ -145,30 +142,41 @@ function SelectGroup(props: filterGropProps) {
         AsyncTrunkReturned<typeof getProgramChild>
       >;
       if (resultInfo.payload.programChildInfo) {
+        handelSetProgramChildInfo(
+          [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(programChildInfo ? (programChildInfo as GetProgramsQuery[]) : [])
+        );
         setProgramChildInfo(
           [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(programChildInfo ? (programChildInfo as GetProgramsQuery[]) : [])
         );
       }
     }
+    const filterIds = value?.map((item: any) => {
+      return item.id;
+    });
+    const initFilterIds = value?.map((item: any) => {
+      return item.id;
+    });
+    if (program_id !== "1" && filterIds.includes("1"))
+      filterIds.splice(
+        filterIds.findIndex((id: any) => id === "1"),
+        1
+      );
     const filterData = {
       ...filterQuery,
-      [name]: value?.map((item: any) => {
-        return item.id;
-      }),
+      [name]: filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
     };
-    setFilterQuery(
-      programChildInfo?.length
-        ? (modelSchedule.learningOutcomeFilerGroup(filterData, programChildInfo).query as LearningComesFilterQuery)
-        : filterData
-    );
+    const filterResult = programChildInfo?.length
+      ? (modelSchedule.learningOutcomeFilerGroup(filterData, programChildInfo).query as LearningComesFilterQuery)
+      : filterData;
+    setFilterQuery(filterResult);
     const values = (item: string[]) => (item.length > 0 ? item : null);
     const filterQueryAssembly = {
-      program_ids: values(filterData.programs),
-      subject_ids: values(filterData.subjects),
-      category_ids: values(filterData.categorys),
-      sub_category_ids: values(filterData.subs),
-      age_ids: values(filterData.ages),
-      grade_ids: values(filterData.grades),
+      program_ids: values(filterResult.programs),
+      subject_ids: values(filterResult.subjects),
+      category_ids: values(filterResult.categorys),
+      sub_category_ids: values(filterResult.subs),
+      age_ids: values(filterResult.ages),
+      grade_ids: values(filterResult.grades),
     };
     searchOutcomesList(filterQueryAssembly);
   };
@@ -192,6 +200,7 @@ function SelectGroup(props: filterGropProps) {
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "programs");
             }}
+            value={programs.filter((item) => filterQuery.programs?.includes(item.id as string))}
             disableCloseOnSelect
             renderOption={(option: any, { selected }) => (
               <React.Fragment>
@@ -341,6 +350,9 @@ export default function LearingOutcome(props: InfoProps) {
     handleClose,
     outComeIds,
     scheduleDetial,
+    filterGropuData,
+    handelSetProgramChildInfo,
+    programChildInfoParent,
   } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
@@ -527,7 +539,13 @@ export default function LearingOutcome(props: InfoProps) {
         />
       </Box>
       <Box className={classes.flexBox}>
-        <SelectGroup programs={programs} searchOutcomesList={searchOutcomesList} />
+        <SelectGroup
+          programChildInfoParent={programChildInfoParent}
+          handelSetProgramChildInfo={handelSetProgramChildInfo}
+          programs={programs}
+          filterGropuData={filterGropuData}
+          searchOutcomesList={searchOutcomesList}
+        />
       </Box>
       <div
         style={{ margin: "20px 0 20px 0" }}
