@@ -899,5 +899,6 @@
   "report_no_assessment": "Please select an assessment from the list on the left to view the results.",
   "assessment_not_applicable": "Not Applicable",
   "assessment_activity_attempted": "Attempted",
-  "schedule_sub_category": "Sub Category"
+  "schedule_sub_category": "Sub Category",
+  "schedule_add_learning_outcome": "Add Learning Outcome"
 }
