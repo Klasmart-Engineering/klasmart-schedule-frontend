@@ -1,12 +1,10 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
-import { AssessmentStatus, GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
-import { DynamicTable } from "../../components/DynamicTable";
-import MultipleSelectGroup from "../../components/MultipleSelectGroup";
+import { AssessmentStatus, FinalOutcomeList, GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
@@ -19,8 +17,9 @@ import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
 import { OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
 import { OutcomesTable } from "./OutcomesTable";
-import RadioHeader, { RadioValue } from "./RadioHeader";
 import { Summary } from "./Summary";
+import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
+import { cloneDeep, uniq } from "lodash";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -37,7 +36,6 @@ export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { filterOutcomes, id, editindex, classType } = useQuery();
-  const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
   const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const isLive = classType ? classType === "OnlineClass" : assessmentDetail.schedule?.class_type === "OnlineClass";
@@ -89,7 +87,7 @@ export function AssessmentsEdit() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -114,7 +112,7 @@ export function AssessmentsEdit() {
             data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
           if (data.action === "complete" && errorlist && errorlist.length > 0)
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -138,12 +136,6 @@ export function AssessmentsEdit() {
     },
     [history]
   );
-  const handleChangeRadio = (value: RadioValue) => {
-    // history.replace({
-    //   search: setQuery(history.location.search, { radioValue: value }),
-    // });
-    setRadioValue(value);
-  };
   useEffect(() => {
     if (id) {
       dispatch(getAssessment({ id, metaLoading: true }));
@@ -155,28 +147,8 @@ export function AssessmentsEdit() {
     }
   }, [assessmentDetail, reset]);
 
-  const TableCellDataDefault = [
-    `${d("No").t("assess_detail_no")}.`,
-    d("Lesson Material Name").t("assess_detail_lesson_material_name"),
-    d("Lesson Material Type").t("assess_detail_lesson_material_type"),
-    d("Answer").t("assess_detail_answer"),
-    d("Score / Full Marks").t("assess_detail_score_full_marks"),
-    d("Learning Outcomes").t("library_label_learning_outcomes"),
-  ];
-  const TableCellDataMaterials = [
-    "Student Name",
-    d("Answer").t("assess_detail_answer"),
-    d("Score / Full Marks").t("assess_detail_score_full_marks"),
-    d("Learning Outcomes").t("library_label_learning_outcomes"),
-  ];
-
   const changeAutocompleteValue = useMemo(
-    () => (
-      value: {
-        id: string | number;
-        title: string;
-      }[]
-    ) => {
+    () => (value: { id: string | number; title: string }[]) => {
       setChangeAutocompleteValue(value);
     },
     []
@@ -186,73 +158,71 @@ export function AssessmentsEdit() {
     setChangeAutocompleteLabel(label);
   };
 
+  /** score assessment 部分 在学生角度下加上 attendanceIds 字段 **/
+  const contentOutcomes = useMemo(() => {
+    let contentOutcomes = ModelAssessment.genContentOutcomes(filter_student_view_items);
+    setValue("content_outcomes", contentOutcomes);
+    return contentOutcomes;
+  }, [filter_student_view_items, setValue]);
+
+  const finalOutcomeList = useMemo(() => {
+    let newFinalOutcomeList: FinalOutcomeList[] = cloneDeep(filteredOutcomelist) ?? [];
+    newFinalOutcomeList?.forEach((outcome) => {
+      let curOutcomes = contentOutcomes.filter((co) => co.outcome_id === outcome.outcome_id);
+      if (curOutcomes.length) {
+        /** 如果找到了 则直接赋值， 没有找到说明是 lesson plan 则不用修改 **/
+        outcome.partial_ids = [];
+        outcome.attendance_ids = [];
+        let allIds = uniq(curOutcomes.map((co) => co.attendance_ids).flat());
+        allIds.forEach((id) => {
+          if (curOutcomes.filter((co) => co.attendance_ids?.find((i) => i === id)).length === curOutcomes.length)
+            outcome.attendance_ids?.push(id);
+          else outcome.partial_ids?.push(id);
+        });
+      }
+    });
+    return newFinalOutcomeList;
+  }, [filteredOutcomelist, contentOutcomes]);
+
   const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
+    console.log("value==========", value);
     setStudentViewItems(value);
   };
 
-  const rightsideArea = (
-    <div style={{ position: "relative" }}>
-      {isLive && <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />}
-      {isLive && radioValue === RadioValue.score && (
-        <MultipleSelectGroup
-          groupCollect={ModelAssessment.MultipleSelectSet(
-            students,
-            lesson_materials ?? assessmentDetail.lesson_materials,
-            assessmentDetail.lesson_materials
-          )}
-          changeAutocompleteValue={changeAutocompleteValue}
-          changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
+  const rightsideArea = isLive ? (
+    <LessonPlanAndScore
+      autocompleteLabel={autocompleteLabel}
+      studentViewItems={filter_student_view_items}
+      isComplete={isComplete}
+      editable={editable as boolean}
+      changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
+      changeAutocompleteValue={changeAutocompleteValue}
+      lesson_materials={lesson_materials}
+      students={students}
+      studyAssessmentDetail={assessmentDetail}
+      changeAssessmentTableDetail={changeAssessmentTableDetail}
+      filterOutcomes={filterOutcomes}
+      filteredOutcomelist={finalOutcomeList}
+      formMethods={formMethods}
+      formValue={formValue}
+      contentOutcomes={contentOutcomes}
+    />
+  ) : (
+    <>
+      <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
+      {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+        <OutcomesTable
+          outcomesList={filteredOutcomelist}
+          attendanceList={students}
+          formMethods={formMethods}
+          formValue={formValue}
+          filterOutcomes={filterOutcomes}
+          editable={editable as boolean}
         />
-      )}
-      {isLive ? (
-        <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
-          <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-          {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-            <OutcomesTable
-              outcomesList={filteredOutcomelist}
-              attendanceList={students}
-              formMethods={formMethods}
-              formValue={formValue}
-              filterOutcomes={filterOutcomes}
-              editable={editable as boolean}
-            />
-          ) : (
-            filteredOutcomelist && <NoOutcome />
-          )}
-        </div>
       ) : (
-        <>
-          <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-          {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-            <OutcomesTable
-              outcomesList={filteredOutcomelist}
-              attendanceList={students}
-              formMethods={formMethods}
-              formValue={formValue}
-              filterOutcomes={filterOutcomes}
-              editable={editable as boolean}
-            />
-          ) : (
-            filteredOutcomelist && <NoOutcome />
-          )}
-        </>
+        filteredOutcomelist && <NoOutcome />
       )}
-      {isLive && (
-        <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
-          <DynamicTable
-            studentViewItems={filter_student_view_items}
-            tableCellData={autocompleteLabel === 1 ? TableCellDataDefault : TableCellDataMaterials}
-            isComplete={isComplete}
-            editable={editable}
-            name="student_view_items"
-            tableType="live"
-            autocompleteLabel={autocompleteLabel}
-            changeAssessmentTableDetail={changeAssessmentTableDetail}
-            lesson_materials={lesson_materials ?? assessmentDetail.lesson_materials}
-          />
-        </div>
-      )}
-    </div>
+    </>
   );
 
   return (
@@ -276,8 +246,4 @@ export function AssessmentsEdit() {
     </>
   );
 }
-// export function AssessmentsEdit() {
-//   const { id, editindex } = useQuery();
-//   return <AssessmentsEditIner key={`${id}${editindex}`}></AssessmentsEditIner>;
-// }
 AssessmentsEdit.routeBasePath = "/assessments/assessments-detail";

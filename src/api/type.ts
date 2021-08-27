@@ -100,6 +100,9 @@ export type GetAssessmentRequest = Parameters<typeof api.assessments.getAssessme
 export type GetAssessmentResult = NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
 export type GetAssessmentResultAttendance = NonNullable<GetAssessmentResult["students"]>[0];
 export type GetAssessmentResultOutcomeAttendanceMap = NonNullable<GetAssessmentResult["outcomes"]>[0];
+export interface FinalOutcomeList extends GetAssessmentResultOutcomeAttendanceMap {
+  partial_ids?: string[];
+}
 
 export type UpdateAssessmentRequestId = Parameters<typeof api.assessments.updateAssessment>[0];
 export type UpdateAssessmentRequestData = Parameters<typeof api.assessments.updateAssessment>[1];
