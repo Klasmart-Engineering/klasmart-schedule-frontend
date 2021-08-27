@@ -1,5 +1,10 @@
 import { cloneDeep } from "lodash";
-import { EntityAssessmentDetailContent, EntityAssessmentStudent } from "../api/api.auto";
+import {
+  EntityAssessmentDetailContent,
+  EntityAssessmentStudent,
+  EntityUpdateAssessmentContentOutcomeArgs,
+  EntityAssessmentStudentViewH5PItem,
+} from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
@@ -215,7 +220,6 @@ export const ModelAssessment = {
             }) ?? [];
           return similarMaterial.length ? similarMaterial[0] : material;
         });
-
         assessmentData.push({
           ...Similar[0],
           // @ts-ignore
@@ -345,6 +349,33 @@ export const ModelAssessment = {
       { label: d("View by Students").t("assess_detail_view_by_students"), data: studentsSet, enum: 1 },
       { label: d("View by Lesson Material").t("assess_detail_view_by_lesson_material"), data: materialsSet, enum: 2 },
     ];
+  },
+
+  /** 生产所有的 ContentOutcomes ：如果该 content&outcome 没有出席的学生，依旧保留该条数据（为空数组）  **/
+  genContentOutcomes(studentViewItems: EntityAssessmentStudentViewH5PItem[] | undefined): EntityUpdateAssessmentContentOutcomeArgs[] {
+    let contentOutcomes: EntityUpdateAssessmentContentOutcomeArgs[] = [];
+    studentViewItems?.forEach((stu) => {
+      stu.lesson_materials?.forEach((lm) => {
+        lm.outcomes?.forEach((oc) => {
+          if (stu?.student_id != null) {
+            let existContentOutcomes = contentOutcomes.find(
+              (eco) => eco.content_id === lm.lesson_material_id && eco.outcome_id === oc.outcome_id
+            );
+            if (existContentOutcomes) {
+              if (oc.checked) existContentOutcomes.attendance_ids?.push(stu?.student_id);
+            } else {
+              contentOutcomes.push({
+                attendance_ids: oc.checked ? [stu.student_id] : [],
+                content_id: lm.lesson_material_id,
+                none_achieved: oc.none_achieved,
+                outcome_id: oc.outcome_id,
+              });
+            }
+          }
+        });
+      });
+    });
+    return contentOutcomes;
   },
 };
 

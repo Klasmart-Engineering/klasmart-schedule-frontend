@@ -1,7 +1,3 @@
-/**
- * 目前此组件 仅仅用于 assessment 中的 class 类型
- * */
-
 import {
   Box,
   Checkbox,
@@ -14,14 +10,18 @@ import {
   TableRow,
   TextField,
 } from "@material-ui/core";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
-import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { FinalOutcomeList } from "../../api/type";
+import { CheckboxGroup } from "../CheckboxGroup";
 import { d } from "../../locale/LocaleManager";
 import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { IAssessmentState } from "../../reducers/assessments";
-import { PLField, PLTableHeader } from "../../components/PLTable";
+import { AchievedTooltips } from "../DynamicTable";
+import { PLField, PLTableHeader } from "../PLTable";
+import { EntityAssessmentStudentViewH5PItemExtend } from "../DynamicTable/types";
+import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
+import { cloneDeep } from "lodash";
 const useStyles = makeStyles({
   tableContainer: {
     marginTop: 5,
@@ -48,6 +48,14 @@ const useStyles = makeStyles({
     padding: 0,
     paddingBottom: 16,
   },
+  partially_checked: {
+    width: 18,
+    height: 18,
+    margin: 2,
+    borderRadius: 3,
+    backgroundColor: "#0E78D5",
+    boxShadow: "0 0 2px #0E78D5",
+  },
 });
 interface mergeHandlerProps<T> extends Array<(arg: T) => any> {}
 
@@ -58,23 +66,27 @@ const mergeHanlder = <T extends unknown>(handlers: mergeHandlerProps<T>): any =>
 };
 
 interface AssessActionProps {
-  outcome: GetAssessmentResultOutcomeAttendanceMap;
+  outcome: FinalOutcomeList;
   attendanceList: IAssessmentState["assessmentDetail"]["students"];
   formMethods: UseFormMethods<IAssessmentState["assessmentDetail"]>;
   index: number;
   formValue: UpdateAssessmentRequestDataOmitAction;
   editable?: boolean;
+  studentViewItems?: EntityAssessmentStudentViewH5PItemExtend[];
+  changeAssessmentTableDetail?: (value?: EntityUpdateAssessmentH5PStudent[]) => void;
 }
 
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
   const {
-    outcome: { outcome_id, attendance_ids },
+    outcome: { outcome_id, attendance_ids, partial_ids },
     formMethods: { control, setValue },
     index,
     attendanceList,
     formValue,
     editable,
+    studentViewItems,
+    changeAssessmentTableDetail,
   } = props;
   const skip: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].skip) || false;
   const none_achieved: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].none_achieved) || false;
@@ -89,21 +101,61 @@ const AssessAction = (props: AssessActionProps) => {
     },
     [index, setValue]
   );
+
+  useEffect(() => {
+    setValue(`outcomes[${index}].attendance_ids`, attendance_ids);
+  }, [index, setValue, attendance_ids]);
+
+  /** 更改下方的 student&content 中的数据 **/
+  const transBottomToTop = (studentIds: string[]) => {
+    console.log("outcomes=========", formValue, studentViewItems, outcome_id);
+    let newSVI = cloneDeep(studentViewItems);
+    newSVI?.forEach((stu) => {
+      stu.lesson_materials?.forEach((lm) => {
+        lm.outcomes?.forEach((lmo) => {
+          // lmo.checked = !lmo.checked
+          /**  **/
+          switch (true) {
+            case studentIds?.length === 0:
+              if (lmo.outcome_id === outcome_id) lmo.checked = false;
+              break;
+            case studentIds?.length === allValue.length:
+              if (lmo.outcome_id === outcome_id) lmo.checked = true;
+              break;
+            default:
+              if (lmo.outcome_id === outcome_id && stu.student_id === studentIds[0]) lmo.checked = !lmo.checked;
+              break;
+          }
+        });
+      });
+    });
+    console.log("studentViewItems:", newSVI);
+    changeAssessmentTableDetail && changeAssessmentTableDetail(newSVI);
+  };
+
   const handleChangeSkip = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
     funSetValue(name, e.target.checked);
-
     if (e.target.checked) {
       if (name === "skip") {
         funSetValue("none_achieved", false);
       }
       funSetValue("attendance_ids", []);
     }
+    transBottomToTop([]);
   };
 
   const handleChangeStudent = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       funSetValue("none_achieved", false);
     }
+    let arr: string[];
+    if (e.target.name === "award") {
+      arr = e.target.checked ? allValue : [];
+    } else {
+      arr = e.target.value ? [e.target.value] : [];
+    }
+    console.log("arr===============", arr);
+    transBottomToTop(arr);
   };
 
   return (
@@ -161,6 +213,8 @@ const AssessAction = (props: AssessActionProps) => {
                     <FormControlLabel
                       control={
                         <Checkbox
+                          indeterminate={partial_ids?.some((p) => p === item.id)}
+                          indeterminateIcon={<div className={css.partially_checked} />}
                           color="primary"
                           value={item.id}
                           checked={selectedContentGroupContext.hashValue[item.id as string] || false}
@@ -196,10 +250,13 @@ export interface OutcomesTableProps {
   formValue: UpdateAssessmentRequestDataOmitAction;
   editable?: boolean;
   filterOutcomes: string;
+  studentViewItems?: EntityAssessmentStudentViewH5PItemExtend[];
+  changeAssessmentTableDetail?: (value?: EntityUpdateAssessmentH5PStudent[]) => void;
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendanceList, formMethods, formValue, editable, filterOutcomes } = props;
+  const { outcomesList, attendanceList, formMethods, formValue, editable, filterOutcomes, changeAssessmentTableDetail, studentViewItems } =
+    props;
 
   const OutcomesHeader: PLField[] = [
     {
@@ -215,7 +272,12 @@ export function OutcomesTable(props: OutcomesTableProps) {
       align: "center",
       style: { backgroundColor: "#F2F5F7" },
       value: "actions",
-      text: d("Assessing Actions").t("assess_option_assessing_actions"),
+      text: (
+        <div className="flex_align_center flex_justify_center">
+          <span>{d("Assessing Actions").t("assess_option_assessing_actions")}</span>
+          <AchievedTooltips showPartially />
+        </div>
+      ),
     },
   ];
 
@@ -248,6 +310,8 @@ export function OutcomesTable(props: OutcomesTableProps) {
             index={index}
             formValue={formValue}
             editable={editable}
+            studentViewItems={studentViewItems}
+            changeAssessmentTableDetail={changeAssessmentTableDetail}
           />
         </TableCell>
       </TableRow>

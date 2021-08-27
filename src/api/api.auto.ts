@@ -204,7 +204,6 @@ export interface EntityAssessmentDetail {
   class_end_time?: number;
   class_length?: number;
   complete_time?: number;
-  content_outcomes?: EntityAssessmentDetailContentOutcome[];
   id?: string;
   lesson_materials?: EntityAssessmentDetailContent[];
   lesson_plan?: EntityAssessmentDetailContent;
@@ -231,12 +230,11 @@ export interface EntityAssessmentDetailContent {
 
 export interface EntityAssessmentDetailContentOutcome {
   assumed?: boolean;
-  attendance_ids?: string[];
+  checked?: boolean;
   content_id?: string;
   none_achieved?: boolean;
   outcome_id?: string;
   outcome_name?: string;
-  skip?: boolean;
 }
 
 export interface EntityAssessmentDetailOutcome {
@@ -305,7 +303,7 @@ export interface EntityAssessmentStudentViewH5PLessonMaterial {
   not_applicable_scoring?: boolean;
   number?: string;
   ordered_id?: number;
-  outcome_names?: string[];
+  outcomes?: EntityAssessmentDetailContentOutcome[];
   parent_id?: string;
 
   /** add: 2021.06.24 */
