@@ -300,19 +300,18 @@ export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
   default_program_id?: string;
   default_subject_ids?: string;
   default_developmental_id?: string;
-  type?: ILinkedMockOptionsType
 }
 
 export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions & {type?: ILinkedMockOptionsType } , LinkedMockOptionsPayload>(
   "content/getLinkedMockOptions",
-  async ({ default_program_id, default_subject_ids, default_developmental_id, type }) => {
+  async ({ default_program_id, default_subject_ids, default_developmental_id }) => {
     const program = await api.programs.getProgram();
     const program_id = default_program_id ? default_program_id : program[0].id;
     if (program_id) {
       const subject = await api.subjects.getSubject({ program_id });
       const subject_ids = default_subject_ids ? default_subject_ids : subject.length ? subject[0].id : undefined;
       if (!subject_ids)
-        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "", type };
+        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
       const [developmental, age, grade] = await Promise.all([
         api.developmentals.getDevelopmental({ program_id, subject_ids }),
         api.ages.getAge({ program_id }),
@@ -321,18 +320,51 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions & {type?:
       const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
       if (developmental_id) {
         const skills = await api.skills.getSkill({ program_id, developmental_id });
-        return { program, subject, developmental, age, grade, skills, program_id, developmental_id , type};
+        return { program, subject, developmental, age, grade, skills, program_id, developmental_id };
       } else {
-        return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" ,type };
+        return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" };
       }
     } else {
-      return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "", type };
+      return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
     }
   }
 );
 export const getLinkedMockOptionsSkills = createAsyncThunk<LinkedMockOptions["skills"], LinkedMockOptionsPayload>(
   "getLinkedMockOptionsSkills",
   async ({ metaLoading, default_program_id: program_id, default_developmental_id: developmental_id }) => {
+    return await api.skills.getSkill({ program_id, developmental_id });
+  }
+);
+export interface IQueryOutcomesOptions extends LoadingMetaPayload  {
+  program_id?: string;
+  subject_ids?: string;
+  developmental_id?: string;
+}
+export const getOutcomesOptions = createAsyncThunk<LinkedMockOptions , IQueryOutcomesOptions>(
+  "content/getOutcomesOptions",
+  async ({ program_id, subject_ids, developmental_id }) => {
+    const program = await api.programs.getProgram();
+    const subject = await api.subjects.getSubject({ program_id });
+    const [developmental, age, grade] = await Promise.all([
+      api.developmentals.getDevelopmental({ program_id, subject_ids }),
+      api.ages.getAge({ program_id }),
+      api.grades.getGrade({ program_id }),
+    ]);
+    const skills = await api.skills.getSkill({ program_id, developmental_id });
+    return { 
+      program,
+      subject,
+      developmental,
+      age,
+      grade,
+      skills,
+       program_id,
+       developmental_id,}
+  }
+);
+export const getOutcomesOptionSkills = createAsyncThunk<LinkedMockOptions["skills"], IQueryOutcomesOptions>(
+  "getOutcomesOptionsSkills",
+  async ({ metaLoading, program_id, developmental_id }) => {
     return await api.skills.getSkill({ program_id, developmental_id });
   }
 );
@@ -383,7 +415,6 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_program_id: contentDetail.program,
           default_developmental_id: contentDetail.developmental && contentDetail.developmental[0],
           default_subject_ids: contentDetail.subject?.join(","),
-          type: ILinkedMockOptionsType.all
         })
       ),
     ]);
@@ -506,17 +537,17 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
   }
 );
 // contentEdit搜索outcomeListist
-type ISearchPublishedLearningOutcomesParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] ;
+export type ISearchPublishedLearningOutcomesParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] ;
 export const searchPublishedLearningOutcomes = createAsyncThunk<ModelSearchPublishedOutcomeResponse, { exactSerch?: string } & ISearchPublishedLearningOutcomesParams & LoadingMetaPayload>(
   "content/searchPublishedLearningOutcomes",
-  async ({ metaLoading, ...query }) => {
-    const { exactSerch, search_key, assumed, page } = query;
+  async ({ metaLoading,exactSerch, search_key, assumed, page, ...query }) => {
     const params = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
       assumed,
       page,
       [exactSerch!]: search_key,
+      ...query,
     };
     const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(params);
     return { list, total };
@@ -1032,18 +1063,10 @@ const { actions, reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptions>>) => {
-      // alert("success");
-      const{type, ...resOptions} = payload
-      if(!type){
-        state.linkedMockOptions = resOptions;
-      }
-      if(type === ILinkedMockOptionsType.LearningOutcomes){
-        state.searchLOListOptions = resOptions;
-      }
-      if(type === ILinkedMockOptionsType.all){
-        state.searchLOListOptions = resOptions;
-        state.linkedMockOptions = resOptions;
-      }
+      state.linkedMockOptions = payload;
+    },
+    [getOutcomesOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesOptions>>) => {
+        state.searchLOListOptions = payload;
     },
     [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1051,6 +1074,10 @@ const { actions, reducer } = createSlice({
     [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       // alert("success");
       state.linkedMockOptions.skills = payload;
+    },
+    [getOutcomesOptionSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      // alert("success");
+      state.searchLOListOptions.skills = payload;
     },
     [getLinkedMockOptionsSkills.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

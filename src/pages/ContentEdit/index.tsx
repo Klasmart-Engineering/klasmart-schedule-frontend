@@ -256,7 +256,9 @@ function ContentEditForm() {
     [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => ({ value = "", exactSerch = "search_key", assumed }) => {
+    () => ({ value = "", exactSerch = "search_key", assumed, page = 1,
+       ...resQuery }) => {
+      console.log("value = ",resQuery)
       history.replace({
         search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
       });
@@ -266,9 +268,11 @@ function ContentEditForm() {
           metaLoading: true,
           search_key: value,
           assumed: assumed ? 1 : -1,
+          page,
+          ...resQuery,
         })
       );
-      setOutcomePage(1);
+      setOutcomePage(page);
     },
     [dispatch, history]
   );
@@ -298,21 +302,6 @@ function ContentEditForm() {
           );
     },
     [dispatch, searchContentType, searchMedia, lesson, isShare]
-  );
-  const handleChangePageOutCome = useMemo(
-    () => (page: number) => {
-      setOutcomePage(page);
-      dispatch(
-        searchPublishedLearningOutcomes({
-          metaLoading: true,
-          page,
-          search_key: searchOutcome,
-          assumed: assumed ? 1 : -1,
-          exactSerch,
-        })
-      );
-    },
-    [assumed, dispatch, exactSerch, searchOutcome]
   );
   const handleGoOutcomeDetail = useMemo(
     () => (id: GetOutcomeDetail["outcome_id"]) => {
@@ -419,10 +408,6 @@ function ContentEditForm() {
         assumed={assumed}
         total={OutcomesListTotal}
         searchLOListOptions={searchLOListOptions}
-        onChangeProgram={ handleChangeProgram}
-        onChangeDevelopmental={handleChangeDevelopmental}
-        onChangeSubject={handleChangeSubject}
-        onChangePage={handleChangePageOutCome}
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}
       />

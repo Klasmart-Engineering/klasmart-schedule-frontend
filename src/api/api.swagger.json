@@ -5161,56 +5161,38 @@
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by program ids",
+            "type": "string",
+            "description": "search by program ids, split by comma",
             "name": "program_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by subject ids",
+            "type": "string",
+            "description": "search by subject ids, split by comma",
             "name": "subject_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by category ids",
+            "type": "string",
+            "description": "search by category ids, split by comma",
             "name": "category_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by sub category ids",
+            "type": "string",
+            "description": "search by sub category ids, split by comma",
             "name": "sub_category_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by age ids",
+            "type": "string",
+            "description": "search by age ids, split by comma",
             "name": "age_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by grade ids",
+            "type": "string",
+            "description": "search by grade ids, split by comma",
             "name": "grade_ids",
             "in": "query"
           },
@@ -5222,7 +5204,7 @@
           },
           {
             "type": "integer",
-            "description": "page size",
+            "description": "page size: -1 no page, 0 default page size 20",
             "name": "page_size",
             "in": "query"
           },
@@ -8538,12 +8520,6 @@
         "complete_time": {
           "type": "integer"
         },
-        "content_outcomes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.AssessmentDetailContentOutcome"
-          }
-        },
         "id": {
           "type": "string"
         },
@@ -8635,11 +8611,8 @@
         "assumed": {
           "type": "boolean"
         },
-        "attendance_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "checked": {
+          "type": "boolean"
         },
         "content_id": {
           "type": "string"
@@ -8652,9 +8625,6 @@
         },
         "outcome_name": {
           "type": "string"
-        },
-        "skip": {
-          "type": "boolean"
         }
       }
     },
@@ -8841,10 +8811,10 @@
         "ordered_id": {
           "type": "integer"
         },
-        "outcome_names": {
+        "outcomes": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/entity.AssessmentDetailContentOutcome"
           }
         },
         "parent_id": {
@@ -9571,6 +9541,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "parent_folder": {
+          "type": "string"
         },
         "program": {
           "type": "string"
@@ -12921,9 +12894,6 @@
           "type": "boolean"
         },
         "author_id": {
-          "type": "string"
-        },
-        "author_name": {
           "type": "string"
         },
         "category_ids": {
