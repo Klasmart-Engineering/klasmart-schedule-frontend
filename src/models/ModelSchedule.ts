@@ -312,6 +312,7 @@ export class modelSchedule {
         assembly[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].unshift(initValue as never);
       }
     });
+    query.programs = filterQuery?.programs as never;
     return { query, assembly };
   }
 }
