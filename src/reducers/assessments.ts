@@ -9,7 +9,7 @@ import {
   EntityScheduleFeedbackView,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
-import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem } from "../api/type";
+import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem, UpdateAssessmentRequestData } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
 import { ModelAssessment } from "../models/ModelAssessment";
@@ -28,6 +28,7 @@ export interface IAssessmentState {
   homeFunAssessmentList: EntityListHomeFunStudiesResultItem[];
   studyAssessmentList: NonNullable<AsyncReturnType<typeof api.studyAssessments.listStudyAssessments>["items"]>;
   studyAssessmentDetail: NonNullable<AsyncReturnType<typeof api.studyAssessments.getStudyAssessmentDetail>>;
+  contentOutcomes?: UpdateAssessmentRequestData["content_outcomes"] /** https://calmisland.atlassian.net/browse/NKL-1199 **/;
 }
 
 interface RootState {
@@ -60,6 +61,7 @@ const initialState: IAssessmentState = {
   studyAssessmentList: [],
   studyAssessmentDetail: {},
   my_id: "ed43b8c3-d5c0-52af-ae10-402f1fe2ea46",
+  contentOutcomes: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;

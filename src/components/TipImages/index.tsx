@@ -78,7 +78,7 @@ export const emptyTipAndCreate = <TipImages type={TipImagesType.empty} text="rep
 
 export function NoOutcome() {
   return (
-    <div style={{ width: "100%", textAlign: "center", marginTop: "calc(30% - 80px)" }}>
+    <div style={{ width: "100%", textAlign: "center", margin: "10vh auto" }}>
       <img src={AnyTimeNoData} alt="" />
       <p>{d("No learning outcome is available.").t("assess_msg_no_lo")}</p>
     </div>

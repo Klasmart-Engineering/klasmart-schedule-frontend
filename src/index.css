@@ -9,3 +9,72 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+.ma {
+  margin: 10px !important;
+}
+.mx {
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+}
+.my {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+.mt {
+  margin-top: 10px !important;
+}
+.mb {
+  margin-bottom: 10px !important;
+}
+.ml {
+  margin-left: 10px !important;
+}
+.mr {
+  margin-right: 10px !important;
+}
+
+.pa {
+  padding: 10px !important;
+}
+.mx {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+.my {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+.pt {
+  padding-top: 10px !important;
+}
+.pb {
+  padding-bottom: 10px !important;
+}
+.pl {
+  padding-left: 10px !important;
+}
+.pr {
+  padding-right: 10px !important;
+}
+
+.flex_col {
+  display: flex;
+  flex-direction: column;
+}
+.flex_align_center {
+  display: flex;
+  align-items: center;
+}
+.flex_justify_center {
+  display: flex;
+  justify-content: center;
+}
+.flex_space_between {
+  display: flex;
+  justify-content: space-between;
+}
+.flex_space_between {
+  display: flex;
+  justify-content: space-around;
+}

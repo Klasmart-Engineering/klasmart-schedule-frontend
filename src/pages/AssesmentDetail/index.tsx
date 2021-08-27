@@ -1,25 +1,22 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
-import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
-import { AssessmentStatus, UpdataStudyAssessmentRequestData } from "../../api/type";
+import { EntityAssessmentStudentViewH5PItem, EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
+import { AssessmentStatus, FinalOutcomeList, UpdataStudyAssessmentRequestData } from "../../api/type";
 import { PermissionType, usePermission } from "../../components/Permission";
-import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { AsyncTrunkReturned, completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
 import { actSuccess } from "../../reducers/notify";
-import { OutcomesFilter, OutcomesFilterProps } from "../AssessmentEdit/filterOutcomes";
-import { OutcomesTable } from "../AssessmentEdit/OutcomesTable";
-import RadioHeader, { RadioValue } from "../AssessmentEdit/RadioHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";
-import { DetailTable } from "./DetailTable";
+import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
+import { cloneDeep, uniq } from "lodash";
 
 export const useQueryDetail = () => {
   const { search } = useLocation();
@@ -33,7 +30,6 @@ export const useQueryDetail = () => {
 
 export function AssessmentDetail() {
   const { id, editindex, filterOutcomes } = useQueryDetail();
-  const [radioValue, setRadioValue] = useState(RadioValue.lessonPlan);
   const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
   const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
@@ -60,18 +56,15 @@ export function AssessmentDetail() {
       return outcome;
     }
   }, [lesson_materials, studyAssessmentDetail, setValue]);
-  const [autocompleteValue, setChangeAutocompleteValue] = React.useState<
-    {
-      id: string | number;
-      title: string;
-    }[]
-  >([{ id: 1, title: "Select All" }]);
+  const [autocompleteValue, setChangeAutocompleteValue] = React.useState<{ id: string | number; title: string }[]>([
+    { id: 1, title: "Select All" },
+  ]);
   const [autocompleteLabel, setChangeAutocompleteLabel] = React.useState<number>(1);
   const [studentViewItems, setStudentViewItems] = React.useState<EntityUpdateAssessmentH5PStudent[] | undefined>([]);
   const init_student_view_items = useMemo(() => {
     return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
   }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
-  const filter_student_view_items = useMemo(() => {
+  const filter_student_view_items: EntityAssessmentStudentViewH5PItem[] = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
     return ModelAssessment.toGetStudentViewFormItems(res, studentViewItems, autocompleteValue, autocompleteLabel);
   }, [studyAssessmentDetail, attendance_ids, lesson_materials, studentViewItems, autocompleteValue, autocompleteLabel]);
@@ -93,7 +86,7 @@ export function AssessmentDetail() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateStudyAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateStudyAssessment>
           >;
           if (payload) {
@@ -113,9 +106,9 @@ export function AssessmentDetail() {
         const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
         const formValue = { ...value, student_view_items };
         const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
-        const { payload } = ((await dispatch(
-          completeStudyAssessment({ id, data, filter_student_view_items })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateStudyAssessment>>;
+        const { payload } = (await dispatch(completeStudyAssessment({ id, data, filter_student_view_items }))) as unknown as PayloadAction<
+          AsyncTrunkReturned<typeof updateStudyAssessment>
+        >;
         if (payload) {
           dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
           history.replace({
@@ -127,31 +120,21 @@ export function AssessmentDetail() {
   );
 
   const changeAutocompleteValue = useMemo(
-    () => (
-      value: {
-        id: string | number;
-        title: string;
-      }[]
-    ) => {
-      setChangeAutocompleteValue(value);
-    },
+    () =>
+      (
+        value: {
+          id: string | number;
+          title: string;
+        }[]
+      ) => {
+        setChangeAutocompleteValue(value);
+      },
     []
   );
 
   const changeAutocompleteDimensionValue = (label: number) => {
     setChangeAutocompleteLabel(label);
   };
-  const handleChangeRadio = (value: RadioValue) => {
-    setRadioValue(value);
-  };
-  const handleFilterOutcomes = useMemo<OutcomesFilterProps["onChange"]>(
-    () => (value) => {
-      history.replace({
-        search: setQuery(history.location.search, { filterOutcomes: value }),
-      });
-    },
-    [history]
-  );
   useEffect(() => {
     dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
   }, [dispatch, id, editindex]);
@@ -161,6 +144,32 @@ export function AssessmentDetail() {
       reset(ModelAssessment.toStudyRequest(studyAssessmentDetail));
     }
   }, [reset, studyAssessmentDetail]);
+
+  /** score assessment 部分 在学生角度下加上 attendanceIds 字段 **/
+  const contentOutcomes = useMemo(() => {
+    let contentOutcomes = ModelAssessment.genContentOutcomes(filter_student_view_items);
+    setValue("content_outcomes", contentOutcomes);
+    return contentOutcomes;
+  }, [filter_student_view_items, setValue]);
+
+  const finalOutcomeList = useMemo(() => {
+    let newFinalOutcomeList: FinalOutcomeList[] = cloneDeep(filteredOutcomelist) ?? [];
+    newFinalOutcomeList?.forEach((outcome) => {
+      let curOutcomes = contentOutcomes.filter((co) => co.outcome_id === outcome.outcome_id);
+      if (curOutcomes.length) {
+        /** 如果找到了 则直接赋值， 没有找到说明是 lesson plan 则不用修改 **/
+        outcome.partial_ids = [];
+        outcome.attendance_ids = [];
+        let allIds = uniq(curOutcomes.map((co) => co.attendance_ids).flat());
+        allIds.forEach((id) => {
+          if (curOutcomes.filter((co) => co.attendance_ids?.find((i) => i === id)).length === curOutcomes.length)
+            outcome.attendance_ids?.push(id);
+          else outcome.partial_ids?.push(id);
+        });
+      }
+    });
+    return newFinalOutcomeList;
+  }, [filteredOutcomelist, contentOutcomes]);
 
   const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
     setStudentViewItems(value);
@@ -183,36 +192,23 @@ export function AssessmentDetail() {
           complete_rate={complete_rate}
         />
         <div style={{ position: "relative" }}>
-          <RadioHeader value={radioValue as RadioValue} onChange={handleChangeRadio} />
-          <div style={{ visibility: radioValue === RadioValue.score ? "visible" : "hidden", position: "absolute", width: "100%" }}>
-            <DetailTable
-              autocompleteLabel={autocompleteLabel}
-              studentViewItems={filter_student_view_items}
-              isComplete={isComplete}
-              editable={editable as boolean}
-              changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
-              changeAutocompleteValue={changeAutocompleteValue}
-              lesson_materials={lesson_materials}
-              students={students}
-              studyAssessmentDetail={studyAssessmentDetail}
-              changeAssessmentTableDetail={changeAssessmentTableDetail}
-            />
-          </div>
-          <div style={{ visibility: radioValue === RadioValue.lessonPlan ? "visible" : "hidden", position: "absolute", width: "100%" }}>
-            <OutcomesFilter value={filterOutcomes} onChange={handleFilterOutcomes} />
-            {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-              <OutcomesTable
-                outcomesList={filteredOutcomelist}
-                attendanceList={students}
-                formMethods={formMethods}
-                formValue={formValue}
-                filterOutcomes={filterOutcomes}
-                editable={editable}
-              />
-            ) : (
-              filteredOutcomelist && <NoOutcome />
-            )}
-          </div>
+          <LessonPlanAndScore
+            autocompleteLabel={autocompleteLabel}
+            studentViewItems={filter_student_view_items}
+            isComplete={isComplete}
+            editable={editable as boolean}
+            changeAutocompleteDimensionValue={changeAutocompleteDimensionValue}
+            changeAutocompleteValue={changeAutocompleteValue}
+            lesson_materials={lesson_materials}
+            students={students}
+            studyAssessmentDetail={studyAssessmentDetail}
+            changeAssessmentTableDetail={changeAssessmentTableDetail}
+            filterOutcomes={filterOutcomes}
+            filteredOutcomelist={finalOutcomeList}
+            formMethods={formMethods}
+            formValue={formValue}
+            contentOutcomes={contentOutcomes}
+          />
         </div>
       </LayoutPair>
     </>

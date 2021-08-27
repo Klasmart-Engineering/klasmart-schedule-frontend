@@ -8676,9 +8676,6 @@
         },
         "outcome_name": {
           "type": "string"
-        },
-        "skip": {
-          "type": "boolean"
         }
       }
     },
