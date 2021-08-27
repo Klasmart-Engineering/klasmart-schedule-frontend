@@ -1,10 +1,12 @@
 import { PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep, uniq } from "lodash";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 import { AssessmentStatus, FinalOutcomeList, GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
+import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
@@ -18,8 +20,6 @@ import { AssessmentHeader } from "./AssessmentHeader";
 import { OutcomesFilter, OutcomesFilterProps } from "./filterOutcomes";
 import { OutcomesTable } from "./OutcomesTable";
 import { Summary } from "./Summary";
-import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
-import { cloneDeep, uniq } from "lodash";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -76,6 +76,32 @@ export function AssessmentsEdit() {
     return ModelAssessment.toGetStudentViewFormItems(res, studentViewItems, autocompleteValue, autocompleteLabel);
   }, [assessmentDetail, attendance_ids, lesson_materials, studentViewItems, autocompleteValue, autocompleteLabel]);
 
+  /** score assessment 部分 在学生角度下加上 attendanceIds 字段 **/
+  const contentOutcomes = useMemo(() => {
+    let contentOutcomes = ModelAssessment.genContentOutcomes(filter_student_view_items);
+    setValue("content_outcomes", contentOutcomes);
+    return contentOutcomes;
+  }, [filter_student_view_items, setValue]);
+
+  const finalOutcomeList = useMemo(() => {
+    let newFinalOutcomeList: FinalOutcomeList[] = cloneDeep(filteredOutcomelist) ?? [];
+    newFinalOutcomeList?.forEach((outcome) => {
+      let curOutcomes = contentOutcomes.filter((co) => co.outcome_id === outcome.outcome_id);
+      if (curOutcomes.length) {
+        /** 如果找到了 则直接赋值， 没有找到说明是 lesson plan 则不用修改 **/
+        outcome.partial_ids = [];
+        outcome.attendance_ids = [];
+        let allIds = uniq(curOutcomes.map((co) => co.attendance_ids).flat());
+        allIds.forEach((id) => {
+          if (curOutcomes.filter((co) => co.attendance_ids?.find((i) => i === id)).length === curOutcomes.length)
+            outcome.attendance_ids?.push(id);
+          else outcome.partial_ids?.push(id);
+        });
+      }
+    });
+    return newFinalOutcomeList;
+  }, [filteredOutcomelist, contentOutcomes]);
+
   const isMyAssessmentlist = assessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = isMyAssessmentlist && isMyAssessmentlist.length > 0;
   const editable = isMyAssessment && perm_439 && assessmentDetail.status === "in_progress";
@@ -87,7 +113,7 @@ export function AssessmentsEdit() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -108,11 +134,18 @@ export function AssessmentsEdit() {
           const formValue = { ...value, student_view_items };
           const data: UpdateAssessmentRequestData = { ...formValue, action: "complete" };
           const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
-            data.outcomes &&
-            data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
+            finalOutcomeList &&
+            finalOutcomeList.filter(
+              (item) =>
+                !item.none_achieved &&
+                !item.skip &&
+                (!item.attendance_ids || item.attendance_ids.length === 0) &&
+                item.partial_ids &&
+                item.partial_ids.length === 0
+            );
           if (data.action === "complete" && errorlist && errorlist.length > 0)
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
-          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -123,7 +156,7 @@ export function AssessmentsEdit() {
           }
         }
       }),
-    [handleSubmit, id, init_student_view_items, filter_student_view_items, dispatch, history, editindex]
+    [handleSubmit, id, init_student_view_items, filter_student_view_items, finalOutcomeList, dispatch, history, editindex]
   );
   const handleGoBack = useCallback(() => {
     history.goBack();
@@ -157,32 +190,6 @@ export function AssessmentsEdit() {
   const changeAutocompleteDimensionValue = (label: number) => {
     setChangeAutocompleteLabel(label);
   };
-
-  /** score assessment 部分 在学生角度下加上 attendanceIds 字段 **/
-  const contentOutcomes = useMemo(() => {
-    let contentOutcomes = ModelAssessment.genContentOutcomes(filter_student_view_items);
-    setValue("content_outcomes", contentOutcomes);
-    return contentOutcomes;
-  }, [filter_student_view_items, setValue]);
-
-  const finalOutcomeList = useMemo(() => {
-    let newFinalOutcomeList: FinalOutcomeList[] = cloneDeep(filteredOutcomelist) ?? [];
-    newFinalOutcomeList?.forEach((outcome) => {
-      let curOutcomes = contentOutcomes.filter((co) => co.outcome_id === outcome.outcome_id);
-      if (curOutcomes.length) {
-        /** 如果找到了 则直接赋值， 没有找到说明是 lesson plan 则不用修改 **/
-        outcome.partial_ids = [];
-        outcome.attendance_ids = [];
-        let allIds = uniq(curOutcomes.map((co) => co.attendance_ids).flat());
-        allIds.forEach((id) => {
-          if (curOutcomes.filter((co) => co.attendance_ids?.find((i) => i === id)).length === curOutcomes.length)
-            outcome.attendance_ids?.push(id);
-          else outcome.partial_ids?.push(id);
-        });
-      }
-    });
-    return newFinalOutcomeList;
-  }, [filteredOutcomelist, contentOutcomes]);
 
   const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
     console.log("value==========", value);

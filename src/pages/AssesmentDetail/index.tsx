@@ -1,22 +1,22 @@
 import { PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep, uniq } from "lodash";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
 import { EntityAssessmentStudentViewH5PItem, EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
 import { AssessmentStatus, FinalOutcomeList, UpdataStudyAssessmentRequestData } from "../../api/type";
+import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { AsyncTrunkReturned, completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
-import { actSuccess } from "../../reducers/notify";
+import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";
-import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
-import { cloneDeep, uniq } from "lodash";
 
 export const useQueryDetail = () => {
   const { search } = useLocation();
@@ -76,74 +76,6 @@ export function AssessmentDetail() {
     if (attempt === 0) return "0";
     return `${Math.round((attempt / all) * 100)}%`;
   }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
-  const handleGoBack = useCallback(async () => {
-    history.goBack();
-  }, [history]);
-  const handleDetailSave = useMemo(
-    () =>
-      handleSubmit(async (value) => {
-        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
-        const formValue = { ...value, student_view_items };
-        if (id) {
-          const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = (await dispatch(updateStudyAssessment({ id, data }))) as unknown as PayloadAction<
-            AsyncTrunkReturned<typeof updateStudyAssessment>
-          >;
-          if (payload) {
-            dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
-            history.replace({
-              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
-            });
-          }
-        }
-      }),
-    [handleSubmit, init_student_view_items, filter_student_view_items, id, dispatch, history, editindex]
-  );
-  const handleDetailComplete = useMemo(
-    () =>
-      handleSubmit(async (value) => {
-        // if (id) {
-        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
-        const formValue = { ...value, student_view_items };
-        const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
-        const { payload } = (await dispatch(completeStudyAssessment({ id, data, filter_student_view_items }))) as unknown as PayloadAction<
-          AsyncTrunkReturned<typeof updateStudyAssessment>
-        >;
-        if (payload) {
-          dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
-          history.replace({
-            search: setQuery(history.location.search, { editindex: editindex + 1 }),
-          });
-        }
-      }),
-    [handleSubmit, init_student_view_items, filter_student_view_items, dispatch, id, history, editindex]
-  );
-
-  const changeAutocompleteValue = useMemo(
-    () =>
-      (
-        value: {
-          id: string | number;
-          title: string;
-        }[]
-      ) => {
-        setChangeAutocompleteValue(value);
-      },
-    []
-  );
-
-  const changeAutocompleteDimensionValue = (label: number) => {
-    setChangeAutocompleteLabel(label);
-  };
-  useEffect(() => {
-    dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
-  }, [dispatch, id, editindex]);
-
-  useEffect(() => {
-    if (studyAssessmentDetail.id) {
-      reset(ModelAssessment.toStudyRequest(studyAssessmentDetail));
-    }
-  }, [reset, studyAssessmentDetail]);
 
   /** score assessment 部分 在学生角度下加上 attendanceIds 字段 **/
   const contentOutcomes = useMemo(() => {
@@ -170,6 +102,86 @@ export function AssessmentDetail() {
     });
     return newFinalOutcomeList;
   }, [filteredOutcomelist, contentOutcomes]);
+
+  const handleGoBack = useCallback(async () => {
+    history.goBack();
+  }, [history]);
+  const handleDetailSave = useMemo(
+    () =>
+      handleSubmit(async (value) => {
+        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
+        const formValue = { ...value, student_view_items };
+        if (id) {
+          const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
+          const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+            AsyncTrunkReturned<typeof updateStudyAssessment>
+          >;
+          if (payload) {
+            dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
+            history.replace({
+              search: setQuery(history.location.search, { id: payload, editindex: editindex + 1 }),
+            });
+          }
+        }
+      }),
+    [handleSubmit, init_student_view_items, filter_student_view_items, id, dispatch, history, editindex]
+  );
+  const handleDetailComplete = useMemo(
+    () =>
+      handleSubmit(async (value) => {
+        // if (id) {
+        const errorlist =
+          finalOutcomeList &&
+          finalOutcomeList.filter(
+            (item) =>
+              !item.none_achieved &&
+              !item.skip &&
+              (!item.attendance_ids || item.attendance_ids.length === 0) &&
+              item.partial_ids &&
+              item.partial_ids.length === 0
+          );
+        if (errorlist && errorlist.length > 0)
+          return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
+        const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
+        const formValue = { ...value, student_view_items };
+        const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
+        const { payload } = ((await dispatch(
+          completeStudyAssessment({ id, data, filter_student_view_items })
+        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateStudyAssessment>>;
+        if (payload) {
+          dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
+          history.replace({
+            search: setQuery(history.location.search, { editindex: editindex + 1 }),
+          });
+        }
+      }),
+    [handleSubmit, finalOutcomeList, dispatch, init_student_view_items, filter_student_view_items, id, history, editindex]
+  );
+
+  const changeAutocompleteValue = useMemo(
+    () => (
+      value: {
+        id: string | number;
+        title: string;
+      }[]
+    ) => {
+      setChangeAutocompleteValue(value);
+    },
+    []
+  );
+
+  const changeAutocompleteDimensionValue = (label: number) => {
+    setChangeAutocompleteLabel(label);
+  };
+  useEffect(() => {
+    dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
+  }, [dispatch, id, editindex]);
+
+  useEffect(() => {
+    if (studyAssessmentDetail.id) {
+      reset(ModelAssessment.toStudyRequest(studyAssessmentDetail));
+    }
+  }, [reset, studyAssessmentDetail]);
 
   const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
     setStudentViewItems(value);
