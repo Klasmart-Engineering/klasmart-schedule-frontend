@@ -7,7 +7,7 @@ import {
   rectIntersection,
   TouchSensor,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import debounce from "lodash/debounce";
@@ -20,7 +20,7 @@ import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchCo
 import { PermissionOr, PermissionType, usePermission } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
-import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
+import { addAllInSearchLOListOption, ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { formLiteFileType } from "../../models/ModelH5pSchema";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
@@ -36,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchPublishedLearningOutcomes
+  searchPublishedLearningOutcomes,
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -124,6 +124,7 @@ function ContentEditForm() {
   const addedLOLength = watch("outcome_entities")?.length || contentDetail.outcome_entities.length;
   const activeRectRef = useRef<Active["rect"]>();
   const unmountRef = useRef<Function>();
+  const searchLOListOptionsAll = addAllInSearchLOListOption(searchLOListOptions);
   const isTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   const perm = usePermission([
     PermissionType.create_content_page_201,
@@ -192,7 +193,7 @@ function ContentEditForm() {
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
         const input = { ...restValues, content_type, outcomes };
         const contentDetail = ModelContentDetailForm.encode(input);
-        const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
+        const { payload: id } = (await dispatch(save(contentDetail))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
           if (lesson === "assets") {
             // assets 创建直接返回列表
@@ -229,52 +230,52 @@ function ContentEditForm() {
   }, [dispatch, id, history]);
 
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
-    () => ({ value = "", exactSerch = "all", isShare = "org" }) => {
-      history.replace({
-        search: setQuery(history.location.search, { searchMedia: value, isShare }),
-      });
-      const contentNameValue = exactSerch === "all" ? "" : value;
-      const nameValue = exactSerch === "all" ? value : "";
-      isShare === "badanamu" && lesson === "plan"
-        ? dispatch(
-            searchAuthContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: nameValue,
-              content_name: contentNameValue,
-            })
-          )
-        : dispatch(
-            searchContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: nameValue,
-              content_name: contentNameValue,
-            })
-          );
-      setMediaPage(1);
-    },
+    () =>
+      ({ value = "", exactSerch = "all", isShare = "org" }) => {
+        history.replace({
+          search: setQuery(history.location.search, { searchMedia: value, isShare }),
+        });
+        const contentNameValue = exactSerch === "all" ? "" : value;
+        const nameValue = exactSerch === "all" ? value : "";
+        isShare === "badanamu" && lesson === "plan"
+          ? dispatch(
+              searchAuthContentLists({
+                metaLoading: true,
+                content_type: searchContentType,
+                name: nameValue,
+                content_name: contentNameValue,
+              })
+            )
+          : dispatch(
+              searchContentLists({
+                metaLoading: true,
+                content_type: searchContentType,
+                name: nameValue,
+                content_name: contentNameValue,
+              })
+            );
+        setMediaPage(1);
+      },
     [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => ({ value = "", exactSerch = "search_key", assumed, page = 1,
-       ...resQuery }) => {
-      console.log("value = ",resQuery)
-      history.replace({
-        search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
-      });
-      dispatch(
-        searchPublishedLearningOutcomes({
-          exactSerch,
-          metaLoading: true,
-          search_key: value,
-          assumed: assumed ? 1 : -1,
-          page,
-          ...resQuery,
-        })
-      );
-      setOutcomePage(page);
-    },
+    () =>
+      ({ value = "", exactSerch = "search_key", assumed, page = 1, ...resQuery }) => {
+        history.replace({
+          search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
+        });
+        dispatch(
+          searchPublishedLearningOutcomes({
+            exactSerch,
+            metaLoading: true,
+            search_key: value,
+            assumed: assumed ? 1 : -1,
+            page,
+            ...resQuery,
+          })
+        );
+        setOutcomePage(page);
+      },
     [dispatch, history]
   );
   const handleGoBack = useCallback(() => {
@@ -355,7 +356,16 @@ function ContentEditForm() {
   }, [scrollTop]);
   useEffect(() => {
     dispatch(
-      onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "badanamu", exactSerch })
+      onLoadContentEdit({
+        id,
+        type: lesson,
+        metaLoading: true,
+        searchMedia,
+        searchOutcome,
+        assumed,
+        isShare: isShare === "badanamu",
+        exactSerch,
+      })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch]);
@@ -371,7 +381,12 @@ function ContentEditForm() {
     />
   );
   const contentTabs = (
-    <ContentTabs tab={tab} addedLOLength={addedLOLength} onChangeTab={handleChangeTab} error={errors.name || errors.publish_scope || errors.subject}>
+    <ContentTabs
+      tab={tab}
+      addedLOLength={addedLOLength}
+      onChangeTab={handleChangeTab}
+      error={errors.name || errors.publish_scope || errors.subject}
+    >
       <PermissionOr
         value={[
           PermissionType.edit_org_published_content_235,
@@ -408,7 +423,7 @@ function ContentEditForm() {
         exactSerch={exactSerch}
         assumed={assumed}
         total={OutcomesListTotal}
-        searchLOListOptions={searchLOListOptions}
+        searchLOListOptions={searchLOListOptionsAll}
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}
         outcomesFullOptions={outcomesFullOptions}
@@ -627,12 +642,9 @@ function ContentEditForm() {
       ) : (
         permissionTip
       )}
-      {/* /> */}
-      {/* <DevTool control={control} /> */}
     </DndContext>
   );
 }
-
 export default function ContentEdit() {
   const { id, editindex } = useQueryCms();
   const { lesson } = useParams<ContentEditRouteParams>();

@@ -1,6 +1,4 @@
-import {
-  Box, Button, makeStyles
-} from "@material-ui/core";
+import { Box, Button, makeStyles } from "@material-ui/core";
 import React, { forwardRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -9,10 +7,15 @@ import { ContentEditRouteParams } from ".";
 import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
-import { getOutcomesOptions, getOutcomesOptionSkills, ISearchPublishedLearningOutcomesParams, LinkedMockOptions } from "../../reducers/content";
+import {
+  getOutcomesOptions,
+  getOutcomesOptionSkills,
+  ISearchPublishedLearningOutcomesParams,
+  LinkedMockOptions,
+} from "../../reducers/content";
 import { OutComesDialog, OutcomesTable } from "./OutcomesRelated";
 
-const useStyles = makeStyles(({ breakpoints, palette,typography }) => ({
+const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
   mediaAssets: {
     minHeight: 900,
     [breakpoints.down("sm")]: {
@@ -35,17 +38,16 @@ const useStyles = makeStyles(({ breakpoints, palette,typography }) => ({
   },
   addButton: {
     width: "95%",
-    margin: "20px 0 14px"
+    margin: "20px 0 14px",
   },
 }));
-
 
 export type ISearchOutcomeQuery = Exclude<ISearchPublishedLearningOutcomesParams, "assumed"> & {
   value?: string;
   exactSerch?: string;
   assumed?: boolean;
-
-}
+};
+export type ISearchOutcomeForm = ISearchOutcomeQuery & { program?: string; category?: string };
 export interface OutcomesProps {
   comingsoon?: boolean;
   list: ModelPublishedOutcomeView[];
@@ -65,46 +67,47 @@ export interface OutcomesProps {
 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
   const css = useStyles();
-  const {
-    comingsoon,
-    value,
-    onChange,
-    onGoOutcomesDetail,
-    onSearch,
-    outcomesFullOptions,
-  } = props;
+  const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions } = props;
   const dispatch = useDispatch();
   const { lesson } = useParams<ContentEditRouteParams>();
-  const [open, toggle] = React.useReducer((open)=> !open, false);
-  const { getValues, control, watch } = useForm<ISearchOutcomeQuery>();
-  const program_id = watch("program_ids");
- const handleChangeProgram = useMemo(
-   () => async (program_id: string) => {
-     dispatch(getOutcomesOptions({ metaLoading: true, program_id }));
-   },
-   [dispatch]
- );
- const handleChangeSubject = useMemo(
-   () => async (subject_ids: string[]) => {
-     dispatch(getOutcomesOptions({ metaLoading: true, program_id, subject_ids: subject_ids.join(",") }));
-   },
-   [dispatch, program_id]
- );
- const handleChangeDevelopmental = useMemo(
-   () => (developmental_id: string[]) => {
-     dispatch(
-       getOutcomesOptionSkills({
-         metaLoading: true,
-         program_id,
-         developmental_id: developmental_id[0],
-       })
-     );
-   },
-   [dispatch]
- );
-  const addOutcomeButton = <Button className={css.addOutcomesButton} onClick={toggle}>
+  const [open, toggle] = React.useReducer((open) => !open, false);
+  const { getValues, control, watch } = useForm<ISearchOutcomeForm>();
+  const programId = watch("program")?.split("/")[0];
+  const subjectId = watch("program")?.split("/")[1];
+  const program_id = programId === "all" ? "" : programId;
+  const subject_ids = subjectId?.includes("all") ? "" : subjectId;
+  const handleChangeProgram = useMemo(
+    () => async (program_id: string) => {
+      dispatch(getOutcomesOptions({ metaLoading: true, program_id: program_id === "all" ? "" : program_id }));
+    },
+    [dispatch]
+  );
+  const handleChangeSubject = useMemo(
+    () => async (subject_ids: string[]) => {
+      const subjectId = subject_ids.includes("all") ? [] : subject_ids;
+
+      dispatch(getOutcomesOptions({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
+    },
+    [dispatch, program_id]
+  );
+  const handleChangeDevelopmental = useMemo(
+    () => (developmental_id: string) => {
+      const developmentalId = developmental_id === "all" ? "" : developmental_id;
+      dispatch(
+        getOutcomesOptionSkills({
+          metaLoading: true,
+          program_id,
+          developmental_id: developmentalId,
+        })
+      );
+    },
+    [dispatch, program_id]
+  );
+  const addOutcomeButton = (
+    <Button className={css.addOutcomesButton} onClick={toggle}>
       {"Add Learning Outcomes"}
     </Button>
+  );
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
@@ -113,24 +116,45 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
         <>
           {value && value.length > 0 ? (
             <>
-              <div className={css.addButton} >{addOutcomeButton}</div> 
-              <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} outcomesFullOptions={outcomesFullOptions} />
+              <div className={css.addButton}>{addOutcomeButton}</div>
+              <OutcomesTable
+                list={value}
+                value={value}
+                onChange={onChange}
+                onGoOutcomesDetail={onGoOutcomesDetail}
+                outcomesFullOptions={outcomesFullOptions}
+              />
             </>
-             
           ) : (
-            <TipImages type={TipImagesType.empty}>
-              {addOutcomeButton}
-            </TipImages>
+            <TipImages type={TipImagesType.empty}>{addOutcomeButton}</TipImages>
           )}
-
         </>
       )}
-     {open && <OutComesDialog {...props} open={open} toggle={toggle} control={control}
-      onChangeOutcomeProgram={handleChangeProgram}
-      onChangeDevelopmental={handleChangeDevelopmental}
-      onChangeOutcomeSubject={handleChangeSubject}
-      handleClickSearch={({page,order_by}) => onSearch({...getValues(),page,order_by})}
-     />}
+      {open && (
+        <OutComesDialog
+          {...props}
+          open={open}
+          toggle={toggle}
+          control={control}
+          onChangeOutcomeProgram={handleChangeProgram}
+          onChangeDevelopmental={handleChangeDevelopmental}
+          onChangeOutcomeSubject={handleChangeSubject}
+          handleClickSearch={({ page, order_by }) => {
+            const { program, category, ...resValues } = getValues();
+            const category_ids = watch("category")?.split("/")[0];
+            const sub_category_ids = watch("category")?.split("/")[1];
+            onSearch({
+              ...resValues,
+              program_ids: program_id,
+              subject_ids: subject_ids,
+              category_ids: category_ids === "all" ? "" : category_ids,
+              sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
+              page,
+              order_by,
+            });
+          }}
+        />
+      )}
     </Box>
   );
 });

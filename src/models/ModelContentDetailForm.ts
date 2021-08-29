@@ -1,7 +1,7 @@
 import { EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
 import { ContentFileType, ContentInputSourceType, ContentType } from "../api/type";
 import { d } from "../locale/LocaleManager";
-import { LinkedMockOptionsItem } from "../reducers/content";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
 import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
 interface MyExtendedDetailForm {
@@ -87,4 +87,15 @@ export const toMapVisibilitySettings = (list?: LinkedMockOptionsItem[]): LinkedM
 export const toMapGroup = (group?: string) => {
   if (group === "school") return d("Schools").t("library_label_visibility_schools");
   if (group === "org") return d("Organization").t("library_label_visibility_organization");
+};
+type options = Omit<LinkedMockOptions, "program_id" | "developmental_id">;
+export const addAllInSearchLOListOption = (linkedMockOptions: LinkedMockOptions): LinkedMockOptions => {
+  const all: LinkedMockOptionsItem | undefined = { id: "all", name: "all" };
+  const { program_id, developmental_id, ...resOptions } = linkedMockOptions;
+  const resault: LinkedMockOptions = {};
+  Object.keys(resOptions).forEach((item) => {
+    const key = item as keyof options;
+    resault[key] = [all].concat(linkedMockOptions[key] || []);
+  });
+  return resault;
 };

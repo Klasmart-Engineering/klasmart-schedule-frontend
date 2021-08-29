@@ -17,7 +17,7 @@ import {
   TextField,
   Typography,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import shadows from "@material-ui/core/styles/shadows";
@@ -168,7 +168,7 @@ export function ContentHeader(props: HeaderProps) {
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
         <IconButton size="small" className={css.arrowBack} onClick={onBack}>
-          <ArrowBack fontSize={sm ? "small" : "medium"} />
+          <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
         {/* <Hidden smDown>
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
