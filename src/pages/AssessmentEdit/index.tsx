@@ -136,12 +136,7 @@ export function AssessmentsEdit() {
           const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
             finalOutcomeList &&
             finalOutcomeList.filter(
-              (item) =>
-                !item.none_achieved &&
-                !item.skip &&
-                (!item.attendance_ids || item.attendance_ids.length === 0) &&
-                item.partial_ids &&
-                item.partial_ids.length === 0
+              (item) => !item.none_achieved && !item.skip && item.attendance_ids?.length === 0 && item.partial_ids?.length === 0
             );
           if (data.action === "complete" && errorlist && errorlist.length > 0)
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));

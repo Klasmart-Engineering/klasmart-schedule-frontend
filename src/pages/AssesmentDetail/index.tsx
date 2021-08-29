@@ -133,13 +133,9 @@ export function AssessmentDetail() {
         const errorlist =
           finalOutcomeList &&
           finalOutcomeList.filter(
-            (item) =>
-              !item.none_achieved &&
-              !item.skip &&
-              (!item.attendance_ids || item.attendance_ids.length === 0) &&
-              item.partial_ids &&
-              item.partial_ids.length === 0
+            (item) => !item.none_achieved && !item.skip && item.attendance_ids?.length === 0 && item.partial_ids?.length === 0
           );
+        console.log("errorlist", finalOutcomeList, errorlist);
         if (errorlist && errorlist.length > 0)
           return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
         const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
