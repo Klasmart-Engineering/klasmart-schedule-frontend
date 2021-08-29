@@ -261,6 +261,7 @@ type LangRecord<T = string> =
   | { id: "assess_msg_save_successfully"; description: "Saved Successfully."; values: undefined }
   | { id: "assess_msg_compete_successfully"; description: "Completed Successfully."; values: undefined }
   | { id: "assess_option_all_achieved"; description: "All Achieved"; values: undefined }
+  | { id: "assessment_partially_achieved"; description: "Partially Achieved"; values: undefined }
   | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
   | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
   | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature."; values: undefined }
@@ -339,6 +340,7 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "assess_detail_lesson_plan_assessment"; description: "Lesson Plan Assessment"; values: undefined }
+  | { id: "assessment_learning_outcome_assessment"; description: "Learning Outcome Assessment"; values: undefined }
   | { id: "assess_detail_score_assessment"; description: "Score Assessment"; values: undefined }
   | { id: "assess_detail_score_full_marks"; description: "Score / Full Marks"; values: undefined }
   | { id: "assess_study_summary"; description: "Study Summary"; values: undefined }
@@ -1243,6 +1245,7 @@ type LangRecord<T = string> =
   | { id: "report_no_feedback"; description: "No feedback is available"; values: undefined }
   | { id: "report_no_data_available"; description: "No Data Available"; values: undefined }
   | { id: "assessment_assignment_assessment"; description: "Assignment Assessment"; values: undefined }
+  | { id: "assessment_assigned_to"; description: "Assigned to"; values: undefined }
   | { id: "assessment_learning_outcomes_assessment"; description: "Learning Outcomes Assessment"; values: undefined }
   | {
       id: "assessment_learning_outcomes_achievement";

@@ -97,7 +97,7 @@ export function LessonPlanAndScore(props: tableProps) {
 
       <>
         <Typography variant={radioTypography} className={css.lps_title}>
-          {d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")}
+          {d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")}
         </Typography>
         {!initLoading &&
           (filteredOutcomelist && filteredOutcomelist.length > 0 ? (

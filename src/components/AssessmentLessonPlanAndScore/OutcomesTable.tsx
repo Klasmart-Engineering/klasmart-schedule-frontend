@@ -279,7 +279,13 @@ export function OutcomesTable(props: OutcomesTableProps) {
       value: "name",
       text: d("Learning Outcomes").t("library_label_learning_outcomes"),
     },
-    { align: "center", style: { backgroundColor: "#F2F5F7" }, width: 120, value: "assignTo", text: "Assign to" },
+    {
+      align: "center",
+      style: { backgroundColor: "#F2F5F7" },
+      width: 120,
+      value: "assignTo",
+      text: d("Assigned to").t("assessment_assigned_to"),
+    },
     { align: "center", style: { backgroundColor: "#F2F5F7" }, width: 100, value: "assumed", text: d("Assumed").t("assess_label_assumed") },
     {
       align: "center",
