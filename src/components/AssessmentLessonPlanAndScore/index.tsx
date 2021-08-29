@@ -44,6 +44,7 @@ interface tableProps extends MultipleGroupProps {
   studentViewItems?: EntityAssessmentStudentViewH5PItem[];
   editable: boolean;
   isComplete: boolean;
+  initLoading?: boolean;
   autocompleteLabel: number;
   changeAssessmentTableDetail?: (value?: EntityUpdateAssessmentH5PStudent[]) => void;
 
@@ -60,6 +61,7 @@ export function LessonPlanAndScore(props: tableProps) {
     studentViewItems,
     editable,
     isComplete,
+    initLoading,
     changeAutocompleteValue,
     changeAutocompleteDimensionValue,
     studyAssessmentDetail,
@@ -97,38 +99,41 @@ export function LessonPlanAndScore(props: tableProps) {
         <Typography variant={radioTypography} className={css.lps_title}>
           {d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")}
         </Typography>
-        {filteredOutcomelist && filteredOutcomelist.length > 0 ? (
-          <OutcomesTable
-            outcomesList={filteredOutcomelist}
-            attendanceList={students}
-            formMethods={formMethods}
-            formValue={formValue}
-            filterOutcomes={filterOutcomes}
-            editable={editable}
-            studentViewItems={studentViewItems}
-            changeAssessmentTableDetail={changeAssessmentTableDetail}
-          />
-        ) : (
-          filteredOutcomelist && <NoOutcome />
-        )}
+        {!initLoading &&
+          (filteredOutcomelist && filteredOutcomelist.length > 0 ? (
+            <OutcomesTable
+              outcomesList={filteredOutcomelist}
+              attendanceList={students}
+              formMethods={formMethods}
+              formValue={formValue}
+              filterOutcomes={filterOutcomes}
+              editable={editable}
+              studentViewItems={studentViewItems}
+              changeAssessmentTableDetail={changeAssessmentTableDetail}
+            />
+          ) : (
+            filteredOutcomelist && <NoOutcome />
+          ))}
       </>
 
       <>
         <Typography variant={radioTypography} className={css.lps_title}>
           {d("Score Assessment").t("assess_detail_score_assessment")}
         </Typography>
-        <DynamicTable
-          formMethods={formMethods}
-          formValue={formValue}
-          studentViewItems={studentViewItems}
-          isComplete={isComplete}
-          editable={editable}
-          name="student_view_items"
-          tableType="study"
-          autocompleteLabel={autocompleteLabel}
-          changeAssessmentTableDetail={changeAssessmentTableDetail}
-          lesson_materials={lesson_materials ?? studyAssessmentDetail.lesson_materials}
-        />
+        {!initLoading && (
+          <DynamicTable
+            formMethods={formMethods}
+            formValue={formValue}
+            studentViewItems={studentViewItems}
+            isComplete={isComplete}
+            editable={editable}
+            name="student_view_items"
+            tableType="study"
+            autocompleteLabel={autocompleteLabel}
+            changeAssessmentTableDetail={changeAssessmentTableDetail}
+            lesson_materials={lesson_materials ?? studyAssessmentDetail.lesson_materials}
+          />
+        )}
       </>
 
       <Controller

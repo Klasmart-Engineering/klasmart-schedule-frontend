@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Checkbox, FormControlLabel } from "@material-ui/core";
 import { d } from "../../locale/LocaleManager";
 import { EntityAssessmentDetailContentOutcome, EntityAssessmentStudentViewH5PItem } from "../../api/api.auto";
@@ -15,13 +15,24 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
   const { outcome, studentViewItemsSet, disabled, formMethods, formValue, changeAssessmentTableDetail } = props;
 
   let { outcome_id, none_achieved, content_id } = outcome;
-  let attendance_ids: string[] =
-    formValue.content_outcomes?.find((co) => co.content_id === outcome.content_id && co.outcome_id === outcome.outcome_id)
-      ?.attendance_ids ?? [];
+
+  let attendance_ids: string[] = [];
 
   let [noneAchieved, setNoneAchieved] = useState(none_achieved && isEmpty(attendance_ids));
   let [attendanceIds, setAttendanceIds] = useState(cloneDeep(attendance_ids));
   let allAchieved = useMemo(() => attendanceIds?.length === studentViewItemsSet?.length, [attendanceIds, studentViewItemsSet]);
+
+  useEffect(() => {
+    let rAttendanceIds =
+      formValue.content_outcomes?.find((co) => co.content_id === outcome.content_id && co.outcome_id === outcome.outcome_id)
+        ?.attendance_ids ?? [];
+    setAttendanceIds(rAttendanceIds);
+  }, [formValue.content_outcomes, outcome.content_id, outcome.outcome_id]);
+
+  /** 根据 outcome 得到（用户通过点击 not attempted 而得到的）禁用列表 **/
+  const outcomeDisableList = useMemo(() => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [], [
+    formValue.outcomes,
+  ]);
 
   /** 上传所有数据的方法 **/
   const emitData = () => {
@@ -73,12 +84,12 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
       <Box width={180} fontSize={14} display="flex" flexDirection="column" alignItems="flexStart">
         <FormControlLabel
           label={d("All Achieved").t("assess_option_all_achieved")}
-          disabled={disabled}
+          disabled={disabled || outcomeDisableList?.some((o) => o === outcome_id)}
           control={<Checkbox checked={allAchieved} color="primary" onChange={(e) => handleAllCheck(e, "all")} />}
         />
         <FormControlLabel
           label={d("None Achieved").t("assess_option_none_achieved")}
-          disabled={disabled}
+          disabled={disabled || outcomeDisableList?.some((o) => o === outcome_id)}
           control={<Checkbox checked={noneAchieved} color="primary" onChange={(e) => handleAllCheck(e, "none")} />}
         />
       </Box>
@@ -88,7 +99,7 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
             <FormControlLabel
               label={item?.student_name}
               key={item.student_id}
-              disabled={disabled}
+              disabled={disabled || outcomeDisableList?.some((o) => o === outcome_id)}
               control={
                 <Checkbox
                   color="primary"
