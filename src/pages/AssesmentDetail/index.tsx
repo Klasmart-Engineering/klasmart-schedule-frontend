@@ -1,6 +1,6 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, uniq } from "lodash";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
@@ -133,13 +133,9 @@ export function AssessmentDetail() {
         const errorlist =
           finalOutcomeList &&
           finalOutcomeList.filter(
-            (item) =>
-              !item.none_achieved &&
-              !item.skip &&
-              (!item.attendance_ids || item.attendance_ids.length === 0) &&
-              item.partial_ids &&
-              item.partial_ids.length === 0
+            (item) => !item.none_achieved && !item.skip && item.attendance_ids?.length === 0 && item.partial_ids?.length === 0
           );
+        console.log("errorlist", finalOutcomeList, errorlist);
         if (errorlist && errorlist.length > 0)
           return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
         const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
@@ -173,8 +169,13 @@ export function AssessmentDetail() {
   const changeAutocompleteDimensionValue = (label: number) => {
     setChangeAutocompleteLabel(label);
   };
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
+    (async () => {
+      setLoading(true);
+      await dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
+      setLoading(false);
+    })();
   }, [dispatch, id, editindex]);
 
   useEffect(() => {
@@ -205,6 +206,7 @@ export function AssessmentDetail() {
         />
         <div style={{ position: "relative" }}>
           <LessonPlanAndScore
+            initLoading={loading}
             autocompleteLabel={autocompleteLabel}
             studentViewItems={filter_student_view_items}
             isComplete={isComplete}

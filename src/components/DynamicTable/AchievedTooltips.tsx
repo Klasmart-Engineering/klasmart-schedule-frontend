@@ -2,6 +2,7 @@ import React from "react";
 import { Checkbox, FormControlLabel, makeStyles, Tooltip } from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
 import { withStyles, Theme } from "@material-ui/core/styles";
+import { d } from "../../locale/LocaleManager";
 
 interface AchievedTooltipsProps {
   showPartially?: boolean;
@@ -10,6 +11,8 @@ interface AchievedTooltipsProps {
 const useStyles = makeStyles({
   tooltip: {
     fontSize: 14,
+    display: "flex",
+    flexDirection: "column",
     "& .MuiFormControlLabel-root": {
       marginRight: 0,
       "& .MuiCheckbox-root": {
@@ -36,7 +39,6 @@ const LightTooltip = withStyles((theme: Theme) => ({
     color: "rgba(0, 0, 0, 0.87)",
     boxShadow: theme.shadows[1],
     fontSize: 11,
-    width: 145,
     margin: "10px 0",
     padding: "6px 18px",
   },
@@ -51,10 +53,13 @@ export function AchievedTooltips(props: AchievedTooltipsProps = { showPartially:
       placement="top"
       title={
         <div className={classes.tooltip}>
-          <FormControlLabel label="All Achieved" control={<Checkbox name="checked" color="primary" size="small" readOnly checked />} />
+          <FormControlLabel
+            label={d("All Achieved").t("assess_option_all_achieved")}
+            control={<Checkbox name="checked" color="primary" size="small" readOnly checked />}
+          />
           {showPartially && (
             <FormControlLabel
-              label="Partially Achieved"
+              label={d("Partially Achieved").t("assessment_partially_achieved")}
               control={
                 <Checkbox
                   name="checkedP"
@@ -68,7 +73,10 @@ export function AchievedTooltips(props: AchievedTooltipsProps = { showPartially:
               }
             />
           )}
-          <FormControlLabel label="Not Achieved" control={<Checkbox name="unchecked" color="primary" size="small" readOnly />} />
+          <FormControlLabel
+            label={d("None Achieved").t("assess_option_none_achieved")}
+            control={<Checkbox name="unchecked" color="primary" size="small" readOnly />}
+          />
         </div>
       }
     >

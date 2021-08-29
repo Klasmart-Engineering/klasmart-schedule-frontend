@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep, uniq } from "lodash";
 import {
   EntityAssessmentDetailContent,
   EntityAssessmentStudent,
@@ -374,6 +374,10 @@ export const ModelAssessment = {
           }
         });
       });
+    });
+    /** 去重操作 **/
+    contentOutcomes?.forEach((co) => {
+      co.attendance_ids = uniq(co.attendance_ids);
     });
     return contentOutcomes;
   },

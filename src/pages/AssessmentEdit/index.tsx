@@ -1,6 +1,6 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, uniq } from "lodash";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -13,7 +13,7 @@ import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessments";
+import { AsyncTrunkReturned, getStudyAssessmentDetail, updateAssessment } from "../../reducers/assessments";
 import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
@@ -136,12 +136,7 @@ export function AssessmentsEdit() {
           const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
             finalOutcomeList &&
             finalOutcomeList.filter(
-              (item) =>
-                !item.none_achieved &&
-                !item.skip &&
-                (!item.attendance_ids || item.attendance_ids.length === 0) &&
-                item.partial_ids &&
-                item.partial_ids.length === 0
+              (item) => !item.none_achieved && !item.skip && item.attendance_ids?.length === 0 && item.partial_ids?.length === 0
             );
           if (data.action === "complete" && errorlist && errorlist.length > 0)
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
@@ -169,9 +164,14 @@ export function AssessmentsEdit() {
     },
     [history]
   );
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (id) {
-      dispatch(getAssessment({ id, metaLoading: true }));
+      (async () => {
+        setLoading(true);
+        await dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
+        setLoading(false);
+      })();
     }
   }, [dispatch, id, editindex]);
   useEffect(() => {
@@ -198,6 +198,7 @@ export function AssessmentsEdit() {
 
   const rightsideArea = isLive ? (
     <LessonPlanAndScore
+      initLoading={loading}
       autocompleteLabel={autocompleteLabel}
       studentViewItems={filter_student_view_items}
       isComplete={isComplete}

@@ -1,5 +1,4 @@
 import { Box, Checkbox, Collapse, FormControlLabel, makeStyles } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -9,7 +8,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   EntityAssessmentDetailContentOutcome,
   EntityAssessmentStudentViewH5PItem,
@@ -92,6 +91,11 @@ function LOChecklist({
   let { outcomes } = rowData;
   let [list, setList] = useState(cloneDeep(outcomes));
 
+  /** 根据 outcome 得到（用户通过点击 not attempted 而得到的）禁用列表 **/
+  const outcomeDisableList = useMemo(() => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [], [
+    formValue.outcomes,
+  ]);
+
   useEffect(() => {
     setList(cloneDeep(outcomes));
   }, [outcomes]);
@@ -123,7 +127,7 @@ function LOChecklist({
         <FormControlLabel
           key={`LO_${studentId}_${item.outcome_id}`}
           label={item.outcome_name}
-          disabled={disabled}
+          disabled={disabled || outcomeDisableList?.some((o) => o === item.outcome_id)}
           control={<Checkbox value={item.outcome_id} color="primary" checked={item.checked} onChange={(e) => handleChangeList(e, item)} />}
         />
       ))}
@@ -133,7 +137,7 @@ function LOChecklist({
 
 export function ViewByStudents(props: BasicTableProps) {
   const classes = useStyles();
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(true);
 
   const {
     handleElasticLayerControl,
@@ -148,12 +152,27 @@ export function ViewByStudents(props: BasicTableProps) {
   } = props;
 
   const StudentHeader: PLField[] = [
-    { align: "center", value: "idx", text: `${d("No").t("assess_detail_no")}.` },
-    { align: "center", value: "name", text: d("Lesson Material Name").t("assess_detail_lesson_material_name") },
-    { align: "center", value: "type", text: d("Lesson Material Type").t("assess_detail_lesson_material_type") },
-    { align: "center", value: "answer", text: d("Answer").t("assess_detail_answer") },
-    { align: "center", value: "score", text: d("Score / Full Marks").t("assess_detail_score_full_marks") },
-    { align: "center", value: "LO", text: d("Learning Outcomes").t("library_label_learning_outcomes") },
+    { align: "center", style: { backgroundColor: "#fff" }, value: "idx", text: `${d("No").t("assess_detail_no")}.` },
+    {
+      align: "center",
+      style: { backgroundColor: "#fff" },
+      value: "name",
+      text: d("Lesson Material Name").t("assess_detail_lesson_material_name"),
+    },
+    {
+      align: "center",
+      style: { backgroundColor: "#fff" },
+      value: "type",
+      text: d("Lesson Material Type").t("assess_detail_lesson_material_type"),
+    },
+    { align: "center", style: { backgroundColor: "#fff" }, value: "answer", text: d("Answer").t("assess_detail_answer") },
+    {
+      align: "center",
+      style: { backgroundColor: "#fff" },
+      value: "score",
+      text: d("Score / Full Marks").t("assess_detail_score_full_marks"),
+    },
+    { align: "center", style: { backgroundColor: "#fff" }, value: "LO", text: d("Learning Outcomes").t("library_label_learning_outcomes") },
   ];
 
   const handleChangeComment = (commentText: string) => {
@@ -250,9 +269,9 @@ export function ViewByStudents(props: BasicTableProps) {
         {checked ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
       </Box>
       <Collapse in={checked}>
-        <Paper elevation={4}>
-          <Table className={classes.table} aria-label="simple table">
-            <PLTableHeader fields={StudentHeader} style={{ backgroundColor: "#fff", height: 35 }} />
+        <TableContainer style={{ maxHeight: 800 }}>
+          <Table className={classes.table} aria-label="simple table" stickyHeader>
+            <PLTableHeader fields={StudentHeader} style={{ height: 35 }} />
             <TableBody>
               {studentViewItem?.lesson_materials?.map((row, idx) => (
                 <TableRow key={`${row.sub_h5p_id ? row.sub_h5p_id : row.lesson_material_id}${idx}`}>
@@ -316,7 +335,7 @@ export function ViewByStudents(props: BasicTableProps) {
               ))}
             </TableBody>
           </Table>
-        </Paper>
+        </TableContainer>
       </Collapse>
     </TableContainer>
   );

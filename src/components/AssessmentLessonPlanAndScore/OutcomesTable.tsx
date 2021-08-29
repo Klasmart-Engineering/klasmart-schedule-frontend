@@ -91,10 +91,10 @@ const AssessAction = (props: AssessActionProps) => {
   const skip: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].skip) || false;
   const none_achieved: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].none_achieved) || false;
   const allValue: string[] = formValue.attendance_ids || [];
-  const checked_attendance_ids = useMemo(
-    () => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0),
-    [allValue, attendance_ids]
-  );
+  const checked_attendance_ids = useMemo(() => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0), [
+    allValue,
+    attendance_ids,
+  ]);
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
       setValue(`outcomes[${index}].${name}`, value);
@@ -103,15 +103,15 @@ const AssessAction = (props: AssessActionProps) => {
   );
 
   useEffect(() => {
-    console.log("index===========", index, attendance_ids);
+    /** 当且仅当 此 outcomes 包含 **/
     let hasOutcome =
       studentViewItems && studentViewItems[0]?.lesson_materials?.some((lm) => lm.outcomes?.some((oc) => oc.outcome_id === outcome_id));
     if (hasOutcome) setValue(`outcomes[${index}].attendance_ids`, attendance_ids);
   }, [index, setValue, attendance_ids, studentViewItems, outcome_id]);
 
   /** 更改下方的 student&content 中的数据 **/
-  const transBottomToTop = (studentIds: string[]) => {
-    console.log("outcomes=========", formValue, studentViewItems, outcome_id);
+  const transBottomToTop = (studentIds: string[], indeterminate?: boolean) => {
+    // console.log("outcomes=========", formValue, studentViewItems, outcome_id,indeterminate);
     let newSVI = cloneDeep(studentViewItems);
     newSVI?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {
@@ -127,6 +127,8 @@ const AssessAction = (props: AssessActionProps) => {
               break;
             default:
               if (lmo.outcome_id === outcome_id && stu.student_id === studentIds[0]) lmo.checked = !lmo.checked;
+              if (lmo.outcome_id === outcome_id && stu.student_id === studentIds[0] && indeterminate)
+                lmo.checked = false; /** 如果当前点击的是 partial 状态，则把它当成选中状态处理 **/
               break;
           }
         });
@@ -151,14 +153,14 @@ const AssessAction = (props: AssessActionProps) => {
     if (e.target.checked) {
       funSetValue("none_achieved", false);
     }
-    let arr: string[];
+    let arr: string[] = [];
     if (e.target.name === "award") {
       arr = e.target.checked ? allValue : [];
     } else {
-      arr = e.target.value ? [e.target.value] : [];
+      if (e.target.value) arr = [e.target.value];
     }
-    console.log("arr===============", arr, cloneDeep(formValue));
-    transBottomToTop(arr);
+    // console.log("arr111111111", arr,e.target,e.target.getAttribute('data-indeterminate')==='true', cloneDeep(formValue));
+    transBottomToTop(arr, e.target.getAttribute("data-indeterminate") === "true");
   };
 
   return (
@@ -258,8 +260,16 @@ export interface OutcomesTableProps {
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendanceList, formMethods, formValue, editable, filterOutcomes, changeAssessmentTableDetail, studentViewItems } =
-    props;
+  const {
+    outcomesList,
+    attendanceList,
+    formMethods,
+    formValue,
+    editable,
+    filterOutcomes,
+    changeAssessmentTableDetail,
+    studentViewItems,
+  } = props;
 
   const OutcomesHeader: PLField[] = [
     {
@@ -269,7 +279,13 @@ export function OutcomesTable(props: OutcomesTableProps) {
       value: "name",
       text: d("Learning Outcomes").t("library_label_learning_outcomes"),
     },
-    { align: "center", style: { backgroundColor: "#F2F5F7" }, width: 120, value: "assignTo", text: "Assign to" },
+    {
+      align: "center",
+      style: { backgroundColor: "#F2F5F7" },
+      width: 120,
+      value: "assignTo",
+      text: d("Assigned to").t("assessment_assigned_to"),
+    },
     { align: "center", style: { backgroundColor: "#F2F5F7" }, width: 100, value: "assumed", text: d("Assumed").t("assess_label_assumed") },
     {
       align: "center",
