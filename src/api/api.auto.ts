@@ -537,6 +537,7 @@ export interface EntityCreateContentRequest {
   lesson_type?: string;
   name?: string;
   outcomes?: string[];
+  parent_folder?: string;
   program?: string;
   publish_scope?: string[];
   self_study?: boolean;
@@ -3334,12 +3335,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         set_name?: string;
         search_key?: string;
         assumed?: number;
-        program_ids?: string[];
-        subject_ids?: string[];
-        category_ids?: string[];
-        sub_category_ids?: string[];
-        age_ids?: string[];
-        grade_ids?: string[];
+        program_ids?: string;
+        subject_ids?: string;
+        category_ids?: string;
+        sub_category_ids?: string;
+        age_ids?: string;
+        grade_ids?: string;
         page?: number;
         page_size?: number;
         order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";

@@ -70,7 +70,8 @@ export const useQueryCms = () => {
   const editindex: number = Number(query.get("editindex") || 0);
   const back = query.get("back") || "";
   const exactSerch = query.get("exactSerch") || "all";
-  return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch };
+  const parent_folder = query.get("parent_id") || "";
+  return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch, parent_folder };
 };
 
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
@@ -96,7 +97,7 @@ function ContentEditForm() {
     useSelector<RootState, RootState["content"]>((state) => state.content);
   const { lesson, tab, rightside } = useParams<RouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
-  const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch } = useQueryCms();
+  const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch, parent_folder } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
   const history = useHistory();
   const offsetRef = useRef(0);
@@ -159,15 +160,6 @@ function ContentEditForm() {
     node?.addEventListener("scroll", update);
     unmountRef.current = () => node?.removeEventListener("scroll", update);
   };
-  // eslint-disable-next-line
-  const handleChangeLesson = useMemo(
-    () => (lesson: string) => {
-      const rightSide = `${lesson === "assets" ? "assetEdit" : lesson === "material" ? "contentH5p" : "planComposeGraphic"}`;
-      const tab = lesson === "assets" ? "assetDetails" : "details";
-      history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightSide}`);
-    },
-    [history, routeBasePath]
-  );
   const handleChangeTab = useMemo(
     () => (tab: string) => {
       history.replace(`${routeBasePath}/lesson/${lesson}/tab/${tab}/rightside/${rightside}${search}`);
@@ -180,7 +172,7 @@ function ContentEditForm() {
       handleSubmit(async (value: ContentDetailForm) => {
         const { outcome_entities, ...restValues } = value;
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
-        const input = { ...restValues, content_type, outcomes };
+        const input = { ...restValues, parent_folder, content_type, outcomes };
         const contentDetail = ModelContentDetailForm.encode(input);
         const { payload: id } = (await dispatch(save(contentDetail))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
@@ -196,7 +188,7 @@ function ContentEditForm() {
           }
         }
       }),
-    [handleSubmit, content_type, lesson, dispatch, history, editindex]
+    [handleSubmit, parent_folder, content_type, dispatch, lesson, history, editindex]
   );
   const handlePublish = useMemo(
     () => async (isAsAssets?: boolean) => {

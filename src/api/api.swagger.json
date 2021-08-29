@@ -5161,56 +5161,38 @@
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by program ids",
+            "type": "string",
+            "description": "search by program ids, split by comma",
             "name": "program_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by subject ids",
+            "type": "string",
+            "description": "search by subject ids, split by comma",
             "name": "subject_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by category ids",
+            "type": "string",
+            "description": "search by category ids, split by comma",
             "name": "category_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by sub category ids",
+            "type": "string",
+            "description": "search by sub category ids, split by comma",
             "name": "sub_category_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by age ids",
+            "type": "string",
+            "description": "search by age ids, split by comma",
             "name": "age_ids",
             "in": "query"
           },
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "search by grade ids",
+            "type": "string",
+            "description": "search by grade ids, split by comma",
             "name": "grade_ids",
             "in": "query"
           },
@@ -8676,6 +8658,9 @@
         },
         "outcome_name": {
           "type": "string"
+        },
+        "skip": {
+          "type": "boolean"
         }
       }
     },
@@ -9556,6 +9541,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "parent_folder": {
+          "type": "string"
         },
         "program": {
           "type": "string"

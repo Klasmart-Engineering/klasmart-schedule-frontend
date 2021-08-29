@@ -11,16 +11,13 @@ import {
   Hidden,
   IconButton,
   makeStyles,
-  MenuItem,
   Radio,
   RadioGroup,
-  TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import shadows from "@material-ui/core/styles/shadows";
 import { ArrowBack, Cancel, CancelOutlined, DeleteOutlineOutlined, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { forwardRef, Fragment, useReducer } from "react";
@@ -28,7 +25,7 @@ import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentInputSourceType, ContentType } from "../../api/type";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionType, usePermission } from "../../components/Permission";
+import { Permission, PermissionType } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm, ContentDetailMaterialType } from "../../models/ModelContentDetailForm";
 
@@ -94,19 +91,6 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
       marginRight: 0,
     },
   },
-  selectLesson: {
-    backgroundColor: "white",
-    borderRadius: 4,
-    boxShadow: shadows[3],
-    color: palette.text.primary,
-    [breakpoints.down("sm")]: {
-      boxShadow: "none",
-      width: "95%",
-    },
-  },
-  selectLessonItem: {
-    fontSize: 18,
-  },
   dialogContentRemoveborder: {
     borderBottom: "none",
   },
@@ -160,19 +144,13 @@ export function ContentHeader(props: HeaderProps) {
     ? data.input_source === ContentInputSourceType.fromFile || inputSourceWatch === ContentInputSourceType.fromFile
     : Number(teacherManualBatchLengthWatch) > 0 || contentDetail?.teacher_manual_batch?.length;
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const [open, toggle] = useReducer((open) => {
-    return !open;
-  }, false);
-
+  const [open, toggle] = useReducer((open) => !open, false);
   return (
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
         <IconButton size="small" className={css.arrowBack} onClick={onBack}>
           <ArrowBack fontSize={sm ? "small" : "default"} />
         </IconButton>
-        {/* <Hidden smDown>
-          <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />
-        </Hidden> */}
         <Typography variant="h6" className={css.title}>
           {sm ? d("Create New Content").t("library_label_create_new_content") : d("For Organizations").t("library_label_for_organizations")}
         </Typography>
@@ -389,55 +367,6 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
         }
       />
     </RadioGroup>
-  );
-}
-interface SelectLessonProps {
-  lesson: string;
-  onChangeLesson: (value: string) => any;
-  disabled: boolean;
-}
-export function SelectLesson(props: SelectLessonProps) {
-  const css = useStyles();
-  const create_asset = usePermission(PermissionType.create_asset_320);
-  const create_material = usePermission(PermissionType.create_lesson_material_220);
-  const create_plan = usePermission(PermissionType.create_lesson_plan_221);
-  const create_content = usePermission(PermissionType.create_content_page_201);
-  const { lesson, onChangeLesson, disabled } = props;
-  return (
-    <Box mb={3} display="flex" justifyContent="center">
-      <TextField
-        fullWidth
-        select
-        className={css.selectLesson}
-        disabled={disabled}
-        value={lesson}
-        onChange={(e) => onChangeLesson(e.target.value)}
-        InputProps={{
-          style: {
-            fontSize: 20,
-            fontWeight: 700,
-          },
-        }}
-      >
-        {(create_asset || create_content) && (
-          <MenuItem value="assets" className={css.selectLessonItem}>
-            {d("Assets").t("library_label_assets")}
-          </MenuItem>
-        )}
-
-        {(create_material || create_content) && (
-          <MenuItem value="material" className={css.selectLessonItem}>
-            {d("Lesson Material").t("library_label_lesson_material")}
-          </MenuItem>
-        )}
-
-        {(create_plan || create_content) && (
-          <MenuItem value="plan" className={css.selectLessonItem}>
-            {d("Lesson Plan").t("library_label_lesson_plan")}
-          </MenuItem>
-        )}
-      </TextField>
-    </Box>
   );
 }
 interface SelectH5PRadioProps {
