@@ -203,7 +203,7 @@ function ContentEditForm() {
         `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.materialandplan}&publish_status=published&path=/${parent_folder}&order_by=-update_at&page=1`
       );
     },
-    [lesson, handleSave, id, history, dispatch]
+    [lesson, handleSave, id, history, dispatch, parent_folder]
   );
 
   const handleDelete = useCallback(async () => {
