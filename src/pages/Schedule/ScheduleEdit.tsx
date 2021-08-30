@@ -1736,8 +1736,8 @@ function EditBox(props: CalendarStateProps) {
           handelSetProgramChildInfo={handelSetProgramChildInfo}
           programChildInfoParent={
             (programChildInfo
-              ? programChildInfo?.concat(resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
-              : resultInfo.payload
+              ? programChildInfo?.concat(resultInfo && resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
+              : resultInfo && resultInfo.payload
               ? [resultInfo.payload.programChildInfo]
               : []) as GetProgramsQuery[]
           }
