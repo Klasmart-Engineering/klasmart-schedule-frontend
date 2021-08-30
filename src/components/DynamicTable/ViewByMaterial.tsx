@@ -64,7 +64,7 @@ const useStyles = makeStyles({
 
 export function ViewByMaterial(props: BasicTableProps) {
   const classes = useStyles();
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(true);
 
   const {
     handleElasticLayerControl,
@@ -168,10 +168,11 @@ export function ViewByMaterial(props: BasicTableProps) {
                     <TableCell align="center">
                       <ViewByMaterialActions
                         studentViewItemsSet={studentViewItemsSet}
+                        dimension2Item={dimension2Item}
                         outcome={outcome}
                         formValue={formValue}
                         formMethods={formMethods}
-                        disabled={!editable}
+                        disabled={!editable || !!dimension2Item.parent_id}
                         changeAssessmentTableDetail={changeAssessmentTableDetail}
                       />
                     </TableCell>

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
-import { AssessmentStatus, FinalOutcomeList, GetAssessmentResultOutcomeAttendanceMap, UpdateAssessmentRequestData } from "../../api/type";
+import { AssessmentStatus, FinalOutcomeList, UpdateAssessmentRequestData } from "../../api/type";
 import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { NoOutcome } from "../../components/TipImages";
@@ -113,7 +113,7 @@ export function AssessmentsEdit() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -133,14 +133,21 @@ export function AssessmentsEdit() {
           const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
           const formValue = { ...value, student_view_items };
           const data: UpdateAssessmentRequestData = { ...formValue, action: "complete" };
-          const errorlist: GetAssessmentResultOutcomeAttendanceMap[] | undefined =
-            finalOutcomeList &&
-            finalOutcomeList.filter(
-              (item) => !item.none_achieved && !item.skip && item.attendance_ids?.length === 0 && item.partial_ids?.length === 0
-            );
+          const errorlist =
+            data.outcomes &&
+            data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
+          if (errorlist && errorlist.length) {
+            const finalErrs = errorlist.filter((err) => {
+              return finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0;
+            });
+            if (finalErrs && finalErrs.length) {
+              console.log(finalErrs);
+              return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
+            }
+          }
           if (data.action === "complete" && errorlist && errorlist.length > 0)
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {

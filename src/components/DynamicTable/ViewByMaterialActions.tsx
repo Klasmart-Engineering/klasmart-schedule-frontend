@@ -3,16 +3,17 @@ import { Box, Checkbox, FormControlLabel } from "@material-ui/core";
 import { d } from "../../locale/LocaleManager";
 import { EntityAssessmentDetailContentOutcome, EntityAssessmentStudentViewH5PItem } from "../../api/api.auto";
 import { cloneDeep, isEmpty } from "lodash";
-import { formValueMethods } from "./types";
+import { BasicTableProps, formValueMethods } from "./types";
 
 interface AssessActionProps extends formValueMethods {
   outcome: EntityAssessmentDetailContentOutcome;
   studentViewItemsSet: EntityAssessmentStudentViewH5PItem[] | undefined;
   disabled?: boolean;
+  dimension2Item?: BasicTableProps["dimension2Item"];
 }
 
 export default function ViewByMaterialActions(props: AssessActionProps) {
-  const { outcome, studentViewItemsSet, disabled, formMethods, formValue, changeAssessmentTableDetail } = props;
+  const { outcome, studentViewItemsSet, disabled, formMethods, formValue, changeAssessmentTableDetail, dimension2Item } = props;
 
   let { outcome_id, none_achieved, content_id } = outcome;
 
@@ -30,41 +31,59 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
   }, [formValue.content_outcomes, outcome.content_id, outcome.outcome_id]);
 
   /** 根据 outcome 得到（用户通过点击 not attempted 而得到的）禁用列表 **/
-  const outcomeDisableList = useMemo(() => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [], [
-    formValue.outcomes,
-  ]);
+  const outcomeDisableList = useMemo(
+    () => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [],
+    [formValue.outcomes]
+  );
 
   /** 上传所有数据的方法 **/
-  const emitData = () => {
+  const emitData = (arr?: string[]) => {
+    let attendanceIds = arr;
     console.log("formValue:", formValue, formMethods, outcome_id, attendanceIds);
     let newStudentViewItemsSet = cloneDeep(studentViewItemsSet);
     newStudentViewItemsSet?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {
         lm.outcomes?.forEach((oc) => {
           if (outcome_id === oc.outcome_id && content_id === oc.content_id) {
-            oc.checked = !!attendanceIds.find((ai) => ai === stu.student_id);
+            oc.checked = !!attendanceIds?.find((ai) => ai === stu.student_id);
           }
         });
       });
     });
+    newStudentViewItemsSet?.forEach((stu) => {
+      stu.lesson_materials?.forEach((lm) => {
+        let nestedArr = lm.number?.split("-");
+        if (lm.parent_id && nestedArr && nestedArr[0] === dimension2Item?.number) {
+          let outcomes =
+            newStudentViewItemsSet &&
+            newStudentViewItemsSet
+              .find((nstu) => nstu.student_id === stu.student_id)
+              ?.lesson_materials?.find((nlm) => nlm.lesson_material_id === lm.lesson_material_id);
+          lm.outcomes = (outcomes && outcomes.outcomes) || [];
+        }
+      });
+    });
+
     changeAssessmentTableDetail && changeAssessmentTableDetail(newStudentViewItemsSet);
   };
 
   /** 全选 / 全不选 **/
   const handleAllCheck = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    let ids: string[] = [];
     if (type === "none") {
       /** 勾选了 None achieved 清空 AttendanceIds **/
-      !noneAchieved && setAttendanceIds([]);
+      !noneAchieved && (ids = []);
       setNoneAchieved(!noneAchieved);
     } else {
       /** 勾选了 All achieved 填满 AttendanceIds 否则 清空 AttendanceIds **/
-      if (!e.target.checked) setAttendanceIds([]);
+      if (!e.target.checked) ids = [];
       else {
         setNoneAchieved(false);
-        setAttendanceIds(studentViewItemsSet?.map((i) => i.student_id || "") ?? []);
+        ids = studentViewItemsSet?.map((i) => i.student_id || "") ?? [];
       }
     }
-    emitData();
+    setAttendanceIds(ids);
+    emitData([...ids]);
   };
 
   /** 更改学生状态 **/
@@ -76,7 +95,7 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
 
     if (ids.length > 0) setNoneAchieved(false);
     setAttendanceIds([...ids]);
-    emitData();
+    emitData([...ids]);
   };
 
   return (

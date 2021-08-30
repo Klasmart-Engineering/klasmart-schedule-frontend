@@ -113,7 +113,7 @@ export function AssessmentDetail() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateStudyAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateStudyAssessment>
           >;
           if (payload) {
@@ -129,21 +129,24 @@ export function AssessmentDetail() {
   const handleDetailComplete = useMemo(
     () =>
       handleSubmit(async (value) => {
-        // if (id) {
-        const errorlist =
-          finalOutcomeList &&
-          finalOutcomeList.filter(
-            (item) => !item.none_achieved && !item.skip && item.attendance_ids?.length === 0 && item.partial_ids?.length === 0
-          );
-        console.log("errorlist", finalOutcomeList, errorlist);
-        if (errorlist && errorlist.length > 0)
-          return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
         const student_view_items = ModelAssessment.toUpdateH5pStudentView(init_student_view_items, filter_student_view_items);
         const formValue = { ...value, student_view_items };
         const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "complete" };
-        const { payload } = ((await dispatch(
-          completeStudyAssessment({ id, data, filter_student_view_items })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateStudyAssessment>>;
+        const errorlist =
+          data.outcomes &&
+          data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
+        if (errorlist && errorlist.length) {
+          const finalErrs = errorlist.filter((err) => {
+            return finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0;
+          });
+          if (finalErrs && finalErrs.length) {
+            console.log(finalErrs);
+            return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
+          }
+        }
+        const { payload } = (await dispatch(completeStudyAssessment({ id, data, filter_student_view_items }))) as unknown as PayloadAction<
+          AsyncTrunkReturned<typeof updateStudyAssessment>
+        >;
         if (payload) {
           dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
           history.replace({
@@ -155,14 +158,15 @@ export function AssessmentDetail() {
   );
 
   const changeAutocompleteValue = useMemo(
-    () => (
-      value: {
-        id: string | number;
-        title: string;
-      }[]
-    ) => {
-      setChangeAutocompleteValue(value);
-    },
+    () =>
+      (
+        value: {
+          id: string | number;
+          title: string;
+        }[]
+      ) => {
+        setChangeAutocompleteValue(value);
+      },
     []
   );
 

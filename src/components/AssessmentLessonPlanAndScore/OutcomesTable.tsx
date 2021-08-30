@@ -51,7 +51,7 @@ const useStyles = makeStyles({
   partially_checked: {
     width: 18,
     height: 18,
-    margin: 2,
+    margin: 3,
     borderRadius: 3,
     backgroundColor: "#0E78D5",
     boxShadow: "0 0 2px #0E78D5",
@@ -91,10 +91,10 @@ const AssessAction = (props: AssessActionProps) => {
   const skip: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].skip) || false;
   const none_achieved: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].none_achieved) || false;
   const allValue: string[] = formValue.attendance_ids || [];
-  const checked_attendance_ids = useMemo(() => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0), [
-    allValue,
-    attendance_ids,
-  ]);
+  const checked_attendance_ids = useMemo(
+    () => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0),
+    [allValue, attendance_ids]
+  );
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
       setValue(`outcomes[${index}].${name}`, value);
@@ -260,16 +260,8 @@ export interface OutcomesTableProps {
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const {
-    outcomesList,
-    attendanceList,
-    formMethods,
-    formValue,
-    editable,
-    filterOutcomes,
-    changeAssessmentTableDetail,
-    studentViewItems,
-  } = props;
+  const { outcomesList, attendanceList, formMethods, formValue, editable, filterOutcomes, changeAssessmentTableDetail, studentViewItems } =
+    props;
 
   const OutcomesHeader: PLField[] = [
     {
@@ -310,16 +302,17 @@ export function OutcomesTable(props: OutcomesTableProps) {
         }}
       >
         <TableCell className={css.tableCellLine} align="center">
-          {" "}
-          {outcome.outcome_name}{" "}
+          &ensp; {outcome.outcome_name} &ensp;
         </TableCell>
         <TableCell className={css.tableCellLine} align="center">
-          {" "}
-          {outcome.assigned_to}{" "}
+          &ensp;{" "}
+          {outcome.assigned_to?.map((a) => (
+            <div>{a}</div>
+          ))}{" "}
+          &ensp;
         </TableCell>
         <TableCell className={css.tableCellLine} align="center">
-          {" "}
-          {outcome.assumed ? d("Yes").t("assess_label_yes") : ""}{" "}
+          &ensp; {outcome.assumed ? d("Yes").t("assess_label_yes") : ""} &ensp;
         </TableCell>
         <TableCell className={css.tablecellError}>
           <AssessAction

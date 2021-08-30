@@ -51,6 +51,7 @@ export interface BasicTableProps extends tableProps {
     number?: string;
     sub_h5p_id?: string;
     h5p_id?: string;
+    parent_id?: string;
   };
   studentViewItemsSet?: EntityAssessmentStudentViewH5PItem[];
 }

@@ -92,9 +92,10 @@ function LOChecklist({
   let [list, setList] = useState(cloneDeep(outcomes));
 
   /** 根据 outcome 得到（用户通过点击 not attempted 而得到的）禁用列表 **/
-  const outcomeDisableList = useMemo(() => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [], [
-    formValue.outcomes,
-  ]);
+  const outcomeDisableList = useMemo(
+    () => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [],
+    [formValue.outcomes]
+  );
 
   useEffect(() => {
     setList(cloneDeep(outcomes));
@@ -105,7 +106,17 @@ function LOChecklist({
     let lesson_materials: EntityAssessmentStudentViewH5PLessonMaterial[] | undefined = [];
     if (studentViewItemsSet) {
       lesson_materials = studentViewItemsSet[studentIdx].lesson_materials;
-      if (lesson_materials) lesson_materials[materialIdx] = { ...rowData, outcomes: list };
+      if (lesson_materials) {
+        lesson_materials[materialIdx] = { ...rowData, outcomes: list };
+        /** 同时更改子活动的选项值 **/
+        lesson_materials.forEach((lm) => {
+          let nestedArr = lm.number?.split("-");
+          if (lm.parent_id && nestedArr && nestedArr[0] === rowData.number) {
+            lm.outcomes = list;
+          }
+        });
+        lesson_materials = [...lesson_materials];
+      }
     }
     const result = Object.values({
       ...studentViewItemsSet,
@@ -127,7 +138,7 @@ function LOChecklist({
         <FormControlLabel
           key={`LO_${studentId}_${item.outcome_id}`}
           label={item.outcome_name}
-          disabled={disabled || outcomeDisableList?.some((o) => o === item.outcome_id)}
+          disabled={disabled || outcomeDisableList?.some((o) => o === item.outcome_id) || !!rowData.parent_id}
           control={<Checkbox value={item.outcome_id} color="primary" checked={item.checked} onChange={(e) => handleChangeList(e, item)} />}
         />
       ))}
