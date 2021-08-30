@@ -13,7 +13,7 @@ import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getStudyAssessmentDetail, updateAssessment } from "../../reducers/assessments";
+import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessments";
 import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
@@ -176,7 +176,7 @@ export function AssessmentsEdit() {
     if (id) {
       (async () => {
         setLoading(true);
-        await dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
+        await dispatch(getAssessment({ id, metaLoading: true }));
         setLoading(false);
       })();
     }

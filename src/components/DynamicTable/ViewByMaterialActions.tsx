@@ -13,7 +13,7 @@ interface AssessActionProps extends formValueMethods {
 }
 
 export default function ViewByMaterialActions(props: AssessActionProps) {
-  const { outcome, studentViewItemsSet, disabled, formMethods, formValue, changeAssessmentTableDetail, dimension2Item } = props;
+  const { outcome, studentViewItemsSet, disabled, formValue, changeAssessmentTableDetail, dimension2Item } = props;
 
   let { outcome_id, none_achieved, content_id } = outcome;
 
@@ -37,19 +37,21 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
   );
 
   /** 上传所有数据的方法 **/
-  const emitData = (arr?: string[]) => {
+  const emitData = (arr?: string[], NA?: boolean) => {
     let attendanceIds = arr;
-    console.log("formValue:", formValue, formMethods, outcome_id, attendanceIds);
+    console.log("formValue:", formValue, outcome_id, attendanceIds, none_achieved, NA);
     let newStudentViewItemsSet = cloneDeep(studentViewItemsSet);
     newStudentViewItemsSet?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {
         lm.outcomes?.forEach((oc) => {
           if (outcome_id === oc.outcome_id && content_id === oc.content_id) {
             oc.checked = !!attendanceIds?.find((ai) => ai === stu.student_id);
+            oc.none_achieved = NA;
           }
         });
       });
     });
+    // console.log("newStudentViewItemsSet111111111111:",cloneDeep(newStudentViewItemsSet))
     newStudentViewItemsSet?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {
         let nestedArr = lm.number?.split("-");
@@ -63,6 +65,7 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
         }
       });
     });
+    // console.log("newStudentViewItemsSet222222222222:",cloneDeep(newStudentViewItemsSet))
 
     changeAssessmentTableDetail && changeAssessmentTableDetail(newStudentViewItemsSet);
   };
@@ -70,20 +73,22 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
   /** 全选 / 全不选 **/
   const handleAllCheck = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
     let ids: string[] = [];
+    let NA: boolean = !!noneAchieved;
     if (type === "none") {
       /** 勾选了 None achieved 清空 AttendanceIds **/
       !noneAchieved && (ids = []);
-      setNoneAchieved(!noneAchieved);
+      NA = !noneAchieved;
     } else {
       /** 勾选了 All achieved 填满 AttendanceIds 否则 清空 AttendanceIds **/
       if (!e.target.checked) ids = [];
       else {
-        setNoneAchieved(false);
+        NA = false;
         ids = studentViewItemsSet?.map((i) => i.student_id || "") ?? [];
       }
     }
     setAttendanceIds(ids);
-    emitData([...ids]);
+    setNoneAchieved(NA);
+    emitData([...ids], NA);
   };
 
   /** 更改学生状态 **/
@@ -93,9 +98,11 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
     if (curIdx === -1) ids?.push(item.student_id);
     else ids.splice(curIdx, 1);
 
-    if (ids.length > 0) setNoneAchieved(false);
+    let NA: boolean = !!noneAchieved;
+    if (ids.length > 0) NA = false;
     setAttendanceIds([...ids]);
-    emitData([...ids]);
+    setNoneAchieved(NA);
+    emitData([...ids], NA);
   };
 
   return (
