@@ -32,7 +32,7 @@ import {
   renameFolder1,
   searchOrgFolderItems,
   setUserSetting,
-  shareFolders,
+  shareFolders
 } from "../../reducers/content";
 import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
@@ -50,7 +50,7 @@ import {
   SEARCH_TEXT_KEY,
   SecondSearchHeader,
   SecondSearchHeaderMb,
-  SecondSearchHeaderProps,
+  SecondSearchHeaderProps
 } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
@@ -238,7 +238,7 @@ export default function MyContentList() {
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
-    const parent_id = (condition.path || "").split("/").pop() || "";
+    const parent_id = (condition.path || "");
     if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
       if (condition.path && condition.path !== ROOT_PATH) {
         history.replace(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?parent_id=${parent_id}`);
@@ -248,13 +248,13 @@ export default function MyContentList() {
     } else if (condition.content_type === SearchContentsRequestContentType.plan) {
       if (condition.path && condition.path !== ROOT_PATH) {
         history.replace({
-          pathname: `/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic?parent_id=${parent_id}`,
-          search: toQueryString({ back: toFullUrl(history.location) }),
+          pathname: `/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic`,
+          search: toQueryString({parent_id: parent_id, back: toFullUrl(history.location) }),
         });
       } else {
         history.push({
-          pathname: `/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic?parent_id=${parent_id}`,
-          search: toQueryString({ back: toFullUrl(history.location) }),
+          pathname: `/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic`,
+          search: toQueryString({ parent_id: parent_id, back: toFullUrl(history.location) }),
         });
       }
     } else {
