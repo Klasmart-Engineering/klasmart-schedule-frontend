@@ -900,5 +900,7 @@
   "assessment_not_applicable": "Not Applicable",
   "assessment_activity_attempted": "Attempted",
   "schedule_sub_category": "Sub Category",
-  "schedule_add_learning_outcome": "Add Learning Outcome"
+  "schedule_add_learning_outcome": "Add Learning Outcome",
+  "assessment_in_progress": "In Progress",
+  "report_lsr_view_all": "View All"
 }
