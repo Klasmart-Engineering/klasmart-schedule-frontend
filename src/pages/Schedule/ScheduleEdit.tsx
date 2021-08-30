@@ -734,16 +734,6 @@ function EditBox(props: CalendarStateProps) {
       if (value?.id) {
         const LinkageProgramData: any = await handleChangeProgramId(value.id);
         setSubjectItem(LinkageProgramData && LinkageProgramData.length ? [LinkageProgramData[0]] : []);
-        const resultInfo = ((await dispatch(getProgramChild({ program_id: value.id, metaLoading: true }))) as unknown) as PayloadAction<
-          AsyncTrunkReturned<typeof getProgramChild>
-        >;
-        if (resultInfo.payload.programChildInfo) {
-          handelSetProgramChildInfo(
-            [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(
-              programChildInfo ? (programChildInfo as GetProgramsQuery[]) : []
-            )
-          );
-        }
       }
       setProgramItem(value);
     }
@@ -1711,7 +1701,21 @@ function EditBox(props: CalendarStateProps) {
     grades: condition.grade_ids ?? [],
   };
   const handeLearingOutcome = async () => {
-    if (outcomeList.length < 1) await getLearingOuctomeData(condition, false);
+    let resultInfo: any;
+    if (scheduleList.program_id) {
+      resultInfo = ((await dispatch(
+        getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
+      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+    }
+    if (outcomeList.length < 1)
+      await getLearingOuctomeData(
+        {
+          ...condition,
+          program_ids: filterGropuDatas.programs.length ? filterGropuDatas.programs : null,
+          subject_ids: filterGropuDatas.subjects.length ? filterGropuDatas.subjects : null,
+        },
+        false
+      );
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -1730,7 +1734,13 @@ function EditBox(props: CalendarStateProps) {
             modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
           )}
           handelSetProgramChildInfo={handelSetProgramChildInfo}
-          programChildInfoParent={programChildInfo as GetProgramsQuery[]}
+          programChildInfoParent={
+            (programChildInfo
+              ? programChildInfo?.concat(resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
+              : resultInfo.payload
+              ? [resultInfo.payload.programChildInfo]
+              : []) as GetProgramsQuery[]
+          }
         />
       ),
       openStatus: true,
@@ -2238,7 +2248,6 @@ function EditBox(props: CalendarStateProps) {
               className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
               multiline
               label={d("Add Learning Outcome").t("schedule_add_learning_outcome")}
-              required
               disabled
               value={outComeIds.length > 0 ? outComeIds.length : ""}
             ></TextField>
