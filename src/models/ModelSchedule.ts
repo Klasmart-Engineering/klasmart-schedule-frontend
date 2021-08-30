@@ -189,7 +189,7 @@ export class modelSchedule {
         name: item.outcome_name,
         shortCode: item.shortcode,
         assumed: item.assumed,
-        learningOutcomeSet: item.sets,
+        learningOutcomeSet: item.sets ?? [],
         select: false,
       };
     });
