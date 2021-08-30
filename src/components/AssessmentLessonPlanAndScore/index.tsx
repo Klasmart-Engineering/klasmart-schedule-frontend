@@ -97,7 +97,9 @@ export function LessonPlanAndScore(props: tableProps) {
 
       <>
         <Typography variant={radioTypography} className={css.lps_title}>
-          {d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")}
+          {autocompleteLabel === 1
+            ? d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")
+            : d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")}
         </Typography>
         {!initLoading &&
           (filteredOutcomelist && filteredOutcomelist.length > 0 ? (
@@ -118,7 +120,9 @@ export function LessonPlanAndScore(props: tableProps) {
 
       <>
         <Typography variant={radioTypography} className={css.lps_title}>
-          {d("Score Assessment").t("assess_detail_score_assessment")}
+          {autocompleteLabel === 1
+            ? d("Score Assessment").t("assess_detail_score_assessment")
+            : d("Lesson Material Assessment").t("assessment_lesson_material_assessment")}
         </Typography>
         {!initLoading && (
           <DynamicTable

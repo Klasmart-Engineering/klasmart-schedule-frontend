@@ -74,7 +74,7 @@ export function AchievedTooltips(props: AchievedTooltipsProps = { showPartially:
             />
           )}
           <FormControlLabel
-            label={d("None Achieved").t("assess_option_none_achieved")}
+            label={d("Not Achieved").t("report_label_not_achieved")}
             control={<Checkbox name="unchecked" color="primary" size="small" readOnly />}
           />
         </div>
