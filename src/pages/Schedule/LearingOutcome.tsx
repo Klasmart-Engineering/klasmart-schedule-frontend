@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: document.body.clientWidth < 650 ? "65vh" : "56vh",
+    maxHeight: document.body.clientWidth < 650 ? "60vh" : "48vh",
     overflow: "auto",
     "&::-webkit-scrollbar": {
       width: "3px",

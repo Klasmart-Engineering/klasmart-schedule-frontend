@@ -342,6 +342,7 @@ type LangRecord<T = string> =
   | { id: "assess_detail_lesson_plan_assessment"; description: "Lesson Plan Assessment"; values: undefined }
   | { id: "assessment_learning_outcome_assessment"; description: "Learning Outcome Assessment"; values: undefined }
   | { id: "assess_detail_score_assessment"; description: "Score Assessment"; values: undefined }
+  | { id: "assessment_lesson_material_assessment"; description: "Lesson Material Assessment"; values: undefined }
   | { id: "assess_detail_score_full_marks"; description: "Score / Full Marks"; values: undefined }
   | { id: "assessment_student_name"; description: "Student Name"; values: undefined }
   | { id: "assess_study_summary"; description: "Study Summary"; values: undefined }
@@ -1266,7 +1267,9 @@ type LangRecord<T = string> =
   | { id: "assessment_not_applicable"; description: "Not Applicable"; values: undefined }
   | { id: "assessment_activity_attempted"; description: "Attempted"; values: undefined }
   | { id: "schedule_sub_category"; description: "Sub Category"; values: undefined }
-  | { id: "schedule_add_learning_outcome"; description: "Add Learning Outcome"; values: undefined };
+  | { id: "schedule_add_learning_outcome"; description: "Add Learning Outcome"; values: undefined }
+  | { id: "assessment_in_progress"; description: "In Progress"; values: undefined }
+  | { id: "report_lsr_view_all"; description: "View All"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

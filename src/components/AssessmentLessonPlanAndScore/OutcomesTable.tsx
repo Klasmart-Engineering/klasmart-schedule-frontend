@@ -79,7 +79,7 @@ interface AssessActionProps {
 const AssessAction = (props: AssessActionProps) => {
   const css = useStyles();
   const {
-    outcome: { outcome_id, attendance_ids, partial_ids },
+    outcome,
     formMethods: { control, setValue },
     index,
     attendanceList,
@@ -88,6 +88,7 @@ const AssessAction = (props: AssessActionProps) => {
     studentViewItems,
     changeAssessmentTableDetail,
   } = props;
+  const { outcome_id, attendance_ids, partial_ids } = outcome;
   const skip: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].skip) || false;
   const none_achieved: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].none_achieved) || false;
   const allValue: string[] = formValue.attendance_ids || [];
@@ -107,7 +108,10 @@ const AssessAction = (props: AssessActionProps) => {
     let hasOutcome =
       studentViewItems && studentViewItems[0]?.lesson_materials?.some((lm) => lm.outcomes?.some((oc) => oc.outcome_id === outcome_id));
     if (hasOutcome) setValue(`outcomes[${index}].attendance_ids`, attendance_ids);
-  }, [index, setValue, attendance_ids, studentViewItems, outcome_id]);
+
+    /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
+    funSetValue("none_achieved", !!outcome.none_achieved);
+  }, [index, setValue, attendance_ids, studentViewItems, outcome_id, outcome, funSetValue]);
 
   /** 更改下方的 student&content 中的数据 **/
   const transBottomToTop = (studentIds: string[], indeterminate?: boolean) => {

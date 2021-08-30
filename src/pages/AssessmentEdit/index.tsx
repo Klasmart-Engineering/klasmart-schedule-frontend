@@ -13,7 +13,7 @@ import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getStudyAssessmentDetail, updateAssessment } from "../../reducers/assessments";
+import { AsyncTrunkReturned, getAssessment, updateAssessment } from "../../reducers/assessments";
 import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentHeader } from "./AssessmentHeader";
@@ -97,6 +97,8 @@ export function AssessmentsEdit() {
             outcome.attendance_ids?.push(id);
           else outcome.partial_ids?.push(id);
         });
+        /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
+        if (curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length) outcome.none_achieved = true;
       }
     });
     return newFinalOutcomeList;
@@ -176,7 +178,7 @@ export function AssessmentsEdit() {
     if (id) {
       (async () => {
         setLoading(true);
-        await dispatch(getStudyAssessmentDetail({ id, metaLoading: true }));
+        await dispatch(getAssessment({ id, metaLoading: true }));
         setLoading(false);
       })();
     }
