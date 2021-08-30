@@ -1721,6 +1721,7 @@ function EditBox(props: CalendarStateProps) {
       customizeTemplate: (
         <LearingOutcome
           handleClose={() => {
+            setCondition({ page: 1, exect_search: "all", assumed: -1 });
             changeModalDate({ openStatus: false, enableCustomization: false });
           }}
           learingOutcomeData={learingOutcomeDatas}
