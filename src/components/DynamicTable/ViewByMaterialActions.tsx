@@ -28,7 +28,8 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
       formValue.content_outcomes?.find((co) => co.content_id === outcome.content_id && co.outcome_id === outcome.outcome_id)
         ?.attendance_ids ?? [];
     setAttendanceIds(rAttendanceIds);
-  }, [formValue.content_outcomes, outcome.content_id, outcome.outcome_id]);
+    setNoneAchieved(outcome.none_achieved);
+  }, [formValue.content_outcomes, outcome]);
 
   /** 根据 outcome 得到（用户通过点击 not attempted 而得到的）禁用列表 **/
   const outcomeDisableList = useMemo(
@@ -56,12 +57,12 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
       stu.lesson_materials?.forEach((lm) => {
         let nestedArr = lm.number?.split("-");
         if (lm.parent_id && nestedArr && nestedArr[0] === dimension2Item?.number) {
-          let outcomes =
+          let lmOutcomes =
             newStudentViewItemsSet &&
             newStudentViewItemsSet
               .find((nstu) => nstu.student_id === stu.student_id)
               ?.lesson_materials?.find((nlm) => nlm.lesson_material_id === lm.lesson_material_id);
-          lm.outcomes = (outcomes && outcomes.outcomes) || [];
+          lm.outcomes = (lmOutcomes && lmOutcomes.outcomes) || [];
         }
       });
     });
