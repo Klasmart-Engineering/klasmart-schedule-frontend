@@ -94,7 +94,7 @@ export function ViewByMaterial(props: BasicTableProps) {
     },
   ];
   const MaterialDefaultHeader: PLField[] = [
-    { align: "center", value: "Learning_Outcomes", text: "Student Name" },
+    { align: "center", value: "Learning_Outcomes", text: d("Student Name").t("assessment_student_name") },
     { align: "center", value: "Answer", text: d("Answer").t("assess_detail_answer") },
     { align: "center", value: "Score_FullMarks", text: d("Score / Full Marks").t("assess_detail_score_full_marks") },
     { align: "center", value: "Percentage", text: d("Percentage").t("assess_detail_percentage") },
