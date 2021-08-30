@@ -172,14 +172,15 @@ function ContentEditForm() {
       handleSubmit(async (value: ContentDetailForm) => {
         const { outcome_entities, ...restValues } = value;
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
-        const input = { ...restValues, parent_folder, content_type, outcomes };
+        const parent_folderLastId = parent_folder.split("/").pop() || ""
+        const input = { ...restValues, parent_folder: parent_folderLastId, content_type, outcomes };
         const contentDetail = ModelContentDetailForm.encode(input);
         const { payload: id } = (await dispatch(save(contentDetail))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
           if (lesson === "assets") {
             // assets 创建直接返回列表
             history.replace(
-              `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.assetsandfolder}&path=/${parent_folder}&order_by=-update_at&page=1`
+              `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.assetsandfolder}&path=${parent_folder}&order_by=-update_at&page=1`
             );
           } else {
             history.replace({
@@ -200,7 +201,7 @@ function ContentEditForm() {
         await dispatch(publish(id));
       }
       history.replace(
-        `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.materialandplan}&publish_status=published&path=/${parent_folder}&order_by=-update_at&page=1`
+        `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.materialandplan}&publish_status=published&path=${parent_folder}&order_by=-update_at&page=1`
       );
     },
     [lesson, handleSave, id, history, dispatch, parent_folder]
