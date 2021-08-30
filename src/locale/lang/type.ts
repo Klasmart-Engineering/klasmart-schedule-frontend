@@ -343,6 +343,7 @@ type LangRecord<T = string> =
   | { id: "assessment_learning_outcome_assessment"; description: "Learning Outcome Assessment"; values: undefined }
   | { id: "assess_detail_score_assessment"; description: "Score Assessment"; values: undefined }
   | { id: "assess_detail_score_full_marks"; description: "Score / Full Marks"; values: undefined }
+  | { id: "assessment_student_name"; description: "Student Name"; values: undefined }
   | { id: "assess_study_summary"; description: "Study Summary"; values: undefined }
   | { id: "assess_detail_all_students"; description: "All Students"; values: undefined }
   | { id: "assess_detail_view_by_students"; description: "View by Students"; values: undefined }

@@ -64,7 +64,7 @@ const useStyles = makeStyles({
 
 export function ViewByMaterial(props: BasicTableProps) {
   const classes = useStyles();
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(true);
 
   const {
     handleElasticLayerControl,
@@ -94,7 +94,7 @@ export function ViewByMaterial(props: BasicTableProps) {
     },
   ];
   const MaterialDefaultHeader: PLField[] = [
-    { align: "center", value: "Learning_Outcomes", text: "Student Name" },
+    { align: "center", value: "Learning_Outcomes", text: d("Student Name").t("assessment_student_name") },
     { align: "center", value: "Answer", text: d("Answer").t("assess_detail_answer") },
     { align: "center", value: "Score_FullMarks", text: d("Score / Full Marks").t("assess_detail_score_full_marks") },
     { align: "center", value: "Percentage", text: d("Percentage").t("assess_detail_percentage") },
@@ -168,10 +168,11 @@ export function ViewByMaterial(props: BasicTableProps) {
                     <TableCell align="center">
                       <ViewByMaterialActions
                         studentViewItemsSet={studentViewItemsSet}
+                        dimension2Item={dimension2Item}
                         outcome={outcome}
                         formValue={formValue}
                         formMethods={formMethods}
-                        disabled={!editable}
+                        disabled={!editable || !!dimension2Item.parent_id}
                         changeAssessmentTableDetail={changeAssessmentTableDetail}
                       />
                     </TableCell>
