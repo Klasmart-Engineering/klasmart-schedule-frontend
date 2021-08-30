@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
+import { Maybe, SchoolMembership } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -43,7 +44,7 @@ import {
   TeachersByOrgnizationQueryVariables,
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables,
+  UserSchoolIDsQueryVariables
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -55,24 +56,21 @@ import {
   EntityScheduleFeedbackView,
   EntityScheduleListView,
   EntityScheduleSearchView,
-  EntityScheduleViewDetail,
+  EntityScheduleViewDetail
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
+import { GetOutcomeList } from "../api/type";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import {
   ChangeParticipants,
   ClassesData,
-  EntityScheduleSchoolInfo,
-  ParticipantsData,
+  EntityScheduleSchoolInfo, filterOptionItem, ParticipantsData,
   ParticipantsShortInfo,
-  RolesData,
-  filterOptionItem,
+  RolesData
 } from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./report";
-import { Maybe, SchoolMembership } from "../api/api-ko-schema.auto";
-import { GetOutcomeList } from "../api/type";
 
 const MOCK = false;
 
@@ -261,7 +259,9 @@ export const saveScheduleData = createAsyncThunk<
   EntityScheduleAddView,
   SaveStatusResourseParams & LoadingMetaPayload,
   { state: Rootstate }
->("schedule/save", async ({ payload, is_new_schedule }, { getState }) => {
+>("schedule/save", 
+// @ts-ignore
+async ({ payload, is_new_schedule }, { getState }) => {
   let {
     schedule: {
       scheduleDetial: { id },
@@ -388,7 +388,9 @@ export const getProgramChild = createAsyncThunk<getProgramsChildResponse, getPro
   }
 );
 
-export const getParticipantsData = createAsyncThunk("getParticipantsData", async (is_org: boolean) => {
+export const getParticipantsData = createAsyncThunk("getParticipantsData",
+// @ts-ignore
+ async (is_org: boolean) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   if (is_org) {
     const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
@@ -657,6 +659,7 @@ interface LiveSchedulePayload extends LoadingMetaPayload {
 type LiveScheduleResult = ReturnType<typeof api.schedules.getScheduleLiveToken>;
 export const getScheduleLiveToken = createAsyncThunk<LiveScheduleResult, LiveSchedulePayload>(
   "schedule/live",
+  // @ts-ignore
   async ({ schedule_id, live_token_type }) => {
     return api.schedules.getScheduleLiveToken(schedule_id, { live_token_type: live_token_type }).catch((err) => Promise.reject(err.label));
   }

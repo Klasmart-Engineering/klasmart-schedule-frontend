@@ -7,7 +7,7 @@ import {
   rectIntersection,
   TouchSensor,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import debounce from "lodash/debounce";
@@ -36,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchOutcomeList,
+  searchOutcomeList
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -178,8 +178,8 @@ function ContentEditForm() {
         if (id) {
           if (lesson === "assets") {
             // assets 创建直接返回列表
-            history.push(
-              `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.assetsandfolder}&order_by=-update_at&page=1`
+            history.replace(
+              `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.assetsandfolder}&path=/${parent_folder}&order_by=-update_at&page=1`
             );
           } else {
             history.replace({
@@ -199,9 +199,11 @@ function ContentEditForm() {
       } else {
         await dispatch(publish(id));
       }
-      history.replace("/ ");
+      history.replace(
+        `${MyContentList.routeBasePath}?content_type=${SearchContentsRequestContentType.materialandplan}&publish_status=published&path=/${parent_folder}&order_by=-update_at&page=1`
+      );
     },
-    [lesson, handleSave, id, history, dispatch]
+    [lesson, handleSave, id, history, dispatch, parent_folder]
   );
 
   const handleDelete = useCallback(async () => {
