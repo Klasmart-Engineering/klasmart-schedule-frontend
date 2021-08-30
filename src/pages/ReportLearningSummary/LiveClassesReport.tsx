@@ -514,7 +514,7 @@ export function RightCom(props: RightComProps) {
                   </>
                   <>
                     <ChangeHistoryOutlined style={{ color: "#f1c621", marginLeft: 3 }} />
-                    <Typography>{"In Progress"}</Typography>
+                    <Typography>{d("In Progress").t("assessment_in_progress")}</Typography>
                   </>
                   <>
                     <ClearOutlined style={{ color: "#d52a2a", marginLeft: 3 }} />
@@ -543,7 +543,8 @@ export function RightCom(props: RightComProps) {
           )}
           {outcomes && outcomes?.length > 3 && (
             <Typography onClick={handleClickViewAll} className={cssProps.viewAllCon} align="right" variant="body1">
-              {"View All >"}
+              {d("View All").t("report_lsr_view_all")}
+              {" >"}
             </Typography>
           )}
         </div>
