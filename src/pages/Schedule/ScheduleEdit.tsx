@@ -1736,8 +1736,8 @@ function EditBox(props: CalendarStateProps) {
           handelSetProgramChildInfo={handelSetProgramChildInfo}
           programChildInfoParent={
             (programChildInfo
-              ? programChildInfo?.concat(resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
-              : resultInfo.payload
+              ? programChildInfo?.concat(resultInfo && resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
+              : resultInfo && resultInfo.payload
               ? [resultInfo.payload.programChildInfo]
               : []) as GetProgramsQuery[]
           }
@@ -1745,6 +1745,7 @@ function EditBox(props: CalendarStateProps) {
       ),
       openStatus: true,
       handleClose: () => {
+        setCondition({ page: 1, exect_search: "all", assumed: -1 });
         changeModalDate({ openStatus: false });
       },
       showScheduleInfo: true,
