@@ -7,7 +7,7 @@ import {
   rectIntersection,
   TouchSensor,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import debounce from "lodash/debounce";
@@ -36,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchPublishedLearningOutcomes,
+  searchPublishedLearningOutcomes
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -118,7 +118,13 @@ function ContentEditForm() {
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
-  const { program, developmental, subject } = watch(["program", "subject", "developmental"]);
+  const { program, developmental, subject,skills,grade, age } = watch(["program", "subject", "developmental", "skills", "grade","age"]);
+  const outcomeSearchDefault = {
+    program: `${program||"all"}/${subject?.length ? subject?.join(",") : "all"}`,
+    category: `${developmental?.[0] || "all"}/${skills?.length ? skills?.join(","): "all"}`,
+    grade_ids: grade?.length ? grade?.join(","): undefined,
+    age_ids: age?.length ? age?.join(","): undefined,
+  }
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
   const addedLOLength = watch("outcome_entities")?.length || contentDetail.outcome_entities.length;
@@ -427,6 +433,7 @@ function ContentEditForm() {
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}
         outcomesFullOptions={outcomesFullOptions}
+        outcomeSearchDefault={outcomeSearchDefault}
       />
       <PermissionOr
         value={[

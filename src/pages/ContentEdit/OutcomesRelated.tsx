@@ -11,7 +11,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
@@ -157,7 +157,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
               <TableCell sortDirection="desc">
                 <Box display="flex">
                   {d("Learning Outcomes").t("library_label_learning_outcomes")}
-                  <SvgIcon component={SortSvg} onClick={handleClickSort} />
+                  <SvgIcon component={SortSvg} onClick={handleClickSort} cursor="pointer" />
                 </Box>
               </TableCell>
               <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
@@ -216,6 +216,7 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
     assumed,
     searchLOListOptions,
     control,
+    outcomeSearchDefault,
     onChangeOutcomeProgram,
     onChangeDevelopmental,
     onChangeOutcomeSubject,
@@ -252,6 +253,7 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
               onChangeOutcomeProgram={onChangeOutcomeProgram}
               onChangeDevelopmental={onChangeDevelopmental}
               onChangeOutcomeSubject={onChangeOutcomeSubject}
+              outcomeSearchDefault={outcomeSearchDefault}
             >
               {list.length ? (
                 <>

@@ -95,7 +95,11 @@ export const addAllInSearchLOListOption = (linkedMockOptions: LinkedMockOptions)
   const resault: LinkedMockOptions = {};
   Object.keys(resOptions).forEach((item) => {
     const key = item as keyof options;
-    resault[key] = [all].concat(linkedMockOptions[key] || []);
+    if(key==="age" || key==="grade"){
+      resault[key] = linkedMockOptions[key]
+    }else {
+      resault[key] = [all].concat(linkedMockOptions[key] || []);
+    }
   });
   return resault;
 };

@@ -1,4 +1,5 @@
 import { Box, Button, makeStyles } from "@material-ui/core";
+import { Pagination } from "@material-ui/lab";
 import React, { forwardRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -11,10 +12,10 @@ import {
   getOutcomesOptions,
   getOutcomesOptionSkills,
   ISearchPublishedLearningOutcomesParams,
-  LinkedMockOptions,
+  LinkedMockOptions
 } from "../../reducers/content";
 import { OutComesDialog, OutcomesTable } from "./OutcomesRelated";
-
+const AMOUNTPERPAGE = 10;
 const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
   mediaAssets: {
     minHeight: 900,
@@ -40,6 +41,10 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
     width: "95%",
     margin: "20px 0 14px",
   },
+  pagination: {
+    position: "absolute",
+    bottom:20,
+  }
 }));
 
 export type ISearchOutcomeQuery = Exclude<ISearchPublishedLearningOutcomesParams, "assumed"> & {
@@ -63,6 +68,7 @@ export interface OutcomesProps {
   outcomePage: number;
   searchLOListOptions: LinkedMockOptions;
   outcomesFullOptions: LinkedMockOptions;
+  outcomeSearchDefault: ISearchOutcomeForm;
 }
 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
@@ -71,21 +77,20 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const dispatch = useDispatch();
   const { lesson } = useParams<ContentEditRouteParams>();
   const [open, toggle] = React.useReducer((open) => !open, false);
-  const { getValues, control, watch } = useForm<ISearchOutcomeForm>();
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const { getValues, control, watch ,reset} = useForm<ISearchOutcomeForm>();
   const programId = watch("program")?.split("/")[0];
-  const subjectId = watch("program")?.split("/")[1];
   const program_id = programId === "all" ? "" : programId;
-  const subject_ids = subjectId?.includes("all") ? "" : subjectId;
   const handleChangeProgram = useMemo(
     () => async (program_id: string) => {
       dispatch(getOutcomesOptions({ metaLoading: true, program_id: program_id === "all" ? "" : program_id }));
+      reset({ ...getValues(),program: `${program_id}/all`, category: "all/all", age_ids:"", grade_ids: "" });
     },
-    [dispatch]
+    [dispatch, reset]
   );
   const handleChangeSubject = useMemo(
     () => async (subject_ids: string[]) => {
       const subjectId = subject_ids.includes("all") ? [] : subject_ids;
-
       dispatch(getOutcomesOptions({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
     },
     [dispatch, program_id]
@@ -103,6 +108,9 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     },
     [dispatch, program_id]
   );
+  const handleChangePage = useMemo(() => (page:number) => {
+    setCurrentPage(page);
+  },[])
   const addOutcomeButton = (
     <Button className={css.addOutcomesButton} onClick={toggle}>
       {"Add Learning Outcomes"}
@@ -118,7 +126,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
             <>
               <div className={css.addButton}>{addOutcomeButton}</div>
               <OutcomesTable
-                list={value}
+                list={value.filter((item, index) => (index>= (currentPage-1) * AMOUNTPERPAGE && index < (currentPage-1) * AMOUNTPERPAGE + 10) )}
                 value={value}
                 onChange={onChange}
                 onGoOutcomesDetail={onGoOutcomesDetail}
@@ -130,6 +138,14 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           )}
         </>
       )}
+      {value && value.length > 0 && <Pagination
+        style={{ marginBottom: 20 }}
+        className={css.pagination}
+        onChange={(e, page) => handleChangePage( page )}
+        count={Math.ceil(value.length / AMOUNTPERPAGE)}
+        color="primary"
+        page={currentPage}
+      />}
       {open && (
         <OutComesDialog
           {...props}
@@ -143,10 +159,12 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
             const { program, category, ...resValues } = getValues();
             const category_ids = watch("category")?.split("/")[0];
             const sub_category_ids = watch("category")?.split("/")[1];
+            const program_ids = watch("program")?.split("/")[0];
+            const subject_ids = watch("program")?.split("/")[1];
             onSearch({
               ...resValues,
-              program_ids: program_id,
-              subject_ids: subject_ids,
+              program_ids: program_ids === "all" ? "" : program_ids,
+              subject_ids: subject_ids === "all" ? "" : subject_ids,
               category_ids: category_ids === "all" ? "" : category_ids,
               sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
               page,

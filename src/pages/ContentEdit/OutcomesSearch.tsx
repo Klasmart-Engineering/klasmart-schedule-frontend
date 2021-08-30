@@ -111,6 +111,13 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
     color: palette.text.primary,
     marginRight: 20,
   },
+  searchBox: {
+    display:"flex",
+    justifyContent:"center",
+    width: "100%",
+    marginTop: 16,
+    marginBottom: 8
+  }
 }));
 
 export const menuItemList = (list?: LinkedMockOptionsItem[]) =>
@@ -131,6 +138,7 @@ export interface SearchOutcomesProps extends SearchItems {
   searchLOListOptions: LinkedMockOptions;
   children: ReactNode;
   control: Control<ISearchOutcomeForm>;
+  outcomeSearchDefault: ISearchOutcomeForm;
 }
 export const OutcomesSearch = (props: SearchOutcomesProps) => {
   const css = useStyles();
@@ -143,10 +151,9 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
     onChangeOutcomeProgram,
     onChangeOutcomeSubject,
     onChangeDevelopmental,
-    age_ids,
-    grade_ids,
     control,
     children,
+    outcomeSearchDefault,
   } = props;
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") handleClickSearch({});
@@ -162,7 +169,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
             <Controller
               name="exactSerch"
               control={control}
-              defaultValue={exactSerch}
+              defaultValue={exactSerch|| "search_key"}
               render={(exactSerchProps) => (
                 <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
                   <TextField
@@ -228,10 +235,10 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
           )}
         />
       </Box>
-      <Box display="flex" justifyContent="center" pb={1} width="100%">
+      <div className={css.searchBox}>
         <Controller
           name="program"
-          defaultValue={"all/all"}
+          defaultValue={ outcomeSearchDefault.program ||"all/all"}
           control={control}
           render={(props) => (
             <GroupSelect
@@ -246,7 +253,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
         />
         <Controller
           name="category"
-          defaultValue={"all/all"}
+          defaultValue={outcomeSearchDefault.category || "all/all"}
           control={control}
           render={(props) => (
             <GroupSelect
@@ -261,7 +268,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
         <Controller
           as={TextField}
           name="age_ids"
-          defaultValue={age_ids || []}
+          defaultValue={outcomeSearchDefault.age_ids?.split(",") || []}
           control={control}
           select
           size="small"
@@ -276,7 +283,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
         <Controller
           as={TextField}
           name="grade_ids"
-          defaultValue={grade_ids || []}
+          defaultValue={outcomeSearchDefault.grade_ids?.split(",") || []}
           control={control}
           select
           size="small"
@@ -288,7 +295,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
         >
           {menuItemList(searchLOListOptions.grade || [])}
         </Controller>
-      </Box>
+      </div>
       {children}
     </div>
   );

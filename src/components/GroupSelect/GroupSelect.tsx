@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { ArrowDropDown, ArrowRight } from "@material-ui/icons";
 import clsx from "clsx";
-import React from "react";
+import React, { forwardRef } from "react";
 import { getNameByIds } from "../../pages/ContentEdit/OutcomesRelated";
 import { LinkedMockOptionsItem } from "../../reducers/milestone";
 const useStyles = makeStyles(({ shadows, palette }) => ({
@@ -66,17 +66,15 @@ interface IGroupSelectProps {
   onChangeListItem?: (id: string) => any;
   onChangeSubListItem?: (subId: string[]) => any;
 }
-export function GroupSelect(props: IGroupSelectProps) {
+export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props, ref) => {
   const { value, onChange, label, list, subList, onChangeSubListItem, onChangeListItem } = props;
   const css = useStyles();
-  // const [open, toggle] = React.useReducer((open) => !open, false);
   const [open, setOpen] = React.useState(false);
-  const [subListIds, setSubListIds] = React.useState(value?.split("/")[1].split(",") || []);
+  const subListIds = value?.split("/")[1].split(",")||[]
   const listId = value?.split("/")[0];
-
   const handleChangeListItem = (id: string) => {
     onChangeListItem?.(id);
-    onChange?.(`${id}/${subListIds?.join(",")}`);
+    onChange?.(`${id}/all`);
   };
   const handleChangeSubListItem = (subId: string) => {
     let newSubListIds: string[] = [];
@@ -88,7 +86,6 @@ export function GroupSelect(props: IGroupSelectProps) {
         ? selectSubListIds.filter((item) => item !== subId)
         : selectSubListIds?.concat([subId]) || [];
     }
-    setSubListIds(newSubListIds.length ? newSubListIds : ["all"]);
     onChange?.(`${listId}/${newSubListIds.length ? newSubListIds?.join(",") : "all"}`);
   };
   const handleClick = () => {
@@ -113,7 +110,7 @@ export function GroupSelect(props: IGroupSelectProps) {
         </div>
       </FormControl>
 
-      <ArrowDropDown className={css.arrowDown} />
+      <ArrowDropDown className={css.arrowDown} onClick={handleClick} />
       <Paper elevation={3} style={{ display: open ? "flex" : "none" }} className={css.cascader}>
         <div style={{ width: "50%", overflow: "auto" }}>
           {list.map((item) => (
@@ -145,4 +142,4 @@ export function GroupSelect(props: IGroupSelectProps) {
       </Paper>
     </div>
   );
-}
+})
