@@ -56,6 +56,12 @@ const useStyles = makeStyles({
     backgroundColor: "#0E78D5",
     boxShadow: "0 0 2px #0E78D5",
   },
+  disabled: {
+    "& $partially_checked": {
+      backgroundColor: "#ababab",
+      boxShadow: "0 0 2px #ababab",
+    },
+  },
 });
 interface mergeHandlerProps<T> extends Array<(arg: T) => any> {}
 
@@ -251,6 +257,7 @@ const AssessAction = (props: AssessActionProps) => {
                       label={item.name}
                       key={item.id}
                       disabled={skip || !editable}
+                      className={skip || !editable ? css.disabled : ""}
                     />
                   ))}
                 <Controller
@@ -329,7 +336,11 @@ export function OutcomesTable(props: OutcomesTableProps) {
         <TableCell className={css.tableCellLine} align="center">
           &ensp;{" "}
           {outcome.assigned_to?.map((a) => (
-            <div>{a}</div>
+            <div>
+              {a === "lesson_material"
+                ? d("Lesson Material").t("library_label_lesson_material")
+                : d("Lesson Plan").t("library_label_lesson_plan")}
+            </div>
           ))}{" "}
           &ensp;
         </TableCell>
