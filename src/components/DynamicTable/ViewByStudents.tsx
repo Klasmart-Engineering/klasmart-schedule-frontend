@@ -127,6 +127,7 @@ function LOChecklist({
 
   const handleChangeList = (e: React.ChangeEvent<HTMLInputElement>, item: EntityAssessmentDetailContentOutcome) => {
     item.checked = !item.checked;
+    if (item.checked) item.none_achieved = false;
     list && setList([...list]);
 
     emitData();
