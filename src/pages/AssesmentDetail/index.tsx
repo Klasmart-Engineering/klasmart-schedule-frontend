@@ -99,7 +99,7 @@ export function AssessmentDetail() {
           else outcome.partial_ids?.push(id);
         });
         /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
-        if (curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length) outcome.none_achieved = true;
+        outcome.none_achieved = curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length;
       }
     });
     return newFinalOutcomeList;

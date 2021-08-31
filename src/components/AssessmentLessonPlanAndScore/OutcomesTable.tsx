@@ -117,7 +117,7 @@ const AssessAction = (props: AssessActionProps) => {
 
   /** 更改下方的 student&content 中的数据 **/
   const transBottomToTop = (studentIds: string[], indeterminate?: boolean, type?: string) => {
-    console.log("outcomes=========", formValue, studentViewItems, outcome_id, indeterminate);
+    // console.log("outcomes=========", studentViewItems, indeterminate);
     let newSVI = cloneDeep(studentViewItems);
     newSVI?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {

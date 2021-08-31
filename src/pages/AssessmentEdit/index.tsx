@@ -98,7 +98,7 @@ export function AssessmentsEdit() {
           else outcome.partial_ids?.push(id);
         });
         /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
-        if (curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length) outcome.none_achieved = true;
+        outcome.none_achieved = curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length;
       }
     });
     return newFinalOutcomeList;
@@ -138,17 +138,17 @@ export function AssessmentsEdit() {
           const errorlist =
             data.outcomes &&
             data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
+          console.log("errorlist:", errorlist);
           if (errorlist && errorlist.length) {
             const finalErrs = errorlist.filter((err) => {
               return finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0;
             });
+            console.log("finalErrs:", finalErrs);
             if (finalErrs && finalErrs.length) {
               console.log(finalErrs);
               return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
             }
           }
-          if (data.action === "complete" && errorlist && errorlist.length > 0)
-            return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
           const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
