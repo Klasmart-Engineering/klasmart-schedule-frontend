@@ -38,7 +38,7 @@ const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
 });
 const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
   table: {
-    minWidth: 700 - 162,
+    minWidth: 700,
   },
   tableHead: {
     backgroundColor: "#F2F5F7",

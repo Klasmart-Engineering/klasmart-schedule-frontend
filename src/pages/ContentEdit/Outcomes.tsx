@@ -18,10 +18,7 @@ import { OutComesDialog, OutcomesTable } from "./OutcomesRelated";
 const AMOUNTPERPAGE = 10;
 const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
   mediaAssets: {
-    minHeight: 900,
-    [breakpoints.down("sm")]: {
-      minHeight: 698,
-    },
+    minHeight: 860,
     position: "relative",
   },
   addOutcomesButton: {
@@ -78,6 +75,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const { lesson } = useParams<ContentEditRouteParams>();
   const [open, toggle] = React.useReducer((open) => !open, false);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [selectedValue, setSelectedValue] = React.useState<EntityOutcome[]|undefined>(value);
   const { getValues, control, watch ,reset} = useForm<ISearchOutcomeForm>();
   const programId = watch("program")?.split("/")[0];
   const program_id = programId === "all" ? "" : programId;
@@ -86,12 +84,13 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
       dispatch(getOutcomesOptions({ metaLoading: true, program_id: program_id === "all" ? "" : program_id }));
       reset({ ...getValues(),program: `${program_id}/all`, category: "all/all", age_ids:"", grade_ids: "" });
     },
-    [dispatch, reset]
+    [dispatch, reset, getValues]
   );
   const handleChangeSubject = useMemo(
     () => async (subject_ids: string[]) => {
       const subjectId = subject_ids.includes("all") ? [] : subject_ids;
       dispatch(getOutcomesOptions({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
+      reset({ ...getValues(),program: `${programId}/${subject_ids.join(",")}`, category: "all/all",  });
     },
     [dispatch, program_id]
   );
@@ -110,12 +109,31 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   );
   const handleChangePage = useMemo(() => (page:number) => {
     setCurrentPage(page);
-  },[])
+  },[]);
+  const localSort=useMemo(() => (props: ISearchOutcomeQuery) => {
+    const sortValue = value?.slice()?.sort((a , b) =>{
+      if(!a ||!b||!a.outcome_name||!b.outcome_name) return 1;
+     return props.order_by ==="-name"?
+      a.outcome_name.charCodeAt(0) - b.outcome_name.charCodeAt(0) 
+      : b.outcome_name.charCodeAt(0) - a.outcome_name.charCodeAt(0)
+    })
+    setSelectedValue(sortValue);
+    setCurrentPage(1);
+  }, [value])
+  const handleChangeValue = useMemo(() =>(value:EntityOutcome[]) =>{
+    if(value.length <= (currentPage-1) * AMOUNTPERPAGE){
+      currentPage>1 && setCurrentPage(currentPage-1)
+    }
+    onChange?.(value);
+  },[currentPage, onChange]);
   const addOutcomeButton = (
     <Button className={css.addOutcomesButton} onClick={toggle}>
       {"Add Learning Outcomes"}
     </Button>
   );
+  React.useEffect(()=>{
+    setSelectedValue(value)
+  }, [value])
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
@@ -126,11 +144,13 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
             <>
               <div className={css.addButton}>{addOutcomeButton}</div>
               <OutcomesTable
-                list={value.filter((item, index) => (index>= (currentPage-1) * AMOUNTPERPAGE && index < (currentPage-1) * AMOUNTPERPAGE + 10) )}
+                list={selectedValue?.filter((item, index) => (index>= (currentPage-1) * AMOUNTPERPAGE && index < (currentPage-1) * AMOUNTPERPAGE + 10) )}
                 value={value}
-                onChange={onChange}
+                onChange={handleChangeValue}
                 onGoOutcomesDetail={onGoOutcomesDetail}
                 outcomesFullOptions={outcomesFullOptions}
+                onChangePageAndSort={localSort}
+
               />
             </>
           ) : (
@@ -139,7 +159,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
         </>
       )}
       {value && value.length > 0 && <Pagination
-        style={{ marginBottom: 20 }}
         className={css.pagination}
         onChange={(e, page) => handleChangePage( page )}
         count={Math.ceil(value.length / AMOUNTPERPAGE)}

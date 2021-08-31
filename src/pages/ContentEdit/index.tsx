@@ -127,7 +127,7 @@ function ContentEditForm() {
   }
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
-  const addedLOLength = watch("outcome_entities")?.length || contentDetail.outcome_entities.length;
+  const addedLOLength = watch("outcome_entities")?.length ?? contentDetail.outcome_entities.length;
   const activeRectRef = useRef<Active["rect"]>();
   const unmountRef = useRef<Function>();
   const searchLOListOptionsAll = addAllInSearchLOListOption(searchLOListOptions);
