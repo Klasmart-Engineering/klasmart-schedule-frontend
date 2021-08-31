@@ -325,7 +325,7 @@
   "assess_label_created_on_oldtonew": "Dibuat Pada (Lama-Baru)",
   "assess_label_learning_outcome": "Hasil Pembelajaran",
   "assess_label_milestone": "Kejadian Penting",
-  "assess_label_Standard": "Standar",
+  "assess_label_Standard": "Standard",
   "assess_label_yes": "lya",
   "assess_label_created_on": "Dibuat Pada",
   "assess_label_author": "Penulis",
@@ -898,5 +898,15 @@
   "report_no_class": "Silakan pilih kelas dari daftar di sebelah kiri untuk melihat hasilnya.",
   "report_no_assessment": "Silakan pilih penilaian dari daftar di sebelah kiri untuk melihat hasilnya.",
   "assessment_not_applicable": "Tidak Berlaku",
-  "assessment_activity_attempted": "Telah dicoba"
+  "assessment_activity_attempted": "Telah dicoba",
+  "assessment_partially_achieved": "Partially Achieved",
+  "report_lsr_view_all": "Lihat semua",
+  "assessment_learning_outcome_assessment": "Learning Outcome Assessment",
+  "assessment_assigned_to": "Assigned to",
+  "library_label_add_learning_outcomes": "Add Learning Outcomes",
+  "schedule_sub_category": "Sub Kategori",
+  "schedule_add_learning_outcome": "Add Learning Outcome",
+  "assessment_in_progress": "Sedang Berlangsung",
+  "assessment_student_name": "Nama Siswa",
+  "assessment_lesson_material_assessment": "Lesson Material Assessment"
 }
