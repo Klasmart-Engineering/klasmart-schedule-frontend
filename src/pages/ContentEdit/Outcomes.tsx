@@ -9,6 +9,7 @@ import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
 import {
+  getOutcomesOptionCategorys,
   getOutcomesOptions,
   getOutcomesOptionSkills,
   ISearchPublishedLearningOutcomesParams,
@@ -70,14 +71,14 @@ export interface OutcomesProps {
 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
   const css = useStyles();
-  const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions } = props;
+  const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions,outcomeSearchDefault } = props;
   const dispatch = useDispatch();
   const { lesson } = useParams<ContentEditRouteParams>();
   const [open, toggle] = React.useReducer((open) => !open, false);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedValue, setSelectedValue] = React.useState<EntityOutcome[]|undefined>(value);
   const { getValues, control, watch ,reset} = useForm<ISearchOutcomeForm>();
-  const programId = watch("program")?.split("/")[0];
+  const programId = watch("program")?.split("/")[0] || outcomeSearchDefault?.program?.split("/")[0];
   const program_id = programId === "all" ? "" : programId;
   const handleChangeProgram = useMemo(
     () => async (program_id: string) => {
@@ -89,10 +90,10 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const handleChangeSubject = useMemo(
     () => async (subject_ids: string[]) => {
       const subjectId = subject_ids.includes("all") ? [] : subject_ids;
-      dispatch(getOutcomesOptions({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
-      reset({ ...getValues(),program: `${programId}/${subject_ids.join(",")}`, category: "all/all",  });
+      dispatch(getOutcomesOptionCategorys({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
+      reset({ ...getValues(),program: `${programId||"all"}/${subject_ids.join(",")}`, category: "all/all",  });
     },
-    [dispatch, program_id]
+    [dispatch, program_id, programId, getValues,reset]
   );
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string) => {
@@ -145,8 +146,8 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
               <div className={css.addButton}>{addOutcomeButton}</div>
               <OutcomesTable
                 list={selectedValue?.filter((item, index) => (index>= (currentPage-1) * AMOUNTPERPAGE && index < (currentPage-1) * AMOUNTPERPAGE + 10) )}
-                value={value}
-                onChange={handleChangeValue}
+                outcomeValue={value}
+                onChangeOutcomeValue={handleChangeValue}
                 onGoOutcomesDetail={onGoOutcomesDetail}
                 outcomesFullOptions={outcomesFullOptions}
                 onChangePageAndSort={localSort}
@@ -175,6 +176,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           onChangeDevelopmental={handleChangeDevelopmental}
           onChangeOutcomeSubject={handleChangeSubject}
           handleClickSearch={({ page, order_by }) => {
+            console.log("page, order_by=",page, order_by);
             const { program, category, ...resValues } = getValues();
             const category_ids = watch("category")?.split("/")[0];
             const sub_category_ids = watch("category")?.split("/")[1];
@@ -186,8 +188,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
               subject_ids: subject_ids === "all" ? "" : subject_ids,
               category_ids: category_ids === "all" ? "" : category_ids,
               sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
-              page,
-              order_by,
             });
           }}
         />

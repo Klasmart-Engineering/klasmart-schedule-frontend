@@ -6,12 +6,21 @@ import { getNameByIds } from "../../pages/ContentEdit/OutcomesRelated";
 import { LinkedMockOptionsItem } from "../../reducers/milestone";
 const useStyles = makeStyles(({ shadows, palette }) => ({
   paper: {
-    width: 200,
     position: "relative",
-    marginRight: 20,
+    borderRadius: 4,
+    border: "1px solid rgba(0,0,0,.23)",
+    borderBottom: "1px solid #fff",
+    boxSizing: "content-box",
+    "&:hover": {
+      border: "1px solid rgba(0,0,0,.57)",
+    },
+    "&:focus":{
+      border: "1px solid blue",
+
+      
+    }
   },
   searchTextField: {
-    width: 200,
     height: 40,
     backgroundColor: "white",
     borderRadius: 4,
@@ -55,6 +64,24 @@ const useStyles = makeStyles(({ shadows, palette }) => ({
       background: "rgba(75,136,245,0.08)",
     },
   },
+  paperBox:{
+    width: "50%",
+    overflow: "auto",
+    "&::-webkit-scrollbar": {
+      width: "4px",
+      height: "4px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: "transparent",
+      borderRadius: "4px",
+    },
+    "&:hover": {
+      "&::-webkit-scrollbar-thumb": {
+        background: "#ccc",
+      },
+    },
+
+  }
 }));
 
 interface IGroupSelectProps {
@@ -100,9 +127,9 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
     return `${name}/${subNames}`;
   };
   return (
-    <div className={css.paper}>
-      <FormControl variant="outlined" onClick={handleClick}>
-        <InputLabel variant="outlined" style={{ transform: "translate(14px, -6px) scale(0.75)" }}>
+    <div className={css.paper} >
+      <FormControl variant="outlined" onClick={handleClick} fullWidth>
+        <InputLabel variant="outlined" style={{ transform: "translate(14px, -6px) scale(0.75)",backgroundColor: "#fff" }}>
           {label}
         </InputLabel>
         <div className={css.searchTextField}>
@@ -112,7 +139,7 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
 
       <ArrowDropDown className={css.arrowDown} onClick={handleClick} />
       <Paper elevation={3} style={{ display: open ? "flex" : "none" }} className={css.cascader}>
-        <div style={{ width: "50%", overflow: "auto" }}>
+        <div className={css.paperBox}>
           {list.map((item) => (
             <MenuItem
               className={clsx(css.cascaderList, { active: item.id === listId })}
@@ -126,7 +153,7 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
             </MenuItem>
           ))}
         </div>
-        <div style={{ borderLeft: "1px solid #ccc", width: "50%", overflow: "auto" }}>
+        <div style={{ borderLeft: "1px solid #ccc"}} className={css.paperBox}>
           {subList.map((item) => (
             <MenuItem
               key={item.id}

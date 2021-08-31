@@ -89,8 +89,8 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
 }));
 interface OutcomesTableProps {
   list?: EntityOutcome[];
-  value?: EntityOutcome[];
-  onChange?: (value: EntityOutcome[]) => any;
+  outcomeValue?: EntityOutcome[];
+  onChangeOutcomeValue?: (value: EntityOutcome[]) => any;
   onGoOutcomesDetail: (id?: string) => any;
   onChangePageAndSort?: (props: ISearchOutcomeQuery) => any;
   isDialog?: boolean;
@@ -103,7 +103,7 @@ export const getNameByIds = (list?: LinkedMockOptionsItem[], ids?: string[]) => 
   }, []);
 };
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, onGoOutcomesDetail, isDialog, onChangePageAndSort, outcomesFullOptions } = props;
+  const { list, outcomeValue, onChangeOutcomeValue, onGoOutcomesDetail, isDialog, onChangePageAndSort, outcomesFullOptions } = props;
   const css = useStyles();
   const [sortUp, toggle] = React.useReducer((sortUp) => !sortUp, true);
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
@@ -113,14 +113,14 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
   const handleAction = (item: EntityOutcome, type: "add" | "remove") => {
     const { outcome_id: id } = item;
     if (type === "add") {
-      if (id && value) {
-        onChange && onChange(value.concat([item]));
+      if (id && outcomeValue) {
+        onChangeOutcomeValue && onChangeOutcomeValue(outcomeValue.concat([item]));
       }
     } else {
-      if (id && value) {
-        let newValue = cloneDeep(value);
+      if (id && outcomeValue) {
+        let newValue = cloneDeep(outcomeValue);
         newValue = newValue.filter((v) => v.outcome_id !== id);
-        onChange && onChange(newValue);
+        onChangeOutcomeValue && onChangeOutcomeValue(newValue);
       }
     }
   };
@@ -132,7 +132,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     <TableRow key={item.outcome_id}>
       {isPermission && (
         <TableCell>
-          {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
+          {outcomeValue?.map((v) => v.outcome_id) && outcomeValue?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
             <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
           ) : (
             <RemoveCircle className={css.removeRead} onClick={() => handleAction(item, "remove")} />
@@ -226,7 +226,7 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
     <Pagination
       style={{ marginBottom: 20 }}
       classes={{ ul: css.paginationUl }}
-      onChange={(e, page) => handleClickSearch({ page })}
+      onChange={(e, page) => page!==outcomePage && handleClickSearch({ page })}
       count={Math.ceil(total / amountPerPage)}
       color="primary"
       page={outcomePage}
@@ -260,8 +260,8 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
                   <OutcomesTable
                     onChangePageAndSort={({ order_by }) => handleClickSearch({ order_by })}
                     list={getOutcomeList(list)}
-                    value={value}
-                    onChange={onChange}
+                    outcomeValue={value}
+                    onChangeOutcomeValue={onChange}
                     onGoOutcomesDetail={onGoOutcomesDetail}
                     outcomesFullOptions={outcomesFullOptions}
                     isDialog={open}
