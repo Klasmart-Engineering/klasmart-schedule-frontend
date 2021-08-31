@@ -109,6 +109,9 @@ interface filterGropProps {
   filterGropuData: LearningComesFilterQuery;
   handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
   programChildInfoParent: GetProgramsQuery[];
+  filterQuery?: LearningComesFilterQuery;
+  setFilterQuery?: (data: LearningComesFilterQuery) => void;
+  getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
 }
 
 interface InfoProps extends filterGropProps {
@@ -122,11 +125,11 @@ interface InfoProps extends filterGropProps {
 
 function SelectGroup(props: filterGropProps) {
   const classes = useStyles();
-  const { programs, searchOutcomesList, filterGropuData, handelSetProgramChildInfo, programChildInfoParent } = props;
-  const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>(filterGropuData);
+  const { programs, searchOutcomesList, handelSetProgramChildInfo, programChildInfoParent, filterQuery, setFilterQuery } = props;
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
 
   const dispatch = useDispatch();
+
   const autocompleteChange = async (value: any | null, name: "subjects" | "categorys" | "subs" | "ages" | "grades" | "programs") => {
     const ids = value?.map((item: any) => {
       return item.id;
@@ -163,12 +166,13 @@ function SelectGroup(props: filterGropProps) {
       );
     const filterData = {
       ...filterQuery,
-      [name]: filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
+      [name]: filterQuery && filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
     };
-    const filterResult = programChildInfo?.length
-      ? (modelSchedule.learningOutcomeFilerGroup(filterData, programChildInfo).query as LearningComesFilterQuery)
-      : filterData;
-    setFilterQuery(filterResult);
+    const filterResult = (programChildInfo?.length
+      ? (modelSchedule.learningOutcomeFilerGroup(filterData as LearningComesFilterQuery, programChildInfo)
+          .query as LearningComesFilterQuery)
+      : filterData) as LearningComesFilterQuery;
+    setFilterQuery && setFilterQuery(filterResult);
     const values = (item: string[]) => (item.length > 0 ? item : null);
     const filterQueryAssembly = {
       program_ids: values(filterResult.programs),
@@ -184,7 +188,7 @@ function SelectGroup(props: filterGropProps) {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
   }, [filterQuery, programChildInfo]);
   const defaultValues = (enumType: "subjects" | "categorys" | "subs" | "ages" | "grades") =>
-    filteredList[enumType]?.filter((item: any) => filterQuery[enumType]?.includes(item.id as string));
+    filteredList[enumType]?.filter((item: any) => filterQuery && filterQuery[enumType]?.includes(item.id as string));
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   return (
@@ -200,7 +204,7 @@ function SelectGroup(props: filterGropProps) {
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "programs");
             }}
-            value={programs.filter((item) => filterQuery.programs?.includes(item.id as string))}
+            value={programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))}
             disableCloseOnSelect
             renderOption={(option: any, { selected }) => (
               <React.Fragment>
@@ -361,6 +365,19 @@ export default function LearingOutcome(props: InfoProps) {
   const content_list = useMemo(() => {
     return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
   }, [outcomeList]);
+  const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>(filterGropuData);
+
+  const getFilterQueryAssembly = (filterData: LearningComesFilterQuery) => {
+    const values = (item: string[]) => (item.length > 0 ? item : null);
+    return {
+      program_ids: values(filterData.programs),
+      subject_ids: values(filterData.subjects),
+      category_ids: values(filterData.categorys),
+      sub_category_ids: values(filterData.subs),
+      age_ids: values(filterData.ages),
+      grade_ids: values(filterData.grades),
+    };
+  };
 
   const content_lists = useMemo(() => {
     const check: LearningContentList[] = [];
@@ -429,7 +446,7 @@ export default function LearingOutcome(props: InfoProps) {
     //  dispatch(resetActOutcomeList([]));
     setValue(`is_assumed`, value);
     setValue(`page`, 1);
-    searchOutcomesList({});
+    searchOutcomesList(getFilterQueryAssembly(filterQuery));
   };
 
   const filterCode = [
@@ -511,7 +528,7 @@ export default function LearingOutcome(props: InfoProps) {
             onClick={() => {
               // dispatch(resetActOutcomeList([]));
               setValue(`page`, 1);
-              searchOutcomesList({});
+              searchOutcomesList(getFilterQueryAssembly(filterQuery));
             }}
           >
             {d("Search").t("library_label_search")}
@@ -545,6 +562,9 @@ export default function LearingOutcome(props: InfoProps) {
           programs={programs}
           filterGropuData={filterGropuData}
           searchOutcomesList={searchOutcomesList}
+          filterQuery={filterQuery}
+          setFilterQuery={setFilterQuery}
+          getFilterQueryAssembly={getFilterQueryAssembly}
         />
       </Box>
       <div
