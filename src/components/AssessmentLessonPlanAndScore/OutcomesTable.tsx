@@ -112,28 +112,31 @@ const AssessAction = (props: AssessActionProps) => {
   useEffect(() => {
     /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
     setValue(`outcomes[${index}].none_achieved`, !!outcome.none_achieved);
-  }, [index, outcome.none_achieved, setValue]);
+    if (outcome.partial_ids?.length) setValue(`outcomes[${index}].none_achieved`, false);
+  }, [index, outcome.none_achieved, outcome.partial_ids, setValue]);
 
   /** 更改下方的 student&content 中的数据 **/
-  const transBottomToTop = (studentIds: string[], indeterminate?: boolean) => {
+  const transBottomToTop = (studentIds: string[], indeterminate?: boolean, type?: string) => {
     // console.log("outcomes=========", formValue, studentViewItems, outcome_id,indeterminate);
     let newSVI = cloneDeep(studentViewItems);
     newSVI?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {
         lm.outcomes?.forEach((lmo) => {
-          // lmo.checked = !lmo.checked
-          /**  **/
           switch (true) {
-            case studentIds?.length === 0:
+            case studentIds?.length === 0 /** 没有学生 **/:
               if (lmo.outcome_id === outcome_id) lmo.checked = false;
+              if (lmo.outcome_id === outcome_id && type === "none_achieved") lmo.none_achieved = true;
               break;
-            case studentIds?.length === allValue.length:
+            case studentIds?.length === allValue.length /** 全选学生 **/:
               if (lmo.outcome_id === outcome_id) lmo.checked = true;
+              if (lmo.outcome_id === outcome_id && type === "none_achieved") lmo.none_achieved = false;
               break;
             default:
+              /** 部分学生 **/
               if (lmo.outcome_id === outcome_id && stu.student_id === studentIds[0]) lmo.checked = !lmo.checked;
               if (lmo.outcome_id === outcome_id && stu.student_id === studentIds[0] && indeterminate)
                 lmo.checked = false; /** 如果当前点击的是 partial 状态，则把它当成选中状态处理 **/
+              if (lmo.outcome_id === outcome_id && type === "none_achieved") lmo.none_achieved = false;
               break;
           }
         });
@@ -151,7 +154,7 @@ const AssessAction = (props: AssessActionProps) => {
       }
       funSetValue("attendance_ids", []);
     }
-    transBottomToTop([]);
+    transBottomToTop([], undefined, name);
   };
 
   const handleChangeStudent = (e: React.ChangeEvent<HTMLInputElement>) => {
