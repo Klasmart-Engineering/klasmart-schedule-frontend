@@ -39,7 +39,6 @@ import {
   getSchoolInfo,
   getSearchScheduleList,
   getSubjectByProgramId,
-  resetScheduleTimeViewData,
   ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
@@ -270,10 +269,10 @@ function ScheduleContent() {
       };
       dispatch(getSearchScheduleList({ data, metaLoading: true }));
     } else {
-      if (stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) {
+      /*      if (stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) {
         dispatch(resetScheduleTimeViewData([]));
         return;
-      }
+      }*/
       dispatch(
         getScheduleTimeViewData({
           view_type: modelView,
