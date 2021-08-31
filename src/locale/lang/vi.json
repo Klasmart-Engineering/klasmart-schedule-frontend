@@ -898,5 +898,15 @@
   "report_no_class": "Vui lòng chọn một lớp từ danh sách bên trái để xem kết quả.",
   "report_no_assessment": "Vui lòng chọn một đánh giá từ danh sách bên trái để xem kết quả.",
   "assessment_not_applicable": "Không áp dụng",
-  "assessment_activity_attempted": "Đã cố gắng"
+  "assessment_activity_attempted": "Đã cố gắng",
+  "assessment_partially_achieved": "Đã đạt được một phần",
+  "report_lsr_view_all": "Xem tất cả",
+  "assessment_learning_outcome_assessment": "Đánh giá kết quả học tập",
+  "assessment_assigned_to": "Được chỉ định cho",
+  "library_label_add_learning_outcomes": "Thêm kết quả học tập",
+  "schedule_sub_category": "Hạng mục phụ",
+  "schedule_add_learning_outcome": "Thêm kết quả học tập",
+  "assessment_in_progress": "Đang tiến hành",
+  "assessment_student_name": "Tên học sinh",
+  "assessment_lesson_material_assessment": "Lesson Material Assessment"
 }
