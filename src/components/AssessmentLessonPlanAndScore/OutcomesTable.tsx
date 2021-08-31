@@ -202,7 +202,7 @@ const AssessAction = (props: AssessActionProps) => {
           {...props}
           render={(selectedContentGroupContext) => (
             <Box display="flex" alignItems="center" p={2} pb={0} {...{ ref }}>
-              <Box width={180} fontSize={14}>
+              <Box width={180} fontSize={14} style={{ flex: "none" }}>
                 <FormControlLabel
                   control={
                     <Checkbox
