@@ -117,7 +117,7 @@ const AssessAction = (props: AssessActionProps) => {
 
   /** 更改下方的 student&content 中的数据 **/
   const transBottomToTop = (studentIds: string[], indeterminate?: boolean, type?: string) => {
-    // console.log("outcomes=========", formValue, studentViewItems, outcome_id,indeterminate);
+    console.log("outcomes=========", formValue, studentViewItems, outcome_id, indeterminate);
     let newSVI = cloneDeep(studentViewItems);
     newSVI?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {
@@ -125,18 +125,32 @@ const AssessAction = (props: AssessActionProps) => {
           switch (true) {
             case studentIds?.length === 0 /** 没有学生 **/:
               if (lmo.outcome_id === outcome_id) lmo.checked = false;
-              if (lmo.outcome_id === outcome_id && type === "none_achieved") lmo.none_achieved = true;
+              if (lmo.outcome_id === outcome_id && type === "skip") lmo.none_achieved = false;
+              /** 在这里需要进行判断，如果该 outcome 全部为 true 则赋值为 false ，如果一部分为 则赋值所有的 outcome 为 true **/
+              let allThisOutcome = studentViewItems
+                ?.map((s) => s.lesson_materials)
+                .flat()
+                ?.map((slm) => slm?.outcomes || [])
+                .flat()
+                .filter((oo) => oo.outcome_id === lmo.outcome_id);
+              let trueThisOutcome = allThisOutcome?.filter((oo) => oo.none_achieved);
+              if (lmo.outcome_id === outcome_id && type === "none_achieved") {
+                if (allThisOutcome?.length !== trueThisOutcome?.length) lmo.none_achieved = true;
+                else lmo.none_achieved = !lmo.none_achieved;
+              }
               break;
             case studentIds?.length === allValue.length /** 全选学生 **/:
-              if (lmo.outcome_id === outcome_id) lmo.checked = true;
-              if (lmo.outcome_id === outcome_id && type === "none_achieved") lmo.none_achieved = false;
+              if (lmo.outcome_id === outcome_id) {
+                lmo.checked = true;
+                lmo.none_achieved = false;
+              }
               break;
             default:
               /** 部分学生 **/
               if (lmo.outcome_id === outcome_id && stu.student_id === studentIds[0]) lmo.checked = !lmo.checked;
               if (lmo.outcome_id === outcome_id && stu.student_id === studentIds[0] && indeterminate)
                 lmo.checked = false; /** 如果当前点击的是 partial 状态，则把它当成选中状态处理 **/
-              if (lmo.outcome_id === outcome_id && type === "none_achieved") lmo.none_achieved = false;
+              if (lmo.outcome_id === outcome_id) lmo.none_achieved = false;
               break;
           }
         });
