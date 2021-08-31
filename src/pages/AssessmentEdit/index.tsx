@@ -115,7 +115,7 @@ export function AssessmentsEdit() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -149,7 +149,7 @@ export function AssessmentsEdit() {
               return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
             }
           }
-          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -251,7 +251,7 @@ export function AssessmentsEdit() {
         onComplete={handleAssessmentComplete}
         editable={editable}
       />
-      <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
+      <LayoutPair breakpoint="md" leftWidth={603} rightWidth={1205} spacing={32} basePadding={0} padding={40}>
         <Summary
           assessmentDetail={assessmentDetail}
           formMethods={formMethods}
