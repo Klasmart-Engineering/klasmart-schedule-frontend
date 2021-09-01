@@ -176,7 +176,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           onChangeDevelopmental={handleChangeDevelopmental}
           onChangeOutcomeSubject={handleChangeSubject}
           handleClickSearch={({ page, order_by }) => {
-            console.log("page, order_by=",page, order_by);
             const { program, category, ...resValues } = getValues();
             const category_ids = watch("category")?.split("/")[0];
             const sub_category_ids = watch("category")?.split("/")[1];
@@ -184,6 +183,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
             const subject_ids = watch("program")?.split("/")[1];
             onSearch({
               ...resValues,
+              page, order_by,
               program_ids: program_ids === "all" ? "" : program_ids,
               subject_ids: subject_ids === "all" ? "" : subject_ids,
               category_ids: category_ids === "all" ? "" : category_ids,

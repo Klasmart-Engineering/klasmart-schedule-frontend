@@ -18,7 +18,7 @@ import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Control } from "react-hook-form";
 import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { ReactComponent as SortSvg } from "../../assets/icons/Slice 1.svg";
@@ -95,6 +95,10 @@ interface OutcomesTableProps {
   onChangePageAndSort?: (props: ISearchOutcomeQuery) => any;
   isDialog?: boolean;
   outcomesFullOptions?: LinkedMockOptions;
+  total?:number;
+  outcomePage?: number;
+  amountPerPage?: number;
+  handleClickSearch?: OutcomesDialogProps["handleClickSearch"];
 }
 export const getNameByIds = (list?: LinkedMockOptionsItem[], ids?: string[]) => {
   return ids?.reduce((names: string[], id) => {
@@ -103,7 +107,10 @@ export const getNameByIds = (list?: LinkedMockOptionsItem[], ids?: string[]) => 
   }, []);
 };
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, outcomeValue, onChangeOutcomeValue, onGoOutcomesDetail, isDialog, onChangePageAndSort, outcomesFullOptions } = props;
+  const { list, outcomeValue, onChangeOutcomeValue, onGoOutcomesDetail, isDialog, onChangePageAndSort, outcomesFullOptions, handleClickSearch,
+    total,
+    amountPerPage = 10,
+    outcomePage, } = props;
   const css = useStyles();
   const [sortUp, toggle] = React.useReducer((sortUp) => !sortUp, true);
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
@@ -125,9 +132,12 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     }
   };
   const handleClickSort = useCallback(() => {
-    onChangePageAndSort?.({ order_by: sortUp ? "name" : "-name" });
+    onChangePageAndSort?.({ order_by: !sortUp ? "name" : "-name" });
     toggle();
   }, [onChangePageAndSort, sortUp]);
+  const handleChangePage = useMemo(() => (page:number) => {
+    page!==outcomePage && handleClickSearch && handleClickSearch({ page, order_by: sortUp ? "name" : "-name" })
+  },[sortUp,handleClickSearch, outcomePage])
   const rows = list?.map((item, idx) => (
     <TableRow key={item.outcome_id}>
       {isPermission && (
@@ -168,6 +178,14 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
           <TableBody>{rows}</TableBody>
         </Table>
       </TableContainer>
+      {isDialog && total && <Pagination
+        style={{ marginBottom: 20 }}
+        classes={{ ul: css.paginationUl }}
+        onChange={(e, page) => handleChangePage(page)}
+        count={Math.ceil(total / amountPerPage)}
+        color="primary"
+        page={outcomePage}
+      />}
     </>
   );
 };
@@ -222,16 +240,8 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
     onChangeOutcomeSubject,
     handleClickSearch,
   } = props;
-  const pagination = (
-    <Pagination
-      style={{ marginBottom: 20 }}
-      classes={{ ul: css.paginationUl }}
-      onChange={(e, page) => page!==outcomePage && handleClickSearch({ page })}
-      count={Math.ceil(total / amountPerPage)}
-      color="primary"
-      page={outcomePage}
-    />
-  );
+ 
+
   return (
     <Box>
       <Dialog onClose={toggle} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth className={css.dialogRoot}>
@@ -256,7 +266,6 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
               outcomeSearchDefault={outcomeSearchDefault}
             >
               {list.length ? (
-                <>
                   <OutcomesTable
                     onChangePageAndSort={({ order_by }) => handleClickSearch({ order_by })}
                     list={getOutcomeList(list)}
@@ -265,9 +274,11 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
                     onGoOutcomesDetail={onGoOutcomesDetail}
                     outcomesFullOptions={outcomesFullOptions}
                     isDialog={open}
+                    total={total}
+                    outcomePage={outcomePage}
+                    amountPerPage={amountPerPage}
+                    handleClickSearch={handleClickSearch}
                   />
-                  {pagination}
-                </>
               ) : (
                 resultsTip
               )}

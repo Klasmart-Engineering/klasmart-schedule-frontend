@@ -582,12 +582,13 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
 export type ISearchPublishedLearningOutcomesParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] ;
 export const searchPublishedLearningOutcomes = createAsyncThunk<ModelSearchPublishedOutcomeResponse, { exactSerch?: string } & ISearchPublishedLearningOutcomesParams & LoadingMetaPayload>(
   "content/searchPublishedLearningOutcomes",
-  async ({ metaLoading,exactSerch="outcome_name", search_key, assumed, page, ...query }) => {
+  async ({ metaLoading,exactSerch="outcome_name", search_key, order_by, assumed, page, ...query }) => {
     const params = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
       assumed,
       page,
+      order_by:order_by||"name",
       [exactSerch!]: search_key,
       ...query,
     };

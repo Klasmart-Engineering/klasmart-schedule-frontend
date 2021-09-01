@@ -14,11 +14,6 @@ const useStyles = makeStyles(({ shadows, palette }) => ({
     "&:hover": {
       border: "1px solid rgba(0,0,0,.57)",
     },
-    "&:focus":{
-      border: "1px solid blue",
-
-      
-    }
   },
   searchTextField: {
     height: 40,
@@ -46,7 +41,7 @@ const useStyles = makeStyles(({ shadows, palette }) => ({
     width: 400,
     height: 500,
     zIndex: 100,
-    top: 40,
+    top: 44,
   },
   cascaderList: {
     display: "flex",
@@ -156,6 +151,7 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
         <div style={{ borderLeft: "1px solid #ccc"}} className={css.paperBox}>
           {subList.map((item) => (
             <MenuItem
+              disabled={value === "all/all"}
               key={item.id}
               className={clsx(css.cascaderSubList, { active: item.id && subListIds?.includes(item.id) })}
               onClick={() => {
