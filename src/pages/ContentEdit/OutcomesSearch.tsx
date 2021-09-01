@@ -85,7 +85,6 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
   const css = useStyles();
   const {
     handleClickSearch,
-    exactSerch,
     value,
     assumed,
     searchLOListOptions,

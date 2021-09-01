@@ -168,7 +168,8 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
       ...transferSearchParams({program, category, age_ids, grade_ids,}),
     });
     dispatch(getOutcomesOptions({metaLoading: true, program_id: program_ids,subject_ids,developmental_id:category_ids}))
-  },[open,outcomeSearchDefault.program, outcomeSearchDefault.category])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[open,dispatch, onSearch,reset])
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
