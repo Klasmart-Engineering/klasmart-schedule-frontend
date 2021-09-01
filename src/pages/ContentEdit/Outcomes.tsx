@@ -44,13 +44,19 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
     bottom:20,
   }
 }));
-
 export type ISearchOutcomeQuery = Exclude<ISearchPublishedLearningOutcomesParams, "assumed"> & {
   value?: string;
   exactSerch?: string;
   assumed?: boolean;
+  program?: string; 
+  category?: string
 };
-export type ISearchOutcomeForm = ISearchOutcomeQuery & { program?: string; category?: string };
+export type ISearchOutcomeForm= Omit<ISearchOutcomeQuery,"grade_ids"| "age_ids">&{
+  grade_ids?:string[];
+  age_ids?:string[];
+
+}
+export type ISearchOutcomeDefault = { program?: string; category?: string,grade_ids?:string[],age_ids?:string[] };
 export interface OutcomesProps {
   comingsoon?: boolean;
   list: ModelPublishedOutcomeView[];
@@ -66,9 +72,25 @@ export interface OutcomesProps {
   outcomePage: number;
   searchLOListOptions: LinkedMockOptions;
   outcomesFullOptions: LinkedMockOptions;
-  outcomeSearchDefault: ISearchOutcomeForm;
+  outcomeSearchDefault: ISearchOutcomeDefault;
 }
 
+ const transferSearchParams=(props:{program?:string,category?:string,age_ids?:string[], grade_ids?:string[],})=> {
+   const{ program, category,age_ids, grade_ids} = props;
+  const category_ids = category?.split("/")[0];
+  const sub_category_ids = category?.split("/")[1];
+  const program_ids = program?.split("/")[0];
+  const subject_ids = program?.split("/")[1];
+  return{
+    program_ids: program_ids === "all" ? "" : program_ids,
+    subject_ids: subject_ids === "all" ? "" : subject_ids,
+    category_ids: category_ids === "all" ? "" : category_ids,
+    sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
+    age_ids:age_ids?.join(","),
+    grade_ids:grade_ids?.join(","),
+  }
+
+ }
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
   const css = useStyles();
   const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions,outcomeSearchDefault } = props;
@@ -83,18 +105,21 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const handleChangeProgram = useMemo(
     () => async (program_id: string) => {
       dispatch(getOutcomesOptions({ metaLoading: true, program_id: program_id === "all" ? "" : program_id }));
-      reset({ ...getValues(),program: `${program_id}/all`, category: "all/all", age_ids:"", grade_ids: "" });
+      reset({ ...getValues(),program: `${program_id}/all`, category: "all/all", age_ids: [], grade_ids: [] });
     },
     [dispatch, reset, getValues]
   );
+
   const handleChangeSubject = useMemo(
     () => async (subject_ids: string[]) => {
       const subjectId = subject_ids.includes("all") ? [] : subject_ids;
       dispatch(getOutcomesOptionCategorys({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
       reset({ ...getValues(),program: `${programId||"all"}/${subject_ids.join(",")}`, category: "all/all",  });
+
     },
     [dispatch, program_id, programId, getValues,reset]
   );
+
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string) => {
       const developmentalId = developmental_id === "all" ? "" : developmental_id;
@@ -111,7 +136,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const handleChangePage = useMemo(() => (page:number) => {
     setCurrentPage(page);
   },[]);
-  const localSort=useMemo(() => (props: ISearchOutcomeQuery) => {
+  const localSort=useMemo(() => (props: ISearchOutcomeForm) => {
     const sortValue = value?.slice()?.sort((a , b) =>{
       if(!a ||!b||!a.outcome_name||!b.outcome_name) return 1;
      return props.order_by ==="-name"?
@@ -133,8 +158,17 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     </Button>
   );
   React.useEffect(()=>{
-    setSelectedValue(value)
-  }, [value])
+    setSelectedValue(value);
+  }, [value]);
+  React.useEffect(()=>{
+    const {program,category,age_ids,grade_ids} = outcomeSearchDefault;
+    reset({ ...getValues(),...outcomeSearchDefault});
+    const {program_ids,subject_ids,category_ids} = transferSearchParams({program, category, age_ids, grade_ids,})
+    open && onSearch({
+      ...transferSearchParams({program, category, age_ids, grade_ids,}),
+    });
+    dispatch(getOutcomesOptions({metaLoading: true, program_id: program_ids,subject_ids,developmental_id:category_ids}))
+  },[open,outcomeSearchDefault.program, outcomeSearchDefault.category])
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
@@ -151,7 +185,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
                 onGoOutcomesDetail={onGoOutcomesDetail}
                 outcomesFullOptions={outcomesFullOptions}
                 onChangePageAndSort={localSort}
-
               />
             </>
           ) : (
@@ -177,17 +210,10 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           onChangeOutcomeSubject={handleChangeSubject}
           handleClickSearch={({ page, order_by }) => {
             const { program, category, ...resValues } = getValues();
-            const category_ids = watch("category")?.split("/")[0];
-            const sub_category_ids = watch("category")?.split("/")[1];
-            const program_ids = watch("program")?.split("/")[0];
-            const subject_ids = watch("program")?.split("/")[1];
             onSearch({
               ...resValues,
               page, order_by,
-              program_ids: program_ids === "all" ? "" : program_ids,
-              subject_ids: subject_ids === "all" ? "" : subject_ids,
-              category_ids: category_ids === "all" ? "" : category_ids,
-              sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
+              ...transferSearchParams({program: watch("program"), category: watch("category"),age_ids:watch("age_ids"),grade_ids:watch("grade_ids")}),
             });
           }}
         />

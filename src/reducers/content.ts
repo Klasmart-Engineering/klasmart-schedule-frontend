@@ -352,17 +352,21 @@ export interface IQueryOutcomesOptions extends LoadingMetaPayload  {
 }
 export const getOutcomesOptions = createAsyncThunk<LinkedMockOptions , IQueryOutcomesOptions>(
   "content/getOutcomesOptions",
-  async ({ program_id, subject_ids, developmental_id }) => {
-    // const program = await api.programs.getProgram();
-    const subject = await api.subjects.getSubject({ program_id });
+  async ({metaLoading, program_id, subject_ids, developmental_id }) => {
+    let subject:LinkedMockOptionsItem[] = [];
+    let skills:LinkedMockOptionsItem[] = [];
+    if(program_id){
+      subject = await api.subjects.getSubject({ program_id });
+    }
     const [developmental, age, grade] = await Promise.all([
       api.developmentals.getDevelopmental({ program_id, subject_ids:subject.length ===1? subject[0].id : subject_ids }),
       api.ages.getAge({ program_id }),
       api.grades.getGrade({ program_id }),
     ]);
-    const skills = await api.skills.getSkill({ program_id, developmental_id: developmental.length ===1? developmental[0].id : developmental_id});
+    if(developmental_id){
+      skills = await api.skills.getSkill({ program_id, developmental_id: developmental.length ===1? developmental[0].id : developmental_id});
+    }
     return { 
-      // program,
       subject,
       developmental,
       age,
@@ -396,7 +400,11 @@ export const getOutcomesFullOptions = createAsyncThunk<LinkedMockOptions,Loading
 export const getOutcomesOptionSkills = createAsyncThunk<LinkedMockOptions["skills"], IQueryOutcomesOptions>(
   "content/getOutcomesOptionsSkills",
   async ({ metaLoading, program_id, developmental_id }) => {
-    return await api.skills.getSkill({ program_id, developmental_id });
+    let skills:LinkedMockOptionsItem[] = [];
+    if(developmental_id){
+      skills = await api.skills.getSkill({ program_id, developmental_id});
+    }
+    return skills;
   }
 );
 export const getOutcomesOptionCategorys = createAsyncThunk<LinkedMockOptions["developmental"], IQueryOutcomesOptions>(
@@ -448,9 +456,9 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
               })
             )
         : undefined,
-      type === "material" || type === "plan"
-        ? dispatch(searchPublishedLearningOutcomes({ search_key: searchOutcome, exactSerch, page: 1, assumed: assumed ? 1 : -1 }))
-        : undefined,
+      // type === "material" || type === "plan"
+      //   ? dispatch(searchPublishedLearningOutcomes({ search_key: searchOutcome, exactSerch, page: 1, assumed: assumed ? 1 : -1 }))
+      //   : undefined,
       dispatch(
         getLinkedMockOptions({
           default_program_id: contentDetail.program,
@@ -582,7 +590,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
 export type ISearchPublishedLearningOutcomesParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] ;
 export const searchPublishedLearningOutcomes = createAsyncThunk<ModelSearchPublishedOutcomeResponse, { exactSerch?: string } & ISearchPublishedLearningOutcomesParams & LoadingMetaPayload>(
   "content/searchPublishedLearningOutcomes",
-  async ({ metaLoading,exactSerch="outcome_name", search_key, order_by, assumed, page, ...query }) => {
+  async ({ metaLoading,exactSerch="search_key", search_key, order_by, assumed, page, ...query }) => {
     const params = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,

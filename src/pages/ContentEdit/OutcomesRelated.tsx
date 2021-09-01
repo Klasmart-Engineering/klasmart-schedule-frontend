@@ -26,7 +26,7 @@ import { PermissionType, usePermission } from "../../components/Permission";
 import { resultsTip } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
-import { ISearchOutcomeQuery, OutcomesProps } from "./Outcomes";
+import { ISearchOutcomeForm, OutcomesProps } from "./Outcomes";
 import { OutcomesSearch } from "./OutcomesSearch";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -92,7 +92,7 @@ interface OutcomesTableProps {
   outcomeValue?: EntityOutcome[];
   onChangeOutcomeValue?: (value: EntityOutcome[]) => any;
   onGoOutcomesDetail: (id?: string) => any;
-  onChangePageAndSort?: (props: ISearchOutcomeQuery) => any;
+  onChangePageAndSort?: (props: ISearchOutcomeForm) => any;
   isDialog?: boolean;
   outcomesFullOptions?: LinkedMockOptions;
   total?:number;
@@ -207,7 +207,7 @@ const getOutcomeList = (list: ModelPublishedOutcomeView[]): EntityOutcome[] => {
 interface OutcomesDialogProps extends OutcomesProps {
   open: boolean;
   toggle: React.DispatchWithoutAction;
-  control: Control<ISearchOutcomeQuery>;
+  control: Control<ISearchOutcomeForm>;
   onChangeOutcomeProgram: (program_id: string) => any;
   onChangeDevelopmental: (developmental_id: string) => any;
   onChangeOutcomeSubject: (subject_ids: string[]) => any;

@@ -7,7 +7,7 @@ import { GroupSelect } from "../../components/GroupSelect/GroupSelect";
 import { SearchItems } from "../../components/SearchcmsList";
 import { d } from "../../locale/LocaleManager";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
-import { ISearchOutcomeForm } from "./Outcomes";
+import { ISearchOutcomeDefault, ISearchOutcomeForm } from "./Outcomes";
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   searchField: {
     flexGrow: 1,
@@ -79,7 +79,7 @@ export interface SearchOutcomesProps extends SearchItems {
   searchLOListOptions: LinkedMockOptions;
   children: ReactNode;
   control: Control<ISearchOutcomeForm>;
-  outcomeSearchDefault: ISearchOutcomeForm;
+  outcomeSearchDefault: ISearchOutcomeDefault;
 }
 export const OutcomesSearch = (props: SearchOutcomesProps) => {
   const css = useStyles();
@@ -110,7 +110,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
             <Controller
               name="exactSerch"
               control={control}
-              defaultValue={exactSerch|| "outcome_name"}
+              defaultValue={"search_key"}
               render={(exactSerchProps) => (
                 <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
                   {/* <TextField
@@ -182,9 +182,13 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
             name="program"
             defaultValue={ outcomeSearchDefault.program ||"all/all"}
             control={control}
-            render={(props) => (
+            render={({value,onChange}) => (
               <GroupSelect
-                {...props}
+                value={value}
+                onChange={(value) => {
+                  onChange(value);
+                  handleClickSearch({})
+                }}
                 list={searchLOListOptions.program || []}
                 subList={searchLOListOptions.subject || []}
                 onChangeListItem={onChangeOutcomeProgram}
@@ -199,9 +203,13 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
           name="category"
           defaultValue={outcomeSearchDefault.category || "all/all"}
           control={control}
-          render={(props) => (
+          render={({value,onChange}) => (
             <GroupSelect
-              {...props}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                handleClickSearch({})
+              }}
               list={searchLOListOptions.developmental || []}
               subList={searchLOListOptions.skills || []}
               onChangeListItem={onChangeDevelopmental}
@@ -211,41 +219,56 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
         />
         </Grid>
         <Grid item xs={6} sm={4} md={3}>
-        <Controller
-          as={TextField}
-          name="age_ids"
-          defaultValue={outcomeSearchDefault.age_ids?.split(",") || []}
-          control={control}
-          select
-          size="small"
-          className={css.searchTextField}
-          fullWidth
-          SelectProps={{
-            multiple: true,
-          }}
-          label={d("Age").t("library_label_age")}
-        >
-          {menuItemList(searchLOListOptions.age || [])}
-        </Controller>
+          <Controller
+           name="age_ids"
+           defaultValue={outcomeSearchDefault.age_ids || []}
+           control={control}
+           render={({value,onChange}) => (
+             <TextField
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                handleClickSearch({})
+              }}
+              select
+              size="small"
+              className={css.searchTextField}
+              fullWidth
+              SelectProps={{
+                multiple: true,
+              }}
+              label={d("Age").t("library_label_age")}
+            >
+              {menuItemList(searchLOListOptions.age || [])}
+             </TextField>
+           )}
+          />
         </Grid>
         <Grid item xs={6} sm={4} md={3}>
           <Controller
-            as={TextField}
             name="grade_ids"
-            defaultValue={outcomeSearchDefault.grade_ids?.split(",") || []}
-            control={control}
-            select
-            size="small"
-            className={css.searchTextField}
-            style={{marginRight:0}}
-            fullWidth
-            SelectProps={{
-              multiple: true,
-            }}
-            label={d("Grade").t("library_label_grade")}
-          >
-            {menuItemList(searchLOListOptions.grade || [])}
-          </Controller>
+            defaultValue={outcomeSearchDefault.grade_ids || []}
+           control={control}
+           render={({value,onChange}) => (
+             <TextField
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                handleClickSearch({})
+              }}
+              select
+              size="small"
+              className={css.searchTextField}
+              fullWidth
+              SelectProps={{
+                multiple: true,
+              }}
+              label={d("Grade").t("library_label_grade")}
+              >
+                {menuItemList(searchLOListOptions.grade || [])}
+             </TextField>
+           )}
+          />
         </Grid>
 
       </Grid>

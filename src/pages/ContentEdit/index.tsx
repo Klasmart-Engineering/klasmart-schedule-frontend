@@ -123,8 +123,8 @@ function ContentEditForm() {
   const outcomeSearchDefault = {
     program: `${program||"all"}/${subject?.length ? subject?.join(",") : "all"}`,
     category: `${developmental?.[0] || "all"}/${skills?.length ? skills?.join(","): "all"}`,
-    grade_ids: grade?.length ? grade?.join(","): undefined,
-    age_ids: age?.length ? age?.join(","): undefined,
+    grade_ids: grade,
+    age_ids: age,
   }
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
