@@ -378,9 +378,7 @@ function EditBox(props: CalendarStateProps) {
     stateCurrentCid,
     stateMaterialArr,
   } = props;
-  const { contentsAuthList, classOptions, mySchoolId, outcomeList } = useSelector<RootState, RootState["schedule"]>(
-    (state) => state.schedule
-  );
+  const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -1707,15 +1705,14 @@ function EditBox(props: CalendarStateProps) {
         getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
       )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
     }
-    if (outcomeList.length < 1)
-      await getLearingOuctomeData(
-        {
-          ...condition,
-          program_ids: filterGropuDatas.programs.length ? filterGropuDatas.programs : null,
-          subject_ids: filterGropuDatas.subjects.length ? filterGropuDatas.subjects : null,
-        },
-        false
-      );
+    await getLearingOuctomeData(
+      {
+        ...condition,
+        program_ids: filterGropuDatas.programs.length ? filterGropuDatas.programs : null,
+        subject_ids: filterGropuDatas.subjects.length ? filterGropuDatas.subjects : null,
+      },
+      false
+    );
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (

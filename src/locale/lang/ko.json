@@ -898,5 +898,15 @@
   "report_no_class": "결과를 보려면 왼쪽 목록에서 클래스를 선택하세요.",
   "report_no_assessment": "결과를 보려면 왼쪽 목록에서 평가를 선택하세요.",
   "assessment_not_applicable": "해당 없음",
-  "assessment_activity_attempted": "시도함"
+  "assessment_activity_attempted": "시도함",
+  "assessment_partially_achieved": "부분적으로 달성함",
+  "report_lsr_view_all": "모두 보기",
+  "assessment_learning_outcome_assessment": "학습 결과 평가",
+  "assessment_assigned_to": "할당됨",
+  "library_label_add_learning_outcomes": "학습 결과 추가",
+  "schedule_sub_category": "하위 범주",
+  "schedule_add_learning_outcome": "학습 결과 추가",
+  "assessment_in_progress": "진행 중",
+  "assessment_student_name": "학생 이름",
+  "assessment_lesson_material_assessment": "수업 자료 평가"
 }

@@ -898,5 +898,15 @@
   "report_no_class": "请在左边选择一节课以查看该结果",
   "report_no_assessment": "请在左边选择一份评估以查看该结果",
   "assessment_not_applicable": "不适用",
-  "assessment_activity_attempted": "已尝试"
+  "assessment_activity_attempted": "已尝试",
+  "assessment_partially_achieved": "部分达标",
+  "report_lsr_view_all": "查看全部",
+  "assessment_learning_outcome_assessment": "学习成果报告",
+  "assessment_assigned_to": "分配给",
+  "library_label_add_learning_outcomes": "添加学习成果",
+  "schedule_sub_category": "子类别",
+  "schedule_add_learning_outcome": "添加学习成果",
+  "assessment_in_progress": "未完成",
+  "assessment_student_name": "学生姓名",
+  "assessment_lesson_material_assessment": "课件素材评估"
 }

@@ -1,3 +1,7 @@
+import { Box, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
 import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -6,6 +10,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { ExtendedRequestParams } from "../../api";
 import { EntityAssessHomeFunStudyArgs } from "../../api/api.auto";
 import { AssessmentStatus, AssessmentUpdateAction } from "../../api/type";
+import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
@@ -15,13 +20,8 @@ import { actError, actSuccess } from "../../reducers/notify";
 import { AssessmentHeader } from "../AssessmentEdit/AssessmentHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import { Assignment } from "./Assignment";
-import { Summary } from "./Summary";
 import { LessonPlan } from "./LessonPlan";
-import { Box, Typography, useMediaQuery, useTheme } from "@material-ui/core";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { NoOutcome } from "../../components/TipImages";
+import { Summary } from "./Summary";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -94,7 +94,7 @@ function AssessmentsHomefunEditIner() {
         onBack={handleGoBack}
         editable={editable}
       />
-      <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
+      <LayoutPair breakpoint="md" leftWidth={603} rightWidth={1205} spacing={32} basePadding={0} padding={40}>
         <Summary detail={homefunDetail} feedbacks={homefunFeedbacks} />
         <Box style={{ marginBottom: "20px" }}>
           <RadioGroup

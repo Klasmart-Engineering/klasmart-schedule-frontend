@@ -381,9 +381,11 @@ interface PupupLessonMaterialProps {
   value: UpdateAssessmentRequestDataLessonMaterials;
   onChange?: (value: PupupLessonMaterialProps["value"]) => any;
   onChangeOA: (materials: PupupLessonMaterialProps["value"]) => any;
+  formMaterials: UpdateAssessmentRequestDataLessonMaterials;
 }
 const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>((props, ref) => {
-  const { value, assessmentDetail, isMyAssessment, onChange, onChangeOA } = props;
+  const { value, assessmentDetail, isMyAssessment, formMaterials, onChange, onChangeOA } = props;
+  console.log("value-materials", value);
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateAssessmentRequestData>();
@@ -394,9 +396,9 @@ const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>
   }, false);
   const editable = assessmentDetail.status === AssessmentStatus.in_progress && isMyAssessment;
   const materialString = useMemo(() => {
-    const materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, value);
+    const materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, formMaterials);
     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
-  }, [assessmentDetail.lesson_materials, value]);
+  }, [assessmentDetail.lesson_materials, formMaterials]);
 
   const handleOk = useCallback(() => {
     const value = getValues()["lesson_materials"];
@@ -495,16 +497,20 @@ interface SummaryProps {
   assessmentDetail: IAssessmentState["assessmentDetail"];
   isMyAssessment?: boolean;
   outcomesList: IAssessmentState["assessmentDetail"]["outcomes"];
+  lessonMaterials: UpdateAssessmentRequestDataOmitAction["lesson_materials"];
 }
 export function Summary(props: SummaryProps) {
-  const { assessmentDetail, isMyAssessment, outcomesList, formMethods } = props;
-  const { control, getValues, setValue } = formMethods;
+  const { assessmentDetail, isMyAssessment, outcomesList, formMethods, lessonMaterials } = props;
+  const { control, setValue } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
-  const m = getValues()["lesson_materials"];
-  const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
+  // const m = getValues()["lesson_materials"];
+  // const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, lessonMaterials), [assessmentDetail, lessonMaterials]);
+  // const { lesson_materials } = watch();
+  // const m = getValues()["lesson_materials"];
+  // const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
     const list = assessmentDetail.teachers?.map((v) => v.name);
     const length = list && list.length ? list.length : "";
@@ -599,8 +605,9 @@ export function Summary(props: SummaryProps) {
               <Controller
                 as={PopupLessonMaterial}
                 name="lesson_materials"
-                defaultValue={materials}
-                value={materials}
+                defaultValue={lessonMaterials}
+                value={lessonMaterials}
+                formMaterials={lessonMaterials}
                 assessmentDetail={assessmentDetail}
                 control={control}
                 isMyAssessment={isMyAssessment}

@@ -98,7 +98,7 @@ export function AssessmentsEdit() {
           else outcome.partial_ids?.push(id);
         });
         /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
-        if (curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length) outcome.none_achieved = true;
+        outcome.none_achieved = curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length;
       }
     });
     return newFinalOutcomeList;
@@ -115,7 +115,7 @@ export function AssessmentsEdit() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -143,13 +143,10 @@ export function AssessmentsEdit() {
               return finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0;
             });
             if (finalErrs && finalErrs.length) {
-              console.log(finalErrs);
               return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
             }
           }
-          if (data.action === "complete" && errorlist && errorlist.length > 0)
-            return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
-          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
+          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -201,7 +198,6 @@ export function AssessmentsEdit() {
   };
 
   const changeAssessmentTableDetail = (value?: EntityUpdateAssessmentH5PStudent[]) => {
-    console.log("value==========", value);
     setStudentViewItems(value);
   };
 
@@ -251,12 +247,13 @@ export function AssessmentsEdit() {
         onComplete={handleAssessmentComplete}
         editable={editable}
       />
-      <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
+      <LayoutPair breakpoint="md" leftWidth={603} rightWidth={1205} spacing={32} basePadding={0} padding={40}>
         <Summary
           assessmentDetail={assessmentDetail}
           formMethods={formMethods}
           isMyAssessment={isMyAssessment}
           outcomesList={filteredOutcomelist}
+          lessonMaterials={lesson_materials}
         />
         {rightsideArea}
       </LayoutPair>

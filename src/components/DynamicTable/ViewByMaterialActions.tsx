@@ -108,7 +108,7 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
 
   return (
     <Box display="flex" alignItems="center" p={2} pb={0}>
-      <Box width={180} fontSize={14} display="flex" flexDirection="column" alignItems="flexStart">
+      <Box width={180} fontSize={14} display="flex" flexDirection="column" alignItems="flexStart" style={{ flex: "none" }}>
         <FormControlLabel
           label={d("All Achieved").t("assess_option_all_achieved")}
           disabled={disabled || outcomeDisableList?.some((o) => o === outcome_id)}
@@ -120,7 +120,7 @@ export default function ViewByMaterialActions(props: AssessActionProps) {
           control={<Checkbox checked={noneAchieved} color="primary" onChange={(e) => handleAllCheck(e, "none")} />}
         />
       </Box>
-      <Box px={3} style={{ borderLeft: "1px solid #ebebeb" }}>
+      <Box px={3} style={{ borderLeft: "1px solid #ebebeb" }} display="flex" flexWrap="wrap">
         {studentViewItemsSet &&
           studentViewItemsSet.map((item) => (
             <FormControlLabel

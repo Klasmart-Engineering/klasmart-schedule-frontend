@@ -56,6 +56,12 @@ const useStyles = makeStyles({
     backgroundColor: "#0E78D5",
     boxShadow: "0 0 2px #0E78D5",
   },
+  disabled: {
+    "& $partially_checked": {
+      backgroundColor: "#ababab",
+      boxShadow: "0 0 2px #ababab",
+    },
+  },
 });
 interface mergeHandlerProps<T> extends Array<(arg: T) => any> {}
 
@@ -117,7 +123,7 @@ const AssessAction = (props: AssessActionProps) => {
 
   /** 更改下方的 student&content 中的数据 **/
   const transBottomToTop = (studentIds: string[], indeterminate?: boolean, type?: string) => {
-    console.log("outcomes=========", formValue, studentViewItems, outcome_id, indeterminate);
+    // console.log("outcomes=========", studentViewItems, indeterminate);
     let newSVI = cloneDeep(studentViewItems);
     newSVI?.forEach((stu) => {
       stu.lesson_materials?.forEach((lm) => {
@@ -196,7 +202,7 @@ const AssessAction = (props: AssessActionProps) => {
           {...props}
           render={(selectedContentGroupContext) => (
             <Box display="flex" alignItems="center" p={2} pb={0} {...{ ref }}>
-              <Box width={180} fontSize={14}>
+              <Box width={180} fontSize={14} style={{ flex: "none" }}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -251,6 +257,7 @@ const AssessAction = (props: AssessActionProps) => {
                       label={item.name}
                       key={item.id}
                       disabled={skip || !editable}
+                      className={skip || !editable ? css.disabled : ""}
                     />
                   ))}
                 <Controller
@@ -329,7 +336,11 @@ export function OutcomesTable(props: OutcomesTableProps) {
         <TableCell className={css.tableCellLine} align="center">
           &ensp;{" "}
           {outcome.assigned_to?.map((a) => (
-            <div>{a}</div>
+            <div>
+              {a === "lesson_material"
+                ? d("Lesson Material").t("library_label_lesson_material")
+                : d("Lesson Plan").t("library_label_lesson_plan")}
+            </div>
           ))}{" "}
           &ensp;
         </TableCell>
