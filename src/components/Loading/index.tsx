@@ -6,7 +6,7 @@ import { RootState } from "../../reducers";
 const useStyles = makeStyles((theme) =>
   createStyles({
     backdrop: {
-      zIndex: theme.zIndex.drawer + 1,
+      zIndex: theme.zIndex.drawer + 300,
       color: "#fff",
     },
   })

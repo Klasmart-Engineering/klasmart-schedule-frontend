@@ -1,11 +1,11 @@
 import { Box, makeStyles, Typography } from "@material-ui/core";
-import React, { Fragment } from "react";
+import React, { Fragment, ReactNode } from "react";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
-import noPermissionUrl from "../../assets/icons/permission.jpg";
 import achievementEmptyUrl from "../../assets/icons/noLearningOutcomes.svg";
+import noPermissionUrl from "../../assets/icons/permission.jpg";
 import { d, t } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -37,10 +37,11 @@ export type TextLabel =
   | "report_msg_no_plan";
 interface TipImagesProps {
   type: TipImagesType;
-  text: TextLabel;
+  text?: TextLabel;
+  children?: ReactNode;
 }
 export function TipImages(props: TipImagesProps) {
-  const { type, text } = props;
+  const { type, text,children } = props;
   const css = useStyles();
   let src = "";
   if (type === TipImagesType.empty) {
@@ -62,9 +63,10 @@ export function TipImages(props: TipImagesProps) {
     <Fragment>
       <Box className={css.emptyContainer}>
         <img className={css.emptyImage} alt={type} src={src} />
-        <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+        {text && <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
           {t(text)}
-        </Typography>
+        </Typography>}
+        {children}
       </Box>
     </Fragment>
   );

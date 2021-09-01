@@ -1,308 +1,196 @@
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  makeStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@material-ui/core";
-import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
-import { AddCircle, RemoveCircle } from "@material-ui/icons";
-import CloseIcon from "@material-ui/icons/Close";
+import { Box, Button, makeStyles } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
-import { cloneDeep } from "lodash";
-import React, { forwardRef, useCallback } from "react";
+import React, { forwardRef, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
-import { PermissionType, usePermission } from "../../components/Permission";
-import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
-import { comingsoonTip, resultsTip } from "../../components/TipImages";
-import { d } from "../../locale/LocaleManager";
-
-const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
-  color: paletteColor.main,
-  cursor: "pointer",
-  "&:hover": {
-    color: paletteColor.dark,
-  },
-});
-const useStyles = makeStyles(({ breakpoints, palette }) => ({
+import { ContentEditRouteParams } from ".";
+import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
+import { GetOutcomeDetail } from "../../api/type";
+import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
+import {
+  getOutcomesOptionCategorys,
+  getOutcomesOptions,
+  getOutcomesOptionSkills,
+  ISearchPublishedLearningOutcomesParams,
+  LinkedMockOptions
+} from "../../reducers/content";
+import { OutComesDialog, OutcomesTable } from "./OutcomesRelated";
+const AMOUNTPERPAGE = 10;
+const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
   mediaAssets: {
-    minHeight: 900,
-    [breakpoints.down("sm")]: {
-      minHeight: 698,
-    },
+    minHeight: 860,
     position: "relative",
-  },
-  tableContainer: {
-    marginTop: 5,
-    maxHeight: 700,
-    marginBottom: 20,
-  },
-  table: {
-    minWidth: 700 - 162,
-  },
-  tableHead: {
-    backgroundColor: "#F2F5F7",
-  },
-  addGreen: createColor(palette.success, palette),
-  removeRead: createColor(palette.error, palette),
-  pagination: {
-    marginBottom: 90,
-  },
-  paginationUl: {
-    justifyContent: "center",
-  },
-  outcomsInput: {
-    position: "absolute",
-    bottom: 20,
-    width: "95%",
   },
   addOutcomesButton: {
     width: "100%",
-    height: 54,
-    backgroundColor: palette.primary.main,
+    height: 48,
+    backgroundColor: "rgba(75,136,245,0.20)",
     borderRadius: 6,
-    padding: "5px 30px",
-    display: "flex",
-    alignItems: "center",
-    boxSizing: "border-box",
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: palette.action.disabledOpacity,
-    },
-  },
-  addText: {
-    color: palette.common.white,
-  },
-  indexUI: {
-    width: 35,
-    height: 35,
-    borderRadius: "50%",
+    border: "1px solid #4b88f5",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: palette.common.white,
-    color: palette.primary.main,
-    position: "absolute",
-    right: 32,
-  },
-  closeButton: {
-    position: "absolute",
-    right: 14,
-    top: 9,
-    color: palette.grey[500],
-  },
-  outcomeCursor: {
+    boxSizing: "border-box",
     cursor: "pointer",
+    color: "#4b88f5",
   },
-  outcomeSet: {
-    overflow: "hidden",
-    display: "-webkit-box",
-    textOverflow: "ellipsis",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 3,
-    maxHeight: 93,
-    maxWidth: 210,
-    wordWrap: "break-word",
-    wordBreak: "normal",
+  addButton: {
+    width: "95%",
+    margin: "20px 0 14px",
   },
+  pagination: {
+    position: "absolute",
+    bottom:20,
+  }
 }));
 
-interface OutcomesTableProps {
-  list?: GetOutcomeList;
-  value?: GetOutcomeList;
-  onChange?: (value: GetOutcomeList) => any;
-  onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
-  open?: boolean;
-}
-export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, value, onChange, onGoOutcomesDetail, open } = props;
-  const css = useStyles();
-  const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
-  const createContent = usePermission(PermissionType.create_content_page_201);
-  const editAll = usePermission(PermissionType.edit_org_published_content_235);
-  const isPermission = associateLOC || createContent || editAll;
-  const handleAction = (item: GetOutcomeDetail, type: "add" | "remove") => {
-    const { outcome_id: id } = item;
-    if (type === "add") {
-      if (id && value) {
-        onChange && onChange(value.concat([item]));
-      }
-    } else {
-      if (id && value) {
-        let newValue = cloneDeep(value);
-        newValue = newValue.filter((v) => v.outcome_id !== id);
-        onChange && onChange(newValue);
-      }
-    }
-  };
-
-  const rows =
-    list &&
-    list.map((item, idx) => (
-      <TableRow key={item.outcome_id}>
-        {open ? (
-          <TableCell>{item.outcome_name}</TableCell>
-        ) : (
-          <TableCell className={css.outcomeCursor} onClick={() => onGoOutcomesDetail(item.outcome_id) as any}>
-            {item.outcome_name}
-          </TableCell>
-        )}
-        <TableCell>{item.shortcode}</TableCell>
-        <TableCell>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
-        {/* <TableCell>{item.author_name}</TableCell> */}
-        <TableCell>
-          <div className={css.outcomeSet}>{item.sets?.map((item) => item.set_name).join(";")}</div>
-        </TableCell>
-        {isPermission && (
-          <TableCell>
-            {value?.map((v) => v.outcome_id) && value?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
-              <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
-            ) : (
-              <RemoveCircle className={css.removeRead} onClick={() => handleAction(item, "remove")} />
-            )}
-          </TableCell>
-        )}
-      </TableRow>
-    ));
-  return (
-    <>
-      <TableContainer className={css.tableContainer}>
-        <Table className={css.table} stickyHeader>
-          <TableHead className={css.tableHead}>
-            <TableRow>
-              <TableCell>{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
-              <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
-              <TableCell>{d("Assumed").t("assess_label_assumed")}</TableCell>
-              {/* <TableCell>{d("Author").t("library_label_author")}</TableCell> */}
-              <TableCell>{d("Learning Outcome Set").t("assess_set_learning_outcome_set")}</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{rows}</TableBody>
-        </Table>
-      </TableContainer>
-    </>
-  );
+export type ISearchOutcomeQuery = Exclude<ISearchPublishedLearningOutcomesParams, "assumed"> & {
+  value?: string;
+  exactSerch?: string;
+  assumed?: boolean;
 };
-
-interface OutcomesInputProps {
-  value?: GetOutcomeDetail[];
-  onChange?: (value: GetOutcomeDetail[]) => any;
-  onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
-}
-export const OutComesInput = (props: OutcomesInputProps) => {
-  const css = useStyles();
-  const { value, onChange, onGoOutcomesDetail } = props;
-  const [open, setOpen] = React.useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  return (
-    <Box className={css.outcomsInput}>
-      <Box color="primary" className={css.addOutcomesButton} boxShadow={3} onClick={handleClickOpen}>
-        <Typography component="h6" className={css.addText}>
-          {d("Added Learning Outcomes").t("library_label_added_learning_outcomes")}
-        </Typography>
-        <Box mr={2} className={css.indexUI}>
-          <Typography variant="h6">{value && value.length}</Typography>
-        </Box>
-      </Box>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-        <DialogTitle id="customized-dialog-title">
-          {d("Added Learning Outcomes").t("library_label_added_learning_outcomes")}
-          <IconButton aria-label="close" className={css.closeButton} onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          <OutcomesTable list={value} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} open={open} />
-        </DialogContent>
-      </Dialog>
-    </Box>
-  );
-};
-
+export type ISearchOutcomeForm = ISearchOutcomeQuery & { program?: string; category?: string };
 export interface OutcomesProps {
   comingsoon?: boolean;
-  list: GetOutcomeDetail[];
+  list: ModelPublishedOutcomeView[];
   total: number;
   amountPerPage?: number;
   searchName: string;
+  exactSerch: string;
   assumed: boolean;
-  onSearch: (query: SearchItems) => any;
-  onChangePage: (page: number) => any;
-  value?: GetOutcomeDetail[];
-  onChange?: (value: GetOutcomeDetail[]) => any;
+  onSearch: (query: ISearchOutcomeQuery) => any;
+  value?: EntityOutcome[];
+  onChange?: (value: EntityOutcome[]) => any;
   onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
   outcomePage: number;
+  searchLOListOptions: LinkedMockOptions;
+  outcomesFullOptions: LinkedMockOptions;
+  outcomeSearchDefault: ISearchOutcomeForm;
 }
 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
   const css = useStyles();
-  const {
-    comingsoon,
-    list,
-    onSearch,
-    searchName,
-    assumed,
-    value,
-    onChange,
-    amountPerPage = 10,
-    onChangePage,
-    total,
-    onGoOutcomesDetail,
-    outcomePage,
-  } = props;
-  const { lesson } = useParams();
-  const handChangePage = useCallback(
-    (event: object, page: number) => {
-      onChangePage(page);
+  const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions,outcomeSearchDefault } = props;
+  const dispatch = useDispatch();
+  const { lesson } = useParams<ContentEditRouteParams>();
+  const [open, toggle] = React.useReducer((open) => !open, false);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [selectedValue, setSelectedValue] = React.useState<EntityOutcome[]|undefined>(value);
+  const { getValues, control, watch ,reset} = useForm<ISearchOutcomeForm>();
+  const programId = watch("program")?.split("/")[0] || outcomeSearchDefault?.program?.split("/")[0];
+  const program_id = programId === "all" ? "" : programId;
+  const handleChangeProgram = useMemo(
+    () => async (program_id: string) => {
+      dispatch(getOutcomesOptions({ metaLoading: true, program_id: program_id === "all" ? "" : program_id }));
+      reset({ ...getValues(),program: `${program_id}/all`, category: "all/all", age_ids:"", grade_ids: "" });
     },
-    [onChangePage]
+    [dispatch, reset, getValues]
   );
-
-  const pagination = (
-    <Pagination
-      className={css.pagination}
-      classes={{ ul: css.paginationUl }}
-      onChange={handChangePage}
-      count={Math.ceil(total / amountPerPage)}
-      color="primary"
-      page={outcomePage}
-    />
+  const handleChangeSubject = useMemo(
+    () => async (subject_ids: string[]) => {
+      const subjectId = subject_ids.includes("all") ? [] : subject_ids;
+      dispatch(getOutcomesOptionCategorys({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
+      reset({ ...getValues(),program: `${programId||"all"}/${subject_ids.join(",")}`, category: "all/all",  });
+    },
+    [dispatch, program_id, programId, getValues,reset]
   );
+  const handleChangeDevelopmental = useMemo(
+    () => (developmental_id: string) => {
+      const developmentalId = developmental_id === "all" ? "" : developmental_id;
+      dispatch(
+        getOutcomesOptionSkills({
+          metaLoading: true,
+          program_id,
+          developmental_id: developmentalId,
+        })
+      );
+    },
+    [dispatch, program_id]
+  );
+  const handleChangePage = useMemo(() => (page:number) => {
+    setCurrentPage(page);
+  },[]);
+  const localSort=useMemo(() => (props: ISearchOutcomeQuery) => {
+    const sortValue = value?.slice()?.sort((a , b) =>{
+      if(!a ||!b||!a.outcome_name||!b.outcome_name) return 1;
+     return props.order_by ==="-name"?
+      a.outcome_name.charCodeAt(0) - b.outcome_name.charCodeAt(0) 
+      : b.outcome_name.charCodeAt(0) - a.outcome_name.charCodeAt(0)
+    })
+    setSelectedValue(sortValue);
+    setCurrentPage(1);
+  }, [value])
+  const handleChangeValue = useMemo(() =>(value:EntityOutcome[]) =>{
+    if(value.length <= (currentPage-1) * AMOUNTPERPAGE){
+      currentPage>1 && setCurrentPage(currentPage-1)
+    }
+    onChange?.(value);
+  },[currentPage, onChange]);
+  const addOutcomeButton = (
+    <Button className={css.addOutcomesButton} onClick={toggle}>
+      {"Add Learning Outcomes"}
+    </Button>
+  );
+  React.useEffect(()=>{
+    setSelectedValue(value)
+  }, [value])
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
         comingsoonTip
       ) : (
         <>
-          <Box width="100%">
-            <SearchcmsList searchType="searchOutcome" onSearch={onSearch} value={searchName} assumed={assumed} />
-          </Box>
-          {list.length > 0 ? (
+          {value && value.length > 0 ? (
             <>
-              <OutcomesTable list={list} value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
-              {pagination}
+              <div className={css.addButton}>{addOutcomeButton}</div>
+              <OutcomesTable
+                list={selectedValue?.filter((item, index) => (index>= (currentPage-1) * AMOUNTPERPAGE && index < (currentPage-1) * AMOUNTPERPAGE + 10) )}
+                outcomeValue={value}
+                onChangeOutcomeValue={handleChangeValue}
+                onGoOutcomesDetail={onGoOutcomesDetail}
+                outcomesFullOptions={outcomesFullOptions}
+                onChangePageAndSort={localSort}
+
+              />
             </>
           ) : (
-            resultsTip
+            <TipImages type={TipImagesType.empty}>{addOutcomeButton}</TipImages>
           )}
-          <OutComesInput value={value} onChange={onChange} onGoOutcomesDetail={onGoOutcomesDetail} />
         </>
+      )}
+      {value && value.length > 0 && <Pagination
+        className={css.pagination}
+        onChange={(e, page) => handleChangePage( page )}
+        count={Math.ceil(value.length / AMOUNTPERPAGE)}
+        color="primary"
+        page={currentPage}
+      />}
+      {open && (
+        <OutComesDialog
+          {...props}
+          open={open}
+          toggle={toggle}
+          control={control}
+          onChangeOutcomeProgram={handleChangeProgram}
+          onChangeDevelopmental={handleChangeDevelopmental}
+          onChangeOutcomeSubject={handleChangeSubject}
+          handleClickSearch={({ page, order_by }) => {
+            const { program, category, ...resValues } = getValues();
+            const category_ids = watch("category")?.split("/")[0];
+            const sub_category_ids = watch("category")?.split("/")[1];
+            const program_ids = watch("program")?.split("/")[0];
+            const subject_ids = watch("program")?.split("/")[1];
+            onSearch({
+              ...resValues,
+              page, order_by,
+              program_ids: program_ids === "all" ? "" : program_ids,
+              subject_ids: subject_ids === "all" ? "" : subject_ids,
+              category_ids: category_ids === "all" ? "" : category_ids,
+              sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
+            });
+          }}
+        />
       )}
     </Box>
   );

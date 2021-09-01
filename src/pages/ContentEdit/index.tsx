@@ -20,7 +20,7 @@ import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchCo
 import { PermissionOr, PermissionType, usePermission } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
-import { ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
+import { addAllInSearchLOListOption, ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { formLiteFileType } from "../../models/ModelH5pSchema";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
@@ -36,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchOutcomeList
+  searchPublishedLearningOutcomes
 } from "../../reducers/content";
 import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
@@ -53,7 +53,7 @@ import { PlanComposeGraphic } from "./PlanComposeGraphic";
 import PlanComposeText, { SegmentText } from "./PlanComposeText";
 import { Regulation } from "./type";
 const SCROLL_DETECT_INTERVAL = 100;
-interface RouteParams {
+export interface ContentEditRouteParams {
   lesson: "assets" | "material" | "plan";
   tab: "details" | "outcomes" | "media" | "assetDetails";
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
@@ -80,7 +80,7 @@ const setQuery = (search: string, hash: Record<string, string | number | boolean
   return query.toString();
 };
 
-const parseRightside = (rightside: RouteParams["rightside"]) => ({
+const parseRightside = (rightside: ContentEditRouteParams["rightside"]) => ({
   includePlanComposeGraphic: rightside.includes("planComposeGraphic"),
   includePlanComposeText: rightside.includes("planComposeText"),
   includeH5p: rightside.includes("H5p"),
@@ -93,9 +93,19 @@ function ContentEditForm() {
   const formMethods = useForm<ContentDetailForm>();
   const [scrollTop, setScrollTop] = useState(0);
   const { handleSubmit, control, watch, errors } = formMethods;
-  const { contentDetail, mediaList, mediaListTotal, OutcomesListTotal, outcomeList, linkedMockOptions, visibility_settings, lesson_types } =
-    useSelector<RootState, RootState["content"]>((state) => state.content);
-  const { lesson, tab, rightside } = useParams<RouteParams>();
+  const {
+    contentDetail,
+    mediaList,
+    mediaListTotal,
+    OutcomesListTotal,
+    outcomeList,
+    linkedMockOptions,
+    searchLOListOptions,
+    visibility_settings,
+    lesson_types,
+    outcomesFullOptions,
+  } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { lesson, tab, rightside } = useParams<ContentEditRouteParams>();
   const searchContentType = lesson === "material" ? SearchContentsRequestContentType.assets : SearchContentsRequestContentType.material;
   const { id, searchMedia, search, editindex, searchOutcome, assumed, isShare, back, exactSerch, parent_folder } = useQueryCms();
   const [regulation, setRegulation] = useState<Regulation>(id ? Regulation.ByContentDetail : Regulation.ByContentDetailAndOptionCount);
@@ -109,11 +119,19 @@ function ContentEditForm() {
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
-  const { program, developmental, subject } = watch(["program", "subject", "developmental"]);
+  const { program, developmental, subject,skills,grade, age } = watch(["program", "subject", "developmental", "skills", "grade","age"]);
+  const outcomeSearchDefault = {
+    program: `${program||"all"}/${subject?.length ? subject?.join(",") : "all"}`,
+    category: `${developmental?.[0] || "all"}/${skills?.length ? skills?.join(","): "all"}`,
+    grade_ids: grade?.length ? grade?.join(","): undefined,
+    age_ids: age?.length ? age?.join(","): undefined,
+  }
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
+  const addedLOLength = watch("outcome_entities")?.length ?? contentDetail.outcome_entities.length;
   const activeRectRef = useRef<Active["rect"]>();
   const unmountRef = useRef<Function>();
+  const searchLOListOptionsAll = addAllInSearchLOListOption(searchLOListOptions);
   const isTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   const perm = usePermission([
     PermissionType.create_content_page_201,
@@ -244,19 +262,21 @@ function ContentEditForm() {
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
     () =>
-      ({ value = "", exactSerch = "all", assumed }) => {
+      ({ value = "", exactSerch = "outcome_name", assumed, page = 1, ...resQuery }) => {
         history.replace({
           search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
         });
         dispatch(
-          searchOutcomeList({
+          searchPublishedLearningOutcomes({
             exactSerch,
             metaLoading: true,
             search_key: value,
             assumed: assumed ? 1 : -1,
+            page,
+            ...resQuery,
           })
         );
-        setOutcomePage(1);
+        setOutcomePage(page);
       },
     [dispatch, history]
   );
@@ -286,21 +306,6 @@ function ContentEditForm() {
           );
     },
     [dispatch, searchContentType, searchMedia, lesson, isShare]
-  );
-  const handleChangePageOutCome = useMemo(
-    () => (page: number) => {
-      setOutcomePage(page);
-      dispatch(
-        searchOutcomeList({
-          metaLoading: true,
-          page,
-          search_key: searchOutcome,
-          assumed: assumed ? 1 : -1,
-          exactSerch,
-        })
-      );
-    },
-    [assumed, dispatch, exactSerch, searchOutcome]
   );
   const handleGoOutcomeDetail = useMemo(
     () => (id: GetOutcomeDetail["outcome_id"]) => {
@@ -353,7 +358,16 @@ function ContentEditForm() {
   }, [scrollTop]);
   useEffect(() => {
     dispatch(
-      onLoadContentEdit({ id, type: lesson, metaLoading: true, searchMedia, searchOutcome, assumed, isShare: isShare === "badanamu" })
+      onLoadContentEdit({
+        id,
+        type: lesson,
+        metaLoading: true,
+        searchMedia,
+        searchOutcome,
+        assumed,
+        isShare: isShare === "badanamu",
+        exactSerch,
+      })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch]);
@@ -369,7 +383,12 @@ function ContentEditForm() {
     />
   );
   const contentTabs = (
-    <ContentTabs tab={tab} onChangeTab={handleChangeTab} error={errors.name || errors.publish_scope || errors.subject}>
+    <ContentTabs
+      tab={tab}
+      addedLOLength={addedLOLength}
+      onChangeTab={handleChangeTab}
+      error={errors.name || errors.publish_scope || errors.subject}
+    >
       <PermissionOr
         value={[
           PermissionType.edit_org_published_content_235,
@@ -403,11 +422,14 @@ function ContentEditForm() {
         list={outcomeList}
         onSearch={handleSearchOutcomes}
         searchName={searchOutcome}
+        exactSerch={exactSerch}
         assumed={assumed}
         total={OutcomesListTotal}
-        onChangePage={handleChangePageOutCome}
+        searchLOListOptions={searchLOListOptionsAll}
         onGoOutcomesDetail={handleGoOutcomeDetail}
         outcomePage={outcomePage}
+        outcomesFullOptions={outcomesFullOptions}
+        outcomeSearchDefault={outcomeSearchDefault}
       />
       <PermissionOr
         value={[
@@ -608,18 +630,6 @@ function ContentEditForm() {
         inputSourceWatch={inputSource}
         teacherManualBatchLengthWatch={teacherManualBatchLengthWatch}
       />
-      {/* <PermissionOr
-        value={[
-          PermissionType.create_content_page_201,
-          PermissionType.edit_org_published_content_235,
-          PermissionType.create_asset_320,
-          PermissionType.create_lesson_material_220,
-          PermissionType.create_lesson_plan_221,
-          PermissionType.edit_lesson_material_metadata_and_content_236,
-          PermissionType.edit_lesson_plan_content_238,
-          PermissionType.edit_lesson_plan_metadata_237,
-        ]}
-        render={(value) => */}
       {(contentDetail.content_type !== ContentType.assets && id ? !!contentDetail.permission.allow_edit : hasPerm) ? (
         <LayoutPair breakpoint="md" leftWidth={703} rightWidth={1105} spacing={32} basePadding={0} padding={40}>
           {
@@ -635,15 +645,12 @@ function ContentEditForm() {
       ) : (
         permissionTip
       )}
-      {/* /> */}
-      {/* <DevTool control={control} /> */}
     </DndContext>
   );
 }
-
 export default function ContentEdit() {
   const { id, editindex } = useQueryCms();
-  const { lesson } = useParams<RouteParams>();
+  const { lesson } = useParams<ContentEditRouteParams>();
   return (
     <div
       onContextMenu={(e) => {

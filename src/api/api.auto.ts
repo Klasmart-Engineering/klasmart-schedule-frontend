@@ -204,6 +204,7 @@ export interface EntityAssessmentDetail {
   class_end_time?: number;
   class_length?: number;
   complete_time?: number;
+  content_outcomes?: EntityAssessmentDetailContentOutcome[];
   id?: string;
   lesson_materials?: EntityAssessmentDetailContent[];
   lesson_plan?: EntityAssessmentDetailContent;
