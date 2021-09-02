@@ -72,7 +72,7 @@ export function EditScore(props: EditScoreProps) {
           d("Not Attempted").t("assess_option_not_attempted")
         )
       ) : (
-        ""
+        d("Not Applicable").t("assessment_not_applicable")
       )}
     </div>
   );
