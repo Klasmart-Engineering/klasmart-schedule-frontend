@@ -2,8 +2,8 @@ import { cloneDeep, uniq } from "lodash";
 import {
   EntityAssessmentDetailContent,
   EntityAssessmentStudent,
-  EntityUpdateAssessmentContentOutcomeArgs,
   EntityAssessmentStudentViewH5PItem,
+  EntityUpdateAssessmentContentOutcomeArgs,
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
@@ -94,17 +94,21 @@ export const ModelAssessment = {
         : draft.lesson_materials;
     return materials;
   },
+  // 获取lesson material的最新选择状态
   toMaterial(
     defaultDetail: GetAssessmentResult["lesson_materials"],
     value: UpdateAssessmentRequestDataLessonMaterials
   ): GetAssessmentResult["lesson_materials"] {
     const draft = cloneDeep(defaultDetail);
     if (draft && draft.length && value && value.length) {
-      return draft.map((item, index) => {
+      return draft.map((item) => {
+        // 找到对应的material
+        const cur = value.find((m) => m.id === item.id);
+        const curValue = cur ? cur : item;
         return {
-          checked: value[index].checked,
-          comment: value[index].comment,
-          id: item.id,
+          checked: curValue.checked,
+          comment: curValue.comment,
+          id: curValue.id,
           name: item.name,
           outcome_ids: item.outcome_ids,
         };
@@ -125,7 +129,8 @@ export const ModelAssessment = {
     if (assessment.lesson_plan?.outcome_ids && assessment.lesson_plan.outcome_ids[0]) {
       check_outcome_ids.push.apply(check_outcome_ids, assessment.lesson_plan.outcome_ids);
     }
-    const new_check_outcome_ids = Array.from(check_outcome_ids);
+    const new_check_outcome_ids = uniq(Array.from(check_outcome_ids));
+    // 有lesson plan 筛选 lesson plan 和 selected lesson materials 绑定的outcome
     if (assessment?.lesson_plan && assessment?.lesson_plan.id) {
       if (assessment.outcomes && assessment.outcomes.length && new_check_outcome_ids && new_check_outcome_ids.length) {
         return assessment.outcomes.filter((item) => new_check_outcome_ids.indexOf(item.outcome_id as string) >= 0);
@@ -133,14 +138,26 @@ export const ModelAssessment = {
         return [];
       }
     } else {
+      // 没有lesson plan 不需要筛选 直接返回拉取到的outcome
       return assessment.outcomes;
     }
+  },
+  toGetOutcomeRequest(outcomes: GetAssessmentResult["outcomes"]): UpdateAssessmentRequestData["outcomes"] {
+    return outcomes?.map((item) => {
+      return {
+        skip: item.skip,
+        attendance_ids: item.attendance_ids,
+        none_achieved: item.none_achieved,
+        outcome_id: item.outcome_id,
+      };
+    });
   },
   toGetStudentIds(detail: DetailStudyAssessment) {
     const draft = cloneDeep(detail);
     const attendance_ids = draft.students?.filter((student) => student.checked).map((item) => item.id as string);
     return { attendance_ids };
   },
+  // 通过选中的student和lesson material 筛选student_view_items对应的数据
   toGetStudentViewItems(
     detail: DetailStudyAssessment,
     student_ids: UpdataStudyAssessmentRequestData["attendance_ids"],
