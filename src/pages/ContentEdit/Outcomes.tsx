@@ -161,10 +161,11 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     setSelectedValue(value);
   }, [value]);
   React.useEffect(()=>{
+    if(!open) return;
     const {program,category,age_ids,grade_ids} = outcomeSearchDefault;
     reset({ ...getValues(),...outcomeSearchDefault});
     const {program_ids,subject_ids,category_ids} = transferSearchParams({program, category, age_ids, grade_ids,})
-    open && onSearch({
+    onSearch({
       ...transferSearchParams({program, category, age_ids, grade_ids,}),
     });
     dispatch(getOutcomesOptions({metaLoading: true, program_id: program_ids,subject_ids,developmental_id:category_ids}))

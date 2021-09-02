@@ -110,7 +110,8 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
     }
     onChange?.(`${listId}/${newSubListIds.length ? newSubListIds?.join(",") : "all"}`);
   };
-  const handleClick = () => {
+  const handleClick = (e:any) => {
+    e.stopPropagation();
     if (open) {
       onChangeSubListItem?.(subListIds);
     }
@@ -121,8 +122,14 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
     const subNames = getNameByIds(subList, subListIds)?.join(",");
     return `${name}/${subNames}`;
   };
+  React.useEffect(()=>{
+    window.addEventListener("click",()=>setOpen(false))
+    return(
+      window.removeEventListener("click",()=>setOpen(false))
+    )
+  })
   return (
-    <div className={css.paper} >
+    <div className={css.paper}  >
       <FormControl variant="outlined" onClick={handleClick} fullWidth>
         <InputLabel variant="outlined" style={{ transform: "translate(14px, -6px) scale(0.75)",backgroundColor: "#fff" }}>
           {label}
@@ -133,13 +140,14 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
       </FormControl>
 
       <ArrowDropDown className={css.arrowDown} onClick={handleClick} />
-      <Paper elevation={3} style={{ display: open ? "flex" : "none" }} className={css.cascader}>
+      <Paper elevation={3} style={{ display: open ? "flex" : "none" }} className={css.cascader} >
         <div className={css.paperBox}>
           {list.map((item) => (
             <MenuItem
               className={clsx(css.cascaderList, { active: item.id === listId })}
               key={item.id}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 item.id && handleChangeListItem(item.id);
               }}
             >
@@ -154,7 +162,8 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
               disabled={value === "all/all"}
               key={item.id}
               className={clsx(css.cascaderSubList, { active: item.id && subListIds?.includes(item.id) })}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 item.id && handleChangeSubListItem(item.id);
               }}
             >
