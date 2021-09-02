@@ -109,7 +109,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
             <Controller
               name="exactSerch"
               control={control}
-              defaultValue={"search_key"}
+              defaultValue={"outcome_name"}
               render={(exactSerchProps) => (
                 <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
                   {/* <TextField
@@ -192,7 +192,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
                 subList={searchLOListOptions.subject || []}
                 onChangeListItem={onChangeOutcomeProgram}
                 onChangeSubListItem={onChangeOutcomeSubject}
-                label="Program - Subject"
+                label={d("Program - Subject").t("library_label_program_subject")}
               />
             )}
           />
@@ -212,7 +212,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
               list={searchLOListOptions.developmental || []}
               subList={searchLOListOptions.skills || []}
               onChangeListItem={onChangeDevelopmental}
-              label="Category- Subcategory"
+              label={d("Category- Subcategory").t("library_label_category_ubcategory")}
             />
           )}
         />

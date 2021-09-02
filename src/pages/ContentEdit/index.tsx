@@ -262,9 +262,9 @@ function ContentEditForm() {
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
     () =>
-      ({ value = "", exactSerch = "outcome_name", assumed, page = 1, ...resQuery }) => {
+      ({ value = "", assumed, exactSerch="outcome_name", page = 1, ...resQuery }) => {
         history.replace({
-          search: setQuery(history.location.search, { searchOutcome: value, exactSerch, assumed: assumed ? "true" : "false" }),
+          search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
         });
         dispatch(
           searchPublishedLearningOutcomes({

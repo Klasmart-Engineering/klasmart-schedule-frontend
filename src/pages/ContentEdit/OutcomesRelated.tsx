@@ -24,7 +24,7 @@ import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { ReactComponent as SortSvg } from "../../assets/icons/Slice 1.svg";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { resultsTip } from "../../components/TipImages";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 import { ISearchOutcomeForm, OutcomesProps } from "./Outcomes";
 import { OutcomesSearch } from "./OutcomesSearch";
@@ -246,7 +246,7 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
     <Box>
       <Dialog onClose={toggle} aria-labelledby="customized-dialog-title" open={open} maxWidth="md" fullWidth className={css.dialogRoot}>
         <DialogTitle id="customized-dialog-title">
-          {"Add Learning Outcomes"}
+          {t("library_label_add_learning_outcomes")}
           <IconButton aria-label="close" className={css.closeButton} onClick={toggle}>
             <CloseIcon />
           </IconButton>

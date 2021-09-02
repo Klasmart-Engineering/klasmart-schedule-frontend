@@ -8,6 +8,7 @@ import { ContentEditRouteParams } from ".";
 import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
+import { t } from "../../locale/LocaleManager";
 import {
   getOutcomesOptionCategorys,
   getOutcomesOptions,
@@ -154,9 +155,20 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   },[currentPage, onChange]);
   const addOutcomeButton = (
     <Button className={css.addOutcomesButton} onClick={toggle}>
-      {"Add Learning Outcomes"}
+      {t("library_label_add_learning_outcomes")}
     </Button>
   );
+  const handleSearch = (query: ISearchOutcomeQuery)=>{
+    const{page,order_by} = query;
+    onSearch({
+      page, order_by,
+      exactSerch:watch("exactSerch"),
+      assumed: watch("assumed"),
+      value:watch("value"),
+      ...transferSearchParams({program: watch("program"), category: watch("category"),age_ids:watch("age_ids"),grade_ids:watch("grade_ids")}),
+    });
+
+  }
   React.useEffect(()=>{
     setSelectedValue(value);
   }, [value]);
@@ -210,14 +222,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           onChangeOutcomeProgram={handleChangeProgram}
           onChangeDevelopmental={handleChangeDevelopmental}
           onChangeOutcomeSubject={handleChangeSubject}
-          handleClickSearch={({ page, order_by }) => {
-            const { program, category, ...resValues } = getValues();
-            onSearch({
-              ...resValues,
-              page, order_by,
-              ...transferSearchParams({program: watch("program"), category: watch("category"),age_ids:watch("age_ids"),grade_ids:watch("grade_ids")}),
-            });
-          }}
+          handleClickSearch={handleSearch}
         />
       )}
     </Box>
