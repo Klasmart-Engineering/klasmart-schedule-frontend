@@ -39,7 +39,7 @@ const useStyles = makeStyles(({ shadows, palette }) => ({
     justifyContent: "space-between",
     position: "absolute",
     width: 400,
-    height: 500,
+    maxHeight: 300,
     zIndex: 100,
     top: 44,
   },

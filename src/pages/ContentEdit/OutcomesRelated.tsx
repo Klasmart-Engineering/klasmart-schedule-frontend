@@ -17,6 +17,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
+import clsx from "clsx";
 import { cloneDeep } from "lodash";
 import React, { useCallback, useMemo } from "react";
 import { Control } from "react-hook-form";
@@ -57,6 +58,10 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
   },
   outcomeCursor: {
     cursor: "pointer",
+    wordBreak: "break-all",
+  },
+  tabelCell: {
+    maxWidth:150,
   },
   outcomeSet: {
     overflow: "hidden",
@@ -141,7 +146,7 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
   const rows = list?.map((item, idx) => (
     <TableRow key={item.outcome_id}>
       {isPermission && (
-        <TableCell>
+        <TableCell align="center">
           {outcomeValue?.map((v) => v.outcome_id) && outcomeValue?.map((v) => v.outcome_id).indexOf(item.outcome_id) < 0 ? (
             <AddCircle className={css.addGreen} onClick={() => handleAction(item, "add")} />
           ) : (
@@ -149,12 +154,12 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
           )}
         </TableCell>
       )}
-      <TableCell className={css.outcomeCursor} onClick={() => isDialog && (onGoOutcomesDetail(item.outcome_id) as any)}>
-        <div style={{ maxWidth: 100, maxHeight: 100, overflow: "auto" }}>{item.outcome_name}</div>
+      <TableCell className={clsx(css.outcomeCursor,css.tabelCell)} onClick={() => isDialog && (onGoOutcomesDetail(item.outcome_id) as any)}>
+        {item.outcome_name}
       </TableCell>
-      <TableCell>{item.shortcode}</TableCell>
-      <TableCell>{getNameByIds(outcomesFullOptions?.developmental, item?.developmental?.split(","))}</TableCell>
-      <TableCell>{getNameByIds(outcomesFullOptions?.skills, item?.skills?.split(","))}</TableCell>
+      <TableCell align="center">{item.shortcode}</TableCell>
+      <TableCell align="center">{getNameByIds(outcomesFullOptions?.developmental, item?.developmental?.split(","))}</TableCell>
+      <TableCell align="center" className={css.tabelCell} >{getNameByIds(outcomesFullOptions?.skills, item?.skills?.split(","))}</TableCell>
     </TableRow>
   ));
   return (
@@ -163,16 +168,16 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
         <Table className={css.table} stickyHeader>
           <TableHead className={css.tableHead}>
             <TableRow>
-              <TableCell></TableCell>
-              <TableCell sortDirection="desc">
+              <TableCell align="center"></TableCell>
+              <TableCell >
                 <Box display="flex">
                   {d("Learning Outcomes").t("library_label_learning_outcomes")}
                   <SvgIcon component={SortSvg} onClick={handleClickSort} cursor="pointer" />
                 </Box>
               </TableCell>
-              <TableCell>{d("Short Code").t("assess_label_short_code")}</TableCell>
-              <TableCell>{d("Category").t("library_label_category")}</TableCell>
-              <TableCell>{d("Subcategory").t("library_label_subcategory")}</TableCell>
+              <TableCell align="center" >{d("Short Code").t("assess_label_short_code")}</TableCell>
+              <TableCell align="center" >{d("Category").t("library_label_category")}</TableCell>
+              <TableCell align="center" >{d("Subcategory").t("library_label_subcategory")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{rows}</TableBody>
