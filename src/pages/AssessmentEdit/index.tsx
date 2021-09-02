@@ -42,7 +42,8 @@ export function AssessmentsEdit() {
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
-  const { lesson_materials, attendance_ids } = formValue;
+  const { lesson_materials, attendance_ids, outcomes } = formValue;
+  console.log("outcomes", outcomes);
   const [autocompleteValue, setChangeAutocompleteValue] = React.useState<
     {
       id: string | number;
@@ -66,15 +67,13 @@ export function AssessmentsEdit() {
     }
   }, [assessmentDetail, lesson_materials, setValue]);
   const init_student_view_items = useMemo(() => {
-    const new_lesson_materials = lesson_materials ? lesson_materials : assessmentDetail.lesson_materials;
-    return ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, new_lesson_materials);
+    return ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials);
   }, [assessmentDetail, attendance_ids, lesson_materials]);
 
   const filter_student_view_items = useMemo(() => {
-    const new_lesson_materials = lesson_materials ? lesson_materials : assessmentDetail.lesson_materials;
-    const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, new_lesson_materials);
-    return ModelAssessment.toGetStudentViewFormItems(res, studentViewItems, autocompleteValue, autocompleteLabel);
-  }, [assessmentDetail, attendance_ids, lesson_materials, studentViewItems, autocompleteValue, autocompleteLabel]);
+    // const res = ModelAssessment.toGetStudentViewItems(assessmentDetail, attendance_ids, lesson_materials);
+    return ModelAssessment.toGetStudentViewFormItems(init_student_view_items, studentViewItems, autocompleteValue, autocompleteLabel);
+  }, [init_student_view_items, studentViewItems, autocompleteValue, autocompleteLabel]);
 
   /** score assessment 部分 在学生角度下加上 attendanceIds 字段 **/
   const contentOutcomes = useMemo(() => {

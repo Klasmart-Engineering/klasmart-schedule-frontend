@@ -381,24 +381,22 @@ interface PupupLessonMaterialProps {
   value: UpdateAssessmentRequestDataLessonMaterials;
   onChange?: (value: PupupLessonMaterialProps["value"]) => any;
   onChangeOA: (materials: PupupLessonMaterialProps["value"]) => any;
-  formMaterials: UpdateAssessmentRequestDataLessonMaterials;
 }
 const PopupLessonMaterial = forwardRef<HTMLDivElement, PupupLessonMaterialProps>((props, ref) => {
-  const { value, assessmentDetail, isMyAssessment, formMaterials, onChange, onChangeOA } = props;
-  console.log("value-materials", value);
+  const { assessmentDetail, isMyAssessment, value, onChange, onChangeOA } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const formMethods = useForm<UpdateAssessmentRequestData>();
   const { getValues } = formMethods;
   const [open, toggle] = useReducer((open) => {
-    // formMethods.reset();
     return !open;
   }, false);
   const editable = assessmentDetail.status === AssessmentStatus.in_progress && isMyAssessment;
+  // 获取checked状态下的materials
   const materialString = useMemo(() => {
-    const materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, formMaterials);
+    const materials = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, value);
     return materials && materials[0] ? materials.filter((item) => item.checked).map((item) => item.name) : [];
-  }, [assessmentDetail.lesson_materials, formMaterials]);
+  }, [assessmentDetail.lesson_materials, value]);
 
   const handleOk = useCallback(() => {
     const value = getValues()["lesson_materials"];
@@ -506,21 +504,30 @@ export function Summary(props: SummaryProps) {
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
   const { attendance_ids } = useMemo(() => ModelAssessment.toRequest(assessmentDetail), [assessmentDetail]);
-  // const m = getValues()["lesson_materials"];
-  // const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, lessonMaterials), [assessmentDetail, lessonMaterials]);
-  // const { lesson_materials } = watch();
-  // const m = getValues()["lesson_materials"];
-  // const materials = useMemo(() => ModelAssessment.toMaterialRequest(assessmentDetail, m), [assessmentDetail, m]);
   const teacherList = useMemo(() => {
     const list = assessmentDetail.teachers?.map((v) => v.name);
     const length = list && list.length ? list.length : "";
     return `${list?.join(",")} (${length})`;
   }, [assessmentDetail.teachers]);
   const handleClickOk = (materials: GetAssessmentResult["lesson_materials"]) => {
-    const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, materials);
-    setTimeout(() => {
-      setValue("outcomes", filteredOutcomelist);
-    }, 100);
+    const mwithlo = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, materials);
+    const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, mwithlo);
+    const newOutcomesValue = filteredOutcomelist?.map((item) => {
+      return {
+        attendance_ids: item.attendance_ids,
+        none_achieved: item.none_achieved,
+        skip: item.skip,
+        outcome_id: item.outcome_id,
+      };
+    });
+    newOutcomesValue?.forEach((item, index) => {
+      setTimeout(() => {
+        setValue(`outcomes[${index}].outcome_id`, item.outcome_id);
+        setValue(`outcomes[${index}].attendance_ids`, item.attendance_ids);
+        setValue(`outcomes[${index}].none_achieved`, item.none_achieved);
+        setValue(`outcomes[${index}].skip`, item.skip);
+      }, 100);
+    });
   };
   return (
     <>
@@ -605,9 +612,7 @@ export function Summary(props: SummaryProps) {
               <Controller
                 as={PopupLessonMaterial}
                 name="lesson_materials"
-                defaultValue={lessonMaterials}
                 value={lessonMaterials}
-                formMaterials={lessonMaterials}
                 assessmentDetail={assessmentDetail}
                 control={control}
                 isMyAssessment={isMyAssessment}
