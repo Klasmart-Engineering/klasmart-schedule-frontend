@@ -50,7 +50,6 @@ function Row(props: { row: IRowProps }) {
   const classes = useRowStyles();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    // console.log(value);
     setChildrenPage(value);
   };
 
@@ -112,18 +111,6 @@ function Row(props: { row: IRowProps }) {
                       <TableCell align="center">{item.lessonTime}</TableCell>
                     </TableRow>
                   ))}
-                  {/* {row.unAttendedList.map((item, idx) => (
-                    <TableRow key={idx} style={{ height: "56px" }}>
-                      <TableCell align="center" component="th" scope="row">
-                        {item.studentName}
-                      </TableCell>
-                      <TableCell align="center">{item.lessionMission}</TableCell>
-                      <TableCell align="center">{item.lessonDate}</TableCell>
-                      <TableCell align="center">
-                        {item.lessonTime}
-                      </TableCell>
-                    </TableRow>
-                  ))} */}
                 </TableBody>
               </Table>
             </Box>
@@ -132,7 +119,9 @@ function Row(props: { row: IRowProps }) {
                 count={Math.ceil(row.unAttendedList.length / childrenRowsPerPage)}
                 page={childrenPage}
                 color="primary"
+                variant="text"
                 onChange={handleChange}
+                size="small"
               />
             </div>
           </Collapse>
@@ -147,7 +136,6 @@ export default function H5pTable() {
   const [rowsPerPage] = React.useState(10);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    // console.log(value);
     setPage(value);
   };
 
@@ -210,26 +198,6 @@ export default function H5pTable() {
               )
             )}
           </TableBody>
-
-          {/* <TableFooter>
-          <TableRow> */}
-          {/* <TablePagination
-              // rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-              colSpan={3}
-              count={attendList.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: { 'aria-label': 'rows per page' },
-                native: true,
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              // ActionsComponent={TablePaginationActions}
-            /> */}
-
-          {/* </TableRow>
-        </TableFooter> */}
         </Table>
       </TableContainer>
       <div style={{ margin: "80px auto 40px auto", display: "flex", justifyContent: "center" }}>
