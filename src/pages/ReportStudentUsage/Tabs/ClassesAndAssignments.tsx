@@ -2,7 +2,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import SelectBtn from "../components/selectBtn";
-import ClassesAndAssignmentsTable from "./ClassesAndAssignmentsTable";
+import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
 import school from "../../../mocks/school.json";
 
 const useStyles = makeStyles((theme: Theme) =>
