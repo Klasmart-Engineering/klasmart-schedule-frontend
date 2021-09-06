@@ -56,7 +56,7 @@ function Row(props: { row: IRowProps }) {
   return (
     <React.Fragment>
       <TableRow className={classes.root}>
-        <TableCell align="center" component="th" scope="row" style={{ width: "340px" }}>
+        <TableCell align="center" component="th" scope="row" style={{ width: "250px" }}>
           {row.className}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>

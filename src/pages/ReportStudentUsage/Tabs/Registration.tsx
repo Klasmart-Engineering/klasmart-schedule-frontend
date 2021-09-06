@@ -7,7 +7,7 @@ import school from "../../../mocks/school.json";
 const useStyles = makeStyles(() =>
   createStyles({
     lineStyle: {
-      width: "1099px",
+      flex: 4,
       height: "746px",
       opacity: 1,
       background: "#ffffff",
@@ -15,9 +15,10 @@ const useStyles = makeStyles(() =>
       boxShadow: "0px 2px 4px 0px rgba(0,0,0,0.20), 0px 1px 10px 0px rgba(0,0,0,0.12), 0px 4px 5px 0px rgba(0,0,0,0.14)",
       padding: "24px 24px 40px 24px",
       boxSizing: "border-box",
+      marginRight: "47px",
     },
     pieStyle: {
-      width: "369px",
+      flex: 1,
       height: "746px",
       opacity: 1,
       background: "#ffffff",
