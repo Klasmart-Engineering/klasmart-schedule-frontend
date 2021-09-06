@@ -1,7 +1,9 @@
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import React from "react";
+import { createStyles, makeStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import SelectBtn from "../components/selectBtn";
+import school from "../../../mocks/school.json";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     lineStyle: {
       width: "1099px",
@@ -37,12 +39,64 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function () {
   const css = useStyles();
+  const [value, setValue] = useState({
+    schoolVal: "",
+    classVal: "",
+    timeVal: "",
+  });
+  const [data, setData] = useState({
+    schoolData: [""],
+    classData: [""],
+    timeData: [""],
+  });
+
+  useEffect(() => {
+    const sData = ["All"];
+    const cData = ["All"];
+    const tData = ["latest 4 weeks", "latest 3 months", "latest 12 months"];
+    school.forEach((item: any) => sData.push(item.name));
+    sData.push("None");
+    switch (value.schoolVal) {
+      case "All":
+        school.forEach((item: any) => item.classes.forEach((value: any) => cData.push(value.name)));
+        break;
+      case "None":
+        break;
+      case "":
+        break;
+      default:
+        setValue({ ...value, classVal: cData[0] });
+        school.forEach((item: any) => {
+          if (item.name === value.schoolVal) {
+            item.classes.forEach((value: any) => cData.push(value.name));
+          }
+        });
+        break;
+    }
+    setData({ schoolData: sData, classData: cData, timeData: tData });
+
+    // eslint-disable-next-line
+  }, [value.schoolVal]);
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setValue({ ...value, schoolVal: event.target.value as string });
+  };
+  const handleChange2 = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setValue({ ...value, classVal: event.target.value as string });
+  };
+  const handleChange3 = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setValue({ ...value, timeVal: event.target.value as string });
+  };
   return (
     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "24px" }}>
       <div className={css.lineStyle}>
         <div className={css.detailStyle}>
           <div className={css.textStyle}>Class Registration Details</div>
-          <div>11111</div>
+          <div>
+            <SelectBtn value={value.schoolVal} handleChange={handleChange} label="School" data={data.schoolData} />
+            <SelectBtn value={value.classVal} handleChange={handleChange2} label="Class" data={data.classData} />
+            <SelectBtn value={value.timeVal} handleChange={handleChange3} data={data.timeData} />
+          </div>
         </div>
         <div></div>
       </div>
