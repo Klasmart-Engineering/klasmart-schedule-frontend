@@ -2,7 +2,6 @@ import Box from "@material-ui/core/Box";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
-import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -17,14 +16,6 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import Pagination from "@material-ui/lab/Pagination";
 import React, { useState } from "react";
 import attendList from "../../../mocks/attendList.json";
-
-const useRowStyles = makeStyles({
-  root: {
-    "& > *": {
-      borderBottom: "unset",
-    },
-  },
-});
 
 interface IUnAttendedListProps {
   studentName: string;
@@ -47,15 +38,13 @@ function Row(props: { row: IRowProps }) {
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(1);
   const [childrenRowsPerPage] = useState(10);
-  const classes = useRowStyles();
-
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setChildrenPage(value);
   };
 
   return (
     <React.Fragment>
-      <TableRow className={classes.root}>
+      <TableRow style={{ height: "64px" }}>
         <TableCell align="center" component="th" scope="row" style={{ width: "250px" }}>
           {row.className}
         </TableCell>
