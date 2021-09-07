@@ -192,7 +192,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
                 subList={searchLOListOptions.subject || []}
                 onChangeListItem={onChangeOutcomeProgram}
                 onChangeSubListItem={onChangeOutcomeSubject}
-                label={d("Program - Subject").t("library_label_program_subject")}
+                label={`${d("Program").t("library_label_program")}-${d("Subject").t("library_label_subject")}`}
               />
             )}
           />
@@ -212,7 +212,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
               list={searchLOListOptions.developmental || []}
               subList={searchLOListOptions.skills || []}
               onChangeListItem={onChangeDevelopmental}
-              label={d("Category- Subcategory").t("library_label_category_ubcategory")}
+              label={ `${d("Category").t("library_label_category")}-${d("Subcategory").t("library_label_subcategory")}`}
             />
           )}
         />

@@ -1271,8 +1271,7 @@ type LangRecord<T = string> =
   | { id: "assessment_in_progress"; description: "In Progress"; values: undefined }
   | { id: "report_lsr_view_all"; description: "View All"; values: undefined }
   | { id: "library_label_add_learning_outcomes"; description: "Add Learning Outcomes"; values: undefined }
-  | { id: "library_label_program_subject"; description: "Program - Subject"; values: undefined }
-  | { id: "library_label_category_ubcategory"; description: "Category- Subcategory"; values: undefined };
+  
   
 
 
