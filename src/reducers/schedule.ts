@@ -112,6 +112,7 @@ export interface ScheduleState {
   mediaList: EntityContentInfoWithDetails[];
   ScheduleViewInfo: EntityScheduleViewDetail;
   outcomeList: ModelPublishedOutcomeView[];
+  outcomeListInit: ModelPublishedOutcomeView[];
   outcomeTotal: number;
   programChildInfo: GetProgramsQuery;
   developmental: LinkedMockOptionsItem[];
@@ -239,6 +240,7 @@ const initialState: ScheduleState = {
   mediaList: [],
   ScheduleViewInfo: {},
   outcomeList: [],
+  outcomeListInit: [],
   outcomeTotal: 0,
   programChildInfo: {},
   developmental: [],
@@ -730,7 +732,7 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
 export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
-    const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
+    const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(query);
     return { list, total, page: query.page };
   }
 );
@@ -773,7 +775,7 @@ const { actions, reducer } = createSlice({
   },
   extraReducers: {
     [actOutcomeListLoading.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.outcomeList = [...state.outcomeList, ...payload.list];
+      state.outcomeListInit = payload.list;
     },
     [actOutcomeList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.outcomeList = payload.page > 1 ? [...state.outcomeList, ...payload.list] : payload.list;
