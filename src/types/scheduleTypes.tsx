@@ -262,6 +262,8 @@ export interface LearningContentList {
   assumed: boolean;
   learningOutcomeSet: ModelOutcomeSetCreateView[];
   select: boolean;
+  category_ids: string[];
+  sub_category_ids: string[];
 }
 export interface LearningContentListForm {
   search_type: string;

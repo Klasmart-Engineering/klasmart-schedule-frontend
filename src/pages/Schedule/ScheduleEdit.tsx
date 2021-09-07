@@ -378,7 +378,9 @@ function EditBox(props: CalendarStateProps) {
     stateCurrentCid,
     stateMaterialArr,
   } = props;
-  const { contentsAuthList, classOptions, mySchoolId } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { contentsAuthList, classOptions, mySchoolId, outcomeListInit } = useSelector<RootState, RootState["schedule"]>(
+    (state) => state.schedule
+  );
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -2243,13 +2245,22 @@ function EditBox(props: CalendarStateProps) {
         )}
         {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
           <Box className={css.fieldBox}>
-            <TextField
-              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
-              multiline
-              label={d("Add Learning Outcome").t("schedule_add_learning_outcome")}
+            <Autocomplete
+              id="combo-box-demo"
+              options={outcomeListInit}
+              getOptionLabel={(option: any) => option.outcome_name}
+              multiple
+              limitTags={1}
+              value={outcomeListInit.filter((item) => outComeIds.includes(item.outcome_id as string))}
               disabled
-              value={outComeIds.length > 0 ? outComeIds.length : ""}
-            ></TextField>
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+                  label={d("Add Learning Outcome").t("schedule_add_learning_outcome")}
+                />
+              )}
+            />
             {!(isScheduleExpired() || isLimit()) && (
               <AddCircleOutlineOutlined
                 onClick={() => {

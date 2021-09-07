@@ -361,11 +361,24 @@ export default function LearingOutcome(props: InfoProps) {
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
   const [selectIds, setSelectIds] = React.useState<string[]>(outComeIds);
-  const { outcomeList, outcomeTotal } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { outcomeList, outcomeTotal, developmental, skills } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const content_list = useMemo(() => {
-    return modelSchedule.AssemblyLearningOutcome(outcomeList) as LearningContentList[];
+    return modelSchedule.AssemblyLearningOutcome(outcomeList);
   }, [outcomeList]);
   const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>(filterGropuData);
+
+  const getLearningFiled = (ids: string[]) => {
+    const categoryAssembly = modelSchedule.getLearingOutcomeCategory(skills.concat(developmental), ids ?? []);
+    return categoryAssembly.map((item) => {
+      return (
+        <div key={`${item.id}`} style={{ marginTop: "10px" }}>
+          <Tooltip title={item.name as string} placement="top-start">
+            <span>{textEllipsis(item.name)}</span>
+          </Tooltip>
+        </div>
+      );
+    });
+  };
 
   const getFilterQueryAssembly = (filterData: LearningComesFilterQuery) => {
     const values = (item: string[]) => (item.length > 0 ? item : null);
@@ -386,11 +399,11 @@ export default function LearingOutcome(props: InfoProps) {
       const is_exist = content_list.filter((item) => {
         return item.id === id;
       });
-      if (is_exist.length > 0) check.unshift({ ...is_exist[0], select: selectIds.includes(id) });
+      if (is_exist.length > 0) check.unshift({ ...is_exist[0], select: selectIds.includes(id as string) } as LearningContentList);
     });
     content_list.forEach((item) => {
-      if (!outComeIds.includes(item.id)) {
-        unCheck.push({ ...item, select: selectIds.includes(item.id) });
+      if (!outComeIds.includes(item.id as string)) {
+        unCheck.push({ ...item, select: selectIds.includes(item.id as string) } as LearningContentList);
       }
     });
     return check.concat(unCheck);
@@ -412,7 +425,7 @@ export default function LearingOutcome(props: InfoProps) {
   };
 
   const textEllipsis = (value?: string) => {
-    const CharacterCount = 10;
+    const CharacterCount = 20;
     return value ? reBytesStr(value, CharacterCount) : "";
   };
 
@@ -581,9 +594,9 @@ export default function LearingOutcome(props: InfoProps) {
               <TableRow>
                 <TableCell align="center">&nbsp;</TableCell>
                 <TableCell align="center">{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
+                <TableCell align="center">{d("Category").t("library_label_category")}</TableCell>
+                <TableCell align="center">{d("Subcategory").t("library_label_subcategory")}</TableCell>
                 <TableCell align="center">{d("Short Code").t("assess_label_short_code")}</TableCell>
-                <TableCell align="center">{d("Assumed").t("assess_filter_assumed")}</TableCell>
-                <TableCell align="center">{d("Learning Outcome Set").t("assess_set_learning_outcome_set")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -635,21 +648,13 @@ export default function LearingOutcome(props: InfoProps) {
                           </span>
                         </Tooltip>
                       </TableCell>
-                      <TableCell align="center">{props.value.shortCode}</TableCell>
-                      <TableCell align="center">{props.value.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
                       <TableCell align="center" style={{ width: "160px" }}>
-                        <ul>
-                          {props.value.learningOutcomeSet.map((set) => {
-                            return (
-                              <li key={`${set.set_id}+${item.id}`} style={{ marginTop: "10px" }}>
-                                <Tooltip title={set.set_name as string} placement="top-start">
-                                  <span>{textEllipsis(set.set_name)}</span>
-                                </Tooltip>
-                              </li>
-                            );
-                          })}
-                        </ul>
+                        {getLearningFiled(props.value.category_ids)}
                       </TableCell>
+                      <TableCell align="center" style={{ width: "160px" }}>
+                        {getLearningFiled(props.value.sub_category_ids)}
+                      </TableCell>
+                      <TableCell align="center">{props.value.shortCode}</TableCell>
                     </TableRow>
                   )}
                 />

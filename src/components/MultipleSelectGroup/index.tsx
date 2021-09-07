@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft: theme.spacing(3),
       },
       display: "flex",
+      "& .MuiAutocomplete-tag": {
+        maxWidth: "calc(100% - 44px)",
+      },
     },
     autocomplete: {
       width: "266px",
