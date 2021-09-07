@@ -90,6 +90,7 @@ import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import LearingOutcome from "./LearingOutcome";
 import { useForm } from "react-hook-form";
+import clsx from "clsx";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -255,6 +256,11 @@ const useStyles = makeStyles(({ shadows }) => ({
     textAlign: "center",
     lineHeight: "1.5rem",
     marginLeft: "4px",
+  },
+  addOutcomeBox: {
+    "& .MuiAutocomplete-endAdornment-310": {
+      display: "none",
+    },
   },
 }));
 
@@ -2244,7 +2250,7 @@ function EditBox(props: CalendarStateProps) {
           </>
         )}
         {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
-          <Box className={css.fieldBox}>
+          <Box className={css.fieldBox} style={{ position: "relative" }}>
             <Autocomplete
               id="combo-box-demo"
               options={outcomeListInit}
@@ -2256,19 +2262,31 @@ function EditBox(props: CalendarStateProps) {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+                  className={clsx(isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled, css.addOutcomeBox)}
                   label={d("Add Learning Outcome").t("schedule_add_learning_outcome")}
                 />
               )}
             />
             {!(isScheduleExpired() || isLimit()) && (
-              <AddCircleOutlineOutlined
-                onClick={() => {
-                  handeLearingOutcome();
-                }}
-                className={css.iconField}
-                style={{ top: "46%", cursor: "pointer" }}
-              />
+              <>
+                {outComeIds.length > 0 && (
+                  <CreateOutlinedIcon
+                    onClick={() => {
+                      handeLearingOutcome();
+                    }}
+                    style={{ cursor: "pointer", position: "absolute", top: "22px", right: "1px" }}
+                  />
+                )}
+                {!outComeIds.length && (
+                  <AddCircleOutlineOutlined
+                    onClick={() => {
+                      handeLearingOutcome();
+                    }}
+                    className={css.iconField}
+                    style={{ top: "46%", cursor: "pointer" }}
+                  />
+                )}
+              </>
             )}
           </Box>
         )}
