@@ -164,10 +164,13 @@ function SelectGroup(props: filterGropProps) {
         filterIds.findIndex((id: any) => id === "1"),
         1
       );
-    const filterData = {
-      ...filterQuery,
-      [name]: filterQuery && filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
-    };
+    const filterData =
+      name === "programs" && !value.length
+        ? { programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] }
+        : {
+            ...filterQuery,
+            [name]: filterQuery && filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
+          };
     const filterResult = (programChildInfo?.length
       ? (modelSchedule.learningOutcomeFilerGroup(filterData as LearningComesFilterQuery, programChildInfo)
           .query as LearningComesFilterQuery)
