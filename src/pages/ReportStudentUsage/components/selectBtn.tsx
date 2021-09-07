@@ -5,6 +5,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: "180px",
     height: "40px",
     marginLeft: theme.spacing(2),
+    "& #demo-simple-select-outlined": {
+      paddingTop: "10px",
+      paddingBottom: "10px",
+    },
+    "& .MuiInputLabel-animated": {
+      top: "-18%",
+    },
+    "& .MuiInputLabel-shrink ": {
+      top: 0,
+    },
   },
 }));
 interface ISelectBtn {
@@ -36,7 +46,13 @@ export default function SelectBtn(props: ISelectBtn) {
           </Select>
         </>
       ) : (
-        <Select value={value} onChange={handleChange} displayEmpty inputProps={{ "aria-label": "Without label" }}>
+        <Select
+          value={value}
+          id="demo-simple-select-outlined"
+          onChange={handleChange}
+          displayEmpty
+          inputProps={{ "aria-label": "Without label" }}
+        >
           <MenuItem value="">{data[0]}</MenuItem>
           {data.map(
             (item, idx) =>

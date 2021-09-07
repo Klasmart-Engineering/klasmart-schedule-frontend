@@ -188,7 +188,7 @@ export default function () {
     );
   };
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "24px" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", margin: "24px 0" }}>
       <div className={css.lineStyle}>
         <div className={css.detailStyle}>
           <div className={css.textStyle}>Class Registration Details</div>
