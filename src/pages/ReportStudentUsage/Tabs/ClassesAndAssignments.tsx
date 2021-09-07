@@ -100,6 +100,7 @@ export default function () {
   const handleChange2 = (event: React.ChangeEvent<{ value: unknown }>) => {
     setValue({ ...value, classVal: event.target.value as string });
   };
+
   return (
     <div>
       <div style={{ marginTop: "32px" }}>
