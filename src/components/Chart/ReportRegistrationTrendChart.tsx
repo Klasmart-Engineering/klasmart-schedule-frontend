@@ -25,6 +25,26 @@ const useStyle = makeStyles(() => ({
       fill: "#D0D0D0",
     },
   },
+  toolBox: {
+    background: "#000",
+    margin: "-6px -8px",
+    color: "#fff",
+    borderRadius: "4px",
+    padding: "8px",
+    overflow: "hidden",
+  },
+  scoreLabel: {
+    display: "flex",
+    marginTop: "6px",
+    "& label": {
+      marginRight: "10px",
+    },
+  },
+  toolBoxTitle: {
+    fontSize: "14px",
+    margin: "-8px",
+    padding: "8px",
+  },
 }));
 interface Props {
   registeredData: Array<number | string>;
@@ -34,12 +54,13 @@ interface Props {
 }
 export default function ReportRegistrationTrendChart(props: Props) {
   const css = useStyle();
+  const colors = ["#0e78d5", "#8693f0", "#fe9b9b"];
   return (
     <ParentSize>
       {(info) => {
         return (
           <XYChart
-            theme={{ ...lightTheme, colors: ["#0e78d5", "#8693f0", "#fe9b9b"] }}
+            theme={{ ...lightTheme, colors }}
             xScale={{ type: "band", paddingInner: 0.3 }}
             yScale={{ type: "linear" }}
             height={info.height}
@@ -68,12 +89,20 @@ export default function ReportRegistrationTrendChart(props: Props) {
             <Tooltip
               showVerticalCrosshair
               showSeriesGlyphs
-              renderTooltip={({ tooltipData, colorScale }) => {
-                console.log(tooltipData, colorScale);
+              renderTooltip={({ tooltipData, colorScale }: Record<string, any>) => {
                 return (
-                  <div>
-                    {tooltipData?.nearestDatum?.key}
-                    {/* {(tooltipData?.nearestDatum as object).datum[tooltipData?.nearestDatum?.key as string]} */}
+                  <div className={css.toolBox}>
+                    <div className={css.toolBoxTitle}>{tooltipData?.nearestDatum?.datum["date"]}</div>
+                    <div>
+                      {Object.values(tooltipData?.datumByKey as object).map((item: Record<string, any>, index) => {
+                        return (
+                          <div className={css.scoreLabel}>
+                            <label style={{ color: colors[index] }}>{item.key}</label>
+                            {item.datum[item.key]}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               }}

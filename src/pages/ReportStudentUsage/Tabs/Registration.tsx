@@ -18,7 +18,6 @@ const useStyles = makeStyles(() =>
       background: "#ffffff",
       borderRadius: "8px",
       boxShadow: "0px 2px 4px 0px rgba(0,0,0,0.20), 0px 1px 10px 0px rgba(0,0,0,0.12), 0px 4px 5px 0px rgba(0,0,0,0.14)",
-      padding: "24px 24px 0 24px",
       boxSizing: "border-box",
       marginRight: "47px",
     },
@@ -83,7 +82,7 @@ const useStyles = makeStyles(() =>
     },
     lineChart: {
       flex: 1,
-      maxHeight: "500px",
+      maxHeight: "450px",
     },
     lineFooter: {
       display: "flex",
@@ -123,6 +122,13 @@ const useStyles = makeStyles(() =>
       "& fieldset": {
         border: "none",
       },
+    },
+    trendChart: {
+      display: "flex",
+      width: "calc(100% - 48px)",
+      flexDirection: "column",
+      flex: 1,
+      padding: "24px 24px 0 24px",
     },
   })
 );
@@ -197,8 +203,8 @@ export default function () {
         marginTop: 20,
       }}
     >
-      <Grid item xs={12} md={9}>
-        <Paper>
+      <Grid container item xs={12} md={9}>
+        <Paper className={css.trendChart}>
           <div className={css.detailStyle}>
             <div className={css.textStyle}>Class Registration Details</div>
             <div>
