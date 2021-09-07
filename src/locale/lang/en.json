@@ -908,7 +908,5 @@
   "schedule_add_learning_outcome": "Add Learning Outcome",
   "assessment_in_progress": "In Progress",
   "assessment_student_name": "Student Name",
-  "assessment_lesson_material_assessment": "Lesson Material Assessment",
-  "library_label_program_subject": "Program - Subject",
-  "library_label_category_ubcategory": "Category- Subcategory"
+  "assessment_lesson_material_assessment": "Lesson Material Assessment"
 }
