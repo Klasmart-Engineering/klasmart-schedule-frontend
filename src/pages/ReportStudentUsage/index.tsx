@@ -1,10 +1,11 @@
-import { Typography, withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import React, { Suspense } from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { reportMiss } from "../../locale/LocaleManager";
 import { ReportTitle } from "../ReportDashboard";
+import TempComponentDisplay from "./Tabs/TempComponentDisplay";
 
 const Registration = React.lazy(() => import("./Tabs/Registration"));
 const MaterialUsage = React.lazy(() => import("./Tabs/MaterialUsage"));
@@ -65,7 +66,7 @@ export default function ReportStudentUsage() {
             return <AntTab key={tabItem} label={tabItem} />;
           })}
         </AntTabs>
-        <Typography />
+        <TempComponentDisplay />
         <Suspense fallback={<div>Loading...</div>}>
           {state.tabIndex === 0 && <Registration />}
           {state.tabIndex === 1 && <MaterialUsage />}
@@ -76,4 +77,4 @@ export default function ReportStudentUsage() {
   );
 }
 
-ReportStudentUsage.routeBasePath = "/report/student-usage";
+ReportStudentUsage.routeBasePath = "/report/student-usage/:tabIndex";

@@ -9,6 +9,7 @@ import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
 import { t } from "../../locale/LocaleManager";
+import { sortOutcomesList, transferSearchParams } from "../../models/ModelContentDetailForm";
 import {
   getOutcomesOptionCategorys,
   getOutcomesOptions,
@@ -68,7 +69,7 @@ export interface OutcomesProps {
   assumed: boolean;
   onSearch: (query: ISearchOutcomeQuery) => any;
   value?: EntityOutcome[];
-  onChange?: (value: EntityOutcome[]) => any;
+  onChange?: (value?: EntityOutcome[]) => any;
   onGoOutcomesDetail: (id: GetOutcomeDetail["outcome_id"]) => any;
   outcomePage: number;
   searchLOListOptions: LinkedMockOptions;
@@ -76,22 +77,7 @@ export interface OutcomesProps {
   outcomeSearchDefault: ISearchOutcomeDefault;
 }
 
- const transferSearchParams=(props:{program?:string,category?:string,age_ids?:string[], grade_ids?:string[],})=> {
-   const{ program, category,age_ids, grade_ids} = props;
-  const category_ids = category?.split("/")[0];
-  const sub_category_ids = category?.split("/")[1];
-  const program_ids = program?.split("/")[0];
-  const subject_ids = program?.split("/")[1];
-  return{
-    program_ids: program_ids === "all" ? "" : program_ids,
-    subject_ids: subject_ids === "all" ? "" : subject_ids,
-    category_ids: category_ids === "all" ? "" : category_ids,
-    sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
-    age_ids:age_ids?.join(","),
-    grade_ids:grade_ids?.join(","),
-  }
-
- }
+ 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
   const css = useStyles();
   const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions,outcomeSearchDefault } = props;
@@ -99,6 +85,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const { lesson } = useParams<ContentEditRouteParams>();
   const [open, toggle] = React.useReducer((open) => !open, false);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [localSortBy, setlocalSortBy] = React.useState<string | undefined>("name");
   const [selectedValue, setSelectedValue] = React.useState<EntityOutcome[]|undefined>(value);
   const { getValues, control, watch ,reset} = useForm<ISearchOutcomeForm>();
   const programId = watch("program")?.split("/")[0] || outcomeSearchDefault?.program?.split("/")[0];
@@ -110,7 +97,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     },
     [dispatch, reset, getValues]
   );
-
   const handleChangeSubject = useMemo(
     () => async (subject_ids: string[]) => {
       const subjectId = subject_ids.includes("all") ? [] : subject_ids;
@@ -120,7 +106,6 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     },
     [dispatch, program_id, programId, getValues,reset]
   );
-
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string) => {
       const developmentalId = developmental_id === "all" ? "" : developmental_id;
@@ -137,27 +122,18 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
   const handleChangePage = useMemo(() => (page:number) => {
     setCurrentPage(page);
   },[]);
-  const localSort=useMemo(() => (props: ISearchOutcomeForm) => {
-    const sortValue = value?.slice()?.sort((a , b) =>{
-      if(!a ||!b||!a.outcome_name||!b.outcome_name) return 1;
-     return props.order_by ==="-name"?
-      a.outcome_name.charCodeAt(0) - b.outcome_name.charCodeAt(0) 
-      : b.outcome_name.charCodeAt(0) - a.outcome_name.charCodeAt(0)
-    })
+  const localSort = useMemo(() => (props: ISearchOutcomeForm) => {
+    const sortValue = sortOutcomesList(value, props.order_by);
+    setlocalSortBy(props.order_by);
     setSelectedValue(sortValue);
     setCurrentPage(1);
   }, [value])
-  const handleChangeValue = useMemo(() =>(value:EntityOutcome[]) =>{
-    if(value.length <= (currentPage-1) * AMOUNTPERPAGE){
+  const handleChangeValue = useMemo(() =>(value?:EntityOutcome[]) =>{
+    if(value && value.length <= (currentPage-1) * AMOUNTPERPAGE){
       currentPage>1 && setCurrentPage(currentPage-1)
     }
     onChange?.(value);
   },[currentPage, onChange]);
-  const addOutcomeButton = (
-    <Button className={css.addOutcomesButton} onClick={toggle}>
-      {t("library_label_add_learning_outcomes")}
-    </Button>
-  );
   const handleSearch = (query: ISearchOutcomeQuery)=>{
     const{page,order_by} = query;
     onSearch({
@@ -167,8 +143,12 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
       value:watch("value"),
       ...transferSearchParams({program: watch("program"), category: watch("category"),age_ids:watch("age_ids"),grade_ids:watch("grade_ids")}),
     });
-
   }
+  const addOutcomeButton = (
+    <Button className={css.addOutcomesButton} onClick={toggle}>
+      {t("library_label_add_learning_outcomes")}
+    </Button>
+  );
   React.useEffect(()=>{
     setSelectedValue(value);
   }, [value]);
@@ -182,7 +162,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     });
     dispatch(getOutcomesOptions({metaLoading: true, program_id: program_ids,subject_ids,developmental_id:category_ids}))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[open,dispatch, onSearch,reset])
+  },[open,dispatch, onSearch, reset])
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
@@ -219,6 +199,7 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           open={open}
           toggle={toggle}
           control={control}
+          onChange={(value?: EntityOutcome[])=>{onChange?.(sortOutcomesList(value, localSortBy))}}
           onChangeOutcomeProgram={handleChangeProgram}
           onChangeDevelopmental={handleChangeDevelopmental}
           onChangeOutcomeSubject={handleChangeSubject}

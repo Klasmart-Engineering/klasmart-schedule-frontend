@@ -43,6 +43,8 @@ import {
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   searchAuthContentLists,
+  getLinkedMockOptions,
+  actOutcomeListLoading,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -307,6 +309,8 @@ function ScheduleContent() {
     dispatch(ScheduleFilterPrograms());
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(getScheduleUserId());
+    dispatch(getLinkedMockOptions({ metaLoading: true }));
+    dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     dispatch(
       searchAuthContentLists({
         metaLoading: true,
