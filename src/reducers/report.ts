@@ -32,6 +32,8 @@ import {
   UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
+  EntityClassesAssignmentsUnattendedStudentsView,
+  EntityClassesAssignmentsView,
   EntityQueryAssignmentsSummaryResult,
   EntityQueryLiveClassesSummaryResult,
   EntityReportListTeachingLoadResult,
@@ -81,6 +83,8 @@ interface IreportState {
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
   assignmentSummary: EntityQueryAssignmentsSummaryResult;
   summaryReportOptions: IResultLearningSummary;
+  ClassesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
+  ClassesAssignments: EntityClassesAssignmentsView[];
 }
 interface RootState {
   report: IreportState;
@@ -159,6 +163,8 @@ const initialState: IreportState = {
     subject_id: "",
     summary_type: ReportType.live,
   },
+  ClassesAssignmentsUnattend: [],
+  ClassesAssignments: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1115,19 +1121,8 @@ export const getAfterClassFilter = createAsyncThunk<
   IParamsGetAfterClassFilter & LoadingMetaPayload,
   { state: RootState }
 >("getAfterClassFilter", async (query, { dispatch }) => {
-  const {
-    summary_type,
-    filter_type,
-    school_id,
-    class_id,
-    teacher_id,
-    student_id,
-    week_start,
-    week_end,
-    isOrg,
-    isSchool,
-    isTeacher,
-  } = query;
+  const { summary_type, filter_type, school_id, class_id, teacher_id, student_id, week_start, week_end, isOrg, isSchool, isTeacher } =
+    query;
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
   let students: ArrProps[] = [];
@@ -1386,6 +1381,22 @@ export const getClassListByschool = createAsyncThunk<GetClassListResponse, GetCl
   }
 );
 
+type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0];
+export const getClassesAssignments = createAsyncThunk<EntityClassesAssignmentsView[], GetClassesAssignmentsPayload & LoadingMetaPayload>(
+  "getClassesAssignments",
+  async (query) => {
+    return await api.reports.getClassesAssignments(query);
+  }
+);
+
+type GetClassesAssignmentsUnattendedPayload = Parameters<typeof api.reports.getClassesAssignmentsUnattended>[0];
+export const getClassesAssignmentsUnattended = createAsyncThunk<
+  EntityClassesAssignmentsUnattendedStudentsView[],
+  GetClassesAssignmentsUnattendedPayload & LoadingMetaPayload
+>("getClassesAssignmentsUnattended", async (query) => {
+  return await api.reports.getClassesAssignmentsUnattended(query);
+});
+
 const { actions, reducer } = createSlice({
   name: "report ",
   initialState,
@@ -1421,13 +1432,13 @@ const { actions, reducer } = createSlice({
     },
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
-      state.reportMockOptions.classList = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching
-        : undefined) as Pick<Class, "class_id" | "class_name">[];
+      state.reportMockOptions.classList = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching : undefined
+      ) as Pick<Class, "class_id" | "class_name">[];
 
-      state.reportMockOptions.class_id = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching[0]?.class_id
-        : undefined) as string;
+      state.reportMockOptions.class_id = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching[0]?.class_id : undefined
+      ) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1569,6 +1580,15 @@ const { actions, reducer } = createSlice({
       if (payload.student_id === "none" || payload.subject_id === "none") {
         payload.summary_type === ReportType.live ? (state.liveClassSummary = {}) : (state.assignmentSummary = {});
       }
+    },
+    [getClassesAssignmentsUnattended.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignmentsUnattended>>
+    ) => {
+      state.ClassesAssignmentsUnattend = payload;
+    },
+    [getClassesAssignments.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {
+      state.ClassesAssignments = payload;
     },
   },
 });

@@ -179,7 +179,7 @@ function Row(props: { row: IRowProps }) {
                     count={row.unAttendedList.length}
                     rowsPerPage={childrenRowsPerPage}
                     page={childrenPage}
-                    onChangePage={handleChangePage2}
+                    onPageChange={handleChangePage2}
                     //onRowsPerPageChange={handleChangeRowsPerPage2}
                     ActionsComponent={TablePaginationActions2}
                   />
@@ -320,7 +320,7 @@ export default function H5pTable() {
               count={attendList.length}
               rowsPerPage={rowsPerPage}
               page={page}
-              onChangePage={handleChangePage}
+              onPageChange={handleChangePage}
               //onRowsPerPageChange={handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActions}
             />

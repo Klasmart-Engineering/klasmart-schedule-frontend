@@ -5720,6 +5720,427 @@
         }
       }
     },
+    "/reports/student_usage/class_registration": {
+      "get": {
+        "description": "get student usage of class registration report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentUsage"],
+        "summary": "get student usage of class registration report",
+        "operationId": "getStudentUsageClassRegistrationReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "organization id",
+            "name": "organization_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "class id list",
+            "name": "class_id_list",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "time range list",
+            "name": "time_range_list",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.StudentUsageRegistration"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_usage/classes_assignments": {
+      "get": {
+        "description": "get Classes\u0026Assignments Report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentUsage"],
+        "summary": "get Classes\u0026Assignments Report",
+        "operationId": "getClassesAssignments",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "class id list",
+            "name": "class_ids",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "time durations, for example: [startTime1-endTime1, startTime2-endTime2]",
+            "name": "durations",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ClassesAssignmentsView"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_usage/classes_assignments/{class_id}/unattended": {
+      "get": {
+        "description": "get Classes\u0026Assignments unattended",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentUsage"],
+        "summary": "get Classes\u0026Assignments Report",
+        "operationId": "getClassesAssignmentsUnattended",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "time durations, for example: [startTime1-endTime1, startTime2-endTime2]",
+            "name": "durations",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ClassesAssignmentsUnattendedStudentsView"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_usage/classes_assignments_overview": {
+      "get": {
+        "description": "get Classes\u0026Assignments overview",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentUsage"],
+        "summary": "get Classes\u0026Assignments Report",
+        "operationId": "getClassesAssignmentsOverview",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "class id list",
+            "name": "class_ids",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "time durations, for example: [startTime1-endTime1, startTime2-endTime2]",
+            "name": "durations",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.ClassesAssignmentOverView"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_usage/material": {
+      "get": {
+        "description": "get student usage of material report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentUsage"],
+        "summary": "get student usage of material report",
+        "operationId": "getStudentUsageMaterialReport",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "class id list",
+            "name": "class_id_list",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "content type list",
+            "name": "content_type_list",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "time range list",
+            "name": "time_range_list",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.StudentUsageMaterialReportResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_usage/material_view_count": {
+      "get": {
+        "description": "get student usage of material report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentUsage"],
+        "summary": "get student usage of material report",
+        "operationId": "getStudentUsageMaterialViewCountReport",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "time range list",
+            "name": "time_range_list",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "class id list",
+            "name": "class_id_list",
+            "in": "query"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "content type list",
+            "name": "content_type_list",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.StudentUsageMaterialViewCountReportResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_usage/organization_registration": {
+      "get": {
+        "description": "get student usage of organization registration report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentUsage"],
+        "summary": "get student usage of organization registration report",
+        "operationId": "getStudentUsageOrganizationRegistrationReport",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "organization id",
+            "name": "organization_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.StudentUsageRegistration"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/reports/students": {
       "get": {
         "description": "list student report",
@@ -7407,6 +7828,53 @@
               "items": {
                 "$ref": "#/definitions/external.SubCategory"
               }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/student_usage_record/event": {
+      "post": {
+        "description": "student usage record",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["usageRecord"],
+        "summary": "student usage record",
+        "operationId": "studentUsageRecord",
+        "parameters": [
+          {
+            "description": "record usage",
+            "name": "milestone",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.JwtToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -9235,6 +9703,84 @@
         }
       }
     },
+    "entity.ClassUsage": {
+      "type": "object",
+      "properties": {
+        "content_usage_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ContentUsage"
+          }
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ClassesAssignmentOverView": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ClassesAssignmentsDurationRatio": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "ratio": {
+          "type": "number"
+        }
+      }
+    },
+    "entity.ClassesAssignmentsUnattendedStudentsView": {
+      "type": "object",
+      "properties": {
+        "schedule": {
+          "type": "object",
+          "properties": {
+            "schedule_id": {
+              "type": "string"
+            },
+            "schedule_name": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "time": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.ClassesAssignmentsView": {
+      "type": "object",
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "durations_ratio": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ClassesAssignmentsDurationRatio"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.ContentInfoWithDetails": {
       "type": "object",
       "properties": {
@@ -9485,6 +10031,20 @@
         },
         "subcontent_count": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ContentUsage": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "time_range": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -9911,6 +10471,14 @@
         "status": {
           "type": "string",
           "enum": ["achieved", "not_achieved", "not_attempted"]
+        }
+      }
+    },
+    "entity.JwtToken": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -11833,6 +12401,94 @@
         },
         "student_name": {
           "type": "string"
+        }
+      }
+    },
+    "entity.StudentUsageMaterialReportRequest": {
+      "type": "object",
+      "properties": {
+        "class_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_type_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_range_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.StudentUsageMaterialReportResponse": {
+      "type": "object",
+      "properties": {
+        "class_usage_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ClassUsage"
+          }
+        },
+        "request": {
+          "$ref": "#/definitions/entity.StudentUsageMaterialReportRequest"
+        }
+      }
+    },
+    "entity.StudentUsageMaterialViewCountReportRequest": {
+      "type": "object",
+      "properties": {
+        "class_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_type_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_range_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.StudentUsageMaterialViewCountReportResponse": {
+      "type": "object",
+      "properties": {
+        "content_usage_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ContentUsage"
+          }
+        },
+        "request": {
+          "$ref": "#/definitions/entity.StudentUsageMaterialViewCountReportRequest"
+        }
+      }
+    },
+    "entity.StudentUsageRegistration": {
+      "type": "object",
+      "properties": {
+        "created": {
+          "type": "integer"
+        },
+        "no_create": {
+          "type": "integer"
+        },
+        "registered": {
+          "type": "integer"
         }
       }
     },
