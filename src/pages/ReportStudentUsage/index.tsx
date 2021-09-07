@@ -5,8 +5,6 @@ import React, { Suspense } from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { reportMiss } from "../../locale/LocaleManager";
 import { ReportTitle } from "../ReportDashboard";
-import TempComponentDisplay from "./Tabs/TempComponentDisplay";
-
 const Registration = React.lazy(() => import("./Tabs/Registration"));
 const MaterialUsage = React.lazy(() => import("./Tabs/MaterialUsage"));
 const ClassesAndAssignments = React.lazy(() => import("./Tabs/ClassesAndAssignments"));
@@ -66,7 +64,6 @@ export default function ReportStudentUsage() {
             return <AntTab key={tabItem} label={tabItem} />;
           })}
         </AntTabs>
-        <TempComponentDisplay />
         <Suspense fallback={<div>Loading...</div>}>
           {state.tabIndex === 0 && <Registration />}
           {state.tabIndex === 1 && <MaterialUsage />}

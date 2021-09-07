@@ -10,6 +10,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableFooter from "@material-ui/core/TableFooter";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
+import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
@@ -59,22 +60,22 @@ interface IRowProps {
 function TablePaginationActions2(props: TablePaginationActionsProps) {
   const classes = useStyles1();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onPageChange } = props;
+  const { count, page, rowsPerPage } = props;
 
   const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, 0);
+    //onPageChange(event, 0);
   };
 
   const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, page - 1);
+    //onPageChange(event, page - 1);
   };
 
   const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, page + 1);
+    //onPageChange(event, page + 1);
   };
 
   const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    //onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
@@ -100,7 +101,7 @@ function Row(props: { row: IRowProps }) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(0);
-  const [childrenRowsPerPage, setChildrenRowsPerPage] = useState(10);
+  const [childrenRowsPerPage /*, setChildrenRowsPerPage */] = useState(10);
   // const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
   //   setChildrenPage(value);
   // };
@@ -108,11 +109,12 @@ function Row(props: { row: IRowProps }) {
   const handleChangePage2 = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setChildrenPage(newPage);
   };
-
+  /*
   const handleChangeRowsPerPage2 = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setChildrenRowsPerPage(parseInt(event.target.value, 10));
     setChildrenPage(0);
   };
+  */
 
   return (
     <React.Fragment>
@@ -177,8 +179,8 @@ function Row(props: { row: IRowProps }) {
                     count={row.unAttendedList.length}
                     rowsPerPage={childrenRowsPerPage}
                     page={childrenPage}
-                    onPageChange={handleChangePage2}
-                    onRowsPerPageChange={handleChangeRowsPerPage2}
+                    onChangePage={handleChangePage2}
+                    //onRowsPerPageChange={handleChangeRowsPerPage2}
                     ActionsComponent={TablePaginationActions2}
                   />
                 </TableFooter>
@@ -201,32 +203,25 @@ function Row(props: { row: IRowProps }) {
   );
 }
 
-interface TablePaginationActionsProps {
-  count: number;
-  page: number;
-  rowsPerPage: number;
-  onPageChange: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
-}
-
 function TablePaginationActions(props: TablePaginationActionsProps) {
   const classes = useStyles1();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onPageChange } = props;
+  const { count, page, rowsPerPage } = props;
 
   const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, 0);
+    //onPageChange(event, 0);
   };
 
   const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, page - 1);
+    //onPageChange(event, page - 1);
   };
 
   const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, page + 1);
+    //onPageChange(event, page + 1);
   };
 
   const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    //onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
@@ -250,17 +245,17 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 export default function H5pTable() {
   const css = useStyles1();
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage /*, setRowsPerPage*/] = React.useState(10);
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
-
+  /*
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+*/
   return (
     <div>
       <TableContainer component={Paper}>
@@ -325,8 +320,8 @@ export default function H5pTable() {
               count={attendList.length}
               rowsPerPage={rowsPerPage}
               page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              onChangePage={handleChangePage}
+              //onRowsPerPageChange={handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActions}
             />
           </TableFooter>
