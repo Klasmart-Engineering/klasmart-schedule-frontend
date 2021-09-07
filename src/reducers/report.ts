@@ -18,6 +18,9 @@ import {
   SchoolAndTeacherByOrgDocument,
   SchoolAndTeacherByOrgQuery,
   SchoolAndTeacherByOrgQueryVariables,
+  SchoolsByOrganizationDocument,
+  SchoolsByOrganizationQuery,
+  SchoolsByOrganizationQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
   TeacherByOrgIdQueryVariables,
@@ -71,6 +74,9 @@ interface IreportState {
   stuReportDetail?: EntityStudentPerformanceReportItem[];
   h5pReportDetail?: [];
   studentList: Pick<User, "user_id" | "user_name">[];
+  studentUsage: {
+    schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
+  };
   teachingLoadOnload: TeachingLoadResponse;
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
   assignmentSummary: EntityQueryAssignmentsSummaryResult;
@@ -129,6 +135,9 @@ const initialState: IreportState = {
     classList: [],
     teachingLoadList: {},
     user_id: "",
+  },
+  studentUsage: {
+    schoolList: [],
   },
   liveClassSummary: {},
   assignmentSummary: {},
@@ -196,6 +205,16 @@ export const getLessonPlan = createAsyncThunk<
 //   });
 //   return data;
 // });
+
+export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  return gqlapi.query<SchoolsByOrganizationQuery, SchoolsByOrganizationQueryVariables>({
+    query: SchoolsByOrganizationDocument,
+    variables: {
+      organization_id,
+    },
+  });
+});
 
 export const getClassList = createAsyncThunk<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>(
   "getClassList",
@@ -1411,6 +1430,12 @@ const { actions, reducer } = createSlice({
         : undefined) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
+      // alert(JSON.stringify(error));
+    },
+    [getSchoolsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
+      state.studentUsage.schoolList = payload.data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+    },
+    [getSchoolsByOrg.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
     [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
