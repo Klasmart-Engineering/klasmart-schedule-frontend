@@ -310,7 +310,6 @@ function ScheduleContent() {
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(getScheduleUserId());
     dispatch(getLinkedMockOptions({ metaLoading: true }));
-    dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     dispatch(
       searchAuthContentLists({
         metaLoading: true,
@@ -329,12 +328,15 @@ function ScheduleContent() {
     if (privilegedMembers("Admin")) {
       dispatch(getClassesByOrg());
       dispatch(getSchoolByOrg());
+      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("School")) {
       dispatch(getClassesBySchool());
       dispatch(getSchoolByUser());
+      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("Teacher")) {
       dispatch(getClassesByTeacher());
       dispatch(getSchoolByUser());
+      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("Student")) {
       dispatch(getClassesByStudent());
       dispatch(getSchoolByUser());

@@ -1758,6 +1758,17 @@ function EditBox(props: CalendarStateProps) {
     });
   };
 
+  const learningOutcomeDefault = () => {
+    const list = outcomeListInit.filter((item) => outComeIds.includes(item.outcome_id as string));
+    return outComeIds
+      .map((id) => {
+        return list.filter((item) => {
+          return id === item.outcome_id;
+        })[0];
+      })
+      .reverse();
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
@@ -2257,7 +2268,7 @@ function EditBox(props: CalendarStateProps) {
               getOptionLabel={(option: any) => option.outcome_name}
               multiple
               limitTags={1}
-              value={outcomeListInit.filter((item) => outComeIds.includes(item.outcome_id as string))}
+              value={learningOutcomeDefault()}
               disabled
               renderInput={(params) => (
                 <TextField
