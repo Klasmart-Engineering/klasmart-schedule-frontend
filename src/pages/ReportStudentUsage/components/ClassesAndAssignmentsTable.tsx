@@ -21,8 +21,12 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
+import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import attendList from "../../../mocks/attendList.json";
+import { getClassesAssignmentsUnattended } from "../../../reducers/report";
+import { formatTime } from "../Tabs/ClassesAndAssignments";
 
 const useStyles1 = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,25 +61,25 @@ interface IRowProps {
   unAttendedList: IUnAttendedListProps[];
 }
 
-function TablePaginationActions2(props: TablePaginationActionsProps) {
+function TablePaginationActions(props: TablePaginationActionsProps) {
   const classes = useStyles1();
   const theme = useTheme();
-  const { count, page, rowsPerPage } = props;
+  const { count, page, rowsPerPage, onChangePage } = props;
 
   const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, 0);
+    onChangePage(event, 0);
   };
 
   const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, page - 1);
+    onChangePage(event, page - 1);
   };
 
   const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, page + 1);
+    onChangePage(event, page + 1);
   };
 
   const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
@@ -96,25 +100,39 @@ function TablePaginationActions2(props: TablePaginationActionsProps) {
   );
 }
 
-function Row(props: { row: IRowProps }) {
+function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
   const css = useStyles1();
-  const { row } = props;
+  const dispatch = useDispatch();
+  const { row, latestThreeMonths } = props;
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(0);
-  const [childrenRowsPerPage /*, setChildrenRowsPerPage */] = useState(10);
-  // const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-  //   setChildrenPage(value);
-  // };
+  const [childrenRowsPerPage, setChildrenRowsPerPage] = useState(10);
+  const handleClick = useCallback(() => {
+    setOpen(!open);
+    dispatch(
+      getClassesAssignmentsUnattended({
+        metaLoading: true,
+        class_id: "",
+        query: {
+          page: childrenPage,
+          page_size: childrenRowsPerPage,
+          durations: [
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${(new Date() as any) / 1000}`,
+          ],
+        },
+      })
+    );
+  }, [childrenPage, childrenRowsPerPage, dispatch, latestThreeMonths.latestThreeMonthsDots, open]);
 
-  const handleChangePage2 = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setChildrenPage(newPage);
   };
-  /*
-  const handleChangeRowsPerPage2 = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setChildrenRowsPerPage(parseInt(event.target.value, 10));
     setChildrenPage(0);
   };
-  */
 
   return (
     <React.Fragment>
@@ -134,7 +152,7 @@ function Row(props: { row: IRowProps }) {
         <TableCell align="center" style={{ width: "200px" }}>
           {row.thirdMound}
         </TableCell>
-        <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={() => setOpen(!open)}>
+        <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={handleClick}>
           Unattended students
           <IconButton aria-label="expand row" size="small">
             {open ? <KeyboardArrowUpIcon style={{ color: "#117ad5" }} /> : <KeyboardArrowDownIcon />}
@@ -179,23 +197,13 @@ function Row(props: { row: IRowProps }) {
                     count={row.unAttendedList.length}
                     rowsPerPage={childrenRowsPerPage}
                     page={childrenPage}
-                    onPageChange={handleChangePage2}
-                    //onRowsPerPageChange={handleChangeRowsPerPage2}
-                    ActionsComponent={TablePaginationActions2}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
                   />
                 </TableFooter>
               </Table>
             </Box>
-            {/* <div style={{ margin: "20px auto", display: "flex", justifyContent: "center" }}>
-              <Pagination
-                count={Math.ceil(row.unAttendedList.length / childrenRowsPerPage)}
-                page={childrenPage}
-                color="primary"
-                variant="text"
-                onChange={handleChange}
-                size="small"
-              />
-            </div> */}
           </Collapse>
         </TableCell>
       </TableRow>
@@ -203,59 +211,40 @@ function Row(props: { row: IRowProps }) {
   );
 }
 
-function TablePaginationActions(props: TablePaginationActionsProps) {
-  const classes = useStyles1();
-  const theme = useTheme();
-  const { count, page, rowsPerPage } = props;
+const numberToEnglish = (month: number) => {
+  const Months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  return Months[month - 1];
+};
 
-  const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, 0);
-  };
-
-  const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <div className={classes.root}>
-      <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
-        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-        {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton onClick={handleNextButtonClick} disabled={page >= Math.ceil(count / rowsPerPage) - 1} aria-label="next page">
-        {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton onClick={handleLastPageButtonClick} disabled={page >= Math.ceil(count / rowsPerPage) - 1} aria-label="last page">
-        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </div>
-  );
+interface ILatestThreeMonths {
+  latestThreeMonthsDate: number[];
+  latestThreeMonthsDots: string[];
 }
 
-export default function H5pTable() {
+interface IClassesAndAssignmentsTable {
+  classesAssignments: EntityClassesAssignmentsView[];
+  latestThreeMonths: ILatestThreeMonths;
+  getPageSize: (pageSize: number) => void;
+}
+
+export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
+  const { classesAssignments, latestThreeMonths, getPageSize } = props;
+  console.log(classesAssignments);
+
   const css = useStyles1();
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage /*, setRowsPerPage*/] = React.useState(10);
-
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
+    getPageSize(rowsPerPage);
   };
-  /*
+
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    getPageSize(parseInt(event.target.value, 10));
   };
-*/
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -276,7 +265,7 @@ export default function H5pTable() {
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>June</b>
+                <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[0])}</b>
                 <Tooltip
                   title="Numbers of scheduled classes in the past 3 monts"
                   aria-label="info"
@@ -286,7 +275,7 @@ export default function H5pTable() {
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>July</b>
+                <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[1])}</b>
                 <Tooltip
                   title="Numbers of scheduled classes in the past 3 monts"
                   aria-label="info"
@@ -296,7 +285,7 @@ export default function H5pTable() {
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>August</b>
+                <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[2])}</b>
                 <Tooltip
                   title="This months class attendance rate"
                   aria-label="info"
@@ -310,7 +299,7 @@ export default function H5pTable() {
           </TableHead>
           <TableBody>
             {(rowsPerPage > 0 ? attendList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : attendList).map((row) => (
-              <Row key={row.className} row={row} />
+              <Row key={row.className} row={row} latestThreeMonths={latestThreeMonths} />
             ))}
           </TableBody>
           <TableFooter className={css.tfoot}>
@@ -320,8 +309,8 @@ export default function H5pTable() {
               count={attendList.length}
               rowsPerPage={rowsPerPage}
               page={page}
-              onPageChange={handleChangePage}
-              //onRowsPerPageChange={handleChangeRowsPerPage}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActions}
             />
           </TableFooter>

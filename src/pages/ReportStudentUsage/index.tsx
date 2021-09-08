@@ -2,8 +2,10 @@ import { withStyles } from "@material-ui/core";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import React, { Suspense } from "react";
+import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
 import { reportMiss } from "../../locale/LocaleManager";
+import { getSchoolsByOrg } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 const Registration = React.lazy(() => import("./Tabs/Registration"));
 const MaterialUsage = React.lazy(() => import("./Tabs/MaterialUsage"));
@@ -46,6 +48,7 @@ const tabs: string[] = [
 ];
 
 export default function ReportStudentUsage() {
+  const dispatch = useDispatch();
   const [state, setState] = React.useState({
     tabIndex: 0,
   });
@@ -55,6 +58,9 @@ export default function ReportStudentUsage() {
       tabIndex: newValue,
     });
   };
+  React.useEffect(() => {
+    dispatch(getSchoolsByOrg());
+  }, [dispatch]);
   return (
     <>
       <ReportTitle title={reportMiss("Student usage Report", "report_label_student_usage")}></ReportTitle>
