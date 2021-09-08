@@ -1,6 +1,9 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../reducers";
+import { getClassesAssignments } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
 import ClassFilter from "../components/ClassFilter";
 
@@ -55,9 +58,70 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+const getTimeDots = (): ILatestThreeMonths => {
+  const currentDate = new Date();
+  var year = currentDate.getFullYear();
+  var month = currentDate.getMonth() + 1;
+  switch (month) {
+    case 1:
+      year--;
+      return {
+        latestThreeMonthsDate: [11, 12, 1],
+        latestThreeMonthsDots: [`${year}-11-01 00:00:00`, `${year}-12-01 00:00:00`, `${year + 1}-01-01 00:00:00`],
+      };
+    case 2:
+      year--;
+      return {
+        latestThreeMonthsDate: [12, 1, 2],
+        latestThreeMonthsDots: [`${year}-12-01 00:00:00`, `${year}-01-01 00:00:00`, `${year + 1}-02-01 00:00:00`],
+      };
+    default:
+      return {
+        latestThreeMonthsDate: [parseInt(`${month - 2}`), parseInt(`${month - 1}`), parseInt(`${month}`)],
+        latestThreeMonthsDots: [`${year}-${month - 2}-01 00:00:00`, `${year}-${month - 1}-01 00:00:00`, `${year}-${month}-01 00:00:00`],
+      };
+  }
+};
+export interface ILatestThreeMonths {
+  latestThreeMonthsDate: number[];
+  latestThreeMonthsDots: string[];
+}
+
+export function formatTime(time: any) {
+  var date = new Date(time);
+  return date.getTime() / 1000;
+}
 
 export default function () {
   const css = useStyles();
+  const currentDate = new Date();
+  const { classesAssignments } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const [pageSize, setPageSize] = useState(10);
+  const dispatch = useDispatch();
+  // const [latestThreeMonths, setLatestThreeMonths] = useState<ILatestThreeMonths>({
+  //   latestThreeMonthsDate: [],
+  //   latestThreeMonthsDots: []
+  // })
+  const latestThreeMonths = getTimeDots();
+  console.log("latestThreeMonths=", latestThreeMonths);
+
+  const getPageSize = (pageSize: number) => {
+    setPageSize(pageSize);
+  };
+  useEffect(() => {
+    dispatch(
+      getClassesAssignments({
+        metaLoading: true,
+        page_size: pageSize,
+        class_ids: [],
+        durations: [
+          `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+          `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+          `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${(currentDate as any) / 1000}`,
+        ],
+      })
+    );
+  }, [dispatch, pageSize, currentDate, latestThreeMonths.latestThreeMonthsDots]);
 
   return (
     <div>
@@ -84,13 +148,14 @@ export default function () {
           <div className={css.right}>饼图</div>
         </div>
       </div>
+
       <div className={css.selectContainer}>
         <div className={css.text}>Live Scheduled(latest 3 moths)</div>
         <div>
           <ClassFilter />
         </div>
       </div>
-      <ClassesAndAssignmentsTable />
+      <ClassesAndAssignmentsTable classesAssignments={classesAssignments} latestThreeMonths={latestThreeMonths} getPageSize={getPageSize} />
     </div>
   );
 }
