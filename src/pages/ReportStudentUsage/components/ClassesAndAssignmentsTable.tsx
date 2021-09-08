@@ -22,9 +22,10 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import React, { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import attendList from "../../../mocks/attendList.json";
+import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
 import { formatTime } from "../Tabs/ClassesAndAssignments";
 
@@ -100,12 +101,32 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
+// function sortByStudentName(studentName: string[]) {
+//   studentName.sort((x: string, y: string) => {
+//     let reg = /[a-zA-Z0-9]/
+//     if(reg.test(x) || reg.test(y)) {
+//       if (x> y) {
+//         return 1
+//       } else if (x < y) {
+//         return -1
+//       } else {
+//         return 0
+//       }
+//     } else {
+//       return x.localeCompare(y, "zh")
+//     }
+//   })
+// }
+
 function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
   const css = useStyles1();
   const dispatch = useDispatch();
   const { row, latestThreeMonths } = props;
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(0);
+  const { classesAssignmentsUnattend } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  console.log(classesAssignmentsUnattend);
+
   const [childrenRowsPerPage, setChildrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
     setOpen(!open);

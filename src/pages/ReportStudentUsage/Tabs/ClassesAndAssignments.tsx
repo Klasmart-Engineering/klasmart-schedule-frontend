@@ -96,6 +96,7 @@ export default function () {
   const css = useStyles();
   const currentDate = new Date();
   const { classesAssignments } = useSelector<RootState, RootState["report"]>((state) => state.report);
+
   const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
   // const [latestThreeMonths, setLatestThreeMonths] = useState<ILatestThreeMonths>({
