@@ -152,23 +152,23 @@ export type MyPermissionsAndClassesTeachingQueryQuery = { __typename?: "Query" }
   me?: Types.Maybe<
     { __typename?: "User" } & Pick<Types.User, "user_id"> & {
         membership?: Types.Maybe<
-          { __typename?: "OrganizationMembership" } & {
-            roles?: Types.Maybe<
-              Array<
-                Types.Maybe<
-                  { __typename?: "Role" } & {
-                    permissions?: Types.Maybe<
-                      Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "permission_name">>>
-                    >;
-                  }
+          { __typename?: "OrganizationMembership" } & Pick<Types.OrganizationMembership, "organization_id"> & {
+              roles?: Types.Maybe<
+                Array<
+                  Types.Maybe<
+                    { __typename?: "Role" } & {
+                      permissions?: Types.Maybe<
+                        Array<Types.Maybe<{ __typename?: "Permission" } & Pick<Types.Permission, "permission_name">>>
+                      >;
+                    }
+                  >
                 >
-              >
-            >;
-            schoolMemberships?: Types.Maybe<
-              Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
-            >;
-            classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id">>>>;
-          }
+              >;
+              schoolMemberships?: Types.Maybe<
+                Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
+              >;
+              classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id">>>>;
+            }
         >;
       }
   >;
@@ -972,6 +972,7 @@ export const MyPermissionsAndClassesTeachingQueryDocument = gql`
     me {
       user_id
       membership(organization_id: $organization_id) {
+        organization_id
         roles {
           permissions {
             permission_name

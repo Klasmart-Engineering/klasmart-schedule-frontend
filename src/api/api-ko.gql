@@ -101,6 +101,7 @@ query myPermissionsAndClassesTeachingQuery($organization_id: ID!) {
 	me{
     user_id
     membership(organization_id: $organization_id) {
+      organization_id
       roles{
         permissions{
           permission_name

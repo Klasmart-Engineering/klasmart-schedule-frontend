@@ -89,6 +89,7 @@ interface IreportState {
   h5pReportDetail?: [];
   studentList: Pick<User, "user_id" | "user_name">[];
   studentUsage: {
+    organization_id: string;
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
   };
   teachingLoadOnload: TeachingLoadResponse;
@@ -153,6 +154,7 @@ const initialState: IreportState = {
     user_id: "",
   },
   studentUsage: {
+    organization_id: "",
     schoolList: [],
   },
   liveClassSummary: {},
@@ -1491,6 +1493,7 @@ const { actions, reducer } = createSlice({
         ],
         myPermissionsAndClassesTeaching
       );
+      state.studentUsage.organization_id = membership?.organization_id || "";
       if (permissions[PermissionType.report_organization_student_usage_654]) {
         state.studentUsage.schoolList = schools;
       } else if (permissions[PermissionType.report_school_student_usage_655]) {
