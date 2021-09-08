@@ -1,9 +1,8 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
-import React, { useEffect, useState } from "react";
-import SelectBtn from "../components/selectBtn";
+import React from "react";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
-import school from "../../../mocks/school.json";
+import ClassFilter from "../components/ClassFilter";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,47 +58,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function () {
   const css = useStyles();
-  const [value, setValue] = useState({
-    schoolVal: "",
-    classVal: "",
-  });
-  const [data, setData] = useState({
-    schoolData: [""],
-    classData: [""],
-  });
-
-  useEffect(() => {
-    const sData = ["All"];
-    const cData = ["All"];
-    school.forEach((item: any) => sData.push(item.name));
-    sData.push("None");
-    switch (value.schoolVal) {
-      case "All":
-        school.forEach((item: any) => item.classes.forEach((value: any) => cData.push(value.name)));
-        break;
-      case "None":
-        break;
-      case "":
-        break;
-      default:
-        setValue({ ...value, classVal: cData[0] });
-        school.forEach((item: any) => {
-          if (item.name === value.schoolVal) {
-            item.classes.forEach((value: any) => cData.push(value.name));
-          }
-        });
-        break;
-    }
-    setData({ schoolData: sData, classData: cData });
-    // eslint-disable-next-line
-  }, [value.schoolVal]);
-
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValue({ ...value, schoolVal: event.target.value as string });
-  };
-  const handleChange2 = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValue({ ...value, classVal: event.target.value as string });
-  };
 
   return (
     <div>
@@ -129,8 +87,7 @@ export default function () {
       <div className={css.selectContainer}>
         <div className={css.text}>Live Scheduled(latest 3 moths)</div>
         <div>
-          <SelectBtn value={value.schoolVal} handleChange={handleChange} label="School" data={data.schoolData} />
-          <SelectBtn value={value.classVal} handleChange={handleChange2} label="Class" data={data.classData} />
+          <ClassFilter />
         </div>
       </div>
       <ClassesAndAssignmentsTable />
