@@ -1426,6 +1426,8 @@ export type SubjectDetail = {
 };
 
 export type SubjectFilter = {
+  id?: Maybe<UuidFilter>;
+  name?: Maybe<StringFilter>;
   status?: Maybe<StringFilter>;
   system?: Maybe<BooleanFilter>;
   organizationId?: Maybe<UuidFilter>;

@@ -1,7 +1,8 @@
-import { createStyles, makeStyles } from "@material-ui/core";
+import { Box, createStyles, makeStyles } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import SelectBtn from "../components/selectBtn";
 import school from "../../../mocks/school.json";
+import ClassFilter from "../components/ClassFilter";
+import SelectBtn from "../components/selectBtn";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -70,21 +71,14 @@ export default function () {
     // eslint-disable-next-line
   }, [value.schoolVal]);
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValue({ ...value, schoolVal: event.target.value as string });
-  };
-  const handleChange2 = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValue({ ...value, classVal: event.target.value as string });
-  };
   const handleChange3 = (event: React.ChangeEvent<{ value: unknown }>) => {
     setValue({ ...value, contentVal: event.target.value as string });
   };
   return (
     <div className={style.material}>
-      <div className={style.selected}>
-        <SelectBtn value={value.schoolVal} handleChange={handleChange} label="School" data={data.schoolData} />
-        <SelectBtn value={value.classVal} handleChange={handleChange2} label="Class" data={data.classData} />
-      </div>
+      <Box style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
+        <ClassFilter />
+      </Box>
       <div className={style.total}>
         <span>Content total viewed (latest 3 months):4000</span>
         <SelectBtn value={value.contentVal} handleChange={handleChange3} data={data.contentData} />

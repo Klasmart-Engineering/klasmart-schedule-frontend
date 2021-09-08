@@ -9,6 +9,9 @@ import {
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
+  MyPermissionsAndClassesTeachingQueryDocument,
+  MyPermissionsAndClassesTeachingQueryQuery,
+  MyPermissionsAndClassesTeachingQueryQueryVariables,
   NotParticipantsByOrganizationDocument,
   NotParticipantsByOrganizationQuery,
   NotParticipantsByOrganizationQueryVariables,
@@ -214,12 +217,20 @@ export const getLessonPlan = createAsyncThunk<
 
 export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  return gqlapi.query<SchoolsByOrganizationQuery, SchoolsByOrganizationQueryVariables>({
-    query: SchoolsByOrganizationDocument,
-    variables: {
-      organization_id,
-    },
-  });
+  return Promise.all([
+    gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
+      query: MyPermissionsAndClassesTeachingQueryDocument,
+      variables: {
+        organization_id,
+      },
+    }),
+    gqlapi.query<SchoolsByOrganizationQuery, SchoolsByOrganizationQueryVariables>({
+      query: SchoolsByOrganizationDocument,
+      variables: {
+        organization_id,
+      },
+    }),
+  ]);
 });
 
 export const getClassList = createAsyncThunk<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>(
@@ -1444,7 +1455,45 @@ const { actions, reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getSchoolsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
-      state.studentUsage.schoolList = payload.data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const myPermissionsAndClassesTeaching = payload[0].data.me;
+      const membership = payload[0].data.me?.membership;
+      const schoolIDs =
+        membership?.schoolMemberships?.map((item) => {
+          return item?.school_id;
+        }) || [];
+      const classIDs =
+        membership?.classesTeaching?.map((item) => {
+          return item?.class_id;
+        }) || [];
+      const permissions = hasPermissionOfMe(
+        [
+          PermissionType.student_usage_report_657,
+          PermissionType.report_organization_student_usage_654,
+          PermissionType.report_school_student_usage_655,
+          PermissionType.report_teacher_student_usage_656,
+        ],
+        myPermissionsAndClassesTeaching
+      );
+      if (permissions[PermissionType.report_organization_student_usage_654]) {
+        state.studentUsage.schoolList = schools;
+      } else if (permissions[PermissionType.report_school_student_usage_655]) {
+        state.studentUsage.schoolList = schools.filter((school) => {
+          return schoolIDs.indexOf(school.school_id) >= 0;
+        });
+      } else {
+        state.studentUsage.schoolList = schools.reduce((prev, cur) => {
+          const classes = cur.classes?.filter((item) => classIDs.indexOf(item?.class_id) >= 0);
+          if (classes && classes.length > 0) {
+            prev.push({
+              school_id: cur.school_id,
+              school_name: cur.school_name,
+              classes,
+            } as never);
+          }
+          return prev;
+        }, []);
+      }
     },
     [getSchoolsByOrg.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

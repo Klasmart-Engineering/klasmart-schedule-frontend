@@ -11,6 +11,12 @@ const Registration = React.lazy(() => import("./Tabs/Registration"));
 const MaterialUsage = React.lazy(() => import("./Tabs/MaterialUsage"));
 const ClassesAndAssignments = React.lazy(() => import("./Tabs/ClassesAndAssignments"));
 
+interface ITabItem {
+  label: string;
+  index: number;
+  display: boolean;
+}
+
 const AntTabs = withStyles({
   root: {
     borderBottom: "1px solid #e8e8e8",
@@ -41,18 +47,32 @@ const AntTab = withStyles((theme) => ({
   selected: {},
 }))(Tab);
 
-const tabs: string[] = [
-  reportMiss("Registration tab name", "report_student_usage_registration"),
-  reportMiss("MaterialUsage tab name", "report_student_usage_materialusage"),
-  reportMiss("ClassesAndAssignments tab name", "report_student_usage_classesandassignments"),
+const tabs: ITabItem[] = [
+  {
+    label: reportMiss("Registration tab name", "report_student_usage_registration"),
+    index: 0,
+    display: false,
+  },
+  {
+    label: reportMiss("MaterialUsage tab name", "report_student_usage_materialusage"),
+    index: 1,
+    display: true,
+  },
+  {
+    label: reportMiss("ClassesAndAssignments tab name", "report_student_usage_classesandassignments"),
+    index: 2,
+    display: true,
+  },
 ];
 
 export default function ReportStudentUsage() {
   const dispatch = useDispatch();
+  const activeTabs = tabs.filter((item) => item.display);
   const [state, setState] = React.useState({
-    tabIndex: 0,
+    tabIndex: activeTabs[0].index,
   });
   const handleChange = (event: any, newValue: number) => {
+    console.log(newValue);
     setState({
       ...state,
       tabIndex: newValue,
@@ -65,15 +85,15 @@ export default function ReportStudentUsage() {
     <>
       <ReportTitle title={reportMiss("Student usage Report", "report_label_student_usage")}></ReportTitle>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-        <AntTabs value={state.tabIndex} onChange={handleChange} aria-label="ant example">
-          {tabs.map((tabItem) => {
-            return <AntTab key={tabItem} label={tabItem} />;
+        <AntTabs value={state.tabIndex} onChange={handleChange} aria-label="">
+          {activeTabs.map((tabItem) => {
+            return <AntTab key={tabItem.index} value={tabItem.index} label={tabItem.label} />;
           })}
         </AntTabs>
         <Suspense fallback={<div>Loading...</div>}>
-          {state.tabIndex === 0 && <Registration />}
-          {state.tabIndex === 1 && <MaterialUsage />}
-          {state.tabIndex === 2 && <ClassesAndAssignments />}
+          {tabs[0].display && state.tabIndex === 0 && <Registration />}
+          {tabs[1].display && state.tabIndex === 1 && <MaterialUsage />}
+          {tabs[2].display && state.tabIndex === 2 && <ClassesAndAssignments />}
         </Suspense>
       </LayoutBox>
     </>
