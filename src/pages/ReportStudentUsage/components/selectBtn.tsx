@@ -17,10 +17,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 }));
+
+interface Iitem {
+  id: string;
+  name: string;
+}
 interface ISelectBtn {
   value: string;
   label?: string;
-  data: string[];
+  data: Iitem[];
   handleChange: any;
 }
 export default function SelectBtn(props: ISelectBtn) {
@@ -28,42 +33,20 @@ export default function SelectBtn(props: ISelectBtn) {
   const { value, label, data, handleChange } = props;
   return (
     <FormControl variant="outlined" className={style.formControl}>
-      {label ? (
-        <>
-          <InputLabel id="demo-simple-select-outlined-label">{label}</InputLabel>
-          <Select
-            labelId="demo-simple-select-outlined-label"
-            id="demo-simple-select-outlined"
-            value={value}
-            onChange={handleChange}
-            label={label}
-          >
-            {data.map((item) => (
-              <MenuItem value={item} key={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </>
-      ) : (
-        <Select
-          value={value}
-          id="demo-simple-select-outlined"
-          onChange={handleChange}
-          displayEmpty
-          inputProps={{ "aria-label": "Without label" }}
-        >
-          <MenuItem value="">{data[0]}</MenuItem>
-          {data.map(
-            (item, idx) =>
-              idx !== 0 && (
-                <MenuItem value={item} key={item}>
-                  {item}
-                </MenuItem>
-              )
-          )}
-        </Select>
-      )}
+      <InputLabel id="demo-simple-select-outlined-label">{label}</InputLabel>
+      <Select
+        labelId="demo-simple-select-outlined-label"
+        id="demo-simple-select-outlined"
+        value={value}
+        onChange={handleChange}
+        label={label}
+      >
+        {data.map((item) => (
+          <MenuItem value={item.id} key={item.id}>
+            {item.name}
+          </MenuItem>
+        ))}
+      </Select>
     </FormControl>
   );
 }

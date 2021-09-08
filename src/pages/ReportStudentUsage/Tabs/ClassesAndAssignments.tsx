@@ -1,9 +1,11 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
-import SelectBtn from "../components/selectBtn";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../reducers";
+import { getClassesAssignments } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
-import school from "../../../mocks/school.json";
+import ClassFilter from "../components/ClassFilter";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,50 +58,71 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+const getTimeDots = (): ILatestThreeMonths => {
+  const currentDate = new Date();
+  var year = currentDate.getFullYear();
+  var month = currentDate.getMonth() + 1;
+  switch (month) {
+    case 1:
+      year--;
+      return {
+        latestThreeMonthsDate: [11, 12, 1],
+        latestThreeMonthsDots: [`${year}-11-01 00:00:00`, `${year}-12-01 00:00:00`, `${year + 1}-01-01 00:00:00`],
+      };
+    case 2:
+      year--;
+      return {
+        latestThreeMonthsDate: [12, 1, 2],
+        latestThreeMonthsDots: [`${year}-12-01 00:00:00`, `${year}-01-01 00:00:00`, `${year + 1}-02-01 00:00:00`],
+      };
+    default:
+      return {
+        latestThreeMonthsDate: [parseInt(`${month - 2}`), parseInt(`${month - 1}`), parseInt(`${month}`)],
+        latestThreeMonthsDots: [`${year}-${month - 2}-01 00:00:00`, `${year}-${month - 1}-01 00:00:00`, `${year}-${month}-01 00:00:00`],
+      };
+  }
+};
+export interface ILatestThreeMonths {
+  latestThreeMonthsDate: number[];
+  latestThreeMonthsDots: string[];
+}
+
+export function formatTime(time: any) {
+  var date = new Date(time);
+  return date.getTime() / 1000;
+}
 
 export default function () {
   const css = useStyles();
-  const [value, setValue] = useState({
-    schoolVal: "",
-    classVal: "",
-  });
-  const [data, setData] = useState({
-    schoolData: [""],
-    classData: [""],
-  });
+  const currentDate = new Date();
+  const { classesAssignments } = useSelector<RootState, RootState["report"]>((state) => state.report);
 
+  const [pageSize, setPageSize] = useState(10);
+  const dispatch = useDispatch();
+  // const [latestThreeMonths, setLatestThreeMonths] = useState<ILatestThreeMonths>({
+  //   latestThreeMonthsDate: [],
+  //   latestThreeMonthsDots: []
+  // })
+  const latestThreeMonths = getTimeDots();
+  console.log("latestThreeMonths=", latestThreeMonths);
+
+  const getPageSize = (pageSize: number) => {
+    setPageSize(pageSize);
+  };
   useEffect(() => {
-    const sData = ["All"];
-    const cData = ["All"];
-    school.forEach((item: any) => sData.push(item.name));
-    sData.push("None");
-    switch (value.schoolVal) {
-      case "All":
-        school.forEach((item: any) => item.classes.forEach((value: any) => cData.push(value.name)));
-        break;
-      case "None":
-        break;
-      case "":
-        break;
-      default:
-        setValue({ ...value, classVal: cData[0] });
-        school.forEach((item: any) => {
-          if (item.name === value.schoolVal) {
-            item.classes.forEach((value: any) => cData.push(value.name));
-          }
-        });
-        break;
-    }
-    setData({ schoolData: sData, classData: cData });
-    // eslint-disable-next-line
-  }, [value.schoolVal]);
-
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValue({ ...value, schoolVal: event.target.value as string });
-  };
-  const handleChange2 = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValue({ ...value, classVal: event.target.value as string });
-  };
+    dispatch(
+      getClassesAssignments({
+        metaLoading: true,
+        page_size: pageSize,
+        class_ids: [],
+        durations: [
+          `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+          `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+          `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${(currentDate as any) / 1000}`,
+        ],
+      })
+    );
+  }, [dispatch, pageSize, currentDate, latestThreeMonths.latestThreeMonthsDots]);
 
   return (
     <div>
@@ -126,14 +149,14 @@ export default function () {
           <div className={css.right}>饼图</div>
         </div>
       </div>
+
       <div className={css.selectContainer}>
         <div className={css.text}>Live Scheduled(latest 3 moths)</div>
         <div>
-          <SelectBtn value={value.schoolVal} handleChange={handleChange} label="School" data={data.schoolData} />
-          <SelectBtn value={value.classVal} handleChange={handleChange2} label="Class" data={data.classData} />
+          <ClassFilter />
         </div>
       </div>
-      <ClassesAndAssignmentsTable />
+      <ClassesAndAssignmentsTable classesAssignments={classesAssignments} latestThreeMonths={latestThreeMonths} getPageSize={getPageSize} />
     </div>
   );
 }

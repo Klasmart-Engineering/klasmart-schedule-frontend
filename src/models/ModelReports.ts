@@ -1,6 +1,10 @@
 import { ReactNode } from "react";
 import { School, User } from "../api/api-ko-schema.auto";
-import { EntityReportListTeachingLoadItem, EntityStudentAchievementReportCategoryItem } from "../api/api.auto";
+import {
+  EntityClassesAssignmentsUnattendedStudentsView,
+  EntityReportListTeachingLoadItem,
+  EntityStudentAchievementReportCategoryItem,
+} from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
@@ -43,9 +47,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
     .toString()
-    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",
@@ -188,3 +192,17 @@ export function getTimeOffSecond() {
   const timeOff = new Date().getTimezoneOffset();
   return -timeOff * 60;
 }
+type studentItem = Pick<User, "user_id" | "user_name">;
+export interface IClassesAssignmentsUnattendedWithStudentNameItem extends EntityClassesAssignmentsUnattendedStudentsView {
+  student_name?: studentItem["user_name"];
+}
+
+export const getClassesAssignmentsUnattendedWithStudentName = (
+  classesAssignmentsUnattended: EntityClassesAssignmentsUnattendedStudentsView[],
+  studentList?: studentItem[]
+): IClassesAssignmentsUnattendedWithStudentNameItem[] => {
+  return classesAssignmentsUnattended.map((item) => {
+    const student_name = studentList?.find((student) => student.user_id === item.student_id)?.user_name;
+    return { ...item, student_name };
+  });
+};
