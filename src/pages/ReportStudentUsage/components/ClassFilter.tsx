@@ -1,4 +1,5 @@
-import { Box, Checkbox, FormControl, Input, InputLabel, ListItemText, MenuItem, Select, TextField } from "@material-ui/core";
+import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../reducers";
@@ -8,25 +9,48 @@ interface ISelect {
   value: string;
 }
 
-type IOptions = ISelect[][];
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
+interface IProps {
+  onChange?: (value: string[]) => void;
+}
 
-export default function () {
-  const [state, setState] = React.useState({
+interface IState {
+  school_id: string;
+}
+
+type IOptions = ISelect[][];
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    selectContainer: {
+      display: "flex",
+      flexDirection: "row",
+      position: "relative",
+    },
+    schoolBox: {
+      width: 180,
+      paddingRight: 320,
+    },
+    classBox: {
+      right: 0,
+      position: "absolute",
+      width: 300,
+      background: "#fff",
+      zIndex: 1000,
+      "& > * + *": {
+        marginTop: theme.spacing(3),
+      },
+      "& > button": {
+        maxWidth: 60,
+      },
+    },
+  })
+);
+
+export default function ({ onChange }: IProps) {
+  const classes = useStyles();
+  const [state, setState] = React.useState<IState>({
     school_id: "",
-    class_id: [],
   });
   const { studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  console.log("studentUsage", studentUsage);
   const options = React.useMemo<IOptions>(() => {
     const schoolOptions =
       (studentUsage.schoolList.map((item) => ({
@@ -40,7 +64,6 @@ export default function () {
           value: item?.class_id,
           label: item?.class_name,
         })) as ISelect[]) || [];
-    console.log(classOptions);
     return [schoolOptions, classOptions];
   }, [studentUsage.schoolList, state.school_id]);
 
@@ -52,8 +75,8 @@ export default function () {
   };
 
   return (
-    <Box>
-      <Box style={{ width: 200 }}>
+    <Box className={classes.selectContainer}>
+      <Box className={classes.schoolBox}>
         <TextField fullWidth size="small" select label="School select" value={state.school_id} onChange={handleChange("school_id")}>
           {options[0].map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -62,26 +85,21 @@ export default function () {
           ))}
         </TextField>
       </Box>
-      <Box>
-        <FormControl>
-          <InputLabel id="class-mutiple-checkbox-label">Tag</InputLabel>
-          <Select
-            labelId="class-mutiple-checkbox-label"
-            multiple
-            value={[]}
-            onChange={() => {}}
-            input={<Input />}
-            renderValue={(selected) => (selected as string[]).join(", ")}
-            MenuProps={MenuProps}
-          >
-            {options[1].map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                <Checkbox checked={false} />
-                <ListItemText primary={option.label} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <Box className={classes.classBox}>
+        <Autocomplete
+          disabled={!state.school_id}
+          size="small"
+          multiple
+          limitTags={1}
+          id="multiple-limit-tags"
+          options={options[1]}
+          getOptionLabel={(option) => option.label}
+          defaultValue={[]}
+          onChange={(event, value) => {
+            onChange && onChange(value.map((v) => v.value));
+          }}
+          renderInput={(params) => <TextField {...params} variant="outlined" label="Class select" placeholder="" />}
+        />
       </Box>
     </Box>
   );

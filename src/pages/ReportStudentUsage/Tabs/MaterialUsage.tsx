@@ -198,7 +198,11 @@ export default function () {
   return (
     <div className={style.material}>
       <div className={style.selected}>
-        <ClassFilter />
+        <ClassFilter
+          onChange={(v) => {
+            console.log(v);
+          }}
+        />
       </div>
       <div className={style.total}>
         <span>Content total viewed (latest 3 months):4000</span>
