@@ -735,8 +735,8 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
     return { list, total, page: query.page };
   }
 );
-
-export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
+type IQueryactOutcomeListLoadingParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
+export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, IQueryactOutcomeListLoadingParams>(
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
     const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(query);
