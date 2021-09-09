@@ -7,6 +7,7 @@ import LastPageIcon from "@material-ui/icons/LastPage";
 import { ParentSize } from "@visx/responsive";
 import React, { useEffect, useState } from "react";
 import HorizontalBarChart from "../../../components/Chart/HorizontalBarChart";
+import { d } from "../../../locale/LocaleManager";
 import ClassFilter from "../components/ClassFilter";
 import SelectBtn from "../components/selectBtn";
 const useStyles = makeStyles(() =>
@@ -111,14 +112,15 @@ export default function () {
     contentData: [{ id: "", name: "" }],
   });
 
+  const count = 4000;
   useEffect(() => {
     const conData = [
-      { id: "All", name: "All" },
+      { id: "All", name: d("All").t("report_label_all") },
       { id: "H5P", name: "H5P" },
-      { id: "Images", name: "Images" },
-      { id: "Video", name: "Video" },
-      { id: "Audio", name: "Audio" },
-      { id: "Document", name: "Document" },
+      { id: "Images", name: d("Image").t("library_label_image") },
+      { id: "Video", name: d("Video").t("library_label_video") },
+      { id: "Audio", name: d("Audio").t("library_label_audio") },
+      { id: "Document", name: d("Document").t("library_label_document") },
     ];
     setData({ ...data, contentData: conData });
 
@@ -208,8 +210,16 @@ export default function () {
         />
       </div>
       <div className={style.total}>
-        <span>Content total viewed (latest 3 months):4000</span>
-        <SelectBtn value={value.contentVal} label="Content" handleChange={handleChange} data={data.contentData} />
+        <span>
+          {d("Content total viewed (latest 3 months):").t("content_total_viewed")}
+          {count}
+        </span>
+        <SelectBtn
+          value={value.contentVal}
+          label={d("Content").t("report_filter_content")}
+          handleChange={handleChange}
+          data={data.contentData}
+        />
       </div>
       {renderBarChart()}
       <Grid container>

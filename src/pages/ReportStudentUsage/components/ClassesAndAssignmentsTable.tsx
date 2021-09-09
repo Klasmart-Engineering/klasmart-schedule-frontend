@@ -18,6 +18,7 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
+import { t } from "../../../locale/LocaleManager";
 import attendList from "../../../mocks/attendList.json";
 import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
@@ -128,7 +129,7 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
           {row.thirdMound}
         </TableCell>
         <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={handleClick}>
-          Unattended students
+          {t("report_student_usage_unattendedStudents")}
           <IconButton aria-label="expand row" size="small">
             {open ? <KeyboardArrowUpIcon style={{ color: "#117ad5" }} /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -139,15 +140,15 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
           <Collapse in={open} timeout="auto" unmountOnExit style={{ padding: "0 119px" }}>
             <Box margin={1}>
               <Typography variant="h6" gutterBottom component="div" style={{ height: "66px", lineHeight: "66px" }}>
-                <b>List of students missed live schedules</b>
+                <b>{t("report_student_usage_missed_schedules")}</b>
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead style={{ backgroundColor: "#f2f5f7", height: "56px" }}>
                   <TableRow>
-                    <TableCell align="center">Student name</TableCell>
-                    <TableCell align="center">Lesson missed</TableCell>
-                    <TableCell align="center">Lesson date</TableCell>
-                    <TableCell align="center">Lesson time</TableCell>
+                    <TableCell align="center">{t("report_student_usage_student_name")}</TableCell>
+                    <TableCell align="center">{t("report_student_usage_lesson_missed")}</TableCell>
+                    <TableCell align="center">{t("report_student_usage_lesson_date")}</TableCell>
+                    <TableCell align="center">{t("report_student_usage_lesson_time")}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -231,10 +232,10 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           <TableHead style={{ backgroundColor: "#f2f5f7" }}>
             <TableRow>
               <TableCell align="center">
-                <b>Class</b>
+                <b>{t("report_student_usage_class")}</b>
               </TableCell>
               <TableCell align="center">
-                <b>Total</b>
+                <b>{t("report_student_usage_total")}</b>
                 <Tooltip
                   title="Numbers of scheduled classes in the past 3 monts"
                   aria-label="info"

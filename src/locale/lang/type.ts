@@ -1276,7 +1276,22 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_report"; description: "Student Usage Report"; values: undefined }
   | { id: "report_student_usage_registration"; description: "Registration tab name"; values: undefined }
   | { id: "report_student_usage_materialusage"; description: "MaterialUsage tab name"; values: undefined }
-  | { id: "report_student_usage_classesandassignments"; description: "ClassesAndAssignments tab name"; values: undefined };
+  | { id: "report_student_usage_classesandassignments"; description: "ClassesAndAssignments tab name"; values: undefined }
+  | { id: "report_student_usage_live"; description: "Live Scheduled(latest 3 moths)"; values: undefined }
+  | { id: "report_student_usage_class"; description: "Class"; values: undefined }
+  | { id: "report_student_usage_total"; description: "Total"; values: undefined }
+  | { id: "report_student_usage_unattendedStudents"; description: "Unattended students"; values: undefined }
+  | { id: "report_student_usage_missed_schedules"; description: "List of students missed live schedules"; values: undefined }
+  | { id: "report_student_usage_student_name"; description: "Student name"; values: undefined }
+  | { id: "report_student_usage_lesson_missed"; description: "Lesson missed"; values: undefined }
+  | { id: "report_student_usage_lesson_date"; description: "Lesson date"; values: undefined }
+  | { id: "report_student_usage_lesson_time"; description: "Lesson time"; values: undefined }
+  | { id: "report_student_usage_results"; description: "results"; values: undefined }
+  | { id: "report_student_usage_live_scheduled"; description: "Live Scheduled"; values: undefined }
+  | { id: "report_student_usage_study"; description: "Study"; values: undefined }
+  | { id: "report_student_usage_home_fun"; description: "Home Fun"; values: undefined }
+  | { id: "report_filter_content"; description: "Content"; values: undefined }
+  | { id: "content_total_viewed"; description: "Content total viewed (latest 3 months):"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
