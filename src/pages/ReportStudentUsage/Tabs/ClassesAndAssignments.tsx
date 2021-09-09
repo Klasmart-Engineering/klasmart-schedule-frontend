@@ -1,13 +1,13 @@
+import { Box } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import PercentCircle from "../../../components/Chart/PercentCircle";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
 import ClassFilter from "../components/ClassFilter";
+import Statistics from "../components/Statistics";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -107,6 +107,34 @@ export default function () {
 
   const latestThreeMonths = getTimeDots();
 
+  const [state, setState] = React.useState({
+    activeTab: 0,
+  });
+
+  const topChatData = React.useMemo(() => {
+    return [
+      {
+        title: t("report_student_usage_live_scheduled"),
+        value: 100,
+        total: 200,
+      },
+      {
+        title: t("report_student_usage_study"),
+        value: 100,
+        total: 200,
+      },
+      {
+        title: t("report_student_usage_home_fun"),
+        value: 100,
+        total: 200,
+      },
+    ];
+  }, []);
+
+  const handleTabClick = (index: number) => () => {
+    setState({ activeTab: index });
+  };
+
   const getPageSize = (pageSize: number) => {
     setPageSize(pageSize);
   };
@@ -128,58 +156,14 @@ export default function () {
 
   return (
     <div>
-      <div style={{ marginTop: "32px" }}>
-        <div className={clsx(css.LiveScheduled, css.styles)}>
-          <div className={css.left}>
-            <div className={css.textStyle}>{t("report_student_usage_live_scheduled")}</div>
-            <div className={css.number}>4000</div>
-          </div>
-          <div className={css.right}>
-            <PercentCircle
-              width={80}
-              height={80}
-              total={9600}
-              value={4000}
-              fontSize={22}
-              colors={["#fff", "#E4E4E4"]}
-              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-            />
-          </div>
-        </div>
-        <div className={css.styles}>
-          <div className={css.left}>
-            <div className={css.textStyle}>{t("report_student_usage_study")}</div>
-            <div className={css.number}>4000</div>
-          </div>
-          <div className={css.right}>
-            <PercentCircle
-              width={80}
-              height={80}
-              total={9600}
-              value={4000}
-              fontSize={22}
-              colors={["#0E78D5", "#E4E4E4"]}
-              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-            />
-          </div>
-        </div>
-        <div className={css.styles}>
-          <div className={css.left}>
-            <div className={css.textStyle}>{t("report_student_usage_home_fun")}</div>
-            <div className={css.number}>4000</div>
-          </div>
-          <div className={css.right}>
-            <PercentCircle
-              width={80}
-              height={80}
-              total={9600}
-              value={4000}
-              fontSize={22}
-              colors={["#0E78D5", "#E4E4E4"]}
-              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-            />
-          </div>
-        </div>
+      <div style={{ marginTop: "32px", display: "flex" }}>
+        {topChatData.map((item, index) => {
+          return (
+            <Box key={index} style={{ paddingRight: 40 }} onClick={handleTabClick(index)}>
+              <Statistics {...item} active={index === state.activeTab} />
+            </Box>
+          );
+        })}
       </div>
 
       <div className={css.selectContainer}>
