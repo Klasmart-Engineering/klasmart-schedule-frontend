@@ -190,11 +190,6 @@ function SelectGroup(props: filterGropProps) {
   const filteredList = useMemo(() => {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
   }, [filterQuery, programChildInfo]);
-  const defaultValues = (enumType: "subjects" | "categorys" | "subs" | "ages" | "grades") =>
-    filteredList[enumType]?.filter((item: any) => filterQuery && filterQuery[enumType]?.includes(item.id as string));
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
   const deduplication = (childItem: EntityScheduleShortInfo[]) => {
     const reduceTemporaryStorage: { [id: string]: boolean } = {};
     return childItem.reduce<EntityScheduleShortInfo[]>((item, next) => {
@@ -206,6 +201,11 @@ function SelectGroup(props: filterGropProps) {
       return item;
     }, []);
   };
+  const defaultValues = (enumType: "subjects" | "categorys" | "subs" | "ages" | "grades") =>
+    deduplication(filteredList[enumType])?.filter((item: any) => filterQuery && filterQuery[enumType]?.includes(item.id as string));
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
   return (
     <div className={classes.root}>
       <Grid container spacing={2}>
