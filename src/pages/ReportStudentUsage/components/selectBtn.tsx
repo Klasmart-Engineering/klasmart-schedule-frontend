@@ -1,22 +1,24 @@
 import React from "react";
-import { makeStyles, FormControl, Select, InputLabel, MenuItem, Theme } from "@material-ui/core";
-const useStyles = makeStyles((theme: Theme) => ({
-  formControl: {
-    width: "180px",
-    height: "40px",
-    marginLeft: theme.spacing(2),
-    "& #demo-simple-select-outlined": {
-      paddingTop: "10px",
-      paddingBottom: "10px",
+import { makeStyles, FormControl, Select, InputLabel, MenuItem, Theme, createStyles } from "@material-ui/core";
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    formControl: {
+      width: "180px",
+      height: "40px",
+      marginLeft: theme.spacing(2),
+      "& #demo-simple-select-outlined": {
+        paddingTop: "10px",
+        paddingBottom: "10px",
+      },
+      "& .MuiInputLabel-animated": {
+        top: "-18%",
+      },
+      "& .MuiInputLabel-shrink ": {
+        top: 0,
+      },
     },
-    "& .MuiInputLabel-animated": {
-      top: "-18%",
-    },
-    "& .MuiInputLabel-shrink ": {
-      top: 0,
-    },
-  },
-}));
+  })
+);
 
 interface Iitem {
   id: string;

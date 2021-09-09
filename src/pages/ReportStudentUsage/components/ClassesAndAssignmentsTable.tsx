@@ -2,25 +2,19 @@ import Box from "@material-ui/core/Box";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
-import { createStyles, makeStyles, Theme, useTheme } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableFooter from "@material-ui/core/TableFooter";
 import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { InfoOutlined } from "@material-ui/icons";
-import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import LastPageIcon from "@material-ui/icons/LastPage";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
@@ -28,35 +22,14 @@ import attendList from "../../../mocks/attendList.json";
 import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
 import { formatTime } from "../Tabs/ClassesAndAssignments";
+import Pagination from "./Pagination";
 
+// eslint-disable-next-line
 const useStyles1 = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexShrink: 0,
       marginLeft: theme.spacing(2.5),
-    },
-    tfoot: {
-      "& .MuiTablePagination-spacer": {
-        display: "none",
-      },
-      "& .MuiTablePagination-toolbar": {
-        justifyContent: "center",
-      },
-    },
-    pagination: {
-      border: "none",
-      "& .MuiTablePagination-toolbar": {
-        "& .MuiTablePagination-input": {
-          display: "none",
-        },
-        "& .MuiTablePagination-caption": {
-          display: "none",
-        },
-      },
-    },
-    paginationLabel: {
-      whiteSpace: "nowrap",
-      color: "#999",
     },
   })
 );
@@ -77,46 +50,6 @@ interface IRowProps {
   unAttendedList: IUnAttendedListProps[];
 }
 
-function TablePaginationActions(props: TablePaginationActionsProps) {
-  const css = useStyles1();
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onPageChange } = props;
-
-  const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, 0);
-  };
-
-  const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <div className={css.root}>
-      <label className={css.paginationLabel}>Total {count} results</label>
-      <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
-        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-        {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton onClick={handleNextButtonClick} disabled={page >= Math.ceil(count / rowsPerPage) - 1} aria-label="next page">
-        {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton onClick={handleLastPageButtonClick} disabled={page >= Math.ceil(count / rowsPerPage) - 1} aria-label="last page">
-        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </div>
-  );
-}
-
 // function sortByStudentName(studentName: string[]) {
 //   studentName.sort((x: string, y: string) => {
 //     let reg = /[a-zA-Z0-9]/
@@ -135,7 +68,6 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 // }
 
 function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
-  const css = useStyles1();
   const dispatch = useDispatch();
   const { row, latestThreeMonths } = props;
   const [open, setOpen] = React.useState(false);
@@ -143,6 +75,7 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
   const { classesAssignmentsUnattend } = useSelector<RootState, RootState["report"]>((state) => state.report);
   console.log(classesAssignmentsUnattend);
 
+  // eslint-disable-next-line
   const [childrenRowsPerPage, setChildrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
     setOpen(!open);
@@ -163,12 +96,17 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
     );
   }, [childrenPage, childrenRowsPerPage, dispatch, latestThreeMonths.latestThreeMonthsDots, open]);
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setChildrenPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setChildrenRowsPerPage(parseInt(event.target.value, 10));
+  const onFirstPage = () => {
     setChildrenPage(0);
+  };
+  const onAddPage = () => {
+    setChildrenPage(childrenPage + 1);
+  };
+  const onSubPage = () => {
+    setChildrenPage(childrenPage - 1);
+  };
+  const onLastPage = () => {
+    setChildrenPage(Math.floor(row.unAttendedList.length / childrenRowsPerPage));
   };
 
   return (
@@ -227,17 +165,18 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
                     </TableRow>
                   ))}
                 </TableBody>
-                <TableFooter className={css.tfoot}>
-                  <TablePagination
-                    className={css.pagination}
-                    rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                    count={row.unAttendedList.length}
-                    rowsPerPage={childrenRowsPerPage}
-                    page={childrenPage}
-                    onPageChange={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
+                <TableFooter>
+                  <TableCell colSpan={6}>
+                    <Pagination
+                      page={childrenPage}
+                      rowsPerPage={childrenRowsPerPage}
+                      count={row.unAttendedList.length}
+                      onAddPage={onAddPage}
+                      onFirstPage={onFirstPage}
+                      onLastPage={onLastPage}
+                      onSubPage={onSubPage}
+                    />
+                  </TableCell>
                 </TableFooter>
               </Table>
             </Box>
@@ -265,21 +204,24 @@ interface IClassesAndAssignmentsTable {
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
-  const { classesAssignments, latestThreeMonths, getPageSize } = props;
+  const { classesAssignments, latestThreeMonths } = props;
   console.log(classesAssignments);
 
-  const css = useStyles1();
   const [page, setPage] = React.useState(0);
+  // eslint-disable-next-line
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setPage(newPage);
-    getPageSize(rowsPerPage);
-  };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  const onFirstPage = () => {
     setPage(0);
-    getPageSize(parseInt(event.target.value, 10));
+  };
+  const onAddPage = () => {
+    setPage(page + 1);
+  };
+  const onSubPage = () => {
+    setPage(page - 1);
+  };
+  const onLastPage = () => {
+    setPage(Math.floor(attendList.length / rowsPerPage));
   };
 
   return (
@@ -339,17 +281,18 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <Row key={row.className} row={row} latestThreeMonths={latestThreeMonths} />
             ))}
           </TableBody>
-          <TableFooter className={css.tfoot}>
-            <TablePagination
-              className={css.pagination}
-              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              count={attendList.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
+          <TableFooter>
+            <TableCell colSpan={6}>
+              <Pagination
+                page={page}
+                rowsPerPage={rowsPerPage}
+                count={attendList.length}
+                onAddPage={onAddPage}
+                onFirstPage={onFirstPage}
+                onLastPage={onLastPage}
+                onSubPage={onSubPage}
+              />
+            </TableCell>
           </TableFooter>
         </Table>
       </TableContainer>
