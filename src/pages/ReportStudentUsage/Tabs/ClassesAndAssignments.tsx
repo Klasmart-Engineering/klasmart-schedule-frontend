@@ -3,6 +3,7 @@ import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PercentCircle from "../../../components/Chart/PercentCircle";
+import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
@@ -130,7 +131,7 @@ export default function () {
       <div style={{ marginTop: "32px" }}>
         <div className={clsx(css.LiveScheduled, css.styles)}>
           <div className={css.left}>
-            <div className={css.textStyle}>Live Scheduled</div>
+            <div className={css.textStyle}>{t("report_student_usage_live_scheduled")}</div>
             <div className={css.number}>4000</div>
           </div>
           <div className={css.right}>
@@ -147,7 +148,7 @@ export default function () {
         </div>
         <div className={css.styles}>
           <div className={css.left}>
-            <div className={css.textStyle}>Study</div>
+            <div className={css.textStyle}>{t("report_student_usage_study")}</div>
             <div className={css.number}>4000</div>
           </div>
           <div className={css.right}>
@@ -164,7 +165,7 @@ export default function () {
         </div>
         <div className={css.styles}>
           <div className={css.left}>
-            <div className={css.textStyle}>Home Fun</div>
+            <div className={css.textStyle}>{t("report_student_usage_home_fun")}</div>
             <div className={css.number}>4000</div>
           </div>
           <div className={css.right}>
@@ -182,7 +183,7 @@ export default function () {
       </div>
 
       <div className={css.selectContainer}>
-        <div className={css.text}>Live Scheduled(latest 3 moths)</div>
+        <div className={css.text}>{t("report_student_usage_live")}</div>
         <div>
           <ClassFilter
             onChange={(v) => {
