@@ -202,6 +202,9 @@ export default function () {
           onChange={(v) => {
             console.log(v);
           }}
+          onClose={() => {
+            console.log("close");
+          }}
         />
       </div>
       <div className={style.total}>

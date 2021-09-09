@@ -184,7 +184,14 @@ export default function () {
       <div className={css.selectContainer}>
         <div className={css.text}>Live Scheduled(latest 3 moths)</div>
         <div>
-          <ClassFilter />
+          <ClassFilter
+            onChange={(v) => {
+              console.log(v);
+            }}
+            onClose={() => {
+              console.log("close");
+            }}
+          />
         </div>
       </div>
       <ClassesAndAssignmentsTable classesAssignments={classesAssignments} latestThreeMonths={latestThreeMonths} getPageSize={getPageSize} />

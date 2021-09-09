@@ -12,10 +12,12 @@ interface ISelect {
 
 interface IProps {
   onChange?: (value: string[]) => void;
+  onClose?: () => void;
 }
 
 interface IState {
-  school_id: string;
+  schoolId: string;
+  classes: ISelect[];
 }
 
 type IOptions = ISelect[][];
@@ -46,10 +48,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ({ onChange }: IProps) {
+export default function ({ onChange, onClose }: IProps) {
   const classes = useStyles();
   const [state, setState] = React.useState<IState>({
-    school_id: "",
+    schoolId: "",
+    classes: [],
   });
   const { studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const options = React.useMemo<IOptions>(() => {
@@ -60,18 +63,18 @@ export default function ({ onChange }: IProps) {
       })) as ISelect[]) || [];
     const classOptions =
       (studentUsage.schoolList
-        .filter((item) => item.school_id === state.school_id)[0]
+        .filter((item) => item.school_id === state.schoolId)[0]
         ?.classes?.map((item) => ({
           value: item?.class_id,
           label: item?.class_name,
         })) as ISelect[]) || [];
     return [schoolOptions, classOptions];
-  }, [studentUsage.schoolList, state.school_id]);
+  }, [studentUsage.schoolList, state.schoolId]);
 
-  const handleChange = (feild: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
-      ...state,
-      [feild]: event.target.value,
+      schoolId: event.target.value,
+      classes: [],
     });
   };
 
@@ -82,9 +85,10 @@ export default function ({ onChange }: IProps) {
           fullWidth
           size="small"
           select
+          disabled={options[0].length === 0}
           label={t("report_filter_school")}
-          value={state.school_id}
-          onChange={handleChange("school_id")}
+          value={state.schoolId}
+          onChange={handleChange}
         >
           {options[0].map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -95,18 +99,30 @@ export default function ({ onChange }: IProps) {
       </Box>
       <Box className={classes.classBox}>
         <Autocomplete
-          disabled={!state.school_id}
+          disabled={!state.schoolId}
           size="small"
           multiple
           limitTags={1}
           id="multiple-limit-tags"
           options={options[1]}
           getOptionLabel={(option) => option.label}
-          defaultValue={[]}
+          value={state.classes}
           onChange={(event, value) => {
             onChange && onChange(value.map((v) => v.value));
+            setState({
+              ...state,
+              classes: value,
+            });
           }}
-          renderInput={(params) => <TextField {...params} variant="outlined" label={t("report_filter_class")} placeholder="" />}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              label={t("report_filter_class")}
+              placeholder="type or select class name"
+              onBlur={onClose ? onClose : () => {}}
+            />
+          )}
         />
       </Box>
     </Box>
