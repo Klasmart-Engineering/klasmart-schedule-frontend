@@ -1,5 +1,5 @@
+import { createStyles, FormControl, InputLabel, makeStyles, MenuItem, Select, Theme } from "@material-ui/core";
 import React from "react";
-import { makeStyles, FormControl, Select, InputLabel, MenuItem, Theme, createStyles } from "@material-ui/core";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     formControl: {
@@ -25,10 +25,11 @@ interface Iitem {
   name: string;
 }
 interface ISelectBtn {
-  value: string;
+  value: string | string[];
   label?: string;
   data: Iitem[];
   handleChange: any;
+  multiple?: boolean;
 }
 export default function SelectBtn(props: ISelectBtn) {
   const style = useStyles();
@@ -36,7 +37,7 @@ export default function SelectBtn(props: ISelectBtn) {
   return (
     <FormControl variant="outlined" className={style.formControl}>
       <InputLabel id="label">{label}</InputLabel>
-      <Select labelId="label" id="outlined" value={value} onChange={handleChange} label={label}>
+      <Select labelId="label" id="outlined" multiple={props.multiple} value={value} onChange={handleChange} label={label}>
         {data.map((item) => (
           <MenuItem value={item.id} key={item.id}>
             {item.name}

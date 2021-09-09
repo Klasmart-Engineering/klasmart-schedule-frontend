@@ -48,6 +48,9 @@ import {
   EntityStudentAchievementReportItem,
   // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
+  EntityStudentUsageMaterialReportRequest,
+  EntityStudentUsageMaterialReportResponse,
+  EntityStudentUsageMaterialViewCountReportResponse,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
@@ -92,6 +95,7 @@ interface IreportState {
     organization_id: string;
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
   };
+  studentUsageReport: [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse];
   teachingLoadOnload: TeachingLoadResponse;
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
   assignmentSummary: EntityQueryAssignmentsSummaryResult;
@@ -130,6 +134,7 @@ const initialState: IreportState = {
     teacherList: [],
     categories: [],
   },
+  studentUsageReport: [{ class_usage_list: [] }, { content_usage_list: [] }],
   stuReportMockOptions: {
     teacherList: [],
     classList: [],
@@ -242,6 +247,13 @@ export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
       },
     }),
   ]);
+});
+
+export const getStudentUsageMaterial = createAsyncThunk<
+  [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse],
+  EntityStudentUsageMaterialReportRequest
+>("getStudentUsageMaterial", async (params) => {
+  return await Promise.all([api.reports.getStudentUsageMaterialReport(params), api.reports.getStudentUsageMaterialViewCountReport(params)]);
 });
 
 export const getClassList = createAsyncThunk<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>(
@@ -1143,8 +1155,19 @@ export const getAfterClassFilter = createAsyncThunk<
   IParamsGetAfterClassFilter & LoadingMetaPayload,
   { state: RootState }
 >("getAfterClassFilter", async (query, { dispatch }) => {
-  const { summary_type, filter_type, school_id, class_id, teacher_id, student_id, week_start, week_end, isOrg, isSchool, isTeacher } =
-    query;
+  const {
+    summary_type,
+    filter_type,
+    school_id,
+    class_id,
+    teacher_id,
+    student_id,
+    week_start,
+    week_end,
+    isOrg,
+    isSchool,
+    isTeacher,
+  } = query;
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
   let students: ArrProps[] = [];
@@ -1461,13 +1484,13 @@ const { actions, reducer } = createSlice({
     },
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
-      state.reportMockOptions.classList = (
-        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching : undefined
-      ) as Pick<Class, "class_id" | "class_name">[];
+      state.reportMockOptions.classList = (payload.user && payload.user.membership?.classesTeaching
+        ? payload.user.membership?.classesTeaching
+        : undefined) as Pick<Class, "class_id" | "class_name">[];
 
-      state.reportMockOptions.class_id = (
-        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching[0]?.class_id : undefined
-      ) as string;
+      state.reportMockOptions.class_id = (payload.user && payload.user.membership?.classesTeaching
+        ? payload.user.membership?.classesTeaching[0]?.class_id
+        : undefined) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1546,6 +1569,11 @@ const { actions, reducer } = createSlice({
       state.reportMockOptions = cloneDeep(initialState.reportMockOptions);
     },
 
+    [getStudentUsageMaterial.fulfilled.type]: (state, { payload }) => {
+      console.log("payload=", payload);
+      state.studentUsageReport = payload;
+    },
+    [getStudentUsageMaterial.rejected.type]: (state) => {},
     [getTeacherListByOrgId.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeacherListByOrgId>>) => {
       const { teacherList } = payload;
       state.reportMockOptions.teacherList = teacherList;
@@ -1555,7 +1583,6 @@ const { actions, reducer } = createSlice({
       state.reportMockOptions.teacherList = cloneDeep(initialState.reportMockOptions.teacherList);
       state.reportMockOptions.teacher_id = cloneDeep(initialState.reportMockOptions.teacher_id);
     },
-
     [reportCategoriesOnload.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof reportCategoriesOnload>>) => {
       state.categoriesPage = payload;
     },
