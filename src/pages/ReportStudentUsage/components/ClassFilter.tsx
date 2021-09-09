@@ -2,6 +2,7 @@ import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@mate
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React from "react";
 import { useSelector } from "react-redux";
+import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 
 interface ISelect {
@@ -77,7 +78,14 @@ export default function ({ onChange }: IProps) {
   return (
     <Box className={classes.selectContainer}>
       <Box className={classes.schoolBox}>
-        <TextField fullWidth size="small" select label="School select" value={state.school_id} onChange={handleChange("school_id")}>
+        <TextField
+          fullWidth
+          size="small"
+          select
+          label={t("report_filter_school")}
+          value={state.school_id}
+          onChange={handleChange("school_id")}
+        >
           {options[0].map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}
@@ -98,7 +106,7 @@ export default function ({ onChange }: IProps) {
           onChange={(event, value) => {
             onChange && onChange(value.map((v) => v.value));
           }}
-          renderInput={(params) => <TextField {...params} variant="outlined" label="Class select" placeholder="" />}
+          renderInput={(params) => <TextField {...params} variant="outlined" label={t("report_filter_class")} placeholder="" />}
         />
       </Box>
     </Box>

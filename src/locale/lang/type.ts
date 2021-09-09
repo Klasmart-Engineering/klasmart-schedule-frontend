@@ -1272,9 +1272,11 @@ type LangRecord<T = string> =
   | { id: "report_lsr_view_all"; description: "View All"; values: undefined }
   | { id: "library_label_add_learning_outcomes"; description: "Add Learning Outcomes"; values: undefined }
   | { id: "library_label_program_subject"; description: "Program - Subject"; values: undefined }
-  | { id: "library_label_category_ubcategory"; description: "Category- Subcategory"; values: undefined };
-  
-
+  | { id: "library_label_category_ubcategory"; description: "Category- Subcategory"; values: undefined }
+  | { id: "report_student_usage_report"; description: "Student Usage Report"; values: undefined }
+  | { id: "report_student_usage_registration"; description: "Registration tab name"; values: undefined }
+  | { id: "report_student_usage_materialusage"; description: "MaterialUsage tab name"; values: undefined }
+  | { id: "report_student_usage_classesandassignments"; description: "ClassesAndAssignments tab name"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

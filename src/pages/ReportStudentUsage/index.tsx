@@ -4,7 +4,7 @@ import Tabs from "@material-ui/core/Tabs";
 import React, { Suspense } from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
-import { reportMiss } from "../../locale/LocaleManager";
+import { t } from "../../locale/LocaleManager";
 import { getSchoolsByOrg } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 const Registration = React.lazy(() => import("./Tabs/Registration"));
@@ -49,17 +49,17 @@ const AntTab = withStyles((theme) => ({
 
 const tabs: ITabItem[] = [
   {
-    label: reportMiss("Registration tab name", "report_student_usage_registration"),
+    label: t("report_student_usage_registration"),
     index: 0,
     display: false,
   },
   {
-    label: reportMiss("MaterialUsage tab name", "report_student_usage_materialusage"),
+    label: t("report_student_usage_materialusage"),
     index: 1,
     display: true,
   },
   {
-    label: reportMiss("ClassesAndAssignments tab name", "report_student_usage_classesandassignments"),
+    label: t("report_student_usage_classesandassignments"),
     index: 2,
     display: true,
   },
@@ -83,7 +83,7 @@ export default function ReportStudentUsage() {
   }, [dispatch]);
   return (
     <>
-      <ReportTitle title={reportMiss("Student usage Report", "report_label_student_usage")}></ReportTitle>
+      <ReportTitle title={t("report_student_usage_report")}></ReportTitle>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <AntTabs value={state.tabIndex} onChange={handleChange} aria-label="">
           {activeTabs.map((tabItem) => {

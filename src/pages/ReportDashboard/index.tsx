@@ -170,7 +170,7 @@ export function ReportDashboard() {
       hasPerm: hasSummaryPerm,
     },
     {
-      title: "report_learning_summary_report",
+      title: "report_student_usage_report",
       url: ReportStudentUsage.routeBasePath,
       icon: <ShowChart />,
       bgColor: "#DCCDFF",
