@@ -43,6 +43,21 @@ const useStyles1 = makeStyles((theme: Theme) =>
         justifyContent: "center",
       },
     },
+    pagination: {
+      border: "none",
+      "& .MuiTablePagination-toolbar": {
+        "& .MuiTablePagination-input": {
+          display: "none",
+        },
+        "& .MuiTablePagination-caption": {
+          display: "none",
+        },
+      },
+    },
+    paginationLabel: {
+      whiteSpace: "nowrap",
+      color: "#999",
+    },
   })
 );
 
@@ -63,28 +78,29 @@ interface IRowProps {
 }
 
 function TablePaginationActions(props: TablePaginationActionsProps) {
-  const classes = useStyles1();
+  const css = useStyles1();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
+  const { count, page, rowsPerPage, onPageChange } = props;
 
   const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, 0);
+    onPageChange(event, 0);
   };
 
   const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, page - 1);
+    onPageChange(event, page - 1);
   };
 
   const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, page + 1);
+    onPageChange(event, page + 1);
   };
 
   const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
-    <div className={classes.root}>
+    <div className={css.root}>
+      <label className={css.paginationLabel}>Total {count} results</label>
       <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
         {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
@@ -213,7 +229,7 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
                 </TableBody>
                 <TableFooter className={css.tfoot}>
                   <TablePagination
-                    size="small"
+                    className={css.pagination}
                     rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                     count={row.unAttendedList.length}
                     rowsPerPage={childrenRowsPerPage}
@@ -325,7 +341,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           </TableBody>
           <TableFooter className={css.tfoot}>
             <TablePagination
-              style={{ padding: "40px 0 10px 0" }}
+              className={css.pagination}
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
               count={attendList.length}
               rowsPerPage={rowsPerPage}
