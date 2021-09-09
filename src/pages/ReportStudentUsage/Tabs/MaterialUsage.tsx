@@ -205,9 +205,15 @@ export default function () {
       })
     );
   };
-  const handleChange = (event: React.ChangeEvent<{ value: string[] }>) => {
-    setContentTypeList(event.target.value);
-    contentTypeListRef.current = event.target.value;
+  const handleChange = (
+    value: {
+      id: string;
+      name: string;
+    }[]
+  ) => {
+    console.log(value);
+    setContentTypeList(value.map((item) => item.id));
+    contentTypeListRef.current = value.map((item) => item.id);
     getList();
   };
 
@@ -308,13 +314,7 @@ export default function () {
           {d("Content total viewed (latest 3 months):").t("content_total_viewed")}
           {count}
         </span>
-        <SelectBtn
-          label={d("Content").t("report_filter_content")}
-          value={contentTypeList}
-          multiple
-          handleChange={handleChange}
-          data={conData}
-        />
+        <SelectBtn label={d("Content").t("report_filter_content")} onChange={handleChange} data={conData} />
       </div>
       {renderBarChart()}
       <Grid container>

@@ -3661,7 +3661,7 @@
         "operationId": "createLearningOutcomes",
         "parameters": [
           {
-            "description": "create outcome",
+            "description": "outcome condition",
             "name": "outcome",
             "in": "body",
             "required": true,
@@ -5104,7 +5104,7 @@
       }
     },
     "/published_learning_outcomes": {
-      "get": {
+      "post": {
         "description": "search published learning outcome with outcome sets",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -5113,107 +5113,30 @@
         "operationId": "searchPublishedLearningOutcomes",
         "parameters": [
           {
-            "type": "string",
-            "description": "search by name",
-            "name": "outcome_name",
-            "in": "query"
+            "description": "create outcome",
+            "name": "outcome",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.OutcomeCondition"
+            }
           },
           {
-            "type": "string",
-            "description": "search by description",
-            "name": "description",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by keywords",
-            "name": "keywords",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by shortcode",
-            "name": "shortcode",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by author_name",
-            "name": "author_name",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by set_name",
-            "name": "set_name",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by search_key",
-            "name": "search_key",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "search by assumed: 1 true, 0 false, -1 all",
-            "name": "assumed",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by program ids, split by comma",
-            "name": "program_ids",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by subject ids, split by comma",
-            "name": "subject_ids",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by category ids, split by comma",
-            "name": "category_ids",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by sub category ids, split by comma",
-            "name": "sub_category_ids",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by age ids, split by comma",
-            "name": "age_ids",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "search by grade ids, split by comma",
-            "name": "grade_ids",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "page",
-            "name": "page",
-            "in": "query"
-          },
-          {
-            "type": "integer",
             "description": "page size: -1 no page, 0 default page size 20",
             "name": "page_size",
-            "in": "query"
+            "in": "body",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"],
-            "type": "string",
             "description": "order by",
             "name": "order_by",
-            "in": "query"
+            "in": "body",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -9743,20 +9666,12 @@
       "type": "object",
       "properties": {
         "schedule": {
-          "type": "object",
-          "properties": {
-            "schedule_id": {
-              "type": "string"
-            },
-            "schedule_name": {
-              "type": "string"
-            },
-            "type": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/entity.ScheduleView"
         },
         "student_id": {
+          "type": "string"
+        },
+        "student_name": {
           "type": "string"
         },
         "time": {
@@ -11051,6 +10966,95 @@
         }
       }
     },
+    "entity.OutcomeCondition": {
+      "type": "object",
+      "properties": {
+        "age_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumed": {
+          "type": "integer"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "category_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "order_by": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "program_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publish_scope": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "search_key": {
+          "type": "string"
+        },
+        "set_name": {
+          "type": "string"
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "sub_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "entity.QueryAssignmentsSummaryResult": {
       "type": "object",
       "properties": {
@@ -12048,6 +12052,20 @@
         },
         "version": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleView": {
+      "type": "object",
+      "properties": {
+        "schedule_id": {
+          "type": "string"
+        },
+        "schedule_name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },

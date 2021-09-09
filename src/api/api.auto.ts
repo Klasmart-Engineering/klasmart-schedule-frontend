@@ -462,8 +462,9 @@ export interface EntityClassesAssignmentsDurationRatio {
 }
 
 export interface EntityClassesAssignmentsUnattendedStudentsView {
-  schedule?: { schedule_id?: string; schedule_name?: string; type?: string };
+  schedule?: EntityScheduleView;
   student_id?: string;
+  student_name?: string;
   time?: number;
 }
 
@@ -900,6 +901,30 @@ export interface EntityOutcome {
   version?: number;
 }
 
+export interface EntityOutcomeCondition {
+  age_ids?: string[];
+  assumed?: number;
+  author_name?: string;
+  category_ids?: string[];
+  description?: string;
+  grade_ids?: string[];
+  ids?: string[];
+  keywords?: string;
+  order_by?: string;
+  organization_id?: string;
+  outcome_name?: string;
+  page?: number;
+  page_size?: number;
+  program_ids?: string[];
+  publish_scope?: string;
+  publish_status?: string;
+  search_key?: string;
+  set_name?: string;
+  shortcode?: string;
+  sub_category_ids?: string[];
+  subject_ids?: string[];
+}
+
 export interface EntityQueryAssignmentsSummaryResult {
   home_fun_study_count?: number;
   items?: EntityAssignmentsSummaryItem[];
@@ -1232,6 +1257,12 @@ export interface EntityScheduleUpdateView {
   time_zone_offset?: number;
   title?: string;
   version?: number;
+}
+
+export interface EntityScheduleView {
+  schedule_id?: string;
+  schedule_name?: string;
+  type?: string;
 }
 
 export interface EntityScheduleViewDetail {
@@ -3387,35 +3418,14 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags learning_outcomes
      * @name searchPublishedLearningOutcomes
      * @summary search published learning outcome
-     * @request GET:/published_learning_outcomes
+     * @request POST:/published_learning_outcomes
      * @description search published learning outcome with outcome sets
      */
-    searchPublishedLearningOutcomes: (
-      query?: {
-        outcome_name?: string;
-        description?: string;
-        keywords?: string;
-        shortcode?: string;
-        author_name?: string;
-        set_name?: string;
-        search_key?: string;
-        assumed?: number;
-        program_ids?: string;
-        subject_ids?: string;
-        category_ids?: string;
-        sub_category_ids?: string;
-        age_ids?: string;
-        grade_ids?: string;
-        page?: number;
-        page_size?: number;
-        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
-      },
-      params?: RequestParams
-    ) =>
+    searchPublishedLearningOutcomes: (order_by: EntityOutcomeCondition, params?: RequestParams) =>
       this.request<
         ModelSearchPublishedOutcomeResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/published_learning_outcomes${this.addQueryParams(query)}`, "GET", params),
+      >(`/published_learning_outcomes`, "POST", params, order_by),
   };
   reports = {
     /**

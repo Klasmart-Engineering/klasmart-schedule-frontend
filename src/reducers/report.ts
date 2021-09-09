@@ -1680,6 +1680,7 @@ const { actions, reducer } = createSlice({
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignmentsUnattended>>
     ) => {
+      // @ts-ignore
       state.classesAssignmentsUnattend = payload;
     },
     [getClassesAssignments.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {

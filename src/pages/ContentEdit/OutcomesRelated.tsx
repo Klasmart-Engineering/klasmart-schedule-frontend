@@ -11,7 +11,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
@@ -62,7 +62,7 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
     wordBreak: "break-all",
   },
   tabelCell: {
-    maxWidth:150,
+    maxWidth: 150,
   },
   outcomeSet: {
     overflow: "hidden",
@@ -110,16 +110,25 @@ interface OutcomesTableProps {
   onChangePageAndSort?: (props: ISearchOutcomeForm) => any;
   isDialog?: boolean;
   outcomesFullOptions?: LinkedMockOptions;
-  total?:number;
+  total?: number;
   outcomePage?: number;
   amountPerPage?: number;
   handleClickSearch?: OutcomesDialogProps["handleClickSearch"];
 }
 export const OutcomesTable = (props: OutcomesTableProps) => {
-  const { list, outcomeValue, onChangeOutcomeValue, onGoOutcomesDetail, isDialog, onChangePageAndSort, outcomesFullOptions, handleClickSearch,
+  const {
+    list,
+    outcomeValue,
+    onChangeOutcomeValue,
+    onGoOutcomesDetail,
+    isDialog,
+    onChangePageAndSort,
+    outcomesFullOptions,
+    handleClickSearch,
     total,
     amountPerPage = 10,
-    outcomePage, } = props;
+    outcomePage,
+  } = props;
   const css = useStyles();
   const [sortUp, toggle] = React.useReducer((sortUp) => !sortUp, false);
   const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
@@ -144,9 +153,12 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
     onChangePageAndSort?.({ order_by: sortUp ? "name" : "-name" });
     toggle();
   }, [onChangePageAndSort, sortUp]);
-  const handleChangePage = useMemo(() => (page:number) => {
-    page!==outcomePage && handleClickSearch && handleClickSearch({ page, order_by: sortUp ? "-name" : "name" })
-  },[sortUp,handleClickSearch, outcomePage])
+  const handleChangePage = useMemo(
+    () => (page: number) => {
+      page !== outcomePage && handleClickSearch && handleClickSearch({ page, order_by: sortUp ? "-name" : "name" });
+    },
+    [sortUp, handleClickSearch, outcomePage]
+  );
   const rows = list?.map((item, idx) => (
     <TableRow key={item.outcome_id}>
       {isPermission && (
@@ -158,12 +170,17 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
           )}
         </TableCell>
       )}
-      <TableCell className={clsx(css.outcomeCursor,css.tabelCell)} onClick={() => isDialog && (onGoOutcomesDetail(item.outcome_id) as any)}>
+      <TableCell
+        className={clsx(css.outcomeCursor, css.tabelCell)}
+        onClick={() => isDialog && (onGoOutcomesDetail(item.outcome_id) as any)}
+      >
         {item.outcome_name}
       </TableCell>
       <TableCell align="center">{item.shortcode}</TableCell>
       <TableCell align="center">{getNameByIds(outcomesFullOptions?.developmental, item?.developmental?.split(","))}</TableCell>
-      <TableCell align="center" className={css.tabelCell} >{getNameByIds(outcomesFullOptions?.skills, item?.skills?.split(","))}</TableCell>
+      <TableCell align="center" className={css.tabelCell}>
+        {getNameByIds(outcomesFullOptions?.skills, item?.skills?.split(","))}
+      </TableCell>
     </TableRow>
   ));
   return (
@@ -173,28 +190,30 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
           <TableHead className={css.tableHead}>
             <TableRow>
               <TableCell align="center"></TableCell>
-              <TableCell >
+              <TableCell>
                 <Box display="flex">
                   {d("Learning Outcomes").t("library_label_learning_outcomes")}
                   <SvgIcon component={SortSvg} onClick={handleClickSort} cursor="pointer" />
                 </Box>
               </TableCell>
-              <TableCell align="center" >{d("Short Code").t("assess_label_short_code")}</TableCell>
-              <TableCell align="center" >{d("Category").t("library_label_category")}</TableCell>
-              <TableCell align="center" >{d("Subcategory").t("library_label_subcategory")}</TableCell>
+              <TableCell align="center">{d("Short Code").t("assess_label_short_code")}</TableCell>
+              <TableCell align="center">{d("Category").t("library_label_category")}</TableCell>
+              <TableCell align="center">{d("Subcategory").t("library_label_subcategory")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{rows}</TableBody>
         </Table>
       </TableContainer>
-      {isDialog && total && <Pagination
-        style={{ marginBottom: 20 }}
-        classes={{ ul: css.paginationUl }}
-        onChange={(e, page) => handleChangePage(page)}
-        count={Math.ceil(total / amountPerPage)}
-        color="primary"
-        page={outcomePage}
-      />}
+      {isDialog && total && (
+        <Pagination
+          style={{ marginBottom: 20 }}
+          classes={{ ul: css.paginationUl }}
+          onChange={(e, page) => handleChangePage(page)}
+          count={Math.ceil(total / amountPerPage)}
+          color="primary"
+          page={outcomePage}
+        />
+      )}
     </>
   );
 };
@@ -235,7 +254,6 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
     onChangeOutcomeSubject,
     handleClickSearch,
   } = props;
- 
 
   return (
     <Box>
@@ -261,19 +279,20 @@ export const OutComesDialog = (props: OutcomesDialogProps) => {
               outcomeSearchDefault={outcomeSearchDefault}
             >
               {list.length ? (
-                  <OutcomesTable
-                    onChangePageAndSort={({ order_by }) => handleClickSearch({ order_by })}
-                    list={getOutcomeList(list)}
-                    outcomeValue={value}
-                    onChangeOutcomeValue={onChange}
-                    onGoOutcomesDetail={onGoOutcomesDetail}
-                    outcomesFullOptions={outcomesFullOptions}
-                    isDialog={open}
-                    total={total}
-                    outcomePage={outcomePage}
-                    amountPerPage={amountPerPage}
-                    handleClickSearch={handleClickSearch}
-                  />
+                <OutcomesTable
+                  // @ts-ignore
+                  onChangePageAndSort={({ order_by }) => handleClickSearch({ order_by })}
+                  list={getOutcomeList(list)}
+                  outcomeValue={value}
+                  onChangeOutcomeValue={onChange}
+                  onGoOutcomesDetail={onGoOutcomesDetail}
+                  outcomesFullOptions={outcomesFullOptions}
+                  isDialog={open}
+                  total={total}
+                  outcomePage={outcomePage}
+                  amountPerPage={amountPerPage}
+                  handleClickSearch={handleClickSearch}
+                />
               ) : (
                 resultsTip
               )}

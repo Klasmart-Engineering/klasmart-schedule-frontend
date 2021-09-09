@@ -189,7 +189,20 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
 }
 
 const numberToEnglish = (month: number) => {
-  const Months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const Months = [
+    t("schedule_calendar_january"),
+    t("schedule_calendar_february"),
+    t("schedule_calendar_march"),
+    t("schedule_calendar_april"),
+    t("schedule_calendar_may"),
+    t("schedule_calendar_june"),
+    t("schedule_calendar_july"),
+    t("schedule_calendar_august"),
+    t("schedule_calendar_september"),
+    t("schedule_calendar_october"),
+    t("schedule_calendar_november"),
+    t("schedule_calendar_december"),
+  ];
   return Months[month - 1];
 };
 
