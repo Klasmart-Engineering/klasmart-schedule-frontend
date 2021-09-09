@@ -11,7 +11,7 @@ interface ISelect {
 }
 
 interface IProps {
-  onChange?: (value: string[]) => void;
+  onChange?: (value: ISelect[]) => void;
   onClose?: () => void;
 }
 
@@ -41,9 +41,9 @@ const useStyles = makeStyles((theme: Theme) =>
       "& > * + *": {
         marginTop: theme.spacing(3),
       },
-      "& > button": {
-        maxWidth: 60,
-      },
+    },
+    tagSizeSmall: {
+      maxWidth: "calc(100% - 100px)",
     },
   })
 );
@@ -99,16 +99,18 @@ export default function ({ onChange, onClose }: IProps) {
       </Box>
       <Box className={classes.classBox}>
         <Autocomplete
+          classes={{
+            tagSizeSmall: classes.tagSizeSmall,
+          }}
           disabled={!state.schoolId}
           size="small"
           multiple
           limitTags={1}
-          id="multiple-limit-tags"
           options={options[1]}
           getOptionLabel={(option) => option.label}
           value={state.classes}
           onChange={(event, value) => {
-            onChange && onChange(value.map((v) => v.value));
+            onChange && onChange(value);
             setState({
               ...state,
               classes: value,
