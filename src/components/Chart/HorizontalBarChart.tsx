@@ -109,7 +109,7 @@ const HorizontalBarChart = withTooltip<BarStackHorizontalProps, TooltipData>(
             >
               {(barStacks) =>
                 barStacks.map((barStack) => {
-                  console.log(barStack);
+                  //console.log(barStack);
                   return barStack.bars.map((bar) => (
                     <rect
                       key={`barstack-horizontal-${barStack.index}-${bar.index}`}

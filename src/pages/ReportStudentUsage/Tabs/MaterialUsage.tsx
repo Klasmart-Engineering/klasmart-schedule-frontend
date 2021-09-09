@@ -1,4 +1,4 @@
-import { createStyles, Grid, IconButton, makeStyles, TablePagination, useTheme } from "@material-ui/core";
+import { Box, createStyles, Grid, IconButton, makeStyles, TablePagination, useTheme } from "@material-ui/core";
 import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -7,9 +7,8 @@ import LastPageIcon from "@material-ui/icons/LastPage";
 import { ParentSize } from "@visx/responsive";
 import React, { useEffect, useState } from "react";
 import HorizontalBarChart from "../../../components/Chart/HorizontalBarChart";
-import { d } from "../../../locale/LocaleManager";
-import ClassFilter from "../components/ClassFilter";
-import SelectBtn from "../components/selectBtn";
+import { d, t } from "../../../locale/LocaleManager";
+import ClassFilter, { MutiSelect } from "../components/ClassFilter";
 const useStyles = makeStyles(() =>
   createStyles({
     material: {
@@ -212,13 +211,27 @@ export default function () {
           {d("Content total viewed (latest 3 months):").t("content_total_viewed")}
           {count}
         </span>
-        <SelectBtn
-          label={d("Content").t("report_filter_content")}
-          data={data.contentData}
-          onChange={(v) => {
-            console.log(v);
+        <Box
+          style={{
+            position: "relative",
+            height: 50,
           }}
-        />
+        >
+          <MutiSelect
+            options={[
+              { value: "all", label: d("All").t("report_label_all") },
+              { value: "H5P", label: "H5P" },
+              { value: "Images", label: d("Image").t("library_label_image") },
+              { value: "Video", label: d("Video").t("library_label_video") },
+              { value: "Audio", label: d("Audio").t("library_label_audio") },
+              { value: "Document", label: d("Document").t("library_label_document") },
+            ]}
+            limitTags={2}
+            label={t("report_filter_content")}
+            onChange={() => {}}
+            onClose={() => {}}
+          />
+        </Box>
       </div>
       {renderBarChart()}
       <Grid container>
