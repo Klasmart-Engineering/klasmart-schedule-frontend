@@ -35,6 +35,7 @@ import {
   UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
+  EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
   EntityQueryAssignmentsSummaryResult,
@@ -93,6 +94,7 @@ interface IreportState {
   summaryReportOptions: IResultLearningSummary;
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   classesAssignments: EntityClassesAssignmentsView[];
+  overview: EntityClassesAssignmentOverView[];
 }
 interface RootState {
   report: IreportState;
@@ -175,6 +177,7 @@ const initialState: IreportState = {
   },
   classesAssignmentsUnattend: [],
   classesAssignments: [],
+  overview: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1417,11 +1420,22 @@ export const getClassListByschool = createAsyncThunk<GetClassListResponse, GetCl
   }
 );
 
-type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0];
-export const getClassesAssignments = createAsyncThunk<EntityClassesAssignmentsView[], GetClassesAssignmentsPayload & LoadingMetaPayload>(
+type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0] & {
+  type: string;
+};
+interface IGetClassesAssignmentsResponse {
+  overview: EntityClassesAssignmentOverView[];
+  classAssignments: EntityClassesAssignmentsView[];
+}
+export const getClassesAssignments = createAsyncThunk<IGetClassesAssignmentsResponse, GetClassesAssignmentsPayload & LoadingMetaPayload>(
   "getClassesAssignments",
   async ({ metaLoading, ...query }) => {
-    return await api.reports.getClassesAssignments(query);
+    const { class_ids, durations } = query;
+    const [overview, classAssignments] = await Promise.all([
+      api.reports.getClassesAssignmentsOverview({ class_ids, durations }),
+      api.reports.getClassesAssignments(query),
+    ]);
+    return { overview, classAssignments };
   }
 );
 
@@ -1668,7 +1682,8 @@ const { actions, reducer } = createSlice({
       state.classesAssignmentsUnattend = payload;
     },
     [getClassesAssignments.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {
-      state.classesAssignments = payload;
+      state.classesAssignments = payload.classAssignments;
+      state.overview = payload.overview;
     },
   },
 });

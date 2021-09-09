@@ -9,6 +9,7 @@ import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable
 import ClassFilter from "../components/ClassFilter";
 import Statistics from "../components/Statistics";
 
+const PAGESIZE = 10;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     styles: {
@@ -97,55 +98,63 @@ export function formatTime(time: any) {
 export default function () {
   const css = useStyles();
   const currentDate = new Date();
-  // eslint-disable-next-line
-  const [classIds, setClassIds] = useState<string[]>([]);
-  const { classesAssignments } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { classesAssignments, overview, studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  console.log(overview);
+  const classIdsInit = studentUsage.schoolList.reduce((prev: string[], current) => {
+    const classId = current.classes?.map((item) => item?.class_id).filter((item) => !!item) as string[];
+    return prev.concat(classId);
+  }, []);
+  const [classIds, setClassIds] = useState<string[]>(classIdsInit);
   const dispatch = useDispatch();
-
   const latestThreeMonths = getTimeDots();
-
+  const [page, setPage] = React.useState(1);
   const [state, setState] = React.useState({
     activeTab: 0,
   });
-
   const topChatData = React.useMemo(() => {
     return [
       {
         title: t("report_student_usage_live_scheduled"),
-        value: 100,
+        value: overview[0]?.count || 0,
         total: 200,
+        id: "live",
       },
       {
         title: t("report_student_usage_study"),
         value: 100,
         total: 200,
+        id: "study",
       },
       {
         title: t("report_student_usage_home_fun"),
         value: 100,
         total: 200,
+        id: "home_fun_study",
       },
     ];
-  }, []);
+  }, [overview]);
 
   const handleTabClick = (index: number) => () => {
     setState({ activeTab: index });
   };
+  const type = topChatData[state.activeTab].id;
 
   useEffect(() => {
-    dispatch(
-      getClassesAssignments({
-        metaLoading: true,
-        class_ids: classIds ?? [],
-        durations: [
-          `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
-          `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-          `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((currentDate as any) / 1000)}`,
-        ],
-      })
-    );
+    classIds &&
+      dispatch(
+        getClassesAssignments({
+          metaLoading: true,
+          class_ids: classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE),
+          type,
+          durations: [
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((currentDate as any) / 1000)}`,
+          ],
+        })
+      );
     // eslint-disable-next-line
-  }, [dispatch, classIds]);
+  }, [dispatch, classIds, type, page]);
 
   return (
     <div>
@@ -172,7 +181,13 @@ export default function () {
           />
         </div>
       </div>
-      <ClassesAndAssignmentsTable classesAssignments={classesAssignments} latestThreeMonths={latestThreeMonths} />
+      <ClassesAndAssignmentsTable
+        total={classIds.length}
+        page={page}
+        handleChangePage={setPage}
+        classesAssignments={classesAssignments}
+        latestThreeMonths={latestThreeMonths}
+      />
     </div>
   );
 }

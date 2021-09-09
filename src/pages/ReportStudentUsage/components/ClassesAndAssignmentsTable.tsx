@@ -19,10 +19,12 @@ import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { t } from "../../../locale/LocaleManager";
+// import mock from "../../../mocks/attendList.json";
 import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
 import { formatTime } from "../Tabs/ClassesAndAssignments";
 import Pagination from "./Pagination";
+const PAGESIZE = 10;
 
 // eslint-disable-next-line
 const useStyles1 = makeStyles((theme: Theme) =>
@@ -114,7 +116,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
   }, [class_id, dispatch, latestThreeMonths.latestThreeMonthsDots, open]);
 
   const onFirstPage = () => {
-    setChildrenPage(0);
+    setChildrenPage(1);
   };
   const onAddPage = () => {
     setChildrenPage(childrenPage + 1);
@@ -123,7 +125,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     setChildrenPage(childrenPage - 1);
   };
   const onLastPage = () => {
-    // setChildrenPage(Math.floor(row.unAttendedList.length / childrenRowsPerPage));
+    setChildrenPage(Math.ceil(classesAssignmentsUnattend.length / childrenRowsPerPage));
   };
 
   return (
@@ -189,9 +191,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
                   <TableCell colSpan={6}>
                     <Pagination
                       page={childrenPage}
-                      rowsPerPage={childrenRowsPerPage}
-                      count={1}
-                      // count={row.unAttendedList.length}
+                      count={classesAssignmentsUnattend.length}
                       onAddPage={onAddPage}
                       onFirstPage={onFirstPage}
                       onLastPage={onLastPage}
@@ -234,26 +234,13 @@ interface ILatestThreeMonths {
 interface IClassesAndAssignmentsTable {
   classesAssignments: EntityClassesAssignmentsView[];
   latestThreeMonths: ILatestThreeMonths;
+  handleChangePage: (page: number) => any;
+  page: number;
+  total: number;
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
-  const { classesAssignments, latestThreeMonths } = props;
-  const [page, setPage] = React.useState(0);
-  const rowsPerPage = 10;
-  const onFirstPage = () => {
-    setPage(0);
-  };
-  const onAddPage = () => {
-    setPage(page + 1);
-    console.log("page:", page);
-  };
-  const onSubPage = () => {
-    setPage(page - 1);
-  };
-  const onLastPage = () => {
-    setPage(Math.floor(classesAssignments.length / rowsPerPage));
-  };
-
+  const { classesAssignments, latestThreeMonths, handleChangePage, page, total } = props;
   return (
     <div>
       <TableContainer component={Paper}>
@@ -307,22 +294,19 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
             </TableRow>
           </TableHead>
           <TableBody>
-            {(rowsPerPage > 0 ? classesAssignments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : classesAssignments).map(
-              (row: EntityClassesAssignmentsView, idx) => (
-                <Row key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
-              )
-            )}
+            {classesAssignments.map((row: EntityClassesAssignmentsView, idx) => (
+              <Row key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
+            ))}
           </TableBody>
           <TableFooter>
             <TableCell colSpan={6}>
               <Pagination
                 page={page}
-                rowsPerPage={rowsPerPage}
-                count={classesAssignments.length}
-                onAddPage={onAddPage}
-                onFirstPage={onFirstPage}
-                onLastPage={onLastPage}
-                onSubPage={onSubPage}
+                count={total}
+                onAddPage={() => handleChangePage(page + 1)}
+                onFirstPage={() => handleChangePage(1)}
+                onLastPage={() => handleChangePage(Math.ceil(total / PAGESIZE))}
+                onSubPage={() => handleChangePage(page - 1)}
               />
             </TableCell>
           </TableFooter>
