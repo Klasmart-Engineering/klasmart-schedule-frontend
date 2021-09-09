@@ -5,7 +5,6 @@ import { BarStackHorizontal } from "@visx/shape";
 import { SeriesPoint } from "@visx/shape/lib/types";
 import { defaultStyles, Tooltip, withTooltip } from "@visx/tooltip";
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
-import moment from "moment";
 import React from "react";
 
 type TooltipData = {
@@ -25,6 +24,7 @@ export type BarStackHorizontalProps = {
   noAxis?: boolean;
   margin?: { top: number; right: number; bottom: number; left: number };
   events?: boolean;
+  data: Record<string, string>[];
 };
 
 export const background = "#eaedff";
@@ -35,42 +35,6 @@ const tooltipStyles = {
   backgroundColor: "rgba(0,0,0,0.9)",
   color: "white",
 };
-
-const data = [
-  { h5Pviewed: 23, imagesViewed: 43, videoViewed: 55, audioListened: 22, documentViewed: 98, date: "2012-3-2" },
-  { h5Pviewed: 22, imagesViewed: 64, videoViewed: 34, audioListened: 22, documentViewed: 34, date: "2012-3-3" },
-  { h5Pviewed: 11, imagesViewed: 54, videoViewed: 54, audioListened: 72, documentViewed: 43, date: "2012-3-4" },
-  { h5Pviewed: 11, imagesViewed: 54, videoViewed: 54, audioListened: 72, documentViewed: 43, date: "2012-3-5" },
-  { h5Pviewed: 11, imagesViewed: 54, videoViewed: 54, audioListened: 72, documentViewed: 43, date: "2012-3-6" },
-];
-const keys = Object.keys(data[0]).filter((d) => d !== "date");
-const temperatureTotals = data.reduce((allTotals, currentDate) => {
-  const totalTemperature = keys.reduce((dailyTotal, k) => {
-    dailyTotal += (currentDate as any)[k];
-    return dailyTotal;
-  }, 0);
-  allTotals.push(totalTemperature);
-  return allTotals;
-}, [] as number[]);
-
-const formatDate = (date: string) => moment(date).format("YYYY-MM-DD");
-
-// accessors
-const getDate = (d: any) => d.date;
-
-// scales
-const temperatureScale = scaleLinear<number>({
-  domain: [0, Math.max(...temperatureTotals)],
-  nice: true,
-});
-const dateScale = scaleBand<string>({
-  domain: data.map(getDate),
-  padding: 0.2,
-});
-const colorScale = scaleOrdinal({
-  domain: keys,
-  range: ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"],
-});
 
 let tooltipTimeout: number;
 const HorizontalBarChart = withTooltip<BarStackHorizontalProps, TooltipData>(
@@ -85,12 +49,38 @@ const HorizontalBarChart = withTooltip<BarStackHorizontalProps, TooltipData>(
     hideTooltip,
     showTooltip,
     noAxis,
+    data,
   }: BarStackHorizontalProps & WithTooltipProvidedProps<TooltipData>) => {
     // bounds
     margin.left = noAxis ? 2 : 160;
     const xMax = width - margin.left - margin.right;
     const yMax = height - margin.top - margin.bottom;
+    const keys = data[0] ? Object.keys(data[0]).filter((d) => d !== "date") : [];
+    const temperatureTotals = data.reduce((allTotals, currentDate) => {
+      const totalTemperature = keys.reduce((dailyTotal, k) => {
+        dailyTotal += (currentDate as any)[k];
+        return dailyTotal;
+      }, 0);
+      allTotals.push(totalTemperature);
+      return allTotals;
+    }, [] as number[]);
 
+    // accessors
+    const getDate = (d: any) => d.date;
+
+    // scales
+    const temperatureScale = scaleLinear<number>({
+      domain: [0, Math.max(...temperatureTotals)],
+      nice: true,
+    });
+    const dateScale = scaleBand<string>({
+      domain: data.map(getDate),
+      padding: 0.2,
+    });
+    const colorScale = scaleOrdinal({
+      domain: keys,
+      range: ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"],
+    });
     temperatureScale.rangeRound([0, xMax]);
     dateScale.rangeRound([height, 0]);
 
@@ -109,7 +99,6 @@ const HorizontalBarChart = withTooltip<BarStackHorizontalProps, TooltipData>(
             >
               {(barStacks) =>
                 barStacks.map((barStack) => {
-                  //console.log(barStack);
                   return barStack.bars.map((bar) => (
                     <rect
                       key={`barstack-horizontal-${barStack.index}-${bar.index}`}
@@ -139,7 +128,6 @@ const HorizontalBarChart = withTooltip<BarStackHorizontalProps, TooltipData>(
             <AxisLeft
               hideTicks
               scale={dateScale}
-              tickFormat={formatDate}
               stroke={"#ccc"}
               ticksComponent={(props) => {
                 return (
@@ -172,9 +160,9 @@ const HorizontalBarChart = withTooltip<BarStackHorizontalProps, TooltipData>(
             <div style={{ color: colorScale(tooltipData.key) }}>
               <strong>{tooltipData.key}</strong>
             </div>
-            <div>{tooltipData.bar.data[tooltipData.key]}℉</div>
+            <div>{tooltipData.bar.data[tooltipData.key]}</div>
             <div>
-              <small>{formatDate(getDate(tooltipData.bar.data))}</small>
+              <small>{getDate(tooltipData.bar.data)}</small>
             </div>
           </Tooltip>
         )}

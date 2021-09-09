@@ -15,9 +15,6 @@ import {
   NotParticipantsByOrganizationDocument,
   NotParticipantsByOrganizationQuery,
   NotParticipantsByOrganizationQueryVariables,
-  ParticipantsByClassDocument,
-  ParticipantsByClassQuery,
-  ParticipantsByClassQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -38,6 +35,7 @@ import {
   UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
+  EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
   EntityQueryAssignmentsSummaryResult,
@@ -48,18 +46,15 @@ import {
   EntityStudentAchievementReportItem,
   // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
+  EntityStudentUsageMaterialReportRequest,
+  EntityStudentUsageMaterialReportResponse,
+  EntityStudentUsageMaterialViewCountReportResponse,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
-import {
-  formatTimeToMonDay,
-  getClassesAssignmentsUnattendedWithStudentName,
-  getTimeOffSecond,
-  IClassesAssignmentsUnattendedWithStudentNameItem,
-  ModelReport,
-} from "../models/ModelReports";
+import { formatTimeToMonDay, getTimeOffSecond, ModelReport } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
 import {
@@ -92,12 +87,14 @@ interface IreportState {
     organization_id: string;
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
   };
+  studentUsageReport: [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse];
   teachingLoadOnload: TeachingLoadResponse;
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
   assignmentSummary: EntityQueryAssignmentsSummaryResult;
   summaryReportOptions: IResultLearningSummary;
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   classesAssignments: EntityClassesAssignmentsView[];
+  overview: EntityClassesAssignmentOverView[];
 }
 interface RootState {
   report: IreportState;
@@ -130,6 +127,7 @@ const initialState: IreportState = {
     teacherList: [],
     categories: [],
   },
+  studentUsageReport: [{ class_usage_list: [] }, { content_usage_list: [] }],
   stuReportMockOptions: {
     teacherList: [],
     classList: [],
@@ -179,6 +177,7 @@ const initialState: IreportState = {
   },
   classesAssignmentsUnattend: [],
   classesAssignments: [],
+  overview: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -242,6 +241,13 @@ export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
       },
     }),
   ]);
+});
+
+export const getStudentUsageMaterial = createAsyncThunk<
+  [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse],
+  EntityStudentUsageMaterialReportRequest
+>("getStudentUsageMaterial", async (params) => {
+  return await Promise.all([api.reports.getStudentUsageMaterialReport(params), api.reports.getStudentUsageMaterialViewCountReport(params)]);
 });
 
 export const getClassList = createAsyncThunk<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>(
@@ -1143,19 +1149,8 @@ export const getAfterClassFilter = createAsyncThunk<
   IParamsGetAfterClassFilter & LoadingMetaPayload,
   { state: RootState }
 >("getAfterClassFilter", async (query, { dispatch }) => {
-  const {
-    summary_type,
-    filter_type,
-    school_id,
-    class_id,
-    teacher_id,
-    student_id,
-    week_start,
-    week_end,
-    isOrg,
-    isSchool,
-    isTeacher,
-  } = query;
+  const { summary_type, filter_type, school_id, class_id, teacher_id, student_id, week_start, week_end, isOrg, isSchool, isTeacher } =
+    query;
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
   let students: ArrProps[] = [];
@@ -1414,27 +1409,31 @@ export const getClassListByschool = createAsyncThunk<GetClassListResponse, GetCl
   }
 );
 
-type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0];
-export const getClassesAssignments = createAsyncThunk<EntityClassesAssignmentsView[], GetClassesAssignmentsPayload & LoadingMetaPayload>(
+type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0] & {
+  type: string;
+};
+interface IGetClassesAssignmentsResponse {
+  overview: EntityClassesAssignmentOverView[];
+  classAssignments: EntityClassesAssignmentsView[];
+}
+export const getClassesAssignments = createAsyncThunk<IGetClassesAssignmentsResponse, GetClassesAssignmentsPayload & LoadingMetaPayload>(
   "getClassesAssignments",
   async ({ metaLoading, ...query }) => {
-    return await api.reports.getClassesAssignments(query);
+    const { class_ids, durations } = query;
+    const [overview, classAssignments] = await Promise.all([
+      api.reports.getClassesAssignmentsOverview({ class_ids, durations }),
+      api.reports.getClassesAssignments(query),
+    ]);
+    return { overview, classAssignments };
   }
 );
 
 type GetClassesAssignmentsUnattendedPayloadQuery = Parameters<typeof api.reports.getClassesAssignmentsUnattended>[1];
 export const getClassesAssignmentsUnattended = createAsyncThunk<
-  IClassesAssignmentsUnattendedWithStudentNameItem[],
+  EntityClassesAssignmentsUnattendedStudentsView[],
   { class_id: string; query: GetClassesAssignmentsUnattendedPayloadQuery } & LoadingMetaPayload
->("getClassesAssignmentsUnattended", async ({ metaLoading, class_id = "b06119d4-764f-4613-bc4c-ed0a126f5423", query }) => {
-  const data = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
-    query: ParticipantsByClassDocument,
-    variables: { class_id: "b06119d4-764f-4613-bc4c-ed0a126f5423" },
-  });
-  const studentList = data.data.class?.students as Pick<User, "user_id" | "user_name">[];
-
-  const classesAssignmentsUnattended = await api.reports.getClassesAssignmentsUnattended(class_id, query);
-  return getClassesAssignmentsUnattendedWithStudentName(classesAssignmentsUnattended, studentList);
+>("getClassesAssignmentsUnattended", async ({ metaLoading, class_id, query }) => {
+  return await api.reports.getClassesAssignmentsUnattended(class_id, query);
 });
 
 const { actions, reducer } = createSlice({
@@ -1472,13 +1471,13 @@ const { actions, reducer } = createSlice({
     },
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
-      state.reportMockOptions.classList = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching
-        : undefined) as Pick<Class, "class_id" | "class_name">[];
+      state.reportMockOptions.classList = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching : undefined
+      ) as Pick<Class, "class_id" | "class_name">[];
 
-      state.reportMockOptions.class_id = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching[0]?.class_id
-        : undefined) as string;
+      state.reportMockOptions.class_id = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching[0]?.class_id : undefined
+      ) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1557,6 +1556,11 @@ const { actions, reducer } = createSlice({
       state.reportMockOptions = cloneDeep(initialState.reportMockOptions);
     },
 
+    [getStudentUsageMaterial.fulfilled.type]: (state, { payload }) => {
+      console.log("payload=", payload);
+      state.studentUsageReport = payload;
+    },
+    [getStudentUsageMaterial.rejected.type]: (state) => {},
     [getTeacherListByOrgId.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeacherListByOrgId>>) => {
       const { teacherList } = payload;
       state.reportMockOptions.teacherList = teacherList;
@@ -1566,7 +1570,6 @@ const { actions, reducer } = createSlice({
       state.reportMockOptions.teacherList = cloneDeep(initialState.reportMockOptions.teacherList);
       state.reportMockOptions.teacher_id = cloneDeep(initialState.reportMockOptions.teacher_id);
     },
-
     [reportCategoriesOnload.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof reportCategoriesOnload>>) => {
       state.categoriesPage = payload;
     },
@@ -1668,7 +1671,8 @@ const { actions, reducer } = createSlice({
       state.classesAssignmentsUnattend = payload;
     },
     [getClassesAssignments.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {
-      state.classesAssignments = payload;
+      state.classesAssignments = payload.classAssignments;
+      state.overview = payload.overview;
     },
   },
 });

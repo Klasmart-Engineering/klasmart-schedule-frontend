@@ -83,13 +83,15 @@ function MutiSelect({ limitTags, options: allOptions, label, disabled, placehold
 
   const optionsOnlyAll = allOptions.slice(0, 1);
 
+  /*
   React.useEffect(() => {
     setState({
       ...state,
       value: [],
       allSelected: false,
     });
-  }, [state]);
+  }, allOptions);
+  */
 
   return (
     <Box className={classes.multipleSelectBox}>
