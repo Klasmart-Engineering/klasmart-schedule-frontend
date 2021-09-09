@@ -91,22 +91,20 @@ export interface ILatestThreeMonths {
 
 export function formatTime(time: any) {
   var date = new Date(time);
-  return date.getTime() / 1000;
+  return Math.floor(date.getTime() / 1000);
 }
 
 export default function () {
   const css = useStyles();
   const currentDate = new Date();
+  const [classIds, setClassIds] = useState<string[]>([]);
   const { classesAssignments } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  console.log("classesAssignments =", classesAssignments);
 
   const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
-  // const [latestThreeMonths, setLatestThreeMonths] = useState<ILatestThreeMonths>({
-  //   latestThreeMonthsDate: [],
-  //   latestThreeMonthsDots: []
-  // })
+
   const latestThreeMonths = getTimeDots();
-  console.log("latestThreeMonths=", latestThreeMonths);
 
   const [state, setState] = React.useState({
     activeTab: 0,
@@ -144,15 +142,16 @@ export default function () {
       getClassesAssignments({
         metaLoading: true,
         page_size: pageSize,
-        class_ids: [],
+        class_ids: classIds ?? [],
         durations: [
           `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
           `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-          `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${(currentDate as any) / 1000}`,
+          `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((currentDate as any) / 1000)}`,
         ],
       })
     );
-  }, [dispatch, pageSize, currentDate, latestThreeMonths.latestThreeMonthsDots]);
+    console.log("classesAssignments111===", classesAssignments);
+  }, [dispatch, pageSize, currentDate, latestThreeMonths.latestThreeMonthsDots, classIds, classesAssignments]);
 
   return (
     <div>
@@ -171,7 +170,7 @@ export default function () {
         <div>
           <ClassFilter
             onChange={(v) => {
-              console.log(v);
+              setClassIds(v);
             }}
             onClose={() => {
               console.log("close");

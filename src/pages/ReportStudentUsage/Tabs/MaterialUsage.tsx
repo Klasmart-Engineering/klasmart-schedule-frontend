@@ -248,7 +248,7 @@ export default function () {
           count={100}
           rowsPerPage={10}
           page={1}
-          onPageChange={() => {}}
+          onChangePage={() => {}}
           ActionsComponent={TablePaginationActions}
         />
       </Grid>
