@@ -105,19 +105,19 @@ export const addAllInSearchLOListOption = (linkedMockOptions: LinkedMockOptions)
 };
 // 搜索outcomes，如果用户选择的是all,调用api传""(传空)
 // transferSearchParams 是将用户选择的数据转换为可以调用api的参数
-export const transferSearchParams=(props:{program?:string,category?:string,age_ids?:string[], grade_ids?:string[],})=> {
-  const{ program, category,age_ids, grade_ids} = props;
+export const transferSearchParams=(props:{program?:string,category?:string,})=> {
+  const{ program, category} = props;
  const category_ids = category?.split("/")[0];
  const sub_category_ids = category?.split("/")[1];
  const program_ids = program?.split("/")[0];
  const subject_ids = program?.split("/")[1];
+ if(!category_ids || !sub_category_ids ||!program_ids||!subject_ids) return{}
  return{
-   program_ids: program_ids === "all" ? "" : program_ids,
-   subject_ids: subject_ids === "all" ? "" : subject_ids,
-   category_ids: category_ids === "all" ? "" : category_ids,
-   sub_category_ids: sub_category_ids === "all" ? "" : sub_category_ids,
-   age_ids:age_ids?.join(","),
-   grade_ids:grade_ids?.join(","),
+   program_ids: program_ids === "all" ? [] : [program_ids],
+   subject_ids: subject_ids === "all" ? [] : subject_ids?.split(","),
+   category_ids: category_ids === "all" ? [] : [category_ids],
+   sub_category_ids: sub_category_ids === "all" ? [] : sub_category_ids?.split(","),
+   
  }
 
 }
