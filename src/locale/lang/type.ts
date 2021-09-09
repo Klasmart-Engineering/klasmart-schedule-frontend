@@ -1291,7 +1291,12 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_study"; description: "Study"; values: undefined }
   | { id: "report_student_usage_home_fun"; description: "Home Fun"; values: undefined }
   | { id: "report_filter_content"; description: "Content"; values: undefined }
-  | { id: "content_total_viewed"; description: "Content total viewed (latest 3 months):"; values: undefined };
+  | { id: "content_total_viewed"; description: "Content total viewed (latest 3 months):"; values: undefined }
+  | { id: "report_student_usage_h5p_viewed"; description: "No of H5P viewed"; values: undefined }
+  | { id: "report_student_usage_video_viewed"; description: "Video viewed"; values: undefined }
+  | { id: "report_student_usage_images_viewed"; description: "Images viewed"; values: undefined }
+  | { id: "report_student_usage_document_viewed"; description: "Document viewed"; values: undefined }
+  | { id: "report_student_usage_audio_listened"; description: "Audio listened"; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

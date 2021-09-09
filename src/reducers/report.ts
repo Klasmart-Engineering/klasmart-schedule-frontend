@@ -45,6 +45,9 @@ import {
   EntityStudentAchievementReportItem,
   // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
+  EntityStudentUsageMaterialReportRequest,
+  EntityStudentUsageMaterialReportResponse,
+  EntityStudentUsageMaterialViewCountReportResponse,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
@@ -83,6 +86,7 @@ interface IreportState {
     organization_id: string;
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
   };
+  studentUsageReport: [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse];
   teachingLoadOnload: TeachingLoadResponse;
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
   assignmentSummary: EntityQueryAssignmentsSummaryResult;
@@ -121,6 +125,7 @@ const initialState: IreportState = {
     teacherList: [],
     categories: [],
   },
+  studentUsageReport: [{ class_usage_list: [] }, { content_usage_list: [] }],
   stuReportMockOptions: {
     teacherList: [],
     classList: [],
@@ -233,6 +238,13 @@ export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
       },
     }),
   ]);
+});
+
+export const getStudentUsageMaterial = createAsyncThunk<
+  [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse],
+  EntityStudentUsageMaterialReportRequest
+>("getStudentUsageMaterial", async (params) => {
+  return await Promise.all([api.reports.getStudentUsageMaterialReport(params), api.reports.getStudentUsageMaterialViewCountReport(params)]);
 });
 
 export const getClassList = createAsyncThunk<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>(
@@ -1541,6 +1553,11 @@ const { actions, reducer } = createSlice({
       state.reportMockOptions = cloneDeep(initialState.reportMockOptions);
     },
 
+    [getStudentUsageMaterial.fulfilled.type]: (state, { payload }) => {
+      console.log("payload=", payload);
+      state.studentUsageReport = payload;
+    },
+    [getStudentUsageMaterial.rejected.type]: (state) => {},
     [getTeacherListByOrgId.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeacherListByOrgId>>) => {
       const { teacherList } = payload;
       state.reportMockOptions.teacherList = teacherList;
@@ -1550,7 +1567,6 @@ const { actions, reducer } = createSlice({
       state.reportMockOptions.teacherList = cloneDeep(initialState.reportMockOptions.teacherList);
       state.reportMockOptions.teacher_id = cloneDeep(initialState.reportMockOptions.teacher_id);
     },
-
     [reportCategoriesOnload.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof reportCategoriesOnload>>) => {
       state.categoriesPage = payload;
     },

@@ -1,9 +1,8 @@
-import React from "react";
-import { makeStyles, Theme, createStyles, TextField, Checkbox, Grid } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import { Checkbox, createStyles, Grid, makeStyles, TextField, Theme } from "@material-ui/core";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import { useState } from "react";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import { Autocomplete } from "@material-ui/lab";
+import React, { useState } from "react";
 import { d } from "../../../locale/LocaleManager";
 // eslint-disable-next-line
 const useStyles = makeStyles((theme: Theme) =>
