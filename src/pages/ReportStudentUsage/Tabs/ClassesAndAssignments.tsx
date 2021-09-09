@@ -99,21 +99,14 @@ export default function () {
   const currentDate = new Date();
   const [classIds, setClassIds] = useState<string[]>([]);
   const { classesAssignments } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  console.log("classesAssignments =", classesAssignments);
-
-  const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
 
   const latestThreeMonths = getTimeDots();
 
-  const getPageSize = (pageSize: number) => {
-    setPageSize(pageSize);
-  };
   useEffect(() => {
     dispatch(
       getClassesAssignments({
         metaLoading: true,
-        page_size: pageSize,
         class_ids: classIds ?? [],
         durations: [
           `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
@@ -122,8 +115,8 @@ export default function () {
         ],
       })
     );
-    console.log("classesAssignments111===", classesAssignments);
-  }, [dispatch, pageSize, currentDate, latestThreeMonths.latestThreeMonthsDots, classIds, classesAssignments]);
+    // eslint-disable-next-line
+  }, [dispatch, classIds]);
 
   return (
     <div>
@@ -186,7 +179,7 @@ export default function () {
         <div>
           <ClassFilter
             onChange={(v) => {
-              setClassIds(v);
+              setClassIds(v.map((item) => item.value));
             }}
             onClose={() => {
               console.log("close");
@@ -194,7 +187,7 @@ export default function () {
           />
         </div>
       </div>
-      <ClassesAndAssignmentsTable classesAssignments={classesAssignments} latestThreeMonths={latestThreeMonths} getPageSize={getPageSize} />
+      <ClassesAndAssignmentsTable classesAssignments={classesAssignments} latestThreeMonths={latestThreeMonths} />
     </div>
   );
 }

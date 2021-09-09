@@ -15,9 +15,6 @@ import {
   NotParticipantsByOrganizationDocument,
   NotParticipantsByOrganizationQuery,
   NotParticipantsByOrganizationQueryVariables,
-  ParticipantsByClassDocument,
-  ParticipantsByClassQuery,
-  ParticipantsByClassQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -53,13 +50,7 @@ import {
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
-import {
-  formatTimeToMonDay,
-  getClassesAssignmentsUnattendedWithStudentName,
-  getTimeOffSecond,
-  IClassesAssignmentsUnattendedWithStudentNameItem,
-  ModelReport,
-} from "../models/ModelReports";
+import { formatTimeToMonDay, getTimeOffSecond, ModelReport } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
 import {
@@ -1424,17 +1415,10 @@ export const getClassesAssignments = createAsyncThunk<EntityClassesAssignmentsVi
 
 type GetClassesAssignmentsUnattendedPayloadQuery = Parameters<typeof api.reports.getClassesAssignmentsUnattended>[1];
 export const getClassesAssignmentsUnattended = createAsyncThunk<
-  IClassesAssignmentsUnattendedWithStudentNameItem[],
+  EntityClassesAssignmentsUnattendedStudentsView[],
   { class_id: string; query: GetClassesAssignmentsUnattendedPayloadQuery } & LoadingMetaPayload
->("getClassesAssignmentsUnattended", async ({ metaLoading, class_id = "b06119d4-764f-4613-bc4c-ed0a126f5423", query }) => {
-  const data = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
-    query: ParticipantsByClassDocument,
-    variables: { class_id: "b06119d4-764f-4613-bc4c-ed0a126f5423" },
-  });
-  const studentList = data.data.class?.students as Pick<User, "user_id" | "user_name">[];
-
-  const classesAssignmentsUnattended = await api.reports.getClassesAssignmentsUnattended(class_id, query);
-  return getClassesAssignmentsUnattendedWithStudentName(classesAssignmentsUnattended, studentList);
+>("getClassesAssignmentsUnattended", async ({ metaLoading, class_id, query }) => {
+  return await api.reports.getClassesAssignmentsUnattended(class_id, query);
 });
 
 const { actions, reducer } = createSlice({

@@ -19,7 +19,6 @@ import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { t } from "../../../locale/LocaleManager";
-import attendList from "../../../mocks/attendList.json";
 import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
 import { formatTime } from "../Tabs/ClassesAndAssignments";
@@ -68,34 +67,52 @@ interface IRowProps {
 //   })
 // }
 
-function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
+const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILatestThreeMonths; idx: number }) => {
   const dispatch = useDispatch();
   const { row, latestThreeMonths } = props;
+  const { class_id } = row || {};
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(0);
-  const { classesAssignmentsUnattend } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  console.log(classesAssignmentsUnattend);
+  const { classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<RootState, RootState["report"]>(
+    (state) => state.report
+  );
+  const classesAssignmentsUnattend =
+    classesAssignmentsUnattendRow.length > 0
+      ? classesAssignmentsUnattendRow
+      : [
+          {
+            schedule: {
+              schedule_id: "2333",
+              schedule_name: "2222",
+              type: "22233333",
+            },
+            student_id: "222222222",
+            student_name: "name",
+            time: 1625068800,
+          },
+        ];
 
   // eslint-disable-next-line
   const [childrenRowsPerPage, setChildrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
     setOpen(!open);
-    dispatch(
-      getClassesAssignmentsUnattended({
-        metaLoading: true,
-        class_id: "",
-        query: {
-          page: childrenPage,
-          page_size: childrenRowsPerPage,
-          durations: [
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${(new Date() as any) / 1000}`,
-          ],
-        },
-      })
-    );
-  }, [childrenPage, childrenRowsPerPage, dispatch, latestThreeMonths.latestThreeMonthsDots, open]);
+    class_id &&
+      dispatch(
+        getClassesAssignmentsUnattended({
+          metaLoading: true,
+          class_id,
+          query: {
+            // page: childrenPage,
+            // page_size: childrenRowsPerPage,
+            durations: [
+              `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+              `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+              `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((new Date() as any) / 1000)}`,
+            ],
+          },
+        })
+      );
+  }, [class_id, dispatch, latestThreeMonths.latestThreeMonthsDots, open]);
 
   const onFirstPage = () => {
     setChildrenPage(0);
@@ -107,26 +124,26 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
     setChildrenPage(childrenPage - 1);
   };
   const onLastPage = () => {
-    setChildrenPage(Math.floor(row.unAttendedList.length / childrenRowsPerPage));
+    // setChildrenPage(Math.floor(row.unAttendedList.length / childrenRowsPerPage));
   };
 
   return (
     <React.Fragment>
       <TableRow style={{ height: "64px" }}>
         <TableCell align="center" component="th" scope="row" style={{ width: "250px" }}>
-          {row.className}
+          {row?.class_id}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row.total}
+          {row?.total}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row.firstMonth}
+          {row?.durations_ratio?.[0].ratio}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row.secondMonth}
+          {row?.durations_ratio?.[1].ratio}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row.thirdMound}
+          {row?.durations_ratio?.[2].ratio}
         </TableCell>
         <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={handleClick}>
           {t("report_student_usage_unattendedStudents")}
@@ -153,16 +170,19 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
                 </TableHead>
                 <TableBody>
                   {(childrenRowsPerPage > 0
-                    ? row.unAttendedList.slice(childrenPage * childrenRowsPerPage, childrenPage * childrenRowsPerPage + childrenRowsPerPage)
-                    : row.unAttendedList
-                  ).map((item, idx) => (
-                    <TableRow key={idx} style={{ height: "56px" }}>
+                    ? classesAssignmentsUnattend.slice(
+                        childrenPage * childrenRowsPerPage,
+                        childrenPage * childrenRowsPerPage + childrenRowsPerPage
+                      )
+                    : classesAssignmentsUnattend
+                  ).map((item) => (
+                    <TableRow key={item.student_id} style={{ height: "56px" }}>
                       <TableCell align="center" component="th" scope="row">
-                        {item.studentName}
+                        {item.student_name}
                       </TableCell>
-                      <TableCell align="center">{item.lessionMission}</TableCell>
-                      <TableCell align="center">{item.lessonDate}</TableCell>
-                      <TableCell align="center">{item.lessonTime}</TableCell>
+                      <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
+                      <TableCell align="center">{item.time}</TableCell>
+                      <TableCell align="center">{item.time}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -171,7 +191,8 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
                     <Pagination
                       page={childrenPage}
                       rowsPerPage={childrenRowsPerPage}
-                      count={row.unAttendedList.length}
+                      count={1}
+                      // count={row.unAttendedList.length}
                       onAddPage={onAddPage}
                       onFirstPage={onFirstPage}
                       onLastPage={onLastPage}
@@ -186,7 +207,7 @@ function Row(props: { row: IRowProps; latestThreeMonths: ILatestThreeMonths }) {
       </TableRow>
     </React.Fragment>
   );
-}
+};
 
 const numberToEnglish = (month: number) => {
   const Months = [
@@ -214,28 +235,25 @@ interface ILatestThreeMonths {
 interface IClassesAndAssignmentsTable {
   classesAssignments: EntityClassesAssignmentsView[];
   latestThreeMonths: ILatestThreeMonths;
-  getPageSize: (pageSize: number) => void;
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
   const { classesAssignments, latestThreeMonths } = props;
-  console.log(classesAssignments);
-
   const [page, setPage] = React.useState(0);
-  // eslint-disable-next-line
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage] = React.useState<number>(10);
 
   const onFirstPage = () => {
     setPage(0);
   };
   const onAddPage = () => {
     setPage(page + 1);
+    console.log("page:", page);
   };
   const onSubPage = () => {
     setPage(page - 1);
   };
   const onLastPage = () => {
-    setPage(Math.floor(attendList.length / rowsPerPage));
+    setPage(Math.floor(classesAssignments.length / rowsPerPage));
   };
 
   return (
@@ -291,16 +309,18 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
             </TableRow>
           </TableHead>
           <TableBody>
-            {(rowsPerPage > 0 ? attendList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : attendList).map((row) => (
-              <Row key={row.className} row={row} latestThreeMonths={latestThreeMonths} />
-            ))}
+            {(rowsPerPage > 0 ? classesAssignments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : classesAssignments).map(
+              (row: EntityClassesAssignmentsView, idx) => (
+                <Row key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
+              )
+            )}
           </TableBody>
           <TableFooter>
             <TableCell colSpan={6}>
               <Pagination
                 page={page}
                 rowsPerPage={rowsPerPage}
-                count={attendList.length}
+                count={classesAssignments.length}
                 onAddPage={onAddPage}
                 onFirstPage={onFirstPage}
                 onLastPage={onLastPage}
