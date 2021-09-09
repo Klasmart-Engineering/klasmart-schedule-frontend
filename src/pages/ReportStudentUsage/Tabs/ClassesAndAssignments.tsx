@@ -2,6 +2,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import PercentCircle from "../../../components/Chart/PercentCircle";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
@@ -132,21 +133,51 @@ export default function () {
             <div className={css.textStyle}>Live Scheduled</div>
             <div className={css.number}>4000</div>
           </div>
-          <div className={css.right}>饼图</div>
+          <div className={css.right}>
+            <PercentCircle
+              width={80}
+              height={80}
+              total={9600}
+              value={4000}
+              fontSize={22}
+              colors={["#fff", "#E4E4E4"]}
+              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            />
+          </div>
         </div>
         <div className={css.styles}>
           <div className={css.left}>
             <div className={css.textStyle}>Study</div>
             <div className={css.number}>4000</div>
           </div>
-          <div className={css.right}>饼图</div>
+          <div className={css.right}>
+            <PercentCircle
+              width={80}
+              height={80}
+              total={9600}
+              value={4000}
+              fontSize={22}
+              colors={["#0E78D5", "#E4E4E4"]}
+              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            />
+          </div>
         </div>
         <div className={css.styles}>
           <div className={css.left}>
             <div className={css.textStyle}>Home Fun</div>
             <div className={css.number}>4000</div>
           </div>
-          <div className={css.right}>饼图</div>
+          <div className={css.right}>
+            <PercentCircle
+              width={80}
+              height={80}
+              total={9600}
+              value={4000}
+              fontSize={22}
+              colors={["#0E78D5", "#E4E4E4"]}
+              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            />
+          </div>
         </div>
       </div>
 
