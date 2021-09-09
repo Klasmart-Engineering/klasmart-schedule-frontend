@@ -130,6 +130,7 @@ export function ReportDashboard() {
     PermissionType.view_my_organizations_reports_612,
     PermissionType.view_my_school_reports_611,
     PermissionType.learning_summary_report_653,
+    PermissionType.student_usage_report_657,
   ]);
   const hasPerm =
     perm.view_reports_610 ||
@@ -137,6 +138,7 @@ export function ReportDashboard() {
     perm.view_my_organizations_reports_612 ||
     (perm.view_my_school_reports_611 as boolean);
   const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
+  const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
   const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
   const reportList: ReportItem[] = [
     {
@@ -172,7 +174,7 @@ export function ReportDashboard() {
       url: ReportStudentUsage.routeBasePath,
       icon: <ShowChart />,
       bgColor: "#DCCDFF",
-      hasPerm: hasSummaryPerm,
+      hasPerm: hasStudentUsagePermission,
     },
   ];
   const handleClick = useMemo(

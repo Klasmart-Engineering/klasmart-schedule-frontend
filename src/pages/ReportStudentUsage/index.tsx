@@ -100,4 +100,4 @@ export default function ReportStudentUsage() {
   );
 }
 
-ReportStudentUsage.routeBasePath = "/report/student-usage/:tabIndex";
+ReportStudentUsage.routeBasePath = "/report/student-usage/";
