@@ -1699,7 +1699,7 @@ function EditBox(props: CalendarStateProps) {
   });
 
   const filterGropuDatas: LearningComesFilterQuery = {
-    programs: Array.from(new Set((condition.program_ids ?? []).concat([scheduleList.program_id]))),
+    programs: Array.from(new Set((condition.program_ids ?? []).concat(scheduleList.program_id ? [scheduleList.program_id] : []))),
     subjects: Array.from(new Set((condition.subject_ids ?? []).concat(subjectIds))),
     categorys: condition.category_ids ?? [],
     subs: condition.sub_category_ids ?? [],
