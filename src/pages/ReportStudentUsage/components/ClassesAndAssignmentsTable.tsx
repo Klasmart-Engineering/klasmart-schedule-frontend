@@ -92,8 +92,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
           },
         ];
 
-  // eslint-disable-next-line
-  const [childrenRowsPerPage, setChildrenRowsPerPage] = useState(10);
+  const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
     setOpen(!open);
     class_id &&
@@ -240,8 +239,7 @@ interface IClassesAndAssignmentsTable {
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
   const { classesAssignments, latestThreeMonths } = props;
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage] = React.useState<number>(10);
-
+  const rowsPerPage = 10;
   const onFirstPage = () => {
     setPage(0);
   };
