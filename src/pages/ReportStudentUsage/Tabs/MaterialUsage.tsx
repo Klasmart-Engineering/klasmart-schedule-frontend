@@ -105,6 +105,7 @@ const useStyles = makeStyles(() =>
 
 export default function () {
   const style = useStyles();
+  // eslint-disable-next-line
   const [value, setValue] = useState({
     contentVal: "",
   });
@@ -127,9 +128,6 @@ export default function () {
     // eslint-disable-next-line
   }, []);
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setValue({ ...value, contentVal: event.target.value as string });
-  };
   const renderLineFooterBlock = (content: string, count: number, color: string) => {
     return (
       <div className={style.dataBlock}>
@@ -215,10 +213,11 @@ export default function () {
           {count}
         </span>
         <SelectBtn
-          value={value.contentVal}
           label={d("Content").t("report_filter_content")}
-          handleChange={handleChange}
           data={data.contentData}
+          onChange={(v) => {
+            console.log(v);
+          }}
         />
       </div>
       {renderBarChart()}

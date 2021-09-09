@@ -97,6 +97,7 @@ export function formatTime(time: any) {
 export default function () {
   const css = useStyles();
   const currentDate = new Date();
+  // eslint-disable-next-line
   const [classIds, setClassIds] = useState<string[]>([]);
   const { classesAssignments } = useSelector<RootState, RootState["report"]>((state) => state.report);
   console.log("classesAssignments =", classesAssignments);
@@ -186,7 +187,7 @@ export default function () {
         <div>
           <ClassFilter
             onChange={(v) => {
-              setClassIds(v);
+              v.map((item) => item.value);
             }}
             onClose={() => {
               console.log("close");
