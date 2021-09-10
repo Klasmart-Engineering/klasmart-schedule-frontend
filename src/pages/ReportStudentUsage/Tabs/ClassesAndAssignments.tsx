@@ -111,24 +111,26 @@ export default function () {
   const [state, setState] = React.useState({
     activeTab: 0,
   });
+
   const topChatData = React.useMemo(() => {
+    const total = overview.reduce((prev: number, current) => prev + (current?.count || 0), 0);
     return [
       {
         title: t("report_student_usage_live_scheduled"),
         value: overview[0]?.count || 0,
-        total: 200,
+        total,
         id: "live",
       },
       {
         title: t("report_student_usage_study"),
-        value: 100,
-        total: 200,
+        value: overview[1]?.count || 0,
+        total,
         id: "study",
       },
       {
         title: t("report_student_usage_home_fun"),
-        value: 100,
-        total: 200,
+        value: overview[2]?.count || 0,
+        total,
         id: "home_fun_study",
       },
     ];
