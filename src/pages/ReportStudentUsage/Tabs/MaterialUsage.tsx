@@ -3,16 +3,17 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import { ParentSize } from "@visx/responsive";
+import clsx from "clsx";
 import moment, { Moment } from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { EntityStudentUsageMaterialReportResponse } from "../../../api/api.auto";
-import HorizontalBarChart from "../../../components/Chart/HorizontalBarChart";
+import { Class } from "../../../api/api-ko-schema.auto";
+import { EntityContentUsage } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import { getStudentUsageMaterial } from "../../../reducers/report";
 import ClassFilter, { MutiSelect } from "../components/ClassFilter";
+import MaterialUsageTooltip from "../components/MaterialUsageTooltip";
 const useStyles = makeStyles(() =>
   createStyles({
     material: {
@@ -36,9 +37,15 @@ const useStyles = makeStyles(() =>
       },
     },
     tableContainer: {
-      maxHeight: "380px",
-      height: "380px",
       borderBottom: "1px solid #e9e9e9",
+      "&:nth-child(1) .datumContainer": {
+        paddingTop: "30px",
+      },
+      "&:last-child": {
+        "& .datumContainer": {
+          paddingBottom: "30px",
+        },
+      },
     },
     dataBlock: {
       display: "flex",
@@ -69,10 +76,11 @@ const useStyles = makeStyles(() =>
     },
     viewedAmount: {},
     tableItem: {
-      flex: 1,
-      height: "inherit",
-      display: "flex",
-      flexDirection: "column",
+      color: "#999",
+      "&:hover": {
+        color: "#000",
+        fontWeight: "bold",
+      },
     },
     date: {
       flex: 1,
@@ -88,6 +96,35 @@ const useStyles = makeStyles(() =>
       color: "#999",
     },
     dateList: {},
+    tableIItemLabel: {
+      fontSize: 16,
+      display: "flex",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      width: "10%",
+    },
+    tableData: {
+      position: "relative",
+      width: "90%",
+    },
+    tableDatum: {
+      height: "28px",
+      transition: "ease 300ms",
+    },
+    datumContainer: {
+      flex: 1,
+      display: "flex",
+      height: "28px",
+      marginLeft: "10px",
+      padding: "20px 0",
+      borderLeft: "1px solid #999",
+      position: "relative",
+    },
+    datumWrapper: {
+      flex: 1,
+      display: "flex",
+      position: "absolute",
+    },
     pagination: {
       border: "none",
       "& .MuiTablePagination-toolbar": {
@@ -146,51 +183,59 @@ const computeTimestamp = (month: Moment, now?: boolean): string => {
   return month.set("D", 1).valueOf() + "-" + month.clone().add(1, "M").set("D", 1).valueOf();
 };
 
-const transferData = (
-  data: EntityStudentUsageMaterialReportResponse,
-  classList: { label: string; value: string }[]
-): Record<string, string>[][] => {
-  const result: Record<string, string>[][] = [[], [], []];
-  const dates: string[] = [];
-  const originData: { id: string; blockChart: Map<string, Array<any>> }[] = [];
-  data.class_usage_list?.forEach((item) => {
-    const obj = { id: item.id as string, blockChart: new Map() };
-    originData.push(obj);
-    item.content_usage_list?.forEach((item) => {
-      dates.push(item.time_range as string);
-      obj.blockChart.set(item.time_range, [...(obj.blockChart.get(item.time_range) || []), item]);
-    });
-  });
-  dates.forEach((time, i) => {
-    originData.forEach((datum) => {
-      const obj: Record<string, string> = {};
-      datum.blockChart.get(time)?.forEach((item) => {
-        obj[viewType[item.type]] = item.count;
-      });
-      result[i].push({ date: classList.find((item) => item.value === datum.id)?.label as string, ...obj });
-    });
-  });
-  return result;
-};
-
 const momentRef = moment().locale("en");
 export default function () {
   const style = useStyles();
-  const [contentTypeList, setContentTypeList] = useState<string[]>(["All"]);
-  const contentTypeListRef = useRef(contentTypeList);
-  const [timeRangeList] = useState<Moment[]>([momentRef.clone().subtract(2, "M"), momentRef.clone().subtract(1, "M"), momentRef]);
-  const [classIdList, setClassIdList] = useState<{ label: string; value: string }[]>([]);
-  const classIdListRef = useRef(classIdList);
-  const { studentUsageReport } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const dispatch = useDispatch();
-  const [page, setPage] = useState(0);
-  const pageRef = useRef(page);
+  const pageRef = useRef(0);
+  const [contentTypeList, setContentTypeList] = useState<string[]>(["All"]);
+  const [classIdList, setClassIdList] = useState<{ label: string; value: string }[]>([]);
+  const contentTypeListRef = useRef(contentTypeList);
+  const classIdListRef = useRef(classIdList);
+  const [timeRangeList] = useState<Moment[]>([momentRef.clone().subtract(2, "M"), momentRef.clone().subtract(1, "M"), momentRef]);
+  const [page, setPage] = useState(pageRef.current);
+  const [tooltipAnchorEl, setTooltipAnchorEl] = useState<HTMLDivElement | null>(null);
+  const [tipContent, setTipContent] = useState<EntityContentUsage[]>([]);
+  const [transferredData, setTransferredDate] = useState<Map<string, EntityContentUsage[]>[]>([]);
+  const { studentUsageReport, studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const [ids, setIds] = useState<string[]>([]);
+  const [totalView, setTotalView] = useState(0);
+  const [allClasses, setAllClasses] = useState<Class[]>([]);
 
-  const count = 4000;
   useEffect(() => {
     getList();
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    const classes: Class[] = [];
+    studentUsage.schoolList.forEach((item) => {
+      item.classes?.forEach((item) => {
+        classes.push(item as Class);
+      });
+    });
+    setAllClasses(classes);
+  }, [studentUsage]);
+
+  useEffect(() => {
+    // handleData
+    const result: Map<string, EntityContentUsage[]>[] = [];
+    const idList: string[] = [];
+    let viewAmount = 0;
+    studentUsageReport[0]?.class_usage_list?.forEach((item) => {
+      const data = new Map<string, EntityContentUsage[]>();
+      item.content_usage_list?.forEach((pItem) => {
+        viewAmount += Number(pItem.count);
+        data.set(pItem.time_range as string, [...(data.get(pItem.time_range as string) ?? []), pItem]);
+      });
+      result.push(data);
+      idList.push(item.id as string);
+    });
+    setTransferredDate(result);
+    setIds(idList);
+    setTotalView(viewAmount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentUsageReport[0]]);
 
   const getList = () => {
     dispatch(
@@ -204,6 +249,7 @@ export default function () {
       })
     );
   };
+
   const handleChange = (
     value: {
       label: string;
@@ -234,20 +280,62 @@ export default function () {
     );
   };
 
-  const renderBarChart = () => {
-    const data = transferData(studentUsageReport[0], classIdList);
+  const renderTableItem = (datum: Map<string, EntityContentUsage[]>, index: number, maxValue: number) => {
     return (
-      <Grid container wrap={"nowrap"} className={style.tableContainer}>
-        <Grid item className={style.tableItem} style={{ width: "40%", minWidth: "40%", maxWidth: "40%" }}>
-          <ParentSize>{(info) => <HorizontalBarChart data={data[0]} width={info.width} height={info.height} />}</ParentSize>
+      <Grid container item className={style.tableItem}>
+        <Grid item className={style.tableIItemLabel}>
+          {allClasses.find((item) => item.class_id === ids[index])?.class_name}
         </Grid>
-        <Grid item className={style.tableItem}>
-          <ParentSize>{(info) => <HorizontalBarChart data={data[1]} width={info.width} height={info.height} noAxis />}</ParentSize>
-        </Grid>
-        <Grid item className={style.tableItem}>
-          <ParentSize>{(info) => <HorizontalBarChart data={data[2]} width={info.width} height={info.height} noAxis />}</ParentSize>
+        <Grid item container className={style.tableData}>
+          {Array.from(datum.values()).map((item) => {
+            const monthAmount = item.reduce((preValue, value) => preValue + Number(value.count), 0);
+            return (
+              <div
+                className={clsx(style.datumContainer, "datumContainer")}
+                onMouseEnter={(e) => {
+                  setTooltipAnchorEl(e.currentTarget);
+                  setTipContent(item);
+                }}
+                onMouseLeave={() => setTooltipAnchorEl(null)}
+              >
+                <div className={style.datumWrapper} style={{ width: (monthAmount / maxValue) * 100 + "%" }}>
+                  {item.map((datumType, index) => {
+                    return (
+                      <div
+                        className={style.tableDatum}
+                        style={{
+                          width: (Number(datumType.count) / monthAmount) * 100 + "%",
+                          background: colors[index],
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </Grid>
       </Grid>
+    );
+  };
+
+  const renderBarChart = () => {
+    const allCount: number[] = [];
+    transferredData.forEach((item) => {
+      Array.from(item.values()).forEach((pItem) => {
+        allCount.push(pItem.reduce((pValue, v) => Number(v.count) + pValue, 0));
+      });
+    });
+    const maxValue = Math.max(...allCount);
+    return (
+      <>
+        <MaterialUsageTooltip anchorEl={tooltipAnchorEl} content={tipContent} />
+        <Grid container wrap={"nowrap"} direction={"column"} className={style.tableContainer}>
+          {transferredData.map((item, index) => {
+            return renderTableItem(item, index, maxValue);
+          })}
+        </Grid>
+      </>
     );
   };
 
@@ -310,7 +398,7 @@ export default function () {
       <div className={style.total}>
         <span>
           {d("Content total viewed (latest 3 months):").t("content_total_viewed")}
-          {count}
+          {totalView}
         </span>
         <Box
           style={{
