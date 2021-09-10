@@ -81,17 +81,15 @@ function MutiSelect({ limitTags, options: allOptions, label, disabled, placehold
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-  const optionsOnlyAll = allOptions.slice(0, 1);
-
-  /*
-  React.useEffect(() => {
+  const resetState = () => {
     setState({
       ...state,
       value: [],
       allSelected: false,
     });
-  }, allOptions);
-  */
+  };
+
+  React.useEffect(resetState, [allOptions[2]]);
 
   return (
     <Box className={classes.multipleSelectBox}>
@@ -105,25 +103,29 @@ function MutiSelect({ limitTags, options: allOptions, label, disabled, placehold
         limitTags={limitTags}
         options={allOptions}
         getOptionDisabled={(option) => {
-          return state.allSelected && option.value !== "all";
+          return state.allSelected;
         }}
         getOptionLabel={(option) => option.label}
         value={state.value}
         onChange={(event, value) => {
-          const curAllSelected = value.filter((item) => item.value === "all").length === 1;
+          const curAllSelected = value.filter((item) => item.value === "all").length > 0;
           onChange && onChange(value);
           setState({
             ...state,
-            value: curAllSelected ? optionsOnlyAll : value,
+            value: curAllSelected ? [{ value: "all", label: t("report_label_all") }] : value,
             allSelected: curAllSelected,
           });
         }}
-        renderOption={(option, { selected }) => (
-          <>
-            <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 4 }} checked={selected} />
-            {option.label}
-          </>
-        )}
+        renderOption={(option, { selected }) => {
+          return (
+            !(option.value === "all" && state.allSelected) && (
+              <>
+                <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 4 }} checked={selected} />
+                {option.label}
+              </>
+            )
+          );
+        }}
         renderInput={(params) => (
           <TextField {...params} variant="outlined" label={label} placeholder={placeholder} onBlur={onClose ? onClose : () => {}} />
         )}
