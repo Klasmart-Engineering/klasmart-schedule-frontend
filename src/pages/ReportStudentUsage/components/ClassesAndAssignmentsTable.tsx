@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { InfoOutlined } from "@material-ui/icons";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { t } from "../../../locale/LocaleManager";
@@ -53,7 +53,7 @@ interface IRowProps {
 }
 
 // function sortByStudentName(studentName: string[]) {
-//   studentName.sort((x: string, y: string) => {
+//   return studentName.sort((x: string, y: string) => {
 //     let reg = /[a-zA-Z0-9]/
 //     if(reg.test(x) || reg.test(y)) {
 //       if (x> y) {
@@ -66,19 +66,39 @@ interface IRowProps {
 //     } else {
 //       return x.localeCompare(y, "zh")
 //     }
+
 //   })
 // }
 
-const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILatestThreeMonths; idx: number }) => {
+// function sortByStudentName(classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[]) {
+//   return classesAssignmentsUnattend.sort((x: string, y: string) => {
+//     // const x = classesAssignmentsUnattend.map(item => item.student_name)
+//     let reg = /[a-zA-Z0-9]/
+//     if(reg.test(x) || reg.test(y)) {
+//       if (x> y) {
+//         return 1
+//       } else if (x < y) {
+//         return -1
+//       } else {
+//         return 0
+//       }
+//     } else {
+//       return x.localeCompare(y, "zh")
+//     }
+
+//   })
+// }
+
+const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILatestThreeMonths; idx: number; studentUsage: any }) => {
   const dispatch = useDispatch();
-  const { row, latestThreeMonths } = props;
+  const { row, latestThreeMonths, studentUsage } = props;
   const { class_id } = row || {};
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(0);
   const { classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
-  const classesAssignmentsUnattend =
+  var classesAssignmentsUnattend =
     classesAssignmentsUnattendRow.length > 0
       ? classesAssignmentsUnattendRow
       : [
@@ -93,6 +113,8 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
             time: 1625068800,
           },
         ];
+
+  // classesAssignmentsUnattend = sortByStudentName(classesAssignmentsUnattend)
 
   const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
@@ -128,23 +150,26 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     setChildrenPage(Math.ceil(classesAssignmentsUnattend.length / childrenRowsPerPage));
   };
 
+  useEffect(() => {
+    console.log(studentUsage.schoolList);
+  }, [studentUsage.schoolList]);
   return (
     <React.Fragment>
       <TableRow style={{ height: "64px" }}>
         <TableCell align="center" component="th" scope="row" style={{ width: "250px" }}>
-          {row?.class_id}
+          {studentUsage.schoolList.filter((item: any) => item.class_id === row?.class_id).class_name}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
           {row?.total}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row?.durations_ratio?.[0].ratio}
+          {(row?.durations_ratio?.[0].ratio as number) * 100 + "%"}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row?.durations_ratio?.[1].ratio}
+          {(row?.durations_ratio?.[1].ratio as number) * 100 + "%"}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row?.durations_ratio?.[2].ratio}
+          {(row?.durations_ratio?.[2].ratio as number) * 100 + "%"}
         </TableCell>
         <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={handleClick}>
           {t("report_student_usage_unattendedStudents")}
@@ -237,10 +262,13 @@ interface IClassesAndAssignmentsTable {
   handleChangePage: (page: number) => any;
   page: number;
   total: number;
+  studentUsage: any;
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
-  const { classesAssignments, latestThreeMonths, handleChangePage, page, total } = props;
+  const { classesAssignments, latestThreeMonths, handleChangePage, page, total, studentUsage } = props;
+  console.log(studentUsage);
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -295,7 +323,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           </TableHead>
           <TableBody>
             {classesAssignments.map((row: EntityClassesAssignmentsView, idx) => (
-              <Row key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
+              <Row key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} studentUsage={studentUsage} />
             ))}
           </TableBody>
           <TableFooter>
