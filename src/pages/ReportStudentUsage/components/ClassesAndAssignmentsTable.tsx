@@ -54,7 +54,7 @@ interface IRowProps {
 }
 
 // function sortByStudentName(studentName: string[]) {
-//   studentName.sort((x: string, y: string) => {
+//   return studentName.sort((x: string, y: string) => {
 //     let reg = /[a-zA-Z0-9]/
 //     if(reg.test(x) || reg.test(y)) {
 //       if (x> y) {
@@ -67,6 +67,7 @@ interface IRowProps {
 //     } else {
 //       return x.localeCompare(y, "zh")
 //     }
+
 //   })
 // }
 
@@ -86,8 +87,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     }
     return className;
   });
-
-  const classesAssignmentsUnattend =
+  var classesAssignmentsUnattend =
     classesAssignmentsUnattendRow.length > 0
       ? classesAssignmentsUnattendRow
       : [
@@ -102,6 +102,8 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
             time: 1625068800,
           },
         ];
+
+  // classesAssignmentsUnattend = sortByStudentName(classesAssignmentsUnattend)
 
   const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
@@ -147,13 +149,13 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
           {row?.total}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row?.durations_ratio?.[0].ratio}
+          {(row?.durations_ratio?.[0].ratio as number) * 100 + "%"}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row?.durations_ratio?.[1].ratio}
+          {(row?.durations_ratio?.[1].ratio as number) * 100 + "%"}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {row?.durations_ratio?.[2].ratio}
+          {(row?.durations_ratio?.[2].ratio as number) * 100 + "%"}
         </TableCell>
         <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={handleClick}>
           {t("report_student_usage_unattendedStudents")}
