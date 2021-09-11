@@ -99,7 +99,7 @@ export default function () {
   const css = useStyles();
   const currentDate = new Date();
   const { classesAssignments, overview, studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  console.log(overview);
+
   const classIdsInit = studentUsage.schoolList.reduce((prev: string[], current) => {
     const classId = current.classes?.map((item) => item?.class_id).filter((item) => !!item) as string[];
     return prev.concat(classId);
@@ -189,6 +189,7 @@ export default function () {
         handleChangePage={setPage}
         classesAssignments={classesAssignments}
         latestThreeMonths={latestThreeMonths}
+        studentUsage={studentUsage}
       />
     </div>
   );

@@ -17,6 +17,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { t } from "../../../locale/LocaleManager";
 // import mock from "../../../mocks/attendList.json";
@@ -69,15 +70,23 @@ interface IRowProps {
 //   })
 // }
 
-const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILatestThreeMonths; idx: number }) => {
+const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILatestThreeMonths; idx: number; classes: IClasses[] }) => {
   const dispatch = useDispatch();
-  const { row, latestThreeMonths } = props;
+  const { row, latestThreeMonths, classes } = props;
   const { class_id } = row || {};
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(0);
   const { classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
+  let className = "";
+  classes.map((item) => {
+    if (item.class_id === row?.class_id) {
+      className = item.class_name || "";
+    }
+    return className;
+  });
+
   const classesAssignmentsUnattend =
     classesAssignmentsUnattendRow.length > 0
       ? classesAssignmentsUnattendRow
@@ -132,7 +141,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     <React.Fragment>
       <TableRow style={{ height: "64px" }}>
         <TableCell align="center" component="th" scope="row" style={{ width: "250px" }}>
-          {row?.class_id}
+          {className}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
           {row?.total}
@@ -237,10 +246,22 @@ interface IClassesAndAssignmentsTable {
   handleChangePage: (page: number) => any;
   page: number;
   total: number;
+  studentUsage: {
+    organization_id: string;
+    schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
+  };
+}
+
+interface IClasses {
+  class_id: string;
+  class_name?: Maybe<string> | undefined;
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
-  const { classesAssignments, latestThreeMonths, handleChangePage, page, total } = props;
+  const { classesAssignments, latestThreeMonths, handleChangePage, page, total, studentUsage } = props;
+  const classes: IClasses[] = [{ class_id: "" }];
+  studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -295,7 +316,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           </TableHead>
           <TableBody>
             {classesAssignments.map((row: EntityClassesAssignmentsView, idx) => (
-              <Row key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
+              <Row classes={classes} key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
             ))}
           </TableBody>
           <TableFooter>
