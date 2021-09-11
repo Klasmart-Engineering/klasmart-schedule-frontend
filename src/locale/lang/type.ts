@@ -1296,7 +1296,13 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_video_viewed"; description: "Video viewed"; values: undefined }
   | { id: "report_student_usage_images_viewed"; description: "Images viewed"; values: undefined }
   | { id: "report_student_usage_document_viewed"; description: "Document viewed"; values: undefined }
-  | { id: "report_student_usage_audio_listened"; description: "Audio listened"; values: undefined };
+  | { id: "report_student_usage_audio_listened"; description: "Audio listened"; values: undefined }
+  | { id: "report_student_usage_this_months_class_attendance_rate"; description: "This months class attendance rate"; values: undefined }
+  | {
+      id: "numbers_of_scheduled_classes_in_the_past_3_monts";
+      description: "Numbers of scheduled classes in the past 3 monts";
+      values: undefined;
+    };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

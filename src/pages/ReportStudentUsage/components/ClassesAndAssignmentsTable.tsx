@@ -19,12 +19,15 @@ import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
-import { t } from "../../../locale/LocaleManager";
+import { d, t } from "../../../locale/LocaleManager";
 // import mock from "../../../mocks/attendList.json";
 import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
 import { formatTime } from "../Tabs/ClassesAndAssignments";
 import Pagination from "./Pagination";
+import unAttendedList from "../../../mocks/unAttendedList.json";
+import moment from "moment";
+
 const PAGESIZE = 10;
 
 // eslint-disable-next-line
@@ -53,23 +56,22 @@ interface IRowProps {
   unAttendedList: IUnAttendedListProps[];
 }
 
-// function sortByStudentName(studentName: string[]) {
-//   return studentName.sort((x: string, y: string) => {
-//     let reg = /[a-zA-Z0-9]/
-//     if(reg.test(x) || reg.test(y)) {
-//       if (x> y) {
-//         return 1
-//       } else if (x < y) {
-//         return -1
-//       } else {
-//         return 0
-//       }
-//     } else {
-//       return x.localeCompare(y, "zh")
-//     }
-
-//   })
-// }
+function sortByStudentName(studentName: any) {
+  return function (x: any, y: any) {
+    let reg = /[a-zA-Z0-9]/;
+    if (reg.test(x[studentName]) || reg.test(y[studentName])) {
+      if (x[studentName] > y[studentName]) {
+        return 1;
+      } else if (x[studentName] < y[studentName]) {
+        return -1;
+      } else {
+        return 0;
+      }
+    } else {
+      return x[studentName].localeCompare(y[studentName], "zh");
+    }
+  };
+}
 
 const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILatestThreeMonths; idx: number; classes: IClasses[] }) => {
   const dispatch = useDispatch();
@@ -87,23 +89,9 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     }
     return className;
   });
-  var classesAssignmentsUnattend =
-    classesAssignmentsUnattendRow.length > 0
-      ? classesAssignmentsUnattendRow
-      : [
-          {
-            schedule: {
-              schedule_id: "2333",
-              schedule_name: "2222",
-              type: "22233333",
-            },
-            student_id: "222222222",
-            student_name: "name",
-            time: 1625068800,
-          },
-        ];
+  var classesAssignmentsUnattend = classesAssignmentsUnattendRow.length > 0 ? classesAssignmentsUnattendRow : unAttendedList;
 
-  // classesAssignmentsUnattend = sortByStudentName(classesAssignmentsUnattend)
+  classesAssignmentsUnattend = classesAssignmentsUnattend.sort(sortByStudentName("student_name"));
 
   const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
@@ -114,8 +102,6 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
           metaLoading: true,
           class_id,
           query: {
-            // page: childrenPage,
-            // page_size: childrenRowsPerPage,
             durations: [
               `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
               `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
@@ -193,8 +179,8 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
                         {item.student_name}
                       </TableCell>
                       <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
-                      <TableCell align="center">{item.time}</TableCell>
-                      <TableCell align="center">{item.time}</TableCell>
+                      <TableCell align="center">{`${moment(item.time).format("MM/DD/YYYY")}`}</TableCell>
+                      <TableCell align="center">{`${moment(item.time).format("HH:mm a")}`}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -276,7 +262,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{t("report_student_usage_total")}</b>
                 <Tooltip
-                  title="Numbers of scheduled classes in the past 3 monts"
+                  title={d("Numbers of scheduled classes in the past 3 monts").t("numbers_of_scheduled_classes_in_the_past_3_monts")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -286,7 +272,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[0])}</b>
                 <Tooltip
-                  title="Numbers of scheduled classes in the past 3 monts"
+                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -296,7 +282,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[1])}</b>
                 <Tooltip
-                  title="Numbers of scheduled classes in the past 3 monts"
+                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -306,7 +292,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[2])}</b>
                 <Tooltip
-                  title="This months class attendance rate"
+                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >

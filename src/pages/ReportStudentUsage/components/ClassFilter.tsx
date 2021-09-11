@@ -142,7 +142,6 @@ export default function ({ onChange, onClose }: IProps) {
   });
 
   const { studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  console.log("studentUsage", studentUsage);
 
   const options = React.useMemo<IOptions>(() => {
     const schoolOptions =
