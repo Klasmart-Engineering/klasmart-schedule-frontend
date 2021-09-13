@@ -1,6 +1,6 @@
 pipelines:
   branches:
-    '{dev,main,hotfix/**}':
+    '{dev/global/alpha,main,hotfix/**}':
     - parallel:
       - step:
           name: 'Build NPM Alpha'
