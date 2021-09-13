@@ -241,11 +241,14 @@ export default function () {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentUsageReport[0]]);
 
+  const getClassesList = () => {
+    return classIdListRef.current.length
+      ? classIdListRef.current.map((item) => item.value)
+      : allClassesRef.current.map((item) => item.class_id);
+  };
   const getList = () => {
     const allClassIdStr = allClassesRef.current.map((item) => item.class_id);
-    const class_id_list = classIdListRef.current.length
-      ? classIdListRef.current.slice(page * 5, page * 5 + 5).map((item) => item.value)
-      : allClassIdStr.slice(page * 5, page * 5 + 5);
+    const class_id_list = getClassesList().slice(page * 5, page * 5 + 5);
     if (!class_id_list.length) {
       return;
     }
@@ -365,13 +368,13 @@ export default function () {
     };
 
     const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      pageRef.current = page + 1 > classIdList.length ? classIdList.length : page + 1;
+      pageRef.current = page + 1 > getClassesList().length ? getClassesList().length : page + 1;
       setPage(pageRef.current);
       getList();
     };
 
     const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      pageRef.current = page + 5 > classIdList.length ? classIdList.length : page + 5;
+      pageRef.current = page + 5 > getClassesList().length ? getClassesList().length : page + 5;
       setPage(pageRef.current);
       getList();
     };
@@ -379,7 +382,7 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-          {d("Total").t("report_student_usage_total")} {classIdList.length} {d("results").t("report_student_usage_results")}
+          {d("Total").t("report_student_usage_total")} {getClassesList().length} {d("results").t("report_student_usage_results")}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
           <FirstPageIcon />
@@ -387,10 +390,14 @@ export default function () {
         <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
           <KeyboardArrowLeft />
         </IconButton>
-        <IconButton onClick={handleNextButtonClick} disabled={page >= Math.ceil(classIdList.length / 5) - 1} aria-label="next page">
+        <IconButton onClick={handleNextButtonClick} disabled={page >= Math.ceil(getClassesList().length / 5) - 1} aria-label="next page">
           <KeyboardArrowRight />
         </IconButton>
-        <IconButton onClick={handleLastPageButtonClick} disabled={page >= Math.ceil(classIdList.length / 5) - 1} aria-label="last page">
+        <IconButton
+          onClick={handleLastPageButtonClick}
+          disabled={page >= Math.ceil(getClassesList().length / 5) - 1}
+          aria-label="last page"
+        >
           <LastPageIcon />
         </IconButton>
       </Grid>
