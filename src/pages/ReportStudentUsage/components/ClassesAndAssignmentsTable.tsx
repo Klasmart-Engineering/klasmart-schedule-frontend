@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
-import unAttendedList from "../../../mocks/unAttendedList.json";
+// import unAttendedList from "../../../mocks/unAttendedList.json";
 // import mock from "../../../mocks/attendList.json";
 import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
@@ -82,6 +82,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
   const { classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
+
   let className = "";
   classes.map((item) => {
     if (item.class_id === row?.class_id) {
@@ -89,12 +90,14 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     }
     return className;
   });
-  var classesAssignmentsUnattend = classesAssignmentsUnattendRow.length > 0 ? classesAssignmentsUnattendRow : unAttendedList;
+  // var classesAssignmentsUnattend = classesAssignmentsUnattendRow.length > 0 ? classesAssignmentsUnattendRow : unAttendedList;
+  var classesAssignmentsUnattend = classesAssignmentsUnattendRow;
 
   classesAssignmentsUnattend = classesAssignmentsUnattend.sort(sortByStudentName("student_name"));
 
   const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
+    console.log("class_id", class_id);
     setOpen(!open);
     class_id &&
       dispatch(

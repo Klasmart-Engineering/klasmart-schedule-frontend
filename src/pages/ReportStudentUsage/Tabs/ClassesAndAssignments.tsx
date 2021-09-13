@@ -155,6 +155,10 @@ export default function () {
           ],
         })
       );
+    // eslint-disable-next-line
+  }, [dispatch, classIds, type, page]);
+
+  useEffect(() => {
     classIds &&
       dispatch(
         getClassesAssignmentsOverview({
@@ -169,7 +173,7 @@ export default function () {
         })
       );
     // eslint-disable-next-line
-  }, [dispatch, classIds, type, page]);
+  }, [dispatch, classIds]);
 
   return (
     <div>
