@@ -245,11 +245,13 @@ export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
 
 interface getStudentUsageMaterialParams extends EntityStudentUsageMaterialReportRequest {
   allClasses: string[];
+  time_range_count: string[];
+  metaLoading: boolean;
 }
 export const getStudentUsageMaterial = createAsyncThunk<
   [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse],
   getStudentUsageMaterialParams
->("getStudentUsageMaterial", async (params) => {
+>("getStudentUsageMaterial", async ({ metaLoading, ...params }) => {
   return await Promise.all([
     api.reports.getStudentUsageMaterialReport({
       class_id_list: params.class_id_list,
@@ -258,7 +260,7 @@ export const getStudentUsageMaterial = createAsyncThunk<
     }),
     api.reports.getStudentUsageMaterialViewCountReport({
       class_id_list: params.allClasses,
-      time_range_list: params.time_range_list,
+      time_range_list: params.time_range_count,
       content_type_list: params.content_type_list,
     }),
   ]);

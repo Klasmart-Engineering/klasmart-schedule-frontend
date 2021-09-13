@@ -254,6 +254,7 @@ export default function () {
     }
     dispatch(
       getStudentUsageMaterial({
+        metaLoading: true,
         class_id_list,
         allClasses: allClassIdStr,
         content_type_list:
@@ -261,6 +262,7 @@ export default function () {
             ? conData.filter((item) => item.value !== "all").map((item) => item.value)
             : contentTypeListRef.current,
         time_range_list: [computeTimestamp(timeRangeList[0]), computeTimestamp(timeRangeList[1]), computeTimestamp(timeRangeList[2], true)],
+        time_range_count: [timeRangeList[0].set("D", 1).unix().valueOf() + "-" + timeRangeList[2].unix().valueOf()],
       })
     );
   };
