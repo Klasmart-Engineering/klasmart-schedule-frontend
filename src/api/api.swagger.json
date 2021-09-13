@@ -9568,6 +9568,9 @@
         "count": {
           "type": "integer"
         },
+        "ratio": {
+          "type": "number"
+        },
         "type": {
           "type": "string"
         }
@@ -9629,12 +9632,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "page": {
-          "type": "integer"
-        },
-        "page_size": {
-          "type": "integer"
         },
         "type": {
           "type": "string"

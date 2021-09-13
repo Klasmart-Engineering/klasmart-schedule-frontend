@@ -453,6 +453,7 @@ export interface EntityClassUsage {
 
 export interface EntityClassesAssignmentOverView {
   count?: number;
+  ratio?: number;
   type?: string;
 }
 
@@ -476,8 +477,6 @@ export interface EntityClassesAssignmentsUnattendedStudentsView {
 export interface EntityClassesAssignmentsUnattendedViewRequest {
   classID?: string;
   durations?: string[];
-  page?: number;
-  page_size?: number;
   type?: string;
 }
 

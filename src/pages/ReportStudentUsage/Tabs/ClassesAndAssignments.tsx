@@ -113,24 +113,23 @@ export default function () {
   });
 
   const topChatData = React.useMemo(() => {
-    const total = overview.reduce((prev: number, current) => prev + (current?.count || 0), 0);
     return [
       {
         title: t("report_student_usage_live_scheduled"),
-        value: overview[0]?.count || 0,
-        total,
+        total: overview[0]?.count || 0,
+        value: overview[0]?.ratio || 0,
         id: "live",
       },
       {
         title: t("report_student_usage_study"),
-        value: overview[1]?.count || 0,
-        total,
+        total: overview[1]?.count || 0,
+        value: overview[1]?.ratio || 0,
         id: "study",
       },
       {
         title: t("report_student_usage_home_fun"),
-        value: overview[2]?.count || 0,
-        total,
+        total: overview[2]?.count || 0,
+        value: overview[2]?.ratio || 0,
         id: "home_fun",
       },
     ];
@@ -164,7 +163,6 @@ export default function () {
         getClassesAssignmentsOverview({
           metaLoading: true,
           class_ids: classIds,
-          type,
           durations: [
             `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
             `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
