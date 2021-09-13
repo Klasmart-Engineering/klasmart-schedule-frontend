@@ -97,7 +97,6 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
 
   const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
-    console.log("class_id", class_id);
     setOpen(!open);
     class_id &&
       dispatch(
