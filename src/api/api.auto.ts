@@ -1386,9 +1386,9 @@ export interface EntityStudentPerformanceReportItem {
 }
 
 export interface EntityStudentUsageMaterialReportRequest {
-  class_id_list?: string[];
-  content_type_list?: string[];
-  time_range_list?: string[];
+  class_id_list?: string;
+  content_type_list?: string;
+  time_range_list?: string;
 }
 
 export interface EntityStudentUsageMaterialReportResponse {
@@ -1397,9 +1397,9 @@ export interface EntityStudentUsageMaterialReportResponse {
 }
 
 export interface EntityStudentUsageMaterialViewCountReportRequest {
-  class_id_list?: string[];
-  content_type_list?: string[];
-  time_range_list?: string[];
+  class_id_list?: string;
+  content_type_list?: string;
+  time_range_list?: string;
 }
 
 export interface EntityStudentUsageMaterialViewCountReportResponse {
@@ -3579,7 +3579,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags reports/studentUsage
      * @name getClassesAssignments
      * @summary get Classes&Assignments Report
-     * @request GET:/reports/student_usage/classes_assignments
+     * @request POST:/reports/student_usage/classes_assignments
      * @description get Classes&Assignments Report
      */
     getClassesAssignments: (
@@ -3588,7 +3588,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityClassesAssignmentsView[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/student_usage/classes_assignments${this.addQueryParams(query)}`,
-        "GET",
+        "POST",
         params
       ),
 
@@ -3596,7 +3596,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags reports/studentUsage
      * @name getClassesAssignmentsUnattended
      * @summary get Classes&Assignments Report
-     * @request GET:/reports/student_usage/classes_assignments/{class_id}/unattended
+     * @request POST:/reports/student_usage/classes_assignments/{class_id}/unattended
      * @description get Classes&Assignments unattended
      */
     getClassesAssignmentsUnattended: (
@@ -3607,19 +3607,19 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       this.request<
         EntityClassesAssignmentsUnattendedStudentsView[],
         ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
-      >(`/reports/student_usage/classes_assignments/${class_id}/unattended${this.addQueryParams(query)}`, "GET", params),
+      >(`/reports/student_usage/classes_assignments/${class_id}/unattended${this.addQueryParams(query)}`, "POST", params),
 
     /**
      * @tags reports/studentUsage
      * @name getClassesAssignmentsOverview
      * @summary get Classes&Assignments Report
-     * @request GET:/reports/student_usage/classes_assignments_overview
+     * @request POST:/reports/student_usage/classes_assignments_overview
      * @description get Classes&Assignments overview
      */
     getClassesAssignmentsOverview: (query?: { class_ids?: string[]; durations?: string[] }, params?: RequestParams) =>
       this.request<EntityClassesAssignmentOverView[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/student_usage/classes_assignments_overview${this.addQueryParams(query)}`,
-        "GET",
+        "POST",
         params
       ),
 

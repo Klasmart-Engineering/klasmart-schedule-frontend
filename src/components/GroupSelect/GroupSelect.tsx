@@ -59,7 +59,7 @@ const useStyles = makeStyles(({ shadows, palette }) => ({
       background: "rgba(75,136,245,0.08)",
     },
   },
-  paperBox:{
+  paperBox: {
     width: "50%",
     overflow: "auto",
     "&::-webkit-scrollbar": {
@@ -75,8 +75,7 @@ const useStyles = makeStyles(({ shadows, palette }) => ({
         background: "#ccc",
       },
     },
-
-  }
+  },
 }));
 
 interface IGroupSelectProps {
@@ -92,7 +91,7 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
   const { value, onChange, label, list, subList, onChangeSubListItem, onChangeListItem } = props;
   const css = useStyles();
   const [open, setOpen] = React.useState(false);
-  const subListIds = value?.split("/")[1].split(",")||[]
+  const subListIds = value?.split("/")[1].split(",") || [];
   const listId = value?.split("/")[0];
   const handleChangeListItem = (id: string) => {
     onChangeListItem?.(id);
@@ -110,7 +109,7 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
     }
     onChange?.(`${listId}/${newSubListIds.length ? newSubListIds?.join(",") : "all"}`);
   };
-  const handleClick = (e:any) => {
+  const handleClick = (e: any) => {
     e.stopPropagation();
     if (open) {
       onChangeSubListItem?.(subListIds);
@@ -122,16 +121,17 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
     const subNames = getNameByIds(subList, subListIds)?.join(",");
     return `${name}/${subNames}`;
   };
-  React.useEffect(()=>{
-    window.addEventListener("click",()=>setOpen(false))
-    return(
-      window.removeEventListener("click",()=>setOpen(false))
-    )
-  })
+  React.useEffect(() => {
+    window.addEventListener("click", () => setOpen(false));
+    return window.removeEventListener("click", () => setOpen(false));
+  });
   return (
-    <div className={css.paper}  >
+    <div className={css.paper}>
       <FormControl variant="outlined" onClick={handleClick} fullWidth>
-        <InputLabel variant="outlined" style={{ transform: "translate(14px, -6px) scale(0.75)",backgroundColor: "#fff" }}>
+        <InputLabel
+          variant="outlined"
+          style={{ transform: "translate(14px, -6px) scale(0.75)", backgroundColor: "#fff", padding: "0 5px" }}
+        >
           {label}
         </InputLabel>
         <div className={css.searchTextField}>
@@ -140,14 +140,14 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
       </FormControl>
 
       <ArrowDropDown className={css.arrowDown} onClick={handleClick} />
-      <Paper elevation={3} style={{ display: open ? "flex" : "none" }} className={css.cascader} >
+      <Paper elevation={3} style={{ display: open ? "flex" : "none" }} className={css.cascader}>
         <div className={css.paperBox}>
           {list.map((item) => (
             <MenuItem
               className={clsx(css.cascaderList, { active: item.id === listId })}
               key={item.id}
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 item.id && handleChangeListItem(item.id);
               }}
             >
@@ -156,14 +156,14 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
             </MenuItem>
           ))}
         </div>
-        <div style={{ borderLeft: "1px solid #ccc"}} className={css.paperBox}>
+        <div style={{ borderLeft: "1px solid #ccc" }} className={css.paperBox}>
           {subList.map((item) => (
             <MenuItem
               disabled={value === "all/all"}
               key={item.id}
               className={clsx(css.cascaderSubList, { active: item.id && subListIds?.includes(item.id) })}
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 item.id && handleChangeSubListItem(item.id);
               }}
             >
@@ -174,4 +174,4 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
       </Paper>
     </div>
   );
-})
+});
