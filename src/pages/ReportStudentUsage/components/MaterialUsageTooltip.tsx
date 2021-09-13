@@ -3,6 +3,8 @@ import Popover from "@material-ui/core/Popover";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React from "react";
 import { EntityContentUsage } from "../../../api/api.auto";
+import { d } from "../../../locale/LocaleManager";
+import { MaterialUsageConData } from "../Tabs/MaterialUsage";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,13 +66,13 @@ export default function MaterialUsageTooltip(props: Props) {
         {props.content.map((item) => {
           return (
             <Grid container justify={"space-between"} className={classes.item}>
-              {item.type}
+              {MaterialUsageConData.find((v) => v.value === item.type)?.label}
               <label>{item.count}</label>
             </Grid>
           );
         })}
         <Grid container justify={"space-between"} className={classes.item} style={{ margin: 0 }}>
-          {"Total"}
+          {d("Total").t("report_student_usage_total")}
           <label>{props.content.reduce((count, item) => Number(item.count) + count, 0)}</label>
         </Grid>
       </Grid>

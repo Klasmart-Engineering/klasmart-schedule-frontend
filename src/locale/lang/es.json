@@ -898,7 +898,7 @@
   "report_no_class": "Seleccione una clase de la lista de la izquierda para ver los resultados.",
   "report_no_assessment": "Seleccione una evaluación de la lista de la izquierda para ver los resultados.",
   "assessment_not_applicable": "No aplicable",
-  "assessment_activity_attempted": "Attempted",
+  "assessment_activity_attempted": "Intentó",
   "assessment_partially_achieved": "Parcialmente logrado",
   "report_lsr_view_all": "Ver todo",
   "assessment_learning_outcome_assessment": "Evaluación de resultados de aprendizaje",
@@ -908,5 +908,6 @@
   "schedule_add_learning_outcome": "Agregar resultado de aprendizaje",
   "assessment_in_progress": "En Progreso",
   "assessment_student_name": "Nombre del estudiante",
-  "assessment_lesson_material_assessment": "Evaluación del material de la lección"
+  "assessment_lesson_material_assessment": "Evaluación del material de la lección",
+  "report_student_usage_report": "Student Usage Report"
 }

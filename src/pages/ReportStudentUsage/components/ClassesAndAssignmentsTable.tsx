@@ -91,13 +91,14 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     return className;
   });
   // var classesAssignmentsUnattend = classesAssignmentsUnattendRow.length > 0 ? classesAssignmentsUnattendRow : unAttendedList;
-  var classesAssignmentsUnattend = classesAssignmentsUnattendRow;
+  // var classesAssignmentsUnattend = classesAssignmentsUnattendRow;
 
-  classesAssignmentsUnattend = classesAssignmentsUnattend.sort(sortByStudentName("student_name"));
+  const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
+    ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
+    : [];
 
   const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
-    console.log("class_id", class_id);
     setOpen(!open);
     class_id &&
       dispatch(
@@ -182,8 +183,8 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
                         {item.student_name}
                       </TableCell>
                       <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
-                      <TableCell align="center">{`${moment(item.time).format("MM/DD/YYYY")}`}</TableCell>
-                      <TableCell align="center">{`${moment(item.time).format("HH:mm a")}`}</TableCell>
+                      <TableCell align="center">{item.time ? `${moment(item.time).format("MM/DD/YYYY")}` : ""}</TableCell>
+                      <TableCell align="center">{item.time ? ` ${moment(item.time).format("HH:mm a")}` : ""}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -265,7 +266,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{t("report_student_usage_total")}</b>
                 <Tooltip
-                  title={d("Numbers of scheduled classes in the past 3 monts").t("numbers_of_scheduled_classes_in_the_past_3_monts")}
+                  title={d("Numbers of scheduled classes in the past 3 monts").t("report_numbers_of_scheduled_classes_in_the_past_3_monts")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >

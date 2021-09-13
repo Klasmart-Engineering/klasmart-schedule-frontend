@@ -908,5 +908,6 @@
   "schedule_add_learning_outcome": "Thêm kết quả học tập",
   "assessment_in_progress": "Đang tiến hành",
   "assessment_student_name": "Tên học sinh",
-  "assessment_lesson_material_assessment": "Đánh giá tài liệu bài học"
+  "assessment_lesson_material_assessment": "Đánh giá tài liệu bài học",
+  "report_student_usage_report": "Student Usage Report"
 }
