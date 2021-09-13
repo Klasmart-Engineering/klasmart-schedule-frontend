@@ -90,6 +90,7 @@ import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import LearingOutcome from "./LearingOutcome";
 import { useForm } from "react-hook-form";
+import clsx from "clsx";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -255,6 +256,11 @@ const useStyles = makeStyles(({ shadows }) => ({
     textAlign: "center",
     lineHeight: "1.5rem",
     marginLeft: "4px",
+  },
+  addOutcomeBox: {
+    "& .MuiAutocomplete-endAdornment-310": {
+      display: "none",
+    },
   },
 }));
 
@@ -779,7 +785,7 @@ function EditBox(props: CalendarStateProps) {
 
   const setScheduleData = (name: string, value: string | number | object | null) => {
     const newTopocList = { ...scheduleList, [name]: value as string | number | object | null };
-    setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+    setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
   };
   /**
    * form input validator
@@ -969,9 +975,9 @@ function EditBox(props: CalendarStateProps) {
     });
 
     let resultInfo: any;
-    resultInfo = ((await dispatch(
+    resultInfo = (await dispatch(
       saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -1264,7 +1270,7 @@ function EditBox(props: CalendarStateProps) {
         start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
         end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
       };
-      setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+      setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
@@ -1693,7 +1699,7 @@ function EditBox(props: CalendarStateProps) {
   });
 
   const filterGropuDatas: LearningComesFilterQuery = {
-    programs: Array.from(new Set((condition.program_ids ?? []).concat([scheduleList.program_id]))),
+    programs: Array.from(new Set((condition.program_ids ?? []).concat(scheduleList.program_id ? [scheduleList.program_id] : []))),
     subjects: Array.from(new Set((condition.subject_ids ?? []).concat(subjectIds))),
     categorys: condition.category_ids ?? [],
     subs: condition.sub_category_ids ?? [],
@@ -1703,9 +1709,9 @@ function EditBox(props: CalendarStateProps) {
   const handeLearingOutcome = async () => {
     let resultInfo: any;
     if (scheduleList.program_id) {
-      resultInfo = ((await dispatch(
+      resultInfo = (await dispatch(
         getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
     }
     await getLearingOuctomeData(
       {
@@ -1750,6 +1756,17 @@ function EditBox(props: CalendarStateProps) {
       },
       showScheduleInfo: true,
     });
+  };
+
+  const learningOutcomeDefault = () => {
+    const list = outcomeListInit.filter((item) => outComeIds.includes(item.outcome_id as string));
+    return outComeIds
+      .map((id) => {
+        return list.filter((item) => {
+          return id === item.outcome_id;
+        })[0];
+      })
+      .reverse();
   };
 
   return (
@@ -2244,31 +2261,43 @@ function EditBox(props: CalendarStateProps) {
           </>
         )}
         {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
-          <Box className={css.fieldBox}>
+          <Box className={css.fieldBox} style={{ position: "relative" }}>
             <Autocomplete
               id="combo-box-demo"
               options={outcomeListInit}
               getOptionLabel={(option: any) => option.outcome_name}
               multiple
               limitTags={1}
-              value={outcomeListInit.filter((item) => outComeIds.includes(item.outcome_id as string))}
+              value={learningOutcomeDefault()}
               disabled
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+                  className={clsx(isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled, css.addOutcomeBox)}
                   label={d("Add Learning Outcome").t("schedule_add_learning_outcome")}
                 />
               )}
             />
             {!(isScheduleExpired() || isLimit()) && (
-              <AddCircleOutlineOutlined
-                onClick={() => {
-                  handeLearingOutcome();
-                }}
-                className={css.iconField}
-                style={{ top: "46%", cursor: "pointer" }}
-              />
+              <>
+                {outComeIds.length > 0 && (
+                  <CreateOutlinedIcon
+                    onClick={() => {
+                      handeLearingOutcome();
+                    }}
+                    style={{ cursor: "pointer", position: "absolute", top: "22px", right: "1px" }}
+                  />
+                )}
+                {!outComeIds.length && (
+                  <AddCircleOutlineOutlined
+                    onClick={() => {
+                      handeLearingOutcome();
+                    }}
+                    className={css.iconField}
+                    style={{ top: "46%", cursor: "pointer" }}
+                  />
+                )}
+              </>
             )}
           </Box>
         )}

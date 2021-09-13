@@ -5704,7 +5704,7 @@
       }
     },
     "/reports/student_usage/classes_assignments": {
-      "get": {
+      "post": {
         "description": "get Classes\u0026Assignments Report",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -5775,7 +5775,7 @@
       }
     },
     "/reports/student_usage/classes_assignments/{class_id}/unattended": {
-      "get": {
+      "post": {
         "description": "get Classes\u0026Assignments unattended",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -5837,7 +5837,7 @@
       }
     },
     "/reports/student_usage/classes_assignments_overview": {
-      "get": {
+      "post": {
         "description": "get Classes\u0026Assignments overview",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -12426,22 +12426,13 @@
       "type": "object",
       "properties": {
         "class_id_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         "content_type_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         "time_range_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         }
       }
     },
@@ -12463,22 +12454,13 @@
       "type": "object",
       "properties": {
         "class_id_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         "content_type_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         },
         "time_range_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "type": "string"
         }
       }
     },

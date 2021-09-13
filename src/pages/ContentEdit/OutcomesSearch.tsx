@@ -13,7 +13,6 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
     flexGrow: 1,
     marginRight: 20,
     height: 42,
-   
   },
   fieldset: {
     marginRight: 30,
@@ -42,11 +41,11 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
     borderRadius: 4,
     boxSizing: "border-box",
   },
-  checkBox:{
+  checkBox: {
     position: "absolute",
-    right:0,
+    right: 0,
   },
-  
+
   searchTextField: {
     height: 40,
     backgroundColor: "white",
@@ -57,8 +56,8 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   },
   searchBox: {
     marginTop: 16,
-    marginBottom: 8
-  }
+    marginBottom: 8,
+  },
 }));
 
 export const menuItemList = (list?: LinkedMockOptionsItem[]) =>
@@ -100,7 +99,7 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
   };
   return (
     <div>
-      <Box display="flex" justifyContent="space-between" pr={30} position="relative" >
+      <Box display="flex" justifyContent="space-between" pr={30} position="relative">
         <Controller
           control={control}
           name="value"
@@ -175,101 +174,100 @@ export const OutcomesSearch = (props: SearchOutcomesProps) => {
           )}
         />
       </Box>
-      <Grid container spacing={3}  className={css.searchBox} >
+      <Grid container spacing={3} className={css.searchBox}>
         <Grid item xs={6} sm={4} md={3}>
           <Controller
             name="program"
-            defaultValue={ outcomeSearchDefault.program ||"all/all"}
+            defaultValue={outcomeSearchDefault.program || "all/all"}
             control={control}
-            render={({value,onChange}) => (
+            render={({ value, onChange }) => (
               <GroupSelect
                 value={value}
                 onChange={(value) => {
                   onChange(value);
-                  handleClickSearch({})
+                  handleClickSearch({});
                 }}
                 list={searchLOListOptions.program || []}
                 subList={searchLOListOptions.subject || []}
                 onChangeListItem={onChangeOutcomeProgram}
                 onChangeSubListItem={onChangeOutcomeSubject}
-                label={d("Program - Subject").t("library_label_program_subject")}
+                label={`${d("Program").t("library_label_program")}-${d("Subject").t("library_label_subject")}`}
               />
             )}
           />
         </Grid>
         <Grid item xs={6} sm={4} md={3}>
-        <Controller
-          name="category"
-          defaultValue={outcomeSearchDefault.category || "all/all"}
-          control={control}
-          render={({value,onChange}) => (
-            <GroupSelect
-              value={value}
-              onChange={(value) => {
-                onChange(value);
-                handleClickSearch({})
-              }}
-              list={searchLOListOptions.developmental || []}
-              subList={searchLOListOptions.skills || []}
-              onChangeListItem={onChangeDevelopmental}
-              label={d("Category- Subcategory").t("library_label_category_ubcategory")}
-            />
-          )}
-        />
+          <Controller
+            name="category"
+            defaultValue={outcomeSearchDefault.category || "all/all"}
+            control={control}
+            render={({ value, onChange }) => (
+              <GroupSelect
+                value={value}
+                onChange={(value) => {
+                  onChange(value);
+                  handleClickSearch({});
+                }}
+                list={searchLOListOptions.developmental || []}
+                subList={searchLOListOptions.skills || []}
+                onChangeListItem={onChangeDevelopmental}
+                label={`${d("Category").t("library_label_category")}-${d("Subcategory").t("library_label_subcategory")}`}
+              />
+            )}
+          />
         </Grid>
         <Grid item xs={6} sm={4} md={3}>
           <Controller
-           name="age_ids"
-           defaultValue={outcomeSearchDefault.age_ids || []}
-           control={control}
-           render={({value,onChange}) => (
-             <TextField
-              value={value}
-              onChange={(value) => {
-                onChange(value);
-                handleClickSearch({})
-              }}
-              select
-              size="small"
-              className={css.searchTextField}
-              fullWidth
-              SelectProps={{
-                multiple: true,
-              }}
-              label={d("Age").t("library_label_age")}
-            >
-              {menuItemList(searchLOListOptions.age || [])}
-             </TextField>
-           )}
+            name="age_ids"
+            defaultValue={outcomeSearchDefault.age_ids || []}
+            control={control}
+            render={({ value, onChange }) => (
+              <TextField
+                value={value}
+                onChange={(value) => {
+                  onChange(value);
+                  handleClickSearch({});
+                }}
+                select
+                size="small"
+                className={css.searchTextField}
+                fullWidth
+                SelectProps={{
+                  multiple: true,
+                }}
+                label={d("Age").t("library_label_age")}
+              >
+                {menuItemList(searchLOListOptions.age || [])}
+              </TextField>
+            )}
           />
         </Grid>
         <Grid item xs={6} sm={4} md={3}>
           <Controller
             name="grade_ids"
             defaultValue={outcomeSearchDefault.grade_ids || []}
-           control={control}
-           render={({value,onChange}) => (
-             <TextField
-              value={value}
-              onChange={(value) => {
-                onChange(value);
-                handleClickSearch({})
-              }}
-              select
-              size="small"
-              className={css.searchTextField}
-              fullWidth
-              SelectProps={{
-                multiple: true,
-              }}
-              label={d("Grade").t("library_label_grade")}
+            control={control}
+            render={({ value, onChange }) => (
+              <TextField
+                value={value}
+                onChange={(value) => {
+                  onChange(value);
+                  handleClickSearch({});
+                }}
+                select
+                size="small"
+                className={css.searchTextField}
+                fullWidth
+                SelectProps={{
+                  multiple: true,
+                }}
+                label={d("Grade").t("library_label_grade")}
               >
                 {menuItemList(searchLOListOptions.grade || [])}
-             </TextField>
-           )}
+              </TextField>
+            )}
           />
         </Grid>
-
       </Grid>
       {children}
     </div>

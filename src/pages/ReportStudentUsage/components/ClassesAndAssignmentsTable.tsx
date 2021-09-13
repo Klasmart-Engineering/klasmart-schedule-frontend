@@ -15,18 +15,18 @@ import Typography from "@material-ui/core/Typography";
 import { InfoOutlined } from "@material-ui/icons";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import moment from "moment";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
+import unAttendedList from "../../../mocks/unAttendedList.json";
 // import mock from "../../../mocks/attendList.json";
 import { RootState } from "../../../reducers";
 import { getClassesAssignmentsUnattended } from "../../../reducers/report";
 import { formatTime } from "../Tabs/ClassesAndAssignments";
 import Pagination from "./Pagination";
-import unAttendedList from "../../../mocks/unAttendedList.json";
-import moment from "moment";
 
 const PAGESIZE = 10;
 
@@ -78,7 +78,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
   const { row, latestThreeMonths, classes } = props;
   const { class_id } = row || {};
   const [open, setOpen] = React.useState(false);
-  const [childrenPage, setChildrenPage] = React.useState(0);
+  const [childrenPage, setChildrenPage] = React.useState(1);
   const { classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
@@ -169,8 +169,8 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
                 <TableBody>
                   {(childrenRowsPerPage > 0
                     ? classesAssignmentsUnattend.slice(
-                        childrenPage * childrenRowsPerPage,
-                        childrenPage * childrenRowsPerPage + childrenRowsPerPage
+                        (childrenPage - 1) * childrenRowsPerPage,
+                        (childrenPage - 1) * childrenRowsPerPage + childrenRowsPerPage
                       )
                     : classesAssignmentsUnattend
                   ).map((item) => (
