@@ -142,7 +142,7 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-const conData = [
+export const MaterialUsageConData = [
   { value: "all", label: d("All").t("report_label_all") },
   { value: "h5p", label: "H5P" },
   { value: "image", label: d("Image").t("library_label_image") },
@@ -248,7 +248,7 @@ export default function () {
   };
   const getList = () => {
     const allClassIdStr = allClassesRef.current.map((item) => item.class_id);
-    const class_id_list = getClassesList().slice(page * 5, page * 5 + 5);
+    const class_id_list = getClassesList().slice(pageRef.current * 5, pageRef.current * 5 + 5);
     if (!class_id_list.length) {
       return;
     }
@@ -259,7 +259,7 @@ export default function () {
         allClasses: allClassIdStr,
         content_type_list:
           contentTypeListRef.current.indexOf("all") > -1 || !contentTypeList.length
-            ? conData.filter((item) => item.value !== "all").map((item) => item.value)
+            ? MaterialUsageConData.filter((item) => item.value !== "all").map((item) => item.value)
             : contentTypeListRef.current,
         time_range_list: [computeTimestamp(timeRangeList[0]), computeTimestamp(timeRangeList[1]), computeTimestamp(timeRangeList[2], true)],
         time_range_count: [timeRangeList[0].set("D", 1).unix().valueOf() + "-" + timeRangeList[2].unix().valueOf()],
@@ -273,12 +273,16 @@ export default function () {
       value: string;
     }[]
   ) => {
+    pageRef.current = 0;
+    setPage(0);
     setContentTypeList(value.map((item) => item.value));
     contentTypeListRef.current = value.map((item) => item.value);
     getList();
   };
 
   const handleClass = (value: { label: string; value: string }[]) => {
+    pageRef.current = 0;
+    setPage(0);
     setClassIdList(value);
     classIdListRef.current = value;
     getList();
@@ -375,7 +379,8 @@ export default function () {
     };
 
     const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      pageRef.current = page + 5 > getClassesList().length ? getClassesList().length : page + 5;
+      const countPages = Math.ceil(getClassesList().length / 5) - 1;
+      pageRef.current = countPages;
       setPage(pageRef.current);
       getList();
     };
@@ -426,7 +431,13 @@ export default function () {
             height: 50,
           }}
         >
-          <MutiSelect options={conData} limitTags={2} label={t("report_filter_content")} onChange={handleChange} onClose={() => {}} />
+          <MutiSelect
+            options={MaterialUsageConData}
+            limitTags={2}
+            label={t("report_filter_content")}
+            onChange={handleChange}
+            onClose={() => {}}
+          />
         </Box>
       </div>
       {renderBarChart()}
