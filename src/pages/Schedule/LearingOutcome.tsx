@@ -164,10 +164,13 @@ function SelectGroup(props: filterGropProps) {
         filterIds.findIndex((id: any) => id === "1"),
         1
       );
-    const filterData = {
-      ...filterQuery,
-      [name]: filterQuery && filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
-    };
+    const filterData =
+      name === "programs" && !value.length
+        ? { programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] }
+        : {
+            ...filterQuery,
+            [name]: filterQuery && filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
+          };
     const filterResult = (programChildInfo?.length
       ? (modelSchedule.learningOutcomeFilerGroup(filterData as LearningComesFilterQuery, programChildInfo)
           .query as LearningComesFilterQuery)
@@ -187,10 +190,22 @@ function SelectGroup(props: filterGropProps) {
   const filteredList = useMemo(() => {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
   }, [filterQuery, programChildInfo]);
+  const deduplication = (childItem: EntityScheduleShortInfo[]) => {
+    const reduceTemporaryStorage: { [id: string]: boolean } = {};
+    return childItem.reduce<EntityScheduleShortInfo[]>((item, next) => {
+      if (next !== null)
+        if (!reduceTemporaryStorage[next.id as string] && next.id) {
+          item.push(next);
+          reduceTemporaryStorage[next.id as string] = true;
+        }
+      return item;
+    }, []);
+  };
   const defaultValues = (enumType: "subjects" | "categorys" | "subs" | "ages" | "grades") =>
-    filteredList[enumType]?.filter((item: any) => filterQuery && filterQuery[enumType]?.includes(item.id as string));
+    deduplication(filteredList[enumType])?.filter((item: any) => filterQuery && filterQuery[enumType]?.includes(item.id as string));
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
   return (
     <div className={classes.root}>
       <Grid container spacing={2}>
@@ -221,7 +236,7 @@ function SelectGroup(props: filterGropProps) {
         <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={filteredList.subjects}
+            options={deduplication(filteredList.subjects)}
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
@@ -245,7 +260,7 @@ function SelectGroup(props: filterGropProps) {
         <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={filteredList.categorys}
+            options={deduplication(filteredList.categorys)}
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
@@ -269,7 +284,7 @@ function SelectGroup(props: filterGropProps) {
         <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={filteredList.subs}
+            options={deduplication(filteredList.subs)}
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple
@@ -293,7 +308,7 @@ function SelectGroup(props: filterGropProps) {
         <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={filteredList.ages}
+            options={deduplication(filteredList.ages)}
             getOptionLabel={(option: any) => option.name}
             multiple
             limitTags={1}
@@ -317,7 +332,7 @@ function SelectGroup(props: filterGropProps) {
         <Grid item xs={4} style={{ paddingLeft: "0px" }}>
           <Autocomplete
             id="combo-box-demo"
-            options={filteredList.grades}
+            options={deduplication(filteredList.grades)}
             limitTags={1}
             getOptionLabel={(option: any) => option.name}
             multiple

@@ -21,7 +21,7 @@ import clsx from "clsx";
 import { cloneDeep } from "lodash";
 import React, { useCallback, useMemo } from "react";
 import { Control } from "react-hook-form";
-import { EntityOutcome } from "../../api/api.auto";
+import { EntityOutcome, EntityOutcomeCondition } from "../../api/api.auto";
 import { ReactComponent as SortSvg } from "../../assets/icons/Slice 1.svg";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { resultsTip } from "../../components/TipImages";
@@ -207,8 +207,8 @@ interface OutcomesDialogProps extends OutcomesProps {
   onChangeDevelopmental: (developmental_id: string) => any;
   onChangeOutcomeSubject: (subject_ids: string[]) => any;
   handleClickSearch: (props: {
-    page?: number;
-    order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
+    page?: EntityOutcomeCondition["page"];
+    order_by?: EntityOutcomeCondition["order_by"];
   }) => any;
 }
 export const OutComesDialog = (props: OutcomesDialogProps) => {

@@ -437,12 +437,19 @@ export const getClassesBySchool = createAsyncThunk("getClassesBySchool", async (
     query: MySchoolIDsDocument,
     variables: { organization_id },
   });
-  return gqlapi.query<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>({
-    query: ClassesBySchoolDocument,
-    variables: {
-      school_id: data.me?.membership?.schoolMemberships![0]?.school_id as string,
-    },
-  });
+  if (data?.me?.membership?.schoolMemberships?.length) {
+    return Promise.all(
+      data?.me?.membership?.schoolMemberships?.map(async (item) => {
+        const { data } = await gqlapi.query<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>({
+          query: ClassesBySchoolDocument,
+          variables: {
+            school_id: item?.school_id as string,
+          },
+        });
+        return data?.school?.classes;
+      })
+    );
+  }
 });
 
 export const getSchoolInfo = createAsyncThunk("getSchoolInfo", async () => {
@@ -728,8 +735,8 @@ export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOu
     return { list, total, page: query.page };
   }
 );
-
-export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
+type IQueryactOutcomeListLoadingParams = Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0] & LoadingMetaPayload;
+export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, IQueryactOutcomeListLoadingParams>(
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
     const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(query);
@@ -841,7 +848,11 @@ const { actions, reducer } = createSlice({
       state.classOptions.classListOrg = payload.data;
     },
     [getClassesBySchool.fulfilled.type]: (state, { payload }: any) => {
-      state.classOptions.classListSchool = payload.data;
+      let result: any = [];
+      payload?.forEach((item: any) => {
+        result = [...result, ...item];
+      });
+      state.classOptions.classListSchool = { school: { classes: result } };
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
       let teachers: RolesData[] = [];

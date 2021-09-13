@@ -131,7 +131,7 @@ export const GroupSelect = forwardRef<HTMLDivElement, IGroupSelectProps>((props,
   return (
     <div className={css.paper}  >
       <FormControl variant="outlined" onClick={handleClick} fullWidth>
-        <InputLabel variant="outlined" style={{ transform: "translate(14px, -6px) scale(0.75)",backgroundColor: "#fff" }}>
+        <InputLabel variant="outlined" style={{ transform: "translate(14px, -6px) scale(0.75)",backgroundColor: "#fff",padding:"0 5px" }}>
           {label}
         </InputLabel>
         <div className={css.searchTextField}>

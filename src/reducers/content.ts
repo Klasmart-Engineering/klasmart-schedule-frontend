@@ -20,6 +20,7 @@ import {
   EntityFolderItemInfo,
   EntityOrganizationInfo,
   EntityOrganizationProperty,
+  EntityOutcomeCondition,
   ModelPublishedOutcomeView,
   ModelSearchPublishedOutcomeResponse
 } from "../api/api.auto";
@@ -587,8 +588,7 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
   }
 );
 // contentEdit搜索outcomeListist
-export type ISearchPublishedLearningOutcomesParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] ;
-export const searchPublishedLearningOutcomes = createAsyncThunk<ModelSearchPublishedOutcomeResponse, { exactSerch?: string } & ISearchPublishedLearningOutcomesParams & LoadingMetaPayload>(
+export const searchPublishedLearningOutcomes = createAsyncThunk<ModelSearchPublishedOutcomeResponse, { exactSerch?: string } & EntityOutcomeCondition & LoadingMetaPayload>(
   "content/searchPublishedLearningOutcomes",
   async ({ metaLoading,exactSerch="search_key", search_key, order_by, assumed, page, ...query }) => {
     const params = {

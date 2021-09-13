@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
-import { EntityOutcome, ModelPublishedOutcomeView } from "../../api/api.auto";
+import { EntityOutcome, EntityOutcomeCondition, ModelPublishedOutcomeView } from "../../api/api.auto";
 import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
 import { t } from "../../locale/LocaleManager";
@@ -14,7 +14,6 @@ import {
   getOutcomesOptionCategorys,
   getOutcomesOptions,
   getOutcomesOptionSkills,
-  ISearchPublishedLearningOutcomesParams,
   LinkedMockOptions
 } from "../../reducers/content";
 import { OutComesDialog, OutcomesTable } from "./OutcomesRelated";
@@ -46,18 +45,14 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
     bottom:20,
   }
 }));
-export type ISearchOutcomeQuery = Exclude<ISearchPublishedLearningOutcomesParams, "assumed"> & {
+export type ISearchOutcomeQuery = Exclude<EntityOutcomeCondition, "assumed"> & {
   value?: string;
   exactSerch?: string;
   assumed?: boolean;
   program?: string; 
   category?: string
 };
-export type ISearchOutcomeForm= Omit<ISearchOutcomeQuery,"grade_ids"| "age_ids">&{
-  grade_ids?:string[];
-  age_ids?:string[];
-
-}
+export type ISearchOutcomeForm= ISearchOutcomeQuery;
 export type ISearchOutcomeDefault = { program?: string; category?: string,grade_ids?:string[],age_ids?:string[] };
 export interface OutcomesProps {
   comingsoon?: boolean;
@@ -141,7 +136,9 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
       exactSerch:watch("exactSerch"),
       assumed: watch("assumed"),
       value:watch("value"),
-      ...transferSearchParams({program: watch("program"), category: watch("category"),age_ids:watch("age_ids"),grade_ids:watch("grade_ids")}),
+      age_ids:watch("age_ids"),
+      grade_ids:watch("grade_ids"),
+      ...transferSearchParams({program: watch("program"), category: watch("category")}),
     });
   }
   const addOutcomeButton = (
@@ -156,11 +153,12 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     if(!open) return;
     const {program,category,age_ids,grade_ids} = outcomeSearchDefault;
     reset({ ...getValues(),...outcomeSearchDefault});
-    const {program_ids,subject_ids,category_ids} = transferSearchParams({program, category, age_ids, grade_ids,})
+    const {program_ids,subject_ids,category_ids} = transferSearchParams({program, category})
     onSearch({
-      ...transferSearchParams({program, category, age_ids, grade_ids,}),
+      age_ids,grade_ids,
+      ...transferSearchParams({program, category}),
     });
-    dispatch(getOutcomesOptions({metaLoading: true, program_id: program_ids,subject_ids,developmental_id:category_ids}))
+    dispatch(getOutcomesOptions({metaLoading: true, program_id: program_ids?.[0],subject_ids:subject_ids?.join(","),developmental_id:category_ids?.[0]}))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[open,dispatch, onSearch, reset])
   return (
