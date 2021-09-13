@@ -417,7 +417,7 @@ export default function () {
       </div>
       <div className={style.total}>
         <span>
-          {d("Content total viewed (latest 3 months):").t("content_total_viewed")}
+          {d("Content total viewed (latest 3 months):").t("report_content_total_viewed")}
           {totalView}
         </span>
         <Box

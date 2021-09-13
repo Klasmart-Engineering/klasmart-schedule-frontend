@@ -264,7 +264,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{t("report_student_usage_total")}</b>
                 <Tooltip
-                  title={d("Numbers of scheduled classes in the past 3 monts").t("numbers_of_scheduled_classes_in_the_past_3_monts")}
+                  title={d("Numbers of scheduled classes in the past 3 monts").t("report_numbers_of_scheduled_classes_in_the_past_3_monts")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
