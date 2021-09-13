@@ -456,6 +456,11 @@ export interface EntityClassesAssignmentOverView {
   type?: string;
 }
 
+export interface EntityClassesAssignmentOverViewRequest {
+  class_ids?: string[];
+  durations?: string[];
+}
+
 export interface EntityClassesAssignmentsDurationRatio {
   key?: string;
   ratio?: number;
@@ -468,10 +473,24 @@ export interface EntityClassesAssignmentsUnattendedStudentsView {
   time?: number;
 }
 
+export interface EntityClassesAssignmentsUnattendedViewRequest {
+  classID?: string;
+  durations?: string[];
+  page?: number;
+  page_size?: number;
+  type?: string;
+}
+
 export interface EntityClassesAssignmentsView {
   class_id?: string;
   durations_ratio?: EntityClassesAssignmentsDurationRatio[];
   total?: number;
+}
+
+export interface EntityClassesAssignmentsViewRequest {
+  class_ids?: string[];
+  durations?: string[];
+  type?: string;
 }
 
 export interface EntityContentInfoWithDetails {
@@ -1386,9 +1405,9 @@ export interface EntityStudentPerformanceReportItem {
 }
 
 export interface EntityStudentUsageMaterialReportRequest {
-  class_id_list?: string;
-  content_type_list?: string;
-  time_range_list?: string;
+  class_id_list?: string[];
+  content_type_list?: string[];
+  time_range_list?: string[];
 }
 
 export interface EntityStudentUsageMaterialReportResponse {
@@ -1397,9 +1416,9 @@ export interface EntityStudentUsageMaterialReportResponse {
 }
 
 export interface EntityStudentUsageMaterialViewCountReportRequest {
-  class_id_list?: string;
-  content_type_list?: string;
-  time_range_list?: string;
+  class_id_list?: string[];
+  content_type_list?: string[];
+  time_range_list?: string[];
 }
 
 export interface EntityStudentUsageMaterialViewCountReportResponse {
@@ -3582,14 +3601,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/reports/student_usage/classes_assignments
      * @description get Classes&Assignments Report
      */
-    getClassesAssignments: (
-      query?: { page?: number; page_size?: number; class_ids?: string[]; durations?: string[] },
-      params?: RequestParams
-    ) =>
+    getClassesAssignments: (classes_assignments: EntityClassesAssignmentsViewRequest, params?: RequestParams) =>
       this.request<EntityClassesAssignmentsView[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/student_usage/classes_assignments${this.addQueryParams(query)}`,
+        `/reports/student_usage/classes_assignments`,
         "POST",
-        params
+        params,
+        classes_assignments
       ),
 
     /**
@@ -3601,13 +3618,13 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getClassesAssignmentsUnattended: (
       class_id: string,
-      query?: { page?: number; page_size?: number; durations?: string[] },
+      unattended: EntityClassesAssignmentsUnattendedViewRequest,
       params?: RequestParams
     ) =>
       this.request<
         EntityClassesAssignmentsUnattendedStudentsView[],
         ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
-      >(`/reports/student_usage/classes_assignments/${class_id}/unattended${this.addQueryParams(query)}`, "POST", params),
+      >(`/reports/student_usage/classes_assignments/${class_id}/unattended`, "POST", params, unattended),
 
     /**
      * @tags reports/studentUsage
@@ -3616,45 +3633,41 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/reports/student_usage/classes_assignments_overview
      * @description get Classes&Assignments overview
      */
-    getClassesAssignmentsOverview: (query?: { class_ids?: string[]; durations?: string[] }, params?: RequestParams) =>
+    getClassesAssignmentsOverview: (overview: EntityClassesAssignmentOverViewRequest, params?: RequestParams) =>
       this.request<EntityClassesAssignmentOverView[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/student_usage/classes_assignments_overview${this.addQueryParams(query)}`,
+        `/reports/student_usage/classes_assignments_overview`,
         "POST",
-        params
+        params,
+        overview
       ),
 
     /**
      * @tags reports/studentUsage
      * @name getStudentUsageMaterialReport
      * @summary get student usage of material report
-     * @request GET:/reports/student_usage/material
+     * @request POST:/reports/student_usage/material
      * @description get student usage of material report
      */
-    getStudentUsageMaterialReport: (
-      query?: { class_id_list?: string[]; content_type_list?: string[]; time_range_list?: string[] },
-      params?: RequestParams
-    ) =>
+    getStudentUsageMaterialReport: (request: EntityStudentUsageMaterialReportRequest, params?: RequestParams) =>
       this.request<EntityStudentUsageMaterialReportResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/student_usage/material${this.addQueryParams(query)}`,
-        "GET",
-        params
+        `/reports/student_usage/material`,
+        "POST",
+        params,
+        request
       ),
 
     /**
      * @tags reports/studentUsage
      * @name getStudentUsageMaterialViewCountReport
      * @summary get student usage of material report
-     * @request GET:/reports/student_usage/material_view_count
+     * @request POST:/reports/student_usage/material_view_count
      * @description get student usage of material report
      */
-    getStudentUsageMaterialViewCountReport: (
-      query?: { time_range_list?: string[]; class_id_list?: string[]; content_type_list?: string[] },
-      params?: RequestParams
-    ) =>
+    getStudentUsageMaterialViewCountReport: (request: EntityStudentUsageMaterialViewCountReportRequest, params?: RequestParams) =>
       this.request<
         EntityStudentUsageMaterialViewCountReportResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
-      >(`/reports/student_usage/material_view_count${this.addQueryParams(query)}`, "GET", params),
+      >(`/reports/student_usage/material_view_count`, "POST", params, request),
 
     /**
      * @tags reports/studentUsage
