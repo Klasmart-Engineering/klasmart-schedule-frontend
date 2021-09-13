@@ -186,7 +186,10 @@ export default function () {
       </div>
 
       <div className={css.selectContainer}>
-        <div className={css.text}>{t("report_student_usage_live")}</div>
+        <div className={css.text}>
+          {topChatData[state.activeTab].title}
+          {t("report_student_usage_live")}
+        </div>
         <div>
           <ClassFilter
             onChange={(v) => {
@@ -205,6 +208,7 @@ export default function () {
         classesAssignments={classesAssignments}
         latestThreeMonths={latestThreeMonths}
         studentUsage={studentUsage}
+        type={type}
       />
     </div>
   );

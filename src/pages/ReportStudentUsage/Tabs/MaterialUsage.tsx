@@ -4,6 +4,7 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import clsx from "clsx";
+import { sortBy } from "lodash";
 import moment, { Moment } from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -156,7 +157,7 @@ export const MaterialUsageConData = [
 const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
 
 const viewType: Record<string, string> = {
-  h5p: d("No of H5P viewed").t("report_student_usage_h5p_viewed"),
+  h5p: d("No. of viewed H5P").t("report_student_usage_h5p_viewed"),
   audio: d("Audio listened").t("report_student_usage_audio_listened"),
   video: d("Video viewed").t("report_student_usage_video_viewed"),
   image: d("Images viewed").t("report_student_usage_images_viewed"),
@@ -230,7 +231,8 @@ export default function () {
     let viewAmount = 0;
     studentUsageReport[0]?.class_usage_list?.forEach((item) => {
       const data = new Map<string, EntityContentUsage[]>();
-      item.content_usage_list?.forEach((pItem) => {
+      const sortData = sortBy(item.content_usage_list, (a) => Number(a.time_range?.split("-")[0]));
+      sortData.forEach((pItem) => {
         viewAmount += Number(pItem.count);
         data.set(pItem.time_range as string, [...(data.get(pItem.time_range as string) ?? []), pItem]);
       });
@@ -390,7 +392,7 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-          {d("Total").t("report_student_usage_total")} {getClassesList().length} {d("results").t("report_student_usage_results")}
+          {d("Total").t("report_student_usage_total")} {getClassesList().length} {d("Results").t("report_student_usage_results")}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
           <FirstPageIcon />
@@ -424,7 +426,7 @@ export default function () {
       </div>
       <div className={style.total}>
         <span>
-          {d("Content total viewed (latest 3 months):").t("report_content_total_viewed")}
+          {d("Content total viewed (latest 3 months)").t("report_content_total_viewed")}
           {totalView}
         </span>
         <Box

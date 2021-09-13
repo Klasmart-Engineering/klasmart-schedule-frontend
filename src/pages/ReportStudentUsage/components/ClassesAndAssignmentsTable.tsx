@@ -16,7 +16,7 @@ import { InfoOutlined } from "@material-ui/icons";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import moment from "moment";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsView } from "../../../api/api.auto";
@@ -73,12 +73,19 @@ function sortByStudentName(studentName: any) {
   };
 }
 
-const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILatestThreeMonths; idx: number; classes: IClasses[] }) => {
+const Row = (props: {
+  row?: EntityClassesAssignmentsView;
+  latestThreeMonths: ILatestThreeMonths;
+  idx: number;
+  classes: IClasses[];
+  type: string;
+}) => {
   const dispatch = useDispatch();
-  const { row, latestThreeMonths, classes } = props;
+  const { row, latestThreeMonths, classes, type } = props;
   const { class_id } = row || {};
   const [open, setOpen] = React.useState(false);
   const [childrenPage, setChildrenPage] = React.useState(1);
+
   const { classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
@@ -90,14 +97,11 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     }
     return className;
   });
-  // var classesAssignmentsUnattend = classesAssignmentsUnattendRow.length > 0 ? classesAssignmentsUnattendRow : unAttendedList;
-  // var classesAssignmentsUnattend = classesAssignmentsUnattendRow;
 
   const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
     ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
     : [];
 
-  const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
     setOpen(!open);
     class_id &&
@@ -106,6 +110,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
           metaLoading: true,
           class_id,
           query: {
+            type,
             durations: [
               `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
               `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
@@ -114,7 +119,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
           },
         })
       );
-  }, [class_id, dispatch, latestThreeMonths.latestThreeMonthsDots, open]);
+  }, [class_id, dispatch, latestThreeMonths.latestThreeMonthsDots, open, type]);
 
   const onFirstPage = () => {
     setChildrenPage(1);
@@ -126,7 +131,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     setChildrenPage(childrenPage - 1);
   };
   const onLastPage = () => {
-    setChildrenPage(Math.ceil(classesAssignmentsUnattend.length / childrenRowsPerPage));
+    setChildrenPage(Math.ceil(classesAssignmentsUnattend.length / 10));
   };
 
   return (
@@ -139,13 +144,13 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
           {row?.total}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {(row?.durations_ratio?.[0].ratio as number) * 100 + "%"}
+          {Math.floor((row?.durations_ratio?.[0].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {(row?.durations_ratio?.[1].ratio as number) * 100 + "%"}
+          {Math.floor((row?.durations_ratio?.[1].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell align="center" style={{ width: "200px" }}>
-          {(row?.durations_ratio?.[2].ratio as number) * 100 + "%"}
+          {Math.floor((row?.durations_ratio?.[2].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={handleClick}>
           {t("report_student_usage_unattendedStudents")}
@@ -171,20 +176,14 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(childrenRowsPerPage > 0
-                    ? classesAssignmentsUnattend.slice(
-                        (childrenPage - 1) * childrenRowsPerPage,
-                        (childrenPage - 1) * childrenRowsPerPage + childrenRowsPerPage
-                      )
-                    : classesAssignmentsUnattend
-                  ).map((item) => (
+                  {classesAssignmentsUnattend.slice((childrenPage - 1) * 10, (childrenPage - 1) * 10 + 10).map((item) => (
                     <TableRow key={item.student_id} style={{ height: "56px" }}>
                       <TableCell align="center" component="th" scope="row">
                         {item.student_name}
                       </TableCell>
                       <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
-                      <TableCell align="center">{item.time ? `${moment(item.time).format("MM/DD/YYYY")}` : ""}</TableCell>
-                      <TableCell align="center">{item.time ? ` ${moment(item.time).format("HH:mm a")}` : ""}</TableCell>
+                      <TableCell align="center">{item.time ? `${moment(item.time * 1000).format("MM/DD/YYYY")}` : ""}</TableCell>
+                      <TableCell align="center">{item.time ? ` ${moment(item.time * 1000).format("HH:mm a")}` : ""}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -238,6 +237,7 @@ interface IClassesAndAssignmentsTable {
   handleChangePage: (page: number) => any;
   page: number;
   total: number;
+  type: string;
   studentUsage: {
     organization_id: string;
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
@@ -250,7 +250,7 @@ interface IClasses {
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
-  const { classesAssignments, latestThreeMonths, handleChangePage, page, total, studentUsage } = props;
+  const { classesAssignments, latestThreeMonths, handleChangePage, page, total, studentUsage, type } = props;
   const classes: IClasses[] = [{ class_id: "" }];
   studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
 
@@ -266,7 +266,9 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{t("report_student_usage_total")}</b>
                 <Tooltip
-                  title={d("Numbers of scheduled classes in the past 3 monts").t("report_numbers_of_scheduled_classes_in_the_past_3_monts")}
+                  title={d("Numbers of scheduled classes in the past 3 months").t(
+                    "report_numbers_of_scheduled_classes_in_the_past_3_months"
+                  )}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -308,7 +310,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           </TableHead>
           <TableBody>
             {classesAssignments.map((row: EntityClassesAssignmentsView, idx) => (
-              <Row classes={classes} key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
+              <Row classes={classes} type={type} key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
             ))}
           </TableBody>
           <TableFooter>
