@@ -144,11 +144,11 @@ const useStyles = makeStyles(() =>
 );
 const conData = [
   { value: "all", label: d("All").t("report_label_all") },
-  { value: "H5P", label: "H5P" },
-  { value: "Images", label: d("Image").t("library_label_image") },
-  { value: "Video", label: d("Video").t("library_label_video") },
-  { value: "Audio", label: d("Audio").t("library_label_audio") },
-  { value: "Document", label: d("Document").t("library_label_document") },
+  { value: "h5p", label: "H5P" },
+  { value: "image", label: d("Image").t("library_label_image") },
+  { value: "video", label: d("Video").t("library_label_video") },
+  { value: "audio", label: d("Audio").t("library_label_audio") },
+  { value: "document", label: d("Document").t("library_label_document") },
 ];
 
 const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
@@ -277,7 +277,6 @@ export default function () {
   };
 
   const handleClass = (value: { label: string; value: string }[]) => {
-    console.log("classChange");
     setClassIdList(value);
     classIdListRef.current = value;
     getList();
