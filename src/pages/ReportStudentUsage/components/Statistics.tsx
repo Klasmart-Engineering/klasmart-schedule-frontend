@@ -54,7 +54,7 @@ export default function ({ title, value, total, active }: IProps) {
     <Paper className={clsx(classes.container, active ? "active" : "")}>
       <Box className={clsx(classes.text, "text")}>
         <Box className={clsx(classes.title, "title")}>{title}</Box>
-        <Box className={clsx(classes.value, "value")}>{value}</Box>
+        <Box className={clsx(classes.value, "value")}>{total}</Box>
       </Box>
       <Box className={clsx(classes.chart, "chart")}>
         <Box>
@@ -63,7 +63,7 @@ export default function ({ title, value, total, active }: IProps) {
             height={90}
             {...{
               value,
-              total,
+              total: 1,
             }}
             fontSize={22}
             colors={active ? ["#fff", "#E4E4E4"] : ["#0E78D5", "#E4E4E4"]}

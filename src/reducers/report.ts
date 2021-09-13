@@ -1436,9 +1436,7 @@ export const getClassListByschool = createAsyncThunk<GetClassListResponse, GetCl
   }
 );
 
-type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0] & {
-  type: string;
-};
+type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0];
 
 export const getClassesAssignments = createAsyncThunk<EntityClassesAssignmentsView[], GetClassesAssignmentsPayload & LoadingMetaPayload>(
   "getClassesAssignments",
@@ -1447,9 +1445,10 @@ export const getClassesAssignments = createAsyncThunk<EntityClassesAssignmentsVi
   }
 );
 
+type GetClassesAssignmentsOverviewPayload = Parameters<typeof api.reports.getClassesAssignmentsOverview>[0];
 export const getClassesAssignmentsOverview = createAsyncThunk<
   EntityClassesAssignmentOverView[],
-  GetClassesAssignmentsPayload & LoadingMetaPayload
+  GetClassesAssignmentsOverviewPayload & LoadingMetaPayload
 >("getClassesAssignmentsOverview", async ({ metaLoading, ...query }) => {
   const { class_ids, durations } = query;
   return await api.reports.getClassesAssignmentsOverview({ class_ids, durations });
