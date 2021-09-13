@@ -178,9 +178,9 @@ const months: Record<string, string> = {
 
 const computeTimestamp = (month: Moment, now?: boolean): string => {
   if (now) {
-    return month.set("D", 1).valueOf() + "-" + month.valueOf();
+    return month.set("D", 1).unix().valueOf() + "-" + month.unix().valueOf();
   }
-  return month.set("D", 1).valueOf() + "-" + month.clone().add(1, "M").set("D", 1).valueOf();
+  return month.set("D", 1).unix().valueOf() + "-" + month.clone().add(1, "M").set("D", 1).unix().valueOf();
 };
 
 const momentRef = moment().locale("en");
@@ -188,7 +188,7 @@ export default function () {
   const style = useStyles();
   const dispatch = useDispatch();
   const pageRef = useRef(0);
-  const [contentTypeList, setContentTypeList] = useState<string[]>([""]);
+  const [contentTypeList, setContentTypeList] = useState<string[]>([]);
   const [classIdList, setClassIdList] = useState<{ label: string; value: string }[]>([]);
   const contentTypeListRef = useRef(contentTypeList);
   const classIdListRef = useRef(classIdList);
@@ -201,7 +201,7 @@ export default function () {
   const [ids, setIds] = useState<string[]>([]);
   const [totalView, setTotalView] = useState(0);
   const [allClasses, setAllClasses] = useState<Class[]>([]);
-
+  const allClassesRef = useRef<Class[]>(allClasses);
   useEffect(() => {
     getList();
     // eslint-disable-next-line
@@ -215,6 +215,10 @@ export default function () {
       });
     });
     setAllClasses(classes);
+    allClassesRef.current = classes;
+    console.log(studentUsage, allClassesRef.current);
+    getList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentUsage]);
 
   useEffect(() => {
@@ -238,11 +242,19 @@ export default function () {
   }, [studentUsageReport[0]]);
 
   const getList = () => {
+    const allClassIdStr = allClassesRef.current.map((item) => item.class_id);
+    const class_id_list = classIdListRef.current.length
+      ? classIdListRef.current.slice(page * 5, page * 5 + 5).map((item) => item.value)
+      : allClassIdStr.slice(page * 5, page * 5 + 5);
+    if (!class_id_list.length) {
+      return;
+    }
     dispatch(
       getStudentUsageMaterial({
-        class_id_list: classIdListRef.current.slice(page * 5, page * 5 + 5).map((item) => item.value),
+        class_id_list,
+        allClasses: allClassIdStr,
         content_type_list:
-          contentTypeListRef.current.indexOf("all") > -1
+          contentTypeListRef.current.indexOf("all") > -1 || !contentTypeList.length
             ? conData.filter((item) => item.value !== "all").map((item) => item.value)
             : contentTypeListRef.current,
         time_range_list: [computeTimestamp(timeRangeList[0]), computeTimestamp(timeRangeList[1]), computeTimestamp(timeRangeList[2], true)],

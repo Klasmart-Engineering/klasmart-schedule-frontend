@@ -5713,34 +5713,13 @@
         "operationId": "getClassesAssignments",
         "parameters": [
           {
-            "type": "integer",
-            "description": "page",
-            "name": "page",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "page size",
-            "name": "page_size",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "class id list",
-            "name": "class_ids",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "time durations, for example: [startTime1-endTime1, startTime2-endTime2]",
-            "name": "durations",
-            "in": "query"
+            "description": "classAssignments",
+            "name": "classes_assignments",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ClassesAssignmentsViewRequest"
+            }
           }
         ],
         "responses": {
@@ -5784,25 +5763,13 @@
         "operationId": "getClassesAssignmentsUnattended",
         "parameters": [
           {
-            "type": "integer",
-            "description": "page",
-            "name": "page",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "page size",
-            "name": "page_size",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "time durations, for example: [startTime1-endTime1, startTime2-endTime2]",
-            "name": "durations",
-            "in": "query"
+            "description": "unattended",
+            "name": "unattended",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ClassesAssignmentsUnattendedViewRequest"
+            }
           }
         ],
         "responses": {
@@ -5846,22 +5813,13 @@
         "operationId": "getClassesAssignmentsOverview",
         "parameters": [
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "class id list",
-            "name": "class_ids",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "time durations, for example: [startTime1-endTime1, startTime2-endTime2]",
-            "name": "durations",
-            "in": "query"
+            "description": "overview",
+            "name": "overview",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ClassesAssignmentOverViewRequest"
+            }
           }
         ],
         "responses": {
@@ -5896,7 +5854,7 @@
       }
     },
     "/reports/student_usage/material": {
-      "get": {
+      "post": {
         "description": "get student usage of material report",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -5905,31 +5863,13 @@
         "operationId": "getStudentUsageMaterialReport",
         "parameters": [
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "class id list",
-            "name": "class_id_list",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "content type list",
-            "name": "content_type_list",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "time range list",
-            "name": "time_range_list",
-            "in": "query"
+            "description": "request",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.StudentUsageMaterialReportRequest"
+            }
           }
         ],
         "responses": {
@@ -5961,7 +5901,7 @@
       }
     },
     "/reports/student_usage/material_view_count": {
-      "get": {
+      "post": {
         "description": "get student usage of material report",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -5970,31 +5910,13 @@
         "operationId": "getStudentUsageMaterialViewCountReport",
         "parameters": [
           {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "time range list",
-            "name": "time_range_list",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "class id list",
-            "name": "class_id_list",
-            "in": "query"
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "content type list",
-            "name": "content_type_list",
-            "in": "query"
+            "description": "request",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.StudentUsageMaterialViewCountReportRequest"
+            }
           }
         ],
         "responses": {
@@ -9651,6 +9573,23 @@
         }
       }
     },
+    "entity.ClassesAssignmentOverViewRequest": {
+      "type": "object",
+      "properties": {
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "durations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "entity.ClassesAssignmentsDurationRatio": {
       "type": "object",
       "properties": {
@@ -9679,6 +9618,29 @@
         }
       }
     },
+    "entity.ClassesAssignmentsUnattendedViewRequest": {
+      "type": "object",
+      "properties": {
+        "classID": {
+          "type": "string"
+        },
+        "durations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
     "entity.ClassesAssignmentsView": {
       "type": "object",
       "properties": {
@@ -9693,6 +9655,26 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ClassesAssignmentsViewRequest": {
+      "type": "object",
+      "properties": {
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "durations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -12426,13 +12408,22 @@
       "type": "object",
       "properties": {
         "class_id_list": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "content_type_list": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "time_range_list": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -12454,13 +12445,22 @@
       "type": "object",
       "properties": {
         "class_id_list": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "content_type_list": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "time_range_list": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
