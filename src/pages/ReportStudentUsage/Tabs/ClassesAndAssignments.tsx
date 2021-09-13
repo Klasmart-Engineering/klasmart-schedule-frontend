@@ -131,7 +131,7 @@ export default function () {
         title: t("report_student_usage_home_fun"),
         value: overview[2]?.count || 0,
         total,
-        id: "home_fun_study",
+        id: "home_fun",
       },
     ];
   }, [overview]);
