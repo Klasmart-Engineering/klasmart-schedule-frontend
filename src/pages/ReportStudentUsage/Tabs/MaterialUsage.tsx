@@ -420,7 +420,7 @@ export default function () {
         <ClassFilter
           onChange={handleClass}
           onClose={() => {
-            console.log("close");
+            //console.log("close");
           }}
         />
       </div>

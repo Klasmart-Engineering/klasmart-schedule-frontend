@@ -196,7 +196,7 @@ export default function () {
               v[0]?.value !== "all" ? setClassIds(v.map((item) => item.value)) : setClassIds(classIdsInit);
             }}
             onClose={() => {
-              console.log("close");
+              //console.log("close");
             }}
           />
         </div>
