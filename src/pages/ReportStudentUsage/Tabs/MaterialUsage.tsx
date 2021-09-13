@@ -59,6 +59,8 @@ const useStyles = makeStyles(() =>
     point: {
       height: "12px",
       width: "12px",
+      minWidth: "12px",
+      maxWidth: "12px",
       marginTop: "6px",
       marginRight: "16px",
       borderRadius: "50%",
@@ -178,12 +180,12 @@ const months: Record<string, string> = {
 
 const computeTimestamp = (month: Moment, now?: boolean): string => {
   if (now) {
-    return month.set("D", 1).unix().valueOf() + "-" + month.unix().valueOf();
+    return month.clone().set("D", 1).unix().valueOf() + "-" + moment().unix().valueOf();
   }
-  return month.set("D", 1).unix().valueOf() + "-" + month.clone().add(1, "M").set("D", 1).unix().valueOf();
+  return month.clone().set("D", 1).unix().valueOf() + "-" + month.clone().add(1, "M").set("D", 1).unix().valueOf();
 };
 
-const momentRef = moment().locale("en");
+const momentRef = moment().locale("en").set("h", 0).set("s", 0).set("minute", 0);
 export default function () {
   const style = useStyles();
   const dispatch = useDispatch();
@@ -262,7 +264,7 @@ export default function () {
             ? MaterialUsageConData.filter((item) => item.value !== "all").map((item) => item.value)
             : contentTypeListRef.current,
         time_range_list: [computeTimestamp(timeRangeList[0]), computeTimestamp(timeRangeList[1]), computeTimestamp(timeRangeList[2], true)],
-        time_range_count: [timeRangeList[0].set("D", 1).unix().valueOf() + "-" + timeRangeList[2].unix().valueOf()],
+        time_range_count: [timeRangeList[0].clone().set("D", 1).unix().valueOf() + "-" + moment().unix().valueOf()],
       })
     );
   };
