@@ -71,7 +71,7 @@ export default function ReportStudentUsage() {
     tabIndex: activeTabs[0].index,
   });
   const handleChange = (event: any, newValue: number) => {
-    console.log(newValue);
+    //console.log(newValue);
     setState({
       ...state,
       tabIndex: newValue,
