@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
-import { getClassesAssignments } from "../../../reducers/report";
+import { getClassesAssignments, getClassesAssignmentsOverview } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
 import ClassFilter from "../components/ClassFilter";
 import Statistics from "../components/Statistics";
@@ -155,6 +155,19 @@ export default function () {
           ],
         })
       );
+    classIds &&
+      dispatch(
+        getClassesAssignmentsOverview({
+          metaLoading: true,
+          class_ids: classIds,
+          type,
+          durations: [
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+            `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((currentDate as any) / 1000)}`,
+          ],
+        })
+      );
     // eslint-disable-next-line
   }, [dispatch, classIds, type, page]);
 
@@ -175,7 +188,7 @@ export default function () {
         <div>
           <ClassFilter
             onChange={(v) => {
-              setClassIds(v.map((item) => item.value));
+              v[0].value !== "all" && setClassIds(v.map((item) => item.value));
             }}
             onClose={() => {
               console.log("close");

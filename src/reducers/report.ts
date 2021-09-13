@@ -1437,21 +1437,21 @@ export const getClassListByschool = createAsyncThunk<GetClassListResponse, GetCl
 type GetClassesAssignmentsPayload = Parameters<typeof api.reports.getClassesAssignments>[0] & {
   type: string;
 };
-interface IGetClassesAssignmentsResponse {
-  overview: EntityClassesAssignmentOverView[];
-  classAssignments: EntityClassesAssignmentsView[];
-}
-export const getClassesAssignments = createAsyncThunk<IGetClassesAssignmentsResponse, GetClassesAssignmentsPayload & LoadingMetaPayload>(
+
+export const getClassesAssignments = createAsyncThunk<EntityClassesAssignmentsView[], GetClassesAssignmentsPayload & LoadingMetaPayload>(
   "getClassesAssignments",
   async ({ metaLoading, ...query }) => {
-    const { class_ids, durations } = query;
-    const [overview, classAssignments] = await Promise.all([
-      api.reports.getClassesAssignmentsOverview({ class_ids, durations }),
-      api.reports.getClassesAssignments(query),
-    ]);
-    return { overview, classAssignments };
+    return await api.reports.getClassesAssignments(query);
   }
 );
+
+export const getClassesAssignmentsOverview = createAsyncThunk<
+  EntityClassesAssignmentOverView[],
+  GetClassesAssignmentsPayload & LoadingMetaPayload
+>("getClassesAssignmentsOverview", async ({ metaLoading, ...query }) => {
+  const { class_ids, durations } = query;
+  return await api.reports.getClassesAssignmentsOverview({ class_ids, durations });
+});
 
 type GetClassesAssignmentsUnattendedPayloadQuery = Parameters<typeof api.reports.getClassesAssignmentsUnattended>[1];
 export const getClassesAssignmentsUnattended = createAsyncThunk<
@@ -1696,8 +1696,13 @@ const { actions, reducer } = createSlice({
       state.classesAssignmentsUnattend = payload;
     },
     [getClassesAssignments.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {
-      state.classesAssignments = payload.classAssignments;
-      state.overview = payload.overview;
+      state.classesAssignments = payload;
+    },
+    [getClassesAssignmentsOverview.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignmentsOverview>>
+    ) => {
+      state.overview = payload;
     },
   },
 });
