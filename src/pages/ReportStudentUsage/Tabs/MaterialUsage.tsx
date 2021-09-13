@@ -188,7 +188,7 @@ export default function () {
   const style = useStyles();
   const dispatch = useDispatch();
   const pageRef = useRef(0);
-  const [contentTypeList, setContentTypeList] = useState<string[]>(["All"]);
+  const [contentTypeList, setContentTypeList] = useState<string[]>([""]);
   const [classIdList, setClassIdList] = useState<{ label: string; value: string }[]>([]);
   const contentTypeListRef = useRef(contentTypeList);
   const classIdListRef = useRef(classIdList);
