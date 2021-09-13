@@ -908,5 +908,6 @@
   "schedule_add_learning_outcome": "Tambah Hasil Belajar",
   "assessment_in_progress": "Sedang Berlangsung",
   "assessment_student_name": "Nama Siswa",
-  "assessment_lesson_material_assessment": "Penilaian Materi Pelajaran"
+  "assessment_lesson_material_assessment": "Penilaian Materi Pelajaran",
+  "report_student_usage_report": "Student Usage Report"
 }
