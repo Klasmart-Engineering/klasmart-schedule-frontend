@@ -91,9 +91,11 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
     return className;
   });
   // var classesAssignmentsUnattend = classesAssignmentsUnattendRow.length > 0 ? classesAssignmentsUnattendRow : unAttendedList;
-  var classesAssignmentsUnattend = classesAssignmentsUnattendRow;
+  // var classesAssignmentsUnattend = classesAssignmentsUnattendRow;
 
-  classesAssignmentsUnattend = classesAssignmentsUnattend.sort(sortByStudentName("student_name"));
+  const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
+    ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
+    : [];
 
   const [childrenRowsPerPage] = useState(10);
   const handleClick = useCallback(() => {
@@ -181,8 +183,8 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
                         {item.student_name}
                       </TableCell>
                       <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
-                      <TableCell align="center">{`${moment(item.time).format("MM/DD/YYYY")}`}</TableCell>
-                      <TableCell align="center">{`${moment(item.time).format("HH:mm a")}`}</TableCell>
+                      <TableCell align="center">{item.time ? `${moment(item.time).format("MM/DD/YYYY")}` : ""}</TableCell>
+                      <TableCell align="center">{item.time ? ` ${moment(item.time).format("HH:mm a")}` : ""}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
