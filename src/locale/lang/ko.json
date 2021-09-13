@@ -908,5 +908,6 @@
   "schedule_add_learning_outcome": "학습 결과 추가",
   "assessment_in_progress": "진행 중",
   "assessment_student_name": "학생 이름",
-  "assessment_lesson_material_assessment": "수업 자료 평가"
+  "assessment_lesson_material_assessment": "수업 자료 평가",
+  "report_student_usage_report": "Student Usage Report"
 }
