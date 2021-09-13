@@ -7,6 +7,7 @@ import {
   ChevronRight,
   InfoOutlined,
   KeyboardBackspace,
+  ShowChart,
 } from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
@@ -21,6 +22,7 @@ import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import { ReportLearningSummary } from "../ReportLearningSummary";
+import ReportStudentUsage from "../ReportStudentUsage";
 import ReportTeachingLoad from "../ReportTeachingLoad";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
@@ -30,23 +32,22 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     alignItems: "center",
   },
   reportList: {
-    display: "flex",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
+    display: "grid",
+    gridTemplateColumns: "repeat(3,1fr)",
+    gridTemplateRows: "repeat(2,180px)",
+    gridAutoRows: "33%",
+    gridColumnGap: 80,
+    gridRowGap: 32,
   },
 
   reportItem: {
     minWidth: 160,
-    width: "25%",
     cursor: "pointer",
     borderRadius: 8,
     boxShadow: shadows[3],
     padding: "32px 28px",
+    flex: 1,
     flexWrap: "wrap",
-    "&:nth-child(n+4)": {
-      marginTop: 32,
-      // visibility: "hidden",
-    },
   },
   reportItemMb: {
     textAlign: "center",
@@ -129,6 +130,7 @@ export function ReportDashboard() {
     PermissionType.view_my_organizations_reports_612,
     PermissionType.view_my_school_reports_611,
     PermissionType.learning_summary_report_653,
+    PermissionType.student_usage_report_657,
   ]);
   const hasPerm =
     perm.view_reports_610 ||
@@ -136,6 +138,7 @@ export function ReportDashboard() {
     perm.view_my_organizations_reports_612 ||
     (perm.view_my_school_reports_611 as boolean);
   const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
+  const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
   const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
   const reportList: ReportItem[] = [
     {
@@ -165,6 +168,13 @@ export function ReportDashboard() {
       icon: <AssignmentTurnedInOutlined />,
       bgColor: "#FE9494",
       hasPerm: hasSummaryPerm,
+    },
+    {
+      title: "report_student_usage_report",
+      url: ReportStudentUsage.routeBasePath,
+      icon: <ShowChart />,
+      bgColor: "#DCCDFF",
+      hasPerm: hasStudentUsagePermission,
     },
   ];
   const handleClick = useMemo(

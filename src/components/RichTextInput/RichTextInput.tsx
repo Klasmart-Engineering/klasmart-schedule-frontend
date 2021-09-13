@@ -77,13 +77,13 @@ const createConvertOption = (unstyledTag: UnstyledTag): IConvertToHTMLConfig => 
   return {
     styleToHTML,
     entityToHTML,
-    blockToHTML: (((block: RawDraftContentBlock) => {
+    blockToHTML: ((block: RawDraftContentBlock) => {
       const Tag = tagMap[block.type as keyof typeof tagMap] ?? "div";
       const textAlign = block.data && (block.data["text-align"] as CSSProperties["textAlign"]);
       const nest = block.type === "unordered-list-item" ? <ul /> : block.type === "ordered-list-item" ? <ol /> : undefined;
       const element = textAlign ? <Tag style={{ textAlign }} /> : <Tag />;
       return nest ? { nest, element } : element;
-    }) as unknown) as IConvertToHTMLConfig["blockToHTML"],
+    }) as unknown as IConvertToHTMLConfig["blockToHTML"],
   };
 };
 
@@ -97,6 +97,7 @@ const useFixLinkBlurBug = (blurHandler: fixedBlurHandler) => {
     const lastEntityKey = editorState.getCurrentContent().getLastCreatedEntityKey();
     if (lastEntityKeyRef.current === lastEntityKey) return;
     lastEntityKeyRef.current = lastEntityKey;
+    // @ts-ignore
     blurHandler(undefined, editorState);
   };
   return { detectBlurByLink };
@@ -122,7 +123,11 @@ export function RichTextInput(props: RichTextInputProps) {
   const handleBlur: fixedBlurHandler = (e, editorState) => {
     setFocus(false);
     if (!onBlur) return;
-    const html = convertToHTML(convertOption)(editorState.getCurrentContent()) ?? "";
+    const html =
+      convertToHTML(convertOption)(
+        // @ts-ignore
+        editorState.getCurrentContent()
+      ) ?? "";
     onBlur(html);
   };
   const { detectBlurByLink } = useFixLinkBlurBug(handleBlur);
@@ -134,6 +139,7 @@ export function RichTextInput(props: RichTextInputProps) {
   };
   return (
     <Editor
+      // @ts-ignore
       defaultEditorState={defaultEditState}
       onEditorStateChange={handleChangeEditorState}
       onBlur={handleBlur as EditorProps["onBlur"]}

@@ -1271,9 +1271,38 @@ type LangRecord<T = string> =
   | { id: "assessment_in_progress"; description: "In Progress"; values: undefined }
   | { id: "report_lsr_view_all"; description: "View All"; values: undefined }
   | { id: "library_label_add_learning_outcomes"; description: "Add Learning Outcomes"; values: undefined }
-  
-  
-
+  | { id: "library_label_program_subject"; description: "Program - Subject"; values: undefined }
+  | { id: "library_label_category_ubcategory"; description: "Category- Subcategory"; values: undefined }
+  | { id: "report_student_usage_report"; description: "Student Usage Report"; values: undefined }
+  | { id: "report_student_usage_registration"; description: "Registration"; values: undefined }
+  | { id: "report_student_usage_materialusage"; description: "Material Usage"; values: undefined }
+  | { id: "report_student_usage_classesandassignments"; description: "Classes&Assignments"; values: undefined }
+  | { id: "report_student_usage_live"; description: "Live Scheduled(latest 3 moths)"; values: undefined }
+  | { id: "report_student_usage_class"; description: "Class"; values: undefined }
+  | { id: "report_student_usage_total"; description: "Total"; values: undefined }
+  | { id: "report_student_usage_unattendedStudents"; description: "Unattended students"; values: undefined }
+  | { id: "report_student_usage_missed_schedules"; description: "List of students missed live schedules"; values: undefined }
+  | { id: "report_student_usage_student_name"; description: "Student name"; values: undefined }
+  | { id: "report_student_usage_lesson_missed"; description: "Lesson missed"; values: undefined }
+  | { id: "report_student_usage_lesson_date"; description: "Lesson date"; values: undefined }
+  | { id: "report_student_usage_lesson_time"; description: "Lesson time"; values: undefined }
+  | { id: "report_student_usage_results"; description: "results"; values: undefined }
+  | { id: "report_student_usage_live_scheduled"; description: "Live Scheduled"; values: undefined }
+  | { id: "report_student_usage_study"; description: "Study"; values: undefined }
+  | { id: "report_student_usage_home_fun"; description: "Home Fun"; values: undefined }
+  | { id: "report_filter_content"; description: "Content"; values: undefined }
+  | { id: "content_total_viewed"; description: "Content total viewed (latest 3 months):"; values: undefined }
+  | { id: "report_student_usage_h5p_viewed"; description: "No of H5P viewed"; values: undefined }
+  | { id: "report_student_usage_video_viewed"; description: "Video viewed"; values: undefined }
+  | { id: "report_student_usage_images_viewed"; description: "Images viewed"; values: undefined }
+  | { id: "report_student_usage_document_viewed"; description: "Document viewed"; values: undefined }
+  | { id: "report_student_usage_audio_listened"; description: "Audio listened"; values: undefined }
+  | { id: "report_student_usage_this_months_class_attendance_rate"; description: "This months class attendance rate"; values: undefined }
+  | {
+      id: "numbers_of_scheduled_classes_in_the_past_3_monts";
+      description: "Numbers of scheduled classes in the past 3 monts";
+      values: undefined;
+    };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

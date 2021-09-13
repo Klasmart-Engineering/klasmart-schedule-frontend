@@ -141,7 +141,7 @@ function SelectGroup(props: filterGropProps) {
       });
     if (name === "programs" && program_id && !is_exist()) {
       let resultInfo: any;
-      resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
+      resultInfo = (await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown as PayloadAction<
         AsyncTrunkReturned<typeof getProgramChild>
       >;
       if (resultInfo.payload) {
@@ -171,10 +171,12 @@ function SelectGroup(props: filterGropProps) {
             ...filterQuery,
             [name]: filterQuery && filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
           };
-    const filterResult = (programChildInfo?.length
-      ? (modelSchedule.learningOutcomeFilerGroup(filterData as LearningComesFilterQuery, programChildInfo)
-          .query as LearningComesFilterQuery)
-      : filterData) as LearningComesFilterQuery;
+    const filterResult = (
+      programChildInfo?.length
+        ? (modelSchedule.learningOutcomeFilerGroup(filterData as LearningComesFilterQuery, programChildInfo)
+            .query as LearningComesFilterQuery)
+        : filterData
+    ) as LearningComesFilterQuery;
     setFilterQuery && setFilterQuery(filterResult);
     const values = (item: string[]) => (item.length > 0 ? item : null);
     const filterQueryAssembly = {

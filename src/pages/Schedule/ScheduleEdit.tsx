@@ -785,7 +785,7 @@ function EditBox(props: CalendarStateProps) {
 
   const setScheduleData = (name: string, value: string | number | object | null) => {
     const newTopocList = { ...scheduleList, [name]: value as string | number | object | null };
-    setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+    setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
   };
   /**
    * form input validator
@@ -975,9 +975,9 @@ function EditBox(props: CalendarStateProps) {
     });
 
     let resultInfo: any;
-    resultInfo = ((await dispatch(
+    resultInfo = (await dispatch(
       saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -1270,7 +1270,7 @@ function EditBox(props: CalendarStateProps) {
         start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
         end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
       };
-      setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+      setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
@@ -1709,9 +1709,9 @@ function EditBox(props: CalendarStateProps) {
   const handeLearingOutcome = async () => {
     let resultInfo: any;
     if (scheduleList.program_id) {
-      resultInfo = ((await dispatch(
+      resultInfo = (await dispatch(
         getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
     }
     await getLearingOuctomeData(
       {

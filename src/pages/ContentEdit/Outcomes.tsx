@@ -10,12 +10,7 @@ import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
 import { t } from "../../locale/LocaleManager";
 import { sortOutcomesList, transferSearchParams } from "../../models/ModelContentDetailForm";
-import {
-  getOutcomesOptionCategorys,
-  getOutcomesOptions,
-  getOutcomesOptionSkills,
-  LinkedMockOptions
-} from "../../reducers/content";
+import { getOutcomesOptionCategorys, getOutcomesOptions, getOutcomesOptionSkills, LinkedMockOptions } from "../../reducers/content";
 import { OutComesDialog, OutcomesTable } from "./OutcomesRelated";
 const AMOUNTPERPAGE = 10;
 const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
@@ -42,18 +37,18 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
   },
   pagination: {
     position: "absolute",
-    bottom:20,
-  }
+    bottom: 20,
+  },
 }));
 export type ISearchOutcomeQuery = Exclude<EntityOutcomeCondition, "assumed"> & {
   value?: string;
   exactSerch?: string;
   assumed?: boolean;
-  program?: string; 
-  category?: string
+  program?: string;
+  category?: string;
 };
-export type ISearchOutcomeForm= ISearchOutcomeQuery;
-export type ISearchOutcomeDefault = { program?: string; category?: string,grade_ids?:string[],age_ids?:string[] };
+export type ISearchOutcomeForm = ISearchOutcomeQuery;
+export type ISearchOutcomeDefault = { program?: string; category?: string; grade_ids?: string[]; age_ids?: string[] };
 export interface OutcomesProps {
   comingsoon?: boolean;
   list: ModelPublishedOutcomeView[];
@@ -72,23 +67,22 @@ export interface OutcomesProps {
   outcomeSearchDefault: ISearchOutcomeDefault;
 }
 
- 
 export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) => {
   const css = useStyles();
-  const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions,outcomeSearchDefault } = props;
+  const { comingsoon, value, onChange, onGoOutcomesDetail, onSearch, outcomesFullOptions, outcomeSearchDefault } = props;
   const dispatch = useDispatch();
   const { lesson } = useParams<ContentEditRouteParams>();
   const [open, toggle] = React.useReducer((open) => !open, false);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [localSortBy, setlocalSortBy] = React.useState<string | undefined>("name");
-  const [selectedValue, setSelectedValue] = React.useState<EntityOutcome[]|undefined>(value);
-  const { getValues, control, watch ,reset} = useForm<ISearchOutcomeForm>();
+  const [selectedValue, setSelectedValue] = React.useState<EntityOutcome[] | undefined>(value);
+  const { getValues, control, watch, reset } = useForm<ISearchOutcomeForm>();
   const programId = watch("program")?.split("/")[0] || outcomeSearchDefault?.program?.split("/")[0];
   const program_id = programId === "all" ? "" : programId;
   const handleChangeProgram = useMemo(
     () => async (program_id: string) => {
       dispatch(getOutcomesOptions({ metaLoading: true, program_id: program_id === "all" ? "" : program_id }));
-      reset({ ...getValues(),program: `${program_id}/all`, category: "all/all", age_ids: [], grade_ids: [] });
+      reset({ ...getValues(), program: `${program_id}/all`, category: "all/all", age_ids: [], grade_ids: [] });
     },
     [dispatch, reset, getValues]
   );
@@ -96,10 +90,9 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     () => async (subject_ids: string[]) => {
       const subjectId = subject_ids.includes("all") ? [] : subject_ids;
       dispatch(getOutcomesOptionCategorys({ metaLoading: true, program_id, subject_ids: subjectId.join(",") }));
-      reset({ ...getValues(),program: `${programId||"all"}/${subject_ids.join(",")}`, category: "all/all",  });
-
+      reset({ ...getValues(), program: `${programId || "all"}/${subject_ids.join(",")}`, category: "all/all" });
     },
-    [dispatch, program_id, programId, getValues,reset]
+    [dispatch, program_id, programId, getValues, reset]
   );
   const handleChangeDevelopmental = useMemo(
     () => (developmental_id: string) => {
@@ -114,53 +107,72 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
     },
     [dispatch, program_id]
   );
-  const handleChangePage = useMemo(() => (page:number) => {
-    setCurrentPage(page);
-  },[]);
-  const localSort = useMemo(() => (props: ISearchOutcomeForm) => {
-    const sortValue = sortOutcomesList(value, props.order_by);
-    setlocalSortBy(props.order_by);
-    setSelectedValue(sortValue);
-    setCurrentPage(1);
-  }, [value])
-  const handleChangeValue = useMemo(() =>(value?:EntityOutcome[]) =>{
-    if(value && value.length <= (currentPage-1) * AMOUNTPERPAGE){
-      currentPage>1 && setCurrentPage(currentPage-1)
-    }
-    onChange?.(value);
-  },[currentPage, onChange]);
-  const handleSearch = (query: ISearchOutcomeQuery)=>{
-    const{page,order_by} = query;
+  const handleChangePage = useMemo(
+    () => (page: number) => {
+      setCurrentPage(page);
+    },
+    []
+  );
+  const localSort = useMemo(
+    () => (props: ISearchOutcomeForm) => {
+      const sortValue = sortOutcomesList(value, props.order_by);
+      setlocalSortBy(props.order_by);
+      setSelectedValue(sortValue);
+      setCurrentPage(1);
+    },
+    [value]
+  );
+  const handleChangeValue = useMemo(
+    () => (value?: EntityOutcome[]) => {
+      if (value && value.length <= (currentPage - 1) * AMOUNTPERPAGE) {
+        currentPage > 1 && setCurrentPage(currentPage - 1);
+      }
+      onChange?.(value);
+    },
+    [currentPage, onChange]
+  );
+  const handleSearch = (query: ISearchOutcomeQuery) => {
+    const { page, order_by } = query;
+    // @ts-ignore
     onSearch({
-      page, order_by,
-      exactSerch:watch("exactSerch"),
+      page,
+      order_by,
+      exactSerch: watch("exactSerch"),
       assumed: watch("assumed"),
-      value:watch("value"),
-      age_ids:watch("age_ids"),
-      grade_ids:watch("grade_ids"),
-      ...transferSearchParams({program: watch("program"), category: watch("category")}),
+      value: watch("value"),
+      age_ids: watch("age_ids"),
+      grade_ids: watch("grade_ids"),
+      ...transferSearchParams({ program: watch("program"), category: watch("category") }),
     });
-  }
+  };
   const addOutcomeButton = (
     <Button className={css.addOutcomesButton} onClick={toggle}>
       {t("library_label_add_learning_outcomes")}
     </Button>
   );
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setSelectedValue(value);
   }, [value]);
-  React.useEffect(()=>{
-    if(!open) return;
-    const {program,category,age_ids,grade_ids} = outcomeSearchDefault;
-    reset({ ...getValues(),...outcomeSearchDefault});
-    const {program_ids,subject_ids,category_ids} = transferSearchParams({program, category})
+  React.useEffect(() => {
+    if (!open) return;
+    const { program, category, age_ids, grade_ids } = outcomeSearchDefault;
+    reset({ ...getValues(), ...outcomeSearchDefault });
+    const { program_ids, subject_ids, category_ids } = transferSearchParams({ program, category });
     onSearch({
-      age_ids,grade_ids,
-      ...transferSearchParams({program, category}),
+      age_ids,
+      grade_ids,
+      ...transferSearchParams({ program, category }),
     });
-    dispatch(getOutcomesOptions({metaLoading: true, program_id: program_ids?.[0],subject_ids:subject_ids?.join(","),developmental_id:category_ids?.[0]}))
+    dispatch(
+      getOutcomesOptions({
+        metaLoading: true,
+        program_id: program_ids?.[0],
+        subject_ids: subject_ids?.join(","),
+        developmental_id: category_ids?.[0],
+      })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[open,dispatch, onSearch, reset])
+  }, [open, dispatch, onSearch, reset]);
   return (
     <Box className={css.mediaAssets} display="flex" flexDirection="column" alignItems="center" {...{ ref }}>
       {comingsoon && lesson !== "plan" ? (
@@ -171,7 +183,9 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
             <>
               <div className={css.addButton}>{addOutcomeButton}</div>
               <OutcomesTable
-                list={selectedValue?.filter((item, index) => (index>= (currentPage-1) * AMOUNTPERPAGE && index < (currentPage-1) * AMOUNTPERPAGE + 10) )}
+                list={selectedValue?.filter(
+                  (item, index) => index >= (currentPage - 1) * AMOUNTPERPAGE && index < (currentPage - 1) * AMOUNTPERPAGE + 10
+                )}
                 outcomeValue={value}
                 onChangeOutcomeValue={handleChangeValue}
                 onGoOutcomesDetail={onGoOutcomesDetail}
@@ -184,20 +198,24 @@ export const Outcomes = forwardRef<HTMLDivElement, OutcomesProps>((props, ref) =
           )}
         </>
       )}
-      {value && value.length > 0 && <Pagination
-        className={css.pagination}
-        onChange={(e, page) => handleChangePage( page )}
-        count={Math.ceil(value.length / AMOUNTPERPAGE)}
-        color="primary"
-        page={currentPage}
-      />}
+      {value && value.length > 0 && (
+        <Pagination
+          className={css.pagination}
+          onChange={(e, page) => handleChangePage(page)}
+          count={Math.ceil(value.length / AMOUNTPERPAGE)}
+          color="primary"
+          page={currentPage}
+        />
+      )}
       {open && (
         <OutComesDialog
           {...props}
           open={open}
           toggle={toggle}
           control={control}
-          onChange={(value?: EntityOutcome[])=>{onChange?.(sortOutcomesList(value, localSortBy))}}
+          onChange={(value?: EntityOutcome[]) => {
+            onChange?.(sortOutcomesList(value, localSortBy));
+          }}
           onChangeOutcomeProgram={handleChangeProgram}
           onChangeDevelopmental={handleChangeDevelopmental}
           onChangeOutcomeSubject={handleChangeSubject}

@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) =>
       textAlign: "center",
     },
     outcomeName: {
-      maxWidth:150,
-      minWidth:100,
+      maxWidth: 150,
+      minWidth: 100,
       wordBreak: "break-all",
     },
     tabContainer: {
@@ -37,7 +37,7 @@ function OutComeRow(props: OutcomeProps) {
   };
   return (
     <TableRow>
-      <TableCell className={clsx(css.tableCell,css.outcomeName)} onClick={handleClickOutcome}>
+      <TableCell className={clsx(css.tableCell, css.outcomeName)} onClick={handleClickOutcome}>
         {outcome.outcome_name}
       </TableCell>
       <TableCell className={css.tableCell}>{outcome.shortcode}</TableCell>
