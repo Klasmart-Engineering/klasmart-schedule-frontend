@@ -23,6 +23,9 @@ interface IState {
 }
 
 type IOptions = ISelect[][];
+
+export const selectAllOption = [{ value: "all", label: t("report_label_all") }];
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     schoolContainer: {
@@ -112,7 +115,7 @@ function MutiSelect({ limitTags, options: allOptions, label, disabled, placehold
           onChange && onChange(value);
           setState({
             ...state,
-            value: curAllSelected ? [{ value: "all", label: t("report_label_all") }] : value,
+            value: curAllSelected ? selectAllOption : value,
             allSelected: curAllSelected,
           });
         }}
@@ -185,7 +188,8 @@ export default function ({ onChange, onClose }: IProps) {
         </TextField>
       </Box>
       <MutiSelect
-        options={[{ value: "all", label: t("report_label_all") }].concat(options[1])}
+        disabled={options[1].length === 0}
+        options={selectAllOption.concat(options[1])}
         limitTags={2}
         label={t("report_filter_class")}
         onChange={onChange}
