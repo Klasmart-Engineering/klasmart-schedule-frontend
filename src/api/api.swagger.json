@@ -9613,6 +9613,10 @@
         "student_id": {
           "type": "string"
         },
+        "student_name": {
+          "description": "fill by frontend",
+          "type": "string"
+        },
         "time": {
           "type": "integer"
         }

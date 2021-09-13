@@ -11,6 +11,8 @@ export type Scalars = {
   Float: number;
   Date: any;
   HexColor: any;
+  /** The number of results to return per page */
+  PageSize: any;
   /** The `UUID` scalar type represents UUID values as specified by [RFC 4122](https://tools.ietf.org/html/rfc4122). */
   UUID: any;
   Upload: any;
@@ -337,7 +339,7 @@ export type ConnectionPageInfo = {
 };
 
 export type ConnectionsDirectionArgs = {
-  count?: Maybe<Scalars["Int"]>;
+  count?: Maybe<Scalars["PageSize"]>;
   cursor?: Maybe<Scalars["String"]>;
 };
 
@@ -727,16 +729,16 @@ export type OrganizationInviteUserArgs = {
 };
 
 export type OrganizationEditMembershipArgs = {
-  user_id?: Maybe<Scalars["ID"]>;
+  user_id: Scalars["ID"];
+  given_name: Scalars["String"];
+  family_name: Scalars["String"];
   email?: Maybe<Scalars["String"]>;
   phone?: Maybe<Scalars["String"]>;
-  given_name?: Maybe<Scalars["String"]>;
-  family_name?: Maybe<Scalars["String"]>;
   date_of_birth?: Maybe<Scalars["String"]>;
   username?: Maybe<Scalars["String"]>;
-  gender?: Maybe<Scalars["String"]>;
-  shortcode?: Maybe<Scalars["String"]>;
-  organization_role_ids?: Maybe<Array<Scalars["ID"]>>;
+  gender: Scalars["String"];
+  shortcode: Scalars["String"];
+  organization_role_ids: Array<Scalars["ID"]>;
   school_ids?: Maybe<Array<Scalars["ID"]>>;
   school_role_ids?: Maybe<Array<Scalars["ID"]>>;
   alternate_email?: Maybe<Scalars["String"]>;
@@ -1431,6 +1433,7 @@ export type SubjectFilter = {
   status?: Maybe<StringFilter>;
   system?: Maybe<BooleanFilter>;
   organizationId?: Maybe<UuidFilter>;
+  categoryId?: Maybe<UuidFilter>;
   AND?: Maybe<Array<Maybe<SubjectFilter>>>;
   OR?: Maybe<Array<Maybe<SubjectFilter>>>;
 };

@@ -1,7 +1,7 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep } from "lodash";
 import api, { gqlapi } from "../api";
-import { Class, School, Status, User } from "../api/api-ko-schema.auto";
+import { Class, School, Status, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
@@ -9,6 +9,9 @@ import {
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
+  GetStudentNameByIdDocument,
+  GetStudentNameByIdQuery,
+  GetStudentNameByIdQueryVariables,
   MyPermissionsAndClassesTeachingQueryDocument,
   MyPermissionsAndClassesTeachingQueryQuery,
   MyPermissionsAndClassesTeachingQueryQueryVariables,
@@ -96,6 +99,11 @@ interface IreportState {
   classesAssignments: EntityClassesAssignmentsView[];
   overview: EntityClassesAssignmentOverView[];
 }
+
+interface IObj {
+  [key: string]: string;
+}
+
 interface RootState {
   report: IreportState;
 }
@@ -241,6 +249,23 @@ export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
       },
     }),
   ]);
+});
+
+export const getStudentUserNamesById = createAsyncThunk("getStudentUserNamesById", async (userIds: string[]) => {
+  const filter = {
+    OR: userIds.map((id) => ({
+      userId: {
+        operator: UuidOperator.Eq,
+        value: id,
+      },
+    })),
+  } as UserFilter;
+  return gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
+    query: GetStudentNameByIdDocument,
+    variables: {
+      filter,
+    },
+  });
 });
 
 interface getStudentUsageMaterialParams extends EntityStudentUsageMaterialReportRequest {
@@ -1448,7 +1473,32 @@ export const getClassesAssignmentsUnattended = createAsyncThunk<
   EntityClassesAssignmentsUnattendedStudentsView[],
   { class_id: string; query: GetClassesAssignmentsUnattendedPayloadQuery } & LoadingMetaPayload
 >("getClassesAssignmentsUnattended", async ({ metaLoading, class_id, query }) => {
-  return await api.reports.getClassesAssignmentsUnattended(class_id, query);
+  const data = await api.reports.getClassesAssignmentsUnattended(class_id, query);
+  const userIds = data.map((d) => d.student_id);
+  const filter = {
+    OR: userIds.map((id) => ({
+      userId: {
+        operator: UuidOperator.Eq,
+        value: id,
+      },
+    })),
+  } as UserFilter;
+  const resp = await gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
+    query: GetStudentNameByIdDocument,
+    variables: {
+      filter,
+    },
+  });
+  const userNames = resp.data.usersConnection?.edges?.reduce((prev: IObj, cur) => {
+    if (cur?.node?.id) {
+      prev[cur?.node?.id] = cur.node?.familyName || "";
+    }
+    return prev;
+  }, {}) as IObj;
+  return data.map((d) => {
+    d.student_name = d.student_id ? userNames[d.student_id] || "" : "";
+    return d;
+  });
 });
 
 const { actions, reducer } = createSlice({
@@ -1574,7 +1624,6 @@ const { actions, reducer } = createSlice({
     },
 
     [getStudentUsageMaterial.fulfilled.type]: (state, { payload }) => {
-      console.log("payload=", payload);
       state.studentUsageReport = payload;
     },
     [getStudentUsageMaterial.rejected.type]: (state) => {},
