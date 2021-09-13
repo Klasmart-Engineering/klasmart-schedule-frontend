@@ -180,7 +180,7 @@ const Row = (props: { row?: EntityClassesAssignmentsView; latestThreeMonths: ILa
                   ).map((item) => (
                     <TableRow key={item.student_id} style={{ height: "56px" }}>
                       <TableCell align="center" component="th" scope="row">
-                        {item.student_name}
+                        {/*item.student_name*/}
                       </TableCell>
                       <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
                       <TableCell align="center">{item.time ? `${moment(item.time).format("MM/DD/YYYY")}` : ""}</TableCell>

@@ -470,7 +470,6 @@ export interface EntityClassesAssignmentsDurationRatio {
 export interface EntityClassesAssignmentsUnattendedStudentsView {
   schedule?: EntityScheduleView;
   student_id?: string;
-  student_name?: string;
   time?: number;
 }
 

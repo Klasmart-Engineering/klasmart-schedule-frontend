@@ -9613,9 +9613,6 @@
         "student_id": {
           "type": "string"
         },
-        "student_name": {
-          "type": "string"
-        },
         "time": {
           "type": "integer"
         }
