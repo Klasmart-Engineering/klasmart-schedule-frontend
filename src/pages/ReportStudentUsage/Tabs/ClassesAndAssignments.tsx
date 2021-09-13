@@ -155,6 +155,10 @@ export default function () {
           ],
         })
       );
+    // eslint-disable-next-line
+  }, [dispatch, classIds, type, page]);
+
+  useEffect(() => {
     classIds &&
       dispatch(
         getClassesAssignmentsOverview({
@@ -169,7 +173,7 @@ export default function () {
         })
       );
     // eslint-disable-next-line
-  }, [dispatch, classIds, type, page]);
+  }, [dispatch, classIds]);
 
   return (
     <div>
@@ -188,7 +192,7 @@ export default function () {
         <div>
           <ClassFilter
             onChange={(v) => {
-              v[0].value !== "all" && setClassIds(v.map((item) => item.value));
+              v[0]?.value !== "all" ? setClassIds(v.map((item) => item.value)) : setClassIds(classIdsInit);
             }}
             onClose={() => {
               console.log("close");

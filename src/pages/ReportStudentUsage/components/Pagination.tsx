@@ -48,12 +48,12 @@ export default function Pagination(props: IPagination) {
       <FirstPage className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onFirstPage()} />
       <ChevronLeft className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onSubPage()} />
       <ChevronRight
-        className={clsx(css.icon, page === Math.ceil(count / PAGESIZE) && css.iconColor)}
-        onClick={() => page !== Math.ceil(count / PAGESIZE) && onAddPage()}
+        className={clsx(css.icon, (page === Math.ceil(count / PAGESIZE) || count === 0) && css.iconColor)}
+        onClick={() => page !== Math.ceil(count / PAGESIZE) && count !== 0 && onAddPage()}
       />
       <LastPage
-        className={clsx(css.icon, page === Math.ceil(count / PAGESIZE) && css.iconColor)}
-        onClick={() => page !== Math.ceil(count / PAGESIZE) && onLastPage()}
+        className={clsx(css.icon, (page === Math.ceil(count / PAGESIZE) || count === 0) && css.iconColor)}
+        onClick={() => page !== Math.ceil(count / PAGESIZE) && count !== 0 && onLastPage()}
       />
     </div>
   );
