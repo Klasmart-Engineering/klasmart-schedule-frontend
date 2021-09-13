@@ -908,5 +908,6 @@
   "schedule_add_learning_outcome": "Add Learning Outcome",
   "assessment_in_progress": "In Progress",
   "assessment_student_name": "Student Name",
-  "assessment_lesson_material_assessment": "Lesson Material Assessment"
+  "assessment_lesson_material_assessment": "Lesson Material Assessment",
+  "report_student_usage_report": "Student Usage Report"
 }
