@@ -98,18 +98,13 @@ export function formatTime(time: any) {
 
 export default function () {
   const css = useStyles();
-  const currentDate = new Date();
   const {
     classesAssignments,
     overview,
     studentUsage,
     classesAssignmentsUnattend: classesAssignmentsUnattendRow,
   } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const classIdsInit = studentUsage.schoolList.reduce((prev: string[], current) => {
-    const classId = current.classes?.map((item) => item?.class_id).filter((item) => !!item) as string[];
-    return prev.concat(classId);
-  }, []);
-  const [classIds, setClassIds] = useState<string[]>(classIdsInit);
+  const [classIds, setClassIds] = useState<string[] | undefined>(undefined);
   const [unattendedTableOpenId, setunattendedTableOpenId] = useState<string | undefined>("");
   const dispatch = useDispatch();
   const latestThreeMonths = getTimeDots();
@@ -143,64 +138,50 @@ export default function () {
     ];
   }, [overview]);
   const type = topChatData[state.activeTab].id;
+  const durations = [
+    `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+    `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+    `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((new Date() as any) / 1000)}`,
+  ];
 
   const handleclickUnattendedTable = React.useMemo(
     () => (class_id?: string) => {
       setunattendedTableOpenId(class_id);
       if (!class_id) return;
-      dispatch(
-        getClassesAssignmentsUnattended({
-          metaLoading: true,
-          class_id,
-          query: {
-            type,
-            durations: [
-              `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
-              `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-              `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((new Date() as any) / 1000)}`,
-            ],
-          },
-        })
-      );
+      dispatch(getClassesAssignmentsUnattended({ metaLoading: true, class_id, query: { type, durations } }));
     },
-    [dispatch, latestThreeMonths.latestThreeMonthsDots, type]
+    [dispatch, type, durations]
   );
 
   const handleTabClick = (index: number) => () => {
     setState({ activeTab: index });
     setunattendedTableOpenId("");
   };
+  const handleChangePage = React.useMemo(
+    () => (page: number) => {
+      setPage(page);
+      classIds &&
+        dispatch(
+          getClassesAssignments({
+            metaLoading: true,
+            class_ids: classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE),
+            type,
+            durations,
+          })
+        );
+      // eslint-disable-next-line
+    },
+    [dispatch, setPage, classIds, type]
+  );
 
   useEffect(() => {
-    classIds &&
-      dispatch(
-        getClassesAssignments({
-          metaLoading: true,
-          class_ids: classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE),
-          type,
-          durations: [
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((currentDate as any) / 1000)}`,
-          ],
-        })
-      );
+    setPage(1);
+    classIds && dispatch(getClassesAssignments({ metaLoading: true, class_ids: classIds.slice(0, PAGESIZE), type, durations }));
     // eslint-disable-next-line
-  }, [dispatch, classIds, type, page]);
+  }, [dispatch, classIds, type]);
 
   useEffect(() => {
-    classIds &&
-      dispatch(
-        getClassesAssignmentsOverview({
-          metaLoading: true,
-          class_ids: classIds,
-          durations: [
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-            `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((currentDate as any) / 1000)}`,
-          ],
-        })
-      );
+    classIds && dispatch(getClassesAssignmentsOverview({ metaLoading: true, class_ids: classIds, durations }));
     // eslint-disable-next-line
   }, [dispatch, classIds]);
 
@@ -225,16 +206,16 @@ export default function () {
           <ClassFilter
             onChange={(v) => {
               console.info(v);
-              v.length ? setClassIds(v.map((item) => item.value)) : setClassIds(classIdsInit);
+              setClassIds(v.map((item) => item.value));
             }}
           />
         </div>
       </div>
       <ClassesAndAssignmentsTable
         unattendedTableOpenId={unattendedTableOpenId}
-        total={classIds.length}
+        total={classIds?.length || 0}
         page={page}
-        handleChangePage={setPage}
+        handleChangePage={handleChangePage}
         classesAssignments={classesAssignments}
         latestThreeMonths={latestThreeMonths}
         studentUsage={studentUsage}

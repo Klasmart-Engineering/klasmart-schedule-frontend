@@ -15,7 +15,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import moment from "moment";
 import React from "react";
-import { Maybe, School } from "../../../api/api-ko-schema.auto";
+import { Class, Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
 import Pagination from "./Pagination";
@@ -148,6 +148,7 @@ interface IClassesAndAssignmentsTable {
   studentUsage: {
     organization_id: string;
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
+    noneSchoolClasses: Pick<Class, "class_id" | "class_name">[];
   };
 }
 interface IClasses {
@@ -167,7 +168,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
     total,
     studentUsage,
   } = props;
-  const classes: IClasses[] = [{ class_id: "" }];
+  const classes: IClasses[] = studentUsage.noneSchoolClasses.slice();
   studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
   return (
     <div>
