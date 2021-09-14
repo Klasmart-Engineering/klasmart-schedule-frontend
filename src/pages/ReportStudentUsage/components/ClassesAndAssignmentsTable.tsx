@@ -13,8 +13,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { InfoOutlined } from "@material-ui/icons";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import moment from "moment";
 import React from "react";
-import moment from "_moment@2.29.1@moment";
 import { Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
@@ -51,8 +51,11 @@ const Row = (props: {
           {Math.floor((row?.durations_ratio?.[2].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell
-          style={{ color: unattendedTableOpenId === row?.class_id ? "#117ad5" : "", cursor: "pointer" }}
-          onClick={() => handleclickUnattendedTable(unattendedTableOpenId === row?.class_id ? "" : row?.class_id)}
+          style={{ minWidth: 168, color: unattendedTableOpenId === row?.class_id ? "#117ad5" : "", cursor: "pointer" }}
+          onClick={() => {
+            handleclickUnattendedTable(unattendedTableOpenId === row?.class_id ? "" : row?.class_id);
+            setChildrenPage(1);
+          }}
         >
           {t("report_student_usage_unattendedStudents")}
           <IconButton aria-label="expand row" size="small">
