@@ -113,6 +113,7 @@ const useStyles = makeStyles(() =>
     tableDatum: {
       height: "28px",
       transition: "ease 300ms",
+      marginRight: "2px",
     },
     datumContainer: {
       flex: 1,
@@ -227,12 +228,10 @@ export default function () {
     // handleData
     const result: Map<string, EntityContentUsage[]>[] = [];
     const idList: string[] = [];
-    let viewAmount = 0;
     studentUsageReport[0]?.class_usage_list?.forEach((item) => {
       const data = new Map<string, EntityContentUsage[]>();
       const sortData = sortBy(item.content_usage_list, (a) => Number(a.time_range?.split("-")[0]));
       sortData.forEach((pItem) => {
-        viewAmount += Number(pItem.count);
         data.set(pItem.time_range as string, [...(data.get(pItem.time_range as string) ?? []), pItem]);
       });
       result.push(data);
@@ -240,9 +239,17 @@ export default function () {
     });
     setTransferredDate(result);
     setIds(idList);
-    setTotalView(viewAmount);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentUsageReport[0]]);
+
+  useEffect(() => {
+    const viewAmount =
+      studentUsageReport[1].content_usage_list?.reduce((preV, item) => {
+        return preV + Number(item.count ?? 0);
+      }, 0) ?? 0;
+    setTotalView(viewAmount);
+  }, [studentUsageReport]);
 
   const getClassesList = () => {
     return classIdListRef.current.length
