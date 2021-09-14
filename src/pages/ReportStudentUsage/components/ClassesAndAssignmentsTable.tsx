@@ -1,8 +1,7 @@
-import Box from "@material-ui/core/Box";
+import { Box, Typography } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -11,129 +10,28 @@ import TableFooter from "@material-ui/core/TableFooter";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
 import { InfoOutlined } from "@material-ui/icons";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import moment from "moment";
-import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import moment from "_moment@2.29.1@moment";
 import { Maybe, School } from "../../../api/api-ko-schema.auto";
-import { EntityClassesAssignmentsView } from "../../../api/api.auto";
+import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
-// import unAttendedList from "../../../mocks/unAttendedList.json";
-// import mock from "../../../mocks/attendList.json";
-import { RootState } from "../../../reducers";
-import { getClassesAssignmentsUnattended } from "../../../reducers/report";
-import { formatTime } from "../Tabs/ClassesAndAssignments";
 import Pagination from "./Pagination";
 
 const PAGESIZE = 10;
-
-// eslint-disable-next-line
-const useStyles1 = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexShrink: 0,
-      marginLeft: theme.spacing(2.5),
-    },
-  })
-);
-
-interface IUnAttendedListProps {
-  studentName: string;
-  lessionMission: string;
-  lessonDate: string;
-  lessonTime: string;
-}
-
-interface IRowProps {
-  className: string;
-  total: number;
-  firstMonth: string;
-  secondMonth: string;
-  thirdMound: string;
-  unAttendedList: IUnAttendedListProps[];
-}
-
-function sortByStudentName(studentName: any) {
-  return function (x: any, y: any) {
-    let reg = /[a-zA-Z0-9]/;
-    if (reg.test(x[studentName]) || reg.test(y[studentName])) {
-      if (x[studentName] > y[studentName]) {
-        return 1;
-      } else if (x[studentName] < y[studentName]) {
-        return -1;
-      } else {
-        return 0;
-      }
-    } else {
-      return x[studentName].localeCompare(y[studentName], "zh");
-    }
-  };
-}
-
 const Row = (props: {
   row?: EntityClassesAssignmentsView;
-  latestThreeMonths: ILatestThreeMonths;
-  idx: number;
+  classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
+  handleclickUnattendedTable: (class_id?: string) => any;
+  unattendedTableOpenId?: string;
   classes: IClasses[];
-  type: string;
 }) => {
-  const dispatch = useDispatch();
-  const { row, latestThreeMonths, classes, type } = props;
-  const { class_id } = row || {};
-  const [open, setOpen] = React.useState(false);
+  const { row, classes, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId } = props;
   const [childrenPage, setChildrenPage] = React.useState(1);
-
-  const { classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<RootState, RootState["report"]>(
-    (state) => state.report
-  );
-
-  let className = "";
-  classes.map((item) => {
-    if (item.class_id === row?.class_id) {
-      className = item.class_name || "";
-    }
-    return className;
-  });
-
-  const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
-    ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
-    : [];
-
-  const handleClick = useCallback(() => {
-    setOpen(!open);
-    class_id &&
-      dispatch(
-        getClassesAssignmentsUnattended({
-          metaLoading: true,
-          class_id,
-          query: {
-            type,
-            durations: [
-              `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
-              `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-              `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((new Date() as any) / 1000)}`,
-            ],
-          },
-        })
-      );
-  }, [class_id, dispatch, latestThreeMonths.latestThreeMonthsDots, open, type]);
-
-  const onFirstPage = () => {
-    setChildrenPage(1);
-  };
-  const onAddPage = () => {
-    setChildrenPage(childrenPage + 1);
-  };
-  const onSubPage = () => {
-    setChildrenPage(childrenPage - 1);
-  };
-  const onLastPage = () => {
-    setChildrenPage(Math.ceil(classesAssignmentsUnattend.length / 10));
-  };
-
+  const className = classes.find((item) => item.class_id === row?.class_id)?.class_name;
+  const total = classesAssignmentsUnattend.length;
   return (
     <React.Fragment>
       <TableRow style={{ height: "64px" }}>
@@ -152,16 +50,19 @@ const Row = (props: {
         <TableCell align="center" style={{ width: "200px" }}>
           {Math.floor((row?.durations_ratio?.[2].ratio as number) * 100) + "%"}
         </TableCell>
-        <TableCell style={{ color: open ? "#117ad5" : "", cursor: "pointer" }} onClick={handleClick}>
+        <TableCell
+          style={{ color: unattendedTableOpenId === row?.class_id ? "#117ad5" : "", cursor: "pointer" }}
+          onClick={() => handleclickUnattendedTable(unattendedTableOpenId === row?.class_id ? "" : row?.class_id)}
+        >
           {t("report_student_usage_unattendedStudents")}
           <IconButton aria-label="expand row" size="small">
-            {open ? <KeyboardArrowUpIcon style={{ color: "#117ad5" }} /> : <KeyboardArrowDownIcon />}
+            {unattendedTableOpenId === row?.class_id ? <KeyboardArrowUpIcon style={{ color: "#117ad5" }} /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: "#fcfcfc" }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit style={{ padding: "0 119px" }}>
+          <Collapse in={unattendedTableOpenId === row?.class_id} timeout="auto" unmountOnExit style={{ padding: "0 119px" }}>
             <Box margin={1}>
               <Typography variant="h6" gutterBottom component="div" style={{ height: "66px", lineHeight: "66px" }}>
                 <b>{t("report_student_usage_missed_schedules")}</b>
@@ -177,7 +78,7 @@ const Row = (props: {
                 </TableHead>
                 <TableBody>
                   {classesAssignmentsUnattend.slice((childrenPage - 1) * 10, (childrenPage - 1) * 10 + 10).map((item) => (
-                    <TableRow key={item.student_id} style={{ height: "56px" }}>
+                    <TableRow key={`${item.time}-${item?.student_id}`} style={{ height: "56px" }}>
                       <TableCell align="center" component="th" scope="row">
                         {item.student_name}
                       </TableCell>
@@ -191,11 +92,11 @@ const Row = (props: {
                   <TableCell colSpan={6}>
                     <Pagination
                       page={childrenPage}
-                      count={classesAssignmentsUnattend.length}
-                      onAddPage={onAddPage}
-                      onFirstPage={onFirstPage}
-                      onLastPage={onLastPage}
-                      onSubPage={onSubPage}
+                      count={total}
+                      onAddPage={() => setChildrenPage(childrenPage + 1)}
+                      onFirstPage={() => setChildrenPage(1)}
+                      onLastPage={() => setChildrenPage(Math.ceil(total / 10))}
+                      onSubPage={() => setChildrenPage(childrenPage - 1)}
                     />
                   </TableCell>
                 </TableFooter>
@@ -233,6 +134,9 @@ interface ILatestThreeMonths {
 
 interface IClassesAndAssignmentsTable {
   classesAssignments: EntityClassesAssignmentsView[];
+  classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
+  handleclickUnattendedTable: (class_id?: string) => any;
+  unattendedTableOpenId?: string;
   latestThreeMonths: ILatestThreeMonths;
   handleChangePage: (page: number) => any;
   page: number;
@@ -243,17 +147,25 @@ interface IClassesAndAssignmentsTable {
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
   };
 }
-
 interface IClasses {
   class_id: string;
   class_name?: Maybe<string> | undefined;
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
-  const { classesAssignments, latestThreeMonths, handleChangePage, page, total, studentUsage, type } = props;
+  const {
+    classesAssignments,
+    unattendedTableOpenId,
+    latestThreeMonths,
+    classesAssignmentsUnattend,
+    handleclickUnattendedTable,
+    handleChangePage,
+    page,
+    total,
+    studentUsage,
+  } = props;
   const classes: IClasses[] = [{ class_id: "" }];
   studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
-
   return (
     <div>
       <TableContainer component={Paper}>
@@ -310,7 +222,14 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           </TableHead>
           <TableBody>
             {classesAssignments.map((row: EntityClassesAssignmentsView, idx) => (
-              <Row classes={classes} type={type} key={row.class_id} row={row} idx={idx} latestThreeMonths={latestThreeMonths} />
+              <Row
+                unattendedTableOpenId={unattendedTableOpenId}
+                handleclickUnattendedTable={handleclickUnattendedTable}
+                classesAssignmentsUnattend={classesAssignmentsUnattend}
+                classes={classes}
+                key={row.class_id}
+                row={row}
+              />
             ))}
           </TableBody>
           <TableFooter>

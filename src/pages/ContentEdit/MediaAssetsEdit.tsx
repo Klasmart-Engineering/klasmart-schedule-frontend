@@ -12,7 +12,7 @@ import { apiIsEnableNewH5p, apiValidatePDF } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview, getSuffix } from "../../components/UIAssetPreview/AssetPreview";
-import { d } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { actAsyncConfirm } from "../../reducers/confirm";
 import { actSetLoading } from "../../reducers/loading";
 import { ProgressWithText } from "./Details";
@@ -104,7 +104,7 @@ function AssetEdit(props: AssetEditProps) {
         .then((res) => {
           dispatch(actSetLoading(false));
           if (!res.valid) {
-            const content = "The PDF file you uploaded cannot be displayed properly in live classes. Please upload a different file.";
+            const content = t("library_msg_pdf_validation");
             dispatch(actAsyncConfirm({ content, hideCancel: true }));
           } else {
             onChangeValue(value);
