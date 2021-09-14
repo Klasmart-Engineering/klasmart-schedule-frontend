@@ -225,10 +225,7 @@ export default function () {
           <ClassFilter
             onChange={(v) => {
               console.info(v);
-              v[0]?.value !== "all" ? setClassIds(v.map((item) => item.value)) : setClassIds(classIdsInit);
-            }}
-            onClose={() => {
-              //console.log("close");
+              v.length ? setClassIds(v.map((item) => item.value)) : setClassIds(classIdsInit);
             }}
           />
         </div>

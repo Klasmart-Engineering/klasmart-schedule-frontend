@@ -1276,7 +1276,7 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_registration"; description: "Registration"; values: undefined }
   | { id: "report_student_usage_materialusage"; description: "Material Usage"; values: undefined }
   | { id: "report_student_usage_classesandassignments"; description: "Classes & Assignments"; values: undefined }
-  | { id: "report_student_usage_live"; description: "(latest 3 moths)"; values: undefined }
+  | { id: "report_student_usage_live"; description: "(latest 3 months)"; values: undefined }
   | { id: "report_student_usage_class"; description: "Class"; values: undefined }
   | { id: "report_student_usage_total"; description: "Total"; values: undefined }
   | { id: "report_student_usage_unattendedStudents"; description: "Unattended students"; values: undefined }
