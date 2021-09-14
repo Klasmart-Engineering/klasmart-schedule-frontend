@@ -2,7 +2,6 @@ import { createStyles, makeStyles } from "@material-ui/core";
 import { ChevronLeft, ChevronRight, FirstPage, LastPage } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
-import { d } from "../../../locale/LocaleManager";
 const PAGESIZE = 10;
 
 const useStyles = makeStyles(() =>
@@ -39,11 +38,13 @@ interface IPagination {
 export default function Pagination(props: IPagination) {
   const { page, count, onFirstPage, onAddPage, onSubPage, onLastPage } = props;
   const css = useStyles();
+  const lastPage = (page - 1) * PAGESIZE + PAGESIZE > count ? count : (page - 1) * PAGESIZE + PAGESIZE;
 
   return (
     <div className={css.pagination}>
       <span style={{ marginRight: 6 }}>
-        {d("Total").t("report_label_total")} {count} {d("Results").t("report_student_usage_results")}
+        {/* {d("Total").t("report_label_total")} {count} {d("Results").t("report_student_usage_results")} */}
+        {`${(page - 1) * PAGESIZE + 1} - ${lastPage}`} / {count}
       </span>
       <FirstPage className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onFirstPage()} />
       <ChevronLeft className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onSubPage()} />
