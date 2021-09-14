@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     contentBox: {},
     tagSizeSmall: {
-      maxWidth: "calc(100% - 100px)",
+      maxWidth: "calc(100% - 120px)",
     },
   })
 );
@@ -122,7 +122,6 @@ function MutiSelect({
         onChange={(event, value) => {
           const curAllSelected = value.filter((item) => item.value === selectAllOption[0].value).length > 0;
           //onChange && onChange(value);
-          console.info("value", value);
           if (onChange) {
             if (curAllSelected) {
               onChange(allOptions.slice(1, allOptions.length));
@@ -158,25 +157,44 @@ export default function ({ onChange, onClose }: IProps) {
 
   const options = React.useMemo<IOptions>(() => {
     const schoolOptions =
-      (studentUsage.schoolList.map((item) => ({
-        value: item.school_id,
-        label: item.school_name,
-      })) as ISelect[]) || [];
-    const classOptions =
       (studentUsage.schoolList
-        .filter((item) => item.school_id === state.schoolId)[0]
-        ?.classes?.map((item) => ({
-          value: item?.class_id,
-          label: item?.class_name,
-        })) as ISelect[]) || [];
+        .map((item) => ({
+          value: item.school_id,
+          label: item.school_name,
+        }))
+        .concat(studentUsage.noneSchoolClasses.length > 0 ? selectNoneSchoolOption : []) as ISelect[]) || [];
+    const classOptions =
+      state.schoolId === selectNoneSchoolOption[0].value
+        ? studentUsage.noneSchoolClasses.map((item) => ({
+            value: item.class_id,
+            label: item.class_name || "",
+          }))
+        : (studentUsage.schoolList
+            .filter((item) => item.school_id === state.schoolId)[0]
+            ?.classes?.map((item) => ({
+              value: item?.class_id,
+              label: item?.class_name,
+            })) as ISelect[]) || [];
     return [schoolOptions, classOptions];
-  }, [studentUsage.schoolList, state.schoolId]);
+  }, [studentUsage.schoolList, studentUsage.noneSchoolClasses, state.schoolId]);
 
   const schoolChangeCb = () => {
-    onChange && onChange(options[1]);
+    if (!onChange) {
+      return;
+    }
+    if (state.schoolId === selectNoneSchoolOption[0].value) {
+      onChange(
+        studentUsage.noneSchoolClasses.map((item) => ({
+          value: item.class_id,
+          label: item.class_name || "",
+        }))
+      );
+    } else {
+      onChange(options[1]);
+    }
   };
 
-  React.useEffect(schoolChangeCb, [state.schoolId, options[1]]);
+  React.useEffect(schoolChangeCb, [options[1]]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
@@ -184,7 +202,7 @@ export default function ({ onChange, onClose }: IProps) {
       classes: [],
     });
   };
-  const allSchoolOptions = selectAllOption.concat(options[0], selectNoneSchoolOption);
+  const allSchoolOptions = selectAllOption.concat(options[0]);
 
   console.log(allSchoolOptions);
   return (
@@ -209,7 +227,7 @@ export default function ({ onChange, onClose }: IProps) {
       <MutiSelect
         disabled={options[1].length === 0}
         options={selectAllOption.concat(options[1])}
-        limitTags={2}
+        limitTags={1}
         label={t("report_filter_class")}
         defaultValueIsAll
         onChange={onChange}

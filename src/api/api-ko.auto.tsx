@@ -92,6 +92,15 @@ export type SchoolsByOrganizationQueryVariables = Types.Exact<{
 export type SchoolsByOrganizationQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
     { __typename?: "Organization" } & {
+      classes?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name"> & {
+                schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id">>>>;
+              }
+          >
+        >
+      >;
       schools?: Types.Maybe<
         Array<
           Types.Maybe<
@@ -855,6 +864,13 @@ export type ClassesByOrganizationQueryResult = Apollo.QueryResult<ClassesByOrgan
 export const SchoolsByOrganizationDocument = gql`
   query schoolsByOrganization($organization_id: ID!) {
     organization(organization_id: $organization_id) {
+      classes {
+        class_id
+        class_name
+        schools {
+          school_id
+        }
+      }
       schools {
         school_id
         school_name
