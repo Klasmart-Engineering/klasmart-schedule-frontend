@@ -416,7 +416,7 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-          {page * 5}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
+          {page * 5 + 1}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
           &nbsp; / &nbsp;
           {getClassesList().length}
         </label>
