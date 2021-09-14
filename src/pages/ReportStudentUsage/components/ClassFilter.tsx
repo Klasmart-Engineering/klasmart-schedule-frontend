@@ -2,8 +2,10 @@ import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@mate
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import clsx from "clsx";
 import isEqual from "lodash/isEqual";
+import uniqBy from "lodash/uniqBy";
 import React, { ChangeEvent } from "react";
 import { useSelector } from "react-redux";
+import { Class, Maybe } from "../../../api/api-ko-schema.auto";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import useTranslation from "../hooks/useTranslation";
@@ -170,7 +172,14 @@ export default function ({ onChange, onClose }: IProps) {
 
   const { studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
 
-  const getList = () => {
+  const transformClassDataToOption = (item: Maybe<Class>): ISelect => {
+    return {
+      value: item?.class_id || "",
+      label: item?.class_name || "",
+    };
+  };
+
+  const getAllSchoolList = (): ISelect[] => {
     const schoolOptions =
       (studentUsage.schoolList
         .map((item) => ({
@@ -178,22 +187,33 @@ export default function ({ onChange, onClose }: IProps) {
           label: item.school_name,
         }))
         .concat(studentUsage.noneSchoolClasses.length > 0 ? selectNoneSchoolOption : []) as ISelect[]) || [];
-    const classOptions =
-      state.schoolId === noneValue
-        ? studentUsage.noneSchoolClasses.map((item) => ({
-            value: item.class_id,
-            label: item.class_name || "",
-          }))
-        : (studentUsage.schoolList
-            .filter((item) => item.school_id === state.schoolId)[0]
-            ?.classes?.map((item) => ({
-              value: item?.class_id,
-              label: item?.class_name,
-            })) as ISelect[]) || [];
-    return [schoolOptions, selectAllOption.concat(classOptions)];
+    return schoolOptions;
   };
 
-  const options = React.useMemo<IOptions>(getList, [state.schoolId, studentUsage.schoolList]);
+  const getAllClassList = () => {
+    let classOptions: ISelect[] = [];
+    if (state.schoolId === allValue) {
+      studentUsage.schoolList.forEach((item) => {
+        if (item.classes) {
+          classOptions = classOptions.concat(item.classes!.map(transformClassDataToOption) as ISelect[]);
+        }
+      });
+    }
+    if (state.schoolId === allValue || state.schoolId === noneValue) {
+      classOptions = classOptions.concat(studentUsage.noneSchoolClasses.map(transformClassDataToOption) as ISelect[]);
+    } else {
+      const classes = studentUsage.schoolList.filter((item) => item.school_id === state.schoolId)[0]?.classes;
+      if (classes) {
+        classOptions = classOptions.concat(classes!.map(transformClassDataToOption));
+      }
+    }
+    classOptions = uniqBy(classOptions, "value");
+    return classOptions;
+  };
+
+  const schoolOptions = React.useMemo<ISelect[]>(getAllSchoolList, [state.schoolId, studentUsage.schoolList]);
+
+  const classOptions = React.useMemo<ISelect[]>(getAllClassList, [state.schoolId, studentUsage.schoolList]);
 
   const schoolChangeCb = () => {
     if (!onChange) {
@@ -207,11 +227,11 @@ export default function ({ onChange, onClose }: IProps) {
         }))
       );
     } else {
-      onChange(options[1]);
+      onChange(classOptions);
     }
   };
 
-  React.useEffect(schoolChangeCb, [state.schoolId, options[1]]);
+  React.useEffect(schoolChangeCb, [state.schoolId, classOptions]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
@@ -219,7 +239,7 @@ export default function ({ onChange, onClose }: IProps) {
       classes: [],
     });
   };
-  const allSchoolOptions = selectAllOption.concat(options[0]);
+  const allSchoolOptions = selectAllOption.concat(schoolOptions);
   return (
     <Box className={classes.schoolContainer}>
       <Box className={classes.schoolBox}>
@@ -227,7 +247,7 @@ export default function ({ onChange, onClose }: IProps) {
           fullWidth
           size="small"
           select
-          disabled={options[0].length === 0}
+          disabled={schoolOptions.length === 0}
           label={t("report_filter_school")}
           value={state.schoolId}
           onChange={handleChange}
@@ -240,8 +260,8 @@ export default function ({ onChange, onClose }: IProps) {
         </TextField>
       </Box>
       <MutiSelect
-        disabled={options[1].length === 0}
-        options={options[1]}
+        disabled={classOptions.length === 0}
+        options={selectAllOption.concat(classOptions)}
         limitTags={1}
         label={t("report_filter_class")}
         defaultValueIsAll
