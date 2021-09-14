@@ -4,7 +4,7 @@ import Tabs from "@material-ui/core/Tabs";
 import React, { Suspense } from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
-import { t } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { getSchoolsByOrg } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 const Registration = React.lazy(() => import("./Tabs/Registration"));
@@ -47,32 +47,31 @@ const AntTab = withStyles((theme) => ({
   selected: {},
 }))(Tab);
 
-const tabs: ITabItem[] = [
-  {
-    label: t("report_student_usage_registration"),
-    index: 0,
-    display: false,
-  },
-  {
-    label: t("report_student_usage_materialusage"),
-    index: 1,
-    display: true,
-  },
-  {
-    label: t("report_student_usage_classesandassignments"),
-    index: 2,
-    display: true,
-  },
-];
-
 export default function ReportStudentUsage() {
   const dispatch = useDispatch();
+  const tabs: ITabItem[] = [
+    {
+      label: d("Registration").t("report_student_usage_registration"),
+      index: 0,
+      display: false,
+    },
+    {
+      label: d("Material Usage").t("report_student_usage_materialusage"),
+      index: 1,
+      display: true,
+    },
+    {
+      label: d("Classes & Assignments").t("report_student_usage_classesandassignments"),
+      index: 2,
+      display: true,
+    },
+  ];
   const activeTabs = tabs.filter((item) => item.display);
   const [state, setState] = React.useState({
     tabIndex: activeTabs[0].index,
   });
   const handleChange = (event: any, newValue: number) => {
-    console.log(newValue);
+    //console.log(newValue);
     setState({
       ...state,
       tabIndex: newValue,

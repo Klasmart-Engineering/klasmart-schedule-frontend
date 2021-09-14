@@ -186,14 +186,17 @@ export default function () {
       </div>
 
       <div className={css.selectContainer}>
-        <div className={css.text}>{t("report_student_usage_live")}</div>
+        <div className={css.text}>
+          {topChatData[state.activeTab].title}
+          {t("report_student_usage_live")}
+        </div>
         <div>
           <ClassFilter
             onChange={(v) => {
               v[0]?.value !== "all" ? setClassIds(v.map((item) => item.value)) : setClassIds(classIdsInit);
             }}
             onClose={() => {
-              console.log("close");
+              //console.log("close");
             }}
           />
         </div>
@@ -205,6 +208,7 @@ export default function () {
         classesAssignments={classesAssignments}
         latestThreeMonths={latestThreeMonths}
         studentUsage={studentUsage}
+        type={type}
       />
     </div>
   );

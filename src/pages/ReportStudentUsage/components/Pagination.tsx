@@ -43,7 +43,7 @@ export default function Pagination(props: IPagination) {
   return (
     <div className={css.pagination}>
       <span style={{ marginRight: 6 }}>
-        {d("Total").t("report_label_total")} {count} {d("results").t("report_student_usage_results")}
+        {d("Total").t("report_label_total")} {count} {d("Results").t("report_student_usage_results")}
       </span>
       <FirstPage className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onFirstPage()} />
       <ChevronLeft className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onSubPage()} />
