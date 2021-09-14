@@ -51,8 +51,11 @@ const Row = (props: {
           {Math.floor((row?.durations_ratio?.[2].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell
-          style={{ color: unattendedTableOpenId === row?.class_id ? "#117ad5" : "", cursor: "pointer" }}
-          onClick={() => handleclickUnattendedTable(unattendedTableOpenId === row?.class_id ? "" : row?.class_id)}
+          style={{ minWidth: 168, color: unattendedTableOpenId === row?.class_id ? "#117ad5" : "", cursor: "pointer" }}
+          onClick={() => {
+            handleclickUnattendedTable(unattendedTableOpenId === row?.class_id ? "" : row?.class_id);
+            setChildrenPage(1);
+          }}
         >
           {t("report_student_usage_unattendedStudents")}
           <IconButton aria-label="expand row" size="small">
