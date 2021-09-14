@@ -4,17 +4,12 @@ import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiIsEnableNewH5p, apiValidatePDF } from "../../api/extra";
+import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
-import { AssetPreview, getSuffix } from "../../components/UIAssetPreview/AssetPreview";
-import { d, t } from "../../locale/LocaleManager";
-import { actAsyncConfirm } from "../../reducers/confirm";
-import { actSetLoading } from "../../reducers/loading";
+import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
+import { d } from "../../locale/LocaleManager";
 import { ProgressWithText } from "./Details";
 import { DragData } from "./PlanComposeGraphic";
 
@@ -93,30 +88,27 @@ interface AssetEditProps {
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { lesson } = useParams<ContentEditRouteParams>();
-  const dispatch = useDispatch();
+  // const { lesson } = useParams<ContentEditRouteParams>();
+  // const dispatch = useDispatch();
   const { isAsset, contentDetail, disabled, value: dataSource, onChange: onChangeValue, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
   const onChange = async (value?: string) => {
-    if (value && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(value)}`) >= 0) {
-      dispatch(actSetLoading(true));
-      apiValidatePDF(value)
-        .then((res) => {
-          dispatch(actSetLoading(false));
-          if (!res.valid) {
-            const content = t("library_msg_pdf_validation");
-            dispatch(actAsyncConfirm({ content, hideCancel: true }));
-          } else {
-            onChangeValue(value);
-          }
-        })
-        .catch(() => {
-          dispatch(actSetLoading(false));
-          onChangeValue("");
-        });
-    } else {
-      onChangeValue(value);
-    }
+    // 韩国后端还没好 这个sprint不发  2021-09-15
+    // if(value && lesson==="material" && fileFormat.pdf.indexOf(`.${getSuffix(value)}`) >= 0){
+    //   dispatch(actSetLoading(true));
+    //   apiValidatePDF(value).then(res => {
+    //     dispatch(actSetLoading(false))
+    //     if(!res.valid){
+    //       const content = "The PDF file you uploaded cannot be displayed properly in live classes. Please upload a different file.";
+    //       dispatch(actAsyncConfirm({ content, hideCancel:true}))
+    //     }else{
+    //       onChangeValue(value);
+    //     }
+    //   }).catch(() => {dispatch(actSetLoading(false)); onChangeValue("")})
+    // }else {
+    //   onChangeValue(value);
+    // }
+    onChangeValue(value);
   };
   const setFile = (data: DragData) => {
     const source = JSON.parse(data.item.data).source;
