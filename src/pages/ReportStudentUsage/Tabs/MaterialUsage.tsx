@@ -112,7 +112,7 @@ const useStyles = makeStyles(() =>
     },
     tableDatum: {
       height: "28px",
-      transition: "ease 300ms",
+      transition: "ease 400ms",
       marginRight: "2px",
     },
     datumContainer: {
@@ -183,12 +183,14 @@ const months: Record<string, string> = {
 export const sortViewTypes = (list: EntityContentUsage[]): EntityContentUsage[] => {
   const sortTemplate = ["h5p", "image", "video", "audio", "document"];
   const result: EntityContentUsage[] = [];
-  list.forEach((item) => {
-    const sortIndex = sortTemplate.indexOf(item?.type as string);
-    if (sortIndex > -1) {
-      result[sortIndex] = item;
-    }
-  });
+  list
+    .filter((item) => item)
+    .forEach((item) => {
+      const sortIndex = sortTemplate.indexOf(item.type as string);
+      if (sortIndex > -1) {
+        result[sortIndex] = item;
+      }
+    });
   return result;
 };
 const computeTimestamp = (month: Moment, now?: boolean): string => {
@@ -228,6 +230,9 @@ export default function () {
       item.classes?.forEach((item) => {
         classes.push(item as Class);
       });
+    });
+    studentUsage.noneSchoolClasses.forEach((item) => {
+      classes.push(item);
     });
     setAllClasses(classes);
     allClassesRef.current = classes;
@@ -347,7 +352,7 @@ export default function () {
                         key={dIndex}
                         className={style.tableDatum}
                         style={{
-                          width: (Number(datumType.count) / monthAmount) * 100 + "%",
+                          width: (Number(datumType.count) ? (Number(datumType.count) / monthAmount) * 100 : 0) + "%",
                           background: colors[dIndex],
                         }}
                       />
@@ -384,7 +389,7 @@ export default function () {
 
   const TablePaginationActions = () => {
     const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      pageRef.current = page - 5 <= 0 ? 0 : page - 5;
+      pageRef.current = 0;
       setPage(pageRef.current);
       getList();
     };
@@ -411,7 +416,9 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-          {d("Total").t("report_student_usage_total")} {getClassesList().length} {d("Results").t("report_student_usage_results")}
+          {page * 5}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
+          &nbsp; / &nbsp;
+          {getClassesList().length}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
           <FirstPageIcon />
