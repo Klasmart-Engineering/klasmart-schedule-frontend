@@ -4,8 +4,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
+import useTranslation from "../hooks/useTranslation";
 
-interface ISelect {
+export interface ISelect {
   label: string;
   value: string;
 }
@@ -21,10 +22,6 @@ interface IState {
 }
 
 type IOptions = ISelect[][];
-
-export const selectAllOption = [{ value: "all", label: t("report_label_all") }] as ISelect[];
-
-const selectNoneSchoolOption = [{ value: "none", label: t("report_label_none") }] as ISelect[];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,6 +82,7 @@ function MutiSelect({
   onChange,
   onClose,
 }: IMutiSelectProps) {
+  const { allValue, selectAllOption } = useTranslation();
   const classes = useStyles();
 
   const [state, setState] = React.useState<IMutiSelectState>({
@@ -120,7 +118,7 @@ function MutiSelect({
         getOptionLabel={(option) => option.label}
         value={state.value}
         onChange={(event, value) => {
-          const curAllSelected = value.filter((item) => item.value === selectAllOption[0].value).length > 0;
+          const curAllSelected = value.filter((item) => item.value === allValue).length > 0;
           //onChange && onChange(value);
           if (onChange) {
             if (curAllSelected) {
@@ -129,6 +127,7 @@ function MutiSelect({
               onChange(value);
             }
           }
+          console.log(curAllSelected, value);
           setState({
             ...state,
             value: curAllSelected ? selectAllOption : value,
@@ -148,8 +147,9 @@ function MutiSelect({
 
 export default function ({ onChange, onClose }: IProps) {
   const classes = useStyles();
+  const { allValue, noneValue, selectAllOption, selectNoneSchoolOption } = useTranslation();
   const [state, setState] = React.useState<IState>({
-    schoolId: selectAllOption[0].value,
+    schoolId: allValue,
     classes: [],
   });
 
@@ -164,7 +164,7 @@ export default function ({ onChange, onClose }: IProps) {
         }))
         .concat(studentUsage.noneSchoolClasses.length > 0 ? selectNoneSchoolOption : []) as ISelect[]) || [];
     const classOptions =
-      state.schoolId === selectNoneSchoolOption[0].value
+      state.schoolId === noneValue
         ? studentUsage.noneSchoolClasses.map((item) => ({
             value: item.class_id,
             label: item.class_name || "",
@@ -176,13 +176,13 @@ export default function ({ onChange, onClose }: IProps) {
               label: item?.class_name,
             })) as ISelect[]) || [];
     return [schoolOptions, classOptions];
-  }, [studentUsage.schoolList, studentUsage.noneSchoolClasses, state.schoolId]);
+  }, [studentUsage.schoolList, studentUsage.noneSchoolClasses, selectNoneSchoolOption, state.schoolId, noneValue]);
 
   const schoolChangeCb = () => {
     if (!onChange) {
       return;
     }
-    if (state.schoolId === selectNoneSchoolOption[0].value) {
+    if (state.schoolId === noneValue) {
       onChange(
         studentUsage.noneSchoolClasses.map((item) => ({
           value: item.class_id,

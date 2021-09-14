@@ -15,6 +15,8 @@ import { RootState } from "../../../reducers";
 import { getStudentUsageMaterial } from "../../../reducers/report";
 import ClassFilter, { MutiSelect } from "../components/ClassFilter";
 import MaterialUsageTooltip from "../components/MaterialUsageTooltip";
+import useTranslation from "../hooks/useTranslation";
+
 const useStyles = makeStyles(() =>
   createStyles({
     material: {
@@ -146,39 +148,8 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-export const MaterialUsageConData = [
-  { value: "all", label: d("All").t("report_label_all") },
-  { value: "h5p", label: "H5P" },
-  { value: "image", label: d("Image").t("library_label_image") },
-  { value: "video", label: d("Video").t("library_label_video") },
-  { value: "audio", label: d("Audio").t("library_label_audio") },
-  { value: "document", label: d("Document").t("library_label_document") },
-];
 
 const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
-
-const viewType: Record<string, string> = {
-  h5p: d("No of H5P viewed").t("report_student_usage_h5p_viewed"),
-  audio: d("Audio listened").t("report_student_usage_audio_listened"),
-  video: d("Video viewed").t("report_student_usage_video_viewed"),
-  image: d("Images viewed").t("report_student_usage_images_viewed"),
-  document: d("Document viewed").t("report_student_usage_document_viewed"),
-};
-
-const months: Record<string, string> = {
-  January: d("January").t("schedule_calendar_january"),
-  February: d("February").t("schedule_calendar_february"),
-  March: d("March").t("schedule_calendar_march"),
-  April: d("April").t("schedule_calendar_april"),
-  May: d("May").t("schedule_calendar_may"),
-  June: d("June").t("schedule_calendar_june"),
-  July: d("July").t("schedule_calendar_july"),
-  August: d("August").t("schedule_calendar_august"),
-  September: d("September").t("schedule_calendar_september"),
-  October: d("October").t("schedule_calendar_october"),
-  November: d("November").t("schedule_calendar_november"),
-  December: d("December").t("schedule_calendar_december"),
-};
 
 export const sortViewTypes = (list: EntityContentUsage[]): EntityContentUsage[] => {
   const sortTemplate = ["h5p", "image", "video", "audio", "document"];
@@ -200,6 +171,7 @@ const computeTimestamp = (month: Moment, now?: boolean): string => {
 
 const momentRef = moment().locale("en").set("h", 0).set("s", 0).set("minute", 0);
 export default function () {
+  const { allValue, viewType, months, MaterialUsageConData } = useTranslation();
   const style = useStyles();
   const dispatch = useDispatch();
   const pageRef = useRef(0);
@@ -279,8 +251,8 @@ export default function () {
         class_id_list,
         allClasses: allClassIdStr,
         content_type_list:
-          contentTypeListRef.current.indexOf("all") > -1 || !contentTypeListRef.current.length
-            ? MaterialUsageConData.filter((item) => item.value !== "all").map((item) => item.value)
+          contentTypeListRef.current.indexOf(allValue) > -1 || !contentTypeListRef.current.length
+            ? MaterialUsageConData.filter((item) => item.value !== allValue).map((item) => item.value)
             : contentTypeListRef.current,
         time_range_list: [computeTimestamp(timeRangeList[0]), computeTimestamp(timeRangeList[1]), computeTimestamp(timeRangeList[2], true)],
         time_range_count: [timeRangeList[0].clone().set("D", 1).unix().valueOf() + "-" + moment().unix().valueOf()],
@@ -455,7 +427,7 @@ export default function () {
         >
           <MutiSelect
             options={MaterialUsageConData}
-            limitTags={2}
+            limitTags={1}
             label={t("report_filter_content")}
             onChange={handleChange}
             onClose={() => {}}

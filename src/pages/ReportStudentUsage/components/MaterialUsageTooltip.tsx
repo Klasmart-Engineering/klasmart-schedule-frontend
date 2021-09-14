@@ -4,7 +4,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React from "react";
 import { EntityContentUsage } from "../../../api/api.auto";
 import { d } from "../../../locale/LocaleManager";
-import { MaterialUsageConData } from "../Tabs/MaterialUsage";
+import useTranslation from "../hooks/useTranslation";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,6 +43,7 @@ interface Props {
 
 export default function MaterialUsageTooltip(props: Props) {
   const classes = useStyles();
+  const { MaterialUsageConData } = useTranslation();
   return (
     <Popover
       id="mouse-over-popover"
