@@ -219,7 +219,6 @@ export default function () {
     });
     setAllClasses(classes);
     allClassesRef.current = classes;
-    console.log(studentUsage, allClassesRef.current);
     getList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentUsage]);
@@ -262,7 +261,7 @@ export default function () {
         class_id_list,
         allClasses: allClassIdStr,
         content_type_list:
-          contentTypeListRef.current.indexOf("all") > -1 || !contentTypeList.length
+          contentTypeListRef.current.indexOf("all") > -1 || !contentTypeListRef.current.length
             ? MaterialUsageConData.filter((item) => item.value !== "all").map((item) => item.value)
             : contentTypeListRef.current,
         time_range_list: [computeTimestamp(timeRangeList[0]), computeTimestamp(timeRangeList[1]), computeTimestamp(timeRangeList[2], true)],
