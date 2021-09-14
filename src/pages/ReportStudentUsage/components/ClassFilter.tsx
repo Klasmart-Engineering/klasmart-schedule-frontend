@@ -24,7 +24,7 @@ interface IState {
 
 type IOptions = ISelect[][];
 
-export const selectAllOption = [{ value: "all", label: t("report_label_all") }];
+export const selectAllOption = [{ value: "all", label: t("report_label_all") }] as ISelect[];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -168,6 +168,7 @@ export default function ({ onChange, onClose }: IProps) {
       classes: [],
     });
   };
+  const allSchoolOptions = selectAllOption.concat(options[0]);
   return (
     <Box className={classes.schoolContainer}>
       <Box className={classes.schoolBox}>
@@ -180,7 +181,7 @@ export default function ({ onChange, onClose }: IProps) {
           value={state.schoolId}
           onChange={handleChange}
         >
-          {options[0].map((option) => (
+          {allSchoolOptions.map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}
             </MenuItem>

@@ -1502,7 +1502,7 @@ export const getClassesAssignmentsUnattended = createAsyncThunk<
   });
   const userNames = resp.data.usersConnection?.edges?.reduce((prev: IObj, cur) => {
     if (cur?.node?.id) {
-      prev[cur?.node?.id] = cur.node?.familyName || "";
+      prev[cur?.node?.id] = `${cur.node?.givenName || ""} ${cur.node?.familyName || ""}`;
     }
     return prev;
   }, {}) as IObj;
