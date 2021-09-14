@@ -1,6 +1,4 @@
-import { Box, Checkbox, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -25,6 +23,8 @@ interface IState {
 type IOptions = ISelect[][];
 
 export const selectAllOption = [{ value: "all", label: t("report_label_all") }] as ISelect[];
+
+const selectNoneSchoolOption = [{ value: "none", label: t("report_label_none") }] as ISelect[];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,30 +69,39 @@ interface IMutiSelectProps {
   disabled?: boolean;
   onChange?: (value: ISelect[]) => void;
   onClose?: () => void;
+  defaultValueIsAll?: boolean;
 }
 interface IMutiSelectState {
   value: ISelect[];
   allSelected: boolean;
 }
-function MutiSelect({ limitTags, options: allOptions, label, disabled, placeholder, onChange, onClose }: IMutiSelectProps) {
+function MutiSelect({
+  limitTags,
+  options: allOptions,
+  label,
+  disabled,
+  placeholder,
+  defaultValueIsAll,
+  onChange,
+  onClose,
+}: IMutiSelectProps) {
   const classes = useStyles();
 
   const [state, setState] = React.useState<IMutiSelectState>({
-    value: [],
-    allSelected: false,
+    value: defaultValueIsAll ? selectAllOption : [],
+    allSelected: !!defaultValueIsAll,
   });
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
   const resetState = () => {
+    console.info("reset");
     setState({
       ...state,
-      value: [],
-      allSelected: false,
+      value: defaultValueIsAll ? selectAllOption : [],
+      allSelected: !!defaultValueIsAll,
     });
   };
 
-  React.useEffect(resetState, [allOptions[2]]);
+  React.useEffect(resetState, [allOptions.length, allOptions[1]]);
 
   return (
     <Box className={classes.multipleSelectBox}>
@@ -111,8 +120,16 @@ function MutiSelect({ limitTags, options: allOptions, label, disabled, placehold
         getOptionLabel={(option) => option.label}
         value={state.value}
         onChange={(event, value) => {
-          const curAllSelected = value.filter((item) => item.value === "all").length > 0;
-          onChange && onChange(value);
+          const curAllSelected = value.filter((item) => item.value === selectAllOption[0].value).length > 0;
+          //onChange && onChange(value);
+          console.info("value", value);
+          if (onChange) {
+            if (curAllSelected) {
+              onChange(allOptions.slice(1, allOptions.length));
+            } else {
+              onChange(value);
+            }
+          }
           setState({
             ...state,
             value: curAllSelected ? selectAllOption : value,
@@ -120,14 +137,7 @@ function MutiSelect({ limitTags, options: allOptions, label, disabled, placehold
           });
         }}
         renderOption={(option, { selected }) => {
-          return (
-            !(option.value === "all" && state.allSelected) && (
-              <>
-                <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 4 }} checked={selected} />
-                {option.label}
-              </>
-            )
-          );
+          return !(option.value === "all" && state.allSelected) && <>{option.label}</>;
         }}
         renderInput={(params) => (
           <TextField {...params} variant="outlined" label={label} placeholder={placeholder} onBlur={onClose ? onClose : () => {}} />
@@ -140,7 +150,7 @@ function MutiSelect({ limitTags, options: allOptions, label, disabled, placehold
 export default function ({ onChange, onClose }: IProps) {
   const classes = useStyles();
   const [state, setState] = React.useState<IState>({
-    schoolId: "",
+    schoolId: selectAllOption[0].value,
     classes: [],
   });
 
@@ -162,13 +172,21 @@ export default function ({ onChange, onClose }: IProps) {
     return [schoolOptions, classOptions];
   }, [studentUsage.schoolList, state.schoolId]);
 
+  const schoolChangeCb = () => {
+    onChange && onChange(options[1]);
+  };
+
+  React.useEffect(schoolChangeCb, [state.schoolId, options[1]]);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
       schoolId: event.target.value,
       classes: [],
     });
   };
-  const allSchoolOptions = selectAllOption.concat(options[0]);
+  const allSchoolOptions = selectAllOption.concat(options[0], selectNoneSchoolOption);
+
+  console.log(allSchoolOptions);
   return (
     <Box className={classes.schoolContainer}>
       <Box className={classes.schoolBox}>
@@ -193,6 +211,7 @@ export default function ({ onChange, onClose }: IProps) {
         options={selectAllOption.concat(options[1])}
         limitTags={2}
         label={t("report_filter_class")}
+        defaultValueIsAll
         onChange={onChange}
         onClose={onClose}
       />

@@ -736,6 +736,7 @@ type LangRecord<T = string> =
   | { id: "report_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
   | { id: "report_label_status"; description: "Status"; values: undefined }
   | { id: "report_label_all"; description: "All"; values: undefined }
+  | { id: "report_label_none"; description: "None"; values: undefined }
   | { id: "report_label_achieved"; description: "Achieved"; values: undefined }
   | { id: "report_label_not_achieved"; description: "Not Achieved"; values: undefined }
   | { id: "report_label_not_attempted"; description: "Not Attempted"; values: undefined }
