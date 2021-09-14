@@ -63,9 +63,9 @@ export default function MaterialUsageTooltip(props: Props) {
       disableRestoreFocus
     >
       <Grid container direction={"column"} className={classes.container}>
-        {props.content.map((item) => {
+        {props.content.map((item, key) => {
           return (
-            <Grid container justify={"space-between"} className={classes.item}>
+            <Grid container justify={"space-between"} className={classes.item} key={key}>
               {MaterialUsageConData.find((v) => v.value === item.type)?.label}
               <label>{item.count}</label>
             </Grid>

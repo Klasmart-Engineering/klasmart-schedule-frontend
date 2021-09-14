@@ -58,6 +58,13 @@ query classesByOrganization($organization_id: ID!) {
 
 query schoolsByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
+    classes{
+      class_id
+      class_name
+    	schools{
+        school_id
+      }
+    }
     schools{
       school_id
       school_name
