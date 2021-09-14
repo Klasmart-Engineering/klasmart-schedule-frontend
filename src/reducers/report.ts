@@ -290,7 +290,7 @@ export const getStudentUsageMaterial = createAsyncThunk<
       content_type_list: params.content_type_list,
     }),
     api.reports.getStudentUsageMaterialViewCountReport({
-      class_id_list: params.allClasses,
+      class_id_list: params.class_id_list,
       time_range_list: params.time_range_count,
       content_type_list: params.content_type_list,
     }),

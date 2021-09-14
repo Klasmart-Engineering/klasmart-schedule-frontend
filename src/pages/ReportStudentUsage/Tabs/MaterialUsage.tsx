@@ -1,3 +1,4 @@
+// 9-14 21:17
 import { Box, createStyles, Grid, IconButton, makeStyles } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -16,7 +17,6 @@ import { getStudentUsageMaterial } from "../../../reducers/report";
 import ClassFilter, { MutiSelect } from "../components/ClassFilter";
 import MaterialUsageTooltip from "../components/MaterialUsageTooltip";
 import useTranslation from "../hooks/useTranslation";
-
 const useStyles = makeStyles(() =>
   createStyles({
     material: {
@@ -114,7 +114,7 @@ const useStyles = makeStyles(() =>
     },
     tableDatum: {
       height: "28px",
-      transition: "ease 300ms",
+      transition: "ease 400ms",
       marginRight: "2px",
     },
     datumContainer: {
@@ -154,12 +154,14 @@ const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
 export const sortViewTypes = (list: EntityContentUsage[]): EntityContentUsage[] => {
   const sortTemplate = ["h5p", "image", "video", "audio", "document"];
   const result: EntityContentUsage[] = [];
-  list.forEach((item) => {
-    const sortIndex = sortTemplate.indexOf(item?.type as string);
-    if (sortIndex > -1) {
-      result[sortIndex] = item;
-    }
-  });
+  list
+    .filter((item) => item)
+    .forEach((item) => {
+      const sortIndex = sortTemplate.indexOf(item.type as string);
+      if (sortIndex > -1) {
+        result[sortIndex] = item;
+      }
+    });
   return result;
 };
 const computeTimestamp = (month: Moment, now?: boolean): string => {
@@ -171,10 +173,10 @@ const computeTimestamp = (month: Moment, now?: boolean): string => {
 
 const momentRef = moment().locale("en").set("h", 0).set("s", 0).set("minute", 0);
 export default function () {
-  const { allValue, viewType, months, MaterialUsageConData } = useTranslation();
   const style = useStyles();
   const dispatch = useDispatch();
   const pageRef = useRef(0);
+  const { allValue, viewType, months, MaterialUsageConData } = useTranslation();
   const [contentTypeList, setContentTypeList] = useState<string[]>([]);
   const [classIdList, setClassIdList] = useState<{ label: string; value: string }[]>([]);
   const contentTypeListRef = useRef(contentTypeList);
@@ -189,26 +191,26 @@ export default function () {
   const [totalView, setTotalView] = useState(0);
   const [allClasses, setAllClasses] = useState<Class[]>([]);
   const allClassesRef = useRef<Class[]>(allClasses);
-  useEffect(() => {
-    getList();
-    // eslint-disable-next-line
-  }, []);
 
   useEffect(() => {
     const classes: Class[] = [];
-    studentUsage.schoolList.forEach((item) => {
-      item.classes?.forEach((item) => {
-        classes.push(item as Class);
+    if (studentUsage.schoolList.length) {
+      studentUsage.schoolList.forEach((item) => {
+        item.classes?.forEach((item) => {
+          classes.push(item as Class);
+        });
       });
-    });
-    setAllClasses(classes);
-    allClassesRef.current = classes;
-    getList();
+      studentUsage.noneSchoolClasses.forEach((item) => {
+        classes.push(item);
+      });
+      setAllClasses(classes);
+      allClassesRef.current = classes;
+      getList();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentUsage]);
 
   useEffect(() => {
-    // handleData
     const result: Map<string, EntityContentUsage[]>[] = [];
     const idList: string[] = [];
     studentUsageReport[0]?.class_usage_list?.forEach((item) => {
@@ -242,7 +244,7 @@ export default function () {
   const getList = () => {
     const allClassIdStr = allClassesRef.current.map((item) => item.class_id);
     const class_id_list = getClassesList().slice(pageRef.current * 5, pageRef.current * 5 + 5);
-    if (!class_id_list.length) {
+    if (!class_id_list.length || !allClassIdStr.length) {
       return;
     }
     dispatch(
@@ -314,13 +316,15 @@ export default function () {
               >
                 <div className={style.datumWrapper} style={{ width: (monthAmount / maxValue) * 100 + "%" }}>
                   {item.map((datumType, dIndex) => {
+                    const count = Number(datumType.count);
                     return (
                       <div
                         key={dIndex}
                         className={style.tableDatum}
                         style={{
-                          width: (Number(datumType.count) / monthAmount) * 100 + "%",
+                          width: (Number(datumType.count) ? (Number(datumType.count) / monthAmount) * 100 : 0) + "%",
                           background: colors[dIndex],
+                          marginRight: count === 0 ? 0 : undefined,
                         }}
                       />
                     );
@@ -356,7 +360,7 @@ export default function () {
 
   const TablePaginationActions = () => {
     const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      pageRef.current = page - 5 <= 0 ? 0 : page - 5;
+      pageRef.current = 0;
       setPage(pageRef.current);
       getList();
     };
@@ -383,7 +387,9 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-          {d("Total").t("report_student_usage_total")} {getClassesList().length} {d("Results").t("report_student_usage_results")}
+          {page * 5 + 1}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
+          &nbsp; / &nbsp;
+          {getClassesList().length}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
           <FirstPageIcon />
@@ -427,7 +433,7 @@ export default function () {
         >
           <MutiSelect
             options={MaterialUsageConData}
-            limitTags={1}
+            limitTags={2}
             label={t("report_filter_content")}
             onChange={handleChange}
             onClose={() => {}}
@@ -448,8 +454,14 @@ export default function () {
       </Grid>
       <Grid container direction={"column"} className={style.viewedAmount}>
         <Grid item className={style.lineFooter}>
-          {sortViewTypes(studentUsageReport[1].content_usage_list || []).map((item, index) => {
-            return renderLineFooterBlock(viewType[item.type as string], item.count as number, index);
+          {Object.keys(viewType).map((key, index) => {
+            const findType = sortViewTypes(studentUsageReport[1].content_usage_list || [])
+              .filter((item) => item)
+              .find((item) => item.type === key);
+            if (findType) {
+              return renderLineFooterBlock(viewType[findType.type as string], findType.count as number, index);
+            }
+            return renderLineFooterBlock(viewType[key], 0, index);
           })}
         </Grid>
       </Grid>
