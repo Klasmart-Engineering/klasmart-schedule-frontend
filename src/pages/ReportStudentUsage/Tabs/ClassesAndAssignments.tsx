@@ -169,8 +169,8 @@ export default function () {
             durations,
           })
         );
-      // eslint-disable-next-line
     },
+    // eslint-disable-next-line
     [dispatch, setPage, classIds, type]
   );
 
