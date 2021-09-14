@@ -736,6 +736,7 @@ type LangRecord<T = string> =
   | { id: "report_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
   | { id: "report_label_status"; description: "Status"; values: undefined }
   | { id: "report_label_all"; description: "All"; values: undefined }
+  | { id: "report_label_none"; description: "None"; values: undefined }
   | { id: "report_label_achieved"; description: "Achieved"; values: undefined }
   | { id: "report_label_not_achieved"; description: "Not Achieved"; values: undefined }
   | { id: "report_label_not_attempted"; description: "Not Attempted"; values: undefined }
@@ -1275,7 +1276,7 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_registration"; description: "Registration"; values: undefined }
   | { id: "report_student_usage_materialusage"; description: "Material Usage"; values: undefined }
   | { id: "report_student_usage_classesandassignments"; description: "Classes & Assignments"; values: undefined }
-  | { id: "report_student_usage_live"; description: "(latest 3 moths)"; values: undefined }
+  | { id: "report_student_usage_live"; description: "(latest 3 months)"; values: undefined }
   | { id: "report_student_usage_class"; description: "Class"; values: undefined }
   | { id: "report_student_usage_total"; description: "Total"; values: undefined }
   | { id: "report_student_usage_unattendedStudents"; description: "Unattended students"; values: undefined }
@@ -1289,7 +1290,7 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_study"; description: "Study"; values: undefined }
   | { id: "report_student_usage_home_fun"; description: "Home Fun"; values: undefined }
   | { id: "report_filter_content"; description: "Content"; values: undefined }
-  | { id: "report_student_usage_h5p_viewed"; description: "No. of viewed H5P"; values: undefined }
+  | { id: "report_student_usage_h5p_viewed"; description: "No of H5P viewed"; values: undefined }
   | { id: "report_student_usage_video_viewed"; description: "Video viewed"; values: undefined }
   | { id: "report_student_usage_images_viewed"; description: "Images viewed"; values: undefined }
   | { id: "report_student_usage_document_viewed"; description: "Document viewed"; values: undefined }

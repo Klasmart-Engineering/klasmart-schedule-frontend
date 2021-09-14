@@ -158,7 +158,7 @@ export const MaterialUsageConData = [
 const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
 
 const viewType: Record<string, string> = {
-  h5p: d("No. of viewed H5P").t("report_student_usage_h5p_viewed"),
+  h5p: d("No of H5P viewed").t("report_student_usage_h5p_viewed"),
   audio: d("Audio listened").t("report_student_usage_audio_listened"),
   video: d("Video viewed").t("report_student_usage_video_viewed"),
   image: d("Images viewed").t("report_student_usage_images_viewed"),
@@ -180,6 +180,17 @@ const months: Record<string, string> = {
   December: d("December").t("schedule_calendar_december"),
 };
 
+export const sortViewTypes = (list: EntityContentUsage[]): EntityContentUsage[] => {
+  const sortTemplate = ["h5p", "image", "video", "audio", "document"];
+  const result: EntityContentUsage[] = [];
+  list.forEach((item) => {
+    const sortIndex = sortTemplate.indexOf(item?.type as string);
+    if (sortIndex > -1) {
+      result[sortIndex] = item;
+    }
+  });
+  return result;
+};
 const computeTimestamp = (month: Moment, now?: boolean): string => {
   if (now) {
     return month.clone().set("D", 1).unix().valueOf() + "-" + moment().unix().valueOf();
@@ -232,7 +243,7 @@ export default function () {
       const data = new Map<string, EntityContentUsage[]>();
       const sortData = sortBy(item.content_usage_list, (a) => Number(a.time_range?.split("-")[0]));
       sortData.forEach((pItem) => {
-        data.set(pItem.time_range as string, [...(data.get(pItem.time_range as string) ?? []), pItem]);
+        data.set(pItem.time_range as string, sortViewTypes([...(data.get(pItem.time_range as string) ?? []), pItem]));
       });
       result.push(data);
       idList.push(item.id as string);
@@ -298,10 +309,10 @@ export default function () {
     getList();
   };
 
-  const renderLineFooterBlock = (content: string, count: number, color: string) => {
+  const renderLineFooterBlock = (content: string, count: number, index: number) => {
     return (
-      <div className={style.dataBlock}>
-        <div className={style.point} style={{ background: color }}></div>
+      <div className={style.dataBlock} key={index}>
+        <div className={style.point} style={{ background: colors[index] }}></div>
         <div className={style.blockRight}>
           {content}
           <div className={style.blockCount}>{count}</div>
@@ -312,15 +323,16 @@ export default function () {
 
   const renderTableItem = (datum: Map<string, EntityContentUsage[]>, index: number, maxValue: number) => {
     return (
-      <Grid container item className={style.tableItem}>
+      <Grid container item className={style.tableItem} key={index}>
         <Grid item className={style.tableIItemLabel}>
           {allClasses.find((item) => item.class_id === ids[index])?.class_name}
         </Grid>
         <Grid item container className={style.tableData}>
-          {Array.from(datum.values()).map((item) => {
+          {Array.from(datum.values()).map((item, index) => {
             const monthAmount = item.reduce((preValue, value) => preValue + Number(value.count), 0);
             return (
               <div
+                key={index}
                 className={clsx(style.datumContainer, "datumContainer")}
                 onMouseEnter={(e) => {
                   setTooltipAnchorEl(e.currentTarget);
@@ -329,13 +341,14 @@ export default function () {
                 onMouseLeave={() => setTooltipAnchorEl(null)}
               >
                 <div className={style.datumWrapper} style={{ width: (monthAmount / maxValue) * 100 + "%" }}>
-                  {item.map((datumType, index) => {
+                  {item.map((datumType, dIndex) => {
                     return (
                       <div
+                        key={dIndex}
                         className={style.tableDatum}
                         style={{
                           width: (Number(datumType.count) / monthAmount) * 100 + "%",
-                          background: colors[index],
+                          background: colors[dIndex],
                         }}
                       />
                     );
@@ -432,8 +445,7 @@ export default function () {
       </div>
       <div className={style.total}>
         <span>
-          {d("Content total viewed (latest 3 months)").t("report_content_total_viewed")}
-          {totalView}
+          {d("Content total viewed (latest 3 months)").t("report_content_total_viewed")}：{totalView}
         </span>
         <Box
           style={{
@@ -464,8 +476,8 @@ export default function () {
       </Grid>
       <Grid container direction={"column"} className={style.viewedAmount}>
         <Grid item className={style.lineFooter}>
-          {(studentUsageReport[1].content_usage_list || []).map((item, index) => {
-            return renderLineFooterBlock(viewType[item.type as string], item.count as number, colors[index]);
+          {sortViewTypes(studentUsageReport[1].content_usage_list || []).map((item, index) => {
+            return renderLineFooterBlock(viewType[item.type as string], item.count as number, index);
           })}
         </Grid>
       </Grid>
