@@ -78,7 +78,7 @@ export default function ReportStudentUsage() {
     });
   };
   React.useEffect(() => {
-    dispatch(getSchoolsByOrg());
+    dispatch(getSchoolsByOrg({ metaLoading: true }));
   }, [dispatch]);
   return (
     <>

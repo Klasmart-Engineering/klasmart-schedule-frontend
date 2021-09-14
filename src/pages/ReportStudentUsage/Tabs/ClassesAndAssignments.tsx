@@ -3,8 +3,9 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { t } from "../../../locale/LocaleManager";
+import { sortByStudentName } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
-import { getClassesAssignments, getClassesAssignmentsOverview } from "../../../reducers/report";
+import { getClassesAssignments, getClassesAssignmentsOverview, getClassesAssignmentsUnattended } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
 import ClassFilter from "../components/ClassFilter";
 import Statistics from "../components/Statistics";
@@ -98,20 +99,27 @@ export function formatTime(time: any) {
 export default function () {
   const css = useStyles();
   const currentDate = new Date();
-  const { classesAssignments, overview, studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
-
+  const {
+    classesAssignments,
+    overview,
+    studentUsage,
+    classesAssignmentsUnattend: classesAssignmentsUnattendRow,
+  } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const classIdsInit = studentUsage.schoolList.reduce((prev: string[], current) => {
     const classId = current.classes?.map((item) => item?.class_id).filter((item) => !!item) as string[];
     return prev.concat(classId);
   }, []);
   const [classIds, setClassIds] = useState<string[]>(classIdsInit);
+  const [unattendedTableOpenId, setunattendedTableOpenId] = useState<string | undefined>("");
   const dispatch = useDispatch();
   const latestThreeMonths = getTimeDots();
   const [page, setPage] = React.useState(1);
   const [state, setState] = React.useState({
     activeTab: 0,
   });
-
+  const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
+    ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
+    : [];
   const topChatData = React.useMemo(() => {
     return [
       {
@@ -134,11 +142,34 @@ export default function () {
       },
     ];
   }, [overview]);
+  const type = topChatData[state.activeTab].id;
+
+  const handleclickUnattendedTable = React.useMemo(
+    () => (class_id?: string) => {
+      setunattendedTableOpenId(class_id);
+      if (!class_id) return;
+      dispatch(
+        getClassesAssignmentsUnattended({
+          metaLoading: true,
+          class_id,
+          query: {
+            type,
+            durations: [
+              `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
+              `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
+              `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((new Date() as any) / 1000)}`,
+            ],
+          },
+        })
+      );
+    },
+    [dispatch, latestThreeMonths.latestThreeMonthsDots, type]
+  );
 
   const handleTabClick = (index: number) => () => {
     setState({ activeTab: index });
+    setunattendedTableOpenId("");
   };
-  const type = topChatData[state.activeTab].id;
 
   useEffect(() => {
     classIds &&
@@ -203,12 +234,15 @@ export default function () {
         </div>
       </div>
       <ClassesAndAssignmentsTable
+        unattendedTableOpenId={unattendedTableOpenId}
         total={classIds.length}
         page={page}
         handleChangePage={setPage}
         classesAssignments={classesAssignments}
         latestThreeMonths={latestThreeMonths}
         studentUsage={studentUsage}
+        classesAssignmentsUnattend={classesAssignmentsUnattend}
+        handleclickUnattendedTable={handleclickUnattendedTable}
         type={type}
       />
     </div>

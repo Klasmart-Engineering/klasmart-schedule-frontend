@@ -1,5 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep } from "lodash";
+import { ApolloQueryResult } from "_@apollo_react-hooks@4.0.0@@apollo/react-hooks";
 import api, { gqlapi } from "../api";
 import { Class, School, Status, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
 import {
@@ -235,9 +236,12 @@ export const getLessonPlan = createAsyncThunk<
 //   return data;
 // });
 
-export const getSchoolsByOrg = createAsyncThunk("getSchoolsByOrg", async () => {
+export const getSchoolsByOrg = createAsyncThunk<
+  [ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<SchoolsByOrganizationQuery>],
+  LoadingMetaPayload
+>("getSchoolsByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  return Promise.all([
+  return await Promise.all([
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -1192,19 +1196,8 @@ export const getAfterClassFilter = createAsyncThunk<
   IParamsGetAfterClassFilter & LoadingMetaPayload,
   { state: RootState }
 >("getAfterClassFilter", async (query, { dispatch }) => {
-  const {
-    summary_type,
-    filter_type,
-    school_id,
-    class_id,
-    teacher_id,
-    student_id,
-    week_start,
-    week_end,
-    isOrg,
-    isSchool,
-    isTeacher,
-  } = query;
+  const { summary_type, filter_type, school_id, class_id, teacher_id, student_id, week_start, week_end, isOrg, isSchool, isTeacher } =
+    query;
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
   let students: ArrProps[] = [];
@@ -1549,13 +1542,13 @@ const { actions, reducer } = createSlice({
     },
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
-      state.reportMockOptions.classList = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching
-        : undefined) as Pick<Class, "class_id" | "class_name">[];
+      state.reportMockOptions.classList = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching : undefined
+      ) as Pick<Class, "class_id" | "class_name">[];
 
-      state.reportMockOptions.class_id = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching[0]?.class_id
-        : undefined) as string;
+      state.reportMockOptions.class_id = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching[0]?.class_id : undefined
+      ) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1751,8 +1744,13 @@ const { actions, reducer } = createSlice({
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignmentsUnattended>>
     ) => {
-      // @ts-ignore
       state.classesAssignmentsUnattend = payload;
+    },
+    [getClassesAssignmentsUnattended.pending.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignmentsUnattended>>
+    ) => {
+      state.classesAssignmentsUnattend = cloneDeep(initialState.classesAssignmentsUnattend);
     },
     [getClassesAssignments.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {
       state.classesAssignments = payload;
