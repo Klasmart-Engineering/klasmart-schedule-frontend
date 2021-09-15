@@ -3,7 +3,7 @@ import { School, User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem
+  EntityStudentAchievementReportCategoryItem,
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
@@ -224,7 +224,7 @@ export function sortByStudentName(studentName: any) {
     }
   };
 }
-export function getTimeDots():ILatestThreeMonths {
+export function getTimeDots(): ILatestThreeMonths {
   const currentDate = new Date();
   var year = currentDate.getFullYear();
   var month = currentDate.getMonth() + 1;
@@ -247,7 +247,7 @@ export function getTimeDots():ILatestThreeMonths {
         latestThreeMonthsDots: [`${year}/${month - 2}/01 00:00:00`, `${year}/${month - 1}/01 00:00:00`, `${year}/${month}/01 00:00:00`],
       };
   }
-};
+}
 export interface ILatestThreeMonths {
   latestThreeMonthsDate: number[];
   latestThreeMonthsDots: string[];

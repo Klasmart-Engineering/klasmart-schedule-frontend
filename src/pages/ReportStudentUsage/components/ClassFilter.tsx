@@ -1,4 +1,4 @@
-import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
+import { Box, Chip, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import clsx from "clsx";
 import isEqual from "lodash/isEqual";
@@ -17,7 +17,6 @@ export interface ISelect {
 
 interface IProps {
   onChange?: (value: ISelect[]) => void;
-  onClose?: () => void;
 }
 
 interface IState {
@@ -72,7 +71,7 @@ interface IMutiSelectProps {
   placeholder?: string;
   disabled?: boolean;
   onChange?: (value: ISelect[]) => void;
-  onClose?: () => void;
+  onInitial?: (value: ISelect[]) => void;
   defaultValueIsAll?: boolean;
 }
 interface IMutiSelectState {
@@ -80,7 +79,7 @@ interface IMutiSelectState {
   allSelected: boolean;
 }
 const MutiSelect = React.memo(
-  ({ limitTags, options: allOptions, label, disabled, placeholder, defaultValueIsAll, onChange, onClose }: IMutiSelectProps) => {
+  ({ limitTags, options: allOptions, label, disabled, placeholder, defaultValueIsAll, onChange, onInitial }: IMutiSelectProps) => {
     const { allValue, selectAllOption } = useTranslation();
     const classes = useStyles();
     const [focused, setFocused] = React.useState<boolean>(false);
@@ -95,10 +94,14 @@ const MutiSelect = React.memo(
         value: defaultValueIsAll ? allOptions.slice(0, 1) : [],
         allSelected: !!defaultValueIsAll,
       });
+      !disabled && onInitial && onInitial(allOptions.slice(1, allOptions.length));
     };
 
     const onSelectChange = (event: ChangeEvent<{}>, value: ISelect[]) => {
       const valueLength = value.length;
+      if (value.length === 0) {
+        return;
+      }
       const curAllSelected = value.filter((item) => item.value === allValue).length > 0;
       const prevAllSelected = state.allSelected;
       let newValue = [];
@@ -123,7 +126,7 @@ const MutiSelect = React.memo(
       });
     };
 
-    React.useEffect(resetState, [allOptions.length, allOptions[1]]);
+    React.useEffect(resetState, [allOptions.length, allOptions]);
 
     return (
       <Box
@@ -137,6 +140,7 @@ const MutiSelect = React.memo(
             tagSizeSmall: classes.tagSizeSmall,
           }}
           disabled={disabled}
+          disableClearable
           size="small"
           multiple
           limitTags={limitTags}
@@ -150,9 +154,17 @@ const MutiSelect = React.memo(
           onBlur={() => {
             setFocused(false);
           }}
-          renderInput={(params) => (
-            <TextField {...params} variant="outlined" label={label} placeholder={placeholder} onBlur={onClose ? onClose : () => {}} />
-          )}
+          renderTags={(tagValue, getTagProps) =>
+            tagValue.map((option, index) => (
+              <Chip
+                label={option.label}
+                {...getTagProps({ index })}
+                disabled={state.value.length === 1}
+                //disabled={fixedOptions.indexOf(option) !== -1}
+              />
+            ))
+          }
+          renderInput={(params) => <TextField {...params} variant="outlined" label={label} placeholder={placeholder} />}
         />
       </Box>
     );
@@ -162,7 +174,7 @@ const MutiSelect = React.memo(
   }
 );
 
-export default function ({ onChange, onClose }: IProps) {
+export default function ({ onChange }: IProps) {
   const classes = useStyles();
   const { allValue, noneValue, selectAllOption, selectNoneSchoolOption } = useTranslation();
   const [state, setState] = React.useState<IState>({
@@ -215,24 +227,6 @@ export default function ({ onChange, onClose }: IProps) {
 
   const classOptions = React.useMemo<ISelect[]>(getAllClassList, [state.schoolId, studentUsage.schoolList]);
 
-  const schoolChangeCb = () => {
-    if (!onChange) {
-      return;
-    }
-    if (state.schoolId === noneValue) {
-      onChange(
-        studentUsage.noneSchoolClasses.map((item) => ({
-          value: item.class_id,
-          label: item.class_name || "",
-        }))
-      );
-    } else {
-      onChange(classOptions);
-    }
-  };
-
-  React.useEffect(schoolChangeCb, [state.schoolId, classOptions]);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
       schoolId: event.target.value,
@@ -266,7 +260,7 @@ export default function ({ onChange, onClose }: IProps) {
         label={t("report_filter_class")}
         defaultValueIsAll
         onChange={onChange}
-        onClose={onClose}
+        onInitial={onChange}
       />
     </Box>
   );

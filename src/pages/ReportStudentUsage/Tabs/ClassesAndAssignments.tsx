@@ -70,13 +70,15 @@ export function formatTime(time: any) {
   var date = new Date(time);
   return Math.floor(date.getTime() / 1000);
 }
-export default function ClassesAndAssignments () {
+export default function ClassesAndAssignments() {
   const css = useStyles();
   const dispatch = useDispatch();
-  const { classesAssignments, overview, studentUsage, classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<
-    RootState,
-    RootState["report"]
-  >((state) => state.report);
+  const {
+    classesAssignments,
+    overview,
+    studentUsage,
+    classesAssignmentsUnattend: classesAssignmentsUnattendRow,
+  } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [classIds, setClassIds] = useState<string[] | undefined>(undefined);
   const [unattendedTableOpenId, setUnattendedTableOpenId] = useState<string | undefined>("");
   const [page, setPage] = React.useState(1);
@@ -138,13 +140,13 @@ export default function ClassesAndAssignments () {
     setState({ activeTab: index });
     setUnattendedTableOpenId("");
   };
-  
+
   const handleChangePage = React.useMemo(
     () => (page: number) => {
-      if(!classIds) return;
+      if (!classIds) return;
       setPage(page);
-      const class_ids = classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE)
-      dispatch(getClassesAssignments({metaLoading: true, class_ids ,type, durations}));
+      const class_ids = classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE);
+      dispatch(getClassesAssignments({ metaLoading: true, class_ids, type, durations }));
     },
     // eslint-disable-next-line
     [dispatch, setPage, classIds, type]
@@ -174,7 +176,9 @@ export default function ClassesAndAssignments () {
       </div>
       <div className={css.selectContainer}>
         <div className={css.text}>{topTitle[state.activeTab]}</div>
-        <div><ClassFilter onChange={(v) =>setClassIds(v.map((item) => item.value))}/></div>
+        <div>
+          <ClassFilter onChange={(v) => setClassIds(v.map((item) => item.value))} />
+        </div>
       </div>
       <ClassesAndAssignmentsTable
         unattendedTableOpenId={unattendedTableOpenId}
