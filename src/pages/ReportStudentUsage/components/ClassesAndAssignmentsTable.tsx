@@ -18,6 +18,7 @@ import React from "react";
 import { Class, Maybe, School } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
+import useTranslation from "../hooks/useTranslation";
 import Pagination from "./Pagination";
 
 const PAGESIZE = 10;
@@ -114,20 +115,7 @@ const Row = (props: {
 };
 
 const numberToEnglish = (month: number) => {
-  const Months = [
-    t("schedule_calendar_january"),
-    t("schedule_calendar_february"),
-    t("schedule_calendar_march"),
-    t("schedule_calendar_april"),
-    t("schedule_calendar_may"),
-    t("schedule_calendar_june"),
-    t("schedule_calendar_july"),
-    t("schedule_calendar_august"),
-    t("schedule_calendar_september"),
-    t("schedule_calendar_october"),
-    t("schedule_calendar_november"),
-    t("schedule_calendar_december"),
-  ];
+  const Months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   return Months[month - 1];
 };
 
@@ -172,6 +160,8 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
     listTitle,
   } = props;
   const classes: IClasses[] = studentUsage.noneSchoolClasses.slice();
+  const { months } = useTranslation();
+
   studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
   return (
     <div>
@@ -195,7 +185,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[0])}</b>
+                <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[0])]}</b>
                 <Tooltip
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
@@ -205,7 +195,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[1])}</b>
+                <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[1])]}</b>
                 <Tooltip
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
@@ -215,7 +205,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>{numberToEnglish(latestThreeMonths.latestThreeMonthsDate[2])}</b>
+                <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[2])]}</b>
                 <Tooltip
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
