@@ -89,11 +89,11 @@ export default function ClassesAndAssignments() {
     : [];
   const topTitle = [
     d("Live Scheduled(latest 3 months)").t("report_student_usage_live"),
-    d("Study(latest 3 months)").t("report_student_usage_study_title"),
-    d("Home Fun(latest 3 months)").t("report_student_usage_home_fun_title"),
+    d("Study (latest 3 months)").t("report_student_usage_study_title"),
+    d("Home Fun (latest 3 months)").t("report_student_usage_home_fun_title"),
   ];
   const listTitle = [
-    d("List of students missed live scheduled").t("report_student_usage_missed_schedules"),
+    d("List of students missed live schedules").t("report_student_usage_missed_schedules"),
     d("List of students missed study").t("report_student_usage_missed_study"),
     d("List of students missed home fun").t("report_student_usage_missed_home_fun"),
   ];

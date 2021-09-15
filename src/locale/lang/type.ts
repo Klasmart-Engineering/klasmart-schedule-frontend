@@ -736,7 +736,6 @@ type LangRecord<T = string> =
   | { id: "report_label_lesson_plan"; description: "Lesson Plan"; values: undefined }
   | { id: "report_label_status"; description: "Status"; values: undefined }
   | { id: "report_label_all"; description: "All"; values: undefined }
-  | { id: "report_label_none"; description: "None"; values: undefined }
   | { id: "report_label_achieved"; description: "Achieved"; values: undefined }
   | { id: "report_label_not_achieved"; description: "Not Achieved"; values: undefined }
   | { id: "report_label_not_attempted"; description: "Not Attempted"; values: undefined }
@@ -1277,14 +1276,10 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_materialusage"; description: "Material Usage"; values: undefined }
   | { id: "report_student_usage_classesandassignments"; description: "Classes & Assignments"; values: undefined }
   | { id: "report_student_usage_live"; description: "Live Scheduled(latest 3 months)"; values: undefined }
-  | { id: "report_student_usage_study_title"; description: "Study(latest 3 months)"; values: undefined }
-  | { id: "report_student_usage_home_fun_title"; description: "Home Fun(latest 3 months)"; values: undefined }
   | { id: "report_student_usage_class"; description: "Class"; values: undefined }
   | { id: "report_student_usage_total"; description: "Total"; values: undefined }
   | { id: "report_student_usage_unattendedStudents"; description: "Unattended students"; values: undefined }
-  | { id: "report_student_usage_missed_schedules"; description: "List of students missed live scheduled"; values: undefined }
-  | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
-  | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
+  | { id: "report_student_usage_missed_schedules"; description: "List of students missed live schedules"; values: undefined }
   | { id: "report_student_usage_student_name"; description: "Student name"; values: undefined }
   | { id: "report_student_usage_lesson_missed"; description: "Lesson missed"; values: undefined }
   | { id: "report_student_usage_lesson_date"; description: "Lesson date"; values: undefined }
@@ -1312,8 +1307,12 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "library_label_category_subcategory"; description: "Category - Subcategory"; values: undefined }
+  | { id: "report_label_none"; description: "None"; values: undefined }
+  | { id: "report_student_usage_study_title"; description: "Study (latest 3 months)"; values: undefined }
+  | { id: "report_student_usage_home_fun_title"; description: "Home Fun (latest 3 months)"; values: undefined }
+  | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
+  | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
   | { id: "report_student_usage_of"; description: "of"; values: undefined };
-  
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
