@@ -2,7 +2,7 @@ import { Box } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { t } from "../../../locale/LocaleManager";
+import { d, t } from "../../../locale/LocaleManager";
 import { sortByStudentName } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments, getClassesAssignmentsOverview, getClassesAssignmentsUnattended } from "../../../reducers/report";
@@ -98,12 +98,10 @@ export function formatTime(time: any) {
 
 export default function () {
   const css = useStyles();
-  const {
-    classesAssignments,
-    overview,
-    studentUsage,
-    classesAssignmentsUnattend: classesAssignmentsUnattendRow,
-  } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { classesAssignments, overview, studentUsage, classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<
+    RootState,
+    RootState["report"]
+  >((state) => state.report);
   const [classIds, setClassIds] = useState<string[] | undefined>(undefined);
   const [unattendedTableOpenId, setunattendedTableOpenId] = useState<string | undefined>("");
   const dispatch = useDispatch();
@@ -115,6 +113,16 @@ export default function () {
   const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
     ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
     : [];
+  const topTitle = [
+    d("Live Scheduled(latest 3 months)").t("report_student_usage_live"),
+    d("Study(latest 3 months)").t("report_student_usage_study_title"),
+    d("Home Fun(latest 3 months)").t("report_student_usage_home_fun_title"),
+  ];
+  const listTitle = [
+    d("List of students missed live scheduled").t("report_student_usage_missed_schedules"),
+    d("List of students missed study").t("report_student_usage_missed_study"),
+    d("List of students missed home fun").t("report_student_usage_missed_home_fun"),
+  ];
   const topChatData = React.useMemo(() => {
     return [
       {
@@ -199,8 +207,8 @@ export default function () {
 
       <div className={css.selectContainer}>
         <div className={css.text}>
-          {topChatData[state.activeTab].title}
-          {t("report_student_usage_live")}
+          {topTitle[state.activeTab]}
+          {/* {t("report_student_usage_live")} */}
         </div>
         <div>
           <ClassFilter
@@ -222,6 +230,7 @@ export default function () {
         classesAssignmentsUnattend={classesAssignmentsUnattend}
         handleclickUnattendedTable={handleclickUnattendedTable}
         type={type}
+        listTitle={listTitle[state.activeTab]}
       />
     </div>
   );

@@ -1276,11 +1276,15 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_registration"; description: "Registration"; values: undefined }
   | { id: "report_student_usage_materialusage"; description: "Material Usage"; values: undefined }
   | { id: "report_student_usage_classesandassignments"; description: "Classes & Assignments"; values: undefined }
-  | { id: "report_student_usage_live"; description: "(latest 3 months)"; values: undefined }
+  | { id: "report_student_usage_live"; description: "Live Scheduled(latest 3 months)"; values: undefined }
+  | { id: "report_student_usage_study_title"; description: "Study(latest 3 months)"; values: undefined }
+  | { id: "report_student_usage_home_fun_title"; description: "Home Fun(latest 3 months)"; values: undefined }
   | { id: "report_student_usage_class"; description: "Class"; values: undefined }
   | { id: "report_student_usage_total"; description: "Total"; values: undefined }
   | { id: "report_student_usage_unattendedStudents"; description: "Unattended students"; values: undefined }
-  | { id: "report_student_usage_missed_schedules"; description: "List of students missed live schedules"; values: undefined }
+  | { id: "report_student_usage_missed_schedules"; description: "List of students missed live scheduled"; values: undefined }
+  | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
+  | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
   | { id: "report_student_usage_student_name"; description: "Student name"; values: undefined }
   | { id: "report_student_usage_lesson_missed"; description: "Lesson missed"; values: undefined }
   | { id: "report_student_usage_lesson_date"; description: "Lesson date"; values: undefined }

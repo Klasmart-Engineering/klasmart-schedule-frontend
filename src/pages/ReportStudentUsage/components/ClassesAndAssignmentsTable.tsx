@@ -27,8 +27,9 @@ const Row = (props: {
   handleclickUnattendedTable: (class_id?: string) => any;
   unattendedTableOpenId?: string;
   classes: IClasses[];
+  listTitle: string;
 }) => {
-  const { row, classes, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId } = props;
+  const { row, classes, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId, listTitle } = props;
   const [childrenPage, setChildrenPage] = React.useState(1);
   const className = classes.find((item) => item.class_id === row?.class_id)?.class_name;
   const total = classesAssignmentsUnattend.length;
@@ -68,7 +69,7 @@ const Row = (props: {
           <Collapse in={unattendedTableOpenId === row?.class_id} timeout="auto" unmountOnExit style={{ padding: "0 119px" }}>
             <Box margin={1}>
               <Typography variant="h6" gutterBottom component="div" style={{ height: "66px", lineHeight: "66px" }}>
-                <b>{t("report_student_usage_missed_schedules")}</b>
+                <b>{listTitle}</b>
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead style={{ backgroundColor: "#f2f5f7", height: "56px" }}>
@@ -141,6 +142,7 @@ interface IClassesAndAssignmentsTable {
   handleclickUnattendedTable: (class_id?: string) => any;
   unattendedTableOpenId?: string;
   latestThreeMonths: ILatestThreeMonths;
+  listTitle: string;
   handleChangePage: (page: number) => any;
   page: number;
   total: number;
@@ -167,6 +169,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
     page,
     total,
     studentUsage,
+    listTitle,
   } = props;
   const classes: IClasses[] = studentUsage.noneSchoolClasses.slice();
   studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
@@ -233,6 +236,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 classes={classes}
                 key={row.class_id}
                 row={row}
+                listTitle={listTitle}
               />
             ))}
           </TableBody>
