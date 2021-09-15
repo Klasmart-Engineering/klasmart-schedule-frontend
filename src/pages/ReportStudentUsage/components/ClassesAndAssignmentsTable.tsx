@@ -81,8 +81,8 @@ const Row = (props: {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {classesAssignmentsUnattend.slice((childrenPage - 1) * 10, (childrenPage - 1) * 10 + 10).map((item) => (
-                    <TableRow key={`${item.time}-${item?.student_id}`} style={{ height: "56px" }}>
+                  {classesAssignmentsUnattend.slice((childrenPage - 1) * 10, (childrenPage - 1) * 10 + 10).map((item, idx) => (
+                    <TableRow key={`${item.time}-${item?.student_id}-${idx}`} style={{ height: "56px" }}>
                       <TableCell align="center" component="th" scope="row">
                         {item.student_name}
                       </TableCell>
