@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { d, t } from "../../../locale/LocaleManager";
-import { sortByStudentName } from "../../../models/ModelReports";
+import { getTimeDots, sortByStudentName } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments, getClassesAssignmentsOverview, getClassesAssignmentsUnattended } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
@@ -62,54 +62,26 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-const getTimeDots = (): ILatestThreeMonths => {
-  const currentDate = new Date();
-  var year = currentDate.getFullYear();
-  var month = currentDate.getMonth() + 1;
-  switch (month) {
-    case 1:
-      year--;
-      return {
-        latestThreeMonthsDate: [11, 12, 1],
-        latestThreeMonthsDots: [`${year}/11/01 00:00:00`, `${year}/12/01 00:00:00`, `${year + 1}/01/01 00:00:00`],
-      };
-    case 2:
-      year--;
-      return {
-        latestThreeMonthsDate: [12, 1, 2],
-        latestThreeMonthsDots: [`${year}/12/01 00:00:00`, `${year}/01/01 00:00:00`, `${year + 1}/02/01 00:00:00`],
-      };
-    default:
-      return {
-        latestThreeMonthsDate: [parseInt(`${month - 2}`), parseInt(`${month - 1}`), parseInt(`${month}`)],
-        latestThreeMonthsDots: [`${year}/${month - 2}/01 00:00:00`, `${year}/${month - 1}/01 00:00:00`, `${year}/${month}/01 00:00:00`],
-      };
-  }
-};
 export interface ILatestThreeMonths {
   latestThreeMonthsDate: number[];
   latestThreeMonthsDots: string[];
 }
-
 export function formatTime(time: any) {
   var date = new Date(time);
   return Math.floor(date.getTime() / 1000);
 }
-
-export default function () {
+export default function ClassesAndAssignments () {
   const css = useStyles();
+  const dispatch = useDispatch();
   const { classesAssignments, overview, studentUsage, classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<
     RootState,
     RootState["report"]
   >((state) => state.report);
   const [classIds, setClassIds] = useState<string[] | undefined>(undefined);
-  const [unattendedTableOpenId, setunattendedTableOpenId] = useState<string | undefined>("");
-  const dispatch = useDispatch();
-  const latestThreeMonths = getTimeDots();
+  const [unattendedTableOpenId, setUnattendedTableOpenId] = useState<string | undefined>("");
   const [page, setPage] = React.useState(1);
-  const [state, setState] = React.useState({
-    activeTab: 0,
-  });
+  const [state, setState] = React.useState({ activeTab: 0 });
+
   const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
     ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
     : [];
@@ -146,6 +118,7 @@ export default function () {
     ];
   }, [overview]);
   const type = topChatData[state.activeTab].id;
+  const latestThreeMonths = getTimeDots();
   const durations = [
     `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
     `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
@@ -154,7 +127,7 @@ export default function () {
 
   const handleclickUnattendedTable = React.useMemo(
     () => (class_id?: string) => {
-      setunattendedTableOpenId(class_id);
+      setUnattendedTableOpenId(class_id);
       if (!class_id) return;
       dispatch(getClassesAssignmentsUnattended({ metaLoading: true, class_id, query: { type, durations } }));
     },
@@ -163,20 +136,15 @@ export default function () {
 
   const handleTabClick = (index: number) => () => {
     setState({ activeTab: index });
-    setunattendedTableOpenId("");
+    setUnattendedTableOpenId("");
   };
+  
   const handleChangePage = React.useMemo(
     () => (page: number) => {
+      if(!classIds) return;
       setPage(page);
-      classIds &&
-        dispatch(
-          getClassesAssignments({
-            metaLoading: true,
-            class_ids: classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE),
-            type,
-            durations,
-          })
-        );
+      const class_ids = classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE)
+      dispatch(getClassesAssignments({metaLoading: true, class_ids ,type, durations}));
     },
     // eslint-disable-next-line
     [dispatch, setPage, classIds, type]
@@ -204,20 +172,9 @@ export default function () {
           );
         })}
       </div>
-
       <div className={css.selectContainer}>
-        <div className={css.text}>
-          {topTitle[state.activeTab]}
-          {/* {t("report_student_usage_live")} */}
-        </div>
-        <div>
-          <ClassFilter
-            onChange={(v) => {
-              console.info(v);
-              setClassIds(v.map((item) => item.value));
-            }}
-          />
-        </div>
+        <div className={css.text}>{topTitle[state.activeTab]}</div>
+        <div><ClassFilter onChange={(v) =>setClassIds(v.map((item) => item.value))}/></div>
       </div>
       <ClassesAndAssignmentsTable
         unattendedTableOpenId={unattendedTableOpenId}
