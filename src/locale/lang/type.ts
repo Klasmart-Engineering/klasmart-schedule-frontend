@@ -1311,7 +1311,9 @@ type LangRecord<T = string> =
       description: "Numbers of scheduled classes in the past 3 months";
       values: undefined;
     }
-  | { id: "library_label_category_subcategory"; description: "Category - Subcategory"; values: undefined };
+  | { id: "library_label_category_subcategory"; description: "Category - Subcategory"; values: undefined }
+  | { id: "report_student_usage_of"; description: "of"; values: undefined };
+  
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
