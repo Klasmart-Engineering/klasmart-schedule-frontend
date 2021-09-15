@@ -1,6 +1,6 @@
 import { ApolloQueryResult } from "@apollo/client";
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { cloneDeep } from "lodash";
+import { cloneDeep, uniq } from "lodash";
 import api, { gqlapi } from "../api";
 import { Class, School, Status, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
 import {
@@ -1481,8 +1481,9 @@ export const getClassesAssignmentsUnattended = createAsyncThunk<
 >("getClassesAssignmentsUnattended", async ({ metaLoading, class_id, query }) => {
   const data = await api.reports.getClassesAssignmentsUnattended(class_id, query);
   const userIds = data.map((d) => d.student_id);
+
   const filter = {
-    OR: userIds.map((id) => ({
+    OR: uniq(userIds).map((id) => ({
       userId: {
         operator: UuidOperator.Eq,
         value: id,
