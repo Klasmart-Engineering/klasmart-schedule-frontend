@@ -144,7 +144,9 @@ const useStyles = makeStyles(() =>
     },
     paginationLabel: {
       whiteSpace: "nowrap",
-      color: "#999",
+      fontSize:14,
+      // color: "#999",
+      color:"rgba(0, 0, 0, 0.54)"
     },
   })
 );
@@ -386,9 +388,12 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-          {page * 5 + 1}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
+          {/* {page * 5 + 1}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
           &nbsp; {t("report_student_usage_of")} &nbsp;
-          {getClassesList().length}
+          {getClassesList().length} */}
+          {`${page * 5 + 1}-${page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
+           ${t("report_student_usage_of")} 
+          ${getClassesList().length}`}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
           <FirstPageIcon />
