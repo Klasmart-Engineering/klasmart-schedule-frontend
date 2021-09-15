@@ -937,5 +937,10 @@
   "report_content_total_viewed": "Content total viewed (latest 3 months)",
   "report_numbers_of_scheduled_classes_in_the_past_3_months": "Numbers of scheduled classes in the past 3 months",
   "library_label_category_subcategory": "Category - Subcategory",
-  "report_label_none": "None"
+  "report_label_none": "None",
+  "report_student_usage_study_title": "Study (latest 3 months)",
+  "report_student_usage_home_fun_title": "Home Fun (latest 3 months)",
+  "report_student_usage_missed_study": "List of students missed study",
+  "report_student_usage_missed_home_fun": "List of students missed home fun",
+  "report_student_usage_of": "of"
 }

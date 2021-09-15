@@ -937,5 +937,10 @@
   "report_content_total_viewed": "콘텐츠 총 조회수(최근 3개월)",
   "report_numbers_of_scheduled_classes_in_the_past_3_months": "지난 3개월 동안 일정에 등록된 수업의 수",
   "library_label_category_subcategory": "카테고리 - 하위 카테고리",
-  "report_label_none": "없음"
+  "report_label_none": "없음",
+  "report_student_usage_study_title": "Study (latest 3 months)",
+  "report_student_usage_home_fun_title": "Home Fun (latest 3 months)",
+  "report_student_usage_missed_study": "List of students missed study",
+  "report_student_usage_missed_home_fun": "List of students missed home fun",
+  "report_student_usage_of": "of"
 }
