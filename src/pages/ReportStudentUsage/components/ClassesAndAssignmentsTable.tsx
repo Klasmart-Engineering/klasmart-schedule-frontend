@@ -175,6 +175,8 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{t("report_student_usage_total")}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
                   title={d("Numbers of scheduled classes in the past 3 months").t(
                     "report_numbers_of_scheduled_classes_in_the_past_3_months"
                   )}
@@ -187,6 +189,8 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[0])]}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
@@ -197,6 +201,8 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[1])]}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
@@ -207,6 +213,8 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[2])]}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
