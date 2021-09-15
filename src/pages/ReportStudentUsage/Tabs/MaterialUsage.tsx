@@ -1,4 +1,4 @@
-// 9-14 21:17
+// 9-15 14:22
 import { Box, createStyles, Grid, IconButton, makeStyles } from "@material-ui/core";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -251,7 +251,7 @@ export default function () {
       getStudentUsageMaterial({
         metaLoading: true,
         class_id_list,
-        allClasses: allClassIdStr,
+        allClasses: getClassesList(),
         content_type_list: !contentTypeListRef.current.length
           ? MaterialUsageConData.filter((item) => item.value !== allValue).map((item) => item.value)
           : contentTypeListRef.current,
@@ -387,7 +387,7 @@ export default function () {
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
           {page * 5 + 1}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
-          &nbsp; / &nbsp;
+          &nbsp; {t("report_student_usage_of")} &nbsp;
           {getClassesList().length}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">

@@ -937,5 +937,10 @@
   "report_content_total_viewed": "Tổng số nội dung đã xem (3 tháng gần nhất)",
   "report_numbers_of_scheduled_classes_in_the_past_3_months": "Số lượng các lớp học trong 3 tháng qua",
   "library_label_category_subcategory": "Danh mục - Danh mục con",
-  "report_label_none": "Không có"
+  "report_label_none": "Không có",
+  "report_student_usage_study_title": "Bài tập về nhà (3 tháng gần nhất)",
+  "report_student_usage_home_fun_title": "Nhiệm vụ về nhà (3 tháng gần nhất)",
+  "report_student_usage_missed_study": "Danh sách học sinh bỏ lỡ bài tập về nhà",
+  "report_student_usage_missed_home_fun": "Danh sách học sinh bỏ lỡ nhiệm vụ về nhà",
+  "report_student_usage_of": "của"
 }

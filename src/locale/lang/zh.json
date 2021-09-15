@@ -937,5 +937,10 @@
   "report_content_total_viewed": "查看的内容总数（最近 3 个月）",
   "report_numbers_of_scheduled_classes_in_the_past_3_months": "过去 3 个月的课程数量",
   "library_label_category_subcategory": "类别 - 子类别",
-  "report_label_none": "无"
+  "report_label_none": "无",
+  "report_student_usage_study_title": "家庭作业（最近3个月）",
+  "report_student_usage_home_fun_title": "学生需上传的家庭作业（最近3个月）",
+  "report_student_usage_missed_study": "错过家庭作业的学生名单",
+  "report_student_usage_missed_home_fun": "错过家庭作业的学生名单",
+  "report_student_usage_of": "/"
 }
