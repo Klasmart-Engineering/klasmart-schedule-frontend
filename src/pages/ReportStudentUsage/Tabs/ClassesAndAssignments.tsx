@@ -98,10 +98,12 @@ export function formatTime(time: any) {
 
 export default function () {
   const css = useStyles();
-  const { classesAssignments, overview, studentUsage, classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<
-    RootState,
-    RootState["report"]
-  >((state) => state.report);
+  const {
+    classesAssignments,
+    overview,
+    studentUsage,
+    classesAssignmentsUnattend: classesAssignmentsUnattendRow,
+  } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [classIds, setClassIds] = useState<string[] | undefined>(undefined);
   const [unattendedTableOpenId, setunattendedTableOpenId] = useState<string | undefined>("");
   const dispatch = useDispatch();
@@ -213,7 +215,6 @@ export default function () {
         <div>
           <ClassFilter
             onChange={(v) => {
-              console.info(v);
               setClassIds(v.map((item) => item.value));
             }}
           />

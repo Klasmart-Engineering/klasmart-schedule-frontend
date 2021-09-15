@@ -252,10 +252,9 @@ export default function () {
         metaLoading: true,
         class_id_list,
         allClasses: allClassIdStr,
-        content_type_list:
-          contentTypeListRef.current.indexOf(allValue) > -1 || !contentTypeListRef.current.length
-            ? MaterialUsageConData.filter((item) => item.value !== allValue).map((item) => item.value)
-            : contentTypeListRef.current,
+        content_type_list: !contentTypeListRef.current.length
+          ? MaterialUsageConData.filter((item) => item.value !== allValue).map((item) => item.value)
+          : contentTypeListRef.current,
         time_range_list: [computeTimestamp(timeRangeList[0]), computeTimestamp(timeRangeList[1]), computeTimestamp(timeRangeList[2], true)],
         time_range_count: [timeRangeList[0].clone().set("D", 1).unix().valueOf() + "-" + moment().unix().valueOf()],
       })
@@ -414,12 +413,7 @@ export default function () {
   return (
     <div className={style.material}>
       <div className={style.selected}>
-        <ClassFilter
-          onChange={handleClass}
-          onClose={() => {
-            //console.log("close");
-          }}
-        />
+        <ClassFilter onChange={handleClass} />
       </div>
       <div className={style.total}>
         <span>
@@ -436,7 +430,7 @@ export default function () {
             limitTags={2}
             label={t("report_filter_content")}
             onChange={handleChange}
-            onClose={() => {}}
+            defaultValueIsAll
           />
         </Box>
       </div>
