@@ -422,16 +422,11 @@ export default function () {
         <Box
           style={{
             position: "relative",
+            width: 180,
             height: 50,
           }}
         >
-          <MutiSelect
-            options={MaterialUsageConData}
-            limitTags={2}
-            label={t("report_filter_content")}
-            onChange={handleChange}
-            defaultValueIsAll
-          />
+          <MutiSelect options={MaterialUsageConData} label={t("report_filter_content")} onChange={handleChange} defaultValueIsAll />
         </Box>
       </div>
       {renderBarChart()}
