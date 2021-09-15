@@ -224,3 +224,31 @@ export function sortByStudentName(studentName: any) {
     }
   };
 }
+export function getTimeDots(): ILatestThreeMonths {
+  const currentDate = new Date();
+  var year = currentDate.getFullYear();
+  var month = currentDate.getMonth() + 1;
+  switch (month) {
+    case 1:
+      year--;
+      return {
+        latestThreeMonthsDate: [11, 12, 1],
+        latestThreeMonthsDots: [`${year}/11/01 00:00:00`, `${year}/12/01 00:00:00`, `${year + 1}/01/01 00:00:00`],
+      };
+    case 2:
+      year--;
+      return {
+        latestThreeMonthsDate: [12, 1, 2],
+        latestThreeMonthsDots: [`${year}/12/01 00:00:00`, `${year}/01/01 00:00:00`, `${year + 1}/02/01 00:00:00`],
+      };
+    default:
+      return {
+        latestThreeMonthsDate: [parseInt(`${month - 2}`), parseInt(`${month - 1}`), parseInt(`${month}`)],
+        latestThreeMonthsDots: [`${year}/${month - 2}/01 00:00:00`, `${year}/${month - 1}/01 00:00:00`, `${year}/${month}/01 00:00:00`],
+      };
+  }
+}
+export interface ILatestThreeMonths {
+  latestThreeMonthsDate: number[];
+  latestThreeMonthsDots: string[];
+}
