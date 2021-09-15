@@ -1,5 +1,4 @@
-import { Box, Chip, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Box, createStyles, FormControl, InputLabel, makeStyles, MenuItem, Select, TextField, Theme } from "@material-ui/core";
 import clsx from "clsx";
 import isEqual from "lodash/isEqual";
 import uniqBy from "lodash/uniqBy";
@@ -35,138 +34,111 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     schoolBox: {
       width: 180,
-      paddingRight: 320,
+    },
+    classBox: {
+      width: 180,
+      marginLeft: 10,
     },
     multipleSelectBox: {
-      top: 0,
-      right: 0,
-      position: "absolute",
-      width: 300,
-      background: "#fff",
-      zIndex: theme.zIndex.drawer + 100,
-      "& > * + *": {
-        marginTop: theme.spacing(3),
-      },
+      width: "100%",
     },
-    multipleSelectBoxFocused: {
-      zIndex: theme.zIndex.drawer + 200,
-    },
-    classBox: {},
-    contentContainer: {
-      display: "flex",
-      position: "relative",
-      marginTop: 20,
-    },
-    contentBox: {},
-    tagSizeSmall: {
-      maxWidth: "calc(100% - 120px)",
-    },
+    multipleSelectBoxFocused: {},
   })
 );
 
 interface IMutiSelectProps {
-  limitTags?: number;
   options: ISelect[];
   label?: string;
-  placeholder?: string;
   disabled?: boolean;
   onChange?: (value: ISelect[]) => void;
   onInitial?: (value: ISelect[]) => void;
   defaultValueIsAll?: boolean;
 }
 interface IMutiSelectState {
-  value: ISelect[];
+  value: string[];
   allSelected: boolean;
 }
 const MutiSelect = React.memo(
-  ({ limitTags, options: allOptions, label, disabled, placeholder, defaultValueIsAll, onChange, onInitial }: IMutiSelectProps) => {
-    const { allValue, selectAllOption } = useTranslation();
+  ({ options: allOptions, label, disabled, defaultValueIsAll, onChange, onInitial }: IMutiSelectProps) => {
+    const { allValue } = useTranslation();
     const classes = useStyles();
     const [focused, setFocused] = React.useState<boolean>(false);
     const [state, setState] = React.useState<IMutiSelectState>({
-      value: defaultValueIsAll ? selectAllOption : [],
+      value: defaultValueIsAll ? [allValue] : [],
       allSelected: !!defaultValueIsAll,
     });
-
     const resetState = () => {
       setState({
         ...state,
-        value: defaultValueIsAll ? allOptions.slice(0, 1) : [],
+        value: defaultValueIsAll ? [allValue] : [],
         allSelected: !!defaultValueIsAll,
       });
       !disabled && onInitial && onInitial(allOptions.slice(1, allOptions.length));
     };
 
-    const onSelectChange = (event: ChangeEvent<{}>, value: ISelect[]) => {
-      const valueLength = value.length;
+    React.useEffect(resetState, [allOptions.length, allOptions]);
+
+    const onSelectChange = (event: ChangeEvent<{ name?: string | undefined; value: unknown }>) => {
+      let value = event.target.value as string[];
       if (value.length === 0) {
         return;
       }
-      const curAllSelected = value.filter((item) => item.value === allValue).length > 0;
-      const prevAllSelected = state.allSelected;
-      let newValue = [];
-      let newAllSelected = false;
-      let cbValues = [];
-      if (valueLength > 1 && curAllSelected && prevAllSelected) {
-        newValue = value.filter((item) => item.value !== allValue);
-        cbValues = newValue;
-      } else if ((curAllSelected && !prevAllSelected) || (!curAllSelected && valueLength === allOptions.length - 1)) {
-        newValue = allOptions.slice(0, 1);
-        newAllSelected = true;
-        cbValues = allOptions.slice(1, allOptions.length);
-      } else {
-        newValue = value;
-        cbValues = newValue;
+      if (value.indexOf(allValue) > -1) {
+        if (state.value.indexOf(allValue) === -1) {
+          value = [allValue];
+        } else {
+          value = value.filter((v) => v !== allValue);
+        }
       }
-      onChange && onChange(cbValues);
       setState({
         ...state,
-        value: newValue,
-        allSelected: newAllSelected,
+        value,
       });
     };
 
-    React.useEffect(resetState, [allOptions.length, allOptions]);
+    const onOpenSelect = () => {
+      setFocused(true);
+    };
+    const onCloseSelect = () => {
+      let cbValues = [];
+      if (state.value.length === 1 && state.value[0] === allValue) {
+        cbValues = allOptions.slice(1, allOptions.length);
+      } else {
+        cbValues = allOptions.filter((item) => state.value.indexOf(item.value) >= 0);
+      }
+      onChange && onChange(cbValues);
+      setFocused(false);
+    };
 
     return (
-      <Box
+      <FormControl
+        size="small"
+        variant="outlined"
         className={clsx({
           [classes.multipleSelectBox]: true,
           [classes.multipleSelectBoxFocused]: focused,
         })}
       >
-        <Autocomplete
-          classes={{
-            tagSizeSmall: classes.tagSizeSmall,
-          }}
-          disabled={disabled}
-          disableClearable
-          size="small"
+        <InputLabel>{label}</InputLabel>
+        <Select
+          fullWidth
           multiple
-          limitTags={limitTags}
-          options={allOptions}
-          getOptionLabel={(option) => option.label}
+          displayEmpty
           value={state.value}
           onChange={onSelectChange}
-          onFocus={() => {
-            setFocused(true);
-          }}
-          onBlur={() => {
-            setFocused(false);
-          }}
-          renderTags={(tagValue, getTagProps) =>
-            tagValue.map((option, index) => (
-              <Chip
-                label={option.label}
-                {...getTagProps({ index })}
-                disabled={state.value.length === 1}
-                //disabled={fixedOptions.indexOf(option) !== -1}
-              />
-            ))
-          }
-          renderInput={(params) => <TextField {...params} variant="outlined" label={label} placeholder={placeholder} />}
-        />
-      </Box>
+          label={label}
+          disabled={disabled}
+          onOpen={onOpenSelect}
+          onClose={onCloseSelect}
+          inputProps={{ "aria-label": "Without label" }}
+        >
+          {allOptions.map((item) => (
+            <MenuItem key={item.value} value={item.value}>
+              {item.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     );
   },
   (prevProps, nextProps) => {
@@ -253,15 +225,16 @@ export default function ({ onChange }: IProps) {
           ))}
         </TextField>
       </Box>
-      <MutiSelect
-        disabled={classOptions.length === 0}
-        options={selectAllOption.concat(classOptions)}
-        limitTags={1}
-        label={t("report_filter_class")}
-        defaultValueIsAll
-        onChange={onChange}
-        onInitial={onChange}
-      />
+      <Box className={classes.classBox}>
+        <MutiSelect
+          disabled={classOptions.length === 0}
+          options={selectAllOption.concat(classOptions)}
+          label={t("report_filter_class")}
+          defaultValueIsAll
+          onChange={onChange}
+          onInitial={onChange}
+        />
+      </Box>
     </Box>
   );
 }
