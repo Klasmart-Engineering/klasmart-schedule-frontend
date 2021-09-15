@@ -152,7 +152,7 @@ const useStyles = makeStyles(() =>
 const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
 
 export const sortViewTypes = (list: EntityContentUsage[]): EntityContentUsage[] => {
-  const sortTemplate = ["h5p", "image", "video", "audio", "document"];
+  const sortTemplate = ["h5p", "audio", "video", "image", "document"];
   const result: EntityContentUsage[] = [];
   list
     .filter((item) => item)
@@ -251,7 +251,7 @@ export default function () {
       getStudentUsageMaterial({
         metaLoading: true,
         class_id_list,
-        allClasses: allClassIdStr,
+        allClasses: getClassesList(),
         content_type_list:
           contentTypeListRef.current.indexOf(allValue) > -1 || !contentTypeListRef.current.length
             ? MaterialUsageConData.filter((item) => item.value !== allValue).map((item) => item.value)
