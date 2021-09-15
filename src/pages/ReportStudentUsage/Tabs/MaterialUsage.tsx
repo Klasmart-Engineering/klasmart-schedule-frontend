@@ -152,7 +152,7 @@ const useStyles = makeStyles(() =>
 const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
 
 export const sortViewTypes = (list: EntityContentUsage[]): EntityContentUsage[] => {
-  const sortTemplate = ["h5p", "audio", "video", "image", "document"];
+  const sortTemplate = ["h5p", "image", "video", "audio", "document"];
   const result: EntityContentUsage[] = [];
   list
     .filter((item) => item)
@@ -299,7 +299,7 @@ export default function () {
     return (
       <Grid container item className={style.tableItem} key={index}>
         <Grid item className={style.tableIItemLabel}>
-          {allClasses.find((item) => item.class_id === ids[index])?.class_name}
+          {classIdList.find((item) => item.value === ids[index])?.label}
         </Grid>
         <Grid item container className={style.tableData}>
           {Array.from(datum.values()).map((item, index) => {
