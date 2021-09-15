@@ -443,14 +443,12 @@ export default function () {
       </Grid>
       <Grid container direction={"column"} className={style.viewedAmount}>
         <Grid item className={style.lineFooter}>
-          {Object.keys(viewType).map((key, index) => {
-            const findType = sortViewTypes(studentUsageReport[1].content_usage_list || [])
-              .filter((item) => item)
-              .find((item) => item.type === key);
+          {sortViewTypes(Object.keys(viewType).map((item) => ({ type: item } as EntityContentUsage))).map((key, index) => {
+            const findType = (studentUsageReport[1].content_usage_list || []).filter((item) => item).find((item) => item.type === key.type);
             if (findType) {
               return renderLineFooterBlock(viewType[findType.type as string], findType.count as number, index);
             }
-            return renderLineFooterBlock(viewType[key], 0, index);
+            return renderLineFooterBlock(viewType[key.type as string], 0, index);
           })}
         </Grid>
       </Grid>

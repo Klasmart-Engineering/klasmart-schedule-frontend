@@ -1,4 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
@@ -22,6 +22,20 @@ import useTranslation from "../hooks/useTranslation";
 import Pagination from "./Pagination";
 
 const PAGESIZE = 10;
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    arrow: {
+      color: theme.palette.common.black,
+    },
+    tooltip: {
+      backgroundColor: theme.palette.common.black,
+      maxWidth: 196,
+      padding: 10,
+      textAlign: "center",
+    },
+  })
+);
 const Row = (props: {
   row?: EntityClassesAssignmentsView;
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
@@ -161,6 +175,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
   } = props;
   const classes: IClasses[] = studentUsage.noneSchoolClasses.slice();
   const { months } = useTranslation();
+  const styles = useStyles();
 
   studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
   return (
@@ -175,9 +190,12 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{t("report_student_usage_total")}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
                   title={d("Numbers of scheduled classes in the past 3 months").t(
                     "report_numbers_of_scheduled_classes_in_the_past_3_months"
                   )}
+                  classes={styles}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -187,6 +205,9 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[0])]}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
+                  classes={styles}
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
@@ -197,6 +218,9 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[1])]}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
+                  classes={styles}
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
@@ -207,6 +231,9 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
               <TableCell align="center">
                 <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[2])]}</b>
                 <Tooltip
+                  arrow
+                  placement="top"
+                  classes={styles}
                   title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
