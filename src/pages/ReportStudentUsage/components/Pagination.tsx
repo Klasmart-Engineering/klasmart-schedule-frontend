@@ -43,9 +43,9 @@ export default function Pagination(props: IPagination) {
 
   return (
     <div className={css.pagination}>
-      <span style={{ marginRight: 6 }}>
+      <span style={{ marginRight: 6 ,fontSize: 14, color:"rgba(0, 0, 0, 0.54)" }}>
         {/* {d("Total").t("report_label_total")} {count} {d("Results").t("report_student_usage_results")} */}
-        {`${(page - 1) * PAGESIZE + 1} - ${lastPage}`} {t("report_student_usage_of")} {count}
+        {`${(page - 1) * PAGESIZE + 1}-${lastPage}`} {t("report_student_usage_of")} {count}
       </span>
       <FirstPage className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onFirstPage()} />
       <ChevronLeft className={clsx(css.icon, page === 1 && css.iconColor)} onClick={() => page !== 1 && onSubPage()} />

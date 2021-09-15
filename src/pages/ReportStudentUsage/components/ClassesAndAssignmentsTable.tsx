@@ -1,7 +1,6 @@
 import { Box, createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
-import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -15,10 +14,11 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import moment from "moment";
 import React from "react";
-import { Class, Maybe, School } from "../../../api/api-ko-schema.auto";
+import { Maybe } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
 import useTranslation from "../hooks/useTranslation";
+import { ISelect } from "./ClassFilter";
 import Pagination from "./Pagination";
 
 const PAGESIZE = 10;
@@ -41,12 +41,12 @@ const Row = (props: {
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   handleclickUnattendedTable: (class_id?: string) => any;
   unattendedTableOpenId?: string;
-  classes: IClasses[];
+  classList?: ISelect[];
   listTitle: string;
 }) => {
-  const { row, classes, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId, listTitle } = props;
+  const { row, classList, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId, listTitle } = props;
   const [childrenPage, setChildrenPage] = React.useState(1);
-  const className = classes.find((item) => item.class_id === row?.class_id)?.class_name;
+  const className = classList?.find((item) => item.value === row?.class_id)?.label;
   const total = classesAssignmentsUnattend.length;
   return (
     <React.Fragment>
@@ -149,11 +149,7 @@ interface IClassesAndAssignmentsTable {
   page: number;
   total: number;
   type: string;
-  studentUsage: {
-    organization_id: string;
-    schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
-    noneSchoolClasses: Pick<Class, "class_id" | "class_name">[];
-  };
+  classList?:ISelect[];
 }
 interface IClasses {
   class_id: string;
@@ -170,17 +166,14 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
     handleChangePage,
     page,
     total,
-    studentUsage,
+    classList,
     listTitle,
   } = props;
-  const classes: IClasses[] = studentUsage.noneSchoolClasses.slice();
   const { months } = useTranslation();
   const styles = useStyles();
-
-  studentUsage.schoolList.map((val) => val.classes?.map((item) => item && classes.push(item)));
   return (
     <div>
-      <TableContainer component={Paper}>
+      <TableContainer >
         <Table aria-label="collapsible table">
           <TableHead style={{ backgroundColor: "#f2f5f7" }}>
             <TableRow>
@@ -250,7 +243,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 unattendedTableOpenId={unattendedTableOpenId}
                 handleclickUnattendedTable={handleclickUnattendedTable}
                 classesAssignmentsUnattend={classesAssignmentsUnattend}
-                classes={classes}
+                classList={classList}
                 key={row.class_id}
                 row={row}
                 listTitle={listTitle}
