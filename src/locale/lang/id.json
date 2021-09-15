@@ -933,8 +933,9 @@
   "report_student_usage_document_viewed": "Dokumen dilihat",
   "report_student_usage_audio_listened": "Audio didengar",
   "report_student_usage_this_months_class_attendance_rate": "Tingkat kehadiran kelas bulan ini",
-  "library_msg_pdf_validation": "PDF yang Anda unggah tidak dapat ditampilkan dengan benar di kelas live. Silakan unggah berkas yang lain.",
+  "library_msg_pdf_validation": "PDF yang Anda unggah tidak dapat ditampilkan dengan benar di kelas live. Silakan unggah file yang lain.",
   "report_content_total_viewed": "Banyak konten dilihat (3 bulan terakhir)",
   "report_numbers_of_scheduled_classes_in_the_past_3_months": "Jumlah kelas terjadwal dalam 3 bulan terakhir",
-  "library_label_category_subcategory": "Kategori - Subkategori"
+  "library_label_category_subcategory": "Kategori - Subkategori",
+  "report_label_none": "Tidak ada"
 }
