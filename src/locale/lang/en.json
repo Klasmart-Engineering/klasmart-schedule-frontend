@@ -942,5 +942,5 @@
   "report_student_usage_home_fun_title": "Home Fun (latest 3 months)",
   "report_student_usage_missed_study": "List of students missed study",
   "report_student_usage_missed_home_fun": "List of students missed home fun",
-  "report_student_usage_of": "{total} of {value}"
+  "report_student_usage_of": "{value} of {total}"
 }
