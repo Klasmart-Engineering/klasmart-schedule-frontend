@@ -5,7 +5,7 @@ import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
 import { PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
 import React, { useCallback } from "react";
-import { Calendar, momentLocalizer, stringOrDate } from "react-big-calendar";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -26,6 +26,10 @@ import "moment/locale/ko";
 import "moment/locale/id";
 import "moment/locale/en-au";
 import "moment/locale/es";
+import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -43,6 +47,28 @@ const useStyles = makeStyles(({ shadows }) => ({
     color: "#757575",
     cursor: "pointer",
     marginRight: "10px",
+  },
+  eventTemplateCalendar: {
+    height: "26px",
+    borderRadius: "16px",
+    borderBottomRightRadius: "12px",
+    borderTopRightRadius: "12px",
+    position: "relative",
+    "& span": {
+      position: "absolute",
+      top: "1px",
+      left: "32px",
+      fontWeight: 600,
+    },
+  },
+  eventTemplateIcon: {
+    width: "26px",
+    height: "26px",
+    borderRadius: "26px",
+    border: "2px solid white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));
 
@@ -395,25 +421,31 @@ function MyCalendar(props: CalendarProps) {
   };
 
   const eventColor = [
-    { id: "OnlineClass", color: "#FFC107", icon: "" },
-    { id: "OfflineClass", color: "#009688", icon: "" },
-    { id: "Homework", color: "#D32F2F", icon: "" },
-    { id: "Task", color: "#0E78D5", icon: "" },
+    { id: "OnlineClass", color: "#FFC107", icon: <LiveTvOutlinedIcon style={{ width: "82%" }} /> },
+    { id: "OfflineClass", color: "#009688", icon: <SchoolOutlinedIcon style={{ width: "86%" }} /> },
+    { id: "Homework", color: "#D32F2F", icon: <LocalLibraryOutlinedIcon style={{ width: "86%" }} /> },
+    { id: "Task", color: "#0E78D5", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },
   ];
 
-  const eventStyleGetter = (event: any, start: stringOrDate, end: stringOrDate, isSelected: boolean) => {
-    const eventTemplate = eventColor.filter((item) => item.id === event.class_type);
+  const eventStyleGetter = () => {
     const style = {
-      backgroundColor: eventTemplate[0].color,
-      color: "white",
+      backgroundColor: "white",
       height: "26px",
-      fontWeight: 600,
-      borderRadius: "10px",
-      padding: "2px 0px 0px 10px",
+      padding: 0,
     };
     return {
       style: style,
     };
+  };
+
+  const CustomEvent = (event: any) => {
+    const eventTemplate = eventColor.filter((item) => item.id === event.event.class_type);
+    return (
+      <div className={css.eventTemplateCalendar} style={{ backgroundColor: eventTemplate[0].color }}>
+        <div className={css.eventTemplateIcon}>{eventTemplate[0].icon}</div>
+        <span>{event.event.title}</span>
+      </div>
+    );
   };
 
   return (
@@ -454,6 +486,9 @@ function MyCalendar(props: CalendarProps) {
           }}
           style={{ height: "100vh" }}
           eventPropGetter={eventStyleGetter}
+          components={{
+            event: CustomEvent,
+          }}
         />
       )}
     </Box>
