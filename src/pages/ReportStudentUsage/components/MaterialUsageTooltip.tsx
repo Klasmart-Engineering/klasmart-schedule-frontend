@@ -45,6 +45,7 @@ interface Props {
 export default function MaterialUsageTooltip(props: Props) {
   const classes = useStyles();
   const { MaterialUsageConData } = useTranslation();
+  const count = props.content.reduce((count, item) => Number(item.count) + count, 0);
   return (
     <Tooltip
       id="mouse-over-popover"
@@ -56,20 +57,24 @@ export default function MaterialUsageTooltip(props: Props) {
       arrow
       placement="top"
       title={
-        <Grid container direction={"column"}>
-          {props.content.map((item, key) => {
-            return (
-              <Grid container justify={"space-between"} className={classes.item} key={key}>
-                {MaterialUsageConData.find((v) => v.value === item.type)?.label}
-                <label>{item.count}</label>
-              </Grid>
-            );
-          })}
-          <Grid container justify={"space-between"} className={classes.item} style={{ margin: 0 }}>
-            {d("Total").t("report_student_usage_total")}
-            <label>{props.content.reduce((count, item) => Number(item.count) + count, 0)}</label>
+        count !== 0 ? (
+          <Grid container direction={"column"}>
+            {props.content.map((item, key) => {
+              return (
+                <Grid container justify={"space-between"} className={classes.item} key={key}>
+                  {MaterialUsageConData.find((v) => v.value === item.type)?.label}
+                  <label>{item.count}</label>
+                </Grid>
+              );
+            })}
+            <Grid container justify={"space-between"} className={classes.item} style={{ margin: 0 }}>
+              {d("Total").t("report_student_usage_total")}
+              <label>{count}</label>
+            </Grid>
           </Grid>
-        </Grid>
+        ) : (
+          ""
+        )
       }
     >
       {props.children}
