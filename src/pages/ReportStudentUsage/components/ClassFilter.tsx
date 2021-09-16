@@ -166,6 +166,7 @@ export default function ({ onChange }: IProps) {
   const getAllSchoolList = (): ISelect[] => {
     const schoolOptions =
       (studentUsage.schoolList
+        .filter((item) => item.classes && item.classes.length > 0)
         .map((item) => ({
           value: item.school_id,
           label: item.school_name,
