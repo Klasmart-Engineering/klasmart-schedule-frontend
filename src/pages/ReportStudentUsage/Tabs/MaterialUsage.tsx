@@ -30,9 +30,7 @@ const useStyles = makeStyles(() =>
       justifyContent: "flex-end",
     },
     total: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
+      marginBottom: "14px",
       "&>span": {
         fontSize: "20px",
         fontFamily: "Helvetica, Helvetica-Bold",
@@ -88,10 +86,10 @@ const useStyles = makeStyles(() =>
       },
     },
     date: {
-      flex: 1,
       alignSelf: "flex-end",
-      paddingRight: "200px",
       color: "#999",
+      width: "30%",
+      display: "flex",
       textAlign: "right",
       paddingTop: "13px",
       paddingBottom: "13px",
@@ -144,12 +142,13 @@ const useStyles = makeStyles(() =>
     },
     paginationLabel: {
       whiteSpace: "nowrap",
-      fontSize:14,
-      // color: "#999",
-      color:"rgba(0, 0, 0, 0.54)"
+      fontSize: 14,
+      color: "rgba(0, 0, 0, 0.54)",
     },
   })
 );
+
+const PAGE_SIZE = 5;
 
 const colors = ["#0062FF", "#408AFF", "#73A9FF", "#A6C9FF", "#E6EFFF"];
 
@@ -185,8 +184,6 @@ export default function () {
   const classIdListRef = useRef(classIdList);
   const [timeRangeList] = useState<Moment[]>([momentRef.clone().subtract(2, "M"), momentRef.clone().subtract(1, "M"), momentRef]);
   const [page, setPage] = useState(pageRef.current);
-  const [tooltipAnchorEl, setTooltipAnchorEl] = useState<HTMLDivElement | null>(null);
-  const [tipContent, setTipContent] = useState<EntityContentUsage[]>([]);
   const [transferredData, setTransferredDate] = useState<Map<string, EntityContentUsage[]>[]>([]);
   const { studentUsageReport, studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [ids, setIds] = useState<string[]>([]);
@@ -245,7 +242,7 @@ export default function () {
   };
   const getList = () => {
     const allClassIdStr = allClassesRef.current.map((item) => item.class_id);
-    const class_id_list = getClassesList().slice(pageRef.current * 5, pageRef.current * 5 + 5);
+    const class_id_list = getClassesList().slice(pageRef.current * PAGE_SIZE, pageRef.current * PAGE_SIZE + PAGE_SIZE);
     if (!class_id_list.length || !allClassIdStr.length) {
       return;
     }
@@ -277,6 +274,7 @@ export default function () {
   };
 
   const handleClass = (value: { label: string; value: string }[]) => {
+    console.log(value);
     pageRef.current = 0;
     setPage(0);
     setClassIdList(value);
@@ -306,32 +304,26 @@ export default function () {
           {Array.from(datum.values()).map((item, index) => {
             const monthAmount = item.reduce((preValue, value) => preValue + Number(value.count), 0);
             return (
-              <div
-                key={index}
-                className={clsx(style.datumContainer, "datumContainer")}
-                onMouseEnter={(e) => {
-                  setTooltipAnchorEl(e.currentTarget);
-                  setTipContent(item);
-                }}
-                onMouseLeave={() => setTooltipAnchorEl(null)}
-              >
-                <div className={style.datumWrapper} style={{ width: (monthAmount / maxValue) * 100 + "%" }}>
-                  {item.map((datumType, dIndex) => {
-                    const count = Number(datumType.count);
-                    return (
-                      <div
-                        key={dIndex}
-                        className={style.tableDatum}
-                        style={{
-                          width: (Number(datumType.count) ? (Number(datumType.count) / monthAmount) * 100 : 0) + "%",
-                          background: colors[dIndex],
-                          marginRight: count === 0 ? 0 : undefined,
-                        }}
-                      />
-                    );
-                  })}
+              <MaterialUsageTooltip content={item} key={index}>
+                <div className={clsx(style.datumContainer, "datumContainer")}>
+                  <div className={style.datumWrapper} style={{ width: (monthAmount / maxValue) * 100 + "%" }}>
+                    {item.map((datumType, dIndex) => {
+                      const count = Number(datumType.count);
+                      return (
+                        <div
+                          key={dIndex}
+                          className={style.tableDatum}
+                          style={{
+                            width: (Number(datumType.count) ? (Number(datumType.count) / monthAmount) * 100 : 0) + "%",
+                            background: colors[dIndex],
+                            marginRight: count === 0 ? 0 : undefined,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              </MaterialUsageTooltip>
             );
           })}
         </Grid>
@@ -349,7 +341,6 @@ export default function () {
     const maxValue = Math.max(...allCount);
     return (
       <>
-        <MaterialUsageTooltip anchorEl={tooltipAnchorEl} content={tipContent} />
         <Grid container wrap={"nowrap"} direction={"column"} className={style.tableContainer}>
           {transferredData.map((item, index) => {
             return renderTableItem(item, index, maxValue);
@@ -388,9 +379,6 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-          {/* {page * 5 + 1}-{page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
-          &nbsp; {t("report_student_usage_of")} &nbsp;
-          {getClassesList().length} */}
           {`${page * 5 + 1}-${page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}
            ${t("report_student_usage_of")} 
           ${getClassesList().length}`}
@@ -420,10 +408,12 @@ export default function () {
       <div className={style.selected}>
         <ClassFilter onChange={handleClass} />
       </div>
-      <div className={style.total}>
+      <Grid container className={style.total}>
         <span>
           {d("Content total viewed (latest 3 months)").t("report_content_total_viewed")}：{totalView}
         </span>
+      </Grid>
+      <Grid container justify={"flex-end"} className={style.total}>
         <Box
           style={{
             position: "relative",
@@ -433,16 +423,16 @@ export default function () {
         >
           <MutiSelect options={MaterialUsageConData} label={t("report_filter_content")} onChange={handleChange} defaultValueIsAll />
         </Box>
-      </div>
+      </Grid>
       {renderBarChart()}
-      <Grid container>
-        <Grid item className={style.date} style={{ width: "40%", minWidth: "40%", maxWidth: "40%" }}>
+      <Grid container justify={"flex-end"}>
+        <Grid item container justify={"center"} className={style.date}>
           {months[timeRangeList[0].format("MMMM")]}
         </Grid>
-        <Grid item className={style.date}>
+        <Grid item container justify={"center"} className={style.date}>
           {months[timeRangeList[1].format("MMMM")]}
         </Grid>
-        <Grid item className={style.date}>
+        <Grid item container justify={"center"} className={style.date}>
           {months[timeRangeList[2].format("MMMM")]}
         </Grid>
       </Grid>

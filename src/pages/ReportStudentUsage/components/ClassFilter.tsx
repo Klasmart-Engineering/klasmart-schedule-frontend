@@ -227,7 +227,7 @@ export default function ({ onChange }: IProps) {
       </Box>
       <Box className={classes.classBox}>
         <MutiSelect
-          disabled={classOptions.length === 0}
+          disabled={studentUsage.organization_id === ""}
           options={selectAllOption.concat(classOptions)}
           label={t("report_filter_class")}
           defaultValueIsAll
