@@ -1312,7 +1312,7 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_home_fun_title"; description: "Home Fun (latest 3 months)"; values: undefined }
   | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
   | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
-  | { id: "report_student_usage_of"; description: "{total} of {value}"; values: { total: string, value: string } };
+  | { id: "report_student_usage_of"; description: "{value} of {total}"; values: { total: string, value: string } };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
