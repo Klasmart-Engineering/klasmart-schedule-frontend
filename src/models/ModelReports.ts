@@ -1,6 +1,10 @@
 import { ReactNode } from "react";
 import { School, User } from "../api/api-ko-schema.auto";
-import { EntityReportListTeachingLoadItem, EntityStudentAchievementReportCategoryItem } from "../api/api.auto";
+import {
+  EntityClassesAssignmentsUnattendedStudentsView,
+  EntityReportListTeachingLoadItem,
+  EntityStudentAchievementReportCategoryItem,
+} from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
@@ -43,9 +47,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
     .toString()
-    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",
@@ -187,4 +191,64 @@ export function deDuplicate(arr: Pick<User, "user_id" | "user_name">[]) {
 export function getTimeOffSecond() {
   const timeOff = new Date().getTimezoneOffset();
   return -timeOff * 60;
+}
+type studentItem = Pick<User, "user_id" | "user_name">;
+
+// @ts-ignore
+export interface IClassesAssignmentsUnattendedWithStudentNameItem extends EntityClassesAssignmentsUnattendedStudentsView {
+  student_name?: studentItem["user_name"];
+}
+
+export const getClassesAssignmentsUnattendedWithStudentName = (
+  classesAssignmentsUnattended: EntityClassesAssignmentsUnattendedStudentsView[],
+  studentList?: studentItem[]
+): IClassesAssignmentsUnattendedWithStudentNameItem[] => {
+  return classesAssignmentsUnattended.map((item) => {
+    const student_name = studentList?.find((student) => student.user_id === item.student_id)?.user_name;
+    return { ...item, student_name };
+  });
+};
+export function sortByStudentName(studentName: any) {
+  return function (x: any, y: any) {
+    let reg = /[a-zA-Z0-9]/;
+    if (reg.test(x[studentName]) || reg.test(y[studentName])) {
+      if (x[studentName] > y[studentName]) {
+        return 1;
+      } else if (x[studentName] < y[studentName]) {
+        return -1;
+      } else {
+        return 0;
+      }
+    } else {
+      return x[studentName].localeCompare(y[studentName], "zh");
+    }
+  };
+}
+export function getTimeDots(): ILatestThreeMonths {
+  const currentDate = new Date();
+  var year = currentDate.getFullYear();
+  var month = currentDate.getMonth() + 1;
+  switch (month) {
+    case 1:
+      year--;
+      return {
+        latestThreeMonthsDate: [11, 12, 1],
+        latestThreeMonthsDots: [`${year}/11/01 00:00:00`, `${year}/12/01 00:00:00`, `${year + 1}/01/01 00:00:00`],
+      };
+    case 2:
+      year--;
+      return {
+        latestThreeMonthsDate: [12, 1, 2],
+        latestThreeMonthsDots: [`${year}/12/01 00:00:00`, `${year}/01/01 00:00:00`, `${year + 1}/02/01 00:00:00`],
+      };
+    default:
+      return {
+        latestThreeMonthsDate: [parseInt(`${month - 2}`), parseInt(`${month - 1}`), parseInt(`${month}`)],
+        latestThreeMonthsDots: [`${year}/${month - 2}/01 00:00:00`, `${year}/${month - 1}/01 00:00:00`, `${year}/${month}/01 00:00:00`],
+      };
+  }
+}
+export interface ILatestThreeMonths {
+  latestThreeMonthsDate: number[];
+  latestThreeMonthsDots: string[];
 }

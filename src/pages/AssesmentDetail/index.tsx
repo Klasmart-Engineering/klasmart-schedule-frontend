@@ -65,9 +65,9 @@ export function AssessmentDetail() {
     return ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
   }, [lesson_materials, attendance_ids, studyAssessmentDetail]);
   const filter_student_view_items: EntityAssessmentStudentViewH5PItem[] = useMemo(() => {
-    const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
-    return ModelAssessment.toGetStudentViewFormItems(res, studentViewItems, autocompleteValue, autocompleteLabel);
-  }, [studyAssessmentDetail, attendance_ids, lesson_materials, studentViewItems, autocompleteValue, autocompleteLabel]);
+    // const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);
+    return ModelAssessment.toGetStudentViewFormItems(init_student_view_items, studentViewItems, autocompleteValue, autocompleteLabel);
+  }, [init_student_view_items, studentViewItems, autocompleteValue, autocompleteLabel]);
 
   const complete_rate = useMemo(() => {
     const res = ModelAssessment.toGetStudentViewItems(studyAssessmentDetail, attendance_ids, lesson_materials);

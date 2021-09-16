@@ -9,12 +9,12 @@ import {
   RolesData,
   LearningComesFilterQuery,
 } from "../types/scheduleTypes";
-import { EntityContentInfoWithDetails, EntityScheduleFilterClass } from "../api/api.auto";
+import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
 import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import { GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
-import { GetOutcomeList } from "../api/type";
 import { Status } from "../api/api-ko-schema.auto";
 import { d } from "../locale/LocaleManager";
+import { LinkedMockOptionsItem } from "../reducers/content";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -182,7 +182,7 @@ export class modelSchedule {
     return set;
   }
 
-  static AssemblyLearningOutcome(outcomeList: GetOutcomeList) {
+  static AssemblyLearningOutcome(outcomeList: ModelPublishedOutcomeView[]) {
     return outcomeList.map((item) => {
       return {
         id: item.outcome_id,
@@ -191,6 +191,8 @@ export class modelSchedule {
         assumed: item.assumed,
         learningOutcomeSet: item.sets ?? [],
         select: false,
+        category_ids: item.category_ids,
+        sub_category_ids: item.sub_category_ids,
       };
     });
   }
@@ -314,5 +316,8 @@ export class modelSchedule {
     });
     query.programs = filterQuery?.programs as never;
     return { query, assembly };
+  }
+  static getLearingOutcomeCategory(list: LinkedMockOptionsItem[], ids: string[]) {
+    return list.filter((item) => ids.includes(item.id as string));
   }
 }

@@ -479,7 +479,7 @@ interface DetailFormProps {
 export default function DetailForm(props: DetailFormProps) {
   // const expand = useExpand();
   const { formMethods, assessmentDetail, isMyAssessment, editable, complete_rate } = props;
-  const { control, getValues } = formMethods;
+  const { control, getValues, setValue } = formMethods;
   const { breakpoints } = useTheme();
   const css = useStyles();
   const sm = useMediaQuery(breakpoints.down("sm"));
@@ -492,7 +492,26 @@ export default function DetailForm(props: DetailFormProps) {
     const teachers = list && list.length ? `${teacherNames} (${list.length})` : d("N/A").t("assess_column_n_a");
     return teachers;
   }, [assessmentDetail.teachers]);
-  const handleClickOk = (materials: DetailStudyAssessment["lesson_materials"]) => {};
+  const handleClickOk = (materials: DetailStudyAssessment["lesson_materials"]) => {
+    const mwithlo = ModelAssessment.toMaterial(assessmentDetail.lesson_materials, materials);
+    const filteredOutcomelist = ModelAssessment.filterOutcomeList(assessmentDetail, mwithlo);
+    const newOutcomesValue = filteredOutcomelist?.map((item) => {
+      return {
+        attendance_ids: item.attendance_ids,
+        none_achieved: item.none_achieved,
+        skip: item.skip,
+        outcome_id: item.outcome_id,
+      };
+    });
+    newOutcomesValue?.forEach((item, index) => {
+      setTimeout(() => {
+        setValue(`outcomes[${index}].outcome_id`, item.outcome_id);
+        setValue(`outcomes[${index}].attendance_ids`, item.attendance_ids);
+        setValue(`outcomes[${index}].none_achieved`, item.none_achieved);
+        setValue(`outcomes[${index}].skip`, item.skip);
+      }, 100);
+    });
+  };
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>

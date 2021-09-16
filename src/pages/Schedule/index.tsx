@@ -43,6 +43,8 @@ import {
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   searchAuthContentLists,
+  getLinkedMockOptions,
+  actOutcomeListLoading,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -114,7 +116,7 @@ function ScheduleContent() {
 
   const handleChangeProgramId = async (programId: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown) as PayloadAction<
+    resultInfo = (await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getSubjectByProgramId>
     >;
     return resultInfo.payload ? resultInfo.payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
@@ -122,9 +124,9 @@ function ScheduleContent() {
 
   const LinkageLessonPlan = async (content_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(
+    resultInfo = (await dispatch(
       onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
     const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
     const materialArr = ModelLessonPlan.toArray(segment);
     const newMaterialArr: (EntityContentInfoWithDetails | undefined)[] = [];
@@ -204,7 +206,7 @@ function ScheduleContent() {
    */
   const getParticipantOptions = async (class_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getScheduleParticipant({ class_id: class_id, metaLoading: true }))) as unknown) as PayloadAction<
+    resultInfo = (await dispatch(getScheduleParticipant({ class_id: class_id, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleParticipant>
     >;
     if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
@@ -214,7 +216,7 @@ function ScheduleContent() {
 
   const getHandleScheduleViewInfo = async (schedule_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown) as PayloadAction<
+    resultInfo = (await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleViewInfo>
     >;
     return resultInfo.payload as EntityScheduleViewDetail;
@@ -307,6 +309,7 @@ function ScheduleContent() {
     dispatch(ScheduleFilterPrograms());
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(getScheduleUserId());
+    dispatch(getLinkedMockOptions({ metaLoading: true }));
     dispatch(
       searchAuthContentLists({
         metaLoading: true,
@@ -325,12 +328,15 @@ function ScheduleContent() {
     if (privilegedMembers("Admin")) {
       dispatch(getClassesByOrg());
       dispatch(getSchoolByOrg());
+      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("School")) {
       dispatch(getClassesBySchool());
       dispatch(getSchoolByUser());
+      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("Teacher")) {
       dispatch(getClassesByTeacher());
       dispatch(getSchoolByUser());
+      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("Student")) {
       dispatch(getClassesByStudent());
       dispatch(getSchoolByUser());

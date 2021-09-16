@@ -16,7 +16,7 @@ import {
   ThemeProvider,
   Typography,
   useMediaQuery,
-  useTheme,
+  useTheme
 } from "@material-ui/core";
 import { AccessTime, CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
@@ -24,7 +24,7 @@ import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useQueryCms } from ".";
+import { ContentEditRouteParams, useQueryCms } from ".";
 import { EntityContentInfoWithDetails, EntityTeacherManualFile } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
@@ -161,7 +161,7 @@ interface SuggestTimeProps {
 const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) => {
   const { value, onChange, watch, disabled } = props;
   const css = useStyles();
-  const { lesson } = useParams();
+  const { lesson } = useParams<ContentEditRouteParams>();
   const [suggestTime, SetSuggestTime] = useState(String(value));
   const min = ModelLessonPlan.sumSuggestTime(watch("data") as Segment);
   const suggestTimeFun = useMemo(
@@ -197,6 +197,27 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
     />
   );
 });
+export const menuItemList = (list?: LinkedMockOptionsItem[]) =>
+list &&
+list.map((item) => (
+  <MenuItem key={item.id} value={item.id}>
+    {item.name}
+  </MenuItem>
+));
+
+const NeedTransilationMenuItemList = (list: LinkedMockOptionsItem[]) =>
+list &&
+list.map((item) => (
+  <MenuItem key={item.id} value={item.id}>
+    {t(item.name as NeedTransilationMenuItem)}
+  </MenuItem>
+));
+
+const rejectReasonTransilation = (reson?: string[], remark?: string) => {
+const reson_remark = reson && reson.map((item) => t(item as LangRecordId));
+if (reson_remark && remark) reson_remark.push(remark);
+return reson_remark ? reson_remark : remark && [remark];
+};
 export interface DetailsProps {
   allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
   contentDetail: EntityContentInfoWithDetails;
@@ -230,7 +251,7 @@ export default function Details(props: DetailsProps) {
     disabled,
   } = props;
   const css = useStyles();
-  const { lesson } = useParams();
+  const { lesson } = useParams<ContentEditRouteParams>();
   const { id } = useQueryCms();
   const defaultTheme = useTheme();
   const dispatch = useDispatch();
@@ -260,28 +281,6 @@ export default function Details(props: DetailsProps) {
     });
     return arr;
   };
-  const menuItemList = (list?: LinkedMockOptionsItem[]) =>
-    list &&
-    list.map((item) => (
-      <MenuItem key={item.id} value={item.id}>
-        {item.name}
-      </MenuItem>
-    ));
-
-  const NeedTransilationMenuItemList = (list: LinkedMockOptionsItem[]) =>
-    list &&
-    list.map((item) => (
-      <MenuItem key={item.id} value={item.id}>
-        {t(item.name as NeedTransilationMenuItem)}
-      </MenuItem>
-    ));
-
-  const rejectReasonTransilation = (reson?: string[], remark?: string) => {
-    const reson_remark = reson && reson.map((item) => t(item as LangRecordId));
-    if (reson_remark && remark) reson_remark.push(remark);
-    return reson_remark ? reson_remark : remark && [remark];
-  };
-
   const teacherInfo = (
     <div
       style={{
@@ -349,7 +348,7 @@ export default function Details(props: DetailsProps) {
         size,
       },
       MuiSvgIcon: {
-        fontSize: sm ? "small" : "default",
+        fontSize: sm ? "small" : "medium",
       },
     },
   });
@@ -531,7 +530,7 @@ export default function Details(props: DetailsProps) {
             }}
             render={(props) => (
               <FormattedTextField
-                select
+                select 
                 error={errors.developmental ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Category").t("library_label_category")}

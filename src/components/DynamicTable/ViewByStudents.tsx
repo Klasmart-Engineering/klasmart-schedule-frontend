@@ -56,6 +56,7 @@ const useStyles = makeStyles({
     flexDirection: "column",
     alignItems: "flex-start",
     textAlign: "left",
+    wordBreak: "break-all",
     "& .MuiFormControlLabel-root": {
       display: "flex",
       alignItems: "flex-start",
@@ -180,11 +181,16 @@ export function ViewByStudents(props: BasicTableProps) {
     { align: "center", style: { backgroundColor: "#fff" }, value: "answer", text: d("Answer").t("assess_detail_answer") },
     {
       align: "center",
-      style: { backgroundColor: "#fff" },
+      style: { backgroundColor: "#fff", minWidth: 100 },
       value: "score",
       text: d("Score / Full Marks").t("assess_detail_score_full_marks"),
     },
-    { align: "center", style: { backgroundColor: "#fff" }, value: "LO", text: d("Learning Outcomes").t("library_label_learning_outcomes") },
+    {
+      align: "center",
+      style: { backgroundColor: "#fff", maxWidth: 400 },
+      value: "LO",
+      text: d("Learning Outcomes").t("library_label_learning_outcomes"),
+    },
   ];
 
   const handleChangeComment = (commentText: string) => {

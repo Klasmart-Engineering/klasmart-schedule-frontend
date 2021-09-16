@@ -30,6 +30,7 @@ import { ReportAchievementList } from "./pages/ReportAchievementList";
 import { ReportCategories } from "./pages/ReportCategories";
 import { ReportDashboard } from "./pages/ReportDashboard";
 import { ReportLearningSummary } from "./pages/ReportLearningSummary";
+import ReportStudentUsage from "./pages/ReportStudentUsage";
 import ReportTeachingLoad from "./pages/ReportTeachingLoad";
 import Schedule from "./pages/Schedule";
 import { StudyAssessmentList } from "./pages/StudyAssessmentList";
@@ -115,6 +116,9 @@ function App() {
                   </Route> */}
                   <Route path={ReportLearningSummary.routeMatchPath}>
                     <ReportLearningSummary />
+                  </Route>
+                  <Route path={ReportStudentUsage.routeBasePath}>
+                    <ReportStudentUsage />
                   </Route>
                   <Route path={H5pEditor.routeBasePath}>
                     <H5pEditor />
