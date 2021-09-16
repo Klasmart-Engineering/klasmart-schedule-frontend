@@ -66,7 +66,7 @@ export default function ({ title, value, total, active }: IProps) {
               total: 1,
             }}
             fontSize={22}
-            colors={active ? ["#fff", "#E4E4E4"] : ["#0E78D5", "#E4E4E4"]}
+            colors={active ? ["#fff", "#4A9ADF"] : ["#0E78D5", "#E4E4E4"]}
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           />
         </Box>
