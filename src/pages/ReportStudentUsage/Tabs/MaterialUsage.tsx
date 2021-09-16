@@ -9,7 +9,6 @@ import { sortBy } from "lodash";
 import moment, { Moment } from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Class } from "../../../api/api-ko-schema.auto";
 import { EntityContentUsage } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
@@ -121,7 +120,7 @@ const useStyles = makeStyles(() =>
       height: "28px",
       marginLeft: "10px",
       padding: "20px 0",
-      borderLeft: "1px solid #999",
+      borderLeft: "1px solid #e9e9e9",
       position: "relative",
     },
     datumWrapper: {
@@ -185,29 +184,9 @@ export default function () {
   const [timeRangeList] = useState<Moment[]>([momentRef.clone().subtract(2, "M"), momentRef.clone().subtract(1, "M"), momentRef]);
   const [page, setPage] = useState(pageRef.current);
   const [transferredData, setTransferredDate] = useState<Map<string, EntityContentUsage[]>[]>([]);
-  const { studentUsageReport, studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { studentUsageReport } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [ids, setIds] = useState<string[]>([]);
   const [totalView, setTotalView] = useState(0);
-  const [allClasses, setAllClasses] = useState<Class[]>([]);
-  const allClassesRef = useRef<Class[]>(allClasses);
-
-  useEffect(() => {
-    const classes: Class[] = [];
-    if (studentUsage.schoolList.length) {
-      studentUsage.schoolList.forEach((item) => {
-        item.classes?.forEach((item) => {
-          classes.push(item as Class);
-        });
-      });
-      studentUsage.noneSchoolClasses.forEach((item) => {
-        classes.push(item);
-      });
-      setAllClasses(classes);
-      allClassesRef.current = classes;
-      getList();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studentUsage]);
 
   useEffect(() => {
     const result: Map<string, EntityContentUsage[]>[] = [];
@@ -236,14 +215,12 @@ export default function () {
   }, [studentUsageReport]);
 
   const getClassesList = () => {
-    return classIdListRef.current.length
-      ? classIdListRef.current.map((item) => item.value)
-      : allClassesRef.current.map((item) => item.class_id);
+    return classIdListRef.current.map((item) => item.value);
   };
+
   const getList = () => {
-    const allClassIdStr = allClassesRef.current.map((item) => item.class_id);
     const class_id_list = getClassesList().slice(pageRef.current * PAGE_SIZE, pageRef.current * PAGE_SIZE + PAGE_SIZE);
-    if (!class_id_list.length || !allClassIdStr.length) {
+    if (!class_id_list.length) {
       return;
     }
     dispatch(
@@ -274,7 +251,6 @@ export default function () {
   };
 
   const handleClass = (value: { label: string; value: string }[]) => {
-    console.log(value);
     pageRef.current = 0;
     setPage(0);
     setClassIdList(value);
@@ -379,7 +355,10 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-           {t("report_student_usage_of" ,{total: `${getClassesList().length}`, value:`${page * 5 + 1}-${page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}`})} 
+          {t("report_student_usage_of", {
+            total: `${getClassesList().length}`,
+            value: `${page * 5 + 1}-${page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}`,
+          })}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
           <FirstPageIcon />
