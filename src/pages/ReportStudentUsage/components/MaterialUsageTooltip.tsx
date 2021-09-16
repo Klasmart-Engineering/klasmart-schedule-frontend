@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "10px",
       padding: "10px 14px",
       position: "relative",
-      bottom: "-20px",
       "&::after": {
         content: " ",
         height: "10px",
