@@ -125,6 +125,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: "12px",
       cursor: "pointer",
     },
+    classTypeColor: {
+      width: "10px",
+      height: "10px",
+      borderRadius: "10px",
+      marginRight: "20px",
+    },
   })
 );
 
@@ -184,6 +190,15 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   const filterItem: FilterItemInfo = { label: label, self_id: self_id, school_id: school_id };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  const getClassTypeColor = (label: string) => {
+    return [
+      { id: "OnlineClass", color: "#FFC107", icon: "" },
+      { id: "OfflineClass", color: "#009688", icon: "" },
+      { id: "Homework", color: "#D32F2F", icon: "" },
+      { id: "Task", color: "#0E78D5", icon: "" },
+    ].filter((item) => item.id === label)[0].color;
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -329,6 +344,9 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                   </Typography>
                 </>
               )}
+            {filterItem.label === "classType" && (
+              <div className={classes.classTypeColor} style={{ backgroundColor: getClassTypeColor(self_id) }}></div>
+            )}
           </div>
         }
         classes={{

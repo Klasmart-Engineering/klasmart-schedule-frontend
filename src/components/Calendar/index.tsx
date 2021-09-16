@@ -5,7 +5,7 @@ import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
 import { PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
 import React, { useCallback } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer, stringOrDate } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -394,6 +394,28 @@ function MyCalendar(props: CalendarProps) {
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
   };
 
+  const eventColor = [
+    { id: "OnlineClass", color: "#FFC107", icon: "" },
+    { id: "OfflineClass", color: "#009688", icon: "" },
+    { id: "Homework", color: "#D32F2F", icon: "" },
+    { id: "Task", color: "#0E78D5", icon: "" },
+  ];
+
+  const eventStyleGetter = (event: any, start: stringOrDate, end: stringOrDate, isSelected: boolean) => {
+    const eventTemplate = eventColor.filter((item) => item.id === event.class_type);
+    const style = {
+      backgroundColor: eventTemplate[0].color,
+      color: "white",
+      height: "26px",
+      fontWeight: 600,
+      borderRadius: "10px",
+      padding: "2px 0px 0px 10px",
+    };
+    return {
+      style: style,
+    };
+  };
+
   return (
     <Box className={css.calendarBox}>
       <Box className={css.calendarNav}>
@@ -431,6 +453,7 @@ function MyCalendar(props: CalendarProps) {
             creteSchedule(e);
           }}
           style={{ height: "100vh" }}
+          eventPropGetter={eventStyleGetter}
         />
       )}
     </Box>
