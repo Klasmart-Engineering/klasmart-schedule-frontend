@@ -36,7 +36,7 @@ import {
   TeacherListBySchoolIdQueryVariables,
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables,
+  UserSchoolIDsQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityClassesAssignmentOverView,
@@ -54,7 +54,7 @@ import {
   EntityStudentUsageMaterialReportResponse,
   EntityStudentUsageMaterialViewCountReportResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -66,7 +66,7 @@ import {
   QueryLearningSummaryCondition,
   QueryLearningSummaryRemainingFilterCondition,
   ReportType,
-  TimeFilter,
+  TimeFilter
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
@@ -1756,11 +1756,20 @@ const { actions, reducer } = createSlice({
     [getClassesAssignments.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {
       state.classesAssignments = payload;
     },
+    [getClassesAssignments.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignments>>) => {
+      state.classesAssignments = cloneDeep(initialState.classesAssignments);
+    },
     [getClassesAssignmentsOverview.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignmentsOverview>>
     ) => {
       state.overview = payload;
+    },
+    [getClassesAssignmentsOverview.pending.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesAssignmentsOverview>>
+    ) => {
+      state.overview = cloneDeep(initialState.overview);
     },
   },
 });

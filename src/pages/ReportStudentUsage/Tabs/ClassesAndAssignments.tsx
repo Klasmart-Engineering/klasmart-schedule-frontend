@@ -7,7 +7,7 @@ import { getTimeDots, sortByStudentName } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments, getClassesAssignmentsOverview, getClassesAssignmentsUnattended } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
-import ClassFilter from "../components/ClassFilter";
+import ClassFilter, { ISelect } from "../components/ClassFilter";
 import Statistics from "../components/Statistics";
 
 const PAGESIZE = 10;
@@ -76,14 +76,14 @@ export default function ClassesAndAssignments() {
   const {
     classesAssignments,
     overview,
-    studentUsage,
     classesAssignmentsUnattend: classesAssignmentsUnattendRow,
   } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const [classIds, setClassIds] = useState<string[] | undefined>(undefined);
+  const [classList, setClassList] = useState<ISelect[] | undefined>(undefined);
   const [unattendedTableOpenId, setUnattendedTableOpenId] = useState<string | undefined>("");
   const [page, setPage] = React.useState(1);
   const [state, setState] = React.useState({ activeTab: 0 });
 
+  const classIds = classList?.map(item => item.value);
   const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
     ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
     : [];
@@ -143,25 +143,25 @@ export default function ClassesAndAssignments() {
 
   const handleChangePage = React.useMemo(
     () => (page: number) => {
-      if (!classIds) return;
+      if (!classList) return;
       setPage(page);
-      const class_ids = classIds.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE);
+      const class_ids = classIds?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE);
       dispatch(getClassesAssignments({ metaLoading: true, class_ids, type, durations }));
     },
     // eslint-disable-next-line
-    [dispatch, setPage, classIds, type]
+    [dispatch, setPage, classList, type]
   );
 
   useEffect(() => {
     setPage(1);
-    classIds && dispatch(getClassesAssignments({ metaLoading: true, class_ids: classIds.slice(0, PAGESIZE), type, durations }));
+    classList && dispatch(getClassesAssignments({ metaLoading: true, class_ids: classIds?.slice(0, PAGESIZE), type, durations }));
     // eslint-disable-next-line
-  }, [dispatch, classIds, type]);
+  }, [dispatch, classList, type]);
 
   useEffect(() => {
-    classIds && dispatch(getClassesAssignmentsOverview({ metaLoading: true, class_ids: classIds, durations }));
+    classList && dispatch(getClassesAssignmentsOverview({ metaLoading: true, class_ids: classIds, durations }));
     // eslint-disable-next-line
-  }, [dispatch, classIds]);
+  }, [dispatch, classList]);
 
   return (
     <div>
@@ -176,18 +176,16 @@ export default function ClassesAndAssignments() {
       </div>
       <div className={css.selectContainer}>
         <div className={css.text}>{topTitle[state.activeTab]}</div>
-        <div>
-          <ClassFilter onChange={(v) => setClassIds(v.map((item) => item.value))} />
-        </div>
+        <div><ClassFilter onChange={setClassList} /></div>
       </div>
       <ClassesAndAssignmentsTable
         unattendedTableOpenId={unattendedTableOpenId}
-        total={classIds?.length || 0}
+        total={classList?.length || 0}
         page={page}
         handleChangePage={handleChangePage}
         classesAssignments={classesAssignments}
         latestThreeMonths={latestThreeMonths}
-        studentUsage={studentUsage}
+        classList={classList}
         classesAssignmentsUnattend={classesAssignmentsUnattend}
         handleclickUnattendedTable={handleclickUnattendedTable}
         type={type}
