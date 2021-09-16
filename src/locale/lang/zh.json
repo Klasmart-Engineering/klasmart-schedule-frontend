@@ -942,5 +942,5 @@
   "report_student_usage_home_fun_title": "学生需上传的家庭作业（最近3个月）",
   "report_student_usage_missed_study": "错过家庭作业的学生名单",
   "report_student_usage_missed_home_fun": "错过家庭作业的学生名单",
-  "report_student_usage_of": "{value}/{total}"
+  "report_student_usage_of": "{value} / {total}"
 }
