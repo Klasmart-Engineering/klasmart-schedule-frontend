@@ -149,7 +149,7 @@ interface IClassesAndAssignmentsTable {
   page: number;
   total: number;
   type: string;
-  classList?:ISelect[];
+  classList?: ISelect[];
 }
 interface IClasses {
   class_id: string;
@@ -173,7 +173,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
   const styles = useStyles();
   return (
     <div>
-      <TableContainer >
+      <TableContainer>
         <Table aria-label="collapsible table">
           <TableHead style={{ backgroundColor: "#f2f5f7" }}>
             <TableRow>
@@ -201,7 +201,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                   arrow
                   placement="top"
                   classes={styles}
-                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
+                  title={d("This month‘s class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -214,7 +214,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                   arrow
                   placement="top"
                   classes={styles}
-                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
+                  title={d("This month‘s class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -227,7 +227,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                   arrow
                   placement="top"
                   classes={styles}
-                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
+                  title={d("This month‘s class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
