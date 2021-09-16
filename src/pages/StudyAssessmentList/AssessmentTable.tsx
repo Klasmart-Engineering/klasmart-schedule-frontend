@@ -101,7 +101,7 @@ export function AssessmentTable(props: AssessmentTableProps) {
   const amountPerPage = props.amountPerPage ?? 20;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517} overflowX={"scroll"}>
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517} overflowX={"auto"}>
       <TableContainer>
         <Table>
           <TableHead className={css.tableHead}>
