@@ -942,5 +942,5 @@
   "report_student_usage_home_fun_title": "Nhiệm vụ về nhà (3 tháng gần nhất)",
   "report_student_usage_missed_study": "Danh sách học sinh bỏ lỡ bài tập về nhà",
   "report_student_usage_missed_home_fun": "Danh sách học sinh bỏ lỡ nhiệm vụ về nhà",
-  "report_student_usage_of": "của"
+  "report_student_usage_of": "{value} của {total}"
 }

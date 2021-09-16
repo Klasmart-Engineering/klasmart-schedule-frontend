@@ -942,5 +942,5 @@
   "report_student_usage_home_fun_title": "Home Fun (3 bulan terakhir)",
   "report_student_usage_missed_study": "Daftar siswa yang bolos study",
   "report_student_usage_missed_home_fun": "Daftar siswa yang merindukan home fun",
-  "report_student_usage_of": "Dari"
+  "report_student_usage_of": "{value} dari {total}"
 }

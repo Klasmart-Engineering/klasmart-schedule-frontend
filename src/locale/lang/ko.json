@@ -942,5 +942,5 @@
   "report_student_usage_home_fun_title": "홈펀스터디 (최근 3개월)",
   "report_student_usage_missed_study": "스터디를 완료하지 않은 학생 목록",
   "report_student_usage_missed_home_fun": "홈펀스터디를 완료하지 않은 학생 목록",
-  "report_student_usage_of": "of"
+  "report_student_usage_of": "{total} 개 중 {value}"
 }
