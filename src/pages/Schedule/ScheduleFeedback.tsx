@@ -224,7 +224,7 @@ function FeedbackTemplate(props: FeedbackProps) {
           <br />
           <span>{d("Image").t("schedule_detail_image")} (jpg, jpeg, png, gif, bmp)</span>
           <br />
-          <span>{d("Document").t("schedule_detail_document")} (doc, docx, ppt, pptx, xls, xlsx, pdf)</span>
+          <span>{d("Document").t("schedule_detail_document")} (docx, pptx, xlsx, pdf)</span>
         </div>
       </div>
     );
@@ -311,7 +311,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       ></TextField>
       <MultipleUploader
         partition="schedule_attachment"
-        accept=".avi,.mov,.mp4,.mp3,.wav,.jpg,.jpeg,.png,.gif,.bmp,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.pdf"
+        accept=".avi,.mov,.mp4,.mp3,.wav,.jpg,.jpeg,.png,.gif,.bmp,,.docx,,.pptx,.xlsx,.pdf"
         {...props}
         maxAmount={3}
         onChange={(value) => handleOnChange(value)}
