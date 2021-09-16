@@ -1,5 +1,6 @@
 import { Box, createStyles, makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer/TableContainer";
+import clsx from "clsx";
 import React from "react";
 import { EntityOutcome } from "../../api/api.auto";
 import { emptyTip } from "../../components/TipImages";
@@ -14,6 +15,11 @@ const useStyles = makeStyles((theme) =>
     },
     tableCell: {
       textAlign: "center",
+    },
+    outcomeName: {
+      maxWidth: 150,
+      minWidth: 100,
+      wordBreak: "break-all",
     },
     tabContainer: {
       textAlign: "center",
@@ -31,7 +37,7 @@ function OutComeRow(props: OutcomeProps) {
   };
   return (
     <TableRow>
-      <TableCell className={css.tableCell} onClick={handleClickOutcome}>
+      <TableCell className={clsx(css.tableCell, css.outcomeName)} onClick={handleClickOutcome}>
         {outcome.outcome_name}
       </TableCell>
       <TableCell className={css.tableCell}>{outcome.shortcode}</TableCell>

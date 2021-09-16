@@ -56,6 +56,18 @@ export const apiResourcePathById = (resource_id?: string) => {
   if (!resource_id) return;
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
+export const apiValidatePDF = (resource_id: string) => {
+  const rid = resource_id.split("-")[1];
+  return fetch(`${process.env.REACT_APP_KO_VALIDATE_PDF_API}/pdf/${rid}/validate`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/pdf",
+      Accept: "application/pdf",
+    },
+  }).then((response) => {
+    return response.json();
+  });
+};
 
 export const apiGenH5pResourceByToken = (token: string) => {
   return `${process.env.REACT_APP_H5P_API}/h5p/token/${token}`;

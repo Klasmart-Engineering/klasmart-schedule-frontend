@@ -88,8 +88,28 @@ interface AssetEditProps {
 function AssetEdit(props: AssetEditProps) {
   const css = useStyles();
   const uploadCss = useUploadBoxStyles(props);
-  const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
+  // const { lesson } = useParams<ContentEditRouteParams>();
+  // const dispatch = useDispatch();
+  const { isAsset, contentDetail, disabled, value: dataSource, onChange: onChangeValue, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
+  const onChange = async (value?: string) => {
+    // 韩国后端还没好 这个sprint不发  2021-09-15
+    // if(value && lesson==="material" && fileFormat.pdf.indexOf(`.${getSuffix(value)}`) >= 0){
+    //   dispatch(actSetLoading(true));
+    //   apiValidatePDF(value).then(res => {
+    //     dispatch(actSetLoading(false))
+    //     if(!res.valid){
+    //       const content = "The PDF file you uploaded cannot be displayed properly in live classes. Please upload a different file.";
+    //       dispatch(actAsyncConfirm({ content, hideCancel:true}))
+    //     }else{
+    //       onChangeValue(value);
+    //     }
+    //   }).catch(() => {dispatch(actSetLoading(false)); onChangeValue("")})
+    // }else {
+    //   onChangeValue(value);
+    // }
+    onChangeValue(value);
+  };
   const setFile = (data: DragData) => {
     const source = JSON.parse(data.item.data).source;
     onChange(source);

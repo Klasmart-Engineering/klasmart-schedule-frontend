@@ -1,4 +1,4 @@
-import { EntityContentInfoWithDetails, EntityCreateContentRequest } from "../api/api.auto";
+import { EntityContentInfoWithDetails, EntityCreateContentRequest, EntityOutcome, ModelPublishedOutcomeView } from "../api/api.auto";
 import { ContentFileType, ContentInputSourceType, ContentType } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
@@ -95,11 +95,51 @@ export const addAllInSearchLOListOption = (linkedMockOptions: LinkedMockOptions)
   const resault: LinkedMockOptions = {};
   Object.keys(resOptions).forEach((item) => {
     const key = item as keyof options;
-    if(key==="age" || key==="grade"){
-      resault[key] = linkedMockOptions[key]
-    }else {
+    if (key === "age" || key === "grade") {
+      resault[key] = linkedMockOptions[key];
+    } else {
       resault[key] = [all].concat(linkedMockOptions[key] || []);
     }
   });
   return resault;
+};
+// 搜索outcomes，如果用户选择的是all,调用api传""(传空)
+// transferSearchParams 是将用户选择的数据转换为可以调用api的参数
+export const transferSearchParams = (props: { program?: string; category?: string }) => {
+  const { program, category } = props;
+  const category_ids = category?.split("/")[0];
+  const sub_category_ids = category?.split("/")[1];
+  const program_ids = program?.split("/")[0];
+  const subject_ids = program?.split("/")[1];
+  if (!category_ids || !sub_category_ids || !program_ids || !subject_ids) return {};
+  return {
+    program_ids: program_ids === "all" ? [] : [program_ids],
+    subject_ids: subject_ids === "all" ? [] : subject_ids?.split(","),
+    category_ids: category_ids === "all" ? [] : [category_ids],
+    sub_category_ids: sub_category_ids === "all" ? [] : sub_category_ids?.split(","),
+  };
+};
+export const sortOutcomesList = (value?: EntityOutcome[], order_by?: string) => {
+  return value?.slice()?.sort((a, b) => {
+    if (!a || !b || !a.outcome_name || !b.outcome_name) return 1;
+    return order_by === "name"
+      ? a.outcome_name.toUpperCase().charCodeAt(0) - b.outcome_name.toUpperCase().charCodeAt(0)
+      : b.outcome_name.toUpperCase().charCodeAt(0) - a.outcome_name.toUpperCase().charCodeAt(0);
+  });
+};
+// 由于列表返回的outcomeItem的数据类型的命名与getContent中返回的outcomeItem的数据类型的字段命名不同，但是需要在同一个表中展示出来
+// 所以做的数据转换
+export const getOutcomeList = (list: ModelPublishedOutcomeView[]): EntityOutcome[] => {
+  return list.map(
+    ({ program_ids, subject_ids, sub_category_ids, category_ids, age_ids, grade_ids, ...item }) =>
+      ({
+        ...item,
+        ages: age_ids,
+        developmental: category_ids?.join(","),
+        grades: grade_ids,
+        programs: program_ids,
+        skills: sub_category_ids?.join(","),
+        subjects: subject_ids,
+      } as EntityOutcome)
+  );
 };

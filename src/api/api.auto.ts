@@ -204,7 +204,6 @@ export interface EntityAssessmentDetail {
   class_end_time?: number;
   class_length?: number;
   complete_time?: number;
-  content_outcomes?: EntityAssessmentDetailContentOutcome[];
   id?: string;
   lesson_materials?: EntityAssessmentDetailContent[];
   lesson_plan?: EntityAssessmentDetailContent;
@@ -447,6 +446,54 @@ export interface EntityClassType {
   updateID?: string;
 }
 
+export interface EntityClassUsage {
+  content_usage_list?: EntityContentUsage[];
+  id?: string;
+}
+
+export interface EntityClassesAssignmentOverView {
+  count?: number;
+  ratio?: number;
+  type?: string;
+}
+
+export interface EntityClassesAssignmentOverViewRequest {
+  class_ids?: string[];
+  durations?: string[];
+}
+
+export interface EntityClassesAssignmentsDurationRatio {
+  key?: string;
+  ratio?: number;
+}
+
+export interface EntityClassesAssignmentsUnattendedStudentsView {
+  schedule?: EntityScheduleView;
+  student_id?: string;
+
+  /** fill by frontend */
+  student_name?: string;
+  time?: number;
+}
+
+export interface EntityClassesAssignmentsUnattendedViewRequest {
+  classID?: string;
+  durations?: string[];
+  type?: string;
+}
+
+export interface EntityClassesAssignmentsView {
+  class_id?: string;
+  durations_ratio?: EntityClassesAssignmentsDurationRatio[];
+  total?: number;
+}
+
+export interface EntityClassesAssignmentsViewRequest {
+  class_ids?: string[];
+  durations?: string[];
+  type?: string;
+}
+
 export interface EntityContentInfoWithDetails {
   age?: string[];
   age_name?: string[];
@@ -523,6 +570,12 @@ export interface EntityContentPermission {
 export interface EntityContentStatisticsInfo {
   outcomes_count?: number;
   subcontent_count?: number;
+}
+
+export interface EntityContentUsage {
+  count?: number;
+  time_range?: string;
+  type?: string;
 }
 
 export interface EntityCreateContentRequest {
@@ -665,6 +718,10 @@ export interface EntityHomeFunStudyOutcome {
   outcome_id?: string;
   outcome_name?: string;
   status?: "achieved" | "not_achieved" | "not_attempted";
+}
+
+export interface EntityJwtToken {
+  token?: string;
 }
 
 export interface EntityLearningSummaryFilterWeek {
@@ -862,6 +919,30 @@ export interface EntityOutcome {
   subjects?: string[];
   updated_at?: number;
   version?: number;
+}
+
+export interface EntityOutcomeCondition {
+  age_ids?: string[];
+  assumed?: number;
+  author_name?: string;
+  category_ids?: string[];
+  description?: string;
+  grade_ids?: string[];
+  ids?: string[];
+  keywords?: string;
+  order_by?: string;
+  organization_id?: string;
+  outcome_name?: string;
+  page?: number;
+  page_size?: number;
+  program_ids?: string[];
+  publish_scope?: string;
+  publish_status?: string;
+  search_key?: string;
+  set_name?: string;
+  shortcode?: string;
+  sub_category_ids?: string[];
+  subject_ids?: string[];
 }
 
 export interface EntityQueryAssignmentsSummaryResult {
@@ -1198,6 +1279,12 @@ export interface EntityScheduleUpdateView {
   version?: number;
 }
 
+export interface EntityScheduleView {
+  schedule_id?: string;
+  schedule_name?: string;
+  type?: string;
+}
+
 export interface EntityScheduleViewDetail {
   attachment?: EntityScheduleShortInfo;
   class?: EntityScheduleShortInfo;
@@ -1316,6 +1403,34 @@ export interface EntityStudentPerformanceReportItem {
   schedule_start_time?: number;
   student_id?: string;
   student_name?: string;
+}
+
+export interface EntityStudentUsageMaterialReportRequest {
+  class_id_list?: string[];
+  content_type_list?: string[];
+  time_range_list?: string[];
+}
+
+export interface EntityStudentUsageMaterialReportResponse {
+  class_usage_list?: EntityClassUsage[];
+  request?: EntityStudentUsageMaterialReportRequest;
+}
+
+export interface EntityStudentUsageMaterialViewCountReportRequest {
+  class_id_list?: string[];
+  content_type_list?: string[];
+  time_range_list?: string[];
+}
+
+export interface EntityStudentUsageMaterialViewCountReportResponse {
+  content_usage_list?: EntityContentUsage[];
+  request?: EntityStudentUsageMaterialViewCountReportRequest;
+}
+
+export interface EntityStudentUsageRegistration {
+  created?: number;
+  no_create?: number;
+  registered?: number;
 }
 
 export interface EntityStudentsAchievementReportResponse {
@@ -3323,35 +3438,14 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags learning_outcomes
      * @name searchPublishedLearningOutcomes
      * @summary search published learning outcome
-     * @request GET:/published_learning_outcomes
+     * @request POST:/published_learning_outcomes
      * @description search published learning outcome with outcome sets
      */
-    searchPublishedLearningOutcomes: (
-      query?: {
-        outcome_name?: string;
-        description?: string;
-        keywords?: string;
-        shortcode?: string;
-        author_name?: string;
-        set_name?: string;
-        search_key?: string;
-        assumed?: number;
-        program_ids?: string;
-        subject_ids?: string;
-        category_ids?: string;
-        sub_category_ids?: string;
-        age_ids?: string;
-        grade_ids?: string;
-        page?: number;
-        page_size?: number;
-        order_by?: "name" | "-name" | "created_at" | "-created_at" | "updated_at" | "-updated_at";
-      },
-      params?: RequestParams
-    ) =>
+    searchPublishedLearningOutcomes: (order_by: EntityOutcomeCondition, params?: RequestParams) =>
       this.request<
         ModelSearchPublishedOutcomeResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
-      >(`/published_learning_outcomes${this.addQueryParams(query)}`, "GET", params),
+      >(`/published_learning_outcomes`, "POST", params, order_by),
   };
   reports = {
     /**
@@ -3483,6 +3577,112 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         EntityGetStudentPerformanceReportResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/performance/students/${id}${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports/studentUsage
+     * @name getStudentUsageClassRegistrationReport
+     * @summary get student usage of class registration report
+     * @request GET:/reports/student_usage/class_registration
+     * @description get student usage of class registration report
+     */
+    getStudentUsageClassRegistrationReport: (
+      query: { organization_id: string; class_id_list?: string[]; time_range_list?: string[] },
+      params?: RequestParams
+    ) =>
+      this.request<EntityStudentUsageRegistration[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_usage/class_registration${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags reports/studentUsage
+     * @name getClassesAssignments
+     * @summary get Classes&Assignments Report
+     * @request POST:/reports/student_usage/classes_assignments
+     * @description get Classes&Assignments Report
+     */
+    getClassesAssignments: (classes_assignments: EntityClassesAssignmentsViewRequest, params?: RequestParams) =>
+      this.request<EntityClassesAssignmentsView[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_usage/classes_assignments`,
+        "POST",
+        params,
+        classes_assignments
+      ),
+
+    /**
+     * @tags reports/studentUsage
+     * @name getClassesAssignmentsUnattended
+     * @summary get Classes&Assignments Report
+     * @request POST:/reports/student_usage/classes_assignments/{class_id}/unattended
+     * @description get Classes&Assignments unattended
+     */
+    getClassesAssignmentsUnattended: (
+      class_id: string,
+      unattended: EntityClassesAssignmentsUnattendedViewRequest,
+      params?: RequestParams
+    ) =>
+      this.request<
+        EntityClassesAssignmentsUnattendedStudentsView[],
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/student_usage/classes_assignments/${class_id}/unattended`, "POST", params, unattended),
+
+    /**
+     * @tags reports/studentUsage
+     * @name getClassesAssignmentsOverview
+     * @summary get Classes&Assignments Report
+     * @request POST:/reports/student_usage/classes_assignments_overview
+     * @description get Classes&Assignments overview
+     */
+    getClassesAssignmentsOverview: (overview: EntityClassesAssignmentOverViewRequest, params?: RequestParams) =>
+      this.request<EntityClassesAssignmentOverView[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_usage/classes_assignments_overview`,
+        "POST",
+        params,
+        overview
+      ),
+
+    /**
+     * @tags reports/studentUsage
+     * @name getStudentUsageMaterialReport
+     * @summary get student usage of material report
+     * @request POST:/reports/student_usage/material
+     * @description get student usage of material report
+     */
+    getStudentUsageMaterialReport: (request: EntityStudentUsageMaterialReportRequest, params?: RequestParams) =>
+      this.request<EntityStudentUsageMaterialReportResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_usage/material`,
+        "POST",
+        params,
+        request
+      ),
+
+    /**
+     * @tags reports/studentUsage
+     * @name getStudentUsageMaterialViewCountReport
+     * @summary get student usage of material report
+     * @request POST:/reports/student_usage/material_view_count
+     * @description get student usage of material report
+     */
+    getStudentUsageMaterialViewCountReport: (request: EntityStudentUsageMaterialViewCountReportRequest, params?: RequestParams) =>
+      this.request<
+        EntityStudentUsageMaterialViewCountReportResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/student_usage/material_view_count`, "POST", params, request),
+
+    /**
+     * @tags reports/studentUsage
+     * @name getStudentUsageOrganizationRegistrationReport
+     * @summary get student usage of organization registration report
+     * @request GET:/reports/student_usage/organization_registration
+     * @description get student usage of organization registration report
+     */
+    getStudentUsageOrganizationRegistrationReport: (query: { organization_id: string }, params?: RequestParams) =>
+      this.request<EntityStudentUsageRegistration, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_usage/organization_registration${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
 
     /**
      * @tags reports
@@ -3979,6 +4179,22 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getSkill: (query?: { program_id?: string; developmental_id?: string }, params?: RequestParams) =>
       this.request<ExternalSubCategory[], ApiInternalServerErrorResponse>(`/skills${this.addQueryParams(query)}`, "GET", params),
+  };
+  studentUsageRecord = {
+    /**
+     * @tags usageRecord
+     * @name studentUsageRecord
+     * @summary student usage record
+     * @request POST:/student_usage_record/event
+     * @description student usage record
+     */
+    studentUsageRecord: (milestone: EntityJwtToken, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/student_usage_record/event`,
+        "POST",
+        params,
+        milestone
+      ),
   };
   studyAssessments = {
     /**
