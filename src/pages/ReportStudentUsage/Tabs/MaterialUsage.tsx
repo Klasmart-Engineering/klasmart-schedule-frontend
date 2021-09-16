@@ -280,8 +280,8 @@ export default function () {
           {Array.from(datum.values()).map((item, index) => {
             const monthAmount = item.reduce((preValue, value) => preValue + Number(value.count), 0);
             return (
-              <MaterialUsageTooltip content={item} key={index}>
-                <div className={clsx(style.datumContainer, "datumContainer")}>
+              <div className={clsx(style.datumContainer, "datumContainer")} key={index}>
+                <MaterialUsageTooltip content={item} key={index}>
                   <div className={style.datumWrapper} style={{ width: (monthAmount / maxValue) * 100 + "%" }}>
                     {item.map((datumType, dIndex) => {
                       const count = Number(datumType.count);
@@ -298,8 +298,8 @@ export default function () {
                       );
                     })}
                   </div>
-                </div>
-              </MaterialUsageTooltip>
+                </MaterialUsageTooltip>
+              </div>
             );
           })}
         </Grid>
