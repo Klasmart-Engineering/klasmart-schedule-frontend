@@ -25,21 +25,19 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "10px",
       padding: "10px 14px",
       position: "relative",
-      top: "-10px",
+      bottom: "-20px",
       "&::after": {
         content: " ",
         height: "10px",
         width: "10px",
         position: "absolute",
         left: "50%",
-        bottom: "-10px",
         background: "#000",
       },
     },
   })
 );
 interface Props {
-  // anchorEl: HTMLDivElement | null;
   content: EntityContentUsage[];
   children: ReactElement;
 }
