@@ -121,7 +121,7 @@ const useStyles = makeStyles(() =>
       height: "28px",
       marginLeft: "10px",
       padding: "20px 0",
-      borderLeft: "1px solid #999",
+      borderLeft: "1px solid #e9e9e9",
       position: "relative",
     },
     datumWrapper: {
@@ -379,7 +379,10 @@ export default function () {
     return (
       <Grid container wrap={"nowrap"} justify={"center"} alignItems={"center"}>
         <label className={style.paginationLabel}>
-           {t("report_student_usage_of" ,{total: `${getClassesList().length}`, value:`${page * 5 + 1}-${page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}`})} 
+          {t("report_student_usage_of", {
+            total: `${getClassesList().length}`,
+            value: `${page * 5 + 1}-${page * 5 + 5 > getClassesList().length ? getClassesList().length : page * 5 + 5}`,
+          })}
         </label>
         <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
           <FirstPageIcon />
