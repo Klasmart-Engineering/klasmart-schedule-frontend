@@ -938,9 +938,9 @@
   "report_numbers_of_scheduled_classes_in_the_past_3_months": "Jumlah kelas terjadwal dalam 3 bulan terakhir",
   "library_label_category_subcategory": "Kategori - Subkategori",
   "report_label_none": "Tidak ada",
-  "report_student_usage_study_title": "Study (latest 3 months)",
-  "report_student_usage_home_fun_title": "Home Fun (latest 3 months)",
-  "report_student_usage_missed_study": "List of students missed study",
-  "report_student_usage_missed_home_fun": "List of students missed home fun",
-  "report_student_usage_of": "of"
+  "report_student_usage_study_title": "Studi (3 bulan terakhir)",
+  "report_student_usage_home_fun_title": "Home Fun (3 bulan terakhir)",
+  "report_student_usage_missed_study": "Daftar siswa yang bolos study",
+  "report_student_usage_missed_home_fun": "Daftar siswa yang merindukan home fun",
+  "report_student_usage_of": "Dari"
 }
