@@ -194,10 +194,10 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 
   const getClassTypeColor = (label: string) => {
     return [
-      { id: "OnlineClass", color: "#FFC107", icon: "" },
-      { id: "OfflineClass", color: "#009688", icon: "" },
-      { id: "Homework", color: "#D32F2F", icon: "" },
-      { id: "Task", color: "#0E78D5", icon: "" },
+      { id: "OnlineClass", color: "#0E78D5", icon: "" },
+      { id: "OfflineClass", color: "#1BADE5", icon: "" },
+      { id: "Homework", color: "#13AAA9", icon: "" },
+      { id: "Task", color: "#AFBA0A", icon: "" },
     ].filter((item) => item.id === label)[0].color;
   };
 
