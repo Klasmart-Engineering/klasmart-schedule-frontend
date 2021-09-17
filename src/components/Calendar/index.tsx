@@ -421,10 +421,10 @@ function MyCalendar(props: CalendarProps) {
   };
 
   const eventColor = [
-    { id: "OnlineClass", color: "#FFC107", icon: <LiveTvOutlinedIcon style={{ width: "82%" }} /> },
-    { id: "OfflineClass", color: "#009688", icon: <SchoolOutlinedIcon style={{ width: "86%" }} /> },
-    { id: "Homework", color: "#D32F2F", icon: <LocalLibraryOutlinedIcon style={{ width: "86%" }} /> },
-    { id: "Task", color: "#0E78D5", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "82%" }} /> },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon style={{ width: "86%" }} /> },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "86%" }} /> },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },
   ];
 
   const eventStyleGetter = () => {
