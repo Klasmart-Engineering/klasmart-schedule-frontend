@@ -7,7 +7,6 @@ import {
   ChevronRight,
   InfoOutlined,
   KeyboardBackspace,
-  ShowChart,
 } from "@material-ui/icons";
 import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
@@ -22,7 +21,6 @@ import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import { ReportLearningSummary } from "../ReportLearningSummary";
-import ReportStudentUsage from "../ReportStudentUsage";
 import ReportTeachingLoad from "../ReportTeachingLoad";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
@@ -138,7 +136,7 @@ export function ReportDashboard() {
     perm.view_my_organizations_reports_612 ||
     (perm.view_my_school_reports_611 as boolean);
   const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
-  const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
+  //const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
   const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
   const reportList: ReportItem[] = [
     {
@@ -169,6 +167,7 @@ export function ReportDashboard() {
       bgColor: "#FE9494",
       hasPerm: hasSummaryPerm,
     },
+    /*
     {
       title: "report_student_usage_report",
       url: ReportStudentUsage.routeBasePath,
@@ -176,6 +175,7 @@ export function ReportDashboard() {
       bgColor: "#DCCDFF",
       hasPerm: hasStudentUsagePermission,
     },
+    */
   ];
   const handleClick = useMemo(
     () => (value: string) => {
