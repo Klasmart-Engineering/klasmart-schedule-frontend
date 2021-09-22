@@ -1,5 +1,14 @@
 import React from "react";
+import LessonChart from "../Components/LessonChart";
 
 export default function () {
-  return <div>Lessons</div>;
+  const teacherChange = (id?: string) => {
+    console.log(id);
+  };
+
+  return (
+    <div>
+      <LessonChart teacherChange={teacherChange} />
+    </div>
+  );
 }

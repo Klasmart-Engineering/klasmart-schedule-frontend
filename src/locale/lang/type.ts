@@ -766,6 +766,8 @@ type LangRecord<T = string> =
   | { id: "report_label_live"; description: "Live"; values: undefined }
   | { id: "report_label_hours"; description: "Hours"; values: undefined }
   | { id: "report_label_mins"; description: "Mins"; values: undefined }
+  | { id: "report_label_hrs_lower"; description: "hrs"; values: undefined }
+  | { id: "report_label_mins_lower"; description: "mins"; values: undefined }
   | { id: "report_label_go_back"; description: "Return to Reports List"; values: undefined }
   | { id: "report_label_individual_achievement"; description: "Individual Student Achievement"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
@@ -1313,6 +1315,13 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
   | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
   | { id: "report_teaching_load_lesson_title"; description: "Total Lessons (Live and In Class) Scheduled"; values: undefined }
+  | { id: "report_teaching_load_lesson_classes_column"; description: "No of Classes"; values: undefined }
+  | { id: "report_teaching_load_lesson_student_column"; description: "No of Student"; values: undefined }
+  | { id: "report_teaching_load_lesson_current"; description: "current"; values: undefined }
+  | { id: "report_teaching_load_lesson_live_completed"; description: "Live Lessons Completed"; values: undefined }
+  | { id: "report_teaching_load_lesson_in_class_completed"; description: "In Class Lessons Completed"; values: undefined }
+  | { id: "report_teaching_load_lesson_live_missed"; description: "Live Lessons Missed"; values: undefined }
+  | { id: "report_teaching_load_lesson_in_class_missed"; description: "In Class Lessons Missed"; values: undefined }
   | { id: "report_teaching_load_lesson_menu_item"; description: "Past {days} days"; values: { days: number } }
   | { id: "report_student_usage_of"; description: "{value} of {total}"; values: { value: string | number; total: string | number } };
 
