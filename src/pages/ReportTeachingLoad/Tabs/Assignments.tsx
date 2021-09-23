@@ -1,4 +1,4 @@
-import { makeStyles, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@material-ui/core";
+import { makeStyles, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,7 +110,11 @@ const AssignmentsTabel = (props:IAssignmentsProps) => {
   const {assignmentsList} = props;
   const rows = assignmentsList?.map((item, idx) => (
     <TableRow key={item.teacher_id}>
-      <TableCell align="center">{item.teacher_name}</TableCell>
+      <TableCell align="center" style={{maxWidth:150}}>
+        <Typography component="div" noWrap>
+         {item.teacher_name}
+        </Typography>
+      </TableCell>
       <TableCell align="center">{item.count_of_classes}</TableCell>
       <TableCell align="center">{item.count_of_students} </TableCell>
       <TableCell align="center">{item.count_of_scheduled_assignment} </TableCell>
