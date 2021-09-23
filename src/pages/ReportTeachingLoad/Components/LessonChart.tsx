@@ -1,10 +1,15 @@
 import { Box, Grid, MenuItem, OutlinedInput, Select } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
-import React, { useState } from "react";
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { EntityTeacherLoadLessonRequest } from "../../../api/api.auto";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import ReportTooltip from "../../../components/ReportTooltip";
 import { d, t } from "../../../locale/LocaleManager";
+import { RootState } from "../../../reducers";
+import { getLessonTeacherLoad } from "../../../reducers/report";
 const useStyle = makeStyles(() => ({
   dataBlock: {
     display: "flex",
@@ -115,20 +120,67 @@ interface Props {
   teacherChange: (id?: string) => void;
 }
 
+const computeTimeStamp = (days: number) => {
+  return `${moment().unix()}-${moment().subtract(days, "days").unix()}`;
+};
+
+const formatTime = (mins: number = 0) => {
+  const hours = Math.floor(mins / 60);
+  const minutes = mins % 60;
+  return `${hours ? hours + lang.hrs : ""}${minutes ? minutes + lang.mins : ""}`;
+};
+
 export default function LessonChart(props: Props) {
   const style = useStyle();
+  const dispatch = useDispatch();
   const [selectItem, setSelectItem] = useState(7);
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
+  const queryParams = useRef<EntityTeacherLoadLessonRequest>({
+    class_ids: [],
+    duration: computeTimeStamp(selectItem),
+    teacher_ids: [],
+  });
 
+  const { teacherLoadLesson } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { list, statistic } = teacherLoadLesson;
+  console.log(list);
   const filterChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>, child: React.ReactNode) => {
     setSelectItem(event.target.value as number);
+    queryParams.current.duration = computeTimeStamp(event.target.value as number);
+    getList();
   };
 
+  const computeCountNumber = () => {
+    let count = 0;
+    Object.values(statistic).forEach((item) => {
+      count += item.count ?? 0;
+    });
+    return count;
+  };
+  const computeAmountTime = () => {
+    let time = 0;
+    Object.values(statistic).forEach((item) => {
+      time += item.duration ?? 0;
+    });
+    return formatTime(time);
+  };
   const pageWillChange = (pageNumber: number) => {
     setPage(pageNumber);
     setCount(0);
   };
+
+  const getList = () => {
+    dispatch(getLessonTeacherLoad(queryParams.current));
+  };
+  useEffect(() => {
+    getList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    console.log(teacherLoadLesson);
+  }, [teacherLoadLesson]);
 
   const renderLineFooterBlock = (content: string, count: string, index: number) => {
     return (
@@ -201,7 +253,7 @@ export default function LessonChart(props: Props) {
     return (
       <Grid container justify={"space-between"} className={style.filter}>
         <Grid item>
-          {lang.lessonTitle}: 123(12{lang.hrs}23{lang.mins})
+          {lang.lessonTitle}: {computeCountNumber()}({computeAmountTime()})
         </Grid>
         <Select value={selectItem} onChange={filterChange} className={style.selector} input={<OutlinedInput />}>
           <MenuItem value={7}>{lang.menuItem1}</MenuItem>
@@ -226,10 +278,22 @@ export default function LessonChart(props: Props) {
   const renderTotalType = () => {
     return (
       <Grid container wrap={"nowrap"} justify={"space-around"} className={style.totalType}>
-        {renderLineFooterBlock(lang.liveCompleted, `70(12${lang.hrs}23${lang.mins})`, 0)}
-        {renderLineFooterBlock(lang.inClassCompleted, "32(1hrs 5mins)", 1)}
-        {renderLineFooterBlock(lang.liveMissed, "18(55mins)", 2)}
-        {renderLineFooterBlock(lang.inClassMidded, "8(1hrs)", 3)}
+        {renderLineFooterBlock(
+          lang.liveCompleted,
+          `${statistic.completed_live_lessons?.count}(${formatTime(statistic.completed_live_lessons?.duration)})`,
+          0
+        )}
+        {renderLineFooterBlock(
+          lang.inClassCompleted,
+          `${statistic.completed_in_class_lessons?.count}(${formatTime(statistic.completed_in_class_lessons?.duration)})`,
+          1
+        )}
+        {renderLineFooterBlock(lang.liveMissed, `${statistic.missed_live_lessons}(${formatTime(statistic.missed_live_lessons?.count)})`, 2)}
+        {renderLineFooterBlock(
+          lang.inClassMidded,
+          `${statistic.missed_in_class_lessons}(${formatTime(statistic.missed_in_class_lessons?.count)})`,
+          3
+        )}
       </Grid>
     );
   };

@@ -20,7 +20,7 @@ export default function ReportTeachingLoad() {
       display: true,
       Component: Assignments,
     },
-    
+
     {
       label: "NextSevenDaysLessonLoad",
       index: 2,

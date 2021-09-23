@@ -1240,6 +1240,17 @@ export interface EntityScheduleShortInfo {
   name?: string;
 }
 
+export interface EntityScheduleTimeView {
+  class_id?: string;
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  due_at?: number;
+  end_at?: number;
+  id?: string;
+  start_at?: number;
+  status?: "NotStart" | "Started" | "Closed";
+  title?: string;
+}
+
 export interface EntityScheduleTimeViewQuery {
   anytime?: boolean;
   class_ids?: string[];
@@ -1453,6 +1464,11 @@ export interface EntityStudentsPerformanceReportItem {
   student_name?: string;
 }
 
+export interface EntitySummaryNode {
+  count?: number;
+  duration?: number;
+}
+
 export interface EntityTeacherLoadAssignmentRequest {
   class_id_list?: string[];
 
@@ -1492,10 +1508,10 @@ export interface EntityTeacherLoadLessonRequest {
 }
 
 export interface EntityTeacherLoadLessonSummary {
-  completed_in_class_lessons?: number;
-  completed_live_lessons?: number;
-  missed_in_class_lessons?: number;
-  missed_live_lessons?: number;
+  completed_in_class_lessons?: EntitySummaryNode;
+  completed_live_lessons?: EntitySummaryNode;
+  missed_in_class_lessons?: EntitySummaryNode;
+  missed_live_lessons?: EntitySummaryNode;
 }
 
 export interface EntityTeacherLoadMissedLesson {
@@ -3798,7 +3814,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       >(`/reports/students/${id}${this.addQueryParams(query)}`, "GET", params),
 
     /**
+<<<<<<< Updated upstream
      * @tags reports/teacher_load
+=======
+     * @tags reports/teacherLoad
+>>>>>>> Stashed changes
      * @name getTeacherLoadReportOfAssignment
      * @summary list teaching load report
      * @request POST:/reports/teacher_load/assignments
@@ -3813,7 +3833,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       ),
 
     /**
+<<<<<<< Updated upstream
      * @tags reports/teacher_Loader
+=======
+     * @tags reports/teacherLoad
+>>>>>>> Stashed changes
      * @name listTeacherLoadLessons
      * @summary get teacher load Report
      * @request POST:/reports/teacher_load/lessons_list
@@ -3828,7 +3852,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       ),
 
     /**
+<<<<<<< Updated upstream
      * @tags reports/teacher_load
+=======
+     * @tags reports/teacherLoad
+>>>>>>> Stashed changes
      * @name summaryTeacherLoadLessons
      * @summary get teacher load Report
      * @request POST:/reports/teacher_load/lessons_summary
@@ -3843,7 +3871,11 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       ),
 
     /**
+<<<<<<< Updated upstream
      * @tags reports/teacher_Loader
+=======
+     * @tags reports/teacherLoad
+>>>>>>> Stashed changes
      * @name listTeacherMissedLessons
      * @summary get teacher missed lessons
      * @request POST:/reports/teacher_load/missed_lessons
@@ -4208,6 +4240,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     postScheduledDates: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
       this.request<string[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view/dates`,
+        "POST",
+        params,
+        queryData
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduleTimeViewList
+     * @summary getScheduleTimeViewList
+     * @request POST:/schedules_time_view/list
+     * @description get schedule time view list without relation info
+     */
+    getScheduleTimeViewList: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
+      this.request<EntityScheduleTimeView, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view/list`,
         "POST",
         params,
         queryData
