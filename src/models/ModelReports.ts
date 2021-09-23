@@ -7,7 +7,7 @@ import {
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
-import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
+import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
 import { Iitem } from "../reducers/report";
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];
@@ -252,4 +252,8 @@ export function getTimeDots(): ILatestThreeMonths {
 export interface ILatestThreeMonths {
   latestThreeMonthsDate: number[];
   latestThreeMonthsDots: string[];
+}
+export function getDurationByDay(day:number){
+  const currentTime = Math.floor(new Date().getTime() / 1000);
+  return `${currentTime - 3600 * 24 * day}-${currentTime}`;
 }

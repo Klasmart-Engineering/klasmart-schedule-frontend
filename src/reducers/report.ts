@@ -44,6 +44,7 @@ import {
   EntityClassesAssignmentsView,
   EntityQueryAssignmentsSummaryResult,
   EntityQueryLiveClassesSummaryResult,
+  EntityReportListTeachingLoadArgs,
   EntityReportListTeachingLoadResult,
   EntityScheduleShortInfo,
   EntityStudentAchievementReportCategoryItem,
@@ -53,6 +54,8 @@ import {
   EntityStudentUsageMaterialReportRequest,
   EntityStudentUsageMaterialReportResponse,
   EntityStudentUsageMaterialViewCountReportResponse,
+  EntityTeacherLoadAssignmentRequest,
+  EntityTeacherLoadAssignmentResponse,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory
 } from "../api/api.auto";
@@ -69,7 +72,7 @@ import {
   TimeFilter
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
+const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600);
 
 interface IreportState {
   reportList?: EntityStudentAchievementReportItem[];
@@ -100,6 +103,8 @@ interface IreportState {
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   classesAssignments: EntityClassesAssignmentsView[];
   overview: EntityClassesAssignmentOverView[];
+  teacherLoadAssignment: EntityTeacherLoadAssignmentResponse[];
+  next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
 }
 
 interface IObj {
@@ -189,6 +194,8 @@ const initialState: IreportState = {
   classesAssignmentsUnattend: [],
   classesAssignments: [],
   overview: [],
+  teacherLoadAssignment: [],
+  next7DaysLessonLoadList: [],
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -556,15 +563,8 @@ export interface GetStuReportMockOptionsResponse {
   // h5pReportDetail?: EntityStudentPerformanceH5PReportItem[];
 }
 
-export interface GetTeachingLoadListPayLoad {
-  school_id?: string;
-  teacher_ids?: string;
-  class_ids?: string;
-  time_offset: string;
-  page?: number;
-  size?: number;
-}
-export const getTeachingLoadList = createAsyncThunk<EntityReportListTeachingLoadResult, GetTeachingLoadListPayLoad & LoadingMetaPayload>(
+
+export const getTeachingLoadList = createAsyncThunk<EntityReportListTeachingLoadResult, EntityReportListTeachingLoadArgs & LoadingMetaPayload>(
   "getTeachingLoad",
   async (query) => {
     return await api.reports.listTeachingLoadReport(query);
@@ -826,7 +826,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     teacherList = ModelReport.ListSetDiff(allItem.concat(teacherList));
     schoolList = ModelReport.ListSetDiff(allItem.concat(schoolList));
     teachingLoadList =
-      (await api.reports.listTeachingLoadReport({ school_id, teacher_ids: newteacher_ids, class_ids, time_offset: TIME_OFFSET })) || [];
+      (await api.reports.listTeachingLoadReport({  teacher_ids: teacherIdList, class_ids:class_ids.split(","), time_offset: TIME_OFFSET })) || [];
     return {
       schoolList,
       teacherList,
@@ -1495,6 +1495,12 @@ export const getClassesAssignmentsUnattended = createAsyncThunk<
     return d;
   });
 });
+export const getTeacherLoadAssignment = createAsyncThunk<EntityTeacherLoadAssignmentResponse[],EntityTeacherLoadAssignmentRequest & LoadingMetaPayload>("getTeacherLoadAssignment",
+ async({metaLoading,...query}) => await api.reports.getTeacherLoadReportOfAssignment(query)
+);
+export const getTeachingLoadReport = createAsyncThunk<EntityReportListTeachingLoadResult, EntityReportListTeachingLoadArgs & LoadingMetaPayload>("getTeachingLoadReport",
+ async({metaLoading,...query}) => await api.reports.listTeachingLoadReport(query)
+)
 
 const { actions, reducer } = createSlice({
   name: "report ",
@@ -1759,6 +1765,16 @@ const { actions, reducer } = createSlice({
     ) => {
       state.overview = cloneDeep(initialState.overview);
     },
+    [getTeacherLoadAssignment.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeacherLoadAssignment>>
+    ) => {
+      state.teacherLoadAssignment = payload
+    },
+    [getTeachingLoadReport.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachingLoadReport>>
+      ) => {
+        state.next7DaysLessonLoadList = payload.items
+      },
+    
+    
   },
 });
 export const { resetSummaryOptions } = actions;

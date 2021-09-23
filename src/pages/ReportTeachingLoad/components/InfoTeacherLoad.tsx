@@ -1,7 +1,7 @@
 import { Box, Divider, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
-import LayoutBox from "../../components/LayoutBox";
+import LayoutBox from "../../../components/LayoutBox";
 const useStyles = makeStyles(() => ({
   colorPart: {
     width: "32px",
