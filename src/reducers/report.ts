@@ -1,6 +1,7 @@
 import { ApolloQueryResult } from "@apollo/client";
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, uniq } from "lodash";
+import moment from "moment";
 import api, { gqlapi } from "../api";
 import { Class, School, Status, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
 import {
@@ -72,7 +73,7 @@ import {
   TimeFilter
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600);
+const TIME_OFFSET = moment().utcOffset() * 60;
 
 interface IreportState {
   reportList?: EntityStudentAchievementReportItem[];

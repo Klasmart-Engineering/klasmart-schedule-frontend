@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
@@ -7,11 +8,7 @@ import { RootState } from "../../../reducers";
 import { getTeachingLoadReport } from "../../../reducers/report";
 import { InfoTeacherLoad } from "../components/InfoTeacherLoad";
 import { TeacherLoadChart } from "../components/TeacherLoadChart";
-const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600);
-// const removeoneValueOfList = (value: string[]): string => {
-//   return value[value.length - 1] === ALL ? "all" : value.filter((id) => id !== ALL).join(",");
-// };
-
+const TIME_OFFSET = moment().utcOffset() * 60;
 export default function () {
   const dispatch = useDispatch();
   const {next7DaysLessonLoadList} = useSelector<RootState, RootState["report"]>((state) => state.report);
