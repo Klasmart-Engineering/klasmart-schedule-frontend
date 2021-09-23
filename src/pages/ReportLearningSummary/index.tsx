@@ -54,19 +54,19 @@ export const useQuery = (): QueryLearningSummaryCondition => {
     const week_end = Number(query.get("week_end"));
     const school_id = query.get("school_id") || "";
     const class_id = query.get("class_id") || "";
-    const teacher_id = query.get("teacher_id") || "";
+    // const teacher_id = query.get("teacher_id") || "";
     const student_id = query.get("student_id") || "";
     const subject_id = query.get("subject_id") || "";
     const idx = Number(query.get("lessonIndex"));
     const lessonIndex = idx >= 0 ? idx : -1;
-    return { year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id, lessonIndex };
+    return { year, week_start, week_end, school_id, class_id, student_id, subject_id, lessonIndex };
   }, [search]);
 };
 export function ReportLearningSummary() {
   const dispatch = useDispatch();
   const { routeBasePath } = ReportLearningSummary;
   const condition = useQuery();
-  const { lessonIndex, year, week_start, week_end, school_id, class_id, teacher_id, student_id, subject_id } = condition;
+  const { lessonIndex, year, week_start, week_end, school_id, class_id, student_id, subject_id } = condition;
   const history = useHistory();
   const { tab } = useParams<RouteParams>();
   // const isLiveClass = tab === ReportType.live
@@ -105,7 +105,6 @@ export function ReportLearningSummary() {
         week_end,
         school_id: "",
         class_id: "",
-        teacher_id: "",
         student_id: "",
         subject_id: "",
         metaLoading: true,
@@ -132,27 +131,9 @@ export function ReportLearningSummary() {
   );
   const changeClassFilter = useMemo(
     () => async (class_id: string) => {
-      if (isOrg || isSchool) {
-        await dispatch(getAfterClassFilter({ filter_type: "teacher", school_id, class_id, ...filterParams }));
-      } else if (isTeacher) {
-        await dispatch(getAfterClassFilter({ class_id, filter_type: "student", ...filterParams }));
-      }
+      await dispatch(getAfterClassFilter({ filter_type: "student", school_id, class_id, ...filterParams }));
     },
-    [dispatch, filterParams, isOrg, isSchool, isTeacher, school_id]
-  );
-  const changeTeacher = useMemo(
-    () => async (teacher_id: string) => {
-      await dispatch(
-        getAfterClassFilter({
-          filter_type: "student",
-          school_id,
-          class_id,
-          teacher_id,
-          ...filterParams,
-        })
-      );
-    },
-    [class_id, dispatch, filterParams, school_id]
+    [dispatch, filterParams, school_id]
   );
   const changeStudent = useMemo(
     () => async (student_id: string) => {
@@ -160,7 +141,6 @@ export function ReportLearningSummary() {
         getAfterClassFilter({
           school_id,
           class_id,
-          teacher_id,
           student_id,
           filter_type: "subject",
           ...filterParams,
@@ -168,39 +148,34 @@ export function ReportLearningSummary() {
         })
       );
     },
-    [class_id, dispatch, filterParams, school_id, teacher_id]
+    [class_id, dispatch, filterParams, school_id]
   );
   const changeSubject = useMemo(
     () => async (subject_id: string) => {
       history.push({ search: setQuery(history.location.search, { subject_id, lessonIndex: -1 }) });
-      tab === ReportType.live
-        ? dispatch(
-            getLiveClassesSummary({
-              ...summaryParams,
-              class_id,
-              teacher_id,
-              student_id,
-              subject_id,
-              metaLoading: true,
-            })
-          )
-        : dispatch(getAssignmentSummary({ ...summaryParams, class_id, teacher_id, student_id, subject_id, metaLoading: true }));
+      dispatch(
+        getLiveClassesSummary({
+          ...summaryParams,
+          class_id,
+          student_id,
+          subject_id,
+          metaLoading: true,
+        })
+      );
+      dispatch(getAssignmentSummary({ ...summaryParams, class_id, student_id, subject_id, metaLoading: true }));
     },
-    [class_id, dispatch, history, student_id, summaryParams, tab, teacher_id]
+    [class_id, dispatch, history, student_id, summaryParams]
   );
   const computeFilterChange = useMemo(
     () => (value: string, filter: keyof QueryLearningSummaryCondition) => {
       if (filter === "school_id") {
         history.push({
-          search: setQuery(history.location.search, { school_id: value, class_id: "", teacher_id: "", student_id: "", subject_id: "" }),
+          search: setQuery(history.location.search, { school_id: value, class_id: "", student_id: "", subject_id: "" }),
         });
         changeSchoolFilter(value);
       }
       if (filter === "class_id") {
         changeClassFilter(value);
-      }
-      if (filter === "teacher_id") {
-        changeTeacher(value);
       }
       if (filter === "student_id") {
         changeStudent(value);
@@ -209,14 +184,11 @@ export function ReportLearningSummary() {
         changeSubject(value);
       }
     },
-    [changeClassFilter, changeSchoolFilter, changeStudent, changeSubject, changeTeacher, history]
+    [changeClassFilter, changeSchoolFilter, changeStudent, changeSubject, history]
   );
   const handleChangeReportType = useMemo(
     () => async (value: ReportType) => {
       if (value === tab) return;
-      // await dispatch(resetSummaryOptions({ years: [], weeks: [], week_start: 0, week_end: 0 }));
-      // dispatch(onLoadLearningSummary({ summary_type: value, metaLoading: true }));
-      // history.replace(`${routeBasePath}/tab/${value}?lessonIndex=-1`);
       history.replace({ pathname: `${routeBasePath}/tab/${value}`, search: setQuery(history.location.search, { lessonIndex: -1 }) });
     },
     [history, routeBasePath, tab]
@@ -233,7 +205,6 @@ export function ReportLearningSummary() {
         week_end,
         school_id,
         class_id,
-        teacher_id,
         student_id,
         subject_id,
         metaLoading: true,
@@ -249,7 +220,6 @@ export function ReportLearningSummary() {
         week_end = "",
         school_id = "",
         class_id = "",
-        teacher_id = "",
         student_id = "",
         subject_id = "",
       } = summaryReportOptions;
@@ -260,7 +230,6 @@ export function ReportLearningSummary() {
           week_end,
           school_id,
           class_id,
-          teacher_id,
           student_id,
           subject_id,
           lessonIndex: -1,
