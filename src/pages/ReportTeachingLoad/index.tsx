@@ -9,17 +9,18 @@ export default function ReportTeachingLoad() {
   const dispatch = useDispatch();
   const tabs: ITabItem[] = [
     {
-      label: "Assignments",
-      index: 0,
-      display: true,
-      Component: Assignments,
-    },
-    {
       label: "Lessons",
-      index: 1,
+      index: 0,
       display: true,
       Component: Lessons,
     },
+    {
+      label: "Assignments",
+      index: 1,
+      display: true,
+      Component: Assignments,
+    },
+    
     {
       label: "NextSevenDaysLessonLoad",
       index: 2,

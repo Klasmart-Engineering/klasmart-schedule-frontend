@@ -7,13 +7,13 @@ import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
 import { formatTeachingLoadList } from "../../models/ModelReports";
 import { RootState } from "../../reducers";
-import { getClassListByschool, getTeachingLoadList, teachingLoadOnload, TeachingLoadPayload } from "../../reducers/report";
+import { getClassListByschool, getTeachingLoadList, TeachingLoadPayload } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
+import { InfoTeacherLoad } from "./components/InfoTeacherLoad";
+import { TeacherLoadChart } from "./components/TeacherLoadChart";
 import { FilterTeacherLoad } from "./FilterTeacherLoad";
-import { InfoTeacherLoad } from "./InfoTeacherLoad";
-import { TeacherLoadChart } from "./TeacherLoadChart";
 const ALL = "all";
-const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
+const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600);
 const removeoneValueOfList = (value: string[]): string => {
   return value[value.length - 1] === ALL ? "all" : value.filter((id) => id !== ALL).join(",");
 };
@@ -68,7 +68,7 @@ export default function ReportTeachingLoad() {
           if (newValue !== "all" && !newValue.includes(",")) {
             dispatch(getClassListByschool({ school_id, teacher_ids: newValue }));
           }
-          dispatch(getTeachingLoadList({ school_id, teacher_ids: newValue, class_ids: ALL, time_offset: TIME_OFFSET, metaLoading: true }));
+          dispatch(getTeachingLoadList({ teacher_ids: newValue.split(","), class_ids: [ALL], time_offset: TIME_OFFSET, metaLoading: true }));
 
           break;
         }
@@ -85,15 +85,15 @@ export default function ReportTeachingLoad() {
             history.push({
               search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newTeacher_ids, class_ids: newValue }),
             });
-            dispatch(
-              getTeachingLoadList({
-                school_id,
-                teacher_ids: newTeacher_ids,
-                class_ids: newValue,
-                time_offset: TIME_OFFSET,
-                metaLoading: true,
-              })
-            );
+            // dispatch(
+            //   getTeachingLoadList({
+            //     school_id,
+            //     teacher_ids: newTeacher_ids,
+            //     class_ids: newValue,
+            //     time_offset: TIME_OFFSET,
+            //     metaLoading: true,
+            //   })
+            // );
           }
           break;
       }
@@ -111,7 +111,7 @@ export default function ReportTeachingLoad() {
     ]
   );
   useEffect(() => {
-    dispatch(teachingLoadOnload({ school_id, teacher_ids, class_ids, metaLoading: true }));
+    // dispatch(teachingLoadOnload({ school_id, teacher_ids, class_ids, metaLoading: true }));
     // eslint-disable-next-line
   }, [dispatch, school_id]);
 
@@ -137,5 +137,4 @@ export default function ReportTeachingLoad() {
     </Fragment>
   );
 }
-ReportTeachingLoad.routeBasePath = "/report/teaching-load";
-ReportTeachingLoad.routeRedirectDefault = "/report/teaching-load";
+
