@@ -258,7 +258,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginLeft: "4px",
   },
   addOutcomeBox: {
-    "& .MuiAutocomplete-endAdornment-310": {
+    "& button": {
       display: "none",
     },
   },
