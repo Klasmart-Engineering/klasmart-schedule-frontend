@@ -214,11 +214,12 @@ export function ReportLearningSummary() {
   const handleChangeReportType = useMemo(
     () => async (value: ReportType) => {
       if (value === tab) return;
-      await dispatch(resetSummaryOptions({ years: [], weeks: [], week_start: 0, week_end: 0 }));
-      dispatch(onLoadLearningSummary({ summary_type: value, metaLoading: true }));
-      history.replace(`${routeBasePath}/tab/${value}?lessonIndex=-1`);
+      // await dispatch(resetSummaryOptions({ years: [], weeks: [], week_start: 0, week_end: 0 }));
+      // dispatch(onLoadLearningSummary({ summary_type: value, metaLoading: true }));
+      // history.replace(`${routeBasePath}/tab/${value}?lessonIndex=-1`);
+      history.replace({ pathname: `${routeBasePath}/tab/${value}`, search: setQuery(history.location.search, { lessonIndex: -1 }) });
     },
-    [dispatch, history, routeBasePath, tab]
+    [history, routeBasePath, tab]
   );
   const handleChangeLessonIndex = (index: number) => {
     history.replace({ search: setQuery(history.location.search, { lessonIndex: index }) });

@@ -36,7 +36,7 @@ import {
   TeacherListBySchoolIdQueryVariables,
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables
+  UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityClassesAssignmentOverView,
@@ -54,7 +54,7 @@ import {
   EntityStudentUsageMaterialReportResponse,
   EntityStudentUsageMaterialViewCountReportResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory
+  EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -66,7 +66,7 @@ import {
   QueryLearningSummaryCondition,
   QueryLearningSummaryRemainingFilterCondition,
   ReportType,
-  TimeFilter
+  TimeFilter,
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
@@ -1032,6 +1032,7 @@ export const onLoadLearningSummary = createAsyncThunk<
         name: item.class_name,
       };
     });
+    classes = [{ id: "", name: "all" }, ...classes];
     _class_id = classes.length ? (class_id ? class_id : classes[0].id) : "none";
     const _teachers = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
@@ -1063,6 +1064,7 @@ export const onLoadLearningSummary = createAsyncThunk<
         name: item.class_name,
       };
     });
+    classes = [{ id: "", name: "all" }, ...classes];
     _class_id = classes.length ? (class_id ? class_id : classes[0].id) : "none";
     const _students = await api.reports.queryLearningSummaryRemainingFilter({
       summary_type,
@@ -1115,7 +1117,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   });
   subjects.length && subjects.unshift({ id: "all", name: "All" });
   _subject_id = subjects.length ? (subject_id ? subject_id : subjects[0].id) : "none";
-  const isLiveClass = summary_type === ReportType.live;
+  // const isLiveClass = summary_type === ReportType.live;
   let params: IParamsQueryLiveClassSummary = {};
   if (isOrg || isSchool) {
     params = {
@@ -1149,13 +1151,17 @@ export const onLoadLearningSummary = createAsyncThunk<
   }
   if (_student_id && _subject_id && _student_id !== "none" && _subject_id !== "none" && _year && _week_start && _week_end) {
     if (subject_id === "all") {
-      isLiveClass
-        ? await dispatch(getLiveClassesSummary({ ...params, subject_id: "", metaLoading }))
-        : await dispatch(getAssignmentSummary({ ...params, subject_id: "", metaLoading }));
+      // isLiveClass
+      // ?
+      await dispatch(getLiveClassesSummary({ ...params, subject_id: "", metaLoading }));
+      // :
+      await dispatch(getAssignmentSummary({ ...params, subject_id: "", metaLoading }));
     } else {
-      isLiveClass
-        ? await dispatch(getLiveClassesSummary({ ...params, metaLoading }))
-        : await dispatch(getAssignmentSummary({ ...params, metaLoading }));
+      // isLiveClass
+      // ?
+      await dispatch(getLiveClassesSummary({ ...params, metaLoading }));
+      // :
+      await dispatch(getAssignmentSummary({ ...params, metaLoading }));
     }
   }
   return { years, weeks, schools, classes, teachers, students, subjects, summary_type, ...params };
@@ -1185,8 +1191,19 @@ export const getAfterClassFilter = createAsyncThunk<
   IParamsGetAfterClassFilter & LoadingMetaPayload,
   { state: RootState }
 >("getAfterClassFilter", async (query, { dispatch }) => {
-  const { summary_type, filter_type, school_id, class_id, teacher_id, student_id, week_start, week_end, isOrg, isSchool, isTeacher } =
-    query;
+  const {
+    summary_type,
+    filter_type,
+    school_id,
+    class_id,
+    teacher_id,
+    student_id,
+    week_start,
+    week_end,
+    isOrg,
+    isSchool,
+    isTeacher,
+  } = query;
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
   let students: ArrProps[] = [];
@@ -1531,13 +1548,13 @@ const { actions, reducer } = createSlice({
     },
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
-      state.reportMockOptions.classList = (
-        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching : undefined
-      ) as Pick<Class, "class_id" | "class_name">[];
+      state.reportMockOptions.classList = (payload.user && payload.user.membership?.classesTeaching
+        ? payload.user.membership?.classesTeaching
+        : undefined) as Pick<Class, "class_id" | "class_name">[];
 
-      state.reportMockOptions.class_id = (
-        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching[0]?.class_id : undefined
-      ) as string;
+      state.reportMockOptions.class_id = (payload.user && payload.user.membership?.classesTeaching
+        ? payload.user.membership?.classesTeaching[0]?.class_id
+        : undefined) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

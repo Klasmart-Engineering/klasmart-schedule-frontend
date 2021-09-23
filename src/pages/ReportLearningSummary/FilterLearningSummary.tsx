@@ -53,7 +53,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   const isTeacher = perm.report_learning_summary_teacher_650;
   // const isStudent = perm.report_learning_summary_student_649;
   const { value, defaultWeeksValue, summaryReportOptions, onChangeYearFilter, onChangeWeekFilter, onChangeFilter } = props;
-  const { years, weeks, schools, classes, teachers, students, subjects } = summaryReportOptions;
+  const { years, weeks, schools, classes, students, subjects } = summaryReportOptions;
   const getYear = () => {
     return (
       years &&
@@ -153,7 +153,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
               {getInfos(classes || [])}
             </TextField>
           )}
-          {(isOrg || isSchoolAdmin) && (
+          {/* {(isOrg || isSchoolAdmin) && (
             <TextField
               size="small"
               className={css.selectButton}
@@ -165,7 +165,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             >
               {getInfos(teachers || [])}
             </TextField>
-          )}
+          )} */}
           {(isOrg || isSchoolAdmin || isTeacher) && (
             <TextField
               size="small"

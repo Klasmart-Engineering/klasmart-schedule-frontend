@@ -151,6 +151,9 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
     marginTop: 50,
     marginLeft: 50,
   },
+  rightItemStyle: {
+    position: "relative",
+  },
   rightItemContent: {
     flex: 5,
     backgroundColor: "#f6f6f6",
@@ -220,6 +223,15 @@ const useStyles = makeStyles(({ breakpoints, props }) => ({
   statusCon: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
+  },
+  statusConStyle: {
+    position: "absolute",
+    left: "0",
+    bottom: "0",
+    backgroundColor: "#eaeaea",
+    width: "100%",
+    height: "26px",
   },
   customWidth: {
     maxWidth: "343px",
@@ -496,7 +508,7 @@ export function RightCom(props: RightComProps) {
   return (
     <>
       <AllOutcomes reportType={reportType} open={open} outcomes={outcomes} onClose={handleCoseAllOutcomes} />
-      <div className={css.rightItem} key={rightComkey}>
+      <div className={clsx(css.rightItem, css.rightItemStyle)} key={rightComkey}>
         <span className={clsx(cssProps.rightItemTitle)}>
           {d("Learning Outcomes Covered").t("report_learning_outcomes_covered")}
           <LightTooltip
@@ -507,20 +519,6 @@ export function RightCom(props: RightComProps) {
                 <Typography variant="body1">
                   {"Observable competency that can be demonstrated by the student by the end of the lesson."}
                 </Typography>
-                <div className={css.statusCon}>
-                  <>
-                    <CheckOutlined style={{ color: "#1aa21e" }} />
-                    <Typography>{d("Achieved").t("report_label_achieved")}</Typography>
-                  </>
-                  <>
-                    <ChangeHistoryOutlined style={{ color: "#f1c621", marginLeft: 3 }} />
-                    <Typography>{d("In Progress").t("assessment_in_progress")}</Typography>
-                  </>
-                  <>
-                    <ClearOutlined style={{ color: "#d52a2a", marginLeft: 3 }} />
-                    <Typography>{d("Not Achieved").t("report_label_not_achieved")}</Typography>
-                  </>
-                </div>
               </div>
             }
           >
@@ -547,6 +545,20 @@ export function RightCom(props: RightComProps) {
               {" >"}
             </Typography>
           )}
+        </div>
+        <div className={clsx(css.statusCon, css.statusConStyle)}>
+          <>
+            <CheckOutlined style={{ color: "#1aa21e" }} />
+            <Typography>{d("Achieved").t("report_label_achieved")}</Typography>
+          </>
+          <>
+            <ChangeHistoryOutlined style={{ color: "#f1c621", marginLeft: 3 }} />
+            <Typography>{d("In Progress").t("assessment_in_progress")}</Typography>
+          </>
+          <>
+            <ClearOutlined style={{ color: "#d52a2a", marginLeft: 3 }} />
+            <Typography>{d("Not Achieved").t("report_label_not_achieved")}</Typography>
+          </>
         </div>
       </div>
       <div className={clsx(css.rightItem)}>
