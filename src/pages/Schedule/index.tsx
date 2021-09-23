@@ -237,7 +237,7 @@ function ScheduleContent() {
   const isSchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
   const isTeacher = usePermission(PermissionType.create_my_schedule_events_521);
   const isStudent = usePermission(PermissionType.attend_live_class_as_a_student_187);
-  const viewSubjectPermission = !usePermission(PermissionType.view_subjects_20115);
+  const viewSubjectPermission = usePermission(PermissionType.view_subjects_20115);
 
   const privilegedMembers = useCallback(
     (member: memberType): boolean => {
