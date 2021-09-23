@@ -10,6 +10,7 @@ import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { getSearchScheduleList } from "../../reducers/schedule";
 import { timestampType } from "../../types/scheduleTypes";
+import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -178,11 +179,34 @@ export default function SearchList(props: SearchListProps) {
     document.documentElement.scrollTop = 0;
   };
 
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 40;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
+
   const getTeacherList = (item: EntityScheduleShortInfo[] | undefined, student_num: number | undefined) => {
     if (!item) return `(${student_num})`;
     const temp = item.map((teacherItem: EntityScheduleShortInfo) => teacherItem.name);
     const list = temp.join(", ");
-    return `${list} (${student_num})`;
+    return (
+      <span>
+        <Tooltip title={list} placement="top-start">
+          <span>{textEllipsis(list)}</span>
+        </Tooltip>{" "}
+        ({student_num})
+      </span>
+    );
   };
 
   return (
