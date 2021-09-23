@@ -26,6 +26,10 @@ import "moment/locale/ko";
 import "moment/locale/id";
 import "moment/locale/en-au";
 import "moment/locale/es";
+import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -43,6 +47,28 @@ const useStyles = makeStyles(({ shadows }) => ({
     color: "#757575",
     cursor: "pointer",
     marginRight: "10px",
+  },
+  eventTemplateCalendar: {
+    height: "26px",
+    borderRadius: "16px",
+    borderBottomRightRadius: "12px",
+    borderTopRightRadius: "12px",
+    position: "relative",
+    "& span": {
+      position: "absolute",
+      top: "1px",
+      left: "32px",
+      fontWeight: 600,
+    },
+  },
+  eventTemplateIcon: {
+    width: "26px",
+    height: "26px",
+    borderRadius: "26px",
+    border: "2px solid white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));
 
@@ -394,6 +420,34 @@ function MyCalendar(props: CalendarProps) {
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
   };
 
+  const eventColor = [
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "82%" }} /> },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon style={{ width: "86%" }} /> },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "86%" }} /> },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },
+  ];
+
+  const eventStyleGetter = () => {
+    const style = {
+      backgroundColor: "white",
+      height: "26px",
+      padding: 0,
+    };
+    return {
+      style: style,
+    };
+  };
+
+  const CustomEvent = (event: any) => {
+    const eventTemplate = eventColor.filter((item) => item.id === event.event.class_type);
+    return (
+      <div className={css.eventTemplateCalendar} style={{ backgroundColor: eventTemplate[0].color }}>
+        <div className={css.eventTemplateIcon}>{eventTemplate[0].icon}</div>
+        <span>{event.event.title}</span>
+      </div>
+    );
+  };
+
   return (
     <Box className={css.calendarBox}>
       <Box className={css.calendarNav}>
@@ -431,6 +485,10 @@ function MyCalendar(props: CalendarProps) {
             creteSchedule(e);
           }}
           style={{ height: "100vh" }}
+          eventPropGetter={eventStyleGetter}
+          components={{
+            event: CustomEvent,
+          }}
         />
       )}
     </Box>
