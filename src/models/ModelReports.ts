@@ -7,7 +7,7 @@ import {
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
-import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
+import { teacherLoadDescription } from "../pages/ReportTeachingLoad/Components/TeacherLoadChart";
 import { Iitem } from "../reducers/report";
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];

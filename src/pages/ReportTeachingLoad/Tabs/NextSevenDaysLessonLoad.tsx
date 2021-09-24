@@ -6,8 +6,8 @@ import teachingLoadJson from "../../../mocks/teachingLoad.json";
 import { formatTeachingLoadList } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 // import { getTeachingLoadReport } from "../../../reducers/report";
-import { InfoTeacherLoad } from "../components/InfoTeacherLoad";
-import { TeacherLoadChart } from "../components/TeacherLoadChart";
+import { InfoTeacherLoad } from "../Components/InfoTeacherLoad";
+import { TeacherLoadChart } from "../Components/TeacherLoadChart";
 // const TIME_OFFSET = moment().utcOffset() * 60;
 export default function () {
   const dispatch = useDispatch();
