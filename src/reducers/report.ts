@@ -61,7 +61,8 @@ import {
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
-import { formatTimeToMonDay, getTimeOffSecond, ModelReport } from "../models/ModelReports";
+import { d } from "../locale/LocaleManager";
+import { formatTimeToMonDay, getTimeOffSecond, ModelReport, sortByStudentName } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
 import {
@@ -1031,7 +1032,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     }
     const timeFilter = await api.reports.queryLearningSummaryTimeFilter({ ...timeFilterParams });
     years = timeFilter.length ? timeFilter.map((item) => item.year as number) : [2021];
-    _year = year ? year : years[years.length - 1];
+    // _year = year ? year : years[years.length - 1];
+    _year = year ? year : years[0];
     const _weeks = timeFilter.length ? timeFilter.find((item) => item.year === _year)?.weeks : [];
     weeks = _weeks
       ? _weeks.map((item) => {
@@ -1040,7 +1042,7 @@ export const onLoadLearningSummary = createAsyncThunk<
           return {
             week_start,
             week_end,
-            value: `${formatTimeToMonDay(week_start as number)}~${formatTimeToMonDay(week_end as number)}`,
+            value: `${formatTimeToMonDay(week_start as number)}~${formatTimeToMonDay((week_end as number) - 24 * 3600)}`,
           };
         })
       : [];
@@ -1048,8 +1050,10 @@ export const onLoadLearningSummary = createAsyncThunk<
     years = summaryReportOptions.years;
     weeks = summaryReportOptions.weeks;
   }
-  _year = year ? year : years[years.length - 1];
-  const lastWeek = weeks[weeks.length - 1];
+  // _year = year ? year : years[years.length - 1];
+  _year = year ? year : years[0];
+  // const lastWeek = weeks[weeks.length - 1];
+  const lastWeek = weeks[0];
   const _week_start = week_start ? week_start : lastWeek.week_start;
   const _week_end = week_end ? week_end : lastWeek.week_end;
   if (isOrg || isSchool || isTeacher) {
@@ -1057,12 +1061,16 @@ export const onLoadLearningSummary = createAsyncThunk<
     const {
       report: { learningSummary },
     } = getState();
+    console.log("learningSummary", learningSummary);
+
     const _schools =
-      learningSummary.schoolList.map((item) => ({
-        id: item.school_id!,
-        name: item.school_name!,
-      })) || [];
-    schools = [{ id: "all", name: "All" }, ..._schools, { id: "none", name: "None" }];
+      learningSummary.schoolList
+        .filter((item) => item?.classes?.length)
+        .map((item) => ({
+          id: item.school_id!,
+          name: item.school_name!,
+        })) || [];
+    schools = [{ id: "all", name: d("All").t("report_label_all") }, ..._schools, { id: "none", name: d("None").t("report_label_none") }];
     schools = uniqBy(schools, "id");
     _school_id = school_id ? school_id : "all";
     if (_school_id === "all") {
@@ -1093,7 +1101,7 @@ export const onLoadLearningSummary = createAsyncThunk<
           name: item?.class_name!,
         })) || [];
     }
-    classes = [{ id: "all", name: "All" }, ...classes];
+    classes = [{ id: "all", name: d("All").t("report_label_all") }, ...classes];
     classes = uniqBy(classes, "id");
     _class_id = class_id ? class_id : "all";
     if (_class_id === "all") {
@@ -1117,8 +1125,21 @@ export const onLoadLearningSummary = createAsyncThunk<
             })) || [];
           studentArr = [...studentArr, ...arr];
         });
-        console.log(studentArr);
+        // studentArr = studentArr.slice().sort(sortByStudentName("name"))
+        console.log("studentArr", studentArr);
         students = uniqBy(studentArr, "id");
+      } else if (_school_id === "none") {
+        let studentArr: ArrProps[] = [];
+        learningSummary.noneSchoolClasses.forEach((item) => {
+          const arr =
+            item.students?.map((sItem) => ({
+              id: sItem?.user_id!,
+              name: sItem?.user_name!,
+            })) || [];
+          studentArr = [...studentArr, ...arr];
+          students = uniqBy(studentArr, "id");
+          console.log("students1", students);
+        });
       } else {
         let studentArr: ArrProps[] = [];
         const school = learningSummary.schoolList.find((item) => item.school_id === school_id);
@@ -1130,6 +1151,7 @@ export const onLoadLearningSummary = createAsyncThunk<
             })) || [];
           studentArr = [...studentArr, ...arr];
         });
+        // studentArr = studentArr.slice().sort(sortByStudentName("name"))
         console.log(studentArr);
         students = uniqBy(studentArr, "id");
       }
@@ -1144,7 +1166,9 @@ export const onLoadLearningSummary = createAsyncThunk<
               name: item?.user_name!,
             })) || []
           : [];
+        // students = students.slice().sort(sortByStudentName("name"))
         students = uniqBy(students, "id");
+      } else if (_school_id === "all") {
       } else {
         const school = learningSummary.schoolList.find((item) => item.school_id === school_id);
         const classObj = school?.classes?.find((item) => item?.class_id === class_id);
@@ -1153,6 +1177,8 @@ export const onLoadLearningSummary = createAsyncThunk<
             id: item?.user_id!,
             name: item?.user_name!,
           })) || [];
+        console.log("students3", students);
+
         // let classArr: Maybe<Class>[] = [];
         // learningSummary.schoolList.forEach(item => {
         //   classArr = item.classes ? [...item.classes] : classArr;
@@ -1163,8 +1189,11 @@ export const onLoadLearningSummary = createAsyncThunk<
         //   name: item?.user_name!,
         // })) || [] : [];
       }
+      students = students.slice().sort(sortByStudentName("name"));
       students = uniqBy(students, "id");
     }
+    console.log("students2", students);
+
     _student_id = students.length ? (student_id ? student_id : students[0].id) : "none";
     // 拉取subject列表
   }
@@ -1184,8 +1213,8 @@ export const onLoadLearningSummary = createAsyncThunk<
       name: item.subject_name,
     };
   });
-  subjects = [{ id: "all", name: "All" }, ...subjects];
-  _subject_id = subject_id ? subject_id : subjects[0].id;
+  subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
+  _subject_id = subject_id ? subject_id : "all";
 
   params = {
     year: _year,
@@ -1439,7 +1468,7 @@ export const getAfterClassFilter = createAsyncThunk<
           name: item?.class_name!,
         })) || [];
     }
-    classes = [{ id: "all", name: "All" }, ...classes];
+    classes = [{ id: "all", name: d("All").t("report_label_all") }, ...classes];
     classes = uniqBy(classes, "id");
     _class_id = classes.length ? classes[0].id : "none";
   }
@@ -1466,7 +1495,20 @@ export const getAfterClassFilter = createAsyncThunk<
             })) || [];
           studentArr = [...studentArr, ...arr];
         });
+        // studentArr = studentArr.slice().sort(sortByStudentName("name"))
         students = [...studentArr];
+      } else if (school_id === "none") {
+        let studentArr: ArrProps[] = [];
+        learningSummary.noneSchoolClasses.forEach((item) => {
+          const arr =
+            item.students?.map((sItem) => ({
+              id: sItem?.user_id!,
+              name: sItem?.user_name!,
+            })) || [];
+          studentArr = [...studentArr, ...arr];
+          students = uniqBy(studentArr, "id");
+          console.log("students1", students);
+        });
       } else {
         let studentArr: ArrProps[] = [];
         const school = learningSummary.schoolList.find((item) => item.school_id === school_id);
@@ -1478,6 +1520,7 @@ export const getAfterClassFilter = createAsyncThunk<
             })) || [];
           studentArr = [...studentArr, ...arr];
         });
+        // studentArr = studentArr.slice().sort(sortByStudentName("name"))
         console.log(studentArr);
         students = [...studentArr];
       }
@@ -1511,6 +1554,7 @@ export const getAfterClassFilter = createAsyncThunk<
         //   name: item?.user_name!,
         // })) || [] : [];
       }
+      // students = students.slice().sort(sortByStudentName("name"))
       students = uniqBy(students, "id");
     }
     _student_id = students.length ? students[0].id : "none";
@@ -1532,7 +1576,7 @@ export const getAfterClassFilter = createAsyncThunk<
         name: item.subject_name,
       };
     });
-    subjects = [{ id: "all", name: "All" }, ...subjects];
+    subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
     _subject_id = subjects[0].id;
   }
   const resParams = {
@@ -1903,7 +1947,7 @@ const { actions, reducer } = createSlice({
             return {
               week_start,
               week_end,
-              value: `${formatTimeToMonDay(week_start)}~${formatTimeToMonDay(week_end)}`,
+              value: `${formatTimeToMonDay(week_start)}~${formatTimeToMonDay(week_end - 24 * 60 * 60)}`,
             };
           })
         : [];

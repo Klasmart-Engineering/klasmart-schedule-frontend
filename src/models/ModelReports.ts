@@ -47,9 +47,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
     .toString()
-    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",
@@ -212,9 +212,9 @@ export function sortByStudentName(studentName: any) {
   return function (x: any, y: any) {
     let reg = /[a-zA-Z0-9]/;
     if (reg.test(x[studentName]) || reg.test(y[studentName])) {
-      if (x[studentName] > y[studentName]) {
+      if (x[studentName].toLowerCase() > y[studentName].toLowerCase()) {
         return 1;
-      } else if (x[studentName] < y[studentName]) {
+      } else if (x[studentName].toLowerCase() < y[studentName].toLowerCase()) {
         return -1;
       } else {
         return 0;
