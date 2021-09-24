@@ -13,7 +13,7 @@ import { InfoTeacherLoad } from "./components/InfoTeacherLoad";
 import { TeacherLoadChart } from "./components/TeacherLoadChart";
 import { FilterTeacherLoad } from "./FilterTeacherLoad";
 const ALL = "all";
-const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600);
+const TIME_OFFSET = (0 - new Date().getTimezoneOffset() / 60) * 3600;
 const removeoneValueOfList = (value: string[]): string => {
   return value[value.length - 1] === ALL ? "all" : value.filter((id) => id !== ALL).join(",");
 };
@@ -30,7 +30,7 @@ const useTeacherLoadReportQuery = () => {
 };
 export default function ReportTeachingLoad() {
   const teacherLoadQuery = useTeacherLoadReportQuery();
-  const { teacher_ids, school_id, class_ids } = teacherLoadQuery;
+  const { teacher_ids, school_id } = teacherLoadQuery;
   const dispatch = useDispatch();
   const history = useHistory();
   const teachingLoadOnloadState = useSelector<RootState, RootState["report"]["teachingLoadOnload"]>(
@@ -61,14 +61,16 @@ export default function ReportTeachingLoad() {
           break;
         }
         case "teacher_ids": {
-          const newValue = removeoneValueOfList(value as unknown as string[]) || ALL;
+          const newValue = removeoneValueOfList((value as unknown) as string[]) || ALL;
           history.push({
             search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newValue, class_ids: ALL }),
           });
           if (newValue !== "all" && !newValue.includes(",")) {
             dispatch(getClassListByschool({ school_id, teacher_ids: newValue }));
           }
-          dispatch(getTeachingLoadList({ teacher_ids: newValue.split(","), class_ids: [ALL], time_offset: TIME_OFFSET, metaLoading: true }));
+          dispatch(
+            getTeachingLoadList({ teacher_ids: newValue.split(","), class_ids: [ALL], time_offset: TIME_OFFSET, metaLoading: true })
+          );
 
           break;
         }
@@ -81,7 +83,7 @@ export default function ReportTeachingLoad() {
               !perm.view_my_organizations_reports_612
                 ? user_id
                 : teacher_ids;
-            const newValue = removeoneValueOfList(value as unknown as string[]) || ALL;
+            const newValue = removeoneValueOfList((value as unknown) as string[]) || ALL;
             history.push({
               search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newTeacher_ids, class_ids: newValue }),
             });
@@ -137,4 +139,3 @@ export default function ReportTeachingLoad() {
     </Fragment>
   );
 }
-
