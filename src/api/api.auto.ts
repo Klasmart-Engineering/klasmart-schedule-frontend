@@ -3814,7 +3814,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       >(`/reports/students/${id}${this.addQueryParams(query)}`, "GET", params),
 
     /**
-     * @tags reports/teacherLoad
+     * @tags reports/teacher_load
      * @name getTeacherLoadReportOfAssignment
      * @summary list teaching load report
      * @request POST:/reports/teacher_load/assignments
@@ -3829,7 +3829,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       ),
 
     /**
-     * @tags reports/teacherLoad
+     * @tags reports/teacher_Loader
      * @name listTeacherLoadLessons
      * @summary get teacher load Report
      * @request POST:/reports/teacher_load/lessons_list
@@ -3844,7 +3844,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       ),
 
     /**
-     * @tags reports/teacherLoad
+     * @tags reports/teacher_load
      * @name summaryTeacherLoadLessons
      * @summary get teacher load Report
      * @request POST:/reports/teacher_load/lessons_summary
@@ -3859,7 +3859,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       ),
 
     /**
-     * @tags reports/teacherLoad
+     * @tags reports/teacher_Loader
      * @name listTeacherMissedLessons
      * @summary get teacher missed lessons
      * @request POST:/reports/teacher_load/missed_lessons
