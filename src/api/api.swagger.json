@@ -12803,6 +12803,17 @@
         }
       }
     },
+    "entity.SummaryNode": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.TeacherLoadAssignmentRequest": {
       "type": "object",
       "properties": {
@@ -12915,16 +12926,16 @@
       "type": "object",
       "properties": {
         "completed_in_class_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         },
         "completed_live_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         },
         "missed_in_class_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         },
         "missed_live_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         }
       }
     },
