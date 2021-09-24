@@ -60,6 +60,8 @@ import {
   EntityTeacherLoadLesson,
   EntityTeacherLoadLessonRequest,
   EntityTeacherLoadLessonSummary,
+  EntityTeacherLoadMissedLessonsRequest,
+  EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
@@ -113,6 +115,7 @@ interface IreportState {
   overview: EntityClassesAssignmentOverView[];
   teacherLoadAssignment: EntityTeacherLoadAssignmentResponse[];
   next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
+  listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse;
 }
 
 interface IObj {
@@ -208,6 +211,7 @@ const initialState: IreportState = {
   overview: [],
   teacherLoadAssignment: [],
   next7DaysLessonLoadList: [],
+  listTeacherMissedLessons: {},
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1560,6 +1564,11 @@ export const getTeachingLoadReport = createAsyncThunk<
   EntityReportListTeachingLoadArgs & LoadingMetaPayload
 >("getTeachingLoadReport", async ({ metaLoading, ...query }) => await api.reports.listTeachingLoadReport(query));
 
+export const getListTeacherMissedLessons = createAsyncThunk<
+  EntityTeacherLoadMissedLessonsResponse,
+  EntityTeacherLoadMissedLessonsRequest & LoadingMetaPayload
+>("getListTeacherMissedLessons", async ({ metaLoading, ...query }) => await api.reports.listTeacherMissedLessons(query));
+
 const { actions, reducer } = createSlice({
   name: "report ",
   initialState,
@@ -1834,6 +1843,12 @@ const { actions, reducer } = createSlice({
     },
     [getTeachingLoadReport.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachingLoadReport>>) => {
       state.next7DaysLessonLoadList = payload.items;
+    },
+    [getListTeacherMissedLessons.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getListTeacherMissedLessons>>
+    ) => {
+      state.listTeacherMissedLessons = payload;
     },
   },
 });
