@@ -1234,6 +1234,17 @@ export interface EntityScheduleShortInfo {
   name?: string;
 }
 
+export interface EntityScheduleTimeView {
+  class_id?: string;
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  due_at?: number;
+  end_at?: number;
+  id?: string;
+  start_at?: number;
+  status?: "NotStart" | "Started" | "Closed";
+  title?: string;
+}
+
 export interface EntityScheduleTimeViewQuery {
   anytime?: boolean;
   class_ids?: string[];
@@ -4084,6 +4095,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     postScheduledDates: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
       this.request<string[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view/dates`,
+        "POST",
+        params,
+        queryData
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduleTimeViewList
+     * @summary getScheduleTimeViewList
+     * @request POST:/schedules_time_view/list
+     * @description get schedule time view list without relation info
+     */
+    getScheduleTimeViewList: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
+      this.request<EntityScheduleTimeView, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view/list`,
         "POST",
         params,
         queryData
