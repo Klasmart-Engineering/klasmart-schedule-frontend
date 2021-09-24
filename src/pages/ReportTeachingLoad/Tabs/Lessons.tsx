@@ -1,5 +1,5 @@
 import React from "react";
-import LessonChart from "../Components/LessonChart";
+import LessonChart from "../components/LessonChart";
 
 export default function () {
   const teacherChange = (id?: string) => {
@@ -8,7 +8,7 @@ export default function () {
 
   return (
     <div>
-      <LessonChart teacherChange={teacherChange} />
+      <LessonChart teacherChange={teacherChange} teacherIds={[]} classIds={[]} />
     </div>
   );
 }

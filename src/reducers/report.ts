@@ -859,9 +859,14 @@ interface listTeacherLoadLessonsResponse {
   lessonList: EntityTeacherLoadLesson[];
   lessonSummary: EntityTeacherLoadLessonSummary;
 }
-export const getLessonTeacherLoad = createAsyncThunk<listTeacherLoadLessonsResponse, EntityTeacherLoadLessonRequest>(
+
+interface ListTeacherLoadLessonRequest extends EntityTeacherLoadLessonRequest {
+  metaLoading: boolean;
+}
+
+export const getLessonTeacherLoad = createAsyncThunk<listTeacherLoadLessonsResponse, ListTeacherLoadLessonRequest>(
   "listTeacherLoadLessons",
-  async (query) => {
+  async ({ metaLoading, ...query }) => {
     return {
       lessonList: await api.reports.listTeacherLoadLessons(query),
       lessonSummary: await api.reports.summaryTeacherLoadLessons(query),
