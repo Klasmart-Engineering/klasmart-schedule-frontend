@@ -7,7 +7,7 @@ import LayoutBox from "../LayoutBox";
 const useStyle = makeStyles({
   chartLayout: {
     marginTop: 24,
-    marginBottom: 200,
+    marginBottom: 20,
     position: "relative",
   },
   chartLayoutContent: {
