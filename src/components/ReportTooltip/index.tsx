@@ -1,9 +1,8 @@
 import { Grid, Tooltip } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React, { ReactElement } from "react";
-import { EntityContentUsage } from "../../../api/api.auto";
-import { d } from "../../../locale/LocaleManager";
-import useTranslation from "../hooks/useTranslation";
+import { EntityContentUsage } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,9 +40,8 @@ interface Props {
   children: ReactElement;
 }
 
-export default function MaterialUsageTooltip(props: Props) {
+export default function ReportTooltip(props: Props) {
   const classes = useStyles();
-  const { MaterialUsageConData } = useTranslation();
   const count = props.content.reduce((count, item) => Number(item.count) + count, 0);
   return (
     <Tooltip
@@ -61,7 +59,7 @@ export default function MaterialUsageTooltip(props: Props) {
             {props.content.map((item, key) => {
               return (
                 <Grid container justify={"space-between"} className={classes.item} key={key}>
-                  {MaterialUsageConData.find((v) => v.value === item.type)?.label}
+                  {item.type}
                   <label>{item.count}</label>
                 </Grid>
               );

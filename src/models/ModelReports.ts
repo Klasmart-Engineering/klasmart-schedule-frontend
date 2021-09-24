@@ -1,13 +1,14 @@
 import { ReactNode } from "react";
-import { School, User } from "../api/api-ko-schema.auto";
+import { User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem,
+  EntityStudentAchievementReportCategoryItem
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
-import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
+import { teacherLoadDescription } from "../pages/ReportTeachingLoad/Components/TeacherLoadChart";
+import { Iitem } from "../reducers/report";
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];
   xLabels?: string[][];
@@ -25,16 +26,16 @@ export const ModelReport = {
     }, []);
     return teacherList;
   },
-  schoolListSetDiff(schoolList: Pick<School, "school_id" | "school_name">[]): Pick<School, "school_id" | "school_name">[] {
+  ListSetDiff(list: Iitem[]): Iitem[] {
     let hash: Record<string, boolean> = {};
-    schoolList = schoolList.reduce((preVal: Pick<School, "school_id" | "school_name">[], curVal) => {
-      if (!hash[curVal.school_id]) {
-        hash[curVal.school_id] = true;
+    list = list.reduce((preVal: Iitem[], curVal) => {
+      if (curVal?.value && !hash[curVal?.value]) {
+        hash[curVal?.value] = true;
         preVal.push(curVal);
       }
       return preVal;
     }, []);
-    return schoolList;
+    return list;
   },
 };
 
@@ -251,4 +252,8 @@ export function getTimeDots(): ILatestThreeMonths {
 export interface ILatestThreeMonths {
   latestThreeMonthsDate: number[];
   latestThreeMonthsDots: string[];
+}
+export function getDurationByDay(day:number){
+  const currentTime = Math.floor(new Date().getTime() / 1000);
+  return `${currentTime - 3600 * 24 * day}-${currentTime}`;
 }

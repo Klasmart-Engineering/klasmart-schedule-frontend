@@ -83,12 +83,12 @@ export default function ClassesAndAssignments() {
   const [page, setPage] = React.useState(1);
   const [state, setState] = React.useState({ activeTab: 0 });
 
-  const classIds = classList?.map(item => item.value);
+  const classIds = classList?.map((item) => item.value);
   const classesAssignmentsUnattend = classesAssignmentsUnattendRow.length
     ? classesAssignmentsUnattendRow.slice().sort(sortByStudentName("student_name"))
     : [];
   const topTitle = [
-    d("Live Scheduled(latest 3 months)").t("report_student_usage_live"),
+    d("Live Scheduled (latest 3 months)").t("report_student_usage_live"),
     d("Study (latest 3 months)").t("report_student_usage_study_title"),
     d("Home Fun (latest 3 months)").t("report_student_usage_home_fun_title"),
   ];
@@ -176,7 +176,9 @@ export default function ClassesAndAssignments() {
       </div>
       <div className={css.selectContainer}>
         <div className={css.text}>{topTitle[state.activeTab]}</div>
-        <div><ClassFilter onChange={setClassList} /></div>
+        <div>
+          <ClassFilter onChange={setClassList} />
+        </div>
       </div>
       <ClassesAndAssignmentsTable
         unattendedTableOpenId={unattendedTableOpenId}

@@ -132,15 +132,16 @@ function ScoreInput(props: ScoreInputProps) {
 
 interface AssignmentDownloadRowProps {
   name?: string;
+  downloadName?: string;
   resourceId?: string;
 }
 function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
-  const { name, resourceId } = props;
+  const { name, downloadName, resourceId } = props;
   const css = useStyle();
   return (
     <div className={css.assignmentDownloadRow}>
       <span>{name}</span>
-      <DownloadButton resourceId={resourceId} fileName={name}>
+      <DownloadButton resourceId={resourceId} fileName={downloadName}>
         <IconButton size="small">
           <GetApp fontSize="inherit" />
         </IconButton>
@@ -152,15 +153,21 @@ function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
 interface AssignmentTableProps {
   title: string;
   feedbacks: AssignmentProps["feedbacks"];
+  detail: EntityGetHomeFunStudyResult;
 }
 function AssignmentTable(props: AssignmentTableProps) {
-  const { feedbacks, title } = props;
+  const { feedbacks, title, detail } = props;
   const css = useStyle();
   const tableBodyRows = feedbacks.map(({ id, comment, create_at, assignments }) => (
     <TableRow key={id}>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
         {assignments?.map((assignment) => (
-          <AssignmentDownloadRow name={assignment.attachment_name} resourceId={assignment.attachment_id} key={assignment.attachment_id} />
+          <AssignmentDownloadRow
+            downloadName={`HFS_${detail.student_name}_${assignment.attachment_name}`}
+            name={assignment.attachment_name}
+            resourceId={assignment.attachment_id}
+            key={assignment.attachment_id}
+          />
         ))}
       </TableCell>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
@@ -211,6 +218,7 @@ export function Assignment(props: AssignmentProps) {
     <div className={css.assignment}>
       <AssignmentTable
         feedbacks={feedbacks.slice(0, 1)}
+        detail={detail}
         title={d("Assignment of {studentname}").t("assess_assignment_of_student", {
           studentname: detail.student_name ?? d("Student").t("schedule_time_conflict_student"),
         })}
@@ -258,7 +266,7 @@ export function Assignment(props: AssignmentProps) {
         fullWidth
         inputProps={{ className: css.commentInput, maxLength: 100 }}
       />
-      <AssignmentTable feedbacks={feedbacks.slice(1)} title={d("Submission History").t("assess_submission_history")} />
+      <AssignmentTable detail={detail} feedbacks={feedbacks.slice(1)} title={d("Submission History").t("assess_submission_history")} />
     </div>
   );
 }

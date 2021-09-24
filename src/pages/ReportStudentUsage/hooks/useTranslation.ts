@@ -19,7 +19,7 @@ export default function useTranslation() {
     { value: "document", label: d("Document").t("library_label_document") },
   ];
   const viewType: Record<string, string> = {
-    h5p: d("No of H5P viewed").t("report_student_usage_h5p_viewed"),
+    h5p: d("No. of H5P viewed.").t("report_student_usage_h5p_viewed"),
     audio: d("Audio listened").t("report_student_usage_audio_listened"),
     video: d("Video viewed").t("report_student_usage_video_viewed"),
     image: d("Images viewed").t("report_student_usage_images_viewed"),

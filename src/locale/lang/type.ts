@@ -1,10 +1,10 @@
 import { IntlFormatters, MessageDescriptor } from "react-intl";
 
 type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
-export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es";
+export type LangName = "en" | "ko" | "zh" | "vi" | "id";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id", "es"].includes(name)) throw new TypeError();
+  if (!name || !["en", "ko", "zh", "vi", "id"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -766,6 +766,8 @@ type LangRecord<T = string> =
   | { id: "report_label_live"; description: "Live"; values: undefined }
   | { id: "report_label_hours"; description: "Hours"; values: undefined }
   | { id: "report_label_mins"; description: "Mins"; values: undefined }
+  | { id: "report_label_hrs_lower"; description: "hrs"; values: undefined }
+  | { id: "report_label_mins_lower"; description: "mins"; values: undefined }
   | { id: "report_label_go_back"; description: "Return to Reports List"; values: undefined }
   | { id: "report_label_individual_achievement"; description: "Individual Student Achievement"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
@@ -1275,7 +1277,7 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_registration"; description: "Registration"; values: undefined }
   | { id: "report_student_usage_materialusage"; description: "Material Usage"; values: undefined }
   | { id: "report_student_usage_classesandassignments"; description: "Classes & Assignments"; values: undefined }
-  | { id: "report_student_usage_live"; description: "Live Scheduled(latest 3 months)"; values: undefined }
+  | { id: "report_student_usage_live"; description: "Live Scheduled (latest 3 months)"; values: undefined }
   | { id: "report_student_usage_class"; description: "Class"; values: undefined }
   | { id: "report_student_usage_total"; description: "Total"; values: undefined }
   | { id: "report_student_usage_unattendedStudents"; description: "Unattended students"; values: undefined }
@@ -1289,12 +1291,12 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_study"; description: "Study"; values: undefined }
   | { id: "report_student_usage_home_fun"; description: "Home Fun"; values: undefined }
   | { id: "report_filter_content"; description: "Content"; values: undefined }
-  | { id: "report_student_usage_h5p_viewed"; description: "No of H5P viewed"; values: undefined }
+  | { id: "report_student_usage_h5p_viewed"; description: "No. of H5P viewed."; values: undefined }
   | { id: "report_student_usage_video_viewed"; description: "Video viewed"; values: undefined }
   | { id: "report_student_usage_images_viewed"; description: "Images viewed"; values: undefined }
   | { id: "report_student_usage_document_viewed"; description: "Document viewed"; values: undefined }
   | { id: "report_student_usage_audio_listened"; description: "Audio listened"; values: undefined }
-  | { id: "report_student_usage_this_months_class_attendance_rate"; description: "This months class attendance rate"; values: undefined }
+  | { id: "report_student_usage_this_months_class_attendance_rate"; description: "This month‘s class attendance rate"; values: undefined }
   | {
       id: "library_msg_pdf_validation";
       description: "The PDF file you uploaded cannot be displayed properly in live classes. Please upload a different file.";
@@ -1306,13 +1308,22 @@ type LangRecord<T = string> =
       description: "Numbers of scheduled classes in the past 3 months";
       values: undefined;
     }
-  | { id: "library_label_category_subcategory"; description: "Category - Subcategory"; values: undefined }
+  | { id: "library_label_category_subcategory"; description: "Category — Subcategory"; values: undefined }
   | { id: "report_label_none"; description: "None"; values: undefined }
   | { id: "report_student_usage_study_title"; description: "Study (latest 3 months)"; values: undefined }
   | { id: "report_student_usage_home_fun_title"; description: "Home Fun (latest 3 months)"; values: undefined }
   | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
   | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
-  | { id: "report_student_usage_of"; description: "of"; values: undefined };
+  | { id: "report_teaching_load_lesson_title"; description: "Total Lessons (Live and In Class) Scheduled"; values: undefined }
+  | { id: "report_teaching_load_lesson_classes_column"; description: "No of Classes"; values: undefined }
+  | { id: "report_teaching_load_lesson_student_column"; description: "No of Student"; values: undefined }
+  | { id: "report_teaching_load_lesson_current"; description: "current"; values: undefined }
+  | { id: "report_teaching_load_lesson_live_completed"; description: "Live Lessons Completed"; values: undefined }
+  | { id: "report_teaching_load_lesson_in_class_completed"; description: "In Class Lessons Completed"; values: undefined }
+  | { id: "report_teaching_load_lesson_live_missed"; description: "Live Lessons Missed"; values: undefined }
+  | { id: "report_teaching_load_lesson_in_class_missed"; description: "In Class Lessons Missed"; values: undefined }
+  | { id: "report_teaching_load_lesson_menu_item"; description: "Past {days} days"; values: { days: number } }
+  | { id: "report_student_usage_of"; description: "{value} of {total}"; values: { value: string | number; total: string | number } };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

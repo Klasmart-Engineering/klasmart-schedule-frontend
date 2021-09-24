@@ -14,12 +14,11 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import moment from "moment";
 import React from "react";
-import { Maybe } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
+import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import { d, t } from "../../../locale/LocaleManager";
 import useTranslation from "../hooks/useTranslation";
 import { ISelect } from "./ClassFilter";
-import Pagination from "./Pagination";
 
 const PAGESIZE = 10;
 
@@ -96,7 +95,7 @@ const Row = (props: {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {classesAssignmentsUnattend.slice((childrenPage - 1) * 10, (childrenPage - 1) * 10 + 10).map((item, idx) => (
+                  {classesAssignmentsUnattend.slice((childrenPage - 1) * PAGESIZE, (childrenPage - 1) * PAGESIZE + PAGESIZE).map((item, idx) => (
                     <TableRow key={`${item.time}-${item?.student_id}-${idx}`} style={{ height: "56px" }}>
                       <TableCell align="center" component="th" scope="row">
                         {item.student_name}
@@ -109,13 +108,10 @@ const Row = (props: {
                 </TableBody>
                 <TableFooter>
                   <TableCell colSpan={6}>
-                    <Pagination
+                    <ReportPagination
                       page={childrenPage}
                       count={total}
-                      onAddPage={() => setChildrenPage(childrenPage + 1)}
-                      onFirstPage={() => setChildrenPage(1)}
-                      onLastPage={() => setChildrenPage(Math.ceil(total / 10))}
-                      onSubPage={() => setChildrenPage(childrenPage - 1)}
+                      onChangePage={setChildrenPage}
                     />
                   </TableCell>
                 </TableFooter>
@@ -149,11 +145,7 @@ interface IClassesAndAssignmentsTable {
   page: number;
   total: number;
   type: string;
-  classList?:ISelect[];
-}
-interface IClasses {
-  class_id: string;
-  class_name?: Maybe<string> | undefined;
+  classList?: ISelect[];
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
@@ -173,7 +165,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
   const styles = useStyles();
   return (
     <div>
-      <TableContainer >
+      <TableContainer>
         <Table aria-label="collapsible table">
           <TableHead style={{ backgroundColor: "#f2f5f7" }}>
             <TableRow>
@@ -201,7 +193,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                   arrow
                   placement="top"
                   classes={styles}
-                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
+                  title={d("This month‘s class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -214,7 +206,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                   arrow
                   placement="top"
                   classes={styles}
-                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
+                  title={d("This month‘s class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -227,7 +219,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                   arrow
                   placement="top"
                   classes={styles}
-                  title={d("This months class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
+                  title={d("This month‘s class attendance rate").t("report_student_usage_this_months_class_attendance_rate")}
                   aria-label="info"
                   style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
                 >
@@ -252,13 +244,10 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           </TableBody>
           <TableFooter>
             <TableCell colSpan={6}>
-              <Pagination
+              <ReportPagination
                 page={page}
                 count={total}
-                onAddPage={() => handleChangePage(page + 1)}
-                onFirstPage={() => handleChangePage(1)}
-                onLastPage={() => handleChangePage(Math.ceil(total / PAGESIZE))}
-                onSubPage={() => handleChangePage(page - 1)}
+                onChangePage={handleChangePage}
               />
             </TableCell>
           </TableFooter>

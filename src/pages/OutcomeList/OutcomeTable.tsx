@@ -375,7 +375,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
   const { control } = formMethods;
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517} overflowX="scroll">
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517} overflowX="auto">
       <Controller
         name={BulkListFormKey.CHECKED_BULK_IDS}
         control={control}
