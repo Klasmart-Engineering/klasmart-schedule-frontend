@@ -24,19 +24,7 @@ export interface IWeeks {
 interface RouteParams {
   tab: QueryLearningSummaryRemainingFilterCondition["summary_type"];
 }
-// export const getWeeks = (): IWeeks[] => {
-//   let week_start = new Date("2021-01-04 00:00").getTime() / 1000;
-//   const currentTime = new Date().getTime() / 1000;
-//   let week_end = week_start + 7 * 24 * 60 * 60 - 1;
-//   const weeks: IWeeks[] = [];
-//   while (week_end < currentTime) {
-//     const item = `${formatTimeToMonDay(week_start)}~${formatTimeToMonDay(week_end)}`;
-//     weeks.push({ week_start, week_end, value: item });
-//     week_start = week_end + 1;
-//     week_end = week_start + 7 * 24 * 60 * 60 - 1;
-//   }
-//   return weeks;
-// };
+
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] == null) delete obj[key];

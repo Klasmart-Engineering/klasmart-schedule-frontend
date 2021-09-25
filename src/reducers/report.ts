@@ -1169,6 +1169,52 @@ export const onLoadLearningSummary = createAsyncThunk<
         // students = students.slice().sort(sortByStudentName("name"))
         students = uniqBy(students, "id");
       } else if (_school_id === "all") {
+        let studentArr: ArrProps[] = [];
+        const classInfo = learningSummary.noneSchoolClasses.length
+          ? learningSummary?.noneSchoolClasses?.find((item) => item?.class_id === class_id)
+          : undefined;
+        const arr2 = classInfo
+          ? classInfo.students?.map((item) => ({
+              id: item?.user_id!,
+              name: item?.user_name!,
+            })) || []
+          : [];
+
+        learningSummary.schoolList.forEach((item) => {
+          if (item?.classes?.length) {
+            item?.classes.forEach((cItem) => {
+              if (cItem?.class_id === class_id) {
+                const arr =
+                  cItem?.students?.map((sItem) => ({
+                    id: sItem?.user_id!,
+                    name: sItem?.user_name!,
+                  })) || [];
+                studentArr = [...studentArr, ...arr2, ...arr];
+              }
+            });
+          }
+        });
+        //   const noneSchoolClasses =
+        //   learningSummary.noneSchoolClasses.map((item) => ({
+        //     id: item.class_id!,
+        //     name: item.class_name!,
+        //   })) || [];
+        // learningSummary.schoolList.forEach((item) => {
+        //   const classArr =
+        //     item.classes?.map((item) => ({
+        //       id: item?.class_id!,
+        //       name: item?.class_name!,
+        //     })) || [];
+        //   classes = [...classes, ...classArr, ...noneSchoolClasses];
+        // });
+        // console.log(classes);
+        // const classObj = classes?.find((item) => item?.class_id === class_id)
+        // students =
+        //   classObj?.students?.map((item) => ({
+        //     id: item?.user_id!,
+        //     name: item?.user_name!,
+        //   })) || [];
+        students = uniqBy(studentArr, "id");
       } else {
         const school = learningSummary.schoolList.find((item) => item.school_id === school_id);
         const classObj = school?.classes?.find((item) => item?.class_id === class_id);
@@ -1521,7 +1567,7 @@ export const getAfterClassFilter = createAsyncThunk<
           studentArr = [...studentArr, ...arr];
         });
         // studentArr = studentArr.slice().sort(sortByStudentName("name"))
-        console.log(studentArr);
+        console.log("studentArr11", studentArr);
         students = [...studentArr];
       }
       students = uniqBy(students, "id");
