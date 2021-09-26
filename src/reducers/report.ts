@@ -1127,6 +1127,7 @@ export const onLoadLearningSummary = createAsyncThunk<
         });
         // studentArr = studentArr.slice().sort(sortByStudentName("name"))
         console.log("studentArr", studentArr);
+        studentArr = studentArr.slice().sort(sortByStudentName("name"));
         students = uniqBy(studentArr, "id");
       } else if (_school_id === "none") {
         let studentArr: ArrProps[] = [];
@@ -1541,8 +1542,9 @@ export const getAfterClassFilter = createAsyncThunk<
             })) || [];
           studentArr = [...studentArr, ...arr];
         });
-        // studentArr = studentArr.slice().sort(sortByStudentName("name"))
+        studentArr = studentArr.slice().sort(sortByStudentName("name"));
         students = [...studentArr];
+        students = uniqBy(students, "id");
       } else if (school_id === "none") {
         let studentArr: ArrProps[] = [];
         learningSummary.noneSchoolClasses.forEach((item) => {
@@ -1582,6 +1584,53 @@ export const getAfterClassFilter = createAsyncThunk<
               name: item?.user_name!,
             })) || []
           : [];
+      } else if (school_id === "all") {
+        let studentArr: ArrProps[] = [];
+        const classInfo = learningSummary.noneSchoolClasses.length
+          ? learningSummary?.noneSchoolClasses?.find((item) => item?.class_id === class_id)
+          : undefined;
+        const arr2 = classInfo
+          ? classInfo.students?.map((item) => ({
+              id: item?.user_id!,
+              name: item?.user_name!,
+            })) || []
+          : [];
+
+        learningSummary.schoolList.forEach((item) => {
+          if (item?.classes?.length) {
+            item?.classes.forEach((cItem) => {
+              if (cItem?.class_id === class_id) {
+                const arr =
+                  cItem?.students?.map((sItem) => ({
+                    id: sItem?.user_id!,
+                    name: sItem?.user_name!,
+                  })) || [];
+                studentArr = [...studentArr, ...arr2, ...arr];
+              }
+            });
+          }
+        });
+        //   const noneSchoolClasses =
+        //   learningSummary.noneSchoolClasses.map((item) => ({
+        //     id: item.class_id!,
+        //     name: item.class_name!,
+        //   })) || [];
+        // learningSummary.schoolList.forEach((item) => {
+        //   const classArr =
+        //     item.classes?.map((item) => ({
+        //       id: item?.class_id!,
+        //       name: item?.class_name!,
+        //     })) || [];
+        //   classes = [...classes, ...classArr, ...noneSchoolClasses];
+        // });
+        // console.log(classes);
+        // const classObj = classes?.find((item) => item?.class_id === class_id)
+        // students =
+        //   classObj?.students?.map((item) => ({
+        //     id: item?.user_id!,
+        //     name: item?.user_name!,
+        //   })) || [];
+        students = uniqBy(studentArr, "id");
       } else {
         const school = learningSummary.schoolList.find((item) => item.school_id === school_id);
         const classObj = school?.classes?.find((item) => item?.class_id === class_id);
@@ -1600,8 +1649,9 @@ export const getAfterClassFilter = createAsyncThunk<
         //   name: item?.user_name!,
         // })) || [] : [];
       }
-      // students = students.slice().sort(sortByStudentName("name"))
+      students = students.slice().sort(sortByStudentName("name"));
       students = uniqBy(students, "id");
+      console.log("students4", students);
     }
     _student_id = students.length ? students[0].id : "none";
   }
@@ -1807,7 +1857,7 @@ const { actions, reducer } = createSlice({
       const myPermissionsAndClassesTeaching = payload[0].data.me;
       const membership = payload[0].data.me?.membership;
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
-      console.log(noneSchoolClasses);
+      // console.log(noneSchoolClasses);
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
           return item?.school_id;
