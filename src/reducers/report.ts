@@ -1240,7 +1240,7 @@ export const onLoadLearningSummary = createAsyncThunk<
       students = uniqBy(students, "id");
     }
     console.log("students2", students);
-
+    students = students.slice().sort(sortByStudentName("name"));
     _student_id = students.length ? (student_id ? student_id : students[0].id) : "none";
     // 拉取subject列表
   }
@@ -1653,6 +1653,7 @@ export const getAfterClassFilter = createAsyncThunk<
       students = uniqBy(students, "id");
       console.log("students4", students);
     }
+    students = students.slice().sort(sortByStudentName("name"));
     _student_id = students.length ? students[0].id : "none";
   }
   _student_id = student_id ? student_id : _student_id;
