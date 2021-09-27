@@ -894,7 +894,7 @@ export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSumma
     const { subject_id, school_id, class_id } = query;
     const res = await api.reports.queryLiveClassesSummary({
       ...query,
-      school_id: school_id === "all" ? "" : school_id,
+      school_id: school_id === "all" || school_id === "none" ? "" : school_id,
       class_id: class_id === "all" ? "" : class_id,
       subject_id: subject_id === "all" ? "" : subject_id,
     });
@@ -910,7 +910,7 @@ export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSumma
     const { subject_id, school_id, class_id } = query;
     const res = await api.reports.queryAssignmentsSummary({
       ...query,
-      school_id: school_id === "all" ? "" : school_id,
+      school_id: school_id === "all" || school_id === "none" ? "" : school_id,
       class_id: class_id === "all" ? "" : class_id,
       subject_id: subject_id === "all" ? "" : subject_id,
     });
@@ -1042,6 +1042,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     const {
       report: { learningSummary },
     } = getState();
+    console.log("learningSummary", learningSummary);
+
     const _schools = learningSummary.schools.map((item) => ({
       id: item.id,
       name: item.name,
@@ -1054,6 +1056,8 @@ export const onLoadLearningSummary = createAsyncThunk<
         id: item.id,
         name: item.name,
       })) || [];
+    console.log("_classes", _classes);
+
     classes = uniqBy(_classes, "id");
     _class_id = class_id ? class_id : "all";
     students =
@@ -1069,7 +1073,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     filter_type: "subject",
     week_start: _week_start,
     week_end: _week_end,
-    school_id: _school_id === "all" ? "" : _school_id,
+    school_id: school_id === "all" || school_id === "none" ? "" : _school_id,
     class_id: _class_id === "all" ? "" : _class_id,
     student_id: _student_id,
   });
@@ -1080,6 +1084,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     };
   });
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
+  console.log("subjects", subjects);
+
   _subject_id = subject_id ? subject_id : subjects[0].id;
   params = {
     year: _year,
@@ -1150,7 +1156,7 @@ export const getAfterClassFilter = createAsyncThunk<
       filter_type: "subject",
       week_start,
       week_end,
-      school_id: school_id === "all" ? "" : school_id,
+      school_id: school_id === "all" || school_id === "none" ? "" : school_id,
       class_id: _class_id === "all" ? "" : _class_id,
       student_id: _student_id,
     });

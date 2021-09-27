@@ -262,6 +262,7 @@ export function getAllUsers(
   let freedomClass: UserType["classes"] = [];
   let allClasses: UserType["classes"] = [];
   let allStudents: UserType["classes"][0]["students"] = [];
+  let noSchoolAllStudents: UserType["classes"][0]["students"] = [];
   // 无学校班级
   freedomClass = noneSchoolClasses.map((item) => ({
     id: item.class_id!,
@@ -272,6 +273,18 @@ export function getAllUsers(
         name: item?.user_name!,
       })) || [],
   }));
+
+  // let allStu: any = [];
+  // noneSchoolClasses.map(item => allStu.push(item.students?.map((item) => ({
+  //   id: item?.user_id!,
+  //   name: item?.user_name!,
+  // })) || []))
+  // freedomClass.unshift({ id: "all", name: d("All").t("report_label_all"), students: allStu});
+  // console.log("freedomClass", freedomClass);
+  freedomClass.forEach((item) => {
+    noSchoolAllStudents = [...noSchoolAllStudents, ...item.students];
+  });
+  freedomClass = [{ id: "all", name: d("All").t("report_label_all"), students: [...noSchoolAllStudents] }, ...freedomClass];
   // 所有学校
   const allSchools = schools.map((item) => ({
     id: item.school_id!,
@@ -299,11 +312,11 @@ export function getAllUsers(
   allClasses.forEach((item) => {
     allStudents = [...allStudents, ...item.students];
   });
-  allStudents = allStudents.slice().sort(sortByStudentName("name"));
+  // allStudents = allStudents.slice().sort(sortByStudentName("name"));
   allClasses.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...allStudents] });
   // 给每个学校的班级添加all选项
   allSchools.forEach((item) => {
-    let curAllStudent: { id: string; name: string }[] = [];
+    let curAllStudent: UserType["classes"][0]["students"] = [];
     item.classes.forEach((item) => {
       curAllStudent = [...curAllStudent, ...item.students];
     });
