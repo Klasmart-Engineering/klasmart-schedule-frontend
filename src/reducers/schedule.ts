@@ -56,6 +56,7 @@ import {
   EntityScheduleFeedbackView,
   EntityScheduleListView,
   EntityScheduleSearchView,
+  EntityScheduleTimeView,
   EntityScheduleViewDetail,
   ModelPublishedOutcomeView,
 } from "../api/api.auto";
@@ -88,7 +89,7 @@ export interface ScheduleState {
   searchScheduleList: EntityScheduleSearchView[];
   saveResult: number;
   scheduleDetial: EntityScheduleDetailsView;
-  scheduleTimeViewData: EntityScheduleListView[];
+  scheduleTimeViewData: EntityScheduleTimeView[];
   scheduleAnyTimeViewData: EntityScheduleListView[];
   scheduleTimeViewYearData: [];
   attachement_id: string;
@@ -296,16 +297,16 @@ export const saveScheduleData = createAsyncThunk<
 );
 
 export interface viewSchedulesResultResponse {
-  scheduleTimeViewData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
+  scheduleTimeViewData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
   scheduleTimeViewYearData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduledDates>;
 }
 
-type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.postScheduledDates>[0] & LoadingMetaPayload;
+type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeViewList>[0] & LoadingMetaPayload;
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultResponse, viewSchedulesParams>(
   "schedule/schedules_time_view",
   async (query) => {
     const [scheduleTimeViewData, scheduleTimeViewYearData] = await Promise.all([
-      api.schedulesTimeView.postScheduleTimeView({ ...query }),
+      api.schedulesTimeView.getScheduleTimeViewList({ ...query }),
       api.schedulesTimeView.postScheduledDates({ ...query }),
     ]);
     return { scheduleTimeViewData, scheduleTimeViewYearData };
