@@ -345,7 +345,7 @@ query schoolByUserQuery($user_id: ID!, $organization_id: ID!) {
     }
   }
 
-query schoolByOrgQuery($organization_id: ID!) { 
+query schoolByOrgQuery($organization_id: ID!) {
     organization(organization_id: $organization_id) {
           schools {
             school_id
@@ -397,11 +397,11 @@ query notParticipantsByOrganization($organization_id: ID!) {
             }
           }
         }
-       
+
      }
    }
 }
-query schoolAndTeacherByOrg($organization_id: ID!) { 
+query schoolAndTeacherByOrg($organization_id: ID!) {
     organization(organization_id: $organization_id) {
           schools {
             school_id
@@ -415,7 +415,7 @@ query schoolAndTeacherByOrg($organization_id: ID!) {
                 user_id
                 user_name
               }
-             
+
             }
           }
     }
@@ -450,6 +450,22 @@ query getPrograms($program_id: ID!){
       id
       name
       status
+    }
+  }
+}
+
+query getSchoolsFilterList($filter: SchoolFilter, $direction: ConnectionDirection!, $directionArgs: ConnectionsDirectionArgs){
+  schoolsConnection(filter: $filter, direction:$direction, directionArgs: $directionArgs) {
+     totalCount
+     edges{
+      cursor
+      node {
+        id
+        name
+      }
+    }
+    pageInfo {
+      hasNextPage
     }
   }
 }

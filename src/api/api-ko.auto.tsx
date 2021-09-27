@@ -666,6 +666,29 @@ export type GetProgramsQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type GetSchoolsFilterListQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.SchoolFilter>;
+  direction: Types.ConnectionDirection;
+  directionArgs?: Types.Maybe<Types.ConnectionsDirectionArgs>;
+}>;
+
+export type GetSchoolsFilterListQuery = { __typename?: "Query" } & {
+  schoolsConnection?: Types.Maybe<
+    { __typename?: "SchoolsConnectionResponse" } & Pick<Types.SchoolsConnectionResponse, "totalCount"> & {
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "SchoolsConnectionEdge" } & Pick<Types.SchoolsConnectionEdge, "cursor"> & {
+                  node?: Types.Maybe<{ __typename?: "SchoolConnectionNode" } & Pick<Types.SchoolConnectionNode, "id" | "name">>;
+                }
+            >
+          >
+        >;
+        pageInfo?: Types.Maybe<{ __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage">>;
+      }
+  >;
+};
+
 export const RoleBasedUsersByOrgnizationDocument = gql`
   query roleBasedUsersByOrgnization($organization_id: ID!) {
     organization(organization_id: $organization_id) {
@@ -1949,3 +1972,54 @@ export function useGetProgramsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetProgramsQueryHookResult = ReturnType<typeof useGetProgramsQuery>;
 export type GetProgramsLazyQueryHookResult = ReturnType<typeof useGetProgramsLazyQuery>;
 export type GetProgramsQueryResult = Apollo.QueryResult<GetProgramsQuery, GetProgramsQueryVariables>;
+export const GetSchoolsFilterListDocument = gql`
+  query getSchoolsFilterList($filter: SchoolFilter, $direction: ConnectionDirection!, $directionArgs: ConnectionsDirectionArgs) {
+    schoolsConnection(filter: $filter, direction: $direction, directionArgs: $directionArgs) {
+      totalCount
+      edges {
+        cursor
+        node {
+          id
+          name
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetSchoolsFilterListQuery__
+ *
+ * To run a query within a React component, call `useGetSchoolsFilterListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSchoolsFilterListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSchoolsFilterListQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      direction: // value for 'direction'
+ *      directionArgs: // value for 'directionArgs'
+ *   },
+ * });
+ */
+export function useGetSchoolsFilterListQuery(
+  baseOptions: Apollo.QueryHookOptions<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>(GetSchoolsFilterListDocument, options);
+}
+export function useGetSchoolsFilterListLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>(GetSchoolsFilterListDocument, options);
+}
+export type GetSchoolsFilterListQueryHookResult = ReturnType<typeof useGetSchoolsFilterListQuery>;
+export type GetSchoolsFilterListLazyQueryHookResult = ReturnType<typeof useGetSchoolsFilterListLazyQuery>;
+export type GetSchoolsFilterListQueryResult = Apollo.QueryResult<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>;

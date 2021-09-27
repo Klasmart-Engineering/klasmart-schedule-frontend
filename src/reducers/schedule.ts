@@ -37,6 +37,7 @@ import {
   SchoolByOrgQueryQuery,
   SchoolByOrgQueryQueryVariables,
   SchoolByUserQueryDocument,
+  GetSchoolsFilterListDocument,
   SchoolByUserQueryQuery,
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
@@ -45,6 +46,8 @@ import {
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
   UserSchoolIDsQueryVariables,
+  GetSchoolsFilterListQuery,
+  GetSchoolsFilterListQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -705,6 +708,20 @@ export const getSchoolByUser = createAsyncThunk("getSchoolByUser", async () => {
     },
   });
 });
+
+export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>(
+  "getSchoolsFilterList",
+  async ({ filter, direction, directionArgs }) => {
+    return gqlapi.query<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>({
+      query: GetSchoolsFilterListDocument,
+      variables: {
+        filter: filter,
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
 
 export const getSchoolByOrg = createAsyncThunk("getSchoolByOrg", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
