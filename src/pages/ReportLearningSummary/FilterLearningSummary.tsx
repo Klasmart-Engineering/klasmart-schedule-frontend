@@ -7,7 +7,6 @@ import { ExternalSubject } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { t } from "../../locale/LocaleManager";
-import { sortByStudentName } from "../../models/ModelReports";
 import { IResultLearningSummary } from "../../reducers/report";
 import { ArrProps, QueryLearningSummaryCondition, QueryLearningSummaryConditionBaseProps } from "./types";
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
@@ -55,7 +54,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   // const isStudent = perm.report_learning_summary_student_649;
   const { value, defaultWeeksValue, summaryReportOptions, onChangeYearFilter, onChangeWeekFilter, onChangeFilter } = props;
   const { years, weeks, schools, classes, students, subjects } = summaryReportOptions;
-  const studentList = students?.slice().sort(sortByStudentName("name"));
+  // const studentList = students?.slice().sort(sortByStudentName("name"));
 
   const getYear = () => {
     return (
@@ -163,7 +162,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
-                {getInfos(studentList || [])}
+                {getInfos(students || [])}
               </TextField>
             </>
           )}

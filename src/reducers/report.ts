@@ -1042,7 +1042,6 @@ export const onLoadLearningSummary = createAsyncThunk<
     const {
       report: { learningSummary },
     } = getState();
-    console.log("learningSummary", learningSummary);
 
     const _schools = learningSummary.schools.map((item) => ({
       id: item.id,
@@ -1056,7 +1055,6 @@ export const onLoadLearningSummary = createAsyncThunk<
         id: item.id,
         name: item.name,
       })) || [];
-    console.log("_classes", _classes);
 
     classes = uniqBy(_classes, "id");
     _class_id = class_id ? class_id : "all";
@@ -1084,7 +1082,6 @@ export const onLoadLearningSummary = createAsyncThunk<
     };
   });
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
-  console.log("subjects", subjects);
 
   _subject_id = subject_id ? subject_id : subjects[0].id;
   params = {
