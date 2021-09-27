@@ -1195,26 +1195,6 @@ export const onLoadLearningSummary = createAsyncThunk<
             });
           }
         });
-        //   const noneSchoolClasses =
-        //   learningSummary.noneSchoolClasses.map((item) => ({
-        //     id: item.class_id!,
-        //     name: item.class_name!,
-        //   })) || [];
-        // learningSummary.schoolList.forEach((item) => {
-        //   const classArr =
-        //     item.classes?.map((item) => ({
-        //       id: item?.class_id!,
-        //       name: item?.class_name!,
-        //     })) || [];
-        //   classes = [...classes, ...classArr, ...noneSchoolClasses];
-        // });
-        // console.log(classes);
-        // const classObj = classes?.find((item) => item?.class_id === class_id)
-        // students =
-        //   classObj?.students?.map((item) => ({
-        //     id: item?.user_id!,
-        //     name: item?.user_name!,
-        //   })) || [];
         students = uniqBy(studentArr, "id");
       } else {
         const school = learningSummary.schoolList.find((item) => item.school_id === school_id);
@@ -1262,6 +1242,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   });
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
   _subject_id = subject_id ? subject_id : "all";
+  console.log("subjects", subjects);
 
   params = {
     year: _year,
@@ -1281,7 +1262,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     student_id: _student_id,
     subject_id: _subject_id,
   };
-  if (_student_id && _subject_id && _student_id !== "none" && _subject_id !== "none" && _year && _week_start && _week_end) {
+  // if (_student_id && _subject_id && _student_id !== "none" && _subject_id !== "none" && _year && _week_start && _week_end) {
+  if (_student_id && _student_id !== "none" && _subject_id !== "none" && _year && _week_start && _week_end) {
     await dispatch(getLiveClassesSummary({ ...params, metaLoading }));
     await dispatch(getAssignmentSummary({ ...params, metaLoading }));
   }
@@ -1610,26 +1592,6 @@ export const getAfterClassFilter = createAsyncThunk<
             });
           }
         });
-        //   const noneSchoolClasses =
-        //   learningSummary.noneSchoolClasses.map((item) => ({
-        //     id: item.class_id!,
-        //     name: item.class_name!,
-        //   })) || [];
-        // learningSummary.schoolList.forEach((item) => {
-        //   const classArr =
-        //     item.classes?.map((item) => ({
-        //       id: item?.class_id!,
-        //       name: item?.class_name!,
-        //     })) || [];
-        //   classes = [...classes, ...classArr, ...noneSchoolClasses];
-        // });
-        // console.log(classes);
-        // const classObj = classes?.find((item) => item?.class_id === class_id)
-        // students =
-        //   classObj?.students?.map((item) => ({
-        //     id: item?.user_id!,
-        //     name: item?.user_name!,
-        //   })) || [];
         students = uniqBy(studentArr, "id");
       } else {
         const school = learningSummary.schoolList.find((item) => item.school_id === school_id);
@@ -1691,7 +1653,8 @@ export const getAfterClassFilter = createAsyncThunk<
     student_id: _student_id,
     subject_id: _subject_id === "all" ? "" : _subject_id,
   };
-  if (params.student_id && params.subject_id && params.student_id !== "none" && params.subject_id !== "none") {
+  // if (params.student_id && params.subject_id && params.student_id !== "none" && params.subject_id !== "none") {
+  if (params.student_id && params.student_id !== "none" && params.subject_id !== "none") {
     summary_type === ReportType.live ? dispatch(getLiveClassesSummary({ ...params })) : dispatch(getAssignmentSummary({ ...params }));
   }
   if (filter_type === "class") {
