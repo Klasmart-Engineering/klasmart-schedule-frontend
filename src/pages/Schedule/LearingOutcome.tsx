@@ -169,7 +169,6 @@ function SelectGroup(props: filterGropProps) {
         }
       } else {
         dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
-        return;
       }
     }
     const filterIds = value?.map((item: any) => {
@@ -391,6 +390,7 @@ export default function LearingOutcome(props: InfoProps) {
     filterGropuData,
     handelSetProgramChildInfo,
     programChildInfoParent,
+    viewSubjectPermission,
   } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
@@ -612,6 +612,7 @@ export default function LearingOutcome(props: InfoProps) {
           filterQuery={filterQuery}
           setFilterQuery={setFilterQuery}
           getFilterQueryAssembly={getFilterQueryAssembly}
+          viewSubjectPermission={viewSubjectPermission}
         />
       </Box>
       <div
