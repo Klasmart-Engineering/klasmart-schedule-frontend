@@ -123,9 +123,9 @@ const lang = {
 const colors = ["#005096", "#0E78D5", "#CC8685", "#E9BEBD"];
 
 interface Props {
-  teacherChange: (id?: string) => void;
-  teacherIds: string[];
-  classIds: string[];
+  teacherChange: (id?: string, days?: number) => void;
+  teacherIds: { label: string; value: string }[];
+  classIds: { label: string; value: string }[];
 }
 
 const computeTimeStamp = (days: number) => {
@@ -198,7 +198,7 @@ export default function (props: Props) {
 
   const clickTeacher = (id?: string) => {
     currentOpenedTeacher.current = currentOpenedTeacher.current === id ? undefined : id;
-    props.teacherChange(currentOpenedTeacher.current);
+    props.teacherChange(currentOpenedTeacher.current, selectItem);
   };
 
   const getList = () => {
@@ -216,8 +216,8 @@ export default function (props: Props) {
   }, []);
 
   useEffect(() => {
-    queryParams.current.class_ids = props.classIds;
-    queryParams.current.teacher_ids = props.teacherIds;
+    queryParams.current.class_ids = props.classIds.map((item) => item.value);
+    queryParams.current.teacher_ids = props.teacherIds.map((item) => item.value);
     pageRef.current = 0;
     setPage(pageRef.current);
     setCount(props.teacherIds.length);
@@ -277,7 +277,7 @@ export default function (props: Props) {
           onClick={() => clickTeacher(item.teacher_id)}
           className={clsx(style.tearchName, style.itemTearchName)}
         >
-          {item.total_scheduled}
+          {props.teacherIds.find((v) => v.value === item.teacher_id)?.label}
         </Grid>
         <Grid item container justify={"center"} alignItems={"center"} className={style.chartField}>
           {item.number_of_classes}
@@ -333,7 +333,6 @@ export default function (props: Props) {
           {list.map((item) => {
             return renderTableItem(item);
           })}
-          {renderTableItem({ teacher_id: "232", completed_in_class_lessons: 232 })}
         </Grid>
         <ReportPagination page={page + 1} count={count} onChangePage={pageWillChange} />
       </Grid>

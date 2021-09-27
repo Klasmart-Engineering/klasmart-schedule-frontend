@@ -3,8 +3,8 @@ import LessonChart from "../components/LessonChart";
 import LessonTable from "../components/LessonTable";
 
 export default function () {
-  const teacherChange = (id?: string) => {
-    console.log(id);
+  const teacherChange = (id?: string, days?: number) => {
+    console.log(id, days);
   };
 
   return (
