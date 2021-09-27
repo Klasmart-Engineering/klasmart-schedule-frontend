@@ -169,6 +169,7 @@ function SelectGroup(props: filterGropProps) {
         }
       } else {
         dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
+        return;
       }
     }
     const filterIds = value?.map((item: any) => {
