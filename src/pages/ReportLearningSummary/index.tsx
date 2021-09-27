@@ -24,7 +24,19 @@ export interface IWeeks {
 interface RouteParams {
   tab: QueryLearningSummaryRemainingFilterCondition["summary_type"];
 }
-
+// export const getWeeks = (): IWeeks[] => {
+//   let week_start = new Date("2021-01-04 00:00").getTime() / 1000;
+//   const currentTime = new Date().getTime() / 1000;
+//   let week_end = week_start + 7 * 24 * 60 * 60 - 1;
+//   const weeks: IWeeks[] = [];
+//   while (week_end < currentTime) {
+//     const item = `${formatTimeToMonDay(week_start)}~${formatTimeToMonDay(week_end)}`;
+//     weeks.push({ week_start, week_end, value: item });
+//     week_start = week_end + 1;
+//     week_end = week_start + 7 * 24 * 60 * 60 - 1;
+//   }
+//   return weeks;
+// };
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] == null) delete obj[key];
@@ -60,7 +72,6 @@ export function ReportLearningSummary() {
   const { liveClassSummary, assignmentSummary, summaryReportOptions } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
-
   const perm = usePermission([
     PermissionType.report_learning_summary_org_652,
     PermissionType.report_learning_summary_school_651,
@@ -84,7 +95,6 @@ export function ReportLearningSummary() {
   };
 
   const handleChangeWeekFilter: FilterLearningSummaryProps["onChangeWeekFilter"] = (week_start, week_end) => {
-    dispatch(resetSummaryOptions({ week_start, week_end }));
     dispatch(
       onLoadLearningSummary({
         summary_type: tab,
@@ -100,9 +110,20 @@ export function ReportLearningSummary() {
     );
   };
   const handleChangeYearFilter: FilterLearningSummaryProps["onChangeYearFilter"] = (year) => {
-    dispatch(resetSummaryOptions({ year, years: [], weeks: [], week_start: 0, week_end: 0 }));
-    dispatch(onLoadLearningSummary({ summary_type: tab, year, metaLoading: true }));
-    history.replace(`${routeBasePath}/tab/${tab}?lessonIndex=-1&year=${year}`);
+    dispatch(resetSummaryOptions({ year }));
+    dispatch(
+      onLoadLearningSummary({
+        summary_type: tab,
+        year,
+        week_start: 0,
+        week_end: 0,
+        school_id: "",
+        class_id: "",
+        student_id: "",
+        subject_id: "",
+        metaLoading: true,
+      })
+    );
   };
   const handleChangeFilter: FilterLearningSummaryProps["onChangeFilter"] = (value, tab) => {
     computeFilterChange(value, tab);
