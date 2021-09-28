@@ -235,9 +235,9 @@ export function ViewByStudents(props: BasicTableProps) {
     return value ? reBytesStr(value, CharacterCount) : "";
   };
 
-  const showCommentsElement = () => {
-    return studentViewItem.lesson_materials?.some((lesson) => lesson.lesson_material_type !== "");
-  };
+  // const showCommentsElement = () => {
+  //   return studentViewItem.lesson_materials?.some((lesson) => lesson.lesson_material_type !== "");
+  // };
 
   return (
     <TableContainer style={{ marginBottom: "20px", display: studentViewItem.is_hide ? "none" : "block" }}>
@@ -250,7 +250,7 @@ export function ViewByStudents(props: BasicTableProps) {
         <div style={{ color: checked ? "black" : "#666666" }}>
           <AccountCircleIcon />
           <span style={{ padding: "0 18px 0 18px" }}>{studentViewItem.student_name}</span>
-          {editable && !isComplete && showCommentsElement() && (
+          {editable && !isComplete && (
             <span
               onClick={(e) => {
                 e.stopPropagation();
@@ -267,7 +267,7 @@ export function ViewByStudents(props: BasicTableProps) {
               {d("Click to add comments").t("assess_detail_click_to_add_comments")}
             </span>
           )}
-          {isComplete && showCommentsElement() && studentViewItem.comment && (
+          {isComplete && studentViewItem.comment && (
             <span
               onClick={(e) => {
                 e.stopPropagation();

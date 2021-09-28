@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       color: "#fff",
-      width: "156px",
+      minWidth: "156px",
       fontSize: "14px",
       background: "#000",
       borderRadius: "10px",
@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 interface Props {
+  totalText?: string;
   content: EntityContentUsage[];
   children: ReactElement;
 }
@@ -55,7 +56,7 @@ export default function ReportTooltip(props: Props) {
       placement="top"
       title={
         count !== 0 ? (
-          <Grid container direction={"column"}>
+          <Grid container direction={"column"} style={{ width: "280px" }}>
             {props.content.map((item, key) => {
               return (
                 <Grid container justify={"space-between"} className={classes.item} key={key}>
@@ -65,7 +66,7 @@ export default function ReportTooltip(props: Props) {
               );
             })}
             <Grid container justify={"space-between"} className={classes.item} style={{ margin: 0 }}>
-              {d("Total").t("report_student_usage_total")}
+              {props.totalText || d("Total").t("report_student_usage_total")}
               <label>{count}</label>
             </Grid>
           </Grid>

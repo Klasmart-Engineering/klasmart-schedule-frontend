@@ -7,7 +7,7 @@ import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
   HorizontalBarStackChartStructSize,
-  HorizontalBarStackDataItem
+  HorizontalBarStackDataItem,
 } from "../../../components/Chart/HorizontalBarStackChart";
 import { d, t } from "../../../locale/LocaleManager";
 import { time2colorLevel } from "../../../models/ModelReports";

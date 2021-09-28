@@ -123,7 +123,7 @@ const useStyles = makeStyles({
 });
 
 interface InfoProps {
-  handleDelete: (scheduleInfo: scheduleInfoViewProps) => void;
+  handleDelete: (scheduleInfo: EntityScheduleViewDetail) => void;
   handleClose: () => void;
   scheduleInfo: scheduleInfoViewProps;
   toLive: () => void;
@@ -173,10 +173,10 @@ export default function CustomizeTempalte(props: InfoProps) {
     return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
   };
 
-  const handleEditSchedule = (scheduleInfo: scheduleInfoViewProps): void => {
+  const handleEditSchedule = (scheduleInfo: EntityScheduleViewDetail): void => {
     const currentTime = Math.floor(new Date().getTime());
     if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
-      if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
+      if (scheduleInfo.due_at !== 0 && (scheduleInfo.due_at as number) * 1000 < currentTime) {
         changeModalDate({
           title: "",
           // text: "You cannot edit this event after the due date",
@@ -199,7 +199,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       }
     }
     handleClose();
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
+    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${ScheduleViewInfo.id}`);
   };
 
   const handleGoLive = (scheduleInfos: ScheduleEditExtend) => {
@@ -225,7 +225,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                 customizeTemplate: (
                   <CustomizeTempalte
                     handleDelete={() => {
-                      handleDelete(scheduleInfo);
+                      handleDelete(ScheduleViewInfo);
                     }}
                     handleClose={() => {
                       changeModalDate({ openStatus: false, enableCustomization: false });
@@ -258,12 +258,12 @@ export default function CustomizeTempalte(props: InfoProps) {
     }
 
     handleClose();
-    dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
+    dispatch(scheduleUpdateStatus({ schedule_id: ScheduleViewInfo.id as string, status: { status: "Started" } }));
     window.open(apiLivePath(liveToken));
   };
 
   const deleteHandle = () => {
-    if (scheduleInfo.class_type_label?.id === "Homework" && scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
+    if (ScheduleViewInfo.class_type_label?.id === "Homework" && ScheduleViewInfo.exist_assessment && !ScheduleViewInfo.is_home_fun) {
       changeModalDate({
         title: "",
         // text: "You cannot edit this event after the due date",
@@ -286,7 +286,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       });
       return;
     }
-    if (scheduleInfo.exist_feedback) {
+    if (ScheduleViewInfo.exist_feedback) {
       changeModalDate({
         title: "",
         text: d("This event cannot be deleted because assignments have already been uploaded. Do you want to hide it instead?").t(
@@ -315,20 +315,20 @@ export default function CustomizeTempalte(props: InfoProps) {
         },
       });
     } else {
-      handleDelete(scheduleInfo);
+      handleDelete(ScheduleViewInfo);
     }
   };
 
   const handleHide = async () => {
     await dispatch(
       scheduleShowOption({
-        schedule_id: scheduleInfo.id as string,
-        show_option: { show_option: scheduleInfo.is_hidden ? "visible" : "hidden" },
+        schedule_id: ScheduleViewInfo.id as string,
+        show_option: { show_option: ScheduleViewInfo.is_hidden ? "visible" : "hidden" },
       })
     );
-    handleChangeHidden(!scheduleInfo.is_hidden);
+    handleChangeHidden(!ScheduleViewInfo.is_hidden);
     refreshView(
-      scheduleInfo.is_hidden
+      ScheduleViewInfo.is_hidden
         ? d("This event is visible again.").t("schedule_msg_visible")
         : d("This event has been hidden").t("schedule_msg_hidden")
     );
@@ -344,17 +344,17 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const disableDelete = () => {
-    if (!scheduleInfo.is_home_fun && scheduleInfo.class_type_label?.id === "Homework") {
-      return scheduleInfo.complete_assessment;
+    if (!ScheduleViewInfo.is_home_fun && ScheduleViewInfo.class_type_label?.id === "Homework") {
+      return ScheduleViewInfo.complete_assessment;
     } else {
-      return scheduleInfo.status !== "NotStart";
+      return ScheduleViewInfo.status !== "NotStart";
     }
   };
 
   const showDelete = () => {
-    return !scheduleInfo.is_home_fun && scheduleInfo.class_type_label?.id === "Homework"
-      ? scheduleInfo.status !== "Closed"
-      : scheduleInfo.status === "NotStart";
+    return !ScheduleViewInfo.is_home_fun && ScheduleViewInfo.class_type_label?.id === "Homework"
+      ? ScheduleViewInfo.status !== "Closed"
+      : ScheduleViewInfo.status === "NotStart";
   };
 
   const reBytesStr = (str: string, len: number) => {
@@ -380,12 +380,12 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span>{textEllipsis(ScheduleViewInfo.title)}</span>
         </Tooltip>
         <div className={classes.iconPart}>
-          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(scheduleInfo)} />
-          {scheduleInfo.exist_feedback && scheduleInfo.is_hidden && !privilegedMembers("Student") && (
+          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
+          {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
-          {!scheduleInfo.is_hidden && disableDelete() && <DeleteOutlined className={classes.disableLastIcon} />}
-          {!scheduleInfo.is_hidden && showDelete() && (
+          {!ScheduleViewInfo.is_hidden && disableDelete() && <DeleteOutlined className={classes.disableLastIcon} />}
+          {!ScheduleViewInfo.is_hidden && showDelete() && (
             <Permission
               value={PermissionType.delete_event_540}
               render={(value) =>
@@ -403,8 +403,8 @@ export default function CustomizeTempalte(props: InfoProps) {
         </div>
       </div>
       {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
-        scheduleInfo.class_type_label?.id !== "Task" &&
-        !scheduleInfo.is_home_fun && (
+        ScheduleViewInfo.class_type_label?.id !== "Task" &&
+        !ScheduleViewInfo.is_home_fun && (
           <p className={classes.checkPlan}>
             {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
           </p>

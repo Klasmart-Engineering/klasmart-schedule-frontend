@@ -56,6 +56,11 @@ import {
   EntityStudentUsageMaterialViewCountReportResponse,
   EntityTeacherLoadAssignmentRequest,
   EntityTeacherLoadAssignmentResponse,
+  EntityTeacherLoadLesson,
+  EntityTeacherLoadLessonRequest,
+  EntityTeacherLoadLessonSummary,
+  EntityTeacherLoadMissedLessonsRequest,
+  EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
@@ -104,6 +109,10 @@ interface IreportState {
     canSelectTeacher: boolean;
   };
 
+  teacherLoadLesson: {
+    list: EntityTeacherLoadLesson[];
+    statistic: EntityTeacherLoadLessonSummary;
+  };
   studentUsageReport: [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse];
   teachingLoadOnload: TeachingLoadResponse;
   liveClassSummary: EntityQueryLiveClassesSummaryResult;
@@ -114,6 +123,7 @@ interface IreportState {
   overview: EntityClassesAssignmentOverView[];
   teacherLoadAssignment: EntityTeacherLoadAssignmentResponse[];
   next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
+  listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse;
 }
 
 interface IObj {
@@ -150,6 +160,10 @@ const initialState: IreportState = {
   categoriesPage: {
     teacherList: [],
     categories: [],
+  },
+  teacherLoadLesson: {
+    list: [],
+    statistic: {},
   },
   studentUsageReport: [{ class_usage_list: [] }, { content_usage_list: [] }],
   stuReportMockOptions: {
@@ -214,6 +228,7 @@ const initialState: IreportState = {
   overview: [],
   teacherLoadAssignment: [],
   next7DaysLessonLoadList: [],
+  listTeacherMissedLessons: {},
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -664,7 +679,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
     let schoolList: Iitem[] = [];
     let teacherList: Iitem[] = [];
     let classList: Iitem[] = [];
-    const allItem: Iitem[] = [{value: "all",label: "All"}];
+    const allItem: Iitem[] = [{ value: "all", label: "All" }];
     let newteacher_ids: string = teacher_ids;
     // 拉取我的user_id
     const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
@@ -708,12 +723,13 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           user_id: my_id,
         },
       });
-      const newSchoolList = data.user?.school_memberships
-        ?.filter(
-          (schoolItem) =>
-            schoolItem?.school?.organization?.organization_id === organization_id && schoolItem.school.status === Status.Active
-        )
-        .map((schoolMember) => ({value: schoolMember?.school?.school_id,label:schoolMember?.school?.school_name} as Iitem)) || [];
+      const newSchoolList =
+        data.user?.school_memberships
+          ?.filter(
+            (schoolItem) =>
+              schoolItem?.school?.organization?.organization_id === organization_id && schoolItem.school.status === Status.Active
+          )
+          .map((schoolMember) => ({ value: schoolMember?.school?.school_id, label: schoolMember?.school?.school_name } as Iitem)) || [];
       schoolList = schoolList.concat(newSchoolList);
       const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
         query: ClassesTeachingQueryDocument,
@@ -725,7 +741,10 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       result.user?.membership?.classesTeaching
         ?.filter((classItem) => classItem?.status === Status.Active)
         .forEach((classItem) => {
-          const schoolListRow = classItem?.schools?.map(schoolItem=>({value:schoolItem?.school_id,label:schoolItem?.school_name})) as Iitem[];
+          const schoolListRow = classItem?.schools?.map((schoolItem) => ({
+            value: schoolItem?.school_id,
+            label: schoolItem?.school_name,
+          })) as Iitem[];
           schoolList = schoolList?.concat(schoolListRow || []);
         });
 
@@ -740,7 +759,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
         });
         schoolListResult.organization?.schools?.forEach((schoolItem) => {
           if (schoolItem?.status === Status.Active) {
-            schoolList?.push({value:schoolItem?.school_id, label:schoolItem?.school_name} as Iitem);
+            schoolList?.push({ value: schoolItem?.school_id, label: schoolItem?.school_name } as Iitem);
           }
         });
         if (school_id === "all") {
@@ -754,9 +773,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           data.organization?.classes?.forEach((classItem) => {
             if (classItem?.status === Status.Active) {
               const newTeacherList = classItem?.teachers
-              ?.map((teacherItem) => ({value:teacherItem?.user_id,label:teacherItem?.user_name}))
-              .filter((item) => item?.value !== "") as Iitem[];
-            teacherList = teacherList?.concat(newTeacherList ||[]  );
+                ?.map((teacherItem) => ({ value: teacherItem?.user_id, label: teacherItem?.user_name }))
+                .filter((item) => item?.value !== "") as Iitem[];
+              teacherList = teacherList?.concat(newTeacherList || []);
             }
           });
           const { data: notParticipantsdata } = await gqlapi.query<
@@ -771,9 +790,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           notParticipantsdata.organization?.classes?.forEach((classItem) => {
             if (classItem?.status === Status.Active && classItem.schools?.length === 0) {
               const newTeacherList = classItem?.teachers
-              ?.map((teacherItem) => ({value:teacherItem?.user_id,label:teacherItem?.user_name}))
-              .filter((item) => item?.value !== "") as Iitem[];
-            teacherList = teacherList?.concat(newTeacherList ||[]  );
+                ?.map((teacherItem) => ({ value: teacherItem?.user_id, label: teacherItem?.user_name }))
+                .filter((item) => item?.value !== "") as Iitem[];
+              teacherList = teacherList?.concat(newTeacherList || []);
             }
           });
         } else if (school_id === "no_assigned") {
@@ -787,9 +806,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           data.organization?.classes?.forEach((classItem) => {
             if (classItem?.status === Status.Active && classItem.schools?.length === 0) {
               const newTeacherList = classItem?.teachers
-                ?.map((teacherItem) => ({value:teacherItem?.user_id,label:teacherItem?.user_name}))
+                ?.map((teacherItem) => ({ value: teacherItem?.user_id, label: teacherItem?.user_name }))
                 .filter((item) => item?.value !== "") as Iitem[];
-              teacherList = teacherList?.concat(newTeacherList ||[]  );
+              teacherList = teacherList?.concat(newTeacherList || []);
             }
           });
         } else {
@@ -802,9 +821,9 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           });
           data.school?.classes?.forEach((classItem) => {
             const newTeacherList = classItem?.teachers
-            ?.map((teacherItem) => ({value:teacherItem?.user_id,label:teacherItem?.user_name}))
-            .filter((item) => item?.value !== "") as Iitem[];
-            teacherList = teacherList?.concat(newTeacherList ||[]  );
+              ?.map((teacherItem) => ({ value: teacherItem?.user_id, label: teacherItem?.user_name }))
+              .filter((item) => item?.value !== "") as Iitem[];
+            teacherList = teacherList?.concat(newTeacherList || []);
           });
         }
       }
@@ -820,8 +839,8 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             (schoolItem) =>
               schoolItem?.school?.organization?.organization_id === organization_id && schoolItem.school.status === Status.Active
           )
-          .map((schoolMember) => ({value: schoolMember?.school?.school_id,label:schoolMember?.school?.school_name} as Iitem));
-        schoolList = newSchoolList?.length ? schoolList.concat(newSchoolList):schoolList;
+          .map((schoolMember) => ({ value: schoolMember?.school?.school_id, label: schoolMember?.school?.school_name } as Iitem));
+        schoolList = newSchoolList?.length ? schoolList.concat(newSchoolList) : schoolList;
         if (perm.view_my_reports_614) {
           const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
             query: ClassesTeachingQueryDocument,
@@ -833,7 +852,10 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
           result.user?.membership?.classesTeaching
             ?.filter((classItem) => classItem?.status === Status.Active)
             .forEach((classItem) => {
-              const schoolListRow = classItem?.schools?.map(schoolItem=>({value:schoolItem?.school_id,label:schoolItem?.school_name})) as Iitem[];
+              const schoolListRow = classItem?.schools?.map((schoolItem) => ({
+                value: schoolItem?.school_id,
+                label: schoolItem?.school_name,
+              })) as Iitem[];
               schoolList = schoolList?.concat(schoolListRow || []);
             });
 
@@ -846,9 +868,7 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             .map((schoolItem) =>
               schoolItem?.school?.classes?.forEach(
                 (classItem) =>
-                  (teacherList = teacherList?.concat(
-                    (classItem?.status === Status.Active ? classItem?.teachers : []) as Iitem[]
-                  ))
+                  (teacherList = teacherList?.concat((classItem?.status === Status.Active ? classItem?.teachers : []) as Iitem[]))
               )
             );
           if (perm.view_my_reports_614) {
@@ -863,14 +883,11 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
             },
           });
           data.school?.classes?.forEach((classItem) => {
-            teacherList = teacherList?.concat(
-              (classItem?.status === Status.Active ? classItem?.teachers : []) as Iitem[]
-            );
+            teacherList = teacherList?.concat((classItem?.status === Status.Active ? classItem?.teachers : []) as Iitem[]);
           });
         } else if (perm.view_my_reports_614) {
           teacherList = teacherList.concat([{ value: my_id, label: meInfo?.me?.user_name || "" }]);
         }
-     
       }
     }
 
@@ -890,13 +907,19 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       if (school_id === "no_assigned") {
         classListall = classListall?.filter((classItem) => classItem?.schools?.length === 0);
       }
-      const newClassList= classListall?.filter((classItem) => classItem?.status === Status.Active).map(classItem => ({value:classItem?.class_id, label:classItem?.class_name})) as Iitem[];
+      const newClassList = classListall
+        ?.filter((classItem) => classItem?.status === Status.Active)
+        .map((classItem) => ({ value: classItem?.class_id, label: classItem?.class_name })) as Iitem[];
       classList = classList?.concat(newClassList);
     }
     teacherList = ModelReport.ListSetDiff(allItem.concat(teacherList));
     schoolList = ModelReport.ListSetDiff(allItem.concat(schoolList));
     teachingLoadList =
-      (await api.reports.listTeachingLoadReport({  teacher_ids: teacherIdList, class_ids:class_ids.split(","), time_offset: TIME_OFFSET })) || [];
+      (await api.reports.listTeachingLoadReport({
+        teacher_ids: teacherIdList,
+        class_ids: class_ids.split(","),
+        time_offset: TIME_OFFSET,
+      })) || [];
     return {
       schoolList,
       teacherList,
@@ -909,6 +932,24 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
 
 */
 
+interface listTeacherLoadLessonsResponse {
+  lessonList: EntityTeacherLoadLesson[];
+  lessonSummary: EntityTeacherLoadLessonSummary;
+}
+
+interface ListTeacherLoadLessonRequest extends EntityTeacherLoadLessonRequest {
+  metaLoading: boolean;
+}
+
+export const getLessonTeacherLoad = createAsyncThunk<listTeacherLoadLessonsResponse, ListTeacherLoadLessonRequest>(
+  "listTeacherLoadLessons",
+  async ({ metaLoading, ...query }) => {
+    return {
+      lessonList: await api.reports.listTeacherLoadLessons(query),
+      lessonSummary: await api.reports.summaryTeacherLoadLessons(query),
+    };
+  }
+);
 export type IParamsQueryLiveClassSummary = Parameters<typeof api.reports.queryLiveClassesSummary>[0];
 export type IResultQueryLiveClassSummary = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;
 export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSummary, IParamsQueryLiveClassSummary & LoadingMetaPayload>(
@@ -1585,6 +1626,11 @@ export const getTeachingLoadReport = createAsyncThunk<
   EntityReportListTeachingLoadArgs & LoadingMetaPayload
 >("getTeachingLoadReport", async ({ metaLoading, ...query }) => await api.reports.listTeachingLoadReport(query));
 
+export const getListTeacherMissedLessons = createAsyncThunk<
+  EntityTeacherLoadMissedLessonsResponse,
+  EntityTeacherLoadMissedLessonsRequest & LoadingMetaPayload
+>("getListTeacherMissedLessons", async ({ metaLoading, ...query }) => await api.reports.listTeacherMissedLessons(query));
+
 const { actions, reducer } = createSlice({
   name: "report ",
   initialState,
@@ -1854,6 +1900,12 @@ const { actions, reducer } = createSlice({
           : (state.assignmentSummary = initialState.assignmentSummary);
       }
     },
+    [getLessonTeacherLoad.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonTeacherLoad>>) => {
+      state.teacherLoadLesson = {
+        list: payload.lessonList,
+        statistic: payload.lessonSummary,
+      };
+    },
     [getLiveClassesSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveClassesSummary>>) => {
       state.liveClassSummary = payload;
     },
@@ -1948,6 +2000,12 @@ const { actions, reducer } = createSlice({
     },
     [getTeachingLoadReport.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachingLoadReport>>) => {
       state.next7DaysLessonLoadList = payload.items;
+    },
+    [getListTeacherMissedLessons.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getListTeacherMissedLessons>>
+    ) => {
+      state.listTeacherMissedLessons = payload;
     },
   },
 });
