@@ -19,7 +19,7 @@ import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, resetSch
 import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps, memberType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
-import { EntityScheduleListView, EntityScheduleViewDetail } from "../../api/api.auto";
+import { EntityScheduleTimeView, EntityScheduleViewDetail } from "../../api/api.auto";
 import "moment/locale/zh-cn";
 import "moment/locale/vi";
 import "moment/locale/ko";
@@ -153,10 +153,10 @@ function MyCalendar(props: CalendarProps) {
 
   const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
 
-  const scheduleTimeViewDataFormat = (data: EntityScheduleListView[]): scheduleInfoViewProps[] => {
+  const scheduleTimeViewDataFormat = (data: EntityScheduleTimeView[]): scheduleInfoViewProps[] => {
     const newViewData: any = [];
     if (data.length > 0) {
-      data.forEach((item: EntityScheduleListView) => {
+      data.forEach((item: EntityScheduleTimeView) => {
         if (!item) return;
         newViewData.push({
           ...item,
@@ -421,7 +421,7 @@ function MyCalendar(props: CalendarProps) {
   };
 
   const eventColor = [
-    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "82%" }} /> },
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "78%" }} /> },
     { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon style={{ width: "86%" }} /> },
     { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "86%" }} /> },
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },

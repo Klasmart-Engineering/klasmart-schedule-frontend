@@ -3,7 +3,7 @@ import { User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem
+  EntityStudentAchievementReportCategoryItem,
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
@@ -48,9 +48,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
     .toString()
-    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",
@@ -253,7 +253,7 @@ export interface ILatestThreeMonths {
   latestThreeMonthsDate: number[];
   latestThreeMonthsDots: string[];
 }
-export function getDurationByDay(day:number){
+export function getDurationByDay(day: number) {
   const currentTime = Math.floor(new Date().getTime() / 1000);
   return `${currentTime - 3600 * 24 * day}-${currentTime}`;
 }

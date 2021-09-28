@@ -11,44 +11,38 @@ import { TeacherLoadChart } from "../components/TeacherLoadChart";
 // const TIME_OFFSET = moment().utcOffset() * 60;
 export default function () {
   const dispatch = useDispatch();
-  const {next7DaysLessonLoadList: list} = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { next7DaysLessonLoadList: list } = useSelector<RootState, RootState["report"]>((state) => state.report);
   // 如果没有数据，使用mock的数据
-  const next7DaysLessonLoadList = list && list?.length ?list : teachingLoadJson.items
-  const [page,setPage] = React.useState(1);
+  const next7DaysLessonLoadList = list && list?.length ? list : teachingLoadJson.items;
+  const [page, setPage] = React.useState(1);
   const total = 10;
-  const handleChangePge= React.useMemo(()=> (page:number)=> {
-    setPage(page)
-    // dispatch(getTeachingLoadReport({metaLoading: true, time_offset:TIME_OFFSET, teacher_ids:[], class_ids:[] }));
-
-    
-  },[])
+  const handleChangePge = React.useMemo(
+    () => (page: number) => {
+      setPage(page);
+      // dispatch(getTeachingLoadReport({metaLoading: true, time_offset:TIME_OFFSET, teacher_ids:[], class_ids:[] }));
+    },
+    []
+  );
 
   useEffect(() => {
     setPage(1);
     // dispatch(getTeachingLoadReport({metaLoading: true, time_offset:TIME_OFFSET, teacher_ids:[], class_ids:[] }));
-  }, [dispatch ]);
+  }, [dispatch]);
 
   return (
     <Fragment>
-        {next7DaysLessonLoadList && next7DaysLessonLoadList.length > 0 ? (
-          <>
-            <InfoTeacherLoad />
-            <TeacherLoadChart
-              data={formatTeachingLoadList(next7DaysLessonLoadList).formatedData}
-              xLabels={formatTeachingLoadList(next7DaysLessonLoadList).xLabels}
-            />
-            <ReportPagination
-              page={page}
-              count={total}
-              onChangePage={(page) => handleChangePge(page)}
-            />
-          </>
-        ) : (
-          emptyTip
-        )
-       }
+      {next7DaysLessonLoadList && next7DaysLessonLoadList.length > 0 ? (
+        <>
+          <InfoTeacherLoad />
+          <TeacherLoadChart
+            data={formatTeachingLoadList(next7DaysLessonLoadList).formatedData}
+            xLabels={formatTeachingLoadList(next7DaysLessonLoadList).xLabels}
+          />
+          <ReportPagination page={page} count={total} onChangePage={(page) => handleChangePge(page)} />
+        </>
+      ) : (
+        emptyTip
+      )}
     </Fragment>
   );
 }
-
-

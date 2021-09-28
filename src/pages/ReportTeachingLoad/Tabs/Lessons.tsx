@@ -2,13 +2,14 @@ import React from "react";
 import LessonChart from "../components/LessonChart";
 
 export default function () {
-  const teacherChange = (id?: string) => {
-    console.log(id);
+  const teacherChange = (id?: string, days?: number) => {
+    console.log(id, days);
   };
 
   return (
     <div>
-      <LessonChart teacherChange={teacherChange} />
+      <LessonChart teacherChange={teacherChange} teacherIds={[]} classIds={[]} />
+      <LessonTable />
     </div>
   );
 }

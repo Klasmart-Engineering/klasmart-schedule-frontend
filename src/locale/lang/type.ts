@@ -1315,14 +1315,22 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
   | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
   | { id: "report_teaching_load_lesson_title"; description: "Total Lessons (Live and In Class) Scheduled"; values: undefined }
-  | { id: "report_teaching_load_lesson_classes_column"; description: "No of Classes"; values: undefined }
-  | { id: "report_teaching_load_lesson_student_column"; description: "No of Student"; values: undefined }
-  | { id: "report_teaching_load_lesson_current"; description: "current"; values: undefined }
+  | { id: "report_teaching_load_classes_column"; description: "No.of Classes"; values: undefined }
+  | { id: "report_teaching_load_student_column"; description: "No.of Student"; values: undefined }
+  | { id: "report_teaching_load_current"; description: "current"; values: undefined }
   | { id: "report_teaching_load_lesson_live_completed"; description: "Live Lessons Completed"; values: undefined }
   | { id: "report_teaching_load_lesson_in_class_completed"; description: "In Class Lessons Completed"; values: undefined }
   | { id: "report_teaching_load_lesson_live_missed"; description: "Live Lessons Missed"; values: undefined }
   | { id: "report_teaching_load_lesson_in_class_missed"; description: "In Class Lessons Missed"; values: undefined }
+  | { id: "report_teaching_load_lesson_total_scheduled"; description: "Total Scheduled"; values: undefined }
   | { id: "report_teaching_load_lesson_menu_item"; description: "Past {days} days"; values: { days: number } }
+  | { id: "report_label_missed_lessons"; description: "Details of Missed Lessons"; values: undefined }
+  | { id: "report_label_lesson_type"; description: "Lesson Type"; values: undefined }
+  | { id: "report_label_lesson_name"; description: "Lesson Name"; values: undefined }
+  | { id: "report_label_class_name"; description: "Class Name"; values: undefined }
+  | { id: "report_label_students_number"; description: "No. of Student"; values: undefined }
+  | { id: "report_label_start_date_time"; description: "Start Date & Time"; values: undefined }
+  | { id: "report_label_end_date_time"; description: "End Date & Time"; values: undefined }
   | { id: "report_student_usage_of"; description: "{value} of {total}"; values: { value: string | number; total: string | number } };
 
 export type LangRecordId = LangRecord["id"];
