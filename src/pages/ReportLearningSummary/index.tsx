@@ -86,7 +86,7 @@ export function ReportLearningSummary() {
   const defaultWeeksValue = useMemo(() => {
     if (weeks.length && condition.week_start) {
       const index = weeks.findIndex((item) => item.week_start === Number(condition.week_start));
-      return weeks && weeks[index] ? `${weeks[index].value}` : weeks[weeks.length - 1].value;
+      return weeks && weeks[index] ? `${weeks[index].value}` : weeks[0].value;
     }
   }, [condition.week_start, weeks]);
   const handleChange = (value: QueryLearningSummaryCondition) => {
