@@ -45,6 +45,7 @@ import {
   searchAuthContentLists,
   getLinkedMockOptions,
   actOutcomeListLoading,
+  getSchoolsFilterList,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -92,6 +93,7 @@ function ScheduleContent() {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
+    schoolsConnection,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -261,6 +263,19 @@ function ScheduleContent() {
     dispatch(getParticipantsData(is_org));
   };
 
+  const getSchoolsConnection = async (cursor: string, value: string, loading: boolean) => {
+    let resultInfo: any;
+    resultInfo = await dispatch(
+      getSchoolsFilterList({
+        filter: { name: { operator: "contains", value: value }, status: { operator: "eq", value: "active" } },
+        direction: "FORWARD",
+        directionArgs: { count: 5, cursor: cursor ?? "" },
+        metaLoading: loading,
+      })
+    );
+    return resultInfo.payload ? resultInfo.payload.data.schoolsConnection.edges : [];
+  };
+
   React.useEffect(() => {
     if (teacherName) {
       const data = {
@@ -317,6 +332,14 @@ function ScheduleContent() {
         program_group: "More Featured Content",
         page_size: 0,
         content_type: "2",
+      })
+    );
+    dispatch(
+      getSchoolsFilterList({
+        filter: { status: { operator: "eq", value: "active" } },
+        direction: "FORWARD",
+        directionArgs: { count: 5 },
+        metaLoading: true,
       })
     );
   }, [dispatch]);
@@ -423,6 +446,8 @@ function ScheduleContent() {
               user_id={user_id}
               schoolByOrgOrUserData={schoolByOrgOrUserData}
               viewSubjectPermission={viewSubjectPermission}
+              schoolsConnection={schoolsConnection}
+              getSchoolsConnection={getSchoolsConnection}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

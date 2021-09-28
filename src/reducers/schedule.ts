@@ -121,6 +121,7 @@ export interface ScheduleState {
   programChildInfo: GetProgramsQuery;
   developmental: LinkedMockOptionsItem[];
   skills: LinkedMockOptionsItem[];
+  schoolsConnection: GetSchoolsFilterListQuery;
 }
 
 interface Rootstate {
@@ -249,6 +250,7 @@ const initialState: ScheduleState = {
   programChildInfo: {},
   developmental: [],
   skills: [],
+  schoolsConnection: {},
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -709,9 +711,10 @@ export const getSchoolByUser = createAsyncThunk("getSchoolByUser", async () => {
   });
 });
 
-export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>(
+export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables & LoadingMetaPayload>(
   "getSchoolsFilterList",
-  async ({ filter, direction, directionArgs }) => {
+  // @ts-ignore
+  ({ filter, direction, directionArgs }) => {
     return gqlapi.query<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>({
       query: GetSchoolsFilterListDocument,
       variables: {
@@ -927,6 +930,9 @@ const { actions, reducer } = createSlice({
     [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.developmental = payload.developmental;
       state.skills = payload.skills;
+    },
+    [getSchoolsFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.schoolsConnection = payload.data;
     },
   },
 });

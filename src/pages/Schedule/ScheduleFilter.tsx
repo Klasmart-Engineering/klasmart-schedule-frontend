@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core";
+import { Box, TextField } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Popover from "@material-ui/core/Popover";
@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { TreeView } from "@material-ui/lab";
 import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
@@ -34,6 +35,8 @@ import {
 import { modelSchedule } from "../../models/ModelSchedule";
 import FilterTree from "../../components/FilterTree";
 import { actError } from "../../reducers/notify";
+import Collapse from "@material-ui/core/Collapse";
+import { GetSchoolsFilterListQuery } from "../../api/api-ko.auto";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
       float: "left",
       marginRight: "8px",
       cursor: "pointer",
+      fontSize: "18px",
     },
     content: {
       padding: "6px",
@@ -131,6 +135,33 @@ const useStyles = makeStyles((theme: Theme) =>
       height: "10px",
       borderRadius: "10px",
       marginRight: "20px",
+    },
+    changeColor: {
+      "&:hover": {
+        backgroundColor: "RGB(245,245,245)",
+      },
+    },
+    schoolTemplateStyleTitle: {
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      paddingLeft: "1em",
+      marginBottom: "0",
+    },
+    schoolTemplateStyleLabel: {
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      paddingLeft: "1em",
+      marginTop: "-0.4em",
+    },
+    schoolTemplateStyleMore: {
+      color: "RGB(0,98,192)",
+      display: "flex",
+      alignItems: "center",
+      paddingLeft: "5em",
+      fontSize: "13px",
+      cursor: "pointer",
     },
   })
 );
@@ -364,6 +395,75 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   );
 }
 
+interface SchoolTemplateProps {
+  schoolsConnection?: GetSchoolsFilterListQuery;
+  getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
+}
+function SchoolTemplate(props: SchoolTemplateProps) {
+  const { schoolsConnection, getSchoolsConnection } = props;
+  const [checked, setChecked] = React.useState(false);
+  const [edges, setEdges] = React.useState<any>([]);
+  const handleChange = () => {
+    setChecked((prev) => !prev);
+  };
+  const css = useStyles();
+  const getSeacherResult = async (value: string) => {
+    await getSchoolsConnection("", value, false);
+    setEdges([]);
+  };
+  const getLastCursor = async () => {
+    const schoolsConnectionItem = schoolsConnection?.schoolsConnection?.edges!;
+    const edge = schoolsConnectionItem && schoolsConnectionItem[schoolsConnectionItem?.length - 1];
+    const cursor = edge?.cursor ?? "";
+    const edgesResult = await getSchoolsConnection(cursor, "", true);
+    edges.length ? setEdges([...edges, ...edgesResult]) : setEdges([...schoolsConnectionItem, ...edges, ...edgesResult]);
+  };
+  return (
+    <Box>
+      <p onClick={handleChange} className={css.schoolTemplateStyleTitle}>
+        <span>
+          {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
+          {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
+        </span>
+        <div className={clsx(css.changeColor, css.subsets)} style={{ width: "83%", paddingLeft: "1em" }}>
+          {d("All My Schools").t("schedule_filter_all_my_schools")}
+        </div>
+      </p>
+      <Collapse in={checked}>
+        {(schoolsConnection?.schoolsConnection?.totalCount ?? 0) > 5 && (
+          <p style={{ textAlign: "center" }}>
+            <TextField
+              id="filled-size-small"
+              size="small"
+              placeholder="Search School Name"
+              onChange={(e) => {
+                getSeacherResult(e.target.value);
+              }}
+            />
+          </p>
+        )}
+        <div>
+          {(edges.length ? edges : schoolsConnection?.schoolsConnection?.edges)?.map((item: any) => {
+            return (
+              <p className={css.schoolTemplateStyleLabel}>
+                <Checkbox color="primary" inputProps={{ "aria-label": "primary checkbox" }} style={{ visibility: "hidden" }} />
+                <div className={clsx(css.changeColor, css.label)} style={{ width: "78%", paddingLeft: "1em" }}>
+                  {item?.node?.name}
+                </div>
+              </p>
+            );
+          })}
+        </div>
+        {schoolsConnection?.schoolsConnection?.pageInfo?.hasNextPage && (
+          <p onClick={getLastCursor} className={css.schoolTemplateStyleMore}>
+            Show more <ArrowDropDownIcon />
+          </p>
+        )}
+      </Collapse>
+    </Box>
+  );
+}
+
 function FilterTemplate(props: FilterProps) {
   const css = useStyles();
   const dispatch = useDispatch();
@@ -381,6 +481,8 @@ function FilterTemplate(props: FilterProps) {
     user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
+    schoolsConnection,
+    getSchoolsConnection,
   } = props;
   const [stateOnlySelectMineExistData, setStateOnlySelectMineExistData] = React.useState<any>({});
 
@@ -678,6 +780,9 @@ function FilterTemplate(props: FilterProps) {
 
   return (
     <>
+      {schoolsConnection?.schoolsConnection?.edges && (
+        <SchoolTemplate schoolsConnection={schoolsConnection} getSchoolsConnection={getSchoolsConnection} />
+      )}
       <TreeView
         className={css.containerRoot}
         defaultExpanded={["1"]}
@@ -716,6 +821,8 @@ interface FilterProps {
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
+  schoolsConnection?: GetSchoolsFilterListQuery;
+  getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
@@ -733,6 +840,8 @@ export default function ScheduleFilter(props: FilterProps) {
     user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
+    schoolsConnection,
+    getSchoolsConnection,
   } = props;
   return (
     <FilterTemplate
@@ -749,6 +858,8 @@ export default function ScheduleFilter(props: FilterProps) {
       user_id={user_id}
       schoolByOrgOrUserData={schoolByOrgOrUserData}
       viewSubjectPermission={viewSubjectPermission}
+      schoolsConnection={schoolsConnection}
+      getSchoolsConnection={getSchoolsConnection}
     />
   );
 }
