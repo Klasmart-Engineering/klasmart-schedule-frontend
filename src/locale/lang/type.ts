@@ -1208,6 +1208,11 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "report_msg_no_achieve"; description: "No achievement data available for this lesson."; values: undefined }
+  | {
+      id: "report_msg_learning_outcomes_covered";
+      description: "Observable competency that can be demonstrated by the student by the end of the lesson.";
+      values: undefined;
+    }
   | { id: "report_msg_no_plan"; description: "There are no lesson plans for this teacher. Would you like to add one?"; values: undefined }
   | { id: "report_button_create_plan"; description: "Create a Lesson Plan"; values: undefined }
   | { id: "report_label_0_hour"; description: "0 Hour"; values: undefined }
