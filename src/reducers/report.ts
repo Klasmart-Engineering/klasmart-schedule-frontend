@@ -57,6 +57,9 @@ import {
   EntityStudentUsageMaterialViewCountReportResponse,
   EntityTeacherLoadAssignmentRequest,
   EntityTeacherLoadAssignmentResponse,
+  EntityTeacherLoadLesson,
+  EntityTeacherLoadLessonRequest,
+  EntityTeacherLoadLessonSummary,
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
@@ -97,6 +100,10 @@ interface IreportState {
     organization_id: string;
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
     noneSchoolClasses: Pick<Class, "class_id" | "class_name">[];
+  };
+  teacherLoadLesson: {
+    list: EntityTeacherLoadLesson[];
+    statistic: EntityTeacherLoadLessonSummary;
   };
   studentUsageReport: [EntityStudentUsageMaterialReportResponse, EntityStudentUsageMaterialViewCountReportResponse];
   teachingLoadOnload: TeachingLoadResponse;
@@ -145,6 +152,10 @@ const initialState: IreportState = {
   categoriesPage: {
     teacherList: [],
     categories: [],
+  },
+  teacherLoadLesson: {
+    list: [],
+    statistic: {},
   },
   studentUsageReport: [{ class_usage_list: [] }, { content_usage_list: [] }],
   stuReportMockOptions: {
@@ -845,6 +856,24 @@ export const teachingLoadOnload = createAsyncThunk<TeachingLoadResponse, Teachin
       classList: allItem.concat(classList),
       teachingLoadList,
       user_id,
+    };
+  }
+);
+interface listTeacherLoadLessonsResponse {
+  lessonList: EntityTeacherLoadLesson[];
+  lessonSummary: EntityTeacherLoadLessonSummary;
+}
+
+interface ListTeacherLoadLessonRequest extends EntityTeacherLoadLessonRequest {
+  metaLoading: boolean;
+}
+
+export const getLessonTeacherLoad = createAsyncThunk<listTeacherLoadLessonsResponse, ListTeacherLoadLessonRequest>(
+  "listTeacherLoadLessons",
+  async ({ metaLoading, ...query }) => {
+    return {
+      lessonList: await api.reports.listTeacherLoadLessons(query),
+      lessonSummary: await api.reports.summaryTeacherLoadLessons(query),
     };
   }
 );
@@ -1713,6 +1742,12 @@ const { actions, reducer } = createSlice({
           ? (state.liveClassSummary = initialState.liveClassSummary)
           : (state.assignmentSummary = initialState.assignmentSummary);
       }
+    },
+    [getLessonTeacherLoad.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonTeacherLoad>>) => {
+      state.teacherLoadLesson = {
+        list: payload.lessonList,
+        statistic: payload.lessonSummary,
+      };
     },
     [getLiveClassesSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveClassesSummary>>) => {
       state.liveClassSummary = payload;
