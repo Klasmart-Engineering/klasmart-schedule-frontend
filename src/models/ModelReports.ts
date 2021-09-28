@@ -3,11 +3,11 @@ import { User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem
+  EntityStudentAchievementReportCategoryItem,
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
-import { teacherLoadDescription } from "../pages/ReportTeachingLoad/Components/TeacherLoadChart";
+import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
 import { Iitem } from "../reducers/report";
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];
@@ -253,7 +253,7 @@ export interface ILatestThreeMonths {
   latestThreeMonthsDate: number[];
   latestThreeMonthsDots: string[];
 }
-export function getDurationByDay(day:number){
+export function getDurationByDay(day: number) {
   const currentTime = Math.floor(new Date().getTime() / 1000);
   return `${currentTime - 3600 * 24 * day}-${currentTime}`;
 }
