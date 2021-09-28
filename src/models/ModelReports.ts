@@ -48,9 +48,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
     .toString()
-    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",

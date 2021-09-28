@@ -7,7 +7,7 @@ import { getTimeDots, sortByStudentName } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments, getClassesAssignmentsOverview, getClassesAssignmentsUnattended } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
-import ClassFilter, { ISelect } from "../components/ClassFilter";
+import ClassFilter from "../components/ClassFilter";
 import Statistics from "../components/Statistics";
 
 const PAGESIZE = 10;
@@ -78,7 +78,7 @@ export default function ClassesAndAssignments() {
     overview,
     classesAssignmentsUnattend: classesAssignmentsUnattendRow,
   } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const [classList, setClassList] = useState<ISelect[] | undefined>(undefined);
+  const [classList, setClassList] = useState<MutiSelect.ISelect[] | undefined>(undefined);
   const [unattendedTableOpenId, setUnattendedTableOpenId] = useState<string | undefined>("");
   const [page, setPage] = React.useState(1);
   const [state, setState] = React.useState({ activeTab: 0 });

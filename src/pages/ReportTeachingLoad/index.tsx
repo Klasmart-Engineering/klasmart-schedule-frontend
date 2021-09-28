@@ -3,10 +3,27 @@ import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
 import TabPages from "../../components/TabPages";
 import { d } from "../../locale/LocaleManager";
+import { getTeachersByOrg } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
+import TeacherFilter from "./components/TeacherFilter";
 import { Assignments, Lessons, NextSevenDaysLessonLoad } from "./Tabs";
+
+interface IState {
+  teachers: MutiSelect.ISelect[];
+  classes: MutiSelect.ISelect[];
+}
+
+export const SelectContext = React.createContext<IState>({
+  teachers: [],
+  classes: [],
+});
+
 export default function ReportTeachingLoad() {
   const dispatch = useDispatch();
+  const [state, setState] = React.useState<IState>({
+    teachers: [],
+    classes: [],
+  });
   const tabs: ITabItem[] = [
     {
       label: "Lessons",
@@ -28,12 +45,28 @@ export default function ReportTeachingLoad() {
       Component: NextSevenDaysLessonLoad,
     },
   ];
-  React.useEffect(() => {}, [dispatch]);
+  React.useEffect(() => {
+    dispatch(
+      getTeachersByOrg({
+        metaLoading: true,
+      })
+    );
+  }, [dispatch]);
   return (
     <>
       <ReportTitle title={d("Teaching Load").t("report_label_teaching_load")}></ReportTitle>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-        <TabPages tabs={tabs} />
+        <TeacherFilter
+          onChange={(teachers, classes) => {
+            setState({
+              teachers,
+              classes,
+            });
+          }}
+        />
+        <SelectContext.Provider value={state}>
+          <TabPages tabs={tabs} />
+        </SelectContext.Provider>
       </LayoutBox>
     </>
   );
