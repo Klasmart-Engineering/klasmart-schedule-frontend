@@ -8,7 +8,8 @@ import {
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
 import { UserType } from "../pages/ReportLearningSummary/types";
-import { teacherLoadDescription } from "../pages/ReportTeachingLoad/TeacherLoadChart";
+import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
+import { Iitem } from "../reducers/report";
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];
   xLabels?: string[][];
@@ -26,16 +27,16 @@ export const ModelReport = {
     }, []);
     return teacherList;
   },
-  schoolListSetDiff(schoolList: Pick<School, "school_id" | "school_name">[]): Pick<School, "school_id" | "school_name">[] {
+  ListSetDiff(list: Iitem[]): Iitem[] {
     let hash: Record<string, boolean> = {};
-    schoolList = schoolList.reduce((preVal: Pick<School, "school_id" | "school_name">[], curVal) => {
-      if (!hash[curVal.school_id]) {
-        hash[curVal.school_id] = true;
+    list = list.reduce((preVal: Iitem[], curVal) => {
+      if (curVal?.value && !hash[curVal?.value]) {
+        hash[curVal?.value] = true;
         preVal.push(curVal);
       }
       return preVal;
     }, []);
-    return schoolList;
+    return list;
   },
 };
 
@@ -327,4 +328,8 @@ export function getAllUsers(
     allSchools.push({ id: "none", name: d("None").t("report_label_none"), classes: freedomClass });
   }
   return allSchools;
+}
+export function getDurationByDay(day: number) {
+  const currentTime = Math.floor(new Date().getTime() / 1000);
+  return `${currentTime - 3600 * 24 * day}-${currentTime}`;
 }

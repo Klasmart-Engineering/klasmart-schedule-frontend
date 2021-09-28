@@ -33,6 +33,7 @@ import {
 } from "../../types/scheduleTypes";
 import { modelSchedule } from "../../models/ModelSchedule";
 import FilterTree from "../../components/FilterTree";
+import { actError } from "../../reducers/notify";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -125,6 +126,12 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: "12px",
       cursor: "pointer",
     },
+    classTypeColor: {
+      width: "10px",
+      height: "10px",
+      borderRadius: "10px",
+      marginRight: "20px",
+    },
   })
 );
 
@@ -184,6 +191,15 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   const filterItem: FilterItemInfo = { label: label, self_id: self_id, school_id: school_id };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  const getClassTypeColor = (label: string) => {
+    return [
+      { id: "OnlineClass", color: "#0E78D5", icon: "" },
+      { id: "OfflineClass", color: "#1BADE5", icon: "" },
+      { id: "Homework", color: "#13AAA9", icon: "" },
+      { id: "Task", color: "#AFBA0A", icon: "" },
+    ].filter((item) => item.id === label)[0].color;
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -329,6 +345,9 @@ function StyledTreeItem(props: StyledTreeItemProps) {
                   </Typography>
                 </>
               )}
+            {filterItem.label === "classType" && (
+              <div className={classes.classTypeColor} style={{ backgroundColor: getClassTypeColor(self_id) }}></div>
+            )}
           </div>
         }
         classes={{
@@ -361,6 +380,7 @@ function FilterTemplate(props: FilterProps) {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
+    viewSubjectPermission,
   } = props;
   const [stateOnlySelectMineExistData, setStateOnlySelectMineExistData] = React.useState<any>({});
 
@@ -450,15 +470,19 @@ function FilterTemplate(props: FilterProps) {
       handleChangeOnlyMine(setData);
     }
     if (node.label === "program" && checked) {
-      let resultInfo: any;
-      resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown) as PayloadAction<
-        AsyncTrunkReturned<typeof ScheduleFilterSubject>
-      >;
-      if (resultInfo.payload.length > 0) {
-        const subjectData = resultInfo.payload.map((val: EntityScheduleShortInfo) => {
-          return { program_id: node.self_id, name: val.name, id: val.id };
-        });
-        setStateSubject([...stateSubject, ...subjectData]);
+      if (viewSubjectPermission) {
+        let resultInfo: any;
+        resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown) as PayloadAction<
+          AsyncTrunkReturned<typeof ScheduleFilterSubject>
+        >;
+        if (resultInfo.payload.length > 0) {
+          const subjectData = resultInfo.payload.map((val: EntityScheduleShortInfo) => {
+            return { program_id: node.self_id, name: val.name, id: val.id };
+          });
+          setStateSubject([...stateSubject, ...subjectData]);
+        }
+      } else {
+        dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
       }
     }
     if (node.label === "program" && !checked) {
@@ -691,6 +715,7 @@ interface FilterProps {
   filterOption: filterOptionItem;
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
+  viewSubjectPermission?: boolean;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
@@ -707,6 +732,7 @@ export default function ScheduleFilter(props: FilterProps) {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
+    viewSubjectPermission,
   } = props;
   return (
     <FilterTemplate
@@ -722,6 +748,7 @@ export default function ScheduleFilter(props: FilterProps) {
       filterOption={filterOption}
       user_id={user_id}
       schoolByOrgOrUserData={schoolByOrgOrUserData}
+      viewSubjectPermission={viewSubjectPermission}
     />
   );
 }

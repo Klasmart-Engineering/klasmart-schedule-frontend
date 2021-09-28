@@ -1,16 +1,16 @@
 import { Text } from "@visx/text";
 import memorize from "lodash/memoize";
 import React, { Fragment } from "react";
-import { EntityReportListTeachingLoadDuration } from "../../api/api.auto";
-import { ChartLayout } from "../../components/Chart/ChartLayout";
+import { EntityReportListTeachingLoadDuration } from "../../../api/api.auto";
+import { ChartLayout } from "../../../components/Chart/ChartLayout";
 import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
   HorizontalBarStackChartStructSize,
   HorizontalBarStackDataItem,
-} from "../../components/Chart/HorizontalBarStackChart";
-import { d, t } from "../../locale/LocaleManager";
-import { time2colorLevel } from "../../models/ModelReports";
+} from "../../../components/Chart/HorizontalBarStackChart";
+import { d, t } from "../../../locale/LocaleManager";
+import { time2colorLevel } from "../../../models/ModelReports";
 
 const structSize = memorize(
   (px: number): HorizontalBarStackChartStructSize => ({

@@ -32,6 +32,7 @@ import { AsyncTrunkReturned } from "../../reducers/content";
 import { GetProgramsQuery } from "../../api/api-ko.auto";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import { actError } from "../../reducers/notify";
 
 const useStyles = makeStyles((theme) => ({
   previewContainer: {
@@ -112,6 +113,7 @@ interface filterGropProps {
   filterQuery?: LearningComesFilterQuery;
   setFilterQuery?: (data: LearningComesFilterQuery) => void;
   getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
+  viewSubjectPermission?: boolean;
 }
 
 interface InfoProps extends filterGropProps {
@@ -125,7 +127,15 @@ interface InfoProps extends filterGropProps {
 
 function SelectGroup(props: filterGropProps) {
   const classes = useStyles();
-  const { programs, searchOutcomesList, handelSetProgramChildInfo, programChildInfoParent, filterQuery, setFilterQuery } = props;
+  const {
+    programs,
+    searchOutcomesList,
+    handelSetProgramChildInfo,
+    programChildInfoParent,
+    filterQuery,
+    setFilterQuery,
+    viewSubjectPermission,
+  } = props;
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
 
   const dispatch = useDispatch();
@@ -140,17 +150,25 @@ function SelectGroup(props: filterGropProps) {
         return item?.program?.id === program_id;
       });
     if (name === "programs" && program_id && !is_exist()) {
-      let resultInfo: any;
-      resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
-        AsyncTrunkReturned<typeof getProgramChild>
-      >;
-      if (resultInfo.payload) {
-        handelSetProgramChildInfo(
-          [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(programChildInfo ? (programChildInfo as GetProgramsQuery[]) : [])
-        );
-        setProgramChildInfo(
-          [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(programChildInfo ? (programChildInfo as GetProgramsQuery[]) : [])
-        );
+      if (viewSubjectPermission) {
+        let resultInfo: any;
+        resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
+          AsyncTrunkReturned<typeof getProgramChild>
+        >;
+        if (resultInfo.payload) {
+          handelSetProgramChildInfo(
+            [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(
+              programChildInfo ? (programChildInfo as GetProgramsQuery[]) : []
+            )
+          );
+          setProgramChildInfo(
+            [resultInfo.payload.programChildInfo as GetProgramsQuery].concat(
+              programChildInfo ? (programChildInfo as GetProgramsQuery[]) : []
+            )
+          );
+        }
+      } else {
+        dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
       }
     }
     const filterIds = value?.map((item: any) => {
