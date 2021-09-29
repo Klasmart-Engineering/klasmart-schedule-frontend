@@ -1026,6 +1026,12 @@ export interface EntityRepeatYearly {
   on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
 }
 
+export interface EntityReportListTeachingLoadArgs {
+  class_ids?: string[];
+  teacher_ids?: string[];
+  time_offset?: number;
+}
+
 export interface EntityReportListTeachingLoadDuration {
   end_at?: number;
   offline?: number;
@@ -1456,6 +1462,80 @@ export interface EntityStudentsPerformanceReportItem {
   not_attempted_names?: string[];
   student_id?: string;
   student_name?: string;
+}
+
+export interface EntitySummaryNode {
+  count?: number;
+  duration?: number;
+}
+
+export interface EntityTeacherLoadAssignmentRequest {
+  class_id_list?: string[];
+
+  /** one of study, home_fun */
+  class_type_list?: string[];
+  duration?: string;
+  teacher_id_list?: string[];
+}
+
+export interface EntityTeacherLoadAssignmentResponseItem {
+  avg_days_of_pending_assignment?: number;
+  count_of_classes?: number;
+  count_of_completed_assignment?: number;
+  count_of_pending_assignment?: number;
+  count_of_scheduled_assignment?: number;
+  count_of_students?: number;
+  feedback_percentage?: number;
+  teacher_id?: string;
+
+  /** TeacherName just used by font-end: generate swagger json --> generate typescript class */
+  teacher_name?: string;
+}
+
+export interface EntityTeacherLoadLesson {
+  completed_in_class_lessons?: number;
+  completed_live_Lessons?: number;
+  missed_in_class_lessons?: number;
+  missed_live_lessons?: number;
+  number_of_classes?: number;
+  number_of_students?: number;
+  teacher_id?: string;
+  total_scheduled?: number;
+}
+
+export interface EntityTeacherLoadLessonRequest {
+  class_ids?: string[];
+  duration?: string;
+  teacher_ids?: string[];
+}
+
+export interface EntityTeacherLoadLessonSummary {
+  completed_in_class_lessons?: EntitySummaryNode;
+  completed_live_lessons?: EntitySummaryNode;
+  missed_in_class_lessons?: EntitySummaryNode;
+  missed_live_lessons?: EntitySummaryNode;
+}
+
+export interface EntityTeacherLoadMissedLesson {
+  class_id?: string;
+  class_type?: string;
+  end_date?: number;
+  no_of_student?: number;
+  start_date?: number;
+  title?: string;
+}
+
+export interface EntityTeacherLoadMissedLessonsRequest {
+  class_ids: string[];
+  duration: string;
+  page: number;
+  page_size: number;
+  teacher_id: string;
+}
+
+export interface EntityTeacherLoadMissedLessonsResponse {
+  list?: EntityTeacherLoadMissedLesson[];
+  total?: number;
 }
 
 export interface EntityTeacherManualFile {
@@ -3743,12 +3823,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description list teaching load report
      */
     getTeacherLoadReportOfAssignment: (request: EntityTeacherLoadAssignmentRequest, params?: RequestParams) =>
-      this.request<EntityTeacherLoadAssignmentResponse[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/teacher_load/assignments`,
-        "POST",
-        params,
-        request
-      ),
+      this.request<
+        EntityTeacherLoadAssignmentResponseItem[],
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/teacher_load/assignments`, "POST", params, request),
 
     /**
      * @tags reports/teacherLoad
@@ -3812,24 +3890,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags reports
      * @name listTeachingLoadReport
      * @summary list teaching load report
-     * @request GET:/reports/teaching_loading
+     * @request POST:/reports/teaching_loading
      * @description list teaching load report
      */
-    listTeachingLoadReport: (
-      query: {
-        school_id?: string;
-        teacher_ids?: string;
-        class_ids?: string;
-        time_offset: string;
-        page?: number;
-        size?: number;
-      },
-      params?: RequestParams
-    ) =>
+    listTeachingLoadReport: (teaching_load: EntityReportListTeachingLoadArgs, params?: RequestParams) =>
       this.request<EntityReportListTeachingLoadResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/teaching_loading${this.addQueryParams(query)}`,
-        "GET",
-        params
+        `/reports/teaching_loading`,
+        "POST",
+        params,
+        teaching_load
       ),
   };
   schedules = {

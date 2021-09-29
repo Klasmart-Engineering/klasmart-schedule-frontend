@@ -15,7 +15,7 @@ import { InfoOutlined } from "@material-ui/icons";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SelectContext } from "..";
-import { EntityTeacherLoadAssignmentResponse } from "../../../api/api.auto";
+import { EntityTeacherLoadAssignmentResponseItem } from "../../../api/api.auto";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import { d, t } from "../../../locale/LocaleManager";
 import { getDurationByDay } from "../../../models/ModelReports";
@@ -127,7 +127,7 @@ export default function Assignments() {
 }
 //  AssignmentsTabel 
 interface IAssignmentsProps {
-  assignmentsList?: EntityTeacherLoadAssignmentResponse[];
+  assignmentsList?: EntityTeacherLoadAssignmentResponseItem[];
 }
 
 const AssignmentsTabel = (props: IAssignmentsProps) => {

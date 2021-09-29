@@ -52,7 +52,7 @@ import {
   EntityStudentUsageMaterialReportResponse,
   EntityStudentUsageMaterialViewCountReportResponse,
   EntityTeacherLoadAssignmentRequest,
-  EntityTeacherLoadAssignmentResponse,
+  EntityTeacherLoadAssignmentResponseItem,
   EntityTeacherLoadLesson,
   EntityTeacherLoadLessonRequest,
   EntityTeacherLoadLessonSummary,
@@ -129,7 +129,7 @@ interface IreportState {
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   classesAssignments: EntityClassesAssignmentsView[];
   overview: EntityClassesAssignmentOverView[];
-  teacherLoadAssignment: EntityTeacherLoadAssignmentResponse[];
+  teacherLoadAssignment: EntityTeacherLoadAssignmentResponseItem[];
   next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
   listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse;
 }
@@ -1133,7 +1133,7 @@ export const getClassesAssignmentsUnattended = createAsyncThunk<
   });
 });
 export const getTeacherLoadAssignment = createAsyncThunk<
-  EntityTeacherLoadAssignmentResponse[],
+  EntityTeacherLoadAssignmentResponseItem[],
   EntityTeacherLoadAssignmentRequest & LoadingMetaPayload
 >("getTeacherLoadAssignment", async ({ metaLoading, ...query }) => await api.reports.getTeacherLoadReportOfAssignment(query));
 export const getTeachingLoadReport = createAsyncThunk<
