@@ -200,15 +200,14 @@ export default function (props: Props) {
   };
 
   useEffect(() => {
-    if (!props.classIds.length) {
-      return;
+    if (props.classIds.length) {
+      queryParams.current.class_ids = props.classIds.map((item) => item.value);
+      queryParams.current.teacher_ids = props.teacherIds.map((item) => item.value);
+      pageRef.current = 0;
+      setPage(pageRef.current);
+      setCount(props.teacherIds.length);
+      getList();
     }
-    queryParams.current.class_ids = props.classIds.map((item) => item.value);
-    queryParams.current.teacher_ids = props.teacherIds.map((item) => item.value);
-    pageRef.current = 0;
-    setPage(pageRef.current);
-    setCount(props.teacherIds.length);
-    getList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.classIds, props.teacherIds]);
 
