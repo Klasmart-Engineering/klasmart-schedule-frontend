@@ -282,7 +282,7 @@ export default function (props: Props) {
             content={[
               { count: item.completed_live_Lessons, type: lang.liveCompleted },
               { count: item.completed_in_class_lessons, type: lang.inClassCompleted },
-              { count: item.missed_in_class_lessons, type: lang.liveMissed },
+              { count: item.missed_in_class_lessons, type: lang.inClassMidded },
               { count: item.missed_live_lessons, type: lang.liveMissed },
             ]}
           >
