@@ -22,7 +22,7 @@ import { getDurationByDay } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getTeacherLoadAssignment } from "../../../reducers/report";
 const PAGESIZE = 10;
-const useStyles= makeStyles(({palette})=>({
+const useStyles = makeStyles(({ palette }) => ({
   selectButton: {
     width: 200,
     height: 40,
@@ -52,33 +52,44 @@ const useStyles= makeStyles(({palette})=>({
 export default function Assignments() {
   const css = useStyles();
   const dispatch = useDispatch();
-  const {teacherLoadAssignment} = useSelector<RootState, RootState["report"]>(state=>state.report)
-  const {teachers, classes} = useContext(SelectContext);
+  const { teacherLoadAssignment } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { teachers, classes } = useContext(SelectContext);
   const [classType, setClassType] = React.useState("all");
   const [durationDay, setDurationDay] = React.useState(7);
   const [page, setPage] = React.useState(1);
   const total = teachers.length;
-  const teacherLoadAssignmentWidthTeacherName = teacherLoadAssignment.map(item => { 
-    const teacher_name = teachers.find(teacher => teacher?.value === item.teacher_id)?.label
-    return {...item,teacher_name }
+  const teacherLoadAssignmentWidthTeacherName = teacherLoadAssignment.map((item) => {
+    const teacher_name = teachers.find((teacher) => teacher?.value === item.teacher_id)?.label;
+    return { ...item, teacher_name };
   });
 
-  const handleChangePge = React.useMemo(() => (page:number) => {
-    const class_type_list = classType=== "all"?["study","home_fun"]:[classType];
-    const class_id_list = classes?.map(item => item.value);
-    const teacher_id_list = teachers?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE).map(item => item.value);
-    dispatch(getTeacherLoadAssignment({metaLoading:true,class_type_list,duration:getDurationByDay(durationDay),class_id_list,teacher_id_list}))
-    setPage(page)
-  },[dispatch, durationDay, classType, classes, teachers]);
+  const handleChangePge = React.useMemo(
+    () => (page: number) => {
+      const class_type_list = classType === "all" ? ["study", "home_fun"] : [classType];
+      const class_id_list = classes?.map((item) => item.value);
+      const teacher_id_list = teachers?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE).map((item) => item.value);
+      dispatch(
+        getTeacherLoadAssignment({
+          metaLoading: true,
+          class_type_list,
+          duration: getDurationByDay(durationDay),
+          class_id_list,
+          teacher_id_list,
+        })
+      );
+      setPage(page);
+    },
+    [dispatch, durationDay, classType, classes, teachers]
+  );
 
   React.useEffect(() => {
-    setPage(1)
+    setPage(1);
     const duration = getDurationByDay(durationDay);
-    const class_type_list = classType=== "all"?["study","home_fun"]:[classType];
-    const class_id_list = classes?.map(item => item.value);
-    const teacher_id_list = teachers?.slice(0, PAGESIZE).map(item => item.value);
-    dispatch(getTeacherLoadAssignment({metaLoading:true, class_type_list, duration, class_id_list, teacher_id_list}))
-  },[dispatch, durationDay, classType, classes, teachers]);
+    const class_type_list = classType === "all" ? ["study", "home_fun"] : [classType];
+    const class_id_list = classes?.map((item) => item.value);
+    const teacher_id_list = teachers?.slice(0, PAGESIZE).map((item) => item.value);
+    dispatch(getTeacherLoadAssignment({ metaLoading: true, class_type_list, duration, class_id_list, teacher_id_list }));
+  }, [dispatch, durationDay, classType, classes, teachers]);
 
   return (
     <div>
@@ -118,14 +129,14 @@ export default function Assignments() {
           </MenuItem>
         </TextField>
       </div>
-      <AssignmentsTabel assignmentsList={teacherLoadAssignmentWidthTeacherName}/>
-      <div style={{marginTop: 20}}>
-       <ReportPagination page={page} count={total} onChangePage={handleChangePge}/>
+      <AssignmentsTabel assignmentsList={teacherLoadAssignmentWidthTeacherName} />
+      <div style={{ marginTop: 20 }}>
+        <ReportPagination page={page} count={total} onChangePage={handleChangePge} />
       </div>
     </div>
   );
 }
-//  AssignmentsTabel 
+//  AssignmentsTabel
 interface IAssignmentsProps {
   assignmentsList?: EntityTeacherLoadAssignmentResponseItem[];
 }
