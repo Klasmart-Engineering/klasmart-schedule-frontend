@@ -7,7 +7,7 @@ import {
   HorizontalBarStackChart,
   horizontalBarStackChartSize,
   HorizontalBarStackChartStructSize,
-  HorizontalBarStackDataItem,
+  HorizontalBarStackDataItem
 } from "../../../components/Chart/HorizontalBarStackChart";
 import { d, t } from "../../../locale/LocaleManager";
 import { time2colorLevel } from "../../../models/ModelReports";
@@ -36,7 +36,7 @@ export function TeacherLoadChart(props: { data: HorizontalBarStackDataItem[]; xL
         <HorizontalBarStackChart
           px={px}
           data={data}
-          valueAxiosLabel="Teaching hours in seven days"
+          valueAxiosLabel={t("report_label_teaching_hours")}
           tickValues={[5, 15, 25, 35, 45, 55, 65]}
           gridValues={[10, 20, 30, 40, 50, 60, 70]}
           labelProps={{ stroke: "black" }}
