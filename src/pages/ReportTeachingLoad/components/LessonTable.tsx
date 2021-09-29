@@ -4,9 +4,11 @@ import moment from "moment";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
-import { t } from "../../..//locale/LocaleManager";
+import { t } from "../../../locale/LocaleManager";
+import { getDurationByDay } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getListTeacherMissedLessons } from "../../../reducers/report";
+import { IState } from "../Tabs/Lessons";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -17,262 +19,32 @@ const useStyles = makeStyles(() =>
   })
 );
 
-const teacherData = [
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 79,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 56,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 23,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 61,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 72,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 31,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 98,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 23,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 45,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "In Class",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-  {
-    lesson_type: "live",
-    lesson_name: "Lesson Name",
-    class_name: "Class Name",
-    no_of_student: 46,
-    start_date: 1632282347,
-    end_date: 1632366693,
-  },
-];
+interface ILessonTable {
+  state: IState;
+  classIds: { label: string; value: string }[];
+}
 
-export default function LessonTable() {
+export default function LessonTable(props: ILessonTable) {
+  const { state, classIds } = props;
+
   const classes = useStyles();
   const dispatch = useDispatch();
   const { listTeacherMissedLessons } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [page, setPage] = React.useState(1);
-  const total = teacherData.length;
-
-  console.log(listTeacherMissedLessons);
 
   React.useEffect(() => {
+    const class_ids = classIds.map((item) => item.value);
     dispatch(
       getListTeacherMissedLessons({
         metaLoading: true,
-        class_ids: ["11111"],
-        duration: "555555-888888",
+        class_ids,
+        duration: getDurationByDay(state.days),
         page_number: page,
         page_size: 10,
-        teacher_id: "vvbgn",
+        teacher_id: state.id,
       })
     );
-  }, [dispatch, page]);
+  }, [dispatch, page, classIds, state.id, state.days]);
 
   return (
     <div>
@@ -289,19 +61,25 @@ export default function LessonTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {teacherData.slice((page - 1) * 10, page * 10).map((item, idx) => (
-            <TableRow key={`${idx}--${page}`}>
-              <TableCell align="center">{item.lesson_type}</TableCell>
-              <TableCell align="center">{item.lesson_name}</TableCell>
-              <TableCell align="center">{item.class_name}</TableCell>
-              <TableCell align="center">{item.no_of_student}</TableCell>
-              <TableCell align="center">{item.start_date ? `${moment(item.start_date * 1000).format("MM/DD/YYYY HH:mm")}` : ""}</TableCell>
-              <TableCell align="center">{item.end_date ? `${moment(item.end_date * 1000).format("MM/DD/YYYY HH:mm")}` : ""}</TableCell>
-            </TableRow>
-          ))}
+          {listTeacherMissedLessons.list
+            ? listTeacherMissedLessons.list.map((item, idx) => (
+                <TableRow key={`${idx}--${page}`}>
+                  <TableCell align="center">{item.lesson_type}</TableCell>
+                  <TableCell align="center">{item.lesson_name}</TableCell>
+                  <TableCell align="center">
+                    {classIds.find((item2) => item2.value === item.class_name)?.label || item.class_name}
+                  </TableCell>
+                  <TableCell align="center">{item.no_of_student}</TableCell>
+                  <TableCell align="center">
+                    {item.start_date ? `${moment(item.start_date * 1000).format("MM/DD/YYYY HH:mm")}` : ""}
+                  </TableCell>
+                  <TableCell align="center">{item.end_date ? `${moment(item.end_date * 1000).format("MM/DD/YYYY HH:mm")}` : ""}</TableCell>
+                </TableRow>
+              ))
+            : ""}
         </TableBody>
       </Table>
-      <ReportPagination page={page} count={total} onChangePage={setPage} />
+      <ReportPagination page={page} count={listTeacherMissedLessons?.total ? listTeacherMissedLessons?.total : 0} onChangePage={setPage} />
     </div>
   );
 }
