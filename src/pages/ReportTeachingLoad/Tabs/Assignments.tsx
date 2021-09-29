@@ -1,15 +1,15 @@
 import { makeStyles, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { SelectContext } from "..";
 import { EntityTeacherLoadAssignmentResponse } from "../../../api/api.auto";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import { d, t } from "../../../locale/LocaleManager";
-import teacher_load_assignmentList from "../../../mocks/teacher_load_assignmentList.json";
 import { getDurationByDay } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getTeacherLoadAssignment } from "../../../reducers/report";
-
+const PAGESIZE = 10;
 const useStyles= makeStyles(({palette})=>({
   selectButton: {
     width: 200,
@@ -43,24 +43,32 @@ export default function Assignments () {
   const css = useStyles();
   const dispatch = useDispatch();
   const {teacherLoadAssignment} = useSelector<RootState, RootState["report"]>(state=>state.report)
+  const {teachers, classes} = useContext(SelectContext);
   const [classType, setClassType] = React.useState("all");
   const [durationDay, setDurationDay] = React.useState(7);
   const [page, setPage] = React.useState(1);
-  // total 是teacherlist的总数
-  const total = 12;
-  
+  const total = teachers.length;
+  const teacherLoadAssignmentWidthTeacherName = teacherLoadAssignment.map(item => { 
+    const teacher_name = teachers.find(teacher => teacher?.value === item.teacher_id)?.label
+    return {...item,teacher_name }
+  });
+
   const handleChangePge = React.useMemo(() => (page:number) => {
     const class_type_list = classType=== "all"?["study","home_fun"]:[classType];
-    dispatch(getTeacherLoadAssignment({metaLoading:true,class_type_list,duration:getDurationByDay(durationDay),class_id_list:[],teacher_id_list:[]}))
+    const class_id_list = classes?.map(item => item.value);
+    const teacher_id_list = teachers?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE).map(item => item.value);
+    dispatch(getTeacherLoadAssignment({metaLoading:true,class_type_list,duration:getDurationByDay(durationDay),class_id_list,teacher_id_list}))
     setPage(page)
-  },[dispatch, durationDay, classType]);
+  },[dispatch, durationDay, classType, classes, teachers]);
 
-  // React.useEffect(() => {
-  //   setPage(1)
-  //   const duration = getDurationByDay(durationDay);
-  //   const class_type_list = classType=== "all"?["study","home_fun"]:[classType];
-    // dispatch(getTeacherLoadAssignment({metaLoading:true,class_type_list,duration,class_id_list:[],teacher_id_list:[]}))
-  // },[dispatch, durationDay, classType])
+  React.useEffect(() => {
+    setPage(1)
+    const duration = getDurationByDay(durationDay);
+    const class_type_list = classType=== "all"?["study","home_fun"]:[classType];
+    const class_id_list = classes?.map(item => item.value);
+    const teacher_id_list = teachers?.slice(0, PAGESIZE).map(item => item.value);
+    dispatch(getTeacherLoadAssignment({metaLoading:true, class_type_list, duration, class_id_list, teacher_id_list}))
+  },[dispatch, durationDay, classType, classes, teachers]);
 
   return (
     <div>
@@ -90,17 +98,15 @@ export default function Assignments () {
           <MenuItem key={30} value={30}>Past 30 days</MenuItem>
         </TextField>
       </div>
-      <AssignmentsTabel assignmentsList={teacherLoadAssignment.length ? teacherLoadAssignment : teacher_load_assignmentList}/>
-      <ReportPagination
-        page={page}
-        count={total}
-        onChangePage={(page) => handleChangePge(page)}
-      />
+      <AssignmentsTabel assignmentsList={teacherLoadAssignmentWidthTeacherName}/>
+      <div style={{marginTop: 20}}>
+       <ReportPagination page={page} count={total} onChangePage={handleChangePge}/>
+      </div>
     </div>
 
   )
 }
-//  AssignmentsTabel 组件
+//  AssignmentsTabel 
 interface IAssignmentsProps {
   assignmentsList?: EntityTeacherLoadAssignmentResponse[];
 }
@@ -187,7 +193,7 @@ const AssignmentsTabel = (props:IAssignmentsProps) => {
             <TableCell align="center">
               <div>
                 {"Avg Days Pending"}
-                <Tooltip title="111" className={css.infoIcon} >
+                <Tooltip title="" className={css.infoIcon} >
                 <InfoOutlined fontSize="small" />
                 </Tooltip>
               </div>

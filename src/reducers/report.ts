@@ -36,7 +36,7 @@ import {
   TeacherByOrgIdQueryVariables,
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables,
+  UserSchoolIDsQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityClassesAssignmentOverView,
@@ -62,7 +62,7 @@ import {
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -74,7 +74,7 @@ import {
   QueryLearningSummaryCondition,
   QueryLearningSummaryRemainingFilterCondition,
   ReportType,
-  TimeFilter,
+  TimeFilter
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 //const TIME_OFFSET = moment().utcOffset() * 60;
@@ -2000,6 +2000,12 @@ const { actions, reducer } = createSlice({
     },
     [getTeachingLoadReport.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachingLoadReport>>) => {
       state.next7DaysLessonLoadList = payload.items;
+    },
+    [getTeacherLoadAssignment.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeacherLoadAssignment>>) => {
+      state.teacherLoadAssignment = cloneDeep(initialState.teacherLoadAssignment);
+    },
+    [getTeachingLoadReport.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachingLoadReport>>) => {
+      state.next7DaysLessonLoadList = cloneDeep(initialState.next7DaysLessonLoadList);
     },
     [getListTeacherMissedLessons.fulfilled.type]: (
       state,
