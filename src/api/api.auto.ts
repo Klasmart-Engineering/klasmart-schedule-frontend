@@ -1026,6 +1026,12 @@ export interface EntityRepeatYearly {
   on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
 }
 
+export interface EntityReportListTeachingLoadArgs {
+  class_ids?: string[];
+  teacher_ids?: string[];
+  time_offset?: number;
+}
+
 export interface EntityReportListTeachingLoadDuration {
   end_at?: number;
   offline?: number;
@@ -3884,24 +3890,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags reports
      * @name listTeachingLoadReport
      * @summary list teaching load report
-     * @request GET:/reports/teaching_loading
+     * @request POST:/reports/teaching_loading
      * @description list teaching load report
      */
-    listTeachingLoadReport: (
-      query: {
-        school_id?: string;
-        teacher_ids?: string;
-        class_ids?: string;
-        time_offset: string;
-        page?: number;
-        size?: number;
-      },
-      params?: RequestParams
-    ) =>
+    listTeachingLoadReport: (teaching_load: EntityReportListTeachingLoadArgs, params?: RequestParams) =>
       this.request<EntityReportListTeachingLoadResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/teaching_loading${this.addQueryParams(query)}`,
-        "GET",
-        params
+        `/reports/teaching_loading`,
+        "POST",
+        params,
+        teaching_load
       ),
   };
   schedules = {
