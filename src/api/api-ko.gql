@@ -54,6 +54,44 @@ query classesByOrganization($organization_id: ID!) {
   }
 }
 
+
+query classesSchoolsByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes{
+      class_id
+      class_name
+    	schools{
+        school_id      
+      }    
+    }
+  }
+}
+
+query classesTeachersByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes{
+      class_id
+      teachers {
+        user_id
+        user_name
+        school_memberships {
+          school_id
+        }
+      }  
+    }
+  }
+}
+
+query schoolsIdNameByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    schools{
+      school_id
+      school_name
+    }
+  }
+}
+
+
 query schoolsByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
@@ -68,11 +106,14 @@ query schoolsByOrganization($organization_id: ID!) {
       school_name
       classes {
         class_id
-        class_name
+        class_name     
       }
     }
   }
 }
+
+
+
 
 query participantsByClass($class_id: ID!) {
   class(class_id: $class_id) {
@@ -376,6 +417,7 @@ query teacherListBySchoolId($school_id: ID!) {
   }
 }
 query notParticipantsByOrganization($organization_id: ID!) {
+<<<<<<< HEAD
   organization(organization_id: $organization_id) {
     classes {
       status
@@ -390,6 +432,25 @@ query notParticipantsByOrganization($organization_id: ID!) {
           school {
             organization {
               organization_id
+=======
+   organization(organization_id: $organization_id) {
+     classes {
+       status
+       schools{
+         school_id
+         school_name
+       }
+        teachers {
+          user_id
+          user_name
+          school_memberships {
+            school_id
+            school {
+              school_name
+              organization{
+                organization_id
+              }
+>>>>>>> origin/dev/global/alpha
             }
           }
         }

@@ -18,7 +18,6 @@ import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignment
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import { d, t } from "../../../locale/LocaleManager";
 import useTranslation from "../hooks/useTranslation";
-import { ISelect } from "./ClassFilter";
 
 const PAGESIZE = 10;
 
@@ -40,7 +39,7 @@ const Row = (props: {
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   handleclickUnattendedTable: (class_id?: string) => any;
   unattendedTableOpenId?: string;
-  classList?: ISelect[];
+  classList?: MutiSelect.ISelect[];
   listTitle: string;
 }) => {
   const { row, classList, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId, listTitle } = props;
@@ -143,7 +142,7 @@ interface IClassesAndAssignmentsTable {
   page: number;
   total: number;
   type: string;
-  classList?: ISelect[];
+  classList?: MutiSelect.ISelect[];
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {

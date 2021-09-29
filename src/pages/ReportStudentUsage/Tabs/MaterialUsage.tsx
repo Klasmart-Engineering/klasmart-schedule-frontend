@@ -10,10 +10,11 @@ import moment, { Moment } from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityContentUsage } from "../../../api/api.auto";
+import MutiSelect from "../../../components/MutiSelect";
 import { d, t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import { getStudentUsageMaterial } from "../../../reducers/report";
-import ClassFilter, { MutiSelect } from "../components/ClassFilter";
+import ClassFilter from "../components/ClassFilter";
 import MaterialUsageTooltip from "../components/MaterialUsageTooltip";
 import useTranslation from "../hooks/useTranslation";
 const useStyles = makeStyles(() =>
