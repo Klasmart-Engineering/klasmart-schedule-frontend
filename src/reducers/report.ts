@@ -27,13 +27,16 @@ import {
   QeuryMeQueryVariables,
   SchoolsByOrganizationDocument,
   SchoolsByOrganizationQuery,
-  SchoolsByOrganizationQueryVariables, SchoolsIdNameByOrganizationDocument,
+  SchoolsByOrganizationQueryVariables,
+  SchoolsIdNameByOrganizationDocument,
   SchoolsIdNameByOrganizationQuery,
-  SchoolsIdNameByOrganizationQueryVariables, StudentsByOrganizationDocument,
+  SchoolsIdNameByOrganizationQueryVariables,
+  StudentsByOrganizationDocument,
   StudentsByOrganizationQuery,
-  StudentsByOrganizationQueryVariables, TeacherByOrgIdDocument,
+  StudentsByOrganizationQueryVariables,
+  TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables
+  TeacherByOrgIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityClassesAssignmentOverView,
@@ -59,7 +62,7 @@ import {
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory
+  EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
@@ -73,7 +76,7 @@ import {
   QueryLearningSummaryRemainingFilterCondition,
   ReportType,
   TimeFilter,
-  UserType
+  UserType,
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 

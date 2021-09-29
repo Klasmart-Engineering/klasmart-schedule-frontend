@@ -15,23 +15,23 @@ export default function () {
   const dispatch = useDispatch();
   const { next7DaysLessonLoadList } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [page, setPage] = React.useState(1);
-  const {teachers, classes} = useContext(SelectContext);
+  const { teachers, classes } = useContext(SelectContext);
   const total = teachers.length;
   const handleChangePge = React.useMemo(
     () => (page: number) => {
       setPage(page);
-      const class_ids = classes?.map(item => item.value);
-      const teacher_ids = teachers?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE).map(item => item.value);
-      dispatch(getTeachingLoadReport({metaLoading: true, time_offset:TIME_OFFSET, teacher_ids, class_ids }));
+      const class_ids = classes?.map((item) => item.value);
+      const teacher_ids = teachers?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE).map((item) => item.value);
+      dispatch(getTeachingLoadReport({ metaLoading: true, time_offset: TIME_OFFSET, teacher_ids, class_ids }));
     },
-    [ dispatch, teachers, classes]
+    [dispatch, teachers, classes]
   );
 
   useEffect(() => {
     setPage(1);
-    const class_ids = classes?.map(item => item.value);
-    const teacher_ids = teachers?.slice(0, PAGESIZE).map(item => item.value);
-    dispatch(getTeachingLoadReport({metaLoading: true, time_offset:TIME_OFFSET, teacher_ids, class_ids }));
+    const class_ids = classes?.map((item) => item.value);
+    const teacher_ids = teachers?.slice(0, PAGESIZE).map((item) => item.value);
+    dispatch(getTeachingLoadReport({ metaLoading: true, time_offset: TIME_OFFSET, teacher_ids, class_ids }));
   }, [dispatch, teachers, classes]);
 
   return (
