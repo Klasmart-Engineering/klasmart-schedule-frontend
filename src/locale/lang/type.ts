@@ -1342,6 +1342,7 @@ type LangRecord<T = string> =
   | { id: "report_label_feedback"; description: "% Feedback"; values: undefined }
   | { id: "report_label_assessments_pending"; description: "Assessments Pending"; values: undefined }
   | { id: "report_label_avg_days_pending"; description: "Avg Days Pending"; values: undefined }
+  | { id: "report_label_teaching_hours"; description: "Teaching hours in seven days"; values: undefined }
   | {
       id: "report_msg_learning_outcomes_covered";
       description: "Observable competency that can be demonstrated by the student by the end of the lesson.";
