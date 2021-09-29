@@ -6158,7 +6158,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/entity.TeacherLoadAssignmentResponse"
+                "$ref": "#/definitions/entity.TeacherLoadAssignmentResponseItem"
               }
             }
           },
@@ -12841,11 +12841,11 @@
         }
       }
     },
-    "entity.TeacherLoadAssignmentResponse": {
+    "entity.TeacherLoadAssignmentResponseItem": {
       "type": "object",
       "properties": {
         "avg_days_of_pending_assignment": {
-          "type": "integer"
+          "type": "number"
         },
         "count_of_classes": {
           "type": "integer"
@@ -12869,6 +12869,7 @@
           "type": "string"
         },
         "teacher_name": {
+          "description": "TeacherName just used by font-end: generate swagger json --\u003e generate typescript class",
           "type": "string"
         }
       }
@@ -12942,28 +12943,29 @@
     "entity.TeacherLoadMissedLesson": {
       "type": "object",
       "properties": {
-        "class_name": {
+        "class_id": {
+          "type": "string"
+        },
+        "class_type": {
           "type": "string"
         },
         "end_date": {
           "type": "integer"
-        },
-        "lesson_name": {
-          "type": "string"
-        },
-        "lesson_type": {
-          "type": "string"
         },
         "no_of_student": {
           "type": "integer"
         },
         "start_date": {
           "type": "integer"
+        },
+        "title": {
+          "type": "string"
         }
       }
     },
     "entity.TeacherLoadMissedLessonsRequest": {
       "type": "object",
+      "required": ["class_ids", "duration", "page", "page_size", "teacher_id"],
       "properties": {
         "class_ids": {
           "type": "array",
@@ -12974,7 +12976,7 @@
         "duration": {
           "type": "string"
         },
-        "page_number": {
+        "page": {
           "type": "integer"
         },
         "page_size": {

@@ -1,6 +1,5 @@
 import { createStyles, makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
 import moment from "moment";
-
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
@@ -267,7 +266,7 @@ export default function LessonTable() {
         metaLoading: true,
         class_ids: ["11111"],
         duration: "555555-888888",
-        page_number: page,
+        page,
         page_size: 10,
         teacher_id: "vvbgn",
       })
