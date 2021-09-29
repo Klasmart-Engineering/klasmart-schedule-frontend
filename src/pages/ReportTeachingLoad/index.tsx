@@ -26,20 +26,20 @@ export default function ReportTeachingLoad() {
   });
   const tabs: ITabItem[] = [
     {
-      label: "Lessons",
+      label: d("Lessons").t("report_label_lessons"),
       index: 0,
       display: true,
       Component: Lessons,
     },
     {
-      label: "Assignments",
+      label: d("Assignments").t("report_label_assignments"),
       index: 1,
       display: true,
       Component: Assignments,
     },
 
     {
-      label: "NextSevenDaysLessonLoad",
+      label: d("Next 7 Days Lesson Load").t("report_label_lesson_load"),
       index: 2,
       display: true,
       Component: NextSevenDaysLessonLoad,
