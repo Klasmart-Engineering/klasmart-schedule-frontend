@@ -1,7 +1,7 @@
 import { Box, MenuItem, TextField, Theme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
-import { uniqBy } from "lodash";
+import { orderBy, uniqBy } from "lodash";
 import React from "react";
 import { useSelector } from "react-redux";
 import MutiSelect from "../../../../components/MutiSelect";
@@ -97,7 +97,8 @@ export default function ({ onChange }: IProps) {
       }
       return prev;
     }, []);
-    return uniqBy(teacherOptions, "value");
+    teacherOptions = uniqBy(teacherOptions, "value");
+    return orderBy(teacherOptions, [(item) => item.label.toLowerCase()], ["asc"]);
   };
 
   const getClassList = (): MutiSelect.ISelect[] => {
@@ -138,31 +139,30 @@ export default function ({ onChange }: IProps) {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
+    setState((state) => ({
       ...state,
       schoolId: event.target.value,
       teachers: [],
       classes: [],
-    });
+    }));
   };
 
   const onChangeTeacher = (value: MutiSelect.ISelect[]) => {
     console.log("teacher: ", value);
-    setState({
+    setState((state) => ({
       ...state,
       teachers: value,
-    });
+    }));
   };
 
   const onChangeClass = (value: MutiSelect.ISelect[]) => {
-    setState({
+    setState((state) => ({
       ...state,
       classes: value,
-    });
+    }));
   };
 
   const cb = () => {
-    console.log("state === ", state);
     if (state.teachers.length > 0 && state.classes.length > 0) {
       onChange && onChange(state.teachers, state.classes);
     }
