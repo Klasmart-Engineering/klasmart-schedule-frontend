@@ -1,33 +1,27 @@
-import { Box, createStyles, FormControl, InputLabel, makeStyles, MenuItem, Select, TextField, Theme } from "@material-ui/core";
-import clsx from "clsx";
-import isEqual from "lodash/isEqual";
+import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import uniqBy from "lodash/uniqBy";
-import React, { ChangeEvent } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { Class, Maybe } from "../../../api/api-ko-schema.auto";
+import MutiSelect from "../../../components/MutiSelect";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import useTranslation from "../hooks/useTranslation";
 
-export interface ISelect {
-  label: string;
-  value: string;
-}
-
 interface IProps {
-  onChange?: (value: ISelect[]) => void;
+  onChange?: (value: MutiSelect.ISelect[]) => void;
 }
 
 interface IState {
   schoolId: string;
-  classes: ISelect[];
+  classes: MutiSelect.ISelect[];
 }
 
-type IOptions = ISelect[][];
+type IOptions = MutiSelect.ISelect[][];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    schoolContainer: {
+    container: {
       display: "flex",
       flexDirection: "row",
       position: "relative",
@@ -39,111 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 180,
       marginLeft: 10,
     },
-    multipleSelectBox: {
-      width: "100%",
-    },
-    multipleSelectBoxFocused: {},
   })
-);
-
-interface IMutiSelectProps {
-  options: ISelect[];
-  label?: string;
-  disabled?: boolean;
-  onChange?: (value: ISelect[]) => void;
-  onInitial?: (value: ISelect[]) => void;
-  defaultValueIsAll?: boolean;
-}
-interface IMutiSelectState {
-  value: string[];
-  allSelected: boolean;
-}
-const MutiSelect = React.memo(
-  ({ options: allOptions, label, disabled, defaultValueIsAll, onChange, onInitial }: IMutiSelectProps) => {
-    const { allValue } = useTranslation();
-    const classes = useStyles();
-    const [focused, setFocused] = React.useState<boolean>(false);
-    const [state, setState] = React.useState<IMutiSelectState>({
-      value: defaultValueIsAll ? [allValue] : [],
-      allSelected: !!defaultValueIsAll,
-    });
-    const resetState = () => {
-      setState({
-        ...state,
-        value: defaultValueIsAll ? [allValue] : [],
-        allSelected: !!defaultValueIsAll,
-      });
-      !disabled && onInitial && onInitial(allOptions.slice(1, allOptions.length));
-    };
-
-    React.useEffect(resetState, [allOptions.length, allOptions]);
-
-    const onSelectChange = (event: ChangeEvent<{ name?: string | undefined; value: unknown }>) => {
-      let value = event.target.value as string[];
-      if (value.length === 0) {
-        return;
-      }
-      if (value.indexOf(allValue) > -1) {
-        if (state.value.indexOf(allValue) === -1) {
-          value = [allValue];
-        } else {
-          value = value.filter((v) => v !== allValue);
-        }
-      }
-      setState({
-        ...state,
-        value,
-      });
-    };
-
-    const onOpenSelect = () => {
-      setFocused(true);
-    };
-    const onCloseSelect = () => {
-      let cbValues = [];
-      if (state.value.length === 1 && state.value[0] === allValue) {
-        cbValues = allOptions.slice(1, allOptions.length);
-      } else {
-        cbValues = allOptions.filter((item) => state.value.indexOf(item.value) >= 0);
-      }
-      onChange && onChange(cbValues);
-      setFocused(false);
-    };
-
-    return (
-      <FormControl
-        size="small"
-        variant="outlined"
-        className={clsx({
-          [classes.multipleSelectBox]: true,
-          [classes.multipleSelectBoxFocused]: focused,
-        })}
-      >
-        <InputLabel>{label}</InputLabel>
-        <Select
-          fullWidth
-          multiple
-          displayEmpty
-          value={state.value}
-          onChange={onSelectChange}
-          label={label}
-          disabled={disabled}
-          onOpen={onOpenSelect}
-          onClose={onCloseSelect}
-          inputProps={{ "aria-label": "Without label" }}
-        >
-          {allOptions.map((item) => (
-            <MenuItem key={item.value} value={item.value}>
-              {item.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    );
-  },
-  (prevProps, nextProps) => {
-    return isEqual(prevProps.options, nextProps.options);
-  }
 );
 
 export default function ({ onChange }: IProps) {
@@ -156,14 +46,14 @@ export default function ({ onChange }: IProps) {
 
   const { studentUsage } = useSelector<RootState, RootState["report"]>((state) => state.report);
 
-  const transformClassDataToOption = (item: Maybe<Class>): ISelect => {
+  const transformClassDataToOption = (item: Maybe<Class>): MutiSelect.ISelect => {
     return {
       value: item?.class_id || "",
       label: item?.class_name || "",
     };
   };
 
-  const getAllSchoolList = (): ISelect[] => {
+  const getAllSchoolList = (): MutiSelect.ISelect[] => {
     const schoolOptions =
       (studentUsage.schoolList
         .filter((item) => item.classes && item.classes.length > 0)
@@ -171,21 +61,21 @@ export default function ({ onChange }: IProps) {
           value: item.school_id,
           label: item.school_name,
         }))
-        .concat(studentUsage.noneSchoolClasses.length > 0 ? selectNoneSchoolOption : []) as ISelect[]) || [];
+        .concat(studentUsage.noneSchoolClasses.length > 0 ? selectNoneSchoolOption : []) as MutiSelect.ISelect[]) || [];
     return schoolOptions;
   };
 
   const getAllClassList = () => {
-    let classOptions: ISelect[] = [];
+    let classOptions: MutiSelect.ISelect[] = [];
     if (state.schoolId === allValue) {
       studentUsage.schoolList.forEach((item) => {
         if (item.classes) {
-          classOptions = classOptions.concat(item.classes!.map(transformClassDataToOption) as ISelect[]);
+          classOptions = classOptions.concat(item.classes!.map(transformClassDataToOption) as MutiSelect.ISelect[]);
         }
       });
     }
     if (state.schoolId === allValue || state.schoolId === noneValue) {
-      classOptions = classOptions.concat(studentUsage.noneSchoolClasses.map(transformClassDataToOption) as ISelect[]);
+      classOptions = classOptions.concat(studentUsage.noneSchoolClasses.map(transformClassDataToOption) as MutiSelect.ISelect[]);
     } else {
       const classes = studentUsage.schoolList.filter((item) => item.school_id === state.schoolId)[0]?.classes;
       if (classes) {
@@ -196,9 +86,9 @@ export default function ({ onChange }: IProps) {
     return classOptions;
   };
 
-  const schoolOptions = React.useMemo<ISelect[]>(getAllSchoolList, [state.schoolId, studentUsage.schoolList]);
+  const schoolOptions = React.useMemo<MutiSelect.ISelect[]>(getAllSchoolList, [state.schoolId, studentUsage.schoolList]);
 
-  const classOptions = React.useMemo<ISelect[]>(getAllClassList, [state.schoolId, studentUsage.schoolList]);
+  const classOptions = React.useMemo<MutiSelect.ISelect[]>(getAllClassList, [state.schoolId, studentUsage.schoolList]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
@@ -208,7 +98,7 @@ export default function ({ onChange }: IProps) {
   };
   const allSchoolOptions = selectAllOption.concat(schoolOptions);
   return (
-    <Box className={classes.schoolContainer}>
+    <Box className={classes.container}>
       <Box className={classes.schoolBox}>
         <TextField
           fullWidth
@@ -239,5 +129,3 @@ export default function ({ onChange }: IProps) {
     </Box>
   );
 }
-
-export { MutiSelect };

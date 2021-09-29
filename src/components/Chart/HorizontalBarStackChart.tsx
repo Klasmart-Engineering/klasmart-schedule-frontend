@@ -14,7 +14,7 @@ import React, { Attributes, ReactNode, SVGAttributes, useMemo } from "react";
 const useStyle = makeStyles({
   svg: {
     position: "relative",
-    backgroundColor: "rgba(0,0,0, .02)",
+    // backgroundColor: "rgba(0,0,0, .02)",
     fontFamily: "Helvetica",
   },
   axiosLine: {

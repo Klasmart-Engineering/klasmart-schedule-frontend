@@ -1,4 +1,3 @@
-
 query roleBasedUsersByOrgnization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     roles {
@@ -43,14 +42,51 @@ query classesByOrganization($organization_id: ID!) {
         school_id
         school_name
       }
-        teachers {
-          user_id
-          user_name
+      teachers {
+        user_id
+        user_name
+      }
+      students {
+        user_id
+        user_name
+      }
+    }
+  }
+}
+
+
+query classesSchoolsByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes{
+      class_id
+      class_name
+    	schools{
+        school_id      
+      }    
+    }
+  }
+}
+
+query classesTeachersByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes{
+      class_id
+      teachers {
+        user_id
+        user_name
+        school_memberships {
+          school_id
         }
-        students {
-          user_id
-          user_name
-        }
+      }  
+    }
+  }
+}
+
+query schoolsIdNameByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    schools{
+      school_id
+      school_name
     }
   }
 }
@@ -58,23 +94,26 @@ query classesByOrganization($organization_id: ID!) {
 
 query schoolsByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
-    classes{
+    classes {
       class_id
       class_name
-    	schools{
+      schools {
         school_id
       }
     }
-    schools{
+    schools {
       school_id
       school_name
       classes {
         class_id
-        class_name
+        class_name     
       }
     }
   }
 }
+
+
+
 
 query participantsByClass($class_id: ID!) {
   class(class_id: $class_id) {
@@ -103,31 +142,30 @@ query qeuryMe($organization_id: ID!) {
   }
 }
 
-
 query myPermissionsAndClassesTeachingQuery($organization_id: ID!) {
-	me{
+  me {
     user_id
     membership(organization_id: $organization_id) {
       organization_id
-      roles{
-        permissions{
+      roles {
+        permissions {
           permission_name
         }
       }
-      schoolMemberships{
+      schoolMemberships {
         school_id
       }
-      classesTeaching{
+      classesTeaching {
         class_id
       }
     }
   }
 }
 
-query getStudentNameById($filter: UserFilter){
-  usersConnection(filter:$filter, direction: FORWARD ){
-  	edges{
-      node{
+query getStudentNameById($filter: UserFilter) {
+  usersConnection(filter: $filter, direction: FORWARD) {
+    edges {
+      node {
         id
         givenName
         familyName
@@ -143,19 +181,19 @@ query organizations {
   }
 }
 
-query getSchoolTeacher($user_id:ID!){
+query getSchoolTeacher($user_id: ID!) {
   user(user_id: $user_id) {
-    school_memberships{
+    school_memberships {
       school {
         status
         school_id
         school_name
         organization {
-                organization_id
+          organization_id
         }
-        classes{
+        classes {
           status
-          teachers{
+          teachers {
             user_id
             user_name
           }
@@ -165,20 +203,20 @@ query getSchoolTeacher($user_id:ID!){
   }
 }
 
-query teacherByOrgId($organization_id: ID!){
+query teacherByOrgId($organization_id: ID!) {
   organization(organization_id: $organization_id) {
-      classes{
-        status
-        class_id
-        class_name
-        teachers{
-          user_id
-          user_name
-          school_memberships{
-            school_id
-          }
+    classes {
+      status
+      class_id
+      class_name
+      teachers {
+        user_id
+        user_name
+        school_memberships {
+          school_id
         }
       }
+    }
   }
 }
 
@@ -202,14 +240,14 @@ query classesBySchool($school_id: ID!) {
         school_id
         school_name
       }
-        teachers {
-          user_id
-          user_name
-        }
-        students {
-          user_id
-          user_name
-        }
+      teachers {
+        user_id
+        user_name
+      }
+      students {
+        user_id
+        user_name
+      }
     }
   }
 }
@@ -217,161 +255,161 @@ query classesBySchool($school_id: ID!) {
 query userSchoolIDs($user_id: ID!) {
   user(user_id: $user_id) {
     school_memberships {
-       school_id
+      school_id
     }
   }
 }
 
 query participantsBySchool($school_id: ID!) {
-   school(school_id: $school_id) {
-     classes {
-        status
-        teachers {
-          user_id
-          user_name,
-          school_memberships {
-            school_id
-          }
+  school(school_id: $school_id) {
+    classes {
+      status
+      teachers {
+        user_id
+        user_name
+        school_memberships {
+          school_id
         }
-        students {
-          user_id
-          user_name
-          school_memberships {
-            school_id
-          }
+      }
+      students {
+        user_id
+        user_name
+        school_memberships {
+          school_id
         }
-     }
-   }
+      }
+    }
+  }
 }
 
 query participantsByOrganization($organization_id: ID!) {
-   organization(organization_id: $organization_id) {
-     status
-     classes {
-        teachers {
-          user_id
-          user_name
-          school_memberships {
-            school_id
-            school {
-              organization{
-                organization_id
-              }
+  organization(organization_id: $organization_id) {
+    status
+    classes {
+      teachers {
+        user_id
+        user_name
+        school_memberships {
+          school_id
+          school {
+            organization {
+              organization_id
             }
           }
         }
-        students {
-          user_id
-          user_name,
-          school_memberships {
-            school_id
-          }
+      }
+      students {
+        user_id
+        user_name
+        school_memberships {
+          school_id
         }
-     }
-   }
+      }
+    }
+  }
 }
 
 query classesTeachingQuery($user_id: ID!, $organization_id: ID!) {
-    user(user_id: $user_id) {
-        membership(organization_id: $organization_id) {
-            classesTeaching {
-                class_id
-                class_name
-                status
-                schools {
-                  school_id
-                  school_name
-               }
-               teachers {
-                 user_id
-                 user_name
-               }
-               students {
-                 user_id
-                 user_name
-               }
-            }
+  user(user_id: $user_id) {
+    membership(organization_id: $organization_id) {
+      classesTeaching {
+        class_id
+        class_name
+        status
+        schools {
+          school_id
+          school_name
         }
+        teachers {
+          user_id
+          user_name
+        }
+        students {
+          user_id
+          user_name
+        }
+      }
     }
+  }
 }
 
 query classesStudentQuery($user_id: ID!, $organization_id: ID!) {
-    user(user_id: $user_id) {
-        membership(organization_id: $organization_id) {
-            classes {
-                class_id
-                class_name
-                status
-                schools {
-                  school_id
-                  school_name
-               }
-               teachers {
-                 user_id
-                 user_name
-               }
-               students {
-                 user_id
-                 user_name
-               }
-            }
+  user(user_id: $user_id) {
+    membership(organization_id: $organization_id) {
+      classes {
+        class_id
+        class_name
+        status
+        schools {
+          school_id
+          school_name
         }
+        teachers {
+          user_id
+          user_name
+        }
+        students {
+          user_id
+          user_name
+        }
+      }
     }
+  }
 }
 
 query schoolByUserQuery($user_id: ID!, $organization_id: ID!) {
-    user(user_id: $user_id) {
-      membership(organization_id: $organization_id) {
-         schoolMemberships {
-          school {
-            school_id
-            school_name
-            classes {
-              status
-              class_id
-              class_name
-              teachers {
-                user_id
-                user_name
-              }
-              students {
-                user_id
-                user_name
-              }
+  user(user_id: $user_id) {
+    membership(organization_id: $organization_id) {
+      schoolMemberships {
+        school {
+          school_id
+          school_name
+          classes {
+            status
+            class_id
+            class_name
+            teachers {
+              user_id
+              user_name
+            }
+            students {
+              user_id
+              user_name
             }
           }
         }
       }
     }
   }
+}
 
-query schoolByOrgQuery($organization_id: ID!) { 
-    organization(organization_id: $organization_id) {
-          schools {
-            school_id
-            school_name
-            classes {
-              status
-              class_id
-              class_name
-              teachers {
-                user_id
-                user_name
-              }
-              students {
-                user_id
-                user_name
-              }
-            }
-          }
+query schoolByOrgQuery($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    schools {
+      school_id
+      school_name
+      classes {
+        status
+        class_id
+        class_name
+        teachers {
+          user_id
+          user_name
+        }
+        students {
+          user_id
+          user_name
+        }
+      }
     }
+  }
 }
 query teacherListBySchoolId($school_id: ID!) {
-  school(school_id: $school_id){
-    classes{
+  school(school_id: $school_id) {
+    classes {
       status
       class_id
-      teachers{
+      teachers {
         user_id
         user_name
       }
@@ -384,6 +422,7 @@ query notParticipantsByOrganization($organization_id: ID!) {
        status
        schools{
          school_id
+         school_name
        }
         teachers {
           user_id
@@ -391,62 +430,62 @@ query notParticipantsByOrganization($organization_id: ID!) {
           school_memberships {
             school_id
             school {
+              school_name
               organization{
                 organization_id
               }
             }
           }
         }
-       
-     }
-   }
-}
-query schoolAndTeacherByOrg($organization_id: ID!) { 
-    organization(organization_id: $organization_id) {
-          schools {
-            school_id
-            school_name
-            status
-            classes {
-              status
-              class_id
-              class_name
-              teachers {
-                user_id
-                user_name
-              }
-             
-            }
-          }
+      }
     }
+  }
+}
+query schoolAndTeacherByOrg($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    schools {
+      school_id
+      school_name
+      status
+      classes {
+        status
+        class_id
+        class_name
+        teachers {
+          user_id
+          user_name
+        }
+      }
+    }
+  }
 }
 
-query getPrograms($program_id: ID!){
-   program(id: $program_id) {
+query getPrograms($program_id: ID!) {
+  program(id: $program_id) {
     id
     name
     status
-    subjects{
+    subjects {
       id
       name
       status
-      categories{
+      categories {
         id
         name
         status
-        subcategories{
+        subcategories {
           id
           name
           status
         }
       }
     }
-    age_ranges{
+    age_ranges {
       id
       name
       status
     }
-    grades{
+    grades {
       id
       name
       status
@@ -454,3 +493,30 @@ query getPrograms($program_id: ID!){
   }
 }
 
+query studentsByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes {
+      class_id
+      class_name
+      schools {
+        school_id
+      }
+      students {
+        user_id
+        user_name
+      }
+    }
+    schools {
+      school_id
+      school_name
+      classes {
+        class_id
+        class_name
+        students {
+          user_id
+          user_name
+        }
+      }
+    }
+  }
+}

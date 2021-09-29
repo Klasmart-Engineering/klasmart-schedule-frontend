@@ -1,7 +1,7 @@
-import { Box, Divider, makeStyles } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
-import LayoutBox from "../../components/LayoutBox";
+import LayoutBox from "../../../components/LayoutBox";
 const useStyles = makeStyles(() => ({
   colorPart: {
     width: "32px",
@@ -24,9 +24,6 @@ const useStyles = makeStyles(() => ({
       fontWeight: 500,
       fontSize: "14px",
     },
-  },
-  divider: {
-    marginTop: "20px",
   },
   marginItem: {
     paddingTop: "15px",
@@ -63,7 +60,6 @@ export function InfoTeacherLoad() {
   ];
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <Divider className={css.divider} />
       <Box className={clsx(css.rightContainer, css.flexRight)}>
         {infoList.map((infoItem) => (
           <Box key={infoItem.title} className={clsx(css.rightContainer, css.marginItem)}>

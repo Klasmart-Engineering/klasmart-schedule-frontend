@@ -294,7 +294,7 @@ export type ClassFilter = {
   ageRangeUnitFrom?: Maybe<AgeRangeUnitFilter>;
   ageRangeValueTo?: Maybe<AgeRangeValueFilter>;
   ageRangeUnitTo?: Maybe<AgeRangeUnitFilter>;
-  schoolId?: Maybe<UuidFilter>;
+  schoolId?: Maybe<UuidExclusiveFilter>;
   gradeId?: Maybe<UuidFilter>;
   subjectId?: Maybe<UuidFilter>;
   programId?: Maybe<UuidFilter>;
@@ -1470,6 +1470,17 @@ export type SubjectsConnectionResponse = IConnectionResponse & {
   edges?: Maybe<Array<Maybe<SubjectsConnectionEdge>>>;
 };
 
+export type UuidExclusiveFilter = {
+  operator: UuidExclusiveOperator;
+  value?: Maybe<Scalars["UUID"]>;
+};
+
+export enum UuidExclusiveOperator {
+  Eq = "eq",
+  Neq = "neq",
+  IsNull = "isNull",
+}
+
 export type UuidFilter = {
   operator: UuidOperator;
   value: Scalars["UUID"];
@@ -1597,9 +1608,9 @@ export type UserFilter = {
   phone?: Maybe<StringFilter>;
   organizationId?: Maybe<UuidFilter>;
   roleId?: Maybe<UuidFilter>;
-  schoolId?: Maybe<UuidFilter>;
+  schoolId?: Maybe<UuidExclusiveFilter>;
   organizationUserStatus?: Maybe<StringFilter>;
-  classId?: Maybe<UuidFilter>;
+  classId?: Maybe<UuidExclusiveFilter>;
   AND?: Maybe<Array<UserFilter>>;
   OR?: Maybe<Array<UserFilter>>;
 };

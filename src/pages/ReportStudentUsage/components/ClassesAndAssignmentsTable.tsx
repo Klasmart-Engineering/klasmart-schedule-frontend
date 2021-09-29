@@ -14,12 +14,10 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import moment from "moment";
 import React from "react";
-import { Maybe } from "../../../api/api-ko-schema.auto";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
+import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import { d, t } from "../../../locale/LocaleManager";
 import useTranslation from "../hooks/useTranslation";
-import { ISelect } from "./ClassFilter";
-import Pagination from "./Pagination";
 
 const PAGESIZE = 10;
 
@@ -41,7 +39,7 @@ const Row = (props: {
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   handleclickUnattendedTable: (class_id?: string) => any;
   unattendedTableOpenId?: string;
-  classList?: ISelect[];
+  classList?: MutiSelect.ISelect[];
   listTitle: string;
 }) => {
   const { row, classList, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId, listTitle } = props;
@@ -96,27 +94,22 @@ const Row = (props: {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {classesAssignmentsUnattend.slice((childrenPage - 1) * 10, (childrenPage - 1) * 10 + 10).map((item, idx) => (
-                    <TableRow key={`${item.time}-${item?.student_id}-${idx}`} style={{ height: "56px" }}>
-                      <TableCell align="center" component="th" scope="row">
-                        {item.student_name}
-                      </TableCell>
-                      <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
-                      <TableCell align="center">{item.time ? `${moment(item.time * 1000).format("MM/DD/YYYY")}` : ""}</TableCell>
-                      <TableCell align="center">{item.time ? ` ${moment(item.time * 1000).format("HH:mm a")}` : ""}</TableCell>
-                    </TableRow>
-                  ))}
+                  {classesAssignmentsUnattend
+                    .slice((childrenPage - 1) * PAGESIZE, (childrenPage - 1) * PAGESIZE + PAGESIZE)
+                    .map((item, idx) => (
+                      <TableRow key={`${item.time}-${item?.student_id}-${idx}`} style={{ height: "56px" }}>
+                        <TableCell align="center" component="th" scope="row">
+                          {item.student_name}
+                        </TableCell>
+                        <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
+                        <TableCell align="center">{item.time ? `${moment(item.time * 1000).format("MM/DD/YYYY")}` : ""}</TableCell>
+                        <TableCell align="center">{item.time ? ` ${moment(item.time * 1000).format("HH:mm a")}` : ""}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
                 <TableFooter>
                   <TableCell colSpan={6}>
-                    <Pagination
-                      page={childrenPage}
-                      count={total}
-                      onAddPage={() => setChildrenPage(childrenPage + 1)}
-                      onFirstPage={() => setChildrenPage(1)}
-                      onLastPage={() => setChildrenPage(Math.ceil(total / 10))}
-                      onSubPage={() => setChildrenPage(childrenPage - 1)}
-                    />
+                    <ReportPagination page={childrenPage} count={total} onChangePage={setChildrenPage} />
                   </TableCell>
                 </TableFooter>
               </Table>
@@ -149,11 +142,7 @@ interface IClassesAndAssignmentsTable {
   page: number;
   total: number;
   type: string;
-  classList?: ISelect[];
-}
-interface IClasses {
-  class_id: string;
-  class_name?: Maybe<string> | undefined;
+  classList?: MutiSelect.ISelect[];
 }
 
 export default function ClassesAndAssignmentsTable(props: IClassesAndAssignmentsTable) {
@@ -252,14 +241,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
           </TableBody>
           <TableFooter>
             <TableCell colSpan={6}>
-              <Pagination
-                page={page}
-                count={total}
-                onAddPage={() => handleChangePage(page + 1)}
-                onFirstPage={() => handleChangePage(1)}
-                onLastPage={() => handleChangePage(Math.ceil(total / PAGESIZE))}
-                onSubPage={() => handleChangePage(page - 1)}
-              />
+              <ReportPagination page={page} count={total} onChangePage={handleChangePage} />
             </TableCell>
           </TableFooter>
         </Table>

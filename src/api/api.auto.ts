@@ -3736,6 +3736,66 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       >(`/reports/students/${id}${this.addQueryParams(query)}`, "GET", params),
 
     /**
+     * @tags reports/teacherLoad
+     * @name getTeacherLoadReportOfAssignment
+     * @summary list teaching load report
+     * @request POST:/reports/teacher_load/assignments
+     * @description list teaching load report
+     */
+    getTeacherLoadReportOfAssignment: (request: EntityTeacherLoadAssignmentRequest, params?: RequestParams) =>
+      this.request<EntityTeacherLoadAssignmentResponse[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load/assignments`,
+        "POST",
+        params,
+        request
+      ),
+
+    /**
+     * @tags reports/teacherLoad
+     * @name listTeacherLoadLessons
+     * @summary get teacher load Report
+     * @request POST:/reports/teacher_load/lessons_list
+     * @description teacher load list
+     */
+    listTeacherLoadLessons: (overview: EntityTeacherLoadLessonRequest, params?: RequestParams) =>
+      this.request<EntityTeacherLoadLesson[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load/lessons_list`,
+        "POST",
+        params,
+        overview
+      ),
+
+    /**
+     * @tags reports/teacherLoad
+     * @name summaryTeacherLoadLessons
+     * @summary get teacher load Report
+     * @request POST:/reports/teacher_load/lessons_summary
+     * @description teacher load summary
+     */
+    summaryTeacherLoadLessons: (overview: EntityTeacherLoadLessonRequest, params?: RequestParams) =>
+      this.request<EntityTeacherLoadLessonSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load/lessons_summary`,
+        "POST",
+        params,
+        overview
+      ),
+
+    /**
+     * @tags reports/teacherLoad
+     * @name listTeacherMissedLessons
+     * @summary get teacher missed lessons
+     * @request POST:/reports/teacher_load/missed_lessons
+     * @description teacher missed lessons
+     */
+    listTeacherMissedLessons: (overview: EntityTeacherLoadMissedLessonsRequest, params?: RequestParams) =>
+      this.request<EntityTeacherLoadMissedLessonsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load/missed_lessons`,
+        "POST",
+        params,
+        overview
+      ),
+
+    /**
      * @tags reports
      * @name getTeacherReport
      * @summary get teacher report

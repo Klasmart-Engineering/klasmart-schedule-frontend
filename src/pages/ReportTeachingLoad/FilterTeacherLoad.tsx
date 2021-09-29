@@ -4,11 +4,10 @@ import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined"
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
-import { Class, School, User } from "../../api/api-ko-schema.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { PermissionType, usePermission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { TeachingLoadPayload, TeachingLoadResponse } from "../../reducers/report";
+import { Iitem, TeachingLoadPayload, TeachingLoadResponse } from "../../reducers/report";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   boxRight: {
@@ -66,13 +65,9 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
 
   const schools = teachingLoadOnload.schoolList?.slice(0) || [];
   if (perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organizations_reports_612) {
-    schools.push({ school_id: "no_assigned", school_name: "No assigned" });
+    schools.push({ value: "no_assigned", label: "No assigned" });
   }
-  schools.unshift({ school_id: "all", school_name: "All" });
-  const classs = teachingLoadOnload.classList?.slice(0) || [];
-  classs.unshift({ class_id: "all", class_name: "All" });
-  const teachers = teachingLoadOnload.teacherList?.slice(0) || [];
-  teachers.unshift({ user_id: "all", user_name: "All" });
+  const { classList: classs, teacherList: teachers } = teachingLoadOnload;
   const class_ids = value?.class_ids?.split(",");
   const teacher_ids = value?.teacher_ids?.split(",");
   const classIsDisabled = isClassDisabled({ perm, value, teacher_ids });
@@ -136,7 +131,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
               disabled={schools.length <= 0}
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
-              {getSchoolList(schools)}
+              {getList(schools)}
             </TextField>
             {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
               <TextField
@@ -148,7 +143,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
                 select
                 SelectProps={{ multiple: true, MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               >
-                {getTeacherList(teachers)}
+                {getList(teachers)}
               </TextField>
             )}
             <TextField
@@ -161,7 +156,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
               SelectProps={{ multiple: true, MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
               disabled={classIsDisabled}
             >
-              {getClassList(classs)}
+              {getList(classs)}
             </TextField>
           </Box>
         </Hidden>
@@ -172,13 +167,13 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
             <Box flex={3}>
               <SchoolOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "school_id")} />
               <Menu anchorEl={anchorElSchool} keepMounted open={Boolean(anchorElSchool)} onClose={(e) => handleClose(e, "school_id")}>
-                <GetSchoolItem list={schools} value={value} onChangeMenu={handleChangeMenu} tab="school_id"></GetSchoolItem>
+                <GetListItem list={schools} value={value} onChangeMenu={handleChangeMenu} tab="school_id"></GetListItem>
               </Menu>
               {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
                 <PersonOutlinedIcon fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "teacher_ids")} />
               )}
               <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_ids")}>
-                <GetTeacherItem list={teachers} value={value} onChangeMenu={handleChangeMenu} tab="teacher_ids"></GetTeacherItem>
+                <GetListItem list={teachers} value={value} onChangeMenu={handleChangeMenu} tab="teacher_ids"></GetListItem>
               </Menu>
 
               <PeopleOutlineOutlinedIcon
@@ -187,7 +182,7 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
                 onClick={(e) => showItem(e, "class_ids")}
               />
               <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_ids")}>
-                <GetClassItem list={classs} value={value} onChangeMenu={handleChangeMenu} tab="class_ids"></GetClassItem>
+                <GetListItem list={classs} value={value} onChangeMenu={handleChangeMenu} tab="class_ids"></GetListItem>
               </Menu>
             </Box>
           </Box>
@@ -196,100 +191,29 @@ export function FilterTeacherLoad(props: FilterTeacherLoadProps) {
     </LayoutBox>
   );
 }
-const getSchoolList = (list: Pick<School, "school_id" | "school_name">[] | undefined | null) => {
+const getList = (list?: Iitem[]) => {
   return list?.map((item) => (
-    <MenuItem key={item.school_id} value={item.school_id}>
-      {item.school_name || "null"}
+    <MenuItem key={item.value} value={item.value}>
+      {item.label || "null"}
     </MenuItem>
   ));
 };
 
-const getTeacherList = (teacherList: Pick<User, "user_id" | "user_name">[] | undefined | null) => {
-  return teacherList?.map((item) => (
-    <MenuItem key={item.user_id} value={item.user_id}>
-      {item.user_name || "null"}
-    </MenuItem>
-  ));
-};
-const getClassList = (list: Pick<Class, "class_id" | "class_name">[] | undefined | null) => {
-  return list?.map((item) => (
-    <MenuItem key={item.class_id} value={item.class_id}>
-      {item.class_name || "null"}
-    </MenuItem>
-  ));
-};
-
-interface GetSchoolItemProps {
-  list?: Pick<School, "school_id" | "school_name">[];
+interface GetListItemProps {
+  list?: Iitem[];
   value: TeachingLoadPayload;
   onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof TeachingLoadPayload) => any;
   tab: keyof TeachingLoadPayload;
 }
 
-const GetSchoolItem = forwardRef<React.RefObject<HTMLElement>, GetSchoolItemProps>((props, ref) => {
+const GetListItem = forwardRef<React.RefObject<HTMLElement>, GetListItemProps>((props, ref) => {
   const { list, value, onChangeMenu, tab } = props;
   return (
     <>
       {" "}
       {list?.map((item) => (
-        <MenuItem
-          key={item.school_id}
-          selected={value[tab] === item.school_id}
-          onClick={(e) => onChangeMenu(e, item.school_id as string, tab)}
-        >
-          {item.school_name ?? "null"}
-        </MenuItem>
-      ))}
-    </>
-  );
-});
-interface GetTeacherItemProps {
-  list?: Pick<User, "user_id" | "user_name">[];
-  value: TeachingLoadPayload;
-  onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof TeachingLoadPayload) => any;
-  tab: keyof TeachingLoadPayload;
-}
-
-const GetTeacherItem = forwardRef<React.RefObject<HTMLElement>, GetTeacherItemProps>((props, ref) => {
-  const { list, value, onChangeMenu, tab } = props;
-  const newValue = value[tab].split(",");
-  return (
-    <>
-      {" "}
-      {list?.map((item) => (
-        <MenuItem
-          key={item.user_id}
-          selected={newValue.indexOf(item.user_id) >= 0}
-          onClick={(e) => onChangeMenu(e, item.user_id as string, tab)}
-        >
-          {item.user_name ?? "null"}
-        </MenuItem>
-      ))}
-    </>
-  );
-});
-
-interface GetClassItemProps {
-  list?: Pick<Class, "class_id" | "class_name">[];
-  value: TeachingLoadPayload;
-  onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof TeachingLoadPayload) => any;
-  tab: keyof TeachingLoadPayload;
-}
-
-const GetClassItem = forwardRef<React.RefObject<HTMLElement>, GetClassItemProps>((props, ref) => {
-  const { list, value, onChangeMenu, tab } = props;
-  const newValue = value[tab].split(",");
-
-  return (
-    <>
-      {" "}
-      {list?.map((item) => (
-        <MenuItem
-          key={item.class_id}
-          selected={newValue.indexOf(item.class_id) >= 0}
-          onClick={(e) => onChangeMenu(e, item.class_id as string, tab)}
-        >
-          {item.class_name ?? "null"}
+        <MenuItem key={item.value} selected={value[tab] === item.value} onClick={(e) => onChangeMenu(e, item.value as string, tab)}>
+          {item.label ?? "null"}
         </MenuItem>
       ))}
     </>

@@ -6138,7 +6138,7 @@
         "description": "list teaching load report",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["reports/teacher_load"],
+        "tags": ["reports/teacherLoad"],
         "summary": "list teaching load report",
         "operationId": "getTeacherLoadReportOfAssignment",
         "parameters": [
@@ -6188,7 +6188,7 @@
         "description": "teacher load list",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["reports/teacher_Loader"],
+        "tags": ["reports/teacherLoad"],
         "summary": "get teacher load Report",
         "operationId": "listTeacherLoadLessons",
         "parameters": [
@@ -6238,7 +6238,7 @@
         "description": "teacher load summary",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["reports/teacher_load"],
+        "tags": ["reports/teacherLoad"],
         "summary": "get teacher load Report",
         "operationId": "summaryTeacherLoadLessons",
         "parameters": [
@@ -6285,7 +6285,7 @@
         "description": "teacher missed lessons",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["reports/teacher_Loader"],
+        "tags": ["reports/teacherLoad"],
         "summary": "get teacher missed lessons",
         "operationId": "listTeacherMissedLessons",
         "parameters": [
@@ -7509,6 +7509,53 @@
               "items": {
                 "type": "string"
               }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_time_view/list": {
+      "post": {
+        "description": "get schedule time view list without relation info",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduleTimeViewList",
+        "operationId": "getScheduleTimeViewList",
+        "parameters": [
+          {
+            "description": "schedule time view data to query",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeViewQuery"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeView"
             }
           },
           "400": {
@@ -12056,6 +12103,37 @@
         }
       }
     },
+    "entity.ScheduleTimeView": {
+      "type": "object",
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "class_type": {
+          "type": "string",
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "end_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["NotStart", "Started", "Closed"]
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
     "entity.ScheduleTimeViewQuery": {
       "type": "object",
       "properties": {
@@ -12725,6 +12803,17 @@
         }
       }
     },
+    "entity.SummaryNode": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.TeacherLoadAssignmentRequest": {
       "type": "object",
       "properties": {
@@ -12837,16 +12926,16 @@
       "type": "object",
       "properties": {
         "completed_in_class_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         },
         "completed_live_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         },
         "missed_in_class_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         },
         "missed_live_lessons": {
-          "type": "integer"
+          "$ref": "#/definitions/entity.SummaryNode"
         }
       }
     },
