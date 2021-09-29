@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import { getDurationByDay } from "../../../models/ModelReports";
+import { RootState } from "../../../reducers";
 import { getListTeacherMissedLessons } from "../../../reducers/report";
 import LessonChart from "../components/LessonChart";
 import LessonTable from "../components/LessonTable";
 import { SelectContext } from "../index";
-import { useDispatch, useSelector } from "react-redux";
-import ReportPagination from "../../../components/ReportPagination/ReportPagination";
-import { RootState } from "../../../reducers";
 
 export interface IState {
   id: string | undefined;
@@ -17,7 +17,7 @@ export default function () {
   const dispatch = useDispatch();
   const { teachers, classes } = useContext(SelectContext);
   const [state, setState] = React.useState<IState>({
-    id: "150de04b-6777-4cab-a381-5f36a9b750ef",
+    id: "",
     days: 7,
   });
   const { listTeacherMissedLessons } = useSelector<RootState, RootState["report"]>((state) => state.report);

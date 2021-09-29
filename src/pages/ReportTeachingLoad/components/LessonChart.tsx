@@ -111,7 +111,7 @@ interface Props {
 }
 
 const computeTimeStamp = (days: number) => {
-  return `${moment().unix()}-${moment().subtract(days, "days").unix()}`;
+  return `${moment().subtract(days, "days").unix()}-${moment().unix()}`;
 };
 
 const useFormatTime = () => {
@@ -200,17 +200,14 @@ export default function (props: Props) {
   };
 
   useEffect(() => {
-    getList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    queryParams.current.class_ids = props.classIds.map((item) => item.value);
-    queryParams.current.teacher_ids = props.teacherIds.map((item) => item.value);
-    pageRef.current = 0;
-    setPage(pageRef.current);
-    setCount(props.teacherIds.length);
-    getList();
+    if (props.classIds.length) {
+      queryParams.current.class_ids = props.classIds.map((item) => item.value);
+      queryParams.current.teacher_ids = props.teacherIds.map((item) => item.value);
+      pageRef.current = 0;
+      setPage(pageRef.current);
+      setCount(props.teacherIds.length);
+      getList();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.classIds, props.teacherIds]);
 
@@ -285,15 +282,31 @@ export default function (props: Props) {
             ]}
           >
             <Box display={"flex"} width={(count / computeCurrentPage()) * 100 + "%"} height={36}>
-              <Box
-                bgcolor={colors[0]}
-                width={handlePercentage(item.completed_in_class_lessons)}
-                marginRight={"3px"}
-                className={style.datumGraph}
-              ></Box>
-              <Box bgcolor={colors[1]} width={handlePercentage(item.completed_live_Lessons)} marginRight={"3px"}></Box>
-              <Box bgcolor={colors[2]} width={handlePercentage(item.missed_in_class_lessons)} marginRight={"3px"}></Box>
-              <Box bgcolor={colors[3]} width={handlePercentage(item.missed_live_lessons)} marginRight={"3px"}></Box>
+              {item.completed_in_class_lessons ? (
+                <Box
+                  bgcolor={colors[0]}
+                  width={handlePercentage(item.completed_in_class_lessons)}
+                  marginRight={"3px"}
+                  className={style.datumGraph}
+                ></Box>
+              ) : (
+                ""
+              )}
+              {item.completed_live_Lessons ? (
+                <Box bgcolor={colors[1]} width={handlePercentage(item.completed_live_Lessons)} marginRight={"3px"}></Box>
+              ) : (
+                ""
+              )}
+              {item.missed_in_class_lessons ? (
+                <Box bgcolor={colors[2]} width={handlePercentage(item.missed_in_class_lessons)} marginRight={"3px"}></Box>
+              ) : (
+                ""
+              )}
+              {item.missed_live_lessons ? (
+                <Box bgcolor={colors[3]} width={handlePercentage(item.missed_live_lessons)} marginRight={"3px"}></Box>
+              ) : (
+                ""
+              )}
             </Box>
           </ReportTooltip>
         </Grid>
@@ -341,10 +354,14 @@ export default function (props: Props) {
           `${statistic.completed_in_class_lessons?.count}(${formatTime(statistic.completed_in_class_lessons?.duration)})`,
           1
         )}
-        {renderLineFooterBlock(lang.liveMissed, `${statistic.missed_live_lessons}(${formatTime(statistic.missed_live_lessons?.count)})`, 2)}
+        {renderLineFooterBlock(
+          lang.liveMissed,
+          `${statistic.missed_live_lessons?.count}(${formatTime(statistic.missed_live_lessons?.count)})`,
+          2
+        )}
         {renderLineFooterBlock(
           lang.inClassMidded,
-          `${statistic.missed_in_class_lessons}(${formatTime(statistic.missed_in_class_lessons?.count)})`,
+          `${statistic.missed_in_class_lessons?.count}(${formatTime(statistic.missed_in_class_lessons?.count)})`,
           3
         )}
       </Grid>
