@@ -390,6 +390,7 @@ export default function LearingOutcome(props: InfoProps) {
     filterGropuData,
     handelSetProgramChildInfo,
     programChildInfoParent,
+    viewSubjectPermission,
   } = props;
   const { control, setValue, getValues } = conditionFormMethods;
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
@@ -611,6 +612,7 @@ export default function LearingOutcome(props: InfoProps) {
           filterQuery={filterQuery}
           setFilterQuery={setFilterQuery}
           getFilterQueryAssembly={getFilterQueryAssembly}
+          viewSubjectPermission={viewSubjectPermission}
         />
       </Box>
       <div

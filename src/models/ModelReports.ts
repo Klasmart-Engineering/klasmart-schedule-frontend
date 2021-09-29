@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { User } from "../api/api-ko-schema.auto";
+import { Class, School, User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
@@ -7,6 +7,7 @@ import {
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
+import { UserType } from "../pages/ReportLearningSummary/types";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
 import { Iitem } from "../reducers/report";
 interface formatTeachingLoadListResponse {
@@ -48,9 +49,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
     .toString()
-    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",
@@ -213,9 +214,9 @@ export function sortByStudentName(studentName: any) {
   return function (x: any, y: any) {
     let reg = /[a-zA-Z0-9]/;
     if (reg.test(x[studentName]) || reg.test(y[studentName])) {
-      if (x[studentName] > y[studentName]) {
+      if (x[studentName].toLowerCase() > y[studentName].toLowerCase()) {
         return 1;
-      } else if (x[studentName] < y[studentName]) {
+      } else if (x[studentName].toLowerCase() < y[studentName].toLowerCase()) {
         return -1;
       } else {
         return 0;
@@ -252,6 +253,81 @@ export function getTimeDots(): ILatestThreeMonths {
 export interface ILatestThreeMonths {
   latestThreeMonthsDate: number[];
   latestThreeMonthsDots: string[];
+}
+
+export function getAllUsers(
+  schools: Pick<School, "classes" | "school_id" | "school_name">[],
+  noneSchoolClasses: Pick<Class, "class_id" | "class_name" | "schools" | "students">[],
+  isSchool: boolean
+) {
+  let freedomClass: UserType["classes"] = [];
+  let allClasses: UserType["classes"] = [];
+  let allStudents: UserType["classes"][0]["students"] = [];
+  let noSchoolAllStudents: UserType["classes"][0]["students"] = [];
+  // 无学校班级
+  freedomClass = noneSchoolClasses.map((item) => ({
+    id: item.class_id!,
+    name: item.class_name!,
+    students:
+      item.students?.map((item) => ({
+        id: item?.user_id!,
+        name: item?.user_name!,
+      })) || [],
+  }));
+
+  // let allStu: any = [];
+  // noneSchoolClasses.map(item => allStu.push(item.students?.map((item) => ({
+  //   id: item?.user_id!,
+  //   name: item?.user_name!,
+  // })) || []))
+  // freedomClass.unshift({ id: "all", name: d("All").t("report_label_all"), students: allStu});
+  // console.log("freedomClass", freedomClass);
+  freedomClass.forEach((item) => {
+    noSchoolAllStudents = [...noSchoolAllStudents, ...item.students];
+  });
+  freedomClass = [{ id: "all", name: d("All").t("report_label_all"), students: [...noSchoolAllStudents] }, ...freedomClass];
+  // 所有学校
+  const allSchools = schools.map((item) => ({
+    id: item.school_id!,
+    name: item.school_name!,
+    classes:
+      item.classes?.map((item) => ({
+        id: item?.class_id!,
+        name: item?.class_name!,
+        students:
+          item?.students?.map((item) => ({
+            id: item?.user_id!,
+            name: item?.user_name!,
+          })) || [],
+      })) || [],
+  }));
+  // 所有学校的所有班级
+  allSchools.forEach((item) => {
+    allClasses = [...allClasses, ...item.classes];
+  });
+  // 不属于任何学校的班级加入所有班级
+  if (!isSchool) {
+    allClasses = [...allClasses, ...freedomClass];
+  }
+  // 所有学生
+  allClasses.forEach((item) => {
+    allStudents = [...allStudents, ...item.students];
+  });
+  // allStudents = allStudents.slice().sort(sortByStudentName("name"));
+  allClasses.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...allStudents] });
+  // 给每个学校的班级添加all选项
+  allSchools.forEach((item) => {
+    let curAllStudent: UserType["classes"][0]["students"] = [];
+    item.classes.forEach((item) => {
+      curAllStudent = [...curAllStudent, ...item.students];
+    });
+    item.classes.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...curAllStudent] });
+  });
+  allSchools.unshift({ id: "all", name: d("All").t("report_label_all"), classes: [...allClasses] });
+  if (!isSchool) {
+    allSchools.push({ id: "none", name: d("None").t("report_label_none"), classes: freedomClass });
+  }
+  return allSchools;
 }
 export function getDurationByDay(day: number) {
   const currentTime = Math.floor(new Date().getTime() / 1000);

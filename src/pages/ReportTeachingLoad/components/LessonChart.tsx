@@ -7,9 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { EntityTeacherLoadLesson, EntityTeacherLoadLessonRequest } from "../../../api/api.auto";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import ReportTooltip from "../../../components/ReportTooltip";
-import { d, t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import { getLessonTeacherLoad } from "../../../reducers/report";
+import useTranslation from "../hooks/useTranslation";
 const useStyle = makeStyles(() => ({
   dataBlock: {
     display: "flex",
@@ -104,24 +104,6 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const lang = {
-  lessonTitle: d("Total Lessons (Live and In Class) Scheduled").t("report_teaching_load_lesson_title"),
-  teacher: d("Teacher").t("report_label_teacher"),
-  menuItem1: t("report_teaching_load_lesson_menu_item", { days: 7 }),
-  menuItem2: t("report_teaching_load_lesson_menu_item", { days: 30 }),
-  noOfClasses: d("No.of Classes").t("report_teaching_load_classes_column"),
-  noOfStudent: d("No.of Student").t("report_teaching_load_student_column"),
-  current: d("current").t("report_teaching_load_current"),
-  liveCompleted: d("Live Lessons Completed").t("report_teaching_load_lesson_live_completed"),
-  inClassCompleted: d("In Class Lessons Completed").t("report_teaching_load_lesson_in_class_completed"),
-  liveMissed: d("Live Lessons Missed").t("report_teaching_load_lesson_live_missed"),
-  inClassMidded: d("In Class Lessons Missed").t("report_teaching_load_lesson_in_class_missed"),
-  hrs: d("hrs").t("report_label_hrs_lower"),
-  mins: d("mins").t("report_label_mins_lower"),
-  totalScheduled: d("Total Scheduled").t("report_teaching_load_lesson_total_scheduled"),
-};
-const colors = ["#005096", "#0E78D5", "#CC8685", "#E9BEBD"];
-
 interface Props {
   teacherChange: (id?: string, days?: number) => void;
   teacherIds: { label: string; value: string }[];
@@ -132,10 +114,13 @@ const computeTimeStamp = (days: number) => {
   return `${moment().unix()}-${moment().subtract(days, "days").unix()}`;
 };
 
-const formatTime = (mins: number = 0) => {
-  const hours = Math.floor(mins / 60);
-  const minutes = mins % 60;
-  return `${hours ? hours + lang.hrs : ""}${minutes ? minutes + lang.mins : ""}`;
+const useFormatTime = () => {
+  const lang = useTranslation().lessonLang;
+  return (mins: number = 0) => {
+    const hours = Math.floor(mins / 60);
+    const minutes = mins % 60;
+    return `${hours ? hours + lang.hrs : ""}${minutes ? minutes + lang.mins : ""}`;
+  };
 };
 
 const PAGE_SIZE = 5;
@@ -154,6 +139,10 @@ export default function (props: Props) {
   });
   const currentOpenedTeacher = useRef<string>();
   const { teacherLoadLesson } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { lessonColors, lessonLang } = useTranslation();
+  const formatTime = useFormatTime();
+  const lang = lessonLang,
+    colors = lessonColors;
   const { list, statistic } = teacherLoadLesson;
   const filterChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>, child: React.ReactNode) => {
     setSelectItem(event.target.value as number);

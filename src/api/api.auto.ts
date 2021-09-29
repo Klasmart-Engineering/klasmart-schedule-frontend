@@ -1478,7 +1478,7 @@ export interface EntityTeacherLoadAssignmentRequest {
   teacher_id_list?: string[];
 }
 
-export interface EntityTeacherLoadAssignmentResponse {
+export interface EntityTeacherLoadAssignmentResponseItem {
   avg_days_of_pending_assignment?: number;
   count_of_classes?: number;
   count_of_completed_assignment?: number;
@@ -1487,6 +1487,8 @@ export interface EntityTeacherLoadAssignmentResponse {
   count_of_students?: number;
   feedback_percentage?: number;
   teacher_id?: string;
+
+  /** TeacherName just used by font-end: generate swagger json --> generate typescript class */
   teacher_name?: string;
 }
 
@@ -1515,20 +1517,20 @@ export interface EntityTeacherLoadLessonSummary {
 }
 
 export interface EntityTeacherLoadMissedLesson {
-  class_name?: string;
+  class_id?: string;
+  class_type?: string;
   end_date?: number;
-  lesson_name?: string;
-  lesson_type?: string;
   no_of_student?: number;
   start_date?: number;
+  title?: string;
 }
 
 export interface EntityTeacherLoadMissedLessonsRequest {
-  class_ids?: string[];
-  duration?: string;
-  page_number?: number;
-  page_size?: number;
-  teacher_id?: string;
+  class_ids: string[];
+  duration: string;
+  page: number;
+  page_size: number;
+  teacher_id: string;
 }
 
 export interface EntityTeacherLoadMissedLessonsResponse {
@@ -3821,12 +3823,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description list teaching load report
      */
     getTeacherLoadReportOfAssignment: (request: EntityTeacherLoadAssignmentRequest, params?: RequestParams) =>
-      this.request<EntityTeacherLoadAssignmentResponse[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/teacher_load/assignments`,
-        "POST",
-        params,
-        request
-      ),
+      this.request<
+        EntityTeacherLoadAssignmentResponseItem[],
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/teacher_load/assignments`, "POST", params, request),
 
     /**
      * @tags reports/teacherLoad
