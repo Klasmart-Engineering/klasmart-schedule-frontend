@@ -4,7 +4,7 @@ import moment from "moment";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
-import { t } from "../../..//locale/LocaleManager";
+import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import { getListTeacherMissedLessons } from "../../../reducers/report";
 

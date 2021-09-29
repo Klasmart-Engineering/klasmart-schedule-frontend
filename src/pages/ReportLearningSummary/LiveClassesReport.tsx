@@ -517,7 +517,10 @@ export function RightCom(props: RightComProps) {
             title={
               <div style={{ fontSize: 14, color: "#000" }}>
                 <Typography variant="body1">
-                  {"Observable competency that can be demonstrated by the student by the end of the lesson."}
+                  {/* {"Observable competency that can be demonstrated by the student by the end of the lesson."} */}
+                  {d("Observable competency that can be demonstrated by the student by the end of the lesson.").t(
+                    "report_msg_learning_outcomes_covered"
+                  )}
                 </Typography>
               </div>
             }

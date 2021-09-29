@@ -1,4 +1,16 @@
-import { makeStyles, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@material-ui/core";
+import {
+  makeStyles,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Tooltip,
+  Typography
+} from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,28 +30,26 @@ const useStyles= makeStyles(({palette})=>({
     color: palette.text.primary,
     marginRight: 20,
   },
-  selectBox:{
+  selectBox: {
     margin: "24px 0",
     display: "flex",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
   },
   tableHead: {
     backgroundColor: "rgba(242,245,247,1)",
     "& .MuiTableCell-head": {
-      fontWeight:700,
+      fontWeight: 700,
       color: "#666",
-    }
+    },
   },
   infoIcon: {
-   position:"relative",
-   top:4,
-   left:5,
-   cursor: "pointer"
-
-  }
-
-}))
-export default function Assignments () {
+    position: "relative",
+    top: 4,
+    left: 5,
+    cursor: "pointer",
+  },
+}));
+export default function Assignments() {
   const css = useStyles();
   const dispatch = useDispatch();
   const {teacherLoadAssignment} = useSelector<RootState, RootState["report"]>(state=>state.report)
@@ -82,9 +92,15 @@ export default function Assignments () {
           select
           SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
         >
-          <MenuItem key="all" value="all">{d("All").t("report_label_all")}</MenuItem>
-          <MenuItem key="study" value="study">{d("Study").t("report_student_usage_study")}</MenuItem>
-          <MenuItem key="home_fun" value="home_fun">{d("Home Fun").t("report_student_usage_home_fun")}</MenuItem>
+          <MenuItem key="all" value="all">
+            {d("All").t("report_label_all")}
+          </MenuItem>
+          <MenuItem key="study" value="study">
+            {d("Study").t("report_student_usage_study")}
+          </MenuItem>
+          <MenuItem key="home_fun" value="home_fun">
+            {d("Home Fun").t("report_student_usage_home_fun")}
+          </MenuItem>
         </TextField>
         <TextField
           size="small"
@@ -94,8 +110,12 @@ export default function Assignments () {
           select
           SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
         >
-          <MenuItem key={7} value={7}>Past 7 days</MenuItem>
-          <MenuItem key={30} value={30}>Past 30 days</MenuItem>
+          <MenuItem key={7} value={7}>
+            Past 7 days
+          </MenuItem>
+          <MenuItem key={30} value={30}>
+            Past 30 days
+          </MenuItem>
         </TextField>
       </div>
       <AssignmentsTabel assignmentsList={teacherLoadAssignmentWidthTeacherName}/>
@@ -103,81 +123,80 @@ export default function Assignments () {
        <ReportPagination page={page} count={total} onChangePage={handleChangePge}/>
       </div>
     </div>
-
-  )
+  );
 }
 //  AssignmentsTabel 
 interface IAssignmentsProps {
   assignmentsList?: EntityTeacherLoadAssignmentResponse[];
 }
 
-const AssignmentsTabel = (props:IAssignmentsProps) => {
+const AssignmentsTabel = (props: IAssignmentsProps) => {
   const css = useStyles();
-  const {assignmentsList} = props;
+  const { assignmentsList } = props;
   const rows = assignmentsList?.map((item, idx) => (
     <TableRow key={item.teacher_id}>
-      <TableCell align="center" style={{maxWidth:150}}>
+      <TableCell align="center" style={{ maxWidth: 150 }}>
         <Typography component="div" noWrap>
-         {item.teacher_name}
+          {item.teacher_name}
         </Typography>
       </TableCell>
       <TableCell align="center">{item.count_of_classes}</TableCell>
       <TableCell align="center">{item.count_of_students} </TableCell>
       <TableCell align="center">{item.count_of_scheduled_assignment} </TableCell>
       <TableCell align="center">{item.count_of_completed_assignment} </TableCell>
-      <TableCell align="center">{`${Math.floor(item.feedback_percentage?item.feedback_percentage* 100 : 0)}%`} </TableCell>
+      <TableCell align="center">{`${Math.floor(item.feedback_percentage ? item.feedback_percentage * 100 : 0)}%`} </TableCell>
       <TableCell align="center">{item.count_of_pending_assignment} </TableCell>
       <TableCell align="center">{item.avg_days_of_pending_assignment} </TableCell>
     </TableRow>
   ));
   return (
     <TableContainer>
-      <Table  stickyHeader>
+      <Table stickyHeader>
         <TableHead className={css.tableHead}>
           <TableRow>
             <TableCell align="center">{d("Teacher").t("report_label_teacher")}</TableCell>
             <TableCell align="center">
               <div>
                 {"No.of Classes"}
-                <div style={{display: "flex", justifyContent: "center"}}>
-                <span style={{color:"rgba(102,102,102,.6)",marginRight:5}}>{"(Current)"}</span>
-                <Tooltip title="" >
-                  <InfoOutlined fontSize="small" />
-                </Tooltip>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>{"(Current)"}</span>
+                  <Tooltip title="">
+                    <InfoOutlined fontSize="small" />
+                  </Tooltip>
                 </div>
               </div>
-              </TableCell>
+            </TableCell>
             <TableCell align="center">
               <div>
-                {"No.of Students"} 
-                <div style={{display: "flex", justifyContent: "center"}}>
-                <span style={{color:"rgba(102,102,102,.6)",marginRight:5}}>{"(Current)"}</span>
-                <Tooltip title="" >
-                  <InfoOutlined fontSize="small" />
-                </Tooltip>
+                {"No.of Students"}
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>{"(Current)"}</span>
+                  <Tooltip title="">
+                    <InfoOutlined fontSize="small" />
+                  </Tooltip>
                 </div>
               </div>
             </TableCell>
             <TableCell align="center">
               <div>
                 {"Assignments Scheduled"}
-                  <Tooltip title=""  className={css.infoIcon} >
+                <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
               </div>
             </TableCell>
             <TableCell align="center">
-            <div>
+              <div>
                 {"Assessments Completed"}
-                  <Tooltip title="" className={css.infoIcon} >
+                <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
               </div>
-              </TableCell>
+            </TableCell>
             <TableCell align="center">
-              <div style={{whiteSpace: "nowrap"}}>
-                  {"% Feedback"}
-                  <Tooltip title="" className={css.infoIcon} >
+              <div style={{ whiteSpace: "nowrap" }}>
+                {"% Feedback"}
+                <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
               </div>
@@ -185,11 +204,11 @@ const AssignmentsTabel = (props:IAssignmentsProps) => {
             <TableCell align="center">
               <div>
                 {"Assessments Pending"}
-                  <Tooltip title="" className={css.infoIcon} >
+                <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
               </div>
-              </TableCell>
+            </TableCell>
             <TableCell align="center">
               <div>
                 {"Avg Days Pending"}
@@ -205,4 +224,3 @@ const AssignmentsTabel = (props:IAssignmentsProps) => {
     </TableContainer>
   );
 };
-
