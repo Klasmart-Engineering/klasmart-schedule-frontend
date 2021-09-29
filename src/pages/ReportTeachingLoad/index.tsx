@@ -54,7 +54,7 @@ export default function ReportTeachingLoad() {
   }, [dispatch]);
   return (
     <>
-      <ReportTitle title={d("Teaching Load").t("report_label_teaching_load")}></ReportTitle>
+      <ReportTitle title={d("Teacher Load Report").t("report_label_teaching_load")}></ReportTitle>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <TeacherFilter
           onChange={(teachers, classes) => {

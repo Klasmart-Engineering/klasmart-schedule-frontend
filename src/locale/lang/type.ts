@@ -756,7 +756,7 @@ type LangRecord<T = string> =
   | { id: "report_label_total_duration"; description: "Total Duration"; values: undefined }
   | { id: "report_label_avg_duration"; description: "Avg Duration"; values: undefined }
   | { id: "report_label_report_list"; description: "Reports List"; values: undefined }
-  | { id: "report_label_teaching_load"; description: "Teaching Load"; values: undefined }
+  | { id: "report_label_teaching_load"; description: "Teacher Load Report"; values: undefined }
   | { id: "report_label_school"; description: "School"; values: undefined }
   | { id: "report_label_0_2_hours"; description: "0~2 Hours"; values: undefined }
   | { id: "report_label_2_4_hours"; description: "2~4 Hours"; values: undefined }
@@ -766,8 +766,6 @@ type LangRecord<T = string> =
   | { id: "report_label_live"; description: "Live"; values: undefined }
   | { id: "report_label_hours"; description: "Hours"; values: undefined }
   | { id: "report_label_mins"; description: "Mins"; values: undefined }
-  | { id: "report_label_hrs_lower"; description: "hrs"; values: undefined }
-  | { id: "report_label_mins_lower"; description: "mins"; values: undefined }
   | { id: "report_label_go_back"; description: "Return to Reports List"; values: undefined }
   | { id: "report_label_individual_achievement"; description: "Individual Student Achievement"; values: undefined }
   | { id: "general_error_unauthorized"; description: "User not logged in, please log in"; values: undefined }
@@ -1210,11 +1208,6 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | { id: "report_msg_no_achieve"; description: "No achievement data available for this lesson."; values: undefined }
-  | {
-      id: "report_msg_learning_outcomes_covered";
-      description: "Observable competency that can be demonstrated by the student by the end of the lesson.";
-      values: undefined;
-    }
   | { id: "report_msg_no_plan"; description: "There are no lesson plans for this teacher. Would you like to add one?"; values: undefined }
   | { id: "report_button_create_plan"; description: "Create a Lesson Plan"; values: undefined }
   | { id: "report_label_0_hour"; description: "0 Hour"; values: undefined }
@@ -1319,24 +1312,41 @@ type LangRecord<T = string> =
   | { id: "report_student_usage_home_fun_title"; description: "Home Fun (latest 3 months)"; values: undefined }
   | { id: "report_student_usage_missed_study"; description: "List of students missed study"; values: undefined }
   | { id: "report_student_usage_missed_home_fun"; description: "List of students missed home fun"; values: undefined }
-  | { id: "report_teaching_load_lesson_title"; description: "Total Lessons (Live and In Class) Scheduled"; values: undefined }
-  | { id: "report_teaching_load_classes_column"; description: "No.of Classes"; values: undefined }
-  | { id: "report_teaching_load_student_column"; description: "No.of Student"; values: undefined }
-  | { id: "report_teaching_load_current"; description: "current"; values: undefined }
-  | { id: "report_teaching_load_lesson_live_completed"; description: "Live Lessons Completed"; values: undefined }
-  | { id: "report_teaching_load_lesson_in_class_completed"; description: "In Class Lessons Completed"; values: undefined }
-  | { id: "report_teaching_load_lesson_live_missed"; description: "Live Lessons Missed"; values: undefined }
-  | { id: "report_teaching_load_lesson_in_class_missed"; description: "In Class Lessons Missed"; values: undefined }
-  | { id: "report_teaching_load_lesson_total_scheduled"; description: "Total Scheduled"; values: undefined }
-  | { id: "report_teaching_load_lesson_menu_item"; description: "Past {days} days"; values: { days: number } }
+  | { id: "report_student_usage_of"; description: "{value} of {total}"; values: { value: string | number; total: string | number } }
+  | { id: "report_label_lessons"; description: "Lessons"; values: undefined }
+  | { id: "report_label_assignments"; description: "Assignments"; values: undefined }
+  | { id: "report_label_lesson_load"; description: "Next 7 Days Lesson Load"; values: undefined }
+  | { id: "report_label_total_lessons"; description: "Total Lessons (Live and In Class) Scheduled"; values: undefined }
+  | { id: "report_label_hrs"; description: "Hrs"; values: undefined }
+  | { id: "report_label_past_7_days"; description: "Past 7 Days"; values: undefined } 
+  | { id: "report_label_past_30_days"; description: "Past 30 Days"; values: undefined }
+  | { id: "report_label_classes_number"; description: "No. of Classes."; values: undefined }
+  | { id: "report_label_students_number"; description: "No. of Students."; values: undefined }
+  | { id: "report_label_current"; description: "Current"; values: undefined }
+  | { id: "report_label_live_lessons_completed"; description: "Live Lessons Completed"; values: undefined }
+  | { id: "report_label_in_class_lessons_completed"; description: "In Class Lessons Completed"; values: undefined }
+  | { id: "report_label_live_lessons_missed"; description: "Live Lessons Missed"; values: undefined }
+  | { id: "report_label_in_class_lessons_Missed"; description: "In Class Lessons Missed"; values: undefined }
+  | { id: "report_label_total_scheduled"; description: "Total Scheduled"; values: undefined }
   | { id: "report_label_missed_lessons"; description: "Details of Missed Lessons"; values: undefined }
   | { id: "report_label_lesson_type"; description: "Lesson Type"; values: undefined }
   | { id: "report_label_lesson_name"; description: "Lesson Name"; values: undefined }
   | { id: "report_label_class_name"; description: "Class Name"; values: undefined }
-  | { id: "report_label_students_number"; description: "No. of Student"; values: undefined }
   | { id: "report_label_start_date_time"; description: "Start Date & Time"; values: undefined }
   | { id: "report_label_end_date_time"; description: "End Date & Time"; values: undefined }
-  | { id: "report_student_usage_of"; description: "{value} of {total}"; values: { value: string | number; total: string | number } };
+  | { id: "report_label_class_type"; description: "Class Type"; values: undefined }
+  | { id: "report_label_study"; description: "Study"; values: undefined }
+  | { id: "report_label_home_fun"; description: "Home Fun"; values: undefined }
+  | { id: "report_label_assignments_scheduled"; description: "Assignments Scheduled"; values: undefined }
+  | { id: "report_label_assessments_completed"; description: "Assessments Completed"; values: undefined }
+  | { id: "report_label_feedback"; description: "% Feedback"; values: undefined }
+  | { id: "report_label_assessments_pending"; description: "Assessments Pending"; values: undefined }
+  | { id: "report_label_avg_days_pending"; description: "Avg Days Pending"; values: undefined }
+  | {
+      id: "report_msg_learning_outcomes_covered";
+      description: "Observable competency that can be demonstrated by the student by the end of the lesson.";
+      values: undefined;
+    };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

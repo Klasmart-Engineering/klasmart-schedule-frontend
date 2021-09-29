@@ -87,7 +87,7 @@ export default function Assignments() {
           size="small"
           className={css.selectButton}
           onChange={(e) => setClassType(e.target.value)}
-          label={t("schedule_detail_class_type")}
+          label={t("report_label_class_type")}
           value={classType}
           select
           SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
@@ -96,10 +96,10 @@ export default function Assignments() {
             {d("All").t("report_label_all")}
           </MenuItem>
           <MenuItem key="study" value="study">
-            {d("Study").t("report_student_usage_study")}
+            {d("Study").t("report_label_study")}
           </MenuItem>
           <MenuItem key="home_fun" value="home_fun">
-            {d("Home Fun").t("report_student_usage_home_fun")}
+            {d("Home Fun").t("report_label_home_fun")}
           </MenuItem>
         </TextField>
         <TextField
@@ -111,10 +111,10 @@ export default function Assignments() {
           SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
         >
           <MenuItem key={7} value={7}>
-            Past 7 days
+           {t("report_label_past_7_days")}
           </MenuItem>
           <MenuItem key={30} value={30}>
-            Past 30 days
+            {t("report_label_past_30_days")}
           </MenuItem>
         </TextField>
       </div>
@@ -157,9 +157,9 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
             <TableCell align="center">{d("Teacher").t("report_label_teacher")}</TableCell>
             <TableCell align="center">
               <div>
-                {"No.of Classes"}
+                {t("report_label_classes_number")}
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>{"(Current)"}</span>
+                  <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>({t("report_label_current")})</span>
                   <Tooltip title="">
                     <InfoOutlined fontSize="small" />
                   </Tooltip>
@@ -168,9 +168,9 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
             </TableCell>
             <TableCell align="center">
               <div>
-                {"No.of Students"}
+                {t("report_label_students_number")}
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>{"(Current)"}</span>
+                  <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>({t("report_label_current")})</span>
                   <Tooltip title="">
                     <InfoOutlined fontSize="small" />
                   </Tooltip>
@@ -179,7 +179,7 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
             </TableCell>
             <TableCell align="center">
               <div>
-                {"Assignments Scheduled"}
+                {t("report_label_assignments_scheduled")}
                 <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
@@ -187,7 +187,7 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
             </TableCell>
             <TableCell align="center">
               <div>
-                {"Assessments Completed"}
+                {t("report_label_assessments_completed")}
                 <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
@@ -195,7 +195,7 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
             </TableCell>
             <TableCell align="center">
               <div style={{ whiteSpace: "nowrap" }}>
-                {"% Feedback"}
+                {t("report_label_feedback")}
                 <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
@@ -203,7 +203,7 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
             </TableCell>
             <TableCell align="center">
               <div>
-                {"Assessments Pending"}
+                {t("report_label_assessments_pending")}
                 <Tooltip title="" className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
                 </Tooltip>
@@ -211,7 +211,7 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
             </TableCell>
             <TableCell align="center">
               <div>
-                {"Avg Days Pending"}
+                {t("report_label_avg_days_pending")}
                 <Tooltip title="" className={css.infoIcon} >
                 <InfoOutlined fontSize="small" />
                 </Tooltip>
