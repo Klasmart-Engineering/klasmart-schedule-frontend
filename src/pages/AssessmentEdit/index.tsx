@@ -137,13 +137,17 @@ export function AssessmentsEdit() {
           const errorlist =
             data.outcomes &&
             data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
-          if (errorlist && errorlist.length) {
+          console.log("errorlist:", errorlist);
+          if (errorlist && errorlist.length && isLive) {
             const finalErrs = errorlist.filter((err) => {
               return finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0;
             });
             if (finalErrs && finalErrs.length) {
               return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
             }
+          }
+          if (!isLive && errorlist && errorlist.length) {
+            return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
           }
           const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
@@ -156,7 +160,7 @@ export function AssessmentsEdit() {
           }
         }
       }),
-    [handleSubmit, id, init_student_view_items, filter_student_view_items, finalOutcomeList, dispatch, history, editindex]
+    [handleSubmit, id, init_student_view_items, filter_student_view_items, isLive, dispatch, finalOutcomeList, history, editindex]
   );
   const handleGoBack = useCallback(() => {
     history.goBack();

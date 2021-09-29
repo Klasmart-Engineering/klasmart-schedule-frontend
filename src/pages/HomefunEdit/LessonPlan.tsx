@@ -116,7 +116,9 @@ export function LessonPlan(props: AssignmentProps) {
   };
 
   const updateStatus = (value: string, index: number, item: EntityHomeFunStudyOutcome) => {
-    setValue(`outcomes[${index}]`, { ...item, status: value });
+    /** 改成可以取消勾选(小燕提的~) **/
+    let nv = item.status === value ? "default" : value;
+    setValue(`outcomes[${index}]`, { ...item, status: nv });
   };
 
   return (
