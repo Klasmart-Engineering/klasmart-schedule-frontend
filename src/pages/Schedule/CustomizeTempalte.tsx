@@ -210,7 +210,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       window.open(apiLivePath(liveToken));
       return;
     }
-    if (scheduleInfo.start.valueOf() - currentTime > 15 * 60 * 1000) {
+    if (ScheduleViewInfo.start_at! - currentTime > 15 * 60 * 1000) {
       changeModalDate({
         title: "",
         text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
