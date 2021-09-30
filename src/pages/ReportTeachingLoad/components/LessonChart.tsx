@@ -123,7 +123,7 @@ const useFormatTime = () => {
   return (mins: number = 0) => {
     const hours = Math.floor(mins / 60);
     const minutes = mins % 60;
-    return `${hours ? hours + lang.hrs : ""}${minutes ? minutes + lang.mins : ""}`;
+    return mins ? `${hours ? hours + lang.hrs : ""}${minutes ? minutes + lang.mins : ""}` : `0${lang.mins}`;
   };
 };
 
