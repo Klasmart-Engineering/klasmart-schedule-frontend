@@ -204,7 +204,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleGoLive = (scheduleInfos: ScheduleEditExtend) => {
     const currentTime = Math.floor(new Date().getTime());
-    if (permissionShowLive && scheduleInfo.class_type_label?.id === "Homework") {
+    if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
       window.open(apiLivePath(liveToken));
