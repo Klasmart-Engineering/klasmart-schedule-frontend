@@ -49,6 +49,9 @@ const useStyle = makeStyles(() => ({
   headerField: {
     borderLeft: "none",
     width: "calc(25% / 2)",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
     position: "relative",
     "&:before": {
       content: "' '",
@@ -62,6 +65,7 @@ const useStyle = makeStyles(() => ({
   },
   headerFieldBar: {
     width: "60%",
+    marginBottom: "-1px",
     borderBottom: "1px solid #e9e9e9",
   },
   tableHeaderItem: {
@@ -190,13 +194,14 @@ export default function (props: Props) {
     props.teacherChange(currentOpenedTeacher.current, selectItem);
   };
 
-  const getList = () => {
+  const getList = async () => {
     const params = {
       ...queryParams.current,
       metaLoading: true,
       teacher_ids: queryParams.current.teacher_ids?.slice(pageRef.current * PAGE_SIZE, pageRef.current * PAGE_SIZE + PAGE_SIZE),
     };
-    dispatch(getLessonTeacherLoad(params));
+    await dispatch(getLessonTeacherLoad(params));
+    props.teacherChange();
   };
 
   useEffect(() => {
@@ -277,7 +282,7 @@ export default function (props: Props) {
             content={[
               { count: item.completed_live_Lessons, type: lang.liveCompleted },
               { count: item.completed_in_class_lessons, type: lang.inClassCompleted },
-              { count: item.missed_in_class_lessons, type: lang.liveMissed },
+              { count: item.missed_in_class_lessons, type: lang.inClassMidded },
               { count: item.missed_live_lessons, type: lang.liveMissed },
             ]}
           >
@@ -336,7 +341,7 @@ export default function (props: Props) {
             return renderTableItem(item);
           })}
         </Grid>
-        <ReportPagination page={page + 1} count={count} onChangePage={pageWillChange} />
+        <ReportPagination page={page + 1} rowsPerPage={PAGE_SIZE} count={count} onChangePage={pageWillChange} />
       </Grid>
     );
   };
