@@ -1318,10 +1318,10 @@ type LangRecord<T = string> =
   | { id: "report_label_lesson_load"; description: "Next 7 Days Lesson Load"; values: undefined }
   | { id: "report_label_total_lessons"; description: "Total Lessons (Live and In Class) Scheduled"; values: undefined }
   | { id: "report_label_hrs"; description: "Hrs"; values: undefined }
-  | { id: "report_label_past_7_days"; description: "Past 7 Days"; values: undefined } 
+  | { id: "report_label_past_7_days"; description: "Past 7 Days"; values: undefined }
   | { id: "report_label_past_30_days"; description: "Past 30 Days"; values: undefined }
-  | { id: "report_label_classes_number"; description: "No. of Classes."; values: undefined }
-  | { id: "report_label_students_number"; description: "No. of Students."; values: undefined }
+  | { id: "report_label_classes_number"; description: "No. of Classes"; values: undefined }
+  | { id: "report_label_students_number"; description: "No. of Students"; values: undefined }
   | { id: "report_label_current"; description: "Current"; values: undefined }
   | { id: "report_label_live_lessons_completed"; description: "Live Lessons Completed"; values: undefined }
   | { id: "report_label_in_class_lessons_completed"; description: "In Class Lessons Completed"; values: undefined }
@@ -1342,10 +1342,45 @@ type LangRecord<T = string> =
   | { id: "report_label_feedback"; description: "% Feedback"; values: undefined }
   | { id: "report_label_assessments_pending"; description: "Assessments Pending"; values: undefined }
   | { id: "report_label_avg_days_pending"; description: "Avg Days Pending"; values: undefined }
-  | { id: "report_label_teaching_hours"; description: "Teaching hours in seven days"; values: undefined }
   | {
       id: "report_msg_learning_outcomes_covered";
       description: "Observable competency that can be demonstrated by the student by the end of the lesson.";
+      values: undefined;
+    }
+  | { id: "report_label_teaching_hours"; description: "Teaching Hours in Next 7 Days"; values: undefined }
+  | {
+      id: "report_msg_students_number";
+      description: "Number of students currently assigned to the teacher. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_classes_number";
+      description: "Number of classes currently assigned to the teacher. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_assignments_scheduled";
+      description: "Number of assignments the teacher has newly planned and assigned during the time range. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_assessments_completed";
+      description: "Number of assessments completed by the teacher for each student submission. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_feedback";
+      description: "% of individual student assessments that are completed of which the teacher has provided feedback for. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_assessments_pending";
+      description: "Number of assessments pending for the teacher to complete for every student submission. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "report_msg_avg_days_pending";
+      description: "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.";
       values: undefined;
     };
 

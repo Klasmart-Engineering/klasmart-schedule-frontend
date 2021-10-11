@@ -11,6 +11,7 @@ import {
   Tooltip,
   Typography
 } from "@material-ui/core";
+import { Theme, withStyles } from "@material-ui/core/styles";
 import { InfoOutlined } from "@material-ui/icons";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,6 +50,21 @@ const useStyles = makeStyles(({ palette }) => ({
     cursor: "pointer",
   },
 }));
+const TooltipBlack = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.black,
+    fontSize: 14, 
+    color: theme.palette.common.white,
+    maxWidth: 200,
+    padding: 8,
+    textAlign: "center",
+    boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.20)"
+  },
+  arrow:{
+    color: theme.palette.common.black,
+  }
+}))(Tooltip);
+
 export default function Assignments() {
   const css = useStyles();
   const dispatch = useDispatch();
@@ -173,9 +189,9 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
                 {t("report_label_classes_number")}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>({t("report_label_current")})</span>
-                  <Tooltip title="">
+                  <TooltipBlack arrow placement="top" title={t("report_msg_classes_number")} style={{cursor:"pointer"}}>
                     <InfoOutlined fontSize="small" />
-                  </Tooltip>
+                  </TooltipBlack>
                 </div>
               </div>
             </TableCell>
@@ -184,50 +200,50 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
                 {t("report_label_students_number")}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <span style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>({t("report_label_current")})</span>
-                  <Tooltip title="">
+                  <TooltipBlack arrow placement="top" title={t("report_msg_students_number")} style={{cursor:"pointer"}}>
                     <InfoOutlined fontSize="small" />
-                  </Tooltip>
+                  </TooltipBlack>
                 </div>
               </div>
             </TableCell>
             <TableCell align="center">
               <div>
                 {t("report_label_assignments_scheduled")}
-                <Tooltip title="" className={css.infoIcon}>
+                <TooltipBlack arrow placement="top" title={t("report_msg_assignments_scheduled")} className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
-                </Tooltip>
+                </TooltipBlack>
               </div>
             </TableCell>
             <TableCell align="center">
               <div>
                 {t("report_label_assessments_completed")}
-                <Tooltip title="" className={css.infoIcon}>
+                <TooltipBlack arrow placement="top" title={t("report_msg_assessments_completed")} className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
-                </Tooltip>
+                </TooltipBlack>
               </div>
             </TableCell>
             <TableCell align="center">
               <div style={{ whiteSpace: "nowrap" }}>
                 {t("report_label_feedback")}
-                <Tooltip title="" className={css.infoIcon}>
+                <TooltipBlack arrow placement="top" title={t("report_msg_feedback")} className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
-                </Tooltip>
+                </TooltipBlack>
               </div>
             </TableCell>
             <TableCell align="center">
               <div>
                 {t("report_label_assessments_pending")}
-                <Tooltip title="" className={css.infoIcon}>
+                <TooltipBlack arrow placement="top" title={t("report_msg_assessments_pending")} className={css.infoIcon}>
                   <InfoOutlined fontSize="small" />
-                </Tooltip>
+                </TooltipBlack>
               </div>
             </TableCell>
             <TableCell align="center">
               <div>
                 {t("report_label_avg_days_pending")}
-                <Tooltip title="" className={css.infoIcon} >
+                <TooltipBlack arrow placement="top" title={t("report_msg_avg_days_pending")} className={css.infoIcon} >
                 <InfoOutlined fontSize="small" />
-                </Tooltip>
+                </TooltipBlack>
               </div>
             </TableCell>
           </TableRow>
