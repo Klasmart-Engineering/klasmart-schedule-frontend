@@ -283,10 +283,10 @@ export default function (props: Props) {
           <ReportTooltip
             totalText={lang.totalScheduled}
             content={[
-              { count: item.completed_live_Lessons, type: lang.liveCompleted },
-              { count: item.completed_in_class_lessons, type: lang.inClassCompleted },
-              { count: item.missed_live_lessons, type: lang.liveMissed },
-              { count: item.missed_in_class_lessons, type: lang.inClassMidded },
+              { count: item.completed_live_Lessons || 0, type: lang.liveCompleted },
+              { count: item.completed_in_class_lessons || 0, type: lang.inClassCompleted },
+              { count: item.missed_live_lessons || 0, type: lang.liveMissed },
+              { count: item.missed_in_class_lessons || 0, type: lang.inClassMidded },
             ]}
           >
             <Box display={"flex"} width={(count / computeCurrentPage()) * 100 + "%"} height={36}>
@@ -326,7 +326,7 @@ export default function (props: Props) {
     return (
       <Grid container justify={"space-between"} className={style.filter}>
         <Grid item>
-          {lang.lessonTitle}: {computeCountNumber()}（{computeAmountTime()}）
+          {lang.lessonTitle}: {computeCountNumber() || 0}（{computeAmountTime()}）
         </Grid>
         <Select value={selectItem} onChange={filterChange} className={style.selector} input={<OutlinedInput />}>
           <MenuItem value={7}>{lang.menuItem1}</MenuItem>
@@ -354,22 +354,22 @@ export default function (props: Props) {
       <Grid container wrap={"nowrap"} justify={"space-around"} className={style.totalType}>
         {renderLineFooterBlock(
           lang.liveCompleted,
-          `${statistic.completed_live_lessons?.count}（${formatTime(statistic.completed_live_lessons?.duration)}）`,
+          `${statistic.completed_live_lessons?.count || 0}（${formatTime(statistic.completed_live_lessons?.duration)}）`,
           0
         )}
         {renderLineFooterBlock(
           lang.inClassCompleted,
-          `${statistic.completed_in_class_lessons?.count}（${formatTime(statistic.completed_in_class_lessons?.duration)}）`,
+          `${statistic.completed_in_class_lessons?.count || 0}（${formatTime(statistic.completed_in_class_lessons?.duration)}）`,
           1
         )}
         {renderLineFooterBlock(
           lang.liveMissed,
-          `${statistic.missed_live_lessons?.count}（${formatTime(statistic.missed_live_lessons?.duration)}）`,
+          `${statistic.missed_live_lessons?.count || 0}（${formatTime(statistic.missed_live_lessons?.duration)}）`,
           2
         )}
         {renderLineFooterBlock(
           lang.inClassMidded,
-          `${statistic.missed_in_class_lessons?.count}（${formatTime(statistic.missed_in_class_lessons?.duration)}）`,
+          `${statistic.missed_in_class_lessons?.count || 0}（${formatTime(statistic.missed_in_class_lessons?.duration)}）`,
           3
         )}
       </Grid>
