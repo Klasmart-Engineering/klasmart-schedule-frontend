@@ -16,10 +16,11 @@ const useStyles = makeStyles(() =>
 interface ILessonTable {
   listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse["list"];
   classIds: MutiSelect.ISelect[];
+  page: number;
 }
 
 export default function LessonTable(props: ILessonTable) {
-  const { listTeacherMissedLessons, classIds } = props;
+  const { listTeacherMissedLessons, classIds, page } = props;
   const classes = useStyles();
   return (
     <div>
@@ -38,7 +39,7 @@ export default function LessonTable(props: ILessonTable) {
         <TableBody>
           {listTeacherMissedLessons
             ? listTeacherMissedLessons.map((item, idx) => (
-                <TableRow key={item.class_id}>
+                <TableRow key={`${page}--${idx}`}>
                   <TableCell align="center">{item.class_type}</TableCell>
                   <TableCell align="center">{item.title}</TableCell>
                   <TableCell align="center">{classIds.find((item2) => item2.value === item.class_id)?.label || item.class_id}</TableCell>
@@ -49,7 +50,7 @@ export default function LessonTable(props: ILessonTable) {
                   <TableCell align="center">{item.end_date ? `${moment(item.end_date * 1000).format("MM/DD/YYYY HH:mm")}` : ""}</TableCell>
                 </TableRow>
               ))
-            : ""}
+            : null}
         </TableBody>
       </Table>
     </div>
