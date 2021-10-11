@@ -120,9 +120,10 @@ const computeTimeStamp = (days: number) => {
 
 const useFormatTime = () => {
   const lang = useTranslation().lessonLang;
-  return (mins: number = 0) => {
+  return (value: number = 0) => {
+    const mins = value / 60;
     const hours = Math.floor(mins / 60);
-    const minutes = mins % 60;
+    const minutes = Math.floor(mins % 60);
     return mins ? `${hours ? hours + lang.hrs : ""}${minutes ? minutes + lang.mins : ""}` : `0${lang.mins}`;
   };
 };
@@ -215,7 +216,7 @@ export default function (props: Props) {
       getList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.classIds, props.teacherIds]);
+  }, [props.classIds]);
 
   const renderLineFooterBlock = (content: string, count: string, index: number) => {
     return (
