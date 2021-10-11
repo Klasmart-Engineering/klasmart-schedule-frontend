@@ -371,7 +371,7 @@ function MyCalendar(props: CalendarProps) {
     const currentTime = Math.floor(new Date().getTime());
     if (
       ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
-      (permissionShowLive && event.class_type_label?.id === "Homework")
+      (permissionShowLive && event.class_type === "Homework")
     ) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
