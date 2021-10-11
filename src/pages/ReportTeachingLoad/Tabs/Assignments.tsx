@@ -58,7 +58,8 @@ const TooltipBlack = withStyles((theme: Theme) => ({
     maxWidth: 200,
     padding: 8,
     textAlign: "center",
-    boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.20)"
+    boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.20)",
+    fontFamily: "Helvetica, Helvetica-Regular",
   },
   arrow:{
     color: theme.palette.common.black,
