@@ -202,6 +202,7 @@ export default function (props: Props) {
     };
     await dispatch(getLessonTeacherLoad(params));
     props.teacherChange();
+    currentOpenedTeacher.current = "";
   };
 
   useEffect(() => {

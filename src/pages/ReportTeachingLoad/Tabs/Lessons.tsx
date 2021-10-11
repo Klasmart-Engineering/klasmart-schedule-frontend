@@ -29,32 +29,46 @@ export default function () {
   const handleChangePage = React.useMemo(
     () => (page: number) => {
       setPage(page);
+      const class_ids = classes.map((item) => item.value);
+      const teacher_id = state.id ? state.id : "";
+      if (!teacher_id) return;
+      dispatch(
+        getListTeacherMissedLessons({
+          metaLoading: true,
+          class_ids,
+          duration: getDurationByDay(state.days),
+          page,
+          page_size: 10,
+          teacher_id,
+        })
+      );
     },
-    []
+    [dispatch, classes, state.id, state.days]
   );
 
   React.useEffect(() => {
     const class_ids = classes.map((item) => item.value);
     const teacher_id = state.id ? state.id : "";
     if (!teacher_id) return;
+    setPage(1);
     dispatch(
       getListTeacherMissedLessons({
         metaLoading: true,
         class_ids,
         duration: getDurationByDay(state.days),
-        page,
+        page: 1,
         page_size: 10,
         teacher_id,
       })
     );
-  }, [dispatch, page, classes, state.id, state.days]);
+  }, [dispatch, classes, state.id, state.days]);
 
   return (
     <div>
       <LessonChart teacherChange={teacherChange} teacherIds={teachers} classIds={classes} />
       {state.id && (
         <div>
-          <LessonTable listTeacherMissedLessons={listTeacherMissedLessons.list} classIds={classes} />
+          <LessonTable listTeacherMissedLessons={listTeacherMissedLessons.list} classIds={classes} page={page} />
           <ReportPagination
             page={page}
             count={listTeacherMissedLessons?.total ? listTeacherMissedLessons?.total : 0}
