@@ -46,6 +46,7 @@ import {
   getLinkedMockOptions,
   actOutcomeListLoading,
   getSchoolsFilterList,
+  getClassFilterList,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -94,6 +95,7 @@ function ScheduleContent() {
     user_id,
     schoolByOrgOrUserData,
     schoolsConnection,
+    classesConnection,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId, teacherName } = useQuery();
@@ -261,6 +263,17 @@ function ScheduleContent() {
 
   const getParticipants = (is_org: boolean = true) => {
     dispatch(getParticipantsData(is_org));
+  };
+
+  const getClassesConnection = async (cursor: string, school_id: string, loading: boolean) => {
+    await dispatch(
+      getClassFilterList({
+        filter: { schoolId: { operator: "eq", value: school_id }, status: { operator: "eq", value: "active" } },
+        direction: "FORWARD",
+        directionArgs: { count: 5, cursor: cursor ?? "" },
+        metaLoading: loading,
+      })
+    );
   };
 
   const getSchoolsConnection = async (cursor: string, value: string, loading: boolean) => {
@@ -448,6 +461,8 @@ function ScheduleContent() {
               viewSubjectPermission={viewSubjectPermission}
               schoolsConnection={schoolsConnection}
               getSchoolsConnection={getSchoolsConnection}
+              getClassesConnection={getClassesConnection}
+              classesConnection={classesConnection}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

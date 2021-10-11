@@ -255,8 +255,8 @@ function FilterLabel(props: FilterLabelProps) {
 }
 
 function FilterOverall(props: FilterTreeProps) {
-  const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine } = props;
-  const total = classDataBySchool.classes.length;
+  const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine, total } = props;
+  // const total = classDataBySchool.classes.length;
   const pageSize = 5;
   const [page, setPage] = React.useState(1);
   const [checkMine, setCheckMine] = React.useState(false);
@@ -436,10 +436,21 @@ interface FilterTreeProps {
   hideClassMenu: () => void;
   handleChangeOnlyMine: (data: string[]) => void;
   stateOnlyMine: string[];
+  total?: number;
+  getClassesConnection: (cursor: string, school_id: string, loading: boolean) => void;
 }
 
 export default function FilterTree(props: FilterTreeProps) {
-  const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine } = props;
+  const {
+    classDataBySchool,
+    handleChangeShowAnyTime,
+    pageY,
+    hideClassMenu,
+    handleChangeOnlyMine,
+    stateOnlyMine,
+    total,
+    getClassesConnection,
+  } = props;
   return (
     <FilterOverall
       stateOnlyMine={stateOnlyMine}
@@ -448,6 +459,8 @@ export default function FilterTree(props: FilterTreeProps) {
       classDataBySchool={classDataBySchool}
       handleChangeShowAnyTime={handleChangeShowAnyTime}
       pageY={pageY}
+      total={total}
+      getClassesConnection={getClassesConnection}
     />
   );
 }

@@ -38,6 +38,7 @@ import {
   SchoolByOrgQueryQueryVariables,
   SchoolByUserQueryDocument,
   GetSchoolsFilterListDocument,
+  GetClassFilterListDocument,
   SchoolByUserQueryQuery,
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
@@ -48,6 +49,8 @@ import {
   UserSchoolIDsQueryVariables,
   GetSchoolsFilterListQuery,
   GetSchoolsFilterListQueryVariables,
+  GetClassFilterListQuery,
+  GetClassFilterListQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -122,6 +125,7 @@ export interface ScheduleState {
   developmental: LinkedMockOptionsItem[];
   skills: LinkedMockOptionsItem[];
   schoolsConnection: GetSchoolsFilterListQuery;
+  classesConnection: GetClassFilterListQuery;
 }
 
 interface Rootstate {
@@ -251,6 +255,7 @@ const initialState: ScheduleState = {
   developmental: [],
   skills: [],
   schoolsConnection: {},
+  classesConnection: {},
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -726,6 +731,21 @@ export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, 
   }
 );
 
+export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
+  "getClassFilterList",
+  // @ts-ignore
+  ({ filter, direction, directionArgs }) => {
+    return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
+      query: GetClassFilterListDocument,
+      variables: {
+        filter: filter,
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
+
 export const getSchoolByOrg = createAsyncThunk("getSchoolByOrg", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
@@ -933,6 +953,9 @@ const { actions, reducer } = createSlice({
     },
     [getSchoolsFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.schoolsConnection = payload.data;
+    },
+    [getClassFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.classesConnection = payload.data;
     },
   },
 });

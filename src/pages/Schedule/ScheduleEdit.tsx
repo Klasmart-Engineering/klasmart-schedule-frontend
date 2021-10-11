@@ -28,7 +28,7 @@ import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Maybe, User } from "../../api/api-ko-schema.auto";
-import { GetProgramsQuery, GetSchoolsFilterListQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, GetSchoolsFilterListQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
   EntityScheduleAddView,
@@ -288,6 +288,8 @@ function SmallCalendar(props: CalendarStateProps) {
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
+    getClassesConnection,
+    classesConnection,
   } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
@@ -340,6 +342,8 @@ function SmallCalendar(props: CalendarStateProps) {
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
+          getClassesConnection={getClassesConnection}
+          classesConnection={classesConnection}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -2433,6 +2437,8 @@ interface CalendarStateProps {
   viewSubjectPermission?: boolean;
   schoolsConnection: GetSchoolsFilterListQuery;
   getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
+  getClassesConnection: (cursor: string, school_id: string, loading: boolean) => void;
+  classesConnection: GetClassFilterListQuery;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2479,6 +2485,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
+    getClassesConnection,
+    classesConnection,
   } = props;
 
   const template = (
@@ -2520,6 +2528,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
+          getClassesConnection={getClassesConnection}
+          classesConnection={classesConnection}
         />
       </Box>
       <Box
@@ -2566,6 +2576,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
+          getClassesConnection={getClassesConnection}
+          classesConnection={classesConnection}
         />
       </Box>
     </>
