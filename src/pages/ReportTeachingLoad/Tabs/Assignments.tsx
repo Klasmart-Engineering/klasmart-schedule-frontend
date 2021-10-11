@@ -55,7 +55,7 @@ const TooltipBlack = withStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.black,
     fontSize: 14, 
     color: theme.palette.common.white,
-    maxWidth: 200,
+    maxWidth: 290,
     padding: 8,
     textAlign: "center",
     boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.20)",
