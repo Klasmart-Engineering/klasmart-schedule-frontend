@@ -362,12 +362,12 @@ export default function (props: Props) {
         )}
         {renderLineFooterBlock(
           lang.liveMissed,
-          `${statistic.missed_live_lessons?.count}(${formatTime(statistic.missed_live_lessons?.count)})`,
+          `${statistic.missed_live_lessons?.count}(${formatTime(statistic.missed_live_lessons?.duration)})`,
           2
         )}
         {renderLineFooterBlock(
           lang.inClassMidded,
-          `${statistic.missed_in_class_lessons?.count}(${formatTime(statistic.missed_in_class_lessons?.count)})`,
+          `${statistic.missed_in_class_lessons?.count}(${formatTime(statistic.missed_in_class_lessons?.duration)})`,
           3
         )}
       </Grid>
