@@ -79,7 +79,8 @@ export default function Assignments() {
       );
       setPage(page);
     },
-    [dispatch, durationDay, classType, classes, teachers]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch, durationDay, classType, classes]
   );
 
   React.useEffect(() => {
@@ -89,7 +90,7 @@ export default function Assignments() {
     const class_id_list = classes?.map((item) => item.value);
     const teacher_id_list = teachers?.slice(0, PAGESIZE).map((item) => item.value);
     dispatch(getTeacherLoadAssignment({ metaLoading: true, class_type_list, duration, class_id_list, teacher_id_list }));
-  }, [dispatch, durationDay, classType, classes, teachers]);
+  }, [dispatch, durationDay, classType, classes]);
 
   return (
     <div>

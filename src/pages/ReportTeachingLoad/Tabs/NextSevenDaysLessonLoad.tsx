@@ -24,7 +24,8 @@ export default function () {
       const teacher_ids = teachers?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE).map((item) => item.value);
       dispatch(getTeachingLoadReport({ metaLoading: true, time_offset: TIME_OFFSET, teacher_ids, class_ids }));
     },
-    [dispatch, teachers, classes]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch, classes]
   );
 
   useEffect(() => {
@@ -32,7 +33,8 @@ export default function () {
     const class_ids = classes?.map((item) => item.value);
     const teacher_ids = teachers?.slice(0, PAGESIZE).map((item) => item.value);
     dispatch(getTeachingLoadReport({ metaLoading: true, time_offset: TIME_OFFSET, teacher_ids, class_ids }));
-  }, [dispatch, teachers, classes]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, classes]);
 
   return (
     <Fragment>
