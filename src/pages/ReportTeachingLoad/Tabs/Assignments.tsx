@@ -90,6 +90,7 @@ export default function Assignments() {
     const class_id_list = classes?.map((item) => item.value);
     const teacher_id_list = teachers?.slice(0, PAGESIZE).map((item) => item.value);
     dispatch(getTeacherLoadAssignment({ metaLoading: true, class_type_list, duration, class_id_list, teacher_id_list }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, durationDay, classType, classes]);
 
   return (
