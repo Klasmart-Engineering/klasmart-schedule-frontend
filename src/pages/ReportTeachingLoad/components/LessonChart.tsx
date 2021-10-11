@@ -124,7 +124,9 @@ const useFormatTime = () => {
     const mins = value / 60;
     const hours = Math.floor(mins / 60);
     const minutes = Math.floor(mins % 60);
-    return mins ? `${hours ? `${hours} ${lang.hrs}` : ""} ${minutes ? `${minutes} ${lang.mins}` : ""}` : `0 ${lang.mins}`;
+    const hoursText = `${hours} ${lang.hrs}`;
+    const minuteText = `${minutes} ${lang.mins}`;
+    return mins ? `${hours ? hoursText : ""} ${minutes ? minuteText : ""}` : `0 ${lang.mins}`;
   };
 };
 
