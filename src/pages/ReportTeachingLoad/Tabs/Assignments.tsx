@@ -176,7 +176,7 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
       <TableCell align="center">{item.count_of_completed_assignment} </TableCell>
       <TableCell align="center">{`${Math.floor(item.feedback_percentage ? item.feedback_percentage * 100 : 0)}%`} </TableCell>
       <TableCell align="center">{item.count_of_pending_assignment} </TableCell>
-      <TableCell align="center">{item.avg_days_of_pending_assignment} </TableCell>
+      <TableCell align="center">{Math.ceil(item.avg_days_of_pending_assignment ?? 0)} </TableCell>
     </TableRow>
   ));
   return (
