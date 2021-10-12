@@ -1,10 +1,10 @@
 import { IntlFormatters, MessageDescriptor } from "react-intl";
 
 type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
-export type LangName = "en" | "ko" | "zh" | "vi" | "id";
+export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id"].includes(name)) throw new TypeError();
+  if (!name || !["en", "ko", "zh", "vi", "id", "es"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -1318,7 +1318,7 @@ type LangRecord<T = string> =
   | { id: "report_label_lesson_load"; description: "Next 7 Days Lesson Load"; values: undefined }
   | { id: "report_label_total_lessons"; description: "Total Lessons (Live and In Class) Scheduled"; values: undefined }
   | { id: "report_label_hrs"; description: "Hrs"; values: undefined }
-  | { id: "report_label_past_7_days"; description: "Past 7 Days"; values: undefined } 
+  | { id: "report_label_past_7_days"; description: "Past 7 Days"; values: undefined }
   | { id: "report_label_past_30_days"; description: "Past 30 Days"; values: undefined }
   | { id: "report_label_classes_number"; description: "No. of Classes."; values: undefined }
   | { id: "report_label_students_number"; description: "No. of Students."; values: undefined }

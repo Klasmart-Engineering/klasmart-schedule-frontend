@@ -427,14 +427,15 @@ function MyCalendar(props: CalendarProps) {
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },
   ];
 
-  const eventStyleGetter = () => {
+  const eventStyleGetter = (event: any) => {
+    const eventTemplate = eventColor.filter((item) => item.id === event.class_type);
     const style = {
       backgroundColor: "white",
       height: "26px",
       padding: 0,
     };
     return {
-      style: style,
+      style: modelView === "month" ? style : { backgroundColor: eventTemplate[0].color },
     };
   };
 
@@ -487,7 +488,7 @@ function MyCalendar(props: CalendarProps) {
           style={{ height: "100vh" }}
           eventPropGetter={eventStyleGetter}
           components={{
-            event: CustomEvent,
+            event: modelView === "month" ? CustomEvent : undefined,
           }}
         />
       )}

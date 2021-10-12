@@ -37,7 +37,6 @@ import {
   getSchoolByOrg,
   getSchoolByUser,
   getSchoolInfo,
-  getSearchScheduleList,
   getSubjectByProgramId,
   ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
@@ -94,7 +93,7 @@ function ScheduleContent() {
     schoolByOrgOrUserData,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
-  const { scheduleId, teacherName } = useQuery();
+  const { scheduleId } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
   const [modelYear, setModelYear] = React.useState<boolean>(false);
@@ -262,30 +261,15 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
-    if (teacherName) {
-      const data = {
-        teacher_name: teacherName,
-        page: 1,
-        page_size: 10,
+    dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
-        start_at: timesTamp.start,
-      };
-      dispatch(getSearchScheduleList({ data, metaLoading: true }));
-    } else {
-      /*      if (stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) {
-        dispatch(resetScheduleTimeViewData([]));
-        return;
-      }*/
-      dispatch(
-        getScheduleTimeViewData({
-          view_type: modelView,
-          time_at: timesTamp.start,
-          time_zone_offset: -new Date().getTimezoneOffset() * 60,
-          ...modelSchedule.AssemblyFilterParameter(stateOnlyMine),
-        })
-      );
-    }
-  }, [teacherName, modelView, timesTamp, stateOnlyMine, dispatch]);
+        ...modelSchedule.AssemblyFilterParameter(stateOnlyMine),
+      })
+    );
+  }, [modelView, timesTamp, stateOnlyMine, dispatch]);
 
   /*  const initialization_assembly_filter_data = useMemo(() => {
     return modelSchedule.SetInitializationAssemblyFilterParameter(schoolByOrgOrUserData, filterOption.others);
