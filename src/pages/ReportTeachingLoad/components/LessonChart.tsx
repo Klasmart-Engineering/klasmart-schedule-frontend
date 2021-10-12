@@ -291,9 +291,14 @@ export default function (props: Props) {
             ]}
           >
             <Box display={"flex"} width={(count / computeCurrentPage()) * 100 + "%"} height={36}>
+              {item.completed_live_Lessons ? (
+                <Box bgcolor={colors[0]} width={handlePercentage(item.completed_live_Lessons)} marginRight={"3px"}></Box>
+              ) : (
+                ""
+              )}
               {item.completed_in_class_lessons ? (
                 <Box
-                  bgcolor={colors[0]}
+                  bgcolor={colors[1]}
                   width={handlePercentage(item.completed_in_class_lessons)}
                   marginRight={"3px"}
                   className={style.datumGraph}
@@ -301,18 +306,13 @@ export default function (props: Props) {
               ) : (
                 ""
               )}
-              {item.completed_live_Lessons ? (
-                <Box bgcolor={colors[1]} width={handlePercentage(item.completed_live_Lessons)} marginRight={"3px"}></Box>
+              {item.missed_live_lessons ? (
+                <Box bgcolor={colors[2]} width={handlePercentage(item.missed_live_lessons)} marginRight={"3px"}></Box>
               ) : (
                 ""
               )}
               {item.missed_in_class_lessons ? (
-                <Box bgcolor={colors[2]} width={handlePercentage(item.missed_in_class_lessons)} marginRight={"3px"}></Box>
-              ) : (
-                ""
-              )}
-              {item.missed_live_lessons ? (
-                <Box bgcolor={colors[3]} width={handlePercentage(item.missed_live_lessons)} marginRight={"3px"}></Box>
+                <Box bgcolor={colors[3]} width={handlePercentage(item.missed_in_class_lessons)} marginRight={"3px"}></Box>
               ) : (
                 ""
               )}
