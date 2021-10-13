@@ -3,7 +3,7 @@ import { Class, School, User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem,
+  EntityStudentAchievementReportCategoryItem
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
@@ -330,6 +330,6 @@ export function getAllUsers(
   return allSchools;
 }
 export function getDurationByDay(day: number) {
-  const currentTime = Math.floor(new Date().getTime() / 1000);
-  return `${currentTime - 3600 * 24 * day}-${currentTime}`;
+  const currentDate = Math.floor(new Date(new Date().toLocaleDateString()).getTime() / 1000);
+  return `${currentDate - 3600 * 24 * day}-${currentDate}`;
 }
