@@ -1,9 +1,10 @@
+import moment from "moment";
 import { ReactNode } from "react";
 import { Class, School, User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem,
+  EntityStudentAchievementReportCategoryItem
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
@@ -330,6 +331,6 @@ export function getAllUsers(
   return allSchools;
 }
 export function getDurationByDay(day: number) {
-  const currentTime = Math.floor(new Date().getTime() / 1000);
-  return `${currentTime - 3600 * 24 * day}-${currentTime}`;
+  const currentDate = moment().startOf('day').unix();
+  return `${currentDate - 3600 * 24 * day}-${currentDate}`;
 }
