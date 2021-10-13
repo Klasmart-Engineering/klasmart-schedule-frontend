@@ -906,6 +906,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     _student_id = students.length ? (student_id ? student_id : students[0].id) : "none";
   }
   _student_id = isOnlyStudent ? myUserId : _student_id;
+
   const data = await gqlapi.query<GetSubjectsQuery, GetSubjectsQueryVariables>({
     query: GetSubjectsDocument,
     variables: {
@@ -919,10 +920,11 @@ export const onLoadLearningSummary = createAsyncThunk<
       name: item.name,
     };
   });
+  subjects = uniqBy(subjects, "id");
   subjects = subjects.slice().sort(sortByStudentName("name"));
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
-
   _subject_id = subject_id ? subject_id : subjects[0].id;
+
   params = {
     year: _year,
     week_start: _week_start,
