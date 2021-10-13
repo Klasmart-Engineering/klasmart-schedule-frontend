@@ -480,6 +480,12 @@ query getClassFilterList($filter: ClassFilter, $direction: ConnectionDirection!,
         name
       }
     }
+     pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
   }
 }
 

@@ -398,7 +398,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 interface SchoolTemplateProps {
   schoolsConnection?: GetSchoolsFilterListQuery;
   getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
-  getClassesConnection: (cursor: string, school_id: string, loading: boolean) => void;
+  getClassesConnection: (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => void;
   classesConnection?: GetClassFilterListQuery;
   openClassMenu?: (pageY: number, schoolItem: { id: string; name: string }) => void;
 }
@@ -435,7 +435,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
         </div>
       </p>
       <Collapse in={checked}>
-        {(schoolsConnection?.schoolsConnection?.totalCount ?? 0) > 5 && (
+        {((schoolsConnection?.schoolsConnection?.totalCount ?? 0) > 5 || searchValue) && (
           <p style={{ textAlign: "center" }}>
             <TextField
               id="filled-size-small"
@@ -680,7 +680,7 @@ function FilterTemplate(props: FilterProps) {
   const openClassMenu = async (pageY: number, schoolItem: { id: string; name: string }) => {
     setShowClassMenu(false);
     if (schoolItem.id === "All_My_Schools") return;
-    await getClassesConnection("", schoolItem.id, true);
+    await getClassesConnection("", schoolItem.id, true, "FORWARD");
     setPageY(pageY);
     setShowClassMenu(true);
     setCheckSchoolItem(schoolItem);
@@ -793,8 +793,9 @@ function FilterTemplate(props: FilterProps) {
           pageY={pageY}
           classDataBySchool={getClassDataBySchool}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
-          total={schoolsConnection?.schoolsConnection?.totalCount!}
+          total={classesConnection?.classesConnection?.totalCount!}
           getClassesConnection={getClassesConnection}
+          pageInfo={classesConnection?.classesConnection?.pageInfo}
         />
       )}
     </>

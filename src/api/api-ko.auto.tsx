@@ -707,6 +707,12 @@ export type GetClassFilterListQuery = { __typename?: "Query" } & {
             >
           >
         >;
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
       }
   >;
 };
@@ -2055,6 +2061,12 @@ export const GetClassFilterListDocument = gql`
           id
           name
         }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
       }
     }
   }

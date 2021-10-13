@@ -265,11 +265,11 @@ function ScheduleContent() {
     dispatch(getParticipantsData(is_org));
   };
 
-  const getClassesConnection = async (cursor: string, school_id: string, loading: boolean) => {
+  const getClassesConnection = async (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => {
     await dispatch(
       getClassFilterList({
         filter: { schoolId: { operator: "eq", value: school_id }, status: { operator: "eq", value: "active" } },
-        direction: "FORWARD",
+        direction: direction,
         directionArgs: { count: 5, cursor: cursor ?? "" },
         metaLoading: loading,
       })

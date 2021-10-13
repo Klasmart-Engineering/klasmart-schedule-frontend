@@ -2437,7 +2437,7 @@ interface CalendarStateProps {
   viewSubjectPermission?: boolean;
   schoolsConnection: GetSchoolsFilterListQuery;
   getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
-  getClassesConnection: (cursor: string, school_id: string, loading: boolean) => void;
+  getClassesConnection: (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => void;
   classesConnection: GetClassFilterListQuery;
 }
 interface ScheduleEditProps extends CalendarStateProps {

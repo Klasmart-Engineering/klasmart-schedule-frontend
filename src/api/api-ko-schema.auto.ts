@@ -266,18 +266,12 @@ export type ClassDeleteArgs = {
   _?: Maybe<Scalars["Int"]>;
 };
 
-export type ClassConnection = {
-  __typename?: "ClassConnection";
-  total?: Maybe<Scalars["Int"]>;
-  edges: Array<Maybe<Class>>;
-  pageInfo: PageInfo;
-};
-
 export type ClassConnectionNode = {
   __typename?: "ClassConnectionNode";
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   status: Status;
+  shortCode?: Maybe<Scalars["String"]>;
   schools?: Maybe<Array<SchoolSimplifiedSummaryNode>>;
   ageRanges?: Maybe<Array<AgeRangeConnectionNode>>;
   grades?: Maybe<Array<GradeSummaryNode>>;
@@ -468,6 +462,7 @@ export type Mutation = {
   role?: Maybe<Role>;
   roles?: Maybe<Array<Maybe<Role>>>;
   uploadRolesFromCSV?: Maybe<File>;
+  replaceRole?: Maybe<Role>;
   school?: Maybe<School>;
   uploadSchoolsFromCSV?: Maybe<File>;
   subcategory?: Maybe<Subcategory>;
@@ -558,6 +553,12 @@ export type MutationRoleArgs = {
 
 export type MutationUploadRolesFromCsvArgs = {
   file: Scalars["Upload"];
+};
+
+export type MutationReplaceRoleArgs = {
+  old_role_id: Scalars["ID"];
+  new_role_id: Scalars["ID"];
+  organization_id: Scalars["ID"];
 };
 
 export type MutationSchoolArgs = {
@@ -788,11 +789,33 @@ export type OrganizationDeleteArgs = {
   _?: Maybe<Scalars["Int"]>;
 };
 
-export type OrganizationConnection = {
-  __typename?: "OrganizationConnection";
-  total?: Maybe<Scalars["Int"]>;
-  edges: Array<Maybe<Organization>>;
-  pageInfo: PageInfo;
+export type OrganizationConnectionNode = {
+  __typename?: "OrganizationConnectionNode";
+  id: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  contactInfo?: Maybe<OrganizationContactInfo>;
+  shortCode?: Maybe<Scalars["String"]>;
+  status?: Maybe<Status>;
+  owners?: Maybe<Array<Maybe<UserSummaryNode>>>;
+  branding?: Maybe<Branding>;
+};
+
+export type OrganizationContactInfo = {
+  __typename?: "OrganizationContactInfo";
+  address1?: Maybe<Scalars["String"]>;
+  address2?: Maybe<Scalars["String"]>;
+  phone?: Maybe<Scalars["String"]>;
+};
+
+export type OrganizationFilter = {
+  id?: Maybe<UuidFilter>;
+  name?: Maybe<StringFilter>;
+  phone?: Maybe<StringFilter>;
+  shortCode?: Maybe<StringFilter>;
+  status?: Maybe<StringFilter>;
+  ownerUserId?: Maybe<UuidFilter>;
+  AND?: Maybe<Array<OrganizationFilter>>;
+  OR?: Maybe<Array<OrganizationFilter>>;
 };
 
 export type OrganizationMembership = {
@@ -805,6 +828,7 @@ export type OrganizationMembership = {
   organization?: Maybe<Organization>;
   user?: Maybe<User>;
   roles?: Maybe<Array<Maybe<Role>>>;
+  /** @deprecated Use User.classesStudying and User.classesTeaching */
   classes?: Maybe<Array<Maybe<Class>>>;
   schoolMemberships?: Maybe<Array<Maybe<SchoolMembership>>>;
   checkAllowed?: Maybe<Scalars["Boolean"]>;
@@ -848,6 +872,15 @@ export type OrganizationOwnership = {
   user?: Maybe<User>;
 };
 
+export enum OrganizationSortBy {
+  Name = "name",
+}
+
+export type OrganizationSortInput = {
+  field: Array<OrganizationSortBy>;
+  order: SortOrder;
+};
+
 export type OrganizationSummaryNode = {
   __typename?: "OrganizationSummaryNode";
   id: Scalars["ID"];
@@ -855,6 +888,20 @@ export type OrganizationSummaryNode = {
   joinDate?: Maybe<Scalars["Date"]>;
   userStatus?: Maybe<Status>;
   status?: Maybe<Status>;
+  userShortCode?: Maybe<Scalars["String"]>;
+};
+
+export type OrganizationsConnectionEdge = IConnectionEdge & {
+  __typename?: "OrganizationsConnectionEdge";
+  cursor?: Maybe<Scalars["String"]>;
+  node?: Maybe<OrganizationConnectionNode>;
+};
+
+export type OrganizationsConnectionResponse = IConnectionResponse & {
+  __typename?: "OrganizationsConnectionResponse";
+  totalCount?: Maybe<Scalars["Int"]>;
+  pageInfo?: Maybe<ConnectionPageInfo>;
+  edges?: Maybe<Array<Maybe<OrganizationsConnectionEdge>>>;
 };
 
 export type PageInfo = {
@@ -1026,6 +1073,7 @@ export type Query = {
   gradesConnection?: Maybe<GradesConnectionResponse>;
   organization?: Maybe<Organization>;
   organizations?: Maybe<Array<Maybe<Organization>>>;
+  organizationsConnection?: Maybe<OrganizationsConnectionResponse>;
   permissionsConnection?: Maybe<PermissionsConnectionResponse>;
   /** @deprecated Use 'programsConnection' with 'id' filter. */
   program?: Maybe<Program>;
@@ -1044,6 +1092,7 @@ export type Query = {
   usersConnection?: Maybe<UsersConnectionResponse>;
   /** @deprecated Unused */
   users?: Maybe<Array<Maybe<User>>>;
+  /** @deprecated Use 'usersConnection with a filter for matching 'email' or 'phone' */
   my_users?: Maybe<Array<User>>;
 };
 
@@ -1090,6 +1139,13 @@ export type QueryOrganizationArgs = {
 
 export type QueryOrganizationsArgs = {
   organization_ids?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type QueryOrganizationsConnectionArgs = {
+  direction: ConnectionDirection;
+  directionArgs?: Maybe<ConnectionsDirectionArgs>;
+  filter?: Maybe<OrganizationFilter>;
+  sort?: Maybe<OrganizationSortInput>;
 };
 
 export type QueryPermissionsConnectionArgs = {
@@ -1197,13 +1253,6 @@ export type RoleDenyArgs = {
 
 export type RoleDelete_RoleArgs = {
   _?: Maybe<Scalars["Int"]>;
-};
-
-export type RoleConnection = {
-  __typename?: "RoleConnection";
-  total?: Maybe<Scalars["Int"]>;
-  edges: Array<Maybe<Role>>;
-  pageInfo: PageInfo;
 };
 
 export type RoleSummaryNode = {
@@ -1597,10 +1646,13 @@ export type UserConnectionNode = {
   roles: Array<RoleSummaryNode>;
   schools: Array<SchoolSummaryNode>;
   status: Status;
+  dateOfBirth?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
 };
 
 export type UserFilter = {
   userId?: Maybe<UuidFilter>;
+  userStatus?: Maybe<StringFilter>;
   givenName?: Maybe<StringFilter>;
   familyName?: Maybe<StringFilter>;
   avatar?: Maybe<StringFilter>;
@@ -1623,6 +1675,11 @@ export enum UserSortBy {
 export type UserSortInput = {
   field: Array<UserSortBy>;
   order: SortOrder;
+};
+
+export type UserSummaryNode = {
+  __typename?: "UserSummaryNode";
+  id?: Maybe<Scalars["String"]>;
 };
 
 export type UsersConnectionEdge = IConnectionEdge & {
