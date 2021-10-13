@@ -776,6 +776,24 @@ export type GetSubjectsQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type GetProgramsAndSubjectsQueryVariables = Types.Exact<{
+  organization_id: Types.Scalars["ID"];
+}>;
+
+export type GetProgramsAndSubjectsQuery = { __typename?: "Query" } & {
+  organization?: Types.Maybe<
+    { __typename?: "Organization" } & {
+      programs?: Types.Maybe<
+        Array<
+          { __typename?: "Program" } & Pick<Types.Program, "id" | "name"> & {
+              subjects?: Types.Maybe<Array<{ __typename?: "Subject" } & Pick<Types.Subject, "id" | "name">>>;
+            }
+        >
+      >;
+    }
+  >;
+};
+
 export const RoleBasedUsersByOrgnizationDocument = gql`
   query roleBasedUsersByOrgnization($organization_id: ID!) {
     organization(organization_id: $organization_id) {
@@ -2322,3 +2340,49 @@ export function useGetSubjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetSubjectsQueryHookResult = ReturnType<typeof useGetSubjectsQuery>;
 export type GetSubjectsLazyQueryHookResult = ReturnType<typeof useGetSubjectsLazyQuery>;
 export type GetSubjectsQueryResult = Apollo.QueryResult<GetSubjectsQuery, GetSubjectsQueryVariables>;
+export const GetProgramsAndSubjectsDocument = gql`
+  query getProgramsAndSubjects($organization_id: ID!) {
+    organization(organization_id: $organization_id) {
+      programs {
+        id
+        name
+        subjects {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetProgramsAndSubjectsQuery__
+ *
+ * To run a query within a React component, call `useGetProgramsAndSubjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProgramsAndSubjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProgramsAndSubjectsQuery({
+ *   variables: {
+ *      organization_id: // value for 'organization_id'
+ *   },
+ * });
+ */
+export function useGetProgramsAndSubjectsQuery(
+  baseOptions: Apollo.QueryHookOptions<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>(GetProgramsAndSubjectsDocument, options);
+}
+export function useGetProgramsAndSubjectsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>(GetProgramsAndSubjectsDocument, options);
+}
+export type GetProgramsAndSubjectsQueryHookResult = ReturnType<typeof useGetProgramsAndSubjectsQuery>;
+export type GetProgramsAndSubjectsLazyQueryHookResult = ReturnType<typeof useGetProgramsAndSubjectsLazyQuery>;
+export type GetProgramsAndSubjectsQueryResult = Apollo.QueryResult<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>;
