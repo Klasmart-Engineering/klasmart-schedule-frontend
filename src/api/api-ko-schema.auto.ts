@@ -462,6 +462,7 @@ export type Mutation = {
   role?: Maybe<Role>;
   roles?: Maybe<Array<Maybe<Role>>>;
   uploadRolesFromCSV?: Maybe<File>;
+  replaceRole?: Maybe<Role>;
   school?: Maybe<School>;
   uploadSchoolsFromCSV?: Maybe<File>;
   subcategory?: Maybe<Subcategory>;
@@ -552,6 +553,12 @@ export type MutationRoleArgs = {
 
 export type MutationUploadRolesFromCsvArgs = {
   file: Scalars["Upload"];
+};
+
+export type MutationReplaceRoleArgs = {
+  old_role_id: Scalars["ID"];
+  new_role_id: Scalars["ID"];
+  organization_id: Scalars["ID"];
 };
 
 export type MutationSchoolArgs = {

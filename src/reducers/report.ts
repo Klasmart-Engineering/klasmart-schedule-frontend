@@ -13,6 +13,9 @@ import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
   ClassesTeachingQueryQueryVariables,
+  GetProgramsAndSubjectsDocument,
+  GetProgramsAndSubjectsQuery,
+  GetProgramsAndSubjectsQueryVariables,
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
@@ -913,11 +916,19 @@ export const onLoadLearningSummary = createAsyncThunk<
       organization_id,
     },
   });
+  const list = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
+    query: GetProgramsAndSubjectsDocument,
+    variables: {
+      organization_id,
+    },
+  });
   const _subjects = data.data.organization?.subjects || [];
+  const programs = list.data.organization?.programs || [];
   subjects = _subjects?.map((item) => {
+    const name = programs.find((item2) => item2.subjects?.some((val) => item.id === val.id))?.name + " - " + item.name;
     return {
       id: item.id,
-      name: item.name,
+      name,
     };
   });
   subjects = uniqBy(subjects, "id");
