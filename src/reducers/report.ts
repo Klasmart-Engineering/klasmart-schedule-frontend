@@ -19,6 +19,9 @@ import {
   GetStudentNameByIdDocument,
   GetStudentNameByIdQuery,
   GetStudentNameByIdQueryVariables,
+  GetSubjectsDocument,
+  GetSubjectsQuery,
+  GetSubjectsQueryVariables,
   MyPermissionsAndClassesTeachingQueryDocument,
   MyPermissionsAndClassesTeachingQueryQuery,
   MyPermissionsAndClassesTeachingQueryQueryVariables,
@@ -903,22 +906,20 @@ export const onLoadLearningSummary = createAsyncThunk<
     _student_id = students.length ? (student_id ? student_id : students[0].id) : "none";
   }
   _student_id = isOnlyStudent ? myUserId : _student_id;
-  // 拉取subject列表
-  const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
-    summary_type,
-    filter_type: "subject",
-    week_start: _week_start,
-    week_end: _week_end,
-    school_id: school_id === "all" || school_id === "none" ? "" : _school_id,
-    class_id: _class_id === "all" ? "" : _class_id,
-    student_id: _student_id,
+  const data = await gqlapi.query<GetSubjectsQuery, GetSubjectsQueryVariables>({
+    query: GetSubjectsDocument,
+    variables: {
+      organization_id,
+    },
   });
-  subjects = _subjects.map((item) => {
+  const _subjects = data.data.organization?.subjects || [];
+  subjects = _subjects?.map((item) => {
     return {
-      id: item.subject_id,
-      name: item.subject_name,
+      id: item.id,
+      name: item.name,
     };
   });
+  subjects = subjects.slice().sort(sortByStudentName("name"));
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
 
   _subject_id = subject_id ? subject_id : subjects[0].id;
@@ -970,7 +971,7 @@ export const getAfterClassFilter = createAsyncThunk<
   let _student_id: string | undefined = "";
   let _subject_id: string | undefined = "";
   const {
-    report: { learningSummary },
+    report: { learningSummary, summaryReportOptions },
   } = getState();
   if (filter_type === "class") {
     classes = learningSummary.schools.find((item) => item.id === school_id)?.classes || [];
@@ -986,22 +987,7 @@ export const getAfterClassFilter = createAsyncThunk<
   }
   _student_id = student_id ? student_id : _student_id;
   if (filter_type === "class" || filter_type === "student" || filter_type === "subject") {
-    const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
-      summary_type,
-      filter_type: "subject",
-      week_start,
-      week_end,
-      school_id: school_id === "all" || school_id === "none" ? "" : school_id,
-      class_id: _class_id === "all" ? "" : _class_id,
-      student_id: _student_id,
-    });
-    subjects = _subjects.map((item) => {
-      return {
-        id: item.subject_id,
-        name: item.subject_name,
-      };
-    });
-    subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
+    subjects = summaryReportOptions.subjects || [];
     _subject_id = subjects[0].id;
   }
   const resParams = {

@@ -54,22 +54,21 @@ query classesByOrganization($organization_id: ID!) {
   }
 }
 
-
 query classesSchoolsByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
-    classes{
+    classes {
       class_id
       class_name
-    	schools{
-        school_id      
-      }    
+      schools {
+        school_id
+      }
     }
   }
 }
 
 query classesTeachersByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
-    classes{
+    classes {
       class_id
       teachers {
         user_id
@@ -77,21 +76,19 @@ query classesTeachersByOrganization($organization_id: ID!) {
         school_memberships {
           school_id
         }
-      }  
+      }
     }
   }
 }
 
 query schoolsIdNameByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
-    schools{
+    schools {
       school_id
       school_name
     }
   }
 }
-
-
 query schoolsByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
@@ -106,14 +103,11 @@ query schoolsByOrganization($organization_id: ID!) {
       school_name
       classes {
         class_id
-        class_name     
+        class_name
       }
     }
   }
 }
-
-
-
 
 query participantsByClass($class_id: ID!) {
   class(class_id: $class_id) {
@@ -417,23 +411,22 @@ query teacherListBySchoolId($school_id: ID!) {
   }
 }
 query notParticipantsByOrganization($organization_id: ID!) {
-   organization(organization_id: $organization_id) {
-     classes {
-       status
-       schools{
-         school_id
-         school_name
-       }
-        teachers {
-          user_id
-          user_name
-          school_memberships {
-            school_id
-            school {
-              school_name
-              organization{
-                organization_id
-              }
+  organization(organization_id: $organization_id) {
+    classes {
+      status
+      schools {
+        school_id
+        school_name
+      }
+      teachers {
+        user_id
+        user_name
+        school_memberships {
+          school_id
+          school {
+            school_name
+            organization {
+              organization_id
             }
           }
         }
@@ -441,6 +434,7 @@ query notParticipantsByOrganization($organization_id: ID!) {
     }
   }
 }
+
 query schoolAndTeacherByOrg($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     schools {
@@ -492,7 +486,6 @@ query getPrograms($program_id: ID!) {
     }
   }
 }
-
 query studentsByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
@@ -517,6 +510,15 @@ query studentsByOrganization($organization_id: ID!) {
           user_name
         }
       }
+    }
+  }
+}
+
+query getSubjects($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    subjects {
+      id
+      name
     }
   }
 }
