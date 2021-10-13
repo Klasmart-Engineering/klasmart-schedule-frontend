@@ -929,11 +929,10 @@ export const onLoadLearningSummary = createAsyncThunk<
     return {
       id: item.id,
       name,
-      label: item.name,
     };
   });
   subjects = uniqBy(subjects, "id");
-  subjects = subjects.slice().sort(sortByStudentName("label"));
+  subjects = subjects.slice().sort(sortByStudentName("name"));
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
   _subject_id = subject_id ? subject_id : subjects[0].id;
 
