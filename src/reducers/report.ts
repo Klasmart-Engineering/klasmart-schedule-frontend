@@ -906,16 +906,6 @@ export const onLoadLearningSummary = createAsyncThunk<
     _student_id = students.length ? (student_id ? student_id : students[0].id) : "none";
   }
   _student_id = isOnlyStudent ? myUserId : _student_id;
-  // 拉取subject列表
-  // const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
-  //   summary_type,
-  //   filter_type: "subject",
-  //   week_start: _week_start,
-  //   week_end: _week_end,
-  //   school_id: school_id === "all" || school_id === "none" ? "" : _school_id,
-  //   class_id: _class_id === "all" ? "" : _class_id,
-  //   student_id: _student_id,
-  // });
   const data = await gqlapi.query<GetSubjectsQuery, GetSubjectsQueryVariables>({
     query: GetSubjectsDocument,
     variables: {
@@ -973,7 +963,7 @@ export const getAfterClassFilter = createAsyncThunk<
   IParamsGetAfterClassFilter & LoadingMetaPayload,
   { state: RootState }
 >("getAfterClassFilter", async (query, { getState, dispatch }) => {
-  const { summary_type, filter_type, /* subject_id, */ school_id, class_id, student_id, week_start, week_end } = query;
+  const { summary_type, filter_type, school_id, class_id, student_id, week_start, week_end } = query;
   let classes: ArrProps[] = [];
   let students: ArrProps[] = [];
   let subjects: ArrProps[] = [];
@@ -997,21 +987,6 @@ export const getAfterClassFilter = createAsyncThunk<
   }
   _student_id = student_id ? student_id : _student_id;
   if (filter_type === "class" || filter_type === "student" || filter_type === "subject") {
-    // const _subjects = await api.reports.queryLearningSummaryRemainingFilter({
-    //   summary_type,
-    //   filter_type: "subject",
-    //   week_start,
-    //   week_end,
-    //   school_id: school_id === "all" || school_id === "none" ? "" : school_id,
-    //   class_id: _class_id === "all" ? "" : _class_id,
-    //   student_id: _student_id,
-    // });
-    // subjects = _subjects.map((item) => {
-    //   return {
-    //     id: item.subject_id,
-    //     name: item.subject_name,
-    //   };
-    // });
     subjects = summaryReportOptions.subjects || [];
     _subject_id = subjects[0].id;
   }
