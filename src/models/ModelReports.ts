@@ -1,3 +1,4 @@
+import moment from "moment";
 import { ReactNode } from "react";
 import { Class, School, User } from "../api/api-ko-schema.auto";
 import {
@@ -330,6 +331,6 @@ export function getAllUsers(
   return allSchools;
 }
 export function getDurationByDay(day: number) {
-  const currentDate = Math.floor(new Date(new Date().toLocaleDateString()).getTime() / 1000);
+  const currentDate = moment().startOf('day').unix();
   return `${currentDate - 3600 * 24 * day}-${currentDate}`;
 }
