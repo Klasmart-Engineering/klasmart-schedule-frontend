@@ -39,7 +39,7 @@ export function TeacherLoadChart(props: { data: HorizontalBarStackDataItem[]; xL
           valueAxiosLabel={t("report_label_teaching_hours")}
           tickValues={[5, 15, 25, 35, 45, 55, 65]}
           gridValues={[10, 20, 30, 40, 50, 60, 70]}
-          labelProps={{ stroke: "black" }}
+          // labelProps={{ stroke: "black" }}
           structSize={structSize(px)}
           renderRect={({ rectProps, index, stackIndex }) => <rect {...rectProps} fill={data[index].value[stackIndex].color} />}
           renderXAxiosLabel={({ formattedValue, ...textProps }) => (
