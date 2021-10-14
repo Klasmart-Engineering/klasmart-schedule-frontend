@@ -594,7 +594,7 @@
   "schedule_msg_cannot_delete_study": "This event cannot be deleted because some students already made progress for Study activities.",
   "report_label_student_achievement": "Overall Student Achievement",
   "report_label_teacher": "Teacher",
-  "report_label_class": "Class",
+  "report_label_class": "In Class",
   "report_label_lesson_plan": "Lesson Plan",
   "report_label_status": "Status",
   "report_label_all": "All",
