@@ -18,11 +18,11 @@ function syncLangType(enJson) {
 }
 
 function writeLangJson(langDef) {
-  ['en', 'zh', 'vi', 'ko', 'id'].forEach(name => {
+  ['en', 'zh', 'vi', 'ko', 'id', 'es'].forEach(name => {
     const filePath = path.resolve(langDir, `${name}.json`)
     fs.writeFileSync(filePath, formatJson(langDef[name]));
   });
-  console.log(g('Successfully'), ` update file: `, g(`${langDir}/{en, zh, vi, ko, id}.json`));
+  console.log(g('Successfully'), ` update file: `, g(`${langDir}/{en, zh, vi, ko, id, es}.json`));
 }
 
 async function syncLang() {

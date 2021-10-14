@@ -6133,6 +6133,200 @@
         }
       }
     },
+    "/reports/teacher_load/assignments": {
+      "post": {
+        "description": "list teaching load report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/teacherLoad"],
+        "summary": "list teaching load report",
+        "operationId": "getTeacherLoadReportOfAssignment",
+        "parameters": [
+          {
+            "description": "request ",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherLoadAssignmentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.TeacherLoadAssignmentResponseItem"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/teacher_load/lessons_list": {
+      "post": {
+        "description": "teacher load list",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/teacherLoad"],
+        "summary": "get teacher load Report",
+        "operationId": "listTeacherLoadLessons",
+        "parameters": [
+          {
+            "description": "request",
+            "name": "overview",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherLoadLessonRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.TeacherLoadLesson"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/teacher_load/lessons_summary": {
+      "post": {
+        "description": "teacher load summary",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/teacherLoad"],
+        "summary": "get teacher load Report",
+        "operationId": "summaryTeacherLoadLessons",
+        "parameters": [
+          {
+            "description": "request",
+            "name": "overview",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherLoadLessonRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherLoadLessonSummary"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/teacher_load/missed_lessons": {
+      "post": {
+        "description": "teacher missed lessons",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/teacherLoad"],
+        "summary": "get teacher missed lessons",
+        "operationId": "listTeacherMissedLessons",
+        "parameters": [
+          {
+            "description": "request",
+            "name": "overview",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherLoadMissedLessonsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherLoadMissedLessonsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/reports/teachers/{id}": {
       "get": {
         "description": "get teacher report",
@@ -6185,7 +6379,7 @@
       }
     },
     "/reports/teaching_loading": {
-      "get": {
+      "post": {
         "description": "list teaching load report",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -6194,41 +6388,13 @@
         "operationId": "listTeachingLoadReport",
         "parameters": [
           {
-            "type": "string",
-            "description": "school_id",
-            "name": "school_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "teacher_ids",
-            "name": "teacher_ids",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "class_ids",
-            "name": "class_ids",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "time_offset",
-            "name": "time_offset",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "description": "page",
-            "name": "page",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "size",
-            "name": "size",
-            "in": "query"
+            "description": "query teaching load",
+            "name": "teaching_load",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ReportListTeachingLoadArgs"
+            }
           }
         ],
         "responses": {
@@ -7343,6 +7509,53 @@
               "items": {
                 "type": "string"
               }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules_time_view/list": {
+      "post": {
+        "description": "get schedule time view list without relation info",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "getScheduleTimeViewList",
+        "operationId": "getScheduleTimeViewList",
+        "parameters": [
+          {
+            "description": "schedule time view data to query",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeViewQuery"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleTimeView"
             }
           },
           "400": {
@@ -11255,6 +11468,26 @@
         }
       }
     },
+    "entity.ReportListTeachingLoadArgs": {
+      "type": "object",
+      "properties": {
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_offset": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.ReportListTeachingLoadDuration": {
       "type": "object",
       "properties": {
@@ -11866,6 +12099,37 @@
           "type": "string"
         },
         "name": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleTimeView": {
+      "type": "object",
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "class_type": {
+          "type": "string",
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
+        },
+        "due_at": {
+          "type": "integer"
+        },
+        "end_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "start_at": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["NotStart", "Started", "Closed"]
+        },
+        "title": {
           "type": "string"
         }
       }
@@ -12536,6 +12800,204 @@
         },
         "student_name": {
           "type": "string"
+        }
+      }
+    },
+    "entity.SummaryNode": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.TeacherLoadAssignmentRequest": {
+      "type": "object",
+      "properties": {
+        "class_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_type_list": {
+          "description": "one of study, home_fun",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "duration": {
+          "type": "string"
+        },
+        "teacher_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.TeacherLoadAssignmentResponseItem": {
+      "type": "object",
+      "properties": {
+        "avg_days_of_pending_assignment": {
+          "type": "number"
+        },
+        "count_of_classes": {
+          "type": "integer"
+        },
+        "count_of_completed_assignment": {
+          "type": "integer"
+        },
+        "count_of_pending_assignment": {
+          "type": "integer"
+        },
+        "count_of_scheduled_assignment": {
+          "type": "integer"
+        },
+        "count_of_students": {
+          "type": "integer"
+        },
+        "feedback_percentage": {
+          "type": "number"
+        },
+        "teacher_id": {
+          "type": "string"
+        },
+        "teacher_name": {
+          "description": "TeacherName just used by font-end: generate swagger json --\u003e generate typescript class",
+          "type": "string"
+        }
+      }
+    },
+    "entity.TeacherLoadLesson": {
+      "type": "object",
+      "properties": {
+        "completed_in_class_lessons": {
+          "type": "integer"
+        },
+        "completed_live_Lessons": {
+          "type": "integer"
+        },
+        "missed_in_class_lessons": {
+          "type": "integer"
+        },
+        "missed_live_lessons": {
+          "type": "integer"
+        },
+        "number_of_classes": {
+          "type": "integer"
+        },
+        "number_of_students": {
+          "type": "integer"
+        },
+        "teacher_id": {
+          "type": "string"
+        },
+        "total_scheduled": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.TeacherLoadLessonRequest": {
+      "type": "object",
+      "properties": {
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "duration": {
+          "type": "string"
+        },
+        "teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.TeacherLoadLessonSummary": {
+      "type": "object",
+      "properties": {
+        "completed_in_class_lessons": {
+          "$ref": "#/definitions/entity.SummaryNode"
+        },
+        "completed_live_lessons": {
+          "$ref": "#/definitions/entity.SummaryNode"
+        },
+        "missed_in_class_lessons": {
+          "$ref": "#/definitions/entity.SummaryNode"
+        },
+        "missed_live_lessons": {
+          "$ref": "#/definitions/entity.SummaryNode"
+        }
+      }
+    },
+    "entity.TeacherLoadMissedLesson": {
+      "type": "object",
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "class_type": {
+          "type": "string"
+        },
+        "end_date": {
+          "type": "integer"
+        },
+        "no_of_student": {
+          "type": "integer"
+        },
+        "start_date": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.TeacherLoadMissedLessonsRequest": {
+      "type": "object",
+      "required": ["class_ids", "duration", "page", "page_size", "teacher_id"],
+      "properties": {
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "duration": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "teacher_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.TeacherLoadMissedLessonsResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.TeacherLoadMissedLesson"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },

@@ -16,7 +16,7 @@ import { setQuery } from "../../models/ModelContentDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
 import { onLoadHomefunDetail, updateHomefun, UpdateHomefunAction, UpdateHomefunParams } from "../../reducers/assessments";
 import { actAsyncConfirm } from "../../reducers/confirm";
-import { actError, actSuccess } from "../../reducers/notify";
+import { actError, actSuccess, actWarning } from "../../reducers/notify";
 import { AssessmentHeader } from "../AssessmentEdit/AssessmentHeader";
 import LayoutPair from "../ContentEdit/Layout";
 import { Assignment } from "./Assignment";
@@ -55,18 +55,22 @@ function AssessmentsHomefunEditIner() {
         dispatch(actError(content));
       };
       const data: UpdateHomefunParams = { ...value, id, action, onError };
+      /** 检查数据上传合规性 **/
+      let errorTimes = 0;
+      data.outcomes?.forEach((o) => {
+        if (o.status === "default") errorTimes++;
+      });
+      console.log("data:", data, errorTimes);
+      if (errorTimes) {
+        return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
+      }
+      /** 检查数据上传合规性 **/
       await dispatch(updateHomefun(data) as UpdateHomefunAction).then(unwrapResult);
       dispatch(actSuccess(message));
       history.replace({
         search: setQuery(history.location.search, { id, editindex: editindex + 1 }),
       });
     });
-  // const handleLeave = useMemo<PromptProps["message"]>(
-  //   () => (location) => {
-  //     return location.pathname === AssessmentsHomefunEdit.routeBasePath ? false : d("Discard unsaved changes?").t("assess_msg_discard");
-  //   },
-  //   []
-  // );
   const handleGoBack = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -154,6 +158,6 @@ function AssessmentsHomefunEditIner() {
 }
 export function AssessmentsHomefunEdit() {
   const { id, editindex } = useQuery();
-  return <AssessmentsHomefunEditIner key={`${id}${editindex}`}></AssessmentsHomefunEditIner>;
+  return <AssessmentsHomefunEditIner key={`${id}${editindex}`} />;
 }
 AssessmentsHomefunEdit.routeBasePath = "/assessments/homefun-edit";

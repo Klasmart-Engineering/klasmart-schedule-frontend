@@ -1,7 +1,8 @@
-import { Box, Divider, makeStyles } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
-import LayoutBox from "../../components/LayoutBox";
+import LayoutBox from "../../../components/LayoutBox";
+import { d } from "../../../locale/LocaleManager";
 const useStyles = makeStyles(() => ({
   colorPart: {
     width: "32px",
@@ -25,11 +26,8 @@ const useStyles = makeStyles(() => ({
       fontSize: "14px",
     },
   },
-  divider: {
-    marginTop: "20px",
-  },
   marginItem: {
-    paddingTop: "15px",
+    paddingTop: "32px",
   },
 }));
 interface InfoListItem {
@@ -41,29 +39,28 @@ export function InfoTeacherLoad() {
   const css = useStyles();
   const infoList: InfoListItem[] = [
     {
-      title: "0 hour",
+      title: d("0 Hour").t("report_label_0_hour"),
       opaciity: 0.1,
     },
     {
-      title: "0~2 hours",
+      title: d("0~2 Hours").t("report_label_0_2_hours"),
       opaciity: 0.25,
     },
     {
-      title: "2~4 hours",
+      title: d("2~4 Hours").t("report_label_2_4_hours"),
       opaciity: 0.45,
     },
     {
-      title: "4~6 hours",
+      title: d("4~6 Hours").t("report_label_4_6_hours"),
       opaciity: 0.7,
     },
     {
-      title: "More than 6 hours",
+      title: d("More than 6 Hours").t("report_label_more_than_6_hours"),
       opaciity: 1,
     },
   ];
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <Divider className={css.divider} />
       <Box className={clsx(css.rightContainer, css.flexRight)}>
         {infoList.map((infoItem) => (
           <Box key={infoItem.title} className={clsx(css.rightContainer, css.marginItem)}>

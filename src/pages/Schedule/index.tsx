@@ -37,7 +37,6 @@ import {
   getSchoolByOrg,
   getSchoolByUser,
   getSchoolInfo,
-  getSearchScheduleList,
   getSubjectByProgramId,
   ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
@@ -94,7 +93,7 @@ function ScheduleContent() {
     schoolByOrgOrUserData,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
-  const { scheduleId, teacherName } = useQuery();
+  const { scheduleId } = useQuery();
   const [state] = useRepeatSchedule();
   const { type } = state;
   const [modelYear, setModelYear] = React.useState<boolean>(false);
@@ -116,7 +115,7 @@ function ScheduleContent() {
 
   const handleChangeProgramId = async (programId: string) => {
     let resultInfo: any;
-    resultInfo = (await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown as PayloadAction<
+    resultInfo = ((await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof getSubjectByProgramId>
     >;
     return resultInfo.payload ? resultInfo.payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
@@ -124,9 +123,9 @@ function ScheduleContent() {
 
   const LinkageLessonPlan = async (content_id: string) => {
     let resultInfo: any;
-    resultInfo = (await dispatch(
+    resultInfo = ((await dispatch(
       onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
     const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
     const materialArr = ModelLessonPlan.toArray(segment);
     const newMaterialArr: (EntityContentInfoWithDetails | undefined)[] = [];
@@ -206,7 +205,7 @@ function ScheduleContent() {
    */
   const getParticipantOptions = async (class_id: string) => {
     let resultInfo: any;
-    resultInfo = (await dispatch(getScheduleParticipant({ class_id: class_id, metaLoading: true }))) as unknown as PayloadAction<
+    resultInfo = ((await dispatch(getScheduleParticipant({ class_id: class_id, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleParticipant>
     >;
     if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
@@ -216,7 +215,7 @@ function ScheduleContent() {
 
   const getHandleScheduleViewInfo = async (schedule_id: string) => {
     let resultInfo: any;
-    resultInfo = (await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown as PayloadAction<
+    resultInfo = ((await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown) as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleViewInfo>
     >;
     return resultInfo.payload as EntityScheduleViewDetail;
@@ -237,6 +236,7 @@ function ScheduleContent() {
   const isSchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
   const isTeacher = usePermission(PermissionType.create_my_schedule_events_521);
   const isStudent = usePermission(PermissionType.attend_live_class_as_a_student_187);
+  const viewSubjectPermission = usePermission(PermissionType.view_subjects_20115);
 
   const privilegedMembers = useCallback(
     (member: memberType): boolean => {
@@ -261,30 +261,15 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
-    if (teacherName) {
-      const data = {
-        teacher_name: teacherName,
-        page: 1,
-        page_size: 10,
+    dispatch(
+      getScheduleTimeViewData({
+        view_type: modelView,
+        time_at: timesTamp.start,
         time_zone_offset: -new Date().getTimezoneOffset() * 60,
-        start_at: timesTamp.start,
-      };
-      dispatch(getSearchScheduleList({ data, metaLoading: true }));
-    } else {
-      /*      if (stateOnlyMine.length === 1 && stateOnlyMine.includes("All")) {
-        dispatch(resetScheduleTimeViewData([]));
-        return;
-      }*/
-      dispatch(
-        getScheduleTimeViewData({
-          view_type: modelView,
-          time_at: timesTamp.start,
-          time_zone_offset: -new Date().getTimezoneOffset() * 60,
-          ...modelSchedule.AssemblyFilterParameter(stateOnlyMine),
-        })
-      );
-    }
-  }, [teacherName, modelView, timesTamp, stateOnlyMine, dispatch]);
+        ...modelSchedule.AssemblyFilterParameter(stateOnlyMine),
+      })
+    );
+  }, [modelView, timesTamp, stateOnlyMine, dispatch]);
 
   /*  const initialization_assembly_filter_data = useMemo(() => {
     return modelSchedule.SetInitializationAssemblyFilterParameter(schoolByOrgOrUserData, filterOption.others);
@@ -421,6 +406,7 @@ function ScheduleContent() {
               filterOption={filterOption}
               user_id={user_id}
               schoolByOrgOrUserData={schoolByOrgOrUserData}
+              viewSubjectPermission={viewSubjectPermission}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

@@ -1026,6 +1026,12 @@ export interface EntityRepeatYearly {
   on_week_seq?: "first" | "second" | "third" | "fourth" | "last";
 }
 
+export interface EntityReportListTeachingLoadArgs {
+  class_ids?: string[];
+  teacher_ids?: string[];
+  time_offset?: number;
+}
+
 export interface EntityReportListTeachingLoadDuration {
   end_at?: number;
   offline?: number;
@@ -1232,6 +1238,17 @@ export interface EntityScheduleSearchView {
 export interface EntityScheduleShortInfo {
   id?: string;
   name?: string;
+}
+
+export interface EntityScheduleTimeView {
+  class_id?: string;
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  due_at?: number;
+  end_at?: number;
+  id?: string;
+  start_at?: number;
+  status?: "NotStart" | "Started" | "Closed";
+  title?: string;
 }
 
 export interface EntityScheduleTimeViewQuery {
@@ -1445,6 +1462,80 @@ export interface EntityStudentsPerformanceReportItem {
   not_attempted_names?: string[];
   student_id?: string;
   student_name?: string;
+}
+
+export interface EntitySummaryNode {
+  count?: number;
+  duration?: number;
+}
+
+export interface EntityTeacherLoadAssignmentRequest {
+  class_id_list?: string[];
+
+  /** one of study, home_fun */
+  class_type_list?: string[];
+  duration?: string;
+  teacher_id_list?: string[];
+}
+
+export interface EntityTeacherLoadAssignmentResponseItem {
+  avg_days_of_pending_assignment?: number;
+  count_of_classes?: number;
+  count_of_completed_assignment?: number;
+  count_of_pending_assignment?: number;
+  count_of_scheduled_assignment?: number;
+  count_of_students?: number;
+  feedback_percentage?: number;
+  teacher_id?: string;
+
+  /** TeacherName just used by font-end: generate swagger json --> generate typescript class */
+  teacher_name?: string;
+}
+
+export interface EntityTeacherLoadLesson {
+  completed_in_class_lessons?: number;
+  completed_live_Lessons?: number;
+  missed_in_class_lessons?: number;
+  missed_live_lessons?: number;
+  number_of_classes?: number;
+  number_of_students?: number;
+  teacher_id?: string;
+  total_scheduled?: number;
+}
+
+export interface EntityTeacherLoadLessonRequest {
+  class_ids?: string[];
+  duration?: string;
+  teacher_ids?: string[];
+}
+
+export interface EntityTeacherLoadLessonSummary {
+  completed_in_class_lessons?: EntitySummaryNode;
+  completed_live_lessons?: EntitySummaryNode;
+  missed_in_class_lessons?: EntitySummaryNode;
+  missed_live_lessons?: EntitySummaryNode;
+}
+
+export interface EntityTeacherLoadMissedLesson {
+  class_id?: string;
+  class_type?: string;
+  end_date?: number;
+  no_of_student?: number;
+  start_date?: number;
+  title?: string;
+}
+
+export interface EntityTeacherLoadMissedLessonsRequest {
+  class_ids: string[];
+  duration: string;
+  page: number;
+  page_size: number;
+  teacher_id: string;
+}
+
+export interface EntityTeacherLoadMissedLessonsResponse {
+  list?: EntityTeacherLoadMissedLesson[];
+  total?: number;
 }
 
 export interface EntityTeacherManualFile {
@@ -3725,6 +3816,64 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       >(`/reports/students/${id}${this.addQueryParams(query)}`, "GET", params),
 
     /**
+     * @tags reports/teacherLoad
+     * @name getTeacherLoadReportOfAssignment
+     * @summary list teaching load report
+     * @request POST:/reports/teacher_load/assignments
+     * @description list teaching load report
+     */
+    getTeacherLoadReportOfAssignment: (request: EntityTeacherLoadAssignmentRequest, params?: RequestParams) =>
+      this.request<
+        EntityTeacherLoadAssignmentResponseItem[],
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/teacher_load/assignments`, "POST", params, request),
+
+    /**
+     * @tags reports/teacherLoad
+     * @name listTeacherLoadLessons
+     * @summary get teacher load Report
+     * @request POST:/reports/teacher_load/lessons_list
+     * @description teacher load list
+     */
+    listTeacherLoadLessons: (overview: EntityTeacherLoadLessonRequest, params?: RequestParams) =>
+      this.request<EntityTeacherLoadLesson[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load/lessons_list`,
+        "POST",
+        params,
+        overview
+      ),
+
+    /**
+     * @tags reports/teacherLoad
+     * @name summaryTeacherLoadLessons
+     * @summary get teacher load Report
+     * @request POST:/reports/teacher_load/lessons_summary
+     * @description teacher load summary
+     */
+    summaryTeacherLoadLessons: (overview: EntityTeacherLoadLessonRequest, params?: RequestParams) =>
+      this.request<EntityTeacherLoadLessonSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load/lessons_summary`,
+        "POST",
+        params,
+        overview
+      ),
+
+    /**
+     * @tags reports/teacherLoad
+     * @name listTeacherMissedLessons
+     * @summary get teacher missed lessons
+     * @request POST:/reports/teacher_load/missed_lessons
+     * @description teacher missed lessons
+     */
+    listTeacherMissedLessons: (overview: EntityTeacherLoadMissedLessonsRequest, params?: RequestParams) =>
+      this.request<EntityTeacherLoadMissedLessonsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load/missed_lessons`,
+        "POST",
+        params,
+        overview
+      ),
+
+    /**
      * @tags reports
      * @name getTeacherReport
      * @summary get teacher report
@@ -3741,24 +3890,15 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags reports
      * @name listTeachingLoadReport
      * @summary list teaching load report
-     * @request GET:/reports/teaching_loading
+     * @request POST:/reports/teaching_loading
      * @description list teaching load report
      */
-    listTeachingLoadReport: (
-      query: {
-        school_id?: string;
-        teacher_ids?: string;
-        class_ids?: string;
-        time_offset: string;
-        page?: number;
-        size?: number;
-      },
-      params?: RequestParams
-    ) =>
+    listTeachingLoadReport: (teaching_load: EntityReportListTeachingLoadArgs, params?: RequestParams) =>
       this.request<EntityReportListTeachingLoadResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
-        `/reports/teaching_loading${this.addQueryParams(query)}`,
-        "GET",
-        params
+        `/reports/teaching_loading`,
+        "POST",
+        params,
+        teaching_load
       ),
   };
   schedules = {
@@ -4084,6 +4224,21 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     postScheduledDates: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
       this.request<string[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view/dates`,
+        "POST",
+        params,
+        queryData
+      ),
+
+    /**
+     * @tags schedule
+     * @name getScheduleTimeViewList
+     * @summary getScheduleTimeViewList
+     * @request POST:/schedules_time_view/list
+     * @description get schedule time view list without relation info
+     */
+    getScheduleTimeViewList: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
+      this.request<EntityScheduleTimeView, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules_time_view/list`,
         "POST",
         params,
         queryData

@@ -258,7 +258,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     marginLeft: "4px",
   },
   addOutcomeBox: {
-    "& .MuiAutocomplete-endAdornment-310": {
+    "& button": {
       display: "none",
     },
   },
@@ -285,6 +285,7 @@ function SmallCalendar(props: CalendarStateProps) {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
+    viewSubjectPermission,
   } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
@@ -334,6 +335,7 @@ function SmallCalendar(props: CalendarStateProps) {
           filterOption={filterOption}
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
+          viewSubjectPermission={viewSubjectPermission}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -383,6 +385,7 @@ function EditBox(props: CalendarStateProps) {
     isShowAnyTime,
     stateCurrentCid,
     stateMaterialArr,
+    viewSubjectPermission,
   } = props;
   const { contentsAuthList, classOptions, mySchoolId, outcomeListInit } = useSelector<RootState, RootState["schedule"]>(
     (state) => state.schedule
@@ -738,8 +741,12 @@ function EditBox(props: CalendarStateProps) {
 
     if (name === "program_id") {
       if (value?.id) {
-        const LinkageProgramData: any = await handleChangeProgramId(value.id);
-        setSubjectItem(LinkageProgramData && LinkageProgramData.length ? [LinkageProgramData[0]] : []);
+        if (viewSubjectPermission) {
+          const LinkageProgramData: any = await handleChangeProgramId(value.id);
+          setSubjectItem(LinkageProgramData && LinkageProgramData.length ? [LinkageProgramData[0]] : []);
+        } else {
+          dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
+        }
       }
       setProgramItem(value);
     }
@@ -785,7 +792,7 @@ function EditBox(props: CalendarStateProps) {
 
   const setScheduleData = (name: string, value: string | number | object | null) => {
     const newTopocList = { ...scheduleList, [name]: value as string | number | object | null };
-    setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+    setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
   };
   /**
    * form input validator
@@ -975,9 +982,9 @@ function EditBox(props: CalendarStateProps) {
     });
 
     let resultInfo: any;
-    resultInfo = (await dispatch(
+    resultInfo = ((await dispatch(
       saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -1270,7 +1277,7 @@ function EditBox(props: CalendarStateProps) {
         start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
         end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
       };
-      setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+      setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
@@ -1709,9 +1716,13 @@ function EditBox(props: CalendarStateProps) {
   const handeLearingOutcome = async () => {
     let resultInfo: any;
     if (scheduleList.program_id) {
-      resultInfo = (await dispatch(
-        getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
-      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+      if (viewSubjectPermission) {
+        resultInfo = ((await dispatch(
+          getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
+        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+      } else {
+        dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
+      }
     }
     await getLearingOuctomeData(
       {
@@ -1725,6 +1736,7 @@ function EditBox(props: CalendarStateProps) {
       enableCustomization: true,
       customizeTemplate: (
         <LearingOutcome
+          viewSubjectPermission={viewSubjectPermission}
           handleClose={() => {
             setCondition({ page: 1, exect_search: "all", assumed: -1 });
             changeModalDate({ openStatus: false, enableCustomization: false });
@@ -2414,6 +2426,7 @@ interface CalendarStateProps {
   filterOption: filterOptionItem;
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
+  viewSubjectPermission?: boolean;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2457,6 +2470,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     filterOption,
     user_id,
     schoolByOrgOrUserData,
+    viewSubjectPermission,
   } = props;
 
   const template = (
@@ -2495,6 +2509,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           filterOption={filterOption}
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
+          viewSubjectPermission={viewSubjectPermission}
         />
       </Box>
       <Box
@@ -2538,6 +2553,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           filterOption={filterOption}
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
+          viewSubjectPermission={viewSubjectPermission}
         />
       </Box>
     </>
