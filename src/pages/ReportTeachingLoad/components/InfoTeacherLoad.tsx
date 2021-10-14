@@ -1,7 +1,6 @@
 import { Box, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
-import LayoutBox from "../../../components/LayoutBox";
 import { d } from "../../../locale/LocaleManager";
 const useStyles = makeStyles(() => ({
   colorPart: {
@@ -60,7 +59,7 @@ export function InfoTeacherLoad() {
     },
   ];
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+    // <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Box className={clsx(css.rightContainer, css.flexRight)}>
         {infoList.map((infoItem) => (
           <Box key={infoItem.title} className={clsx(css.rightContainer, css.marginItem)}>
@@ -69,6 +68,6 @@ export function InfoTeacherLoad() {
           </Box>
         ))}
       </Box>
-    </LayoutBox>
+    // </LayoutBox>
   );
 }

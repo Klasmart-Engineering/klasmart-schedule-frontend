@@ -2,7 +2,6 @@ import { makeStyles } from "@material-ui/core";
 import { ParentSize } from "@visx/responsive";
 import React, { ReactNode } from "react";
 import { useChartScale } from "../../hooks/useChartScale";
-import LayoutBox from "../LayoutBox";
 
 const useStyle = makeStyles({
   chartLayout: {
@@ -27,15 +26,15 @@ export function ChartLayout(props: ChartLayoutProps) {
   if (scale(1) !== 1) {
     const px = scale(window.innerWidth / chartWidth);
     return (
-      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+      // <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <div className={css.chartLayout} style={{ height: chartHeight * px, overflowX: "scroll" }}>
           <div className={css.chartLayoutContent}>{render(px)}</div>
         </div>
-      </LayoutBox>
+      // </LayoutBox>
     );
   }
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+    // <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.chartLayout} style={{ paddingBottom: `${(100 * chartHeight) / chartWidth}%` }}>
         <ParentSize>
           {(info) => {
@@ -44,6 +43,6 @@ export function ChartLayout(props: ChartLayoutProps) {
           }}
         </ParentSize>
       </div>
-    </LayoutBox>
+    // </LayoutBox>
   );
 }
