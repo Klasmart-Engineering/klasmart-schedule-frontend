@@ -18,7 +18,7 @@ const AntTab = withStyles((theme) => ({
   root: {
     textTransform: "none",
     minWidth: 72,
-    fontWeight: theme.typography.fontWeightRegular,
+    fontWeight: theme.typography.fontWeightBold,
     marginRight: theme.spacing(4),
     "&:hover": {
       color: "#40a9ff",
@@ -26,7 +26,7 @@ const AntTab = withStyles((theme) => ({
     },
     "&$selected": {
       color: "#1890ff",
-      fontWeight: theme.typography.fontWeightMedium,
+      fontWeight: theme.typography.fontWeightBold,
     },
     "&:focus": {
       color: "#40a9ff",

@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     },
   },
   marginItem: {
-    paddingTop: "15px",
+    paddingTop: "32px",
   },
 }));
 interface InfoListItem {
