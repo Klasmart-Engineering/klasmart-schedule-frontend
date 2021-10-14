@@ -972,13 +972,13 @@
   "report_label_feedback": "% Phản hồi",
   "report_label_assessments_pending": "Đánh giá đang chờ xét duyệt",
   "report_label_avg_days_pending": "Số ngày trung bình đang chờ xét duyệt",
-  "report_msg_learning_outcomes_covered": "Observable competency that can be demonstrated by the student by the end of the lesson.",
-  "report_label_teaching_hours": "Teaching Hours in Next 7 Days",
-  "report_msg_students_number": "Number of students currently assigned to the teacher. Values are based on filter selection.",
-  "report_msg_classes_number": "Number of classes currently assigned to the teacher. Values are based on filter selection.",
-  "report_msg_assignments_scheduled": "Number of assignments the teacher has newly planned and assigned during the time range. Values are based on filter selection.",
-  "report_msg_assessments_completed": "Number of assessments completed by the teacher for each student submission. Values are based on filter selection.",
-  "report_msg_feedback": "% of individual student assessments that are completed of which the teacher has provided feedback for. Values are based on filter selection.",
-  "report_msg_assessments_pending": "Number of assessments pending for the teacher to complete for every student submission. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.",
-  "report_msg_avg_days_pending": "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection."
+  "report_msg_learning_outcomes_covered": "Khả năng quan sát có thể được chứng minh bởi học sinh vào cuối bài học.",
+  "report_label_teaching_hours": "Giờ dạy trong 7 ngày tới",
+  "report_msg_students_number": "Số học sinh hiện được giao cho giáo viên. Giá trị dựa trên lựa chọn bộ lọc.",
+  "report_msg_classes_number": "Số lớp học hiện được giao cho giáo viên. Giá trị dựa trên lựa chọn bộ lọc.",
+  "report_msg_assignments_scheduled": "Số lượng bài tập mà giáo viên đã lên kế hoạch mới và giao trong khoảng thời gian. Giá trị dựa trên lựa chọn bộ lọc.",
+  "report_msg_assessments_completed": "Số lượng bài đánh giá mà giáo viên đã hoàn thành đối với mỗi bài nộp của học sinh. Giá trị dựa trên lựa chọn bộ lọc.",
+  "report_msg_feedback": "% các bài đánh giá cá nhân của học sinh đã được hoàn thành mà giáo viên đã cung cấp phản hồi. Giá trị dựa trên lựa chọn bộ lọc.",
+  "report_msg_assessments_pending": "Số lượng đánh giá đang chờ giáo viên hoàn thành cho mỗi bài nộp của học sinh. Trạng thái đang chờ xử lý có nghĩa là ngày quá hạn đã qua nhưng việc đánh giá vẫn chưa được hoàn thành. Giá trị dựa trên lựa chọn bộ lọc.",
+  "report_msg_avg_days_pending": "Số ngày trung bình các bài đánh giá ở trạng thái chờ xử lý. Trạng thái đang chờ xử lý có nghĩa là ngày đáo hạn đã qua nhưng việc đánh giá vẫn chưa được hoàn thành. Giá trị dựa trên lựa chọn bộ lọc."
 }

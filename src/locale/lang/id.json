@@ -972,13 +972,13 @@
   "report_label_feedback": "% Masukan",
   "report_label_assessments_pending": "Menunggu Penilaian",
   "report_label_avg_days_pending": "Rata-rata Waktu Tunggu",
-  "report_msg_learning_outcomes_covered": "Observable competency that can be demonstrated by the student by the end of the lesson.",
-  "report_label_teaching_hours": "Teaching Hours in Next 7 Days",
-  "report_msg_students_number": "Number of students currently assigned to the teacher. Values are based on filter selection.",
-  "report_msg_classes_number": "Number of classes currently assigned to the teacher. Values are based on filter selection.",
-  "report_msg_assignments_scheduled": "Number of assignments the teacher has newly planned and assigned during the time range. Values are based on filter selection.",
-  "report_msg_assessments_completed": "Number of assessments completed by the teacher for each student submission. Values are based on filter selection.",
-  "report_msg_feedback": "% of individual student assessments that are completed of which the teacher has provided feedback for. Values are based on filter selection.",
-  "report_msg_assessments_pending": "Number of assessments pending for the teacher to complete for every student submission. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.",
-  "report_msg_avg_days_pending": "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection."
+  "report_msg_learning_outcomes_covered": "Kompetensi yang dapat diamati dan didemonstrasikan oleh siswa pada akhir pelajaran.",
+  "report_label_teaching_hours": "Jam Mengajar Dalam 7 Hari Ke Depan",
+  "report_msg_students_number": "Banyak siswa yang dimiliki oleh guru. Besarnya didasarkan pada pemilihan filter.",
+  "report_msg_classes_number": "Banyak kelas yang ditugaskan ke guru. Besarnya didasarkan pada pemilihan filter.",
+  "report_msg_assignments_scheduled": "Banyak tugas yang direncanakan dan ditugaskan oleh guru dalam rentang waktu tertentu. Besarnya didasarkan pada pemilihan filter.",
+  "report_msg_assessments_completed": "Banyak penilaian yang diselesaikan oleh guru untuk setiap submisi siswa. Besarnya didasarkan pada pemilihan filter.",
+  "report_msg_feedback": "% dari penilaian individu siswa yang sudah selesai dan diberikan umpan balik oleh guru. Besarnya didasarkan pada pemilihan filter.",
+  "report_msg_assessments_pending": "Banyaknya penilaian yang menunggu diselesaikan oleh guru untuk setiap submisi dari siswa. Status menunggu berarti tanggal jatuh tempo sudah lewat tetapi penilaian belum selesai. Besarnya sesuai dengan pemilihan filter.",
+  "report_msg_avg_days_pending": "Lama rata-rata penilaian berada di status menunggu. Status menunggu berarti tanggal jatuh tempo sudah lewat tetapi penilaian belum selesai. Besarnya sesuai dengan pemilihan filter."
 }
