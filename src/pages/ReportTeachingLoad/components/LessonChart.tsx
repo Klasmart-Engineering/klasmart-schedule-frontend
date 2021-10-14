@@ -16,7 +16,7 @@ const useStyle = makeStyles(() => ({
     alignItems: "flex-start",
   },
   blockRight: {
-    wordBreak: "break-all",
+    wordWrap: "break-word",
     marginBottom: "16px",
     maxWidth: "180px",
     color: "#666666",
@@ -34,10 +34,10 @@ const useStyle = makeStyles(() => ({
     fontSize: "20px",
     fontWeight: "bold",
     marginTop: "16px",
+    color: "#000",
   },
   tableItem: {
     height: "80px",
-    fontWeight: 600,
     fontSize: "18px",
   },
   chartField: {
@@ -74,7 +74,6 @@ const useStyle = makeStyles(() => ({
   tearchName: {
     width: "15%",
     paddingRight: "20px",
-    fontWeight: "bold",
   },
   itemTearchName: {
     color: "#4B88F5",
@@ -102,6 +101,7 @@ const useStyle = makeStyles(() => ({
   },
   selector: {
     height: "40px",
+    width: "180px",
   },
   datumGraph: {
     transition: "ease 400ms",
