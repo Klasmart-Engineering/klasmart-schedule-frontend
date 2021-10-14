@@ -16,7 +16,7 @@ const useStyle = makeStyles(() => ({
     alignItems: "flex-start",
   },
   blockRight: {
-    wordWrap: "break-word",
+    whiteSpace: "nowrap",
     marginBottom: "16px",
     maxWidth: "180px",
     color: "#666666",
@@ -53,15 +53,6 @@ const useStyle = makeStyles(() => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     position: "relative",
-    "&:before": {
-      content: "' '",
-      height: "50%",
-      display: "block",
-      position: "absolute",
-      bottom: "0",
-      left: "0",
-      borderLeft: "1px solid #e9e9e9",
-    },
   },
   headerFieldBar: {
     width: "60%",
@@ -69,6 +60,7 @@ const useStyle = makeStyles(() => ({
     borderBottom: "1px solid #e9e9e9",
   },
   tableHeaderItem: {
+    background: "#F2F5F7",
     height: "60px",
   },
   tearchName: {
@@ -77,6 +69,8 @@ const useStyle = makeStyles(() => ({
   },
   itemTearchName: {
     color: "#4B88F5",
+    textAlign: "center",
+    wordBreak: "break-word",
     borderTop: "1px solid #e9e9e9",
     cursor: "pointer",
   },
@@ -235,7 +229,7 @@ export default function (props: Props) {
   const renderHeader = () => {
     return (
       <Grid item container justify={"space-between"} className={clsx(style.tableItem, style.tableHeaderItem)}>
-        <Grid item container justify={"flex-end"} alignItems={"center"} className={style.tearchName}>
+        <Grid item container justify={"center"} alignItems={"center"} className={style.tearchName}>
           {lang.teacher}
         </Grid>
         <Grid item container direction={"column"} justify={"center"} alignItems={"center"} className={style.headerField}>
@@ -267,7 +261,7 @@ export default function (props: Props) {
         <Grid
           item
           container
-          justify={"flex-end"}
+          justify={"center"}
           alignItems={"center"}
           onClick={() => clickTeacher(item.teacher_id)}
           className={clsx(style.tearchName, style.itemTearchName)}
@@ -327,7 +321,7 @@ export default function (props: Props) {
     return (
       <Grid container justify={"space-between"} className={style.filter}>
         <Grid item>
-          {lang.lessonTitle}: {computeCountNumber() || 0}（{computeAmountTime()}）
+          {lang.lessonTitle}: {computeCountNumber() || 0}&ensp;({computeAmountTime()})
         </Grid>
         <Select value={selectItem} onChange={filterChange} className={style.selector} input={<OutlinedInput />}>
           <MenuItem value={7}>{lang.menuItem1}</MenuItem>
@@ -355,22 +349,22 @@ export default function (props: Props) {
       <Grid container wrap={"nowrap"} justify={"space-around"} className={style.totalType}>
         {renderLineFooterBlock(
           lang.liveCompleted,
-          `${statistic.completed_live_lessons?.count || 0}（${formatTime(statistic.completed_live_lessons?.duration)}）`,
+          `${statistic.completed_live_lessons?.count || 0} (${formatTime(statistic.completed_live_lessons?.duration)})`,
           0
         )}
         {renderLineFooterBlock(
           lang.inClassCompleted,
-          `${statistic.completed_in_class_lessons?.count || 0}（${formatTime(statistic.completed_in_class_lessons?.duration)}）`,
+          `${statistic.completed_in_class_lessons?.count || 0} (${formatTime(statistic.completed_in_class_lessons?.duration)})`,
           1
         )}
         {renderLineFooterBlock(
           lang.liveMissed,
-          `${statistic.missed_live_lessons?.count || 0}（${formatTime(statistic.missed_live_lessons?.duration)}）`,
+          `${statistic.missed_live_lessons?.count || 0} (${formatTime(statistic.missed_live_lessons?.duration)})`,
           2
         )}
         {renderLineFooterBlock(
           lang.inClassMidded,
-          `${statistic.missed_in_class_lessons?.count || 0}（${formatTime(statistic.missed_in_class_lessons?.duration)}）`,
+          `${statistic.missed_in_class_lessons?.count || 0} (${formatTime(statistic.missed_in_class_lessons?.duration)})`,
           3
         )}
       </Grid>
