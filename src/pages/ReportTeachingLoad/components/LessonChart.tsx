@@ -1,12 +1,12 @@
 import { Box, Grid, MenuItem, OutlinedInput, Select } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
-import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityTeacherLoadLesson, EntityTeacherLoadLessonRequest } from "../../../api/api.auto";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import ReportTooltip from "../../../components/ReportTooltip";
+import { getDurationByDay } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getLessonTeacherLoad } from "../../../reducers/report";
 import useTranslation from "../hooks/useTranslation";
@@ -115,7 +115,7 @@ interface Props {
 }
 
 const computeTimeStamp = (days: number) => {
-  return `${moment().subtract(days, "days").unix()}-${moment().unix()}`;
+  return getDurationByDay(days);
 };
 
 const useFormatTime = () => {
