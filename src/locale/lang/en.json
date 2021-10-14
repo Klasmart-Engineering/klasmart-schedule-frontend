@@ -627,7 +627,7 @@
   "report_label_total": "Total",
   "report_label_live": "Live",
   "report_label_hours": "Hours",
-  "report_label_mins": "Mins",
+  "report_label_mins": "mins",
   "report_label_go_back": "Return to Reports List",
   "report_label_individual_achievement": "Individual Student Achievement",
   "general_error_unauthorized": "User not logged in, please log in",

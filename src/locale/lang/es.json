@@ -627,7 +627,7 @@
   "report_label_total": "Total",
   "report_label_live": "En vivo",
   "report_label_hours": "Horas",
-  "report_label_mins": "Mins",
+  "report_label_mins": "mins",
   "report_label_go_back": "Volver a la lista de informes",
   "report_label_individual_achievement": "Logro individual del estudiante",
   "general_error_unauthorized": "El usuario no ha iniciado sesión; iníciala",
