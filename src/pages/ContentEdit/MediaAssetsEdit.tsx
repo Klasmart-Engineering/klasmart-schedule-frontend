@@ -5,7 +5,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
 import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
@@ -115,7 +114,7 @@ function AssetEdit(props: AssetEditProps) {
     onChange(source);
     onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromAssets);
   };
-  const dropType = apiIsEnableNewH5p() ? `LIBRARY_ITEM_FILE_TYPE_${assetLibraryId}` : "LIBRARY_ITEM";
+  const dropType =  "LIBRARY_ITEM";
   const { isOver, active, setNodeRef: fileRef } = useDroppable({ id: "MEDIA_ASSETS_EDIT_ID", data: { accept: [dropType], drop: setFile } });
   const canDropfile = isOver && active?.data.current?.type === dropType;
   const handleChangeFileType = useCallback(() => {

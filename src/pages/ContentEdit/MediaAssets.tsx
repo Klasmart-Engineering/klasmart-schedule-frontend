@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentFileType } from "../../api/type";
 import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
@@ -150,7 +149,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
   );
   const rows = list?.map((item, idx) => {
     const fileType: ContentFileType = item.data && JSON.parse(item.data)?.file_type;
-    const dragType = apiIsEnableNewH5p() && lesson === "material" ? `LIBRARY_ITEM_FILE_TYPE_${fileType}` : "LIBRARY_ITEM";
+    const dragType = "LIBRARY_ITEM";
     return (
       <TableRow key={item.id}>
         <TableCell className={css.cellThumnbnail}>

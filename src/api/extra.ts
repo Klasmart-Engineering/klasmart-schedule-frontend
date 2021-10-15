@@ -214,10 +214,6 @@ export function domainSwitch() {
   return window.location.host.includes("kidsloop.live");
 }
 
-export function apiIsEnableNewH5p() {
-  return process.env.REACT_APP_ENABLE_NEW_H5P === "1";
-}
-
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
