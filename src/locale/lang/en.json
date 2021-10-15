@@ -594,7 +594,7 @@
   "schedule_msg_cannot_delete_study": "This event cannot be deleted because some students already made progress for Study activities.",
   "report_label_student_achievement": "Overall Student Achievement",
   "report_label_teacher": "Teacher",
-  "report_label_class": "In Class",
+  "report_label_class": "Class",
   "report_label_lesson_plan": "Lesson Plan",
   "report_label_status": "Status",
   "report_label_all": "All",
@@ -856,7 +856,7 @@
   "report_msg_no_data": "No achievement data is available.",
   "report_navigation_class_view": "Class View",
   "report_msg_individual_infor": "This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.",
-  "report_msg_overall_infor": "The Overall Student Achievement Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.",
+  "report_msg_overall_infor": "The Overall Student Achievement Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.\n\nThe report shows results from Live, Class, and Study assessments.\nStudent absences seen in the Live and Class mean that learner wasn’t attended.\nStudent absences seen in the Study mean that the learner didn’t try at all.",
   "report_msg_no_achieve": "No achievement data available for this lesson.",
   "report_msg_no_plan": "There are no lesson plans for this teacher. Would you like to add one?",
   "report_button_create_plan": "Create a Lesson Plan",
@@ -980,5 +980,6 @@
   "report_msg_assessments_completed": "Number of assessments completed by the teacher for each student submission. Values are based on filter selection.",
   "report_msg_feedback": "% of individual student assessments that are completed of which the teacher has provided feedback for. Values are based on filter selection.",
   "report_msg_assessments_pending": "Number of assessments pending for the teacher to complete for every student submission. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.",
-  "report_msg_avg_days_pending": "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection."
+  "report_msg_avg_days_pending": "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.",
+  "schedule_search_school_name": "Search School Name"
 }

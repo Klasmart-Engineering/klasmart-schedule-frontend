@@ -627,7 +627,7 @@
   "report_label_total": "Total",
   "report_label_live": "En vivo",
   "report_label_hours": "Horas",
-  "report_label_mins": "mins",
+  "report_label_mins": "minutos",
   "report_label_go_back": "Volver a la lista de informes",
   "report_label_individual_achievement": "Logro individual del estudiante",
   "general_error_unauthorized": "El usuario no ha iniciado sesión; iníciala",
@@ -980,5 +980,6 @@
   "report_msg_assessments_completed": "Number of assessments completed by the teacher for each student submission. Values are based on filter selection.",
   "report_msg_feedback": "% of individual student assessments that are completed of which the teacher has provided feedback for. Values are based on filter selection.",
   "report_msg_assessments_pending": "Number of assessments pending for the teacher to complete for every student submission. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.",
-  "report_msg_avg_days_pending": "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection."
+  "report_msg_avg_days_pending": "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.",
+  "schedule_search_school_name": "Search School Name"
 }
