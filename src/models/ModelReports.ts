@@ -130,23 +130,23 @@ export function formatTimeToMonDay(seconds: number) {
 }
 
 interface Time2colorLevelResponse {
-  opacity: number;
+  color: string;
   hour: number;
   min: number;
 }
 export function time2colorLevel(seconds: number): Time2colorLevelResponse {
-  if (seconds === 0) return { opacity: 0.1, hour: 0, min: 0 };
+  if (seconds === 0) return { color: "rgba(233,190,189,1)", hour: 0, min: 0 };
   const hour = Math.floor(seconds / 3600);
   const min = Math.floor((seconds % 3600) / 60);
-  let opacity = 1;
+  let color = "rgba(0,80,150,1)";
   if (hour < 2) {
-    opacity = 0.25;
+    color = "rgba(204,134,132,1)";
   } else if (hour < 4) {
-    opacity = 0.45;
+    color = "rgba(173,132,192,1)";
   } else if (hour < 6) {
-    opacity = 0.7;
+    color = "rgba(14,120,213,1)";
   }
-  return { opacity, hour, min };
+  return { color, hour, min };
 }
 export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[]): formatTeachingLoadListResponse {
   let formatedData: HorizontalBarStackDataItem[] = [];
@@ -158,12 +158,12 @@ export function formatTeachingLoadList(data: EntityReportListTeachingLoadItem[])
       value: dataItem.durations
         ? dataItem.durations.map((durationItems, idx) => {
             const total = (durationItems?.online || 0) + (durationItems?.offline || 0);
-            const { opacity } = time2colorLevel(total);
+            const { color } = time2colorLevel(total);
             const description: ReactNode = teacherLoadDescription({ ...durationItems });
             return {
               name: `category-${idx}`,
               value: 10,
-              color: `rgba(0,98,255,${opacity})`,
+              color,
               description: description,
             };
           })

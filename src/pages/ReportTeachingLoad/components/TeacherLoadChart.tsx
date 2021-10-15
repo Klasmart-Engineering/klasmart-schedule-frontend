@@ -15,8 +15,8 @@ import { time2colorLevel } from "../../../models/ModelReports";
 const structSize = memorize(
   (px: number): HorizontalBarStackChartStructSize => ({
     barStackWidth: 1175 * px,
-    barStackHeight: 36 * px,
-    barStackMargin: 48 * px,
+    barStackHeight: 26 * px,
+    barStackMargin: 78 * px,
     xMarginTop: 70 * px,
     yMarginLeft: 180 * px,
     yMarginRight: 230 * px,
@@ -41,7 +41,7 @@ export function TeacherLoadChart(props: { data: HorizontalBarStackDataItem[]; xL
           gridValues={[10, 20, 30, 40, 50, 60, 70]}
           labelProps={{ stroke: "black" }}
           structSize={structSize(px)}
-          renderRect={({ rectProps, index, stackIndex }) => <rect {...rectProps} fill={data[index].value[stackIndex].color} />}
+          renderRect={({ rectProps, index, stackIndex }) => <rect {...rectProps} fill={data[index].value[stackIndex].color} rx={rectProps.height? Number(rectProps.height) * 0.2 : 4} ry={rectProps.height ? Number(rectProps.height) * 0.2 : 4} />}
           renderXAxiosLabel={({ formattedValue, ...textProps }) => (
             <Fragment>
               <Text {...textProps} dy="-1.2em">

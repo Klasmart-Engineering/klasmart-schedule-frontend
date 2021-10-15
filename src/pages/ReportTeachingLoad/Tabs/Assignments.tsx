@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { InfoOutlined } from "@material-ui/icons";
+import { ParentSize } from "@visx/responsive";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SelectContext } from "..";
@@ -25,11 +26,11 @@ import { getTeacherLoadAssignment } from "../../../reducers/report";
 const PAGESIZE = 10;
 const useStyles = makeStyles(({ palette }) => ({
   selectButton: {
-    width: 200,
+    width: 180,
     height: 40,
     borderRadius: 4,
     color: palette.text.primary,
-    marginRight: 20,
+    marginLeft: 30,
   },
   selectBox: {
     margin: "24px 0",
@@ -183,8 +184,10 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
     </TableRow>
   ));
   return (
-    <TableContainer >
-      <Table stickyHeader>
+    <ParentSize>
+    {(info) => (
+     <TableContainer style={{width:info.width}} >
+      <Table>
         <TableHead className={css.tableHead}>
           <TableRow>
             <TableCell align="center">{d("Teacher").t("report_label_teacher")}</TableCell>
@@ -255,5 +258,6 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
         <TableBody>{rows}</TableBody>
       </Table>
     </TableContainer>
+   )}</ParentSize>
   );
 };
