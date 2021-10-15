@@ -195,6 +195,7 @@ export default function (props: Props) {
     const params = {
       ...queryParams.current,
       metaLoading: true,
+      allTeacher_ids: queryParams.current.teacher_ids,
       teacher_ids: queryParams.current.teacher_ids?.slice(pageRef.current * PAGE_SIZE, pageRef.current * PAGE_SIZE + PAGE_SIZE),
     };
     await dispatch(getLessonTeacherLoad(params));
