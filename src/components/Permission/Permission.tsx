@@ -450,6 +450,7 @@ export enum PermissionType {
   report_school_student_usage_655 = "report_school_student_usage_655",
   report_teacher_student_usage_656 = "report_teacher_student_usage_656",
   student_usage_report_657 = "student_usage_report_657",
+  student_progress_report_662 = "student_progress_report_662",
 }
 
 const isPermissionType = (x: PermissionType | PermissionType[]): x is PermissionType => !Array.isArray(x);

@@ -30,6 +30,7 @@ import { ReportAchievementList } from "./pages/ReportAchievementList";
 import { ReportCategories } from "./pages/ReportCategories";
 import { ReportDashboard } from "./pages/ReportDashboard";
 import { ReportLearningSummary } from "./pages/ReportLearningSummary";
+import ReportStudentProgress from "./pages/ReportStudentProgress";
 import ReportStudentUsage from "./pages/ReportStudentUsage";
 import ReportTeachingLoad from "./pages/ReportTeachingLoad";
 import Schedule from "./pages/Schedule";
@@ -110,6 +111,9 @@ function App() {
                   </Route>
                   <Route path={ReportCategories.routeBasePath}>
                     <ReportCategories />
+                  </Route>
+                  <Route path={ReportStudentProgress.routeBasePath}>
+                    <ReportStudentProgress />
                   </Route>
                   {/* <Route path={ReportStudentPerformance.routeBasePath}>
                     <ReportStudentPerformance />
