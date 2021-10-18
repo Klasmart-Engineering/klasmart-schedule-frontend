@@ -29,7 +29,6 @@ import "moment/locale/es";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
-import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -278,7 +277,7 @@ function MyCalendar(props: CalendarProps) {
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoViewProps) => {
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
+      if (scheduleInfo.class_type_label?.id === "Homework") {
         if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
           changeModalDate({
             title: "",
@@ -424,7 +423,6 @@ function MyCalendar(props: CalendarProps) {
     { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "78%" }} /> },
     { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon style={{ width: "86%" }} /> },
     { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "86%" }} /> },
-    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },
   ];
 
   const eventStyleGetter = (event: any) => {

@@ -228,7 +228,6 @@ function StyledTreeItem(props: StyledTreeItemProps) {
       { id: "OnlineClass", color: "#0E78D5", icon: "" },
       { id: "OfflineClass", color: "#1BADE5", icon: "" },
       { id: "Homework", color: "#13AAA9", icon: "" },
-      { id: "Task", color: "#AFBA0A", icon: "" },
     ].filter((item) => item.id === label)[0].color;
   };
 
