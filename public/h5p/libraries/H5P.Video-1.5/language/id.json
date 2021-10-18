@@ -1,0 +1,136 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Video sources",
+      "description": "translate:: To ensure that the video works in all browsers you should add both WebM and MP4 formatted sources."
+    },
+    {
+      "label": "translate:: Visuals",
+      "fields": [
+        {
+          "label": "translate:: Poster image"
+        },
+        {
+          "label": "translate:: Fit video player to use all available space",
+          "description": "translate:: If not set the video player will have the same aspect ratio as the video."
+        },
+        {
+          "label": "translate:: Show video player controls",
+          "description": "translate:: Add controls to the video player. This allows users to play, pause, etc."
+        }
+      ]
+    },
+    {
+      "label": "translate:: Playback",
+      "fields": [
+        {
+          "label": "translate:: Auto-play video",
+          "description": "translate:: Start playing the video automatically. May not work on mobile devices."
+        },
+        {
+          "label": "translate:: Loop video",
+          "description": "translate:: Automatically start the video over again when it ends."
+        }
+      ]
+    },
+    {
+      "label": "translate:: Video localization",
+      "fields": [
+        {
+          "label": "translate:: Name",
+          "default": "translate:: Video",
+          "description": "translate:: Helps identify content of this type."
+        },
+        {
+          "label": "translate:: Loading",
+          "default": "translate:: Video player loading..."
+        },
+        {
+          "label": "translate:: No players found",
+          "default": "translate:: Found no video players that supports the given video format."
+        },
+        {
+          "label": "translate:: No sources",
+          "default": "translate:: Video is missing sources."
+        },
+        {
+          "label": "translate:: Aborted",
+          "default": "translate:: Media playback has been aborted."
+        },
+        {
+          "label": "translate:: Network failure",
+          "default": "translate:: Network failure."
+        },
+        {
+          "label": "translate:: Cannot decode video source",
+          "default": "translate:: Unable to decode media."
+        },
+        {
+          "label": "translate:: Format not supported",
+          "default": "translate:: Video format not supported."
+        },
+        {
+          "label": "translate:: Media encrypted",
+          "default": "translate:: Media encrypted."
+        },
+        {
+          "label": "translate:: Unknown error",
+          "default": "translate:: Unknown error."
+        },
+        {
+          "label": "translate:: Invalid YouTube ID",
+          "default": "translate:: Invalid YouTube ID."
+        },
+        {
+          "label": "translate:: Unknown YouTube ID",
+          "default": "translate:: Unable to find video with the given YouTube ID."
+        },
+        {
+          "label": "translate:: Restricted YouTube video",
+          "default": "translate:: The owner of this video does not allow it to be embedded."
+        }
+      ]
+    },
+    {
+      "label": "translate:: Accessibility",
+      "fields": [
+        {
+          "label": "translate:: Add video track",
+          "entity": "translate:: Track",
+          "field": {
+            "label": "translate:: Track",
+            "fields": [
+              {
+                "label": "translate:: Track label"
+              },
+              {
+                "label": "translate:: Type kind, refer to <a target='_blank' href=https://html.spec.whatwg.org/multipage/embedded-content.html#the-track-element>HTML living standard</a>",
+                "options": [
+                  {
+                    "label": "translate:: Subtitles"
+                  },
+                  {
+                    "label": "translate:: Captions"
+                  },
+                  {
+                    "label": "translate:: Descriptions"
+                  },
+                  {
+                    "label": "translate:: Chapters"
+                  }
+                ]
+              },
+              {
+                "label": "translate:: Source language, must be defined for subtitles",
+                "description": "translate:: Must be a valid BCP 47 language tag. If the kind attribute is set to subtitles, then srclang must be defined."
+              },
+              {
+                "label": "translate:: Track file (WebVTT)"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

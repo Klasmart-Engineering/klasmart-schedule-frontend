@@ -1,0 +1,67 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Description",
+      "description": "translate:: Description of the goals page.",
+      "default": "translate:: Insert the goals that you have chosen to work with."
+    },
+    {
+      "label": "translate:: Define goal link text",
+      "description": "translate:: Text that will be displayed on the button for creating a new goal.",
+      "default": "translate:: Create a new goal"
+    },
+    {
+      "label": "translate:: Label for a user defined goal",
+      "description": "translate:: Text that will be displayed as label on a user created goal.",
+      "default": "translate:: User defined goal"
+    },
+    {
+      "label": "translate:: Define goal placeholder",
+      "description": "translate:: Text that will be displayed as a placeholder when creating a new goal.",
+      "default": "translate:: Write here..."
+    },
+    {
+      "label": "translate:: Text indicating how many goals has been added",
+      "default": "translate:: Goals added:",
+      "description": "translate:: This text will follow after the amount of goals that is currently created, example: 'Goals added: 5' where 'Goals added:' is this text."
+    },
+    {
+      "label": "translate:: Text for \"Specify goal\"-button",
+      "default": "translate:: Specification"
+    },
+    {
+      "label": "translate:: Text for \"Remove goal\"-button",
+      "default": "translate:: Remove"
+    },
+    {
+      "label": "translate:: Label for help text",
+      "description": "translate:: Label for showing additional helpful information to the user.",
+      "default": "translate:: More information"
+    },
+    {
+      "label": "translate:: Fill in additional help information",
+      "description": "translate:: Here you can fill in additional helpful information for the user."
+    },
+    {
+      "label": "translate:: Localize goal deletion confirmation",
+      "fields": [
+        {
+          "label": "translate:: Header",
+          "default": "translate:: Confirm deletion"
+        },
+        {
+          "label": "translate:: Message",
+          "default": "translate:: Are you sure you want to delete this goal?"
+        },
+        {
+          "label": "translate:: Cancel button label",
+          "default": "translate:: Cancel"
+        },
+        {
+          "label": "translate:: Confirm button label",
+          "default": "translate:: Confirm"
+        }
+      ]
+    }
+  ]
+}

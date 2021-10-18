@@ -1,0 +1,38 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Description",
+      "description": "translate:: Description of the goals assessment page.",
+      "default": "translate:: Rate the goals that you have chosen in the goals page."
+    },
+    {
+      "label": "translate:: Low rating text",
+      "description": "translate:: Text for worst rating.",
+      "default": "translate:: Learned little"
+    },
+    {
+      "label": "translate:: Medium rating text",
+      "description": "translate:: Text for middle rating.",
+      "default": "translate:: Learned something"
+    },
+    {
+      "label": "translate:: High rating text",
+      "description": "translate:: Text for great rating.",
+      "default": "translate:: Learned a lot"
+    },
+    {
+      "label": "translate:: No goals text",
+      "description": "translate:: Feedback text when no goals have been created.",
+      "default": "translate:: You have not chosen any goals yet."
+    },
+    {
+      "label": "translate:: Label for help text",
+      "description": "translate:: Label for showing additional helpful information to the user.",
+      "default": "translate:: More information"
+    },
+    {
+      "label": "translate:: Fill in additional help information",
+      "description": "translate:: Here you can fill in additional helpful information for the user."
+    }
+  ]
+}

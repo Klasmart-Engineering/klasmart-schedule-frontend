@@ -1,0 +1,40 @@
+{
+  "semantics": [
+    {
+      "label": "translae:: Description of inputfield",
+      "description": "translae:: Description of what the user should input."
+    },
+    {
+      "label": "translae:: Placeholder text",
+      "description": "translae:: A placeholder text for the user."
+    },
+    {
+      "label": "translae:: Maximum text length",
+      "description": "translae:: Maximum number of characters for the text."
+    },
+    {
+      "label": "translae:: Input field size",
+      "description": "translae:: The size of the input field in amount of lines it will cover.",
+      "options": [
+        {
+          "label": "translae:: 1 line"
+        },
+        {
+          "label": "translae:: 3 lines"
+        },
+        {
+          "label": "translae:: 10 lines"
+        }
+      ]
+    },
+    {
+      "label": "translae:: Required field",
+      "description": "translae:: Check to make this field required, the user must answer all required fields to be able to export a document."
+    },
+    {
+      "label": "translae:: Remaining characters",
+      "default": "translae:: Remaining characters: @chars",
+      "description": "translae:: Message for remaining characters. You can use @chars which will be replaced by the corresponding number."
+    }
+  ]
+}

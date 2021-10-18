@@ -1,0 +1,267 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Check answer button",
+      "default": "translate:: Check"
+    },
+    {
+      "label": "translate:: Retry button",
+      "default": "translate:: Retry"
+    },
+    {
+      "label": "translate:: Score explanation text",
+      "default": "translate:: Correct answers give +1 point. Incorrect answers give -1 point. The lowest possible score is 0."
+    },
+    {
+      "fields": [
+        {
+          "label": "translate:: Settings",
+          "fields": [
+            {
+              "label": "translate:: Background image",
+              "description": "translate:: Optional. Select an image to use as background for your drag and drop task."
+            },
+            {
+              "label": "translate:: Task size",
+              "description": "translate:: Specify how large (in px) the play area should be."
+            }
+          ]
+        },
+        {
+          "label": "translate:: Task",
+          "description": "translate:: Start by placing your drop zones.<br/>Next, place your droppable elements and check off the appropriate drop zones.<br/>Last, edit your drop zone again and check off the correct answers.",
+          "fields": [
+            {
+              "label": "translate:: Elements",
+              "entity": "translate:: element",
+              "field": {
+                "label": "translate:: Element",
+                "fields": [
+                  {
+                    "description": "translate:: Choose the type of content you would like to add."
+                  },
+                  {},
+                  {},
+                  {},
+                  {},
+                  {
+                    "label": "translate:: Select drop zones"
+                  },
+                  {
+                    "label": "translate:: Background Opacity"
+                  },
+                  {
+                    "label": "translate:: Infinite number of element instances",
+                    "description": "translate:: Clones this element so that it can be dragged to multiple drop zones."
+                  }
+                ]
+              }
+            },
+            {
+              "label": "translate:: Drop Zones",
+              "entity": "translate:: Drop Zone",
+              "field": {
+                "label": "translate:: Drop Zone",
+                "fields": [
+                  {
+                    "label": "translate:: Label"
+                  },
+                  {
+                    "label": "translate:: Show label"
+                  },
+                  {},
+                  {},
+                  {},
+                  {},
+                  {
+                    "label": "translate:: Select correct elements"
+                  },
+                  {
+                    "label": "translate:: Background Opacity"
+                  },
+                  {
+                    "label": "translate:: Tips and feedback",
+                    "fields": [
+                      {
+                        "label": "translate:: Tip text"
+                      },
+                      {
+                        "label": "translate:: Message displayed on correct match",
+                        "description": "translate:: Message will appear below the task on \"check\" if correct droppable is matched."
+                      },
+                      {
+                        "label": "translate:: Message displayed on incorrect match",
+                        "description": "translate:: Message will appear below the task on \"check\" if the match is incorrect."
+                      }
+                    ]
+                  },
+                  {
+                    "label": "translate:: This drop zone can only contain one element",
+                    "description": "translate:: Make sure there is only one correct answer for this dropzone"
+                  },
+                  {
+                    "label": "translate:: Enable Auto-Align",
+                    "description": "translate:: Will auto-align all draggables dropped in this zone."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "translate:: Overall Feedback",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "translate:: Default"
+            }
+          ],
+          "label": "translate:: Define custom feedback for any score range",
+          "description": "translate:: Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
+          "entity": "translate:: range",
+          "field": {
+            "fields": [
+              {
+                "label": "translate:: Score Range"
+              },
+              {},
+              {
+                "label": "translate:: Feedback for defined score range",
+                "placeholder": "translate:: Fill in the feedback"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "translate:: Behavioural settings",
+      "description": "translate:: These options will let you control how the task behaves.",
+      "fields": [
+        {
+          "label": "translate:: Enable \"Retry\""
+        },
+        {
+          "label": "translate:: Enable \"Check\" button"
+        },
+        {
+          "label": "translate:: Require user input before the solution can be viewed"
+        },
+        {
+          "label": "translate:: Give one point for the whole task",
+          "description": "translate:: Disable to give one point for each draggable that is placed correctly."
+        },
+        {
+          "label": "translate:: Apply penalties",
+          "description": "translate:: Apply penalties for elements dropped in the wrong drop zones. This must be enabled when the same element(s) are able to be dropped into multiple drop zones, or if there is only one drop-zone. If this is not enabled, learners may match all items to all drop-zones and always receive a full score."
+        },
+        {
+          "label": "translate:: Enable score explanation",
+          "description": "translate:: Display a score explanation to user when checking their answers (if the 'Apply penalties' option has been selected)."
+        },
+        {
+          "label": "translate:: Background opacity for draggables",
+          "description": "translate:: If this field is set, it will override opacity set on all draggable elements. This should be a number between 0 and 100, where 0 means full transparency and 100 means no transparency"
+        },
+        {
+          "label": "translate:: Drop Zone Highlighting",
+          "description": "translate:: Choose when to highlight drop zones.",
+          "options": [
+            {
+              "label": "translate:: When dragging"
+            },
+            {
+              "label": "translate:: Always"
+            },
+            {
+              "label": "translate:: Never"
+            }
+          ]
+        },
+        {
+          "label": "translate:: Spacing for Auto-Align (in px)"
+        },
+        {
+          "label": "translate:: Enable FullScreen",
+          "description": "translate:: Check this option to enable the full screen button."
+        },
+        {
+          "label": "translate:: Show score points",
+          "description": "translate:: Show points earned for each answer. Not available when the 'Give one point for the whole task' option is enabled."
+        },
+        {
+          "label": "translate:: Show Title",
+          "description": "translate:: Uncheck this option if you do not want this title to be displayed. The title will only be displayed in summaries, statistics etc."
+        }
+      ]
+    },
+    {
+      "label": "translate:: Localize",
+      "fields": [
+        {
+          "label": "translate:: Fullscreen label",
+          "default": "translate:: Fullscreen"
+        },
+        {
+          "label": "translate:: Exit fullscreen label",
+          "default": "translate:: Exit fullscreen"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Grabbable prefix",
+      "default": "translate:: Grabbable {num} of {total}."
+    },
+    {
+      "label": "translate:: Grabbable suffix",
+      "default": "translate:: Placed in dropzone {num}."
+    },
+    {
+      "label": "translate:: Dropzone prefix",
+      "default": "translate:: Dropzone {num} of {total}."
+    },
+    {
+      "label": "translate:: No dropzone selection label",
+      "default": "translate:: No dropzone."
+    },
+    {
+      "label": "translate:: Label for show tip button",
+      "default": "translate:: Show tip."
+    },
+    {
+      "label": "translate:: Label for tip available",
+      "default": "translate:: Tip available"
+    },
+    {
+      "label": "translate:: Label for correct answer",
+      "default": "translate:: Correct answer"
+    },
+    {
+      "label": "translate:: Label for incorrect answer",
+      "default": "translate:: Wrong answer"
+    },
+    {
+      "label": "translate:: Header for panel containing feedback for correct/incorrect answers",
+      "default": "translate:: Feedback"
+    },
+    {
+      "label": "translate:: Textual representation of the score bar for those using a readspeaker",
+      "default": "translate:: You got :num out of :total points"
+    },
+    {
+      "label": "translate:: Textual representation of the score explanation button",
+      "default": "translate:: Show score explanation"
+    },
+    {
+      "label": "translate:: Assistive technology label for \"Check\" button",
+      "default": "translate:: Check the answers. The responses will be marked as correct, incorrect, or unanswered."
+    },
+    {
+      "label": "translate:: Assistive technology label for \"Retry\" button",
+      "default": "translate:: Retry the task. Reset all responses and start the task over again."
+    }
+  ]
+}

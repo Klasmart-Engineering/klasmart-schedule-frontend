@@ -1,0 +1,115 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Task description"
+    },
+    {
+      "widgets": [
+        {
+          "label": "translate:: Default"
+        }
+      ],
+      "label": "translate:: Cards",
+      "entity": "translate:: card",
+      "field": {
+        "label": "translate:: Card",
+        "fields": [
+          {
+            "label": "translate:: Question",
+            "description": "translate:: Optional textual question for the card. (The card may use just an image, just a text or both)"
+          },
+          {
+            "label": "translate:: Answer",
+            "description": "translate:: Optional answer(solution) for the card."
+          },
+          {
+            "label": "translate:: Image",
+            "description": "translate:: Optional image for the card. (The card may use just an image, just a text or both)"
+          },
+          {
+            "label": "translate:: Alternative text for image"
+          },
+          {
+            "label": "translate:: Tip",
+            "fields": [
+              {
+                "label": "translate:: Tip text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "translate:: Progress text",
+      "default": "translate:: Card @card of @total",
+      "description": "translate:: Progress text, variables available: @card and @total. Example: 'Card @card of @total'"
+    },
+    {
+      "label": "translate:: Text for the next button",
+      "default": "translate:: Next"
+    },
+    {
+      "label": "translate:: Text for the previous button",
+      "default": "translate:: Previous"
+    },
+    {
+      "label": "translate:: Text for the check answers button",
+      "default": "translate:: Check"
+    },
+    {
+      "label": "translate:: Require user input before the solution can be viewed"
+    },
+    {
+      "label": "translate:: Text for the answer input field",
+      "default": "translate:: Your answer"
+    },
+    {
+      "label": "translate:: Text for correct answer",
+      "default": "translate:: Correct"
+    },
+    {
+      "label": "translate:: Text for incorrect answer",
+      "default": "translate:: Incorrect"
+    },
+    {
+      "label": "translate:: Show solution text",
+      "default": "translate:: Correct answer"
+    },
+    {
+      "label": "translate:: Text for results title",
+      "default": "translate:: Results"
+    },
+    {
+      "label": "translate:: Text for number of correct",
+      "default": "translate:: @score of @total correct",
+      "description": "translate:: Result text, variables available: @score and @total. Example: '@score of @total correct'"
+    },
+    {
+      "label": "translate:: Text for show results",
+      "default": "translate:: Show results"
+    },
+    {
+      "label": "translate:: Text for short answer label",
+      "default": "translate:: A:"
+    },
+    {
+      "label": "translate:: Text for \"retry\" button",
+      "default": "translate:: Retry"
+    },
+    {
+      "label": "translate:: Case sensitive",
+      "description": "translate:: Makes sure the user input has to be exactly the same as the answer."
+    },
+    {
+      "label": "translate:: Incorrect text for assistive technologies",
+      "default": "translate:: Incorrect answer. Correct answer was @answer",
+      "description": "translate:: Text that will be announced to assistive technologies. Use @answer as variable."
+    },
+    {
+      "label": "translate:: Card change for assistive technologies",
+      "default": "translate:: Page @current of @total",
+      "description": "translate:: Text that will be announced to assistive technologies when navigating between cards. Use @current and @total as variables."
+    }
+  ]
+}

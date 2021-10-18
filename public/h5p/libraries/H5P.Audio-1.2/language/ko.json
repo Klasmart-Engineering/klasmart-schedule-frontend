@@ -1,0 +1,99 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Source files"
+    },
+    {
+      "label": "translate:: Player mode",
+      "description": "translate:: Select the layout of the player.",
+      "options": [
+        {
+          "label": "translate:: Minimalistic"
+        },
+        {
+          "label": "translate:: Full"
+        },
+        {
+          "label": "translate:: Transparent"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Fit to wrapper"
+    },
+    {
+      "label": "translate:: Enable controls",
+      "description": "translate:: Controls allow the user to for instance pause the audio"
+    },
+    {
+      "label": "translate:: Enable autoplay",
+      "description": "translate:: With autoplay the audio starts to play immediately. If autoplay is disabled the user presses a play button to start the audio."
+    },
+    {
+      "label": "translate:: Copyright information",
+      "fields": [
+        {
+          "label": "translate:: Title",
+          "placeholder": "translate:: Für Elise"
+        },
+        {
+          "label": "translate:: Author",
+          "placeholder": "translate:: Ludwig van Beethoven"
+        },
+        {
+          "label": "translate:: Source",
+          "placeholder": "translate:: http://en.wikipedia.org/wiki/F%C3%BCr_Elise"
+        },
+        {
+          "label": "translate:: License",
+          "options": [
+            {
+              "label": "translate:: Undisclosed"
+            },
+            {
+              "label": "translate:: Attribution"
+            },
+            {
+              "label": "translate:: Attribution-ShareAlike"
+            },
+            {
+              "label": "translate:: Attribution-NoDerivs"
+            },
+            {
+              "label": "translate:: Attribution-NonCommercial"
+            },
+            {
+              "label": "translate:: Attribution-NonCommercial-ShareAlike"
+            },
+            {
+              "label": "translate:: Attribution-NonCommercial-NoDerivs"
+            },
+            {
+              "label": "translate:: General Public License"
+            },
+            {
+              "label": "translate:: Public Domain"
+            },
+            {
+              "label": "translate:: Public Domain Dedication and Licence"
+            },
+            {
+              "label": "translate:: Public Domain Mark"
+            },
+            {
+              "label": "translate:: Copyright"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "translate:: Audio content name",
+      "default": "translate:: Audio"
+    },
+    {
+      "label": "translate:: Audio not supported message",
+      "default": "translate:: Your browser does not support this audio"
+    }
+  ]
+}

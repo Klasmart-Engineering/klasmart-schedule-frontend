@@ -1,0 +1,39 @@
+{
+  "semantics": [
+    {
+      "label": "标语",
+      "default": "文件工具",
+      "description": "文件工具的标题名称"
+    },
+    {
+      "label": "项目",
+      "widgets": [
+        {
+          "label": "Default"
+        }
+      ],
+      "entity": "页面",
+      "field": {
+        "label": "页面形式",
+        "description": "页面的形式"
+      }
+    },
+    {
+      "label": "介面本地化",
+      "fields": [
+        {
+          "label": "上一张投影片文字",
+          "default": "上一张"
+        },
+        {
+          "label": "下一张投影片文字",
+          "default": "下一张"
+        },
+        {
+          "label": "关闭投影片按钮文字",
+          "default": "关闭"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Elements",
+      "entity": "translate:: element",
+      "field": {
+        "label": "translate:: Element type",
+        "description": "translate:: Library for this page."
+      }
+    },
+    {
+      "label": "translate:: Label for help text",
+      "description": "translate:: Label for showing additional helpful information to the user.",
+      "default": "translate:: More information"
+    },
+    {
+      "label": "translate:: Fill in additional help information",
+      "description": "translate:: Here you can fill in additional information for the user, which will be available when clicked."
+    }
+  ]
+}

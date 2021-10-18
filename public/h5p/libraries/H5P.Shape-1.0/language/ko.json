@@ -1,0 +1,94 @@
+{
+  "semantics":[
+    {
+      "label": "translate:: Type",
+      "widget": "translate:: radioGroup",
+      "alignment": "translate:: horizontal",
+      "options": [
+        {
+          "label": "translate:: Rectangle"
+        },
+        {
+          "label": "translate:: Circle"
+        },
+        {
+          "label": "translate:: Vertical line"
+        },
+        {
+          "label": "translate:: Horizontal line"
+        }
+      ],
+      "default": "translate:: rectangle"
+    },
+    {
+      "fields": [
+        {
+          "label": "translate:: Fill color"
+        },
+        {
+          "label": "translate:: Border color"
+        },
+        {
+          "label": "translate:: Border width"
+        },
+        {
+          "label": "translate:: Border style",
+          "default": "translate:: solid",
+          "options": [
+            {
+              "label": "translate:: Solid"
+            },
+            {
+              "label": "translate:: Dotted"
+            },
+            {
+              "label": "translate:: Dashed"
+            },
+            {
+              "label": "translate:: Double"
+            },
+            {
+              "label": "translate:: Inset"
+            },
+            {
+              "label": "translate:: Outset"
+            }
+          ]
+        },
+        {
+          "label": "translate:: Border radius"
+        }
+      ]
+    },
+    {
+      "fields": [
+        {
+          "label": "translate:: Line color"
+        },
+        {
+          "label": "translate:: Line width"
+         
+        },
+        {
+          "label": "translate:: Line style",
+          "default": "translate:: solid",
+          "options": [
+            {
+              "label": "translate:: Solid"
+            },
+            {
+              "label": "translate:: Dotted"
+            },
+            {
+              "label": "translate:: Dashed"
+            },
+            {
+              "label": "translate:: Double"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  
+}

@@ -1,0 +1,97 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: 目標位置",
+      "fields": [
+        {
+          "label": "translate:: 類別",
+          "options": [
+            {
+              "label": "translate:: 時間代碼"
+            },
+            {
+              "label": "translate:: 網頁（站台頁面）"
+            }
+          ]
+        },
+        {
+          "label": "translate:: 移至",
+          "description": "translate:: 在點擊熱點後，用戶會被帶到什麼時間點上，時間代碼的格式為 M:SS。"
+        },
+        {
+          "label": "translate:: 網址",
+          "fields": [
+            {
+              "label": "translate:: 通訊協定",
+              "options": [
+                {
+                  "label": "http://"
+                },
+                {
+                  "label": "https://"
+                },
+                {
+                  "label": "translate:: 相對位址"
+                },
+                {
+                  "label": "translate:: 其它"
+                }
+              ]
+            },
+            {
+              "label": "translate:: 網路位址"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "translate:: 外觀",
+      "fields": [
+        {
+          "label": "translate:: 形狀",
+          "options": [
+            {
+              "label": "translate:: 矩形"
+            },
+            {
+              "label": "translate:: 環形"
+            },
+            {
+              "label": "translate:: 圓角矩形"
+            }
+          ]
+        },
+        {
+          "label": "translate:: 熱點的背景顏色"
+        },
+        {
+          "label": "translate:: 游標變成指針圖示"
+        },
+        {
+          "label": "translate:: 添加閃爍效果",
+          "description": "translate:: 注意，在編輯器中也會有閃爍效果以方便你編輯透明形式的熱點。"
+        }
+      ]
+    },
+    {
+      "label": "translate:: 文字",
+      "fields": [
+        {
+          "label": "translate:: 熱點的替代文字",
+          "description": "translate:: 用來描述熱點上包含了什麼，可用於報讀器上。",
+          "placeholder": "translate:: 一顆在桌上的蘋果。"
+        },
+        {
+          "label": "translate:: 熱點的說明文字"
+        },
+        {
+          "label": "translate:: 顯示熱點說明文字"
+        },
+        {
+          "label": "translate:: 熱點說明文字顏色"
+        }
+      ]
+    }
+  ]
+}

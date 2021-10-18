@@ -1,0 +1,135 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Intro",
+      "description": "translate:: The intro text (maximum 100 characters)"
+    },
+    {
+      "label": "translate:: Quiz type",
+      "options": [
+        {
+          "label": "translate:: Arithmetic Operations Quiz"
+        },
+        {
+          "label": "translate:: Linear Equations Quiz"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Arithmetic type",
+      "options": [
+        {
+          "label": "translate:: Addition"
+        },
+        {
+          "label": "translate:: Subtraction"
+        },
+        {
+          "label": "translate:: Multiplication"
+        },
+        {
+          "label": "translate:: Division"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Equation type",
+      "options": [
+        {
+          "label": "translate:: Basic [ 3x = 12 ]"
+        },
+        {
+          "label": "translate:: Intermediate [ 4x - 3 = 13 ]"
+        },
+        {
+          "label": "translate:: Advanced [ 5x + 3 = 3x + 15 ]"
+        }
+      ]
+    },
+    {
+      "label": "translate:: Enable fractions",
+      "description": "translate:: Enable to allow fractions in equations."
+    },
+    {
+      "label": "translate:: Max number of questions"
+    },
+    {
+      "label": "translate:: User interface translations",
+      "fields": [
+        {
+          "label": "translate:: Scoring during quiz",
+          "default": "translate:: Score:"
+        },
+        {
+          "label": "translate:: Time",
+          "default": "translate:: Time: @time"
+        },
+        {
+          "label": "translate:: Result page header",
+          "default": "translate:: Finished!"
+        },
+        {
+          "label": "translate:: Go label",
+          "default": "translate:: GO!"
+        },
+        {
+          "label": "translate:: Start button label",
+          "default": "translate:: Start"
+        },
+        {
+          "label": "translate:: Retry button label",
+          "default": "translate:: Retry"
+        },
+        {
+          "label": "translate:: Readspeaker text for correct answer",
+          "default": "translate:: Correct"
+        },
+        {
+          "label": "translate:: Readspeaker text for incorrect answer",
+          "default": "translate:: Incorrect. Correct answer was :num"
+        },
+        {
+          "label": "translate:: Readspeaker label for the timer",
+          "default": "translate:: Duration in hours, minutes and seconds."
+        },
+        {
+          "label": "translate:: Readspeaker text for question",
+          "default": "translate:: What does :arithmetic equal?"
+        },
+        {
+          "label": "translate:: Readspeaker text for equation question",
+          "default": "translate:: For the equation :equation, what does :item equal?"
+        },
+        {
+          "label": "translate:: Readspeaker text for equation variable",
+          "default": "translate:: What does :item equal?"
+        },
+        {
+          "label": "translate:: Plus operator text",
+          "default": "translate:: plus"
+        },
+        {
+          "label": "translate:: Subtraction operator text",
+          "default": "translate:: minus"
+        },
+        {
+          "label": "translate:: Multiplication operator text",
+          "default": "translate:: times"
+        },
+        {
+          "label": "translate:: Division operator text",
+          "default": "translate:: divided by"
+        },
+        {
+          "label": "translate:: Equality sign text",
+          "default": "translate:: equals"
+        },
+        {
+          "label": "translate:: Slide number text",
+          "description": "translate:: Announces current slide and total number of slides, variables are :num and :total",
+          "default": "translate:: Slide :num of :total"
+        }
+      ]
+    }
+  ]
+}

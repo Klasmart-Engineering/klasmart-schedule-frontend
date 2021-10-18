@@ -1,0 +1,14 @@
+{
+  "semantics": [
+    {
+      "label": "translate:: Username on Twitter",
+      "description": "translate:: The username we'll be fetching tweets from"
+    },
+    {
+      "label": "translate:: Show replies"
+    },
+    {
+      "label": "translate:: Number of tweets"
+    }
+  ]
+}
