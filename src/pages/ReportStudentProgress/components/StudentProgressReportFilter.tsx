@@ -1,6 +1,7 @@
 import { Grid, MenuItem, OutlinedInput, Select } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import React from "react";
+import { d } from "../../../locale/LocaleManager";
 
 const useStyle = makeStyles(({ palette }) =>
   createStyles({
@@ -32,8 +33,8 @@ export default function StudentProgressReportFilter(props: IStudentProgressRepor
         className={css.selector}
         input={<OutlinedInput />}
       >
-        <MenuItem value={4}>4 weeks</MenuItem>
-        <MenuItem value={6}>6 months</MenuItem>
+        <MenuItem value={4}>{d("4 Weeks").t("report_label_4_weeks")}</MenuItem>
+        <MenuItem value={6}>{d("6 Months").t("report_label_6_months")}</MenuItem>
       </Select>
     </Grid>
   );

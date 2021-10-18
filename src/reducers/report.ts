@@ -45,9 +45,15 @@ import {
   TeacherByOrgIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
+  EntityAssignmentCompletionRate,
+  EntityAssignmentRequest,
+  EntityClassAttendanceRequest,
+  EntityClassAttendanceResponseItem,
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
+  EntityLearnOutcomeAchievementRequest,
+  EntityLearnOutcomeAchievementResponse,
   EntityQueryAssignmentsSummaryResult,
   EntityQueryLiveClassesSummaryResult,
   EntityReportListTeachingLoadArgs,
@@ -142,6 +148,9 @@ interface IreportState {
   teacherLoadAssignment: EntityTeacherLoadAssignmentResponseItem[];
   next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
   listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse;
+  assignmentsCompletion: EntityAssignmentCompletionRate[];
+  learnOutcomeClassAttendance: EntityClassAttendanceResponseItem[];
+  learnOutcomeAchievement: EntityLearnOutcomeAchievementResponse;
 }
 
 interface IObj {
@@ -254,6 +263,9 @@ const initialState: IreportState = {
   teacherLoadAssignment: [],
   next7DaysLessonLoadList: [],
   listTeacherMissedLessons: {},
+  assignmentsCompletion: [],
+  learnOutcomeClassAttendance: [],
+  learnOutcomeAchievement: {},
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1146,6 +1158,21 @@ export const getListTeacherMissedLessons = createAsyncThunk<
   EntityTeacherLoadMissedLessonsRequest & LoadingMetaPayload
 >("getListTeacherMissedLessons", async ({ metaLoading, ...query }) => await api.reports.listTeacherMissedLessons(query));
 
+export const getAssignmentsCompletion = createAsyncThunk<EntityAssignmentCompletionRate[], EntityAssignmentRequest & LoadingMetaPayload>(
+  "getAssignmentsCompletion",
+  async ({ metaLoading, ...query }) => await api.reports.getAssignmentsCompletion(query)
+);
+
+export const getLearnOutcomeClassAttendance = createAsyncThunk<
+  EntityClassAttendanceResponseItem[],
+  EntityClassAttendanceRequest & LoadingMetaPayload
+>("getLearnOutcomeClassAttendance", async ({ metaLoading, ...query }) => await api.reports.getLearnOutcomeClassAttendance(query));
+
+export const getLearnOutcomeAchievement = createAsyncThunk<
+  EntityLearnOutcomeAchievementResponse,
+  EntityLearnOutcomeAchievementRequest & LoadingMetaPayload
+>("getLearnOutcomeAchievement", async ({ metaLoading, ...query }) => await api.reports.getLearnOutcomeAchievement(query));
+
 const { actions, reducer } = createSlice({
   name: "report ",
   initialState,
@@ -1580,6 +1607,21 @@ const { actions, reducer } = createSlice({
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getListTeacherMissedLessons>>
     ) => {
       state.listTeacherMissedLessons = payload;
+    },
+    [getAssignmentsCompletion.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentsCompletion>>) => {
+      state.assignmentsCompletion = payload;
+    },
+    [getLearnOutcomeClassAttendance.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeClassAttendance>>
+    ) => {
+      state.learnOutcomeClassAttendance = payload;
+    },
+    [getLearnOutcomeAchievement.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeAchievement>>
+    ) => {
+      state.learnOutcomeAchievement = payload;
     },
   },
 });
