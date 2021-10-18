@@ -71,6 +71,7 @@ import {
   EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
+import { IParamQueryRemainFilter } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
 import { formatTimeToMonDay, getAllUsers, getTimeOffSecond, ModelReport, sortByStudentName } from "../models/ModelReports";
@@ -79,7 +80,7 @@ import { IWeeks } from "../pages/ReportLearningSummary";
 import {
   ArrProps,
   QueryLearningSummaryCondition,
-  QueryLearningSummaryRemainingFilterCondition,
+  QueryLearningSummaryTimeFilterCondition,
   ReportType,
   TimeFilter,
   UserType,
@@ -771,17 +772,14 @@ export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQuer
   }
 );
 
-export type IParamQueryRemainFilter = Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0];
-export type IResultQueryRemainFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
-export const getRemainFilter = createAsyncThunk<IResultQueryRemainFilter, IParamQueryRemainFilter & LoadingMetaPayload>(
-  "getRemainFilter",
-  async (query) => {
-    return await api.reports.queryLearningSummaryRemainingFilter({ ...query });
-  }
-);
-export interface IParamsOnLoadLearningSummary {
-  summary_type: string;
-}
+// export type IParamQueryRemainFilter = Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0];
+// export type IResultQueryRemainFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
+// export const getRemainFilter = createAsyncThunk<IResultQueryRemainFilter, IParamQueryRemainFilter & LoadingMetaPayload>(
+//   "getRemainFilter",
+//   async (query) => {
+//     return await api.reports.queryLearningSummaryRemainingFilter({ ...query });
+//   }
+// );
 
 export interface IParamsLearningSummary extends QueryLearningSummaryCondition {
   isOrg?: boolean;
@@ -790,7 +788,7 @@ export interface IParamsLearningSummary extends QueryLearningSummaryCondition {
   isStudent?: boolean;
   year?: number;
   subject_id?: string;
-  summary_type: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  summary_type: QueryLearningSummaryTimeFilterCondition["summary_type"];
 }
 export interface IResultLearningSummary {
   years: number[];
@@ -808,7 +806,7 @@ export interface IResultLearningSummary {
   teacher_id?: string;
   student_id?: string;
   subject_id?: string;
-  summary_type: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  summary_type: QueryLearningSummaryTimeFilterCondition["summary_type"];
 }
 export const onLoadLearningSummary = createAsyncThunk<
   IResultLearningSummary,
@@ -1503,7 +1501,6 @@ const { actions, reducer } = createSlice({
         }),
       }));
     },
-    [getRemainFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>) => {},
     [getAfterClassFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>) => {
       if (payload.filter_type === "class") {
         state.summaryReportOptions.school_id = payload.school_id;

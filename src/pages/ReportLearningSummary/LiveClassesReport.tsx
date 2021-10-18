@@ -22,7 +22,7 @@ import {
   AssignmentSummaryResultItem,
   LiveClassesSummaryResultItem,
   OutcomeStatus,
-  QueryLearningSummaryRemainingFilterCondition,
+  QueryLearningSummaryTimeFilterCondition,
   ReportInfoBaseProps,
   ReportType,
 } from "./types";
@@ -302,7 +302,7 @@ const LightTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 export type ReportTypeProps = {
-  reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  reportType: QueryLearningSummaryTimeFilterCondition["summary_type"];
 };
 export interface LiveClassesReportProps extends ReportInfoBaseProps {
   data: EntityLiveClassSummaryItem[];
@@ -579,7 +579,7 @@ export interface LiveItemProps {
   showArrow: boolean;
   liveItem?: LiveClassesSummaryResultItem;
   assignmentItem?: AssignmentSummaryResultItem;
-  reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  reportType: QueryLearningSummaryTimeFilterCondition["summary_type"];
   onClickLessonPlan: () => void;
 }
 export type LeftDataProps = {
