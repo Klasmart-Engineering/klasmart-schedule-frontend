@@ -467,7 +467,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
         </div>
         {schoolsConnection?.schoolsConnection?.pageInfo?.hasNextPage && (
           <p onClick={getLastCursor} className={css.schoolTemplateStyleMore}>
-            Show more <ArrowDropDownIcon />
+            {d("See More").t("schedule_detail_see_more")} <ArrowDropDownIcon />
           </p>
         )}
       </Collapse>

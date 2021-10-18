@@ -375,7 +375,7 @@ function FilterOverall(props: FilterTreeProps) {
             color="inherit"
             disabled={!pageInfo?.hasPreviousPage}
             onClick={() => {
-              handleChange(pageInfo?.endCursor as string, "BACKWARD", page - 1);
+              handleChange(pageInfo?.startCursor as string, "BACKWARD", page - 1);
             }}
           >
             <ArrowBackIosOutlined fontSize="small" style={{ width: "14px" }} />
@@ -393,7 +393,7 @@ function FilterOverall(props: FilterTreeProps) {
             color="inherit"
             disabled={!pageInfo?.hasNextPage}
             onClick={() => {
-              handleChange(pageInfo?.startCursor as string, "FORWARD", page + 1);
+              handleChange(pageInfo?.endCursor as string, "FORWARD", page + 1);
             }}
           >
             <ArrowForwardIosOutlined fontSize="small" style={{ width: "14px" }} />
