@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { ContentFileType } from "../../api/type";
 import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
@@ -148,7 +147,6 @@ export default function MediaAssets(props: MediaAssetsProps) {
     [onChangePage]
   );
   const rows = list?.map((item, idx) => {
-    const fileType: ContentFileType = item.data && JSON.parse(item.data)?.file_type;
     const dragType = "LIBRARY_ITEM";
     return (
       <TableRow key={item.id}>
