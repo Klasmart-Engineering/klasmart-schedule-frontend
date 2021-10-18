@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core";
+import { Box, TextField } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Popover from "@material-ui/core/Popover";
@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { TreeView } from "@material-ui/lab";
 import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
@@ -34,6 +35,8 @@ import {
 import { modelSchedule } from "../../models/ModelSchedule";
 import FilterTree from "../../components/FilterTree";
 import { actError } from "../../reducers/notify";
+import Collapse from "@material-ui/core/Collapse";
+import { GetClassFilterListQuery, GetSchoolsFilterListQuery } from "../../api/api-ko.auto";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
       float: "left",
       marginRight: "8px",
       cursor: "pointer",
+      fontSize: "18px",
     },
     content: {
       padding: "6px",
@@ -132,6 +136,33 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "10px",
       marginRight: "20px",
     },
+    changeColor: {
+      "&:hover": {
+        backgroundColor: "RGB(245,245,245)",
+      },
+    },
+    schoolTemplateStyleTitle: {
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      paddingLeft: "1em",
+      marginBottom: "0",
+    },
+    schoolTemplateStyleLabel: {
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      paddingLeft: "1em",
+      marginTop: "-0.4em",
+    },
+    schoolTemplateStyleMore: {
+      color: "RGB(0,98,192)",
+      display: "flex",
+      alignItems: "center",
+      paddingLeft: "5em",
+      fontSize: "13px",
+      cursor: "pointer",
+    },
   })
 );
 
@@ -153,7 +184,7 @@ type StyledTreeItemProps = TreeItemProps & {
   privilegedMembers: (member: memberType) => boolean;
   fullSelectionStatusSet: { id: string; status: boolean }[];
   fullOtherSelectionStatusSet: boolean;
-  openClassMenu: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, schoolId: string) => void;
+  openClassMenu: (pageY: number, schoolItem: { id: string; name: string }) => void;
 };
 
 interface InterfaceSubject extends EntityScheduleShortInfo {
@@ -264,7 +295,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
               style={{ display: "flex", alignItems: "center", width: "58%" }}
               className={isOnlyMine ? classes.abbreviation : ""}
               onClick={(e) => {
-                if (!self_id) openClassMenu(e, filterItem.label);
+                if (!self_id) openClassMenu(e.pageY, { id: filterItem.school_id, name: filterItem.label });
               }}
             >
               <Typography
@@ -364,13 +395,93 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   );
 }
 
+interface SchoolTemplateProps {
+  schoolsConnection?: GetSchoolsFilterListQuery;
+  getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
+  getClassesConnection: (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => void;
+  classesConnection?: GetClassFilterListQuery;
+  openClassMenu?: (pageY: number, schoolItem: { id: string; name: string }) => void;
+}
+function SchoolTemplate(props: SchoolTemplateProps) {
+  const { schoolsConnection, getSchoolsConnection, openClassMenu } = props;
+  const [checked, setChecked] = React.useState(false);
+  const [edges, setEdges] = React.useState<any>([]);
+  const [searchValue, setSearchValue] = React.useState<string>("");
+  const handleChange = () => {
+    setChecked((prev) => !prev);
+  };
+  const css = useStyles();
+  const getSeacherResult = async (value: string) => {
+    setSearchValue(value);
+    await getSchoolsConnection("", value, false);
+    setEdges([]);
+  };
+  const getLastCursor = async () => {
+    const schoolsConnectionItem = schoolsConnection?.schoolsConnection?.edges!;
+    const edge = schoolsConnectionItem && schoolsConnectionItem[schoolsConnectionItem?.length - 1];
+    const cursor = edge?.cursor ?? "";
+    const edgesResult = await getSchoolsConnection(cursor, searchValue, true);
+    edges.length ? setEdges([...edges, ...edgesResult]) : setEdges([...schoolsConnectionItem, ...edges, ...edgesResult]);
+  };
+  return (
+    <Box>
+      <p onClick={handleChange} className={css.schoolTemplateStyleTitle}>
+        <span>
+          {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
+          {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
+        </span>
+        <div className={clsx(css.changeColor, css.subsets)} style={{ width: "83%", paddingLeft: "1em" }}>
+          {d("All My Schools").t("schedule_filter_all_my_schools")}
+        </div>
+      </p>
+      <Collapse in={checked}>
+        {((schoolsConnection?.schoolsConnection?.totalCount ?? 0) > 5 || searchValue) && (
+          <p style={{ textAlign: "center" }}>
+            <TextField
+              id="filled-size-small"
+              size="small"
+              placeholder="Search School Name"
+              onChange={(e) => {
+                getSeacherResult(e.target.value);
+              }}
+            />
+          </p>
+        )}
+        <div>
+          {(edges.length ? edges : schoolsConnection?.schoolsConnection?.edges)?.map((item: any) => {
+            return (
+              <p className={css.schoolTemplateStyleLabel}>
+                <Checkbox color="primary" inputProps={{ "aria-label": "primary checkbox" }} style={{ visibility: "hidden" }} />
+                <div
+                  className={clsx(css.changeColor, css.label)}
+                  style={{ width: "78%", paddingLeft: "1em" }}
+                  onClick={async (e) => {
+                    openClassMenu && openClassMenu(e.pageY, { id: item?.node?.id, name: item?.node?.name });
+                  }}
+                >
+                  {item?.node?.name}
+                </div>
+              </p>
+            );
+          })}
+        </div>
+        {schoolsConnection?.schoolsConnection?.pageInfo?.hasNextPage && (
+          <p onClick={getLastCursor} className={css.schoolTemplateStyleMore}>
+            {d("See More").t("schedule_detail_see_more")} <ArrowDropDownIcon />
+          </p>
+        )}
+      </Collapse>
+    </Box>
+  );
+}
+
 function FilterTemplate(props: FilterProps) {
   const css = useStyles();
   const dispatch = useDispatch();
   const [stateSubject, setStateSubject] = React.useState<InterfaceSubject[]>([]);
   const [stateOnlySelectMine, setStateOnlySelectMine] = React.useState<string[]>([]);
   const [showClassMenu, setShowClassMenu] = React.useState<boolean>(false);
-  const [checkSchoolId, setCheckSchoolId] = React.useState<string>("");
+  const [checkSchoolItem, setCheckSchoolItem] = React.useState<{ id: string; name: string }>({ id: "", name: "" });
   const [pageY, setPageY] = React.useState<number>(0);
   const {
     handleChangeShowAnyTime,
@@ -381,6 +492,10 @@ function FilterTemplate(props: FilterProps) {
     user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
+    schoolsConnection,
+    getSchoolsConnection,
+    getClassesConnection,
+    classesConnection,
   } = props;
   const [stateOnlySelectMineExistData, setStateOnlySelectMineExistData] = React.useState<any>({});
 
@@ -498,28 +613,10 @@ function FilterTemplate(props: FilterProps) {
   };
 
   const getClassDataBySchool = useMemo(() => {
-    const role = privilegedMembers("Teacher") || privilegedMembers("Student");
-    return modelSchedule.classDataConversion(user_id, checkSchoolId, schoolByOrgOrUserData, role);
-  }, [schoolByOrgOrUserData, checkSchoolId, privilegedMembers, user_id]);
-
-  const getClassBySchool = (): FilterDataItemsProps[] => {
-    const classResult: FilterDataItemsProps[] = [];
-    schoolByOrgOrUserData?.forEach((schoolItem: EntityScheduleSchoolInfo) => {
-      const existData: string[] = [];
-      const onLyMineData: string[] = [];
-      classResult.push({
-        id: `${schoolItem.school_id}`,
-        name: schoolItem.school_name,
-        isCheck: false,
-        child: [],
-        isOnlyMine: false,
-        existData: existData,
-        isHide: false,
-        onLyMineData: onLyMineData,
-      });
-    });
-    return classResult;
-  };
+    // const role = privilegedMembers("Teacher") || privilegedMembers("Student");
+    // return modelSchedule.classDataConversion(user_id, checkSchoolItem.id, schoolByOrgOrUserData, role, classesConnection);
+    return modelSchedule.classDataConversion2(checkSchoolItem.name, checkSchoolItem.id, classesConnection);
+  }, [checkSchoolItem, classesConnection]);
 
   const getClassTypeByFilter = () => {
     return filterOption.classType.map((val: EntityScheduleShortInfo) => {
@@ -580,11 +677,13 @@ function FilterTemplate(props: FilterProps) {
     return data;
   };
 
-  const openClassMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, schoolId: string) => {
-    if (schoolId === "All_My_Schools") return;
-    setPageY(e.pageY);
+  const openClassMenu = async (pageY: number, schoolItem: { id: string; name: string }) => {
+    setShowClassMenu(false);
+    if (schoolItem.id === "All_My_Schools") return;
+    await getClassesConnection("", schoolItem.id, true, "FORWARD");
+    setPageY(pageY);
     setShowClassMenu(true);
-    setCheckSchoolId(schoolId);
+    setCheckSchoolItem(schoolItem);
   };
 
   const hideClassMenu = () => {
@@ -592,16 +691,6 @@ function FilterTemplate(props: FilterProps) {
   };
 
   const filterData: FilterDataItemsProps[] = [
-    {
-      id: "School+1",
-      name: d("All My Schools").t("schedule_filter_all_my_schools"),
-      isCheck: false,
-      child: getClassBySchool(),
-      isOnlyMine: false,
-      existData: [],
-      isHide: getClassBySchool().length < 1,
-      onLyMineData: [],
-    },
     {
       id: "Others+1",
       name: d("Others").t("schedule_filter_others"),
@@ -678,6 +767,14 @@ function FilterTemplate(props: FilterProps) {
 
   return (
     <>
+      {schoolsConnection?.schoolsConnection?.edges && (
+        <SchoolTemplate
+          openClassMenu={openClassMenu}
+          schoolsConnection={schoolsConnection}
+          getSchoolsConnection={getSchoolsConnection}
+          getClassesConnection={getClassesConnection}
+        />
+      )}
       <TreeView
         className={css.containerRoot}
         defaultExpanded={["1"]}
@@ -696,13 +793,16 @@ function FilterTemplate(props: FilterProps) {
           pageY={pageY}
           classDataBySchool={getClassDataBySchool}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
+          total={classesConnection?.classesConnection?.totalCount!}
+          getClassesConnection={getClassesConnection}
+          pageInfo={classesConnection?.classesConnection?.pageInfo}
         />
       )}
     </>
   );
 }
 
-interface FilterProps {
+interface FilterProps extends SchoolTemplateProps {
   handleChangeLoadScheduleView: (filterQuery: FilterQueryTypeProps | []) => void;
   mockOptions: MockOptionsOptionsItem[] | undefined;
   scheduleMockOptions: getScheduleMockOptionsResponse;
@@ -733,6 +833,10 @@ export default function ScheduleFilter(props: FilterProps) {
     user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
+    schoolsConnection,
+    getSchoolsConnection,
+    getClassesConnection,
+    classesConnection,
   } = props;
   return (
     <FilterTemplate
@@ -749,6 +853,10 @@ export default function ScheduleFilter(props: FilterProps) {
       user_id={user_id}
       schoolByOrgOrUserData={schoolByOrgOrUserData}
       viewSubjectPermission={viewSubjectPermission}
+      schoolsConnection={schoolsConnection}
+      getSchoolsConnection={getSchoolsConnection}
+      getClassesConnection={getClassesConnection}
+      classesConnection={classesConnection}
     />
   );
 }
