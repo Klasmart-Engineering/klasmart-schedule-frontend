@@ -26,6 +26,7 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   tableCell: {
     textAlign: "center",
     maxWidth: 200,
+    wordBreak: "break-all",
   },
   liCon: {
     textAlign: "left",

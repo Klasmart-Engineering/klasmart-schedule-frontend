@@ -5,7 +5,6 @@ import { Pagination } from "@material-ui/lab";
 import { cloneDeep } from "lodash";
 import React, { useMemo, useState } from "react";
 import { GetOutcomeDetail, GetOutcomeList } from "../../api/type";
-
 import { d } from "../../locale/LocaleManager";
 
 const createColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -31,6 +30,7 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   tableCell: {
     maxWidth: 200,
     textAlign: "center",
+    wordBreak: "break-all",
   },
   liCon: {
     textAlign: "left",

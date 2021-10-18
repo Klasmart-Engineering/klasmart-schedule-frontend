@@ -1,141 +1,76 @@
-import React, { Fragment, useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import { PermissionType, usePermission } from "../../components/Permission";
-import { emptyTip, permissionTip } from "../../components/TipImages";
+import React from "react";
+import { useDispatch } from "react-redux";
+import LayoutBox from "../../components/LayoutBox";
+import TabPages from "../../components/TabPages";
 import { d } from "../../locale/LocaleManager";
-import { setQuery } from "../../models/ModelContentDetailForm";
-import { formatTeachingLoadList } from "../../models/ModelReports";
-import { RootState } from "../../reducers";
-import { getClassListByschool, getTeachingLoadList, teachingLoadOnload, TeachingLoadPayload } from "../../reducers/report";
+import { getTeachersByOrg } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
-import { FilterTeacherLoad } from "./FilterTeacherLoad";
-import { InfoTeacherLoad } from "./InfoTeacherLoad";
-import { TeacherLoadChart } from "./TeacherLoadChart";
-const ALL = "all";
-const TIME_OFFSET = ((0 - new Date().getTimezoneOffset() / 60) * 3600).toString();
-const removeoneValueOfList = (value: string[]): string => {
-  return value[value.length - 1] === ALL ? "all" : value.filter((id) => id !== ALL).join(",");
-};
+import TeacherFilter from "./components/TeacherFilter";
+import { Assignments, Lessons, NextSevenDaysLessonLoad } from "./Tabs";
 
-const useTeacherLoadReportQuery = () => {
-  const { search } = useLocation();
-  return useMemo(() => {
-    const query = new URLSearchParams(search);
-    const teacher_ids = query.get("teacher_ids") || ALL;
-    const class_ids = query.get("class_ids") || ALL;
-    const school_id = query.get("school_id") || ALL;
-    return { teacher_ids, class_ids, school_id };
-  }, [search]);
-};
+interface IState {
+  teachers: MutiSelect.ISelect[];
+  classes: MutiSelect.ISelect[];
+}
+
+export const SelectContext = React.createContext<IState>({
+  teachers: [],
+  classes: [],
+});
+
 export default function ReportTeachingLoad() {
-  const teacherLoadQuery = useTeacherLoadReportQuery();
-  const { teacher_ids, school_id, class_ids } = teacherLoadQuery;
   const dispatch = useDispatch();
-  const history = useHistory();
-  const teachingLoadOnloadState = useSelector<RootState, RootState["report"]["teachingLoadOnload"]>(
-    (state) => state.report.teachingLoadOnload
-  );
-  const { teachingLoadList, user_id } = teachingLoadOnloadState;
-  const perm = usePermission([
-    PermissionType.view_reports_610,
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_organizations_reports_612,
-    PermissionType.view_my_school_reports_611,
-  ]);
-
-  const handleChange = useMemo(
-    () => (value: string, tab: keyof TeachingLoadPayload) => {
-      switch (tab) {
-        case "school_id": {
-          const newTeacher_ids =
-            perm.view_my_reports_614 &&
-            !perm.view_reports_610 &&
-            !perm.view_my_school_reports_611 &&
-            !perm.view_my_organizations_reports_612
-              ? user_id
-              : ALL;
-          history.push({
-            search: setQuery(history.location.search, { school_id: value, teacher_ids: newTeacher_ids, class_ids: ALL }),
-          });
-          break;
-        }
-        case "teacher_ids": {
-          const newValue = removeoneValueOfList((value as unknown) as string[]) || ALL;
-          history.push({
-            search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newValue, class_ids: ALL }),
-          });
-          if (newValue !== "all" && !newValue.includes(",")) {
-            dispatch(getClassListByschool({ school_id, teacher_ids: newValue }));
-          }
-          dispatch(getTeachingLoadList({ school_id, teacher_ids: newValue, class_ids: ALL, time_offset: TIME_OFFSET, metaLoading: true }));
-
-          break;
-        }
-        case "class_ids":
-          {
-            const newTeacher_ids =
-              perm.view_my_reports_614 &&
-              !perm.view_reports_610 &&
-              !perm.view_my_school_reports_611 &&
-              !perm.view_my_organizations_reports_612
-                ? user_id
-                : teacher_ids;
-            const newValue = removeoneValueOfList((value as unknown) as string[]) || ALL;
-            history.push({
-              search: setQuery(history.location.search, { school_id: school_id, teacher_ids: newTeacher_ids, class_ids: newValue }),
-            });
-            dispatch(
-              getTeachingLoadList({
-                school_id,
-                teacher_ids: newTeacher_ids,
-                class_ids: newValue,
-                time_offset: TIME_OFFSET,
-                metaLoading: true,
-              })
-            );
-          }
-          break;
-      }
+  const [state, setState] = React.useState<IState>({
+    teachers: [],
+    classes: [],
+  });
+  const tabs: ITabItem[] = [
+    {
+      label: d("Lessons").t("report_label_lessons"),
+      index: 0,
+      display: true,
+      Component: Lessons,
     },
-    [
-      perm.view_my_reports_614,
-      perm.view_reports_610,
-      perm.view_my_school_reports_611,
-      perm.view_my_organizations_reports_612,
-      user_id,
-      history,
-      school_id,
-      dispatch,
-      teacher_ids,
-    ]
-  );
-  useEffect(() => {
-    dispatch(teachingLoadOnload({ school_id, teacher_ids, class_ids, metaLoading: true }));
-    // eslint-disable-next-line
-  }, [dispatch, school_id]);
+    {
+      label: d("Assignments").t("report_label_assignments"),
+      index: 1,
+      display: true,
+      Component: Assignments,
+    },
 
+    {
+      label: d("Next 7 Days Lesson Load").t("report_label_lesson_load"),
+      index: 2,
+      display: true,
+      Component: NextSevenDaysLessonLoad,
+    },
+  ];
+  React.useEffect(() => {
+    dispatch(
+      getTeachersByOrg({
+        metaLoading: true,
+      })
+    );
+  }, [dispatch]);
   return (
-    <Fragment>
-      <ReportTitle title={d("Teaching Load").t("report_label_teaching_load")}></ReportTitle>
-      <FilterTeacherLoad value={teacherLoadQuery} onChange={handleChange} teachingLoadOnload={teachingLoadOnloadState}></FilterTeacherLoad>
-      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612 ? (
-        teachingLoadList.items && teachingLoadList.items.length > 0 ? (
-          <>
-            <InfoTeacherLoad />
-            <TeacherLoadChart
-              data={formatTeachingLoadList(teachingLoadList?.items).formatedData}
-              xLabels={formatTeachingLoadList(teachingLoadList?.items).xLabels}
-            />
-          </>
-        ) : (
-          emptyTip
-        )
-      ) : (
-        permissionTip
-      )}
-    </Fragment>
+    <>
+      <ReportTitle title={d("Teacher Load Report").t("report_label_teaching_load")}></ReportTitle>
+      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+        <TeacherFilter
+          onChange={(teachers, classes) => {
+            setState({
+              teachers,
+              classes,
+            });
+          }}
+        />
+        <SelectContext.Provider value={state}>
+          <TabPages tabs={tabs} />
+        </SelectContext.Provider>
+      </LayoutBox>
+    </>
   );
 }
+
 ReportTeachingLoad.routeBasePath = "/report/teaching-load";
 ReportTeachingLoad.routeRedirectDefault = "/report/teaching-load";

@@ -204,13 +204,13 @@ export default function CustomizeTempalte(props: InfoProps) {
 
   const handleGoLive = (scheduleInfos: ScheduleEditExtend) => {
     const currentTime = Math.floor(new Date().getTime());
-    if (permissionShowLive && scheduleInfo.class_type_label?.id === "Homework") {
+    if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
       window.open(apiLivePath(liveToken));
       return;
     }
-    if (scheduleInfo.start.valueOf() - currentTime > 15 * 60 * 1000) {
+    if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
       changeModalDate({
         title: "",
         text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),

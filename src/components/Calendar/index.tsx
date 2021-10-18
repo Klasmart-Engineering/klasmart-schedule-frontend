@@ -371,7 +371,7 @@ function MyCalendar(props: CalendarProps) {
     const currentTime = Math.floor(new Date().getTime());
     if (
       ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
-      (permissionShowLive && event.class_type_label?.id === "Homework")
+      (permissionShowLive && event.class_type === "Homework")
     ) {
       await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     }
@@ -427,14 +427,15 @@ function MyCalendar(props: CalendarProps) {
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "86%" }} /> },
   ];
 
-  const eventStyleGetter = () => {
+  const eventStyleGetter = (event: any) => {
+    const eventTemplate = eventColor.filter((item) => item.id === event.class_type);
     const style = {
       backgroundColor: "white",
       height: "26px",
       padding: 0,
     };
     return {
-      style: style,
+      style: modelView === "month" ? style : { backgroundColor: eventTemplate[0].color },
     };
   };
 
@@ -487,7 +488,7 @@ function MyCalendar(props: CalendarProps) {
           style={{ height: "100vh" }}
           eventPropGetter={eventStyleGetter}
           components={{
-            event: CustomEvent,
+            event: modelView === "month" ? CustomEvent : undefined,
           }}
         />
       )}

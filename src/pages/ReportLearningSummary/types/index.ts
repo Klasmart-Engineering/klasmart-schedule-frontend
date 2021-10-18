@@ -53,3 +53,19 @@ export enum OutcomeStatus {
   not_achieved = "not_achieved",
   partially = "partially",
 }
+export interface ISelect {
+  label: string;
+  value: string;
+}
+export type UserType = {
+  id: string;
+  name: string;
+  classes: {
+    id: string;
+    name: string;
+    students: {
+      id: string;
+      name: string;
+    }[];
+  }[];
+};

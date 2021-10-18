@@ -53,7 +53,9 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   const isTeacher = perm.report_learning_summary_teacher_650;
   // const isStudent = perm.report_learning_summary_student_649;
   const { value, defaultWeeksValue, summaryReportOptions, onChangeYearFilter, onChangeWeekFilter, onChangeFilter } = props;
-  const { years, weeks, schools, classes, teachers, students, subjects } = summaryReportOptions;
+  const { years, weeks, schools, classes, students, subjects } = summaryReportOptions;
+  // const studentList = students?.slice().sort(sortByStudentName("name"));
+
   const getYear = () => {
     return (
       years &&
@@ -127,57 +129,42 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
         </div>
         {/* )} */}
         <div style={{ marginTop: 20 }}>
-          {isOrg && (
-            <TextField
-              size="small"
-              className={css.selectButton}
-              onChange={(e) => handleChange(e.target.value, "school_id")}
-              label={t("report_filter_school")}
-              value={value.school_id}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-            >
-              {getInfos(schools || [])}
-            </TextField>
-          )}
           {(isOrg || isSchoolAdmin || isTeacher) && (
-            <TextField
-              size="small"
-              className={css.selectButton}
-              onChange={(e) => handleChange(e.target.value, "class_id")}
-              label={t("report_filter_class")}
-              value={value.class_id}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-            >
-              {getInfos(classes || [])}
-            </TextField>
-          )}
-          {(isOrg || isSchoolAdmin) && (
-            <TextField
-              size="small"
-              className={css.selectButton}
-              onChange={(e) => handleChange(e.target.value, "teacher_id")}
-              label={t("report_filter_teacher")}
-              value={value.teacher_id}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-            >
-              {getInfos(teachers || [])}
-            </TextField>
-          )}
-          {(isOrg || isSchoolAdmin || isTeacher) && (
-            <TextField
-              size="small"
-              className={css.selectButton}
-              onChange={(e) => handleChange(e.target.value, "student_id")}
-              label={t("report_filter_student")}
-              value={value.student_id}
-              select
-              SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-            >
-              {getInfos(students || [])}
-            </TextField>
+            <>
+              <TextField
+                size="small"
+                className={css.selectButton}
+                onChange={(e) => handleChange(e.target.value, "school_id")}
+                label={t("report_filter_school")}
+                value={value.school_id}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              >
+                {getInfos(schools || [])}
+              </TextField>
+              <TextField
+                size="small"
+                className={css.selectButton}
+                onChange={(e) => handleChange(e.target.value, "class_id")}
+                label={t("report_filter_class")}
+                value={value.class_id}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              >
+                {getInfos(classes || [])}
+              </TextField>
+              <TextField
+                size="small"
+                className={css.selectButton}
+                onChange={(e) => handleChange(e.target.value, "student_id")}
+                label={t("report_filter_student")}
+                value={value.student_id}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              >
+                {getInfos(students || [])}
+              </TextField>
+            </>
           )}
           {/* {isStudent && ( */}
           <TextField
