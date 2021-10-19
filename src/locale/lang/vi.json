@@ -980,5 +980,6 @@
   "report_msg_assessments_completed": "Số lượng bài đánh giá mà giáo viên đã hoàn thành đối với mỗi bài nộp của học sinh. Giá trị dựa trên lựa chọn bộ lọc.",
   "report_msg_feedback": "% các bài đánh giá cá nhân của học sinh đã được hoàn thành mà giáo viên đã cung cấp phản hồi. Giá trị dựa trên lựa chọn bộ lọc.",
   "report_msg_assessments_pending": "Số lượng đánh giá đang chờ giáo viên hoàn thành cho mỗi bài nộp của học sinh. Trạng thái đang chờ xử lý có nghĩa là ngày quá hạn đã qua nhưng việc đánh giá vẫn chưa được hoàn thành. Giá trị dựa trên lựa chọn bộ lọc.",
-  "report_msg_avg_days_pending": "Số ngày trung bình các bài đánh giá ở trạng thái chờ xử lý. Trạng thái đang chờ xử lý có nghĩa là ngày đáo hạn đã qua nhưng việc đánh giá vẫn chưa được hoàn thành. Giá trị dựa trên lựa chọn bộ lọc."
+  "report_msg_avg_days_pending": "Số ngày trung bình các bài đánh giá ở trạng thái chờ xử lý. Trạng thái đang chờ xử lý có nghĩa là ngày đáo hạn đã qua nhưng việc đánh giá vẫn chưa được hoàn thành. Giá trị dựa trên lựa chọn bộ lọc.",
+  "schedule_search_school_name": "Search School Name"
 }

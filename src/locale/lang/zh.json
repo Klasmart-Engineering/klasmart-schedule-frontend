@@ -980,5 +980,6 @@
   "report_msg_assessments_completed": "老师已完成的评估数量。值取决于筛选条件。",
   "report_msg_feedback": "已完成的评估中，老师提供反馈的百分比。值取决于筛选条件。",
   "report_msg_assessments_pending": "老师未完成的评估数量。未完成状态意味着截止日期已过但评估尚未完成。值取决于筛选条件。",
-  "report_msg_avg_days_pending": "评估处于未完成状态的平均天数。未完成状态意味着截止日期已过但评估尚未完成。值取决于筛选条件。"
+  "report_msg_avg_days_pending": "评估处于未完成状态的平均天数。未完成状态意味着截止日期已过但评估尚未完成。值取决于筛选条件。",
+  "schedule_search_school_name": "搜索学校"
 }

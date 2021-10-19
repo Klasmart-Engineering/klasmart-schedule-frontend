@@ -627,7 +627,7 @@
   "report_label_total": "Total",
   "report_label_live": "Langsung",
   "report_label_hours": "Jam",
-  "report_label_mins": "Menit",
+  "report_label_mins": "menit",
   "report_label_go_back": "Kembali Ke Daftar Laporan",
   "report_label_individual_achievement": "Pencapaian Individu Siswa",
   "general_error_unauthorized": "Pengguna belum masuk, silakan masuk",
@@ -980,5 +980,6 @@
   "report_msg_assessments_completed": "Banyak penilaian yang diselesaikan oleh guru untuk setiap submisi siswa. Besarnya didasarkan pada pemilihan filter.",
   "report_msg_feedback": "% dari penilaian individu siswa yang sudah selesai dan diberikan umpan balik oleh guru. Besarnya didasarkan pada pemilihan filter.",
   "report_msg_assessments_pending": "Banyaknya penilaian yang menunggu diselesaikan oleh guru untuk setiap submisi dari siswa. Status menunggu berarti tanggal jatuh tempo sudah lewat tetapi penilaian belum selesai. Besarnya sesuai dengan pemilihan filter.",
-  "report_msg_avg_days_pending": "Lama rata-rata penilaian berada di status menunggu. Status menunggu berarti tanggal jatuh tempo sudah lewat tetapi penilaian belum selesai. Besarnya sesuai dengan pemilihan filter."
+  "report_msg_avg_days_pending": "Lama rata-rata penilaian berada di status menunggu. Status menunggu berarti tanggal jatuh tempo sudah lewat tetapi penilaian belum selesai. Besarnya sesuai dengan pemilihan filter.",
+  "schedule_search_school_name": "Search School Name"
 }
