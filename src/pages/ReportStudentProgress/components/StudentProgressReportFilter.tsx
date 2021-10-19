@@ -19,17 +19,17 @@ const useStyle = makeStyles(({ palette }) =>
 interface IStudentProgressReportFilter {
   studentProgressReportTitle: string;
   durationTime: number;
-  setDurationTime: (x: number) => void;
+  handleChange: (x: number) => void;
 }
 export default function StudentProgressReportFilter(props: IStudentProgressReportFilter) {
   const css = useStyle();
-  const { studentProgressReportTitle, durationTime, setDurationTime } = props;
+  const { studentProgressReportTitle, durationTime, handleChange } = props;
   return (
     <Grid container justify={"space-between"} className={css.filter}>
       <Grid item>{studentProgressReportTitle}</Grid>
       <Select
         value={durationTime}
-        onChange={(e) => setDurationTime(Number(e.target.value))}
+        onChange={(e) => handleChange(Number(e.target.value))}
         className={css.selector}
         input={<OutlinedInput />}
       >

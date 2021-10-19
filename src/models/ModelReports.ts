@@ -7,7 +7,7 @@ import {
   EntityStudentAchievementReportCategoryItem,
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
-import { d } from "../locale/LocaleManager";
+import { d, t } from "../locale/LocaleManager";
 import { UserType } from "../pages/ReportLearningSummary/types";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
 import { Iitem } from "../reducers/report";
@@ -346,7 +346,7 @@ export function formatDate(time: string) {
 }
 
 export function getSixMonths() {
-  var data = new Date("2021/01/01 12:00:00");
+  var data = new Date();
   var year = data.getFullYear();
   var month = data.getMonth() + 1;
   var day = data.getDate();
@@ -359,7 +359,7 @@ export function getSixMonths() {
     }
     day = mGetDate(year, month) + 1;
   }
-  var lastDate = formatDate(`${year}/${month}/01 00:00:00`) + " - " + formatDate(`${year}/${month}/${day - 1} 23:59:59`);
+  var lastDate = formatDate(`${year}/${month}/01 00:00:00`) + " - " + formatDate(`${year}/${month}/${day} 00:00:00`);
   var arry = [];
   for (var i = 0; i < 5; i++) {
     month = month - 1;
@@ -371,7 +371,9 @@ export function getSixMonths() {
       month = Number("0" + month);
     }
     arry[i] =
-      formatDate(year + "/" + month + "/01 00:00:00") + " - " + formatDate(year + "/" + month + "/" + mGetDate(year, month) + " 23:59:59");
+      formatDate(year + "/" + month + "/01 00:00:00") +
+      " - " +
+      (formatDate(year + "/" + month + "/" + mGetDate(year, month) + " 23:59:59") + 1);
   }
   arry.unshift(lastDate);
   return arry.reverse();
@@ -397,11 +399,301 @@ export function getFourWeeks() {
   } else {
     day = day - dd;
   }
-
   var newDate = formatDate(`${year}/${month}/${day} 23:59:59`);
   var array = [];
-  for (var i = 1; i <= 4; i++) {
-    array.unshift(`${newDate - 3600 * 24 * i * 7 + 1} - ${newDate - 3600 * 24 * (i - 1) * 7}`);
+  if (dd === 1) {
+    for (let i = 1; i <= 4; i++) {
+      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1} - ${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
+    }
+  } else {
+    for (let i = 1; i <= 3; i++) {
+      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1} - ${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
+    }
+    array.push(`${newDate + 1} - ${newDate + 3600 * 24 * (dd - 1) + 1}`);
   }
   return array;
+}
+
+export function getLearnOutcomeAchievementFeedback(data: any) {
+  if (
+    data[3].class_average_achieved_percentage === 0 &&
+    data[3].first_achieved_percentage === 0 &&
+    data[3].re_achieved_percentage === 0 &&
+    data[3].un_selected_subjects_average_achieved_percentage === 0
+  ) {
+    return t("report_msg_lo_new", {
+      Name: "zhangsan",
+      AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
+      LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
+    });
+  } else if (
+    (data[1].first_achieved_percentage > data[1].class_average_achieved_percentage &&
+      data[2].first_achieved_percentage > data[2].class_average_achieved_percentage &&
+      data[3].first_achieved_percentage > data[3].class_average_achieved_percentage) ||
+    (data[1].first_achieved_percentage < data[1].class_average_achieved_percentage &&
+      data[2].first_achieved_percentage < data[2].class_average_achieved_percentage &&
+      data[3].first_achieved_percentage < data[3].class_average_achieved_percentage)
+  ) {
+    if (
+      data[1].first_achieved_percentage > data[1].class_average_achieved_percentage &&
+      data[2].first_achieved_percentage > data[2].class_average_achieved_percentage &&
+      data[3].first_achieved_percentage > data[3].class_average_achieved_percentage
+    ) {
+      return t("report_msg_lo_high_class_3w", { Name: "zhangsan", LOCompareClass3week: "20" });
+    } else {
+      return t("report_msg_lo_low_class_3w", { Name: "zhangsan", LOCompareClass3week: "20" });
+    }
+  } else if (
+    data[3].first_achieved_percentage - data[2].first_achieved_percentage >= 0.2 ||
+    data[2].first_achieved_percentage - data[3].first_achieved_percentage >= 0.2
+  ) {
+    if (data[3].first_achieved_percentage - data[2].first_achieved_percentage >= 0.2) {
+      return t("report_msg_lo_increase_previous_large_w", {
+        Name: "zhangsan",
+        LOCompareLastWeek: Math.floor((data[3].first_achieved_percentage - data[2].first_achieved_percentage) * 100),
+      });
+    } else {
+      return t("report_msg_lo_decrease_previous_large_w", {
+        Name: "zhangsan",
+        LOCompareLastWeek: Math.floor((data[2].first_achieved_percentage - data[3].first_achieved_percentage) * 100),
+      });
+    }
+  } else if (
+    data[3].re_achieved_percentage - data[3].class_average_achieved_percentage >= 0.1 ||
+    data[3].class_average_achieved_percentage - data[3].re_achieved_percentage >= 0.1
+  ) {
+    if ((data[3].re_achieved_percentage - data[3].class_average_achieved_percentage) / data[3].class_average_achieved_percentage >= 0.1) {
+      return t("report_msg_lo_high_class_review_w", {
+        Name: "zhangsan",
+        LOReviewCompareClass: Math.floor((data[3].re_achieved_percentage - data[3].class_average_achieved_percentage) * 100),
+      });
+    } else {
+      return t("report_msg_lo_low_class_review_w", {
+        Name: "zhangsan",
+        LOReviewCompareClass: Math.floor((data[3].class_average_achieved_percentage - data[3].re_achieved_percentage) * 100),
+      });
+    }
+  } else if (
+    (data[2].first_achieved_percentage - data[1].first_achieved_percentage > 0 &&
+      data[3].first_achieved_percentage - data[2].first_achieved_percentage > 0) ||
+    (data[2].first_achieved_percentage - data[1].first_achieved_percentage < 0 &&
+      data[3].first_achieved_percentage - data[2].first_achieved_percentage < 0)
+  ) {
+    if (
+      data[2].first_achieved_percentage - data[1].first_achieved_percentage > 0 &&
+      data[3].first_achieved_percentage - data[2].first_achieved_percentage > 0
+    ) {
+      return t("report_msg_lo_increase_3w", { Name: "zhangsan", LOCompareLast3Week: "20" });
+    } else {
+      return t("report_msg_lo_decrease_3w", { Name: "zhangsan", LOCompareLast3Week: "20" });
+    }
+  } else if (
+    data[3].first_achieved_percentage > data[3].class_average_achieved_percentage ||
+    data[3].first_achieved_percentage < data[3].class_average_achieved_percentage
+  ) {
+    if (data[3].first_achieved_percentage > data[3].class_average_achieved_percentage) {
+      return t("report_msg_lo_high_class_w", {
+        Name: "zhangsan",
+        LOCompareClass: Math.floor((data[3].first_achieved_percentage - data[3].class_average_achieved_percentage) * 100),
+      });
+    } else {
+      return t("report_msg_lo_low_class_w", {
+        Name: "zhangsan",
+        LOCompareClass: Math.floor((data[3].class_average_achieved_percentage - data[3].first_achieved_percentage) * 100),
+      });
+    }
+  } else if (
+    data[3].first_achieved_percentage - data[2].first_achieved_percentage < 0.2 ||
+    data[2].first_achieved_percentage - data[3].first_achieved_percentage < 0.2
+  ) {
+    if ((data[3].first_achieved_percentage - data[2].first_achieved_percentage) / data[2].first_achieved_percentage < 0.2) {
+      return t("report_msg_lo_increase_previous_w", {
+        Name: "zhangsan",
+        LOCompareLastWeek: Math.floor((data[3].first_achieved_percentage - data[2].first_achieved_percentage) * 100),
+      });
+    } else {
+      return t("report_msg_lo_decrease_previous_w", {
+        Name: "zhangsan",
+        LOCompareLastWeek: Math.floor((data[2].first_achieved_percentage - data[3].first_achieved_percentage) * 100),
+      });
+    }
+  } else {
+    return t("report_msg_lo_default", {
+      Name: "zhangsan",
+      AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
+      LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
+    });
+  }
+}
+
+export function getClassAttendanceFeedback(data: any, value: any) {
+  if (
+    data[3].attendance_percentage === 0 &&
+    data[3].class_average_attendance_percentage === 0 &&
+    data[3].un_selected_subjects_average_attendance_percentage === 0
+  ) {
+    return t("report_msg_att_new", { Name: "zhangsan", AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
+  } else if (
+    (data[1].attendance_percentage > data[1].class_average_attendance_percentage &&
+      data[2].attendance_percentage > data[2].class_average_attendance_percentage &&
+      data[3].attendance_percentage > data[3].class_average_attendance_percentage) ||
+    (data[1].attendance_percentage < data[1].class_average_attendance_percentage &&
+      data[2].attendance_percentage < data[2].class_average_attendance_percentage &&
+      data[3].attendance_percentage < data[3].class_average_attendance_percentage)
+  ) {
+    if (
+      data[1].attendance_percentage > data[1].class_average_attendance_percentage &&
+      data[2].attendance_percentage > data[2].class_average_attendance_percentage &&
+      data[3].attendance_percentage > data[3].class_average_attendance_percentage
+    ) {
+      return t("report_msg_att_high_class_3w", { Name: "zhangsan", LOCompareClass3week: "20" });
+    } else {
+      return t("report_msg_att_low_class_3w", { Name: "zhangsan", LOCompareClass3week: "20" });
+    }
+  } else if (
+    data[3].attendance_percentage - data[2].attendance_percentage >= 0.2 ||
+    data[2].attendance_percentage - data[3].attendance_percentage >= 0.2
+  ) {
+    if (data[3].attendance_percentage - data[2].attendance_percentage >= 0.2) {
+      return t("report_msg_att_increase_previous_large_w", {
+        Name: "zhangsan",
+        AttendCompareLastWeek: Math.floor((data[3].attendance_percentage - data[2].attendance_percentage) * 100),
+      });
+    } else {
+      return t("report_msg_att_decrease_previous_large_w", {
+        Name: "zhangsan",
+        AttendCompareLastWeek: Math.floor((data[2].attendance_percentage - data[3].attendance_percentage) * 100),
+      });
+    }
+  } else if (
+    (data[2].attendance_percentage - data[1].attendance_percentage > 0 &&
+      data[3].attendance_percentage - data[2].attendance_percentage > 0) ||
+    (data[2].attendance_percentage - data[1].attendance_percentage < 0 && data[3].attendance_percentage - data[2].attendance_percentage < 0)
+  ) {
+    if (
+      data &&
+      data[2].attendance_percentage - data[1].attendance_percentage > 0 &&
+      data[3].attendance_percentage - data[2].attendance_percentage > 0
+    ) {
+      return t("report_msg_att_increase_3w", { Name: "zhangsan", AttendCompareLast3Week: "20" });
+    } else {
+      return t("report_msg_att_decrease_3w", { Name: "zhangsan", AttendCompareLast3Week: "20" });
+    }
+  } else if (
+    data[3].attendance_percentage > data[3].class_average_attendance_percentage ||
+    data[3].attendance_percentage < data[3].class_average_attendance_percentage
+  ) {
+    if (data[3].attendance_percentage > data[3].class_average_attendance_percentage) {
+      return t("report_msg_att_high_class_w", {
+        Name: "zhangsan",
+        LOCompareClass: Math.floor((data[3].attendance_percentage - data[3].class_average_attendance_percentage) * 100),
+      });
+    } else {
+      return t("report_msg_att_low_class_w", {
+        Name: "zhangsan",
+        LOCompareClass: Math.floor((data[3].class_average_attendance_percentage - data[3].attendance_percentage) * 100),
+      });
+    }
+  } else if (
+    (data && data[3].attendance_percentage - data[2].attendance_percentage < 0.2) ||
+    data[2].attendance_percentage - data[3].attendance_percentage < 0.2
+  ) {
+    if (data && (data[3].attendance_percentage - data[2].attendance_percentage) / data[2].attendance_percentage < 0.2) {
+      return t("report_msg_att_increase_previous_w", {
+        Name: "zhangsan",
+        AttendCompareLastWeek: Math.floor((data[3].attendance_percentage - data[2].attendance_percentage) * 100),
+      });
+    } else {
+      return t("report_msg_att_decrease_previous_w", {
+        Name: "zhangsan",
+        AttendCompareLastWeek: Math.floor((data[2].attendance_percentage - data[3].attendance_percentage) * 100),
+      });
+    }
+  } else {
+    return t("report_msg_att_default", { Name: "zhangsan", AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
+  }
+}
+
+export function getAssignmentCompletionFeedback(data: any) {
+  if (data[3].class_designated_subject === 0 && data[3].student_designated_subject === 0 && data[3].student_non_designated_subject === 0) {
+    return t("report_msg_assign_new", { Name: "zhangsan", AssignmentCompleteCount: 5, AssignmentCount: 5 });
+  } else if (
+    (data[1].student_designated_subject > data[1].class_designated_subject &&
+      data[2].student_designated_subject > data[2].class_designated_subject &&
+      data[3].student_designated_subject > data[3].class_designated_subject) ||
+    (data[1].student_designated_subject < data[1].class_designated_subject &&
+      data[2].student_designated_subject < data[2].class_designated_subject &&
+      data[3].student_designated_subject < data[3].class_designated_subject)
+  ) {
+    if (
+      data[1].student_designated_subject > data[1].class_designated_subject &&
+      data[2].student_designated_subject > data[2].class_designated_subject &&
+      data[3].student_designated_subject > data[3].class_designated_subject
+    ) {
+      return t("report_msg_assign_high_class_3w", { Name: "zhangsan", AssignCompareClass3week: "20" });
+    } else {
+      return t("report_msg_assign_low_class_3w", { Name: "zhangsan", AssignCompareClass3week: "20" });
+    }
+  } else if (
+    data[3].student_designated_subject - data[2].student_designated_subject >= 0.2 ||
+    data[2].student_designated_subject - data[3].student_designated_subject >= 0.2
+  ) {
+    if (data[3].student_designated_subject - data[2].student_designated_subject >= 0.2) {
+      return t("report_msg_assign_increase_previous_large_w", {
+        Name: "zhangsan",
+        AssignCompareLastWeek: Math.floor((data[3].student_designated_subject - data[2].student_designated_subject) * 100),
+      });
+    } else {
+      return t("report_msg_assign_decrease_previous_large_w", {
+        Name: "zhangsan",
+        AssignCompareLastWeek: Math.floor((data[2].student_designated_subject - data[3].student_designated_subject) * 100),
+      });
+    }
+  } else if (
+    (data[2].student_designated_subject - data[1].student_designated_subject > 0 &&
+      data[3].student_designated_subject - data[2].student_designated_subject > 0) ||
+    (data[2].student_designated_subject - data[1].student_designated_subject < 0 &&
+      data[3].student_designated_subject - data[2].student_designated_subject < 0)
+  ) {
+    if (
+      data[2].student_designated_subject - data[1].student_designated_subject > 0 &&
+      data[3].student_designated_subject - data[2].student_designated_subject > 0
+    ) {
+      return t("report_msg_assign_increase_3w", { Name: "zhangsan", AssignCompare3Week: "20" });
+    } else {
+      return t("report_msg_assign_decrease_3w", { Name: "zhangsan", AssignCompare3Week: "20" });
+    }
+  } else if (
+    data[3].student_designated_subject > data[3].class_designated_subject ||
+    data[3].student_designated_subject < data[3].class_designated_subject
+  ) {
+    if (data[3].student_designated_subject > data[3].class_designated_subject) {
+      return t("report_msg_assign_high_class_w", {
+        Name: "zhangsan",
+        AssignCompareClass: Math.floor((data[3].student_designated_subject - data[3].class_designated_subject) * 100),
+      });
+    } else {
+      return t("report_msg_assign_low_class_w", {
+        Name: "zhangsan",
+        AssignCompareClass: Math.floor((data[3].class_designated_subject - data[3].student_designated_subject) * 100),
+      });
+    }
+  } else if (
+    data[3].student_designated_subject - data[2].student_designated_subject < 0.2 ||
+    data[2].student_designated_subject - data[3].student_designated_subject < 0.2
+  ) {
+    if (data[3].student_designated_subject - data[2].student_designated_subject < 0.2) {
+      return t("report_msg_assign_increase_previous_w", {
+        Name: "zhangsan",
+        AssignCompareLastWeek: Math.floor((data[3].student_designated_subject - data[2].student_designated_subject) * 100),
+      });
+    } else {
+      return t("report_msg_assign_decrease_previous_w", {
+        Name: "zhangsan",
+        AssignCompareLastWeek: Math.floor((data[2].student_designated_subject - data[3].student_designated_subject) * 100),
+      });
+    }
+  } else {
+    return t("report_msg_assign_default", { Name: "zhangsan", AssignCompleteCount: 5, AssignmentCount: 5 });
+  }
 }

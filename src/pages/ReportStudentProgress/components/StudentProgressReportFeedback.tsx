@@ -30,7 +30,7 @@ const useStyle = makeStyles(({ palette }) =>
   })
 );
 
-// function getFeedback (data: any, Name: string, AchievedLoCount: number | string, LearntLoCount: number | string) {
+// function getFeedback (data: EntityLearnOutcomeAchievementResponse) {
 //   switch (data) {
 //     case "上周都没有数据":
 //       return t("lo_new", {Name, AchievedLoCount, LearntLoCount });
@@ -59,16 +59,21 @@ const useStyle = makeStyles(({ palette }) =>
 //   }
 // }
 
-export default function StudentProgressReportFeedback() {
+interface ILearnOutcomeAchievement {
+  fourWeeksMassage: string;
+}
+
+export default function StudentProgressReportFeedback(props: ILearnOutcomeAchievement) {
   const css = useStyle();
+  const { fourWeeksMassage } = props;
 
   return (
     <div className={css.feedbackContainer}>
       <CheckCircle className={css.checkCircleStyle} />
-      <span>
+      {/* <span>
         Name is continue learning in KidsLoop. In this week, Name achieved AchievedLoCount learning outcomes among LearntLoCount.{" "}
-      </span>
-      {/* {getFeedback(data, )} */}
+      </span> */}
+      <span>{fourWeeksMassage}</span>
     </div>
   );
 }

@@ -80,7 +80,14 @@ import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { IParamQueryRemainFilter } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
-import { formatTimeToMonDay, getAllUsers, getTimeOffSecond, ModelReport, sortByStudentName } from "../models/ModelReports";
+import {
+  formatTimeToMonDay,
+  getAllUsers,
+  getLearnOutcomeAchievementFeedback,
+  getTimeOffSecond,
+  ModelReport,
+  sortByStudentName,
+} from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
 import {
@@ -151,6 +158,9 @@ interface IreportState {
   assignmentsCompletion: EntityAssignmentCompletionRate[];
   learnOutcomeClassAttendance: EntityClassAttendanceResponseItem[];
   learnOutcomeAchievement: EntityLearnOutcomeAchievementResponse;
+  fourWeekslearnOutcomeAchievementMassage: string;
+  fourWeeksAssignmentsCompletionMassage: string;
+  fourWeeksClassAttendanceMassage: string;
 }
 
 interface IObj {
@@ -266,6 +276,9 @@ const initialState: IreportState = {
   assignmentsCompletion: [],
   learnOutcomeClassAttendance: [],
   learnOutcomeAchievement: {},
+  fourWeekslearnOutcomeAchievementMassage: "",
+  fourWeeksAssignmentsCompletionMassage: "",
+  fourWeeksClassAttendanceMassage: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1610,18 +1623,64 @@ const { actions, reducer } = createSlice({
     },
     [getAssignmentsCompletion.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentsCompletion>>) => {
       state.assignmentsCompletion = payload;
+      if (payload?.length === 4) {
+        //  state.fourWeeksAssignmentsCompletionMassage =  getAssignmentCompletionFeedback(payload)
+        //  state.fourWeeksAssignmentsCompletionMassage = payload
+      }
     },
     [getLearnOutcomeClassAttendance.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeClassAttendance>>
     ) => {
       state.learnOutcomeClassAttendance = payload;
+      if (payload?.length === 4) {
+        //  state.fourWeeksClassAttendanceMassage = getClassAttendanceFeedback(payload?.items, payload)
+        //  state.fourWeeksClassAttendanceMassage = payload
+      }
     },
     [getLearnOutcomeAchievement.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeAchievement>>
     ) => {
       state.learnOutcomeAchievement = payload;
+      const data = {
+        items: [
+          {
+            class_average_achieve_percent: 0,
+            duration: "string",
+            first_achieved_percentage: 0,
+            re_achieved_percentage: 0,
+            un_selected_subjects_average_achieve_percentage: 0,
+          },
+          {
+            class_average_achieve_percent: 10,
+            duration: "string",
+            first_achieved_percentage: 20,
+            re_achieved_percentage: 0,
+            un_selected_subjects_average_achieve_percentage: 0,
+          },
+          {
+            class_average_achieve_percent: 10,
+            duration: "string",
+            first_achieved_percentage: 20,
+            re_achieved_percentage: 0,
+            un_selected_subjects_average_achieve_percentage: 0,
+          },
+          {
+            class_average_achieve_percent: 10,
+            duration: "string",
+            first_achieved_percentage: 20,
+            re_achieved_percentage: 0,
+            un_selected_subjects_average_achieve_percentage: 0,
+          },
+        ],
+      };
+      // const studentName = state.studentList.find(item => item.user_id === payload?.request.student_id)
+      state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(data);
+      // if (payload?.items?.length === 4 ) {
+      //  state.fourWeekslearnOutcomeAchievementMassage =  getLearnOutcomeAchievementFeedback(payload?.items, payload)
+      //    state.fourWeekslearnOutcomeAchievementMassage =  payload?.items
+      // }
     },
   },
 });
