@@ -15,14 +15,14 @@ import {
 import { ReportTitle } from "../ReportDashboard";
 import { FilterLearningSummary, FilterLearningSummaryProps } from "./FilterLearningSummary";
 import { ReportInfo } from "./ReportInfo";
-import { QueryLearningSummaryCondition, QueryLearningSummaryRemainingFilterCondition, ReportType } from "./types";
+import { QueryLearningSummaryCondition, QueryLearningSummaryTimeFilterCondition, ReportType } from "./types";
 export interface IWeeks {
   week_start: number;
   week_end: number;
   value: string;
 }
 interface RouteParams {
-  tab: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  tab: QueryLearningSummaryTimeFilterCondition["summary_type"];
 }
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {

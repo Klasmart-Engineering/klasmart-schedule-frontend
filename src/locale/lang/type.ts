@@ -1342,6 +1342,37 @@ type LangRecord<T = string> =
   | { id: "report_label_feedback"; description: "% Feedback"; values: undefined }
   | { id: "report_label_assessments_pending"; description: "Assessments Pending"; values: undefined }
   | { id: "report_label_avg_days_pending"; description: "Avg Days Pending"; values: undefined }
+  | { id: "report_label_learning_outcomes_achievement"; description: "Learning Outcomes Achievement"; values: undefined }
+  | { id: "report_label_class_attendance"; description: "Class Attendance"; values: undefined }
+  | { id: "report_label_assignment_completion"; description: "Assignment Completion"; values: undefined }
+  | { id: "report_label_4_weeks"; description: "4 Weeks"; values: undefined }
+  | { id: "report_label_6_months"; description: "6 Months"; values: undefined }
+  | { id: "report_label_total_newly_achieved_lo"; description: "Total Newly Achieved Learning Outcomes"; values: undefined }
+  | { id: "report_label_total_reachieved_lo"; description: "Total Re-achieved Learning Outcomes"; values: undefined }
+  | {
+      id: "report_label_total_achieved_lo_class_average";
+      description: "Total Achieved Learning Outcomes for Class Average";
+      values: undefined;
+    }
+  | {
+      id: "report_label_total_achieved_lo_subject_average";
+      description: "Total Achieved Learning Outcomes for Subject Average";
+      values: undefined;
+    }
+  | { id: "report_label_student_attendance_rate"; description: "Student Attendance Rate"; values: undefined }
+  | { id: "report_label_class_average_attendance_rate"; description: "Class Average Attendance Rate"; values: undefined }
+  | { id: "report_label_subject_average_attendance_rate"; description: "Subject Average Attendance Rate"; values: undefined }
+  | { id: "report_label_student_assignments_completion_rate"; description: "Student Assignments Completion Rate"; values: undefined }
+  | {
+      id: "report_label_class_average_assignments_completion_rate";
+      description: "Class Average Assignments Completion Rate";
+      values: undefined;
+    }
+  | {
+      id: "report_label_subject_average_assignments_completion_rate";
+      description: "Subject Average Assignments Completion Rate";
+      values: undefined;
+    }
   | {
       id: "report_msg_learning_outcomes_covered";
       description: "Observable competency that can be demonstrated by the student by the end of the lesson.";

@@ -45,9 +45,15 @@ import {
   TeacherByOrgIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
+  EntityAssignmentCompletionRate,
+  EntityAssignmentRequest,
+  EntityClassAttendanceRequest,
+  EntityClassAttendanceResponseItem,
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
+  EntityLearnOutcomeAchievementRequest,
+  EntityLearnOutcomeAchievementResponse,
   EntityQueryAssignmentsSummaryResult,
   EntityQueryLiveClassesSummaryResult,
   EntityReportListTeachingLoadArgs,
@@ -71,6 +77,7 @@ import {
   EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
+import { IParamQueryRemainFilter } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
 import { formatTimeToMonDay, getAllUsers, getTimeOffSecond, ModelReport, sortByStudentName } from "../models/ModelReports";
@@ -79,7 +86,7 @@ import { IWeeks } from "../pages/ReportLearningSummary";
 import {
   ArrProps,
   QueryLearningSummaryCondition,
-  QueryLearningSummaryRemainingFilterCondition,
+  QueryLearningSummaryTimeFilterCondition,
   ReportType,
   TimeFilter,
   UserType,
@@ -141,6 +148,9 @@ interface IreportState {
   teacherLoadAssignment: EntityTeacherLoadAssignmentResponseItem[];
   next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
   listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse;
+  assignmentsCompletion: EntityAssignmentCompletionRate[];
+  learnOutcomeClassAttendance: EntityClassAttendanceResponseItem[];
+  learnOutcomeAchievement: EntityLearnOutcomeAchievementResponse;
 }
 
 interface IObj {
@@ -253,6 +263,9 @@ const initialState: IreportState = {
   teacherLoadAssignment: [],
   next7DaysLessonLoadList: [],
   listTeacherMissedLessons: {},
+  assignmentsCompletion: [],
+  learnOutcomeClassAttendance: [],
+  learnOutcomeAchievement: {},
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -772,17 +785,14 @@ export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQuer
   }
 );
 
-export type IParamQueryRemainFilter = Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0];
-export type IResultQueryRemainFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
-export const getRemainFilter = createAsyncThunk<IResultQueryRemainFilter, IParamQueryRemainFilter & LoadingMetaPayload>(
-  "getRemainFilter",
-  async (query) => {
-    return await api.reports.queryLearningSummaryRemainingFilter({ ...query });
-  }
-);
-export interface IParamsOnLoadLearningSummary {
-  summary_type: string;
-}
+// export type IParamQueryRemainFilter = Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0];
+// export type IResultQueryRemainFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryRemainingFilter>;
+// export const getRemainFilter = createAsyncThunk<IResultQueryRemainFilter, IParamQueryRemainFilter & LoadingMetaPayload>(
+//   "getRemainFilter",
+//   async (query) => {
+//     return await api.reports.queryLearningSummaryRemainingFilter({ ...query });
+//   }
+// );
 
 export interface IParamsLearningSummary extends QueryLearningSummaryCondition {
   isOrg?: boolean;
@@ -791,7 +801,7 @@ export interface IParamsLearningSummary extends QueryLearningSummaryCondition {
   isStudent?: boolean;
   year?: number;
   subject_id?: string;
-  summary_type: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  summary_type: QueryLearningSummaryTimeFilterCondition["summary_type"];
 }
 export interface IResultLearningSummary {
   years: number[];
@@ -809,7 +819,7 @@ export interface IResultLearningSummary {
   teacher_id?: string;
   student_id?: string;
   subject_id?: string;
-  summary_type: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  summary_type: QueryLearningSummaryTimeFilterCondition["summary_type"];
 }
 export const onLoadLearningSummary = createAsyncThunk<
   IResultLearningSummary,
@@ -1148,6 +1158,21 @@ export const getListTeacherMissedLessons = createAsyncThunk<
   EntityTeacherLoadMissedLessonsResponse,
   EntityTeacherLoadMissedLessonsRequest & LoadingMetaPayload
 >("getListTeacherMissedLessons", async ({ metaLoading, ...query }) => await api.reports.listTeacherMissedLessons(query));
+
+export const getAssignmentsCompletion = createAsyncThunk<EntityAssignmentCompletionRate[], EntityAssignmentRequest & LoadingMetaPayload>(
+  "getAssignmentsCompletion",
+  async ({ metaLoading, ...query }) => await api.reports.getAssignmentsCompletion(query)
+);
+
+export const getLearnOutcomeClassAttendance = createAsyncThunk<
+  EntityClassAttendanceResponseItem[],
+  EntityClassAttendanceRequest & LoadingMetaPayload
+>("getLearnOutcomeClassAttendance", async ({ metaLoading, ...query }) => await api.reports.getLearnOutcomeClassAttendance(query));
+
+export const getLearnOutcomeAchievement = createAsyncThunk<
+  EntityLearnOutcomeAchievementResponse,
+  EntityLearnOutcomeAchievementRequest & LoadingMetaPayload
+>("getLearnOutcomeAchievement", async ({ metaLoading, ...query }) => await api.reports.getLearnOutcomeAchievement(query));
 
 const { actions, reducer } = createSlice({
   name: "report ",
@@ -1504,7 +1529,6 @@ const { actions, reducer } = createSlice({
         }),
       }));
     },
-    [getRemainFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getRemainFilter>>) => {},
     [getAfterClassFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAfterClassFilter>>) => {
       if (payload.filter_type === "class") {
         state.summaryReportOptions.school_id = payload.school_id;
@@ -1584,6 +1608,21 @@ const { actions, reducer } = createSlice({
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getListTeacherMissedLessons>>
     ) => {
       state.listTeacherMissedLessons = payload;
+    },
+    [getAssignmentsCompletion.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentsCompletion>>) => {
+      state.assignmentsCompletion = payload;
+    },
+    [getLearnOutcomeClassAttendance.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeClassAttendance>>
+    ) => {
+      state.learnOutcomeClassAttendance = payload;
+    },
+    [getLearnOutcomeAchievement.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeAchievement>>
+    ) => {
+      state.learnOutcomeAchievement = payload;
     },
   },
 });

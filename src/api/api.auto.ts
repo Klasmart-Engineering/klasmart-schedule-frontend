@@ -325,6 +325,21 @@ export interface EntityAssessmentsSummary {
   in_progress?: number;
 }
 
+export interface EntityAssignmentCompletionRate {
+  class_designated_subject?: number;
+  duration?: string;
+  student_designated_subject?: number;
+  student_non_designated_subject?: number;
+}
+
+export interface EntityAssignmentRequest {
+  class_id: string;
+  durations?: string[];
+  selected_subject_id_list?: string[];
+  student_id: string;
+  un_selected_subject_id_list?: string[];
+}
+
 export interface EntityAssignmentsSummaryItem {
   assessment_id?: string;
   assessment_title?: string;
@@ -428,6 +443,21 @@ export interface EntityBatchDeleteAuthedContentByOrgsRequest {
   content_ids?: string[];
   folder_ids?: string[];
   org_ids?: string[];
+}
+
+export interface EntityClassAttendanceRequest {
+  class_id: string;
+  durations?: string[];
+  selected_subject_id_list?: string[];
+  student_id: string;
+  un_selected_subject_id_list?: string[];
+}
+
+export interface EntityClassAttendanceResponseItem {
+  attendance_percentage?: number;
+  class_average_attendance_percentage?: number;
+  duration?: string;
+  un_selected_subjects_average_attendance_percentage?: number;
 }
 
 export interface EntityClassEventBody {
@@ -724,6 +754,30 @@ export interface EntityJwtToken {
   token?: string;
 }
 
+export interface EntityLearnOutcomeAchievementRequest {
+  class_id: string;
+  durations?: string[];
+  selected_subject_id_list?: string[];
+  student_id: string;
+  un_selected_subject_id_list?: string[];
+}
+
+export interface EntityLearnOutcomeAchievementResponse {
+  class_average_achieved_count?: number;
+  first_achieved_count?: number;
+  items?: EntityLearnOutcomeAchievementResponseItem[];
+  re_achieved_count?: number;
+  un_selected_subjects_average_achieve_count?: number;
+}
+
+export interface EntityLearnOutcomeAchievementResponseItem {
+  class_average_achieve_percent?: number;
+  duration?: string;
+  first_achieved_percentage?: number;
+  re_achieved_percentage?: number;
+  un_selected_subjects_average_achieve_percentage?: number;
+}
+
 export interface EntityLearningSummaryFilterWeek {
   week_end?: number;
   week_start?: number;
@@ -949,22 +1003,6 @@ export interface EntityQueryAssignmentsSummaryResult {
   home_fun_study_count?: number;
   items?: EntityAssignmentsSummaryItem[];
   study_count?: number;
-}
-
-export interface EntityQueryLearningSummaryRemainingFilterResultItem {
-  class_id?: string;
-  class_name?: string;
-  school_id?: string;
-  school_name?: string;
-  student_id?: string;
-  student_name?: string;
-  subject_id?: string;
-  subject_name?: string;
-  teacher_id?: string;
-  teacher_name?: string;
-  week_end?: number;
-  week_start?: number;
-  year?: number;
 }
 
 export interface EntityQueryLiveClassesSummaryResult {
@@ -3593,31 +3631,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports/learningSummary
-     * @name queryLearningSummaryRemainingFilter
-     * @summary query remaining learning summary filter
-     * @request GET:/reports/learning_summary/remaining_filter
-     * @description query remaining learning summary filter
-     */
-    queryLearningSummaryRemainingFilter: (
-      query: {
-        summary_type: "live_class" | "assignment";
-        filter_type: "school" | "class" | "teacher" | "student" | "subject";
-        week_start?: number;
-        week_end?: number;
-        school_id?: string;
-        class_id?: string;
-        teacher_id?: string;
-        student_id?: string;
-      },
-      params?: RequestParams
-    ) =>
-      this.request<
-        EntityQueryLearningSummaryRemainingFilterResultItem[],
-        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
-      >(`/reports/learning_summary/remaining_filter${this.addQueryParams(query)}`, "GET", params),
-
-    /**
-     * @tags reports/learningSummary
      * @name queryLearningSummaryTimeFilter
      * @summary query learning summary time filter
      * @request GET:/reports/learning_summary/time_filter
@@ -3668,6 +3681,48 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         EntityGetStudentPerformanceReportResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/performance/students/${id}${this.addQueryParams(query)}`, "GET", params),
+
+    /**
+     * @tags reports/studentProgress
+     * @name getAssignmentsCompletion
+     * @summary getAssignmentsCompletion
+     * @request POST:/reports/student_progress/assignment_completion
+     */
+    getAssignmentsCompletion: (request: EntityAssignmentRequest, params?: RequestParams) =>
+      this.request<EntityAssignmentCompletionRate[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_progress/assignment_completion`,
+        "POST",
+        params,
+        request
+      ),
+
+    /**
+     * @tags reports/studentProgress
+     * @name getLearnOutcomeClassAttendance
+     * @summary getClassAttendance
+     * @request POST:/reports/student_progress/class_attendance
+     */
+    getLearnOutcomeClassAttendance: (request: EntityClassAttendanceRequest, params?: RequestParams) =>
+      this.request<EntityClassAttendanceResponseItem[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_progress/class_attendance`,
+        "POST",
+        params,
+        request
+      ),
+
+    /**
+     * @tags reports/studentProgress
+     * @name getLearnOutcomeAchievement
+     * @summary getLearnOutcomeAchievement
+     * @request POST:/reports/student_progress/learn_outcome_achievement
+     */
+    getLearnOutcomeAchievement: (request: EntityLearnOutcomeAchievementRequest, params?: RequestParams) =>
+      this.request<EntityLearnOutcomeAchievementResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/student_progress/learn_outcome_achievement`,
+        "POST",
+        params,
+        request
+      ),
 
     /**
      * @tags reports/studentUsage

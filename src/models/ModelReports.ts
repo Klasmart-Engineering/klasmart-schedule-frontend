@@ -4,7 +4,7 @@ import { Class, School, User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem
+  EntityStudentAchievementReportCategoryItem,
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d } from "../locale/LocaleManager";
@@ -331,6 +331,77 @@ export function getAllUsers(
   return allSchools;
 }
 export function getDurationByDay(day: number) {
-  const currentDate = moment().startOf('day').unix();
+  const currentDate = moment().startOf("day").unix();
   return `${currentDate - 3600 * 24 * day}-${currentDate}`;
+}
+
+export function mGetDate(year: number, month: number) {
+  var d = new Date(year, month, 0);
+  return d.getDate();
+}
+
+export function formatDate(time: string) {
+  var date = new Date(time);
+  return Math.floor(date.getTime() / 1000);
+}
+
+export function getSixMonths() {
+  var data = new Date("2021/01/01 12:00:00");
+  var year = data.getFullYear();
+  var month = data.getMonth() + 1;
+  var day = data.getDate();
+  if (day === 1) {
+    if (month === 1) {
+      year = year - 1;
+      month = 12;
+    } else {
+      month = month - 1;
+    }
+    day = mGetDate(year, month) + 1;
+  }
+  var lastDate = formatDate(`${year}/${month}/01 00:00:00`) + " - " + formatDate(`${year}/${month}/${day - 1} 23:59:59`);
+  var arry = [];
+  for (var i = 0; i < 5; i++) {
+    month = month - 1;
+    if (month <= 0) {
+      year = year - 1;
+      month = month + 12;
+    }
+    if (month < 10) {
+      month = Number("0" + month);
+    }
+    arry[i] =
+      formatDate(year + "/" + month + "/01 00:00:00") + " - " + formatDate(year + "/" + month + "/" + mGetDate(year, month) + " 23:59:59");
+  }
+  arry.unshift(lastDate);
+  return arry.reverse();
+}
+
+export function getFourWeeks() {
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
+  var day = date.getDate();
+  var dd = date.getDay();
+  if (dd === 0) {
+    dd = 7;
+  }
+  if (day <= dd) {
+    if (month === 1) {
+      year = year - 1;
+      month = 12;
+    } else {
+      month = month - 1;
+    }
+    day = mGetDate(year, month) + day - dd;
+  } else {
+    day = day - dd;
+  }
+
+  var newDate = formatDate(`${year}/${month}/${day} 23:59:59`);
+  var array = [];
+  for (var i = 1; i <= 4; i++) {
+    array.unshift(`${newDate - 3600 * 24 * i * 7 + 1} - ${newDate - 3600 * 24 * (i - 1) * 7}`);
+  }
+  return array;
 }

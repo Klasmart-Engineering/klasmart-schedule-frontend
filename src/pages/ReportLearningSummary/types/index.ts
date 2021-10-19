@@ -29,13 +29,27 @@ export type AssignmentSummaryResultItem = NonNullable<AssignmentSummaryResult["i
 export type ReportInfoBaseProps = {
   liveClassSummary: LiveClassesSummaryResult;
   assignmentSummary: AssignmentSummaryResult;
-  reportType: QueryLearningSummaryRemainingFilterCondition["summary_type"];
+  reportType: QueryLearningSummaryTimeFilterCondition["summary_type"];
   onChangeLessonIndex: (index: number) => void;
 };
-
-export type QueryLearningSummaryRemainingFilterCondition = NonNullRecordValue<
-  NonNullable<Parameters<typeof api.reports.queryLearningSummaryRemainingFilter>[0]>
+export type QueryLearningSummaryTimeFilterCondition = NonNullRecordValue<
+  NonNullable<Parameters<typeof api.reports.queryLearningSummaryTimeFilter>[0]>
 >;
+export type QueryLearningSummaryRemainingFilterCondition = {
+  class_id?: string;
+  class_name?: string;
+  school_id?: string;
+  school_name?: string;
+  student_id?: string;
+  student_name?: string;
+  subject_id?: string;
+  subject_name?: string;
+  teacher_id?: string;
+  teacher_name?: string;
+  week_end?: number;
+  week_start?: number;
+  year?: number;
+};
 export type ArrProps = {
   id: string | undefined;
   name: string | undefined;
