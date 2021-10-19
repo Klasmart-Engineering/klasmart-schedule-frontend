@@ -732,14 +732,15 @@ interface listTeacherLoadLessonsResponse {
 
 interface ListTeacherLoadLessonRequest extends EntityTeacherLoadLessonRequest {
   metaLoading: boolean;
+  allTeacher_ids?: string[];
 }
 
 export const getLessonTeacherLoad = createAsyncThunk<listTeacherLoadLessonsResponse, ListTeacherLoadLessonRequest>(
   "listTeacherLoadLessons",
-  async ({ metaLoading, ...query }) => {
+  async ({ metaLoading, allTeacher_ids, ...query }) => {
     return {
       lessonList: await api.reports.listTeacherLoadLessons(query),
-      lessonSummary: await api.reports.summaryTeacherLoadLessons(query),
+      lessonSummary: await api.reports.summaryTeacherLoadLessons({ ...query, teacher_ids: allTeacher_ids }),
     };
   }
 );

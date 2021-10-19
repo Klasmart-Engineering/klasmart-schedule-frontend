@@ -350,9 +350,6 @@ export function H5pPreview(props: H5pPreview) {
             {classType === "Homework" && (
               <Typography className={css.btnFontSize}>{d("KidsLoop Study").t("schedule_preview_study")}</Typography>
             )}
-            {classType === "Task" && (
-              <Typography className={css.btnFontSize}>{d("Live Class").t("library_label_kidsloop_live")}</Typography>
-            )}
           </Box>
         </Box>
       </Box>
