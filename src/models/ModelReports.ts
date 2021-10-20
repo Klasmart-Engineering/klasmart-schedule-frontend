@@ -135,16 +135,16 @@ interface Time2colorLevelResponse {
   min: number;
 }
 export function time2colorLevel(seconds: number): Time2colorLevelResponse {
-  if (seconds === 0) return { color: "rgba(233,190,189,1)", hour: 0, min: 0 };
+  if (seconds === 0) return { color: "rgba(174,174,174,0.15)", hour: 0, min: 0 };
   const hour = Math.floor(seconds / 3600);
   const min = Math.floor((seconds % 3600) / 60);
-  let color = "rgba(0,80,150,1)";
+  let color = "rgba(0,98,255,1)";
   if (hour < 2) {
-    color = "rgba(204,134,132,1)";
+    color = "rgba(230,239,255,1)";
   } else if (hour < 4) {
-    color = "rgba(173,132,192,1)";
+    color = "rgba(163,199,255,1)";
   } else if (hour < 6) {
-    color = "rgba(14,120,213,1)";
+    color = "rgba(74,144,255,1)";
   }
   return { color, hour, min };
 }

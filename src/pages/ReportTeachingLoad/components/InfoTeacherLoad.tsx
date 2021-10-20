@@ -37,23 +37,23 @@ export function InfoTeacherLoad() {
   const infoList: InfoListItem[] = [
     {
       title: d("0 Hour").t("report_label_0_hour"),
-      color: "rgba(233,190,189,1)",
+      color: "rgba(174,174,174,0.15)",
     },
     {
       title: d("0~2 Hours").t("report_label_0_2_hours"),
-      color: "rgba(204,134,132,1)",
+      color: "rgba(230,239,255,1)",
     },
     {
       title: d("2~4 Hours").t("report_label_2_4_hours"),
-      color: "rgba(173,132,192,1)",
+      color: "rgba(163,199,255,1)",
     },
     {
       title: d("4~6 Hours").t("report_label_4_6_hours"),
-      color: "rgba(14,120,213,1)",
+      color: "rgba(74,144,255,1)",
     },
     {
       title: d("More than 6 Hours").t("report_label_more_than_6_hours"),
-      color: "rgba(0,80,150,1)",
+      color: "rgba(0,98,255,1)",
     },
   ];
   return (
