@@ -39,6 +39,7 @@ import {
   SchoolByUserQueryDocument,
   GetSchoolsFilterListDocument,
   GetClassFilterListDocument,
+  GetUserDocument,
   SchoolByUserQueryQuery,
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
@@ -51,6 +52,8 @@ import {
   GetSchoolsFilterListQueryVariables,
   GetClassFilterListQuery,
   GetClassFilterListQueryVariables,
+  GetUserQuery,
+  GetUserQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -785,6 +788,20 @@ export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, I
   }
 );
 
+export const getUsers = createAsyncThunk<GetUserQuery, GetUserQueryVariables & LoadingMetaPayload>(
+  "getUsers",
+  // @ts-ignore
+  ({ filter, direction }) => {
+    return gqlapi.query<GetUserQuery, GetUserQueryVariables>({
+      query: GetUserDocument,
+      variables: {
+        filter: filter,
+        direction: direction,
+      },
+    });
+  }
+);
+
 export interface LinkedMockOptions {
   developmental?: LinkedMockOptionsItem[];
   skills?: LinkedMockOptionsItem[];
@@ -955,6 +972,9 @@ const { actions, reducer } = createSlice({
       state.schoolsConnection = payload.data;
     },
     [getClassFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.classesConnection = payload.data;
+    },
+    [getUsers.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.classesConnection = payload.data;
     },
   },

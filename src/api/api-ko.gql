@@ -570,3 +570,23 @@ query getClassFilterList($filter: ClassFilter, $direction: ConnectionDirection!,
     }
   }
 }
+
+query getUser($filter: UserFilter, $direction: ConnectionDirection!) {
+  usersConnection(
+    direction: $direction,
+    filter: $filter
+  ) {
+    edges {
+      node {
+        id
+        givenName
+        familyName
+        status
+        roles {
+          id
+          name
+        }
+      }
+    }
+  }
+}
