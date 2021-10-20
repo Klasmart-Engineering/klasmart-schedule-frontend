@@ -1095,7 +1095,7 @@ export interface EntityScheduleAddView {
   class_id?: string;
   class_roster_student_ids?: string[];
   class_roster_teacher_ids?: string[];
-  class_type?: "OnlineClass" | "OfflineClass" | "Homework";
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -1122,7 +1122,7 @@ export interface EntityScheduleDetailsView {
   class?: EntityScheduleAccessibleUserView;
   class_roster_students?: EntityScheduleAccessibleUserView[];
   class_roster_teachers?: EntityScheduleAccessibleUserView[];
-  class_type?: "OnlineClass" | "OfflineClass" | "Homework";
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
   description?: string;
@@ -1193,7 +1193,7 @@ export interface EntityScheduleLessonPlanMaterial {
 
 export interface EntityScheduleListView {
   class_id?: string;
-  class_type?: "OnlineClass" | "OfflineClass" | "Homework";
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
   due_at?: number;
@@ -1242,7 +1242,7 @@ export interface EntityScheduleShortInfo {
 
 export interface EntityScheduleTimeView {
   class_id?: string;
-  class_type?: "OnlineClass" | "OfflineClass" | "Homework";
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   due_at?: number;
   end_at?: number;
   id?: string;
@@ -1272,7 +1272,7 @@ export interface EntityScheduleUpdateView {
   class_id?: string;
   class_roster_student_ids?: string[];
   class_roster_teacher_ids?: string[];
-  class_type?: "OnlineClass" | "OfflineClass" | "Homework";
+  class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   description?: string;
   due_at?: number;
   end_at?: number;
