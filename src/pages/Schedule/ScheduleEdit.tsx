@@ -23,8 +23,10 @@ import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { enAU, id, ko, vi, zhCN, es } from "date-fns/esm/locale";
+import clsx from "clsx";
+import { enAU, es, id, ko, th, vi, zhCN } from "date-fns/esm/locale";
 import React, { useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Maybe, User } from "../../api/api-ko-schema.auto";
@@ -46,6 +48,7 @@ import { actError, actSuccess } from "../../reducers/notify";
 import {
   actOutcomeList,
   changeParticipants,
+  getProgramChild,
   getScheduleLiveToken,
   getScheduleMockOptionsResponse,
   getScheduleParticipant,
@@ -54,13 +57,12 @@ import {
   getSubjectByProgramId,
   initScheduleDetial,
   removeSchedule,
+  resetActOutcomeList,
   resetParticipantList,
   resetScheduleDetial,
   saveScheduleData,
   ScheduleFilterPrograms,
   scheduleShowOption,
-  resetActOutcomeList,
-  getProgramChild,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -71,26 +73,24 @@ import {
   EntityScheduleSchoolInfo,
   filterOptionItem,
   FilterQueryTypeProps,
+  LearningComesFilterQuery,
+  LearningContentListForm,
   memberType,
   modeViewType,
   ParticipantsData,
   ParticipantsShortInfo,
   repeatOptionsType,
   timestampType,
-  LearningContentListForm,
-  LearningComesFilterQuery,
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
+import LearingOutcome from "./LearingOutcome";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import LearingOutcome from "./LearingOutcome";
-import { useForm } from "react-hook-form";
-import clsx from "clsx";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -318,7 +318,7 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
-  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es };
+  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th };
 
   return (
     <Box className={css.smallCalendarBox}>
