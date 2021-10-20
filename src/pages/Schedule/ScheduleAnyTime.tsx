@@ -216,7 +216,7 @@ function AnyTimeSchedule(props: SearchListProps) {
   const handleDelete = useCallback(
     (scheduleInfo: EntityScheduleListView) => {
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.class_type_label?.id === "Homework") {
+      if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
         if (scheduleInfo.due_at !== 0 && (scheduleInfo.due_at as number) * 1000 < currentTime) {
           changeModalDate({
             title: "",
@@ -329,7 +329,7 @@ function AnyTimeSchedule(props: SearchListProps) {
 
   const handleEditSchedule = (scheduleInfo: EntityScheduleListView): void => {
     const currentTime = Math.floor(new Date().getTime());
-    if (scheduleInfo.class_type_label?.id === "Homework") {
+    if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
       if (scheduleInfo.exist_assessment && !scheduleInfo.is_home_fun) {
         changeModalDate({
           title: "",

@@ -549,7 +549,7 @@ function EditBox(props: CalendarStateProps) {
       const newData: EntityScheduleAddView = {
         attachment: scheduleDetial.attachment,
         class_id: scheduleDetial.class?.id || "",
-        class_type: (scheduleDetial.class_type_label?.id as "OnlineClass" | "OfflineClass" | "Homework") || "",
+        class_type: (scheduleDetial.class_type_label?.id as "Task" | "OnlineClass" | "OfflineClass" | "Homework") || "",
         description: scheduleDetial.description,
         due_at: scheduleDetial.due_at,
         end_at: scheduleDetial.end_at || (scheduleDetial.due_at as number),
@@ -831,7 +831,12 @@ function EditBox(props: CalendarStateProps) {
 
   const validatorFun = () => {
     let verificaPath = true;
-    const validator = checkedStatus.homeFunCheck ? { ...taskValidator, program_id: false } : isValidator;
+    const validator =
+      scheduleList.class_type === "Task"
+        ? taskValidator
+        : checkedStatus.homeFunCheck
+        ? { ...taskValidator, program_id: false }
+        : isValidator;
 
     for (let name in scheduleList) {
       if (validator.hasOwnProperty(name)) {
@@ -869,12 +874,15 @@ function EditBox(props: CalendarStateProps) {
     const currentTime = Math.floor(new Date().getTime() / 1000);
     // @ts-ignore
     const dueDateTimestamp = timestampInt(selectedDueDate.getTime() / 1000);
-    if (checkedStatus.dueDateCheck && scheduleList.class_type === "Homework") {
-      if (dueDateTimestamp <= scheduleList.end_at! && scheduleList.class_type !== "Homework") {
+    if (checkedStatus.dueDateCheck && (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task")) {
+      if (dueDateTimestamp <= scheduleList.end_at! && scheduleList.class_type !== "Homework" && scheduleList.class_type !== "Task") {
         dispatch(actError(d("The due date cannot be earlier than the scheduled class end time.").t("schedule_msg_due_date_earlier")));
         return;
       }
-      if (scheduleList.class_type === "Homework" && timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime) {
+      if (
+        (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") &&
+        timestampToTime(dueDateTimestamp, "all_day_end") <= currentTime
+      ) {
         dispatch(actError(d("Due date cannot be earlier than today.").t("schedule_msg_earlier_today")));
         return;
       }
@@ -939,7 +947,7 @@ function EditBox(props: CalendarStateProps) {
       addData["outcome_ids"] = outComeIds;
     }
 
-    if (scheduleList.class_type === "Homework") addData["is_force"] = true;
+    if (scheduleList.class_type === "Homework" || scheduleList.class_type === "Task") addData["is_force"] = true;
 
     // participants && class roster collision detection
     const participantsIsEmpty: boolean = !(participantsIds?.student.length || participantsIds?.teacher.length);
@@ -1163,6 +1171,7 @@ function EditBox(props: CalendarStateProps) {
       scheduleDetial &&
       scheduleList.start_at &&
       scheduleList.start_at - currentTime < 15 * 60 &&
+      scheduleList.class_type !== "Task" &&
       scheduleList.class_type !== "Homework"
     ) {
       changeModalDate({
@@ -1350,7 +1359,7 @@ function EditBox(props: CalendarStateProps) {
       feedBackNoticeDelete();
       return;
     }
-    if (scheduleDetial.class_type === "Homework") {
+    if (scheduleDetial.class_type === "Homework" || scheduleDetial.class_type === "Task") {
       if (scheduleDetial.due_at && scheduleDetial.due_at !== 0 && scheduleDetial.due_at < currentTime) {
         changeModalDate({
           title: "",
@@ -1628,6 +1637,14 @@ function EditBox(props: CalendarStateProps) {
     return JSON.stringify(item) === "[]";
   };
 
+  const repeatHide = () => {
+    return scheduleList.class_type === "Task" && checkedStatus.dueDateCheck;
+  };
+
+  const dueDataHide = () => {
+    return scheduleList.class_type === "Task" && checkedStatus.repeatCheck;
+  };
+
   const conditionFormMethods = useForm<LearningContentListForm>();
   const { getValues } = conditionFormMethods;
   const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
@@ -1894,17 +1911,19 @@ function EditBox(props: CalendarStateProps) {
                 control={<Checkbox name="allDayCheck" color="primary" checked={checkedStatus.allDayCheck} onChange={handleCheck} />}
                 label={d("All day").t("schedule_detail_all_day")}
               />
-              <FormControlLabel
-                disabled={isScheduleExpired() || isLimit()}
-                control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
-                label={d("Repeat").t("schedule_detail_repeat")}
-              />
+              {!repeatHide() && (
+                <FormControlLabel
+                  disabled={isScheduleExpired() || isLimit()}
+                  control={<Checkbox name="repeatCheck" color="primary" checked={checkedStatus.repeatCheck} onChange={handleCheck} />}
+                  label={d("Repeat").t("schedule_detail_repeat")}
+                />
+              )}
             </FormGroup>
           </Box>
         )}
         <Box
           style={{
-            display: scheduleList?.class_type === "Homework" ? "block" : "none",
+            display: (scheduleList?.class_type === "Task" || scheduleList?.class_type === "Homework") && !dueDataHide() ? "block" : "none",
           }}
         >
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -2156,7 +2175,7 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Box>
         )}
-        {!(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
+        {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
           <Autocomplete
             id="combo-box-demo"
             freeSolo
@@ -2176,89 +2195,91 @@ function EditBox(props: CalendarStateProps) {
                 error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
                 value={scheduleList.lesson_plan_id}
                 variant="outlined"
-                required={true}
+                required={scheduleList.class_type !== "Task"}
               />
             )}
           />
         )}
-        <>
-          {!(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
-            <span
-              style={{ color: "#0E78D5", cursor: "pointer", fontSize: "14px" }}
-              onClick={() => {
-                setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
-              }}
-            >
-              {linkageLessonPlanOpen ? (
-                <>
-                  {d("See Less").t("assess_detail_see_less")} <ExpandLessOutlined style={{ position: "absolute" }} />
-                </>
-              ) : (
-                <>
-                  {d("See More").t("schedule_detail_see_more")} <ExpandMoreOutlined style={{ position: "absolute" }} />
-                </>
-              )}
-            </span>
-          )}
-          <Collapse in={linkageLessonPlanOpen || (checkedStatus.homeFunCheck && scheduleList.class_type === "Homework")}>
-            <Paper elevation={0} className={css.paper}>
-              {menuItemListMaterial() && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
-                <Box style={{ position: "relative" }}>
-                  <span className={css.rosterNotice}>
-                    {d("Lesson Material").t("schedule_detail_lesson_material")} <span style={{ color: "#D32F2F" }}>*</span>
-                  </span>
-                  <Box className={css.participantSaveBox} style={{ padding: "0px" }}>
-                    {menuItemListMaterial()}
+        {scheduleList.class_type !== "Task" && (
+          <>
+            {!(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
+              <span
+                style={{ color: "#0E78D5", cursor: "pointer", fontSize: "14px" }}
+                onClick={() => {
+                  setLinkageLessonPlanOpen(!linkageLessonPlanOpen);
+                }}
+              >
+                {linkageLessonPlanOpen ? (
+                  <>
+                    {d("See Less").t("assess_detail_see_less")} <ExpandLessOutlined style={{ position: "absolute" }} />
+                  </>
+                ) : (
+                  <>
+                    {d("See More").t("schedule_detail_see_more")} <ExpandMoreOutlined style={{ position: "absolute" }} />
+                  </>
+                )}
+              </span>
+            )}
+            <Collapse in={linkageLessonPlanOpen || (checkedStatus.homeFunCheck && scheduleList.class_type === "Homework")}>
+              <Paper elevation={0} className={css.paper}>
+                {menuItemListMaterial() && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
+                  <Box style={{ position: "relative" }}>
+                    <span className={css.rosterNotice}>
+                      {d("Lesson Material").t("schedule_detail_lesson_material")} <span style={{ color: "#D32F2F" }}>*</span>
+                    </span>
+                    <Box className={css.participantSaveBox} style={{ padding: "0px" }}>
+                      {menuItemListMaterial()}
+                    </Box>
                   </Box>
-                </Box>
-              )}
-              <Autocomplete
-                id="combo-box-demo"
-                options={modelSchedule.Deduplication(
-                  modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
                 )}
-                getOptionLabel={(option: any) => option.name}
-                onChange={(e: any, newValue) => {
-                  autocompleteChange(newValue, "program_id");
-                }}
-                value={programItem}
-                disabled={isScheduleExpired() || isLimit()}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    className={css.fieldset}
-                    label={d("Program").t("assess_label_program")}
-                    variant="outlined"
-                    error={validator.program_id && !scheduleList.program_id}
-                    value={scheduleList.program_id}
-                    required
-                  />
-                )}
-              />
-              <Autocomplete
-                multiple
-                id="combo-box-demo"
-                options={modelSchedule.Deduplication(scheduleMockOptions.subjectList.concat(subjectItem!))}
-                getOptionLabel={(option: any) => option.name}
-                onChange={(e: any, newValue) => {
-                  autocompleteChange(newValue, "subject_id");
-                }}
-                value={subjectItem}
-                disabled={isScheduleExpired() || isLimit() || !scheduleList.program_id}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    className={css.fieldset}
-                    label={d("Subject").t("assess_label_subject")}
-                    variant="outlined"
-                    value={scheduleList.subject_ids}
-                    disabled={isScheduleExpired() || isLimit()}
-                  />
-                )}
-              />
-            </Paper>
-          </Collapse>
-        </>
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={modelSchedule.Deduplication(
+                    modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
+                  )}
+                  getOptionLabel={(option: any) => option.name}
+                  onChange={(e: any, newValue) => {
+                    autocompleteChange(newValue, "program_id");
+                  }}
+                  value={programItem}
+                  disabled={isScheduleExpired() || isLimit()}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      className={css.fieldset}
+                      label={d("Program").t("assess_label_program")}
+                      variant="outlined"
+                      error={validator.program_id && !scheduleList.program_id}
+                      value={scheduleList.program_id}
+                      required
+                    />
+                  )}
+                />
+                <Autocomplete
+                  multiple
+                  id="combo-box-demo"
+                  options={modelSchedule.Deduplication(scheduleMockOptions.subjectList.concat(subjectItem!))}
+                  getOptionLabel={(option: any) => option.name}
+                  onChange={(e: any, newValue) => {
+                    autocompleteChange(newValue, "subject_id");
+                  }}
+                  value={subjectItem}
+                  disabled={isScheduleExpired() || isLimit() || !scheduleList.program_id}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      className={css.fieldset}
+                      label={d("Subject").t("assess_label_subject")}
+                      variant="outlined"
+                      value={scheduleList.subject_ids}
+                      disabled={isScheduleExpired() || isLimit()}
+                    />
+                  )}
+                />
+              </Paper>
+            </Collapse>
+          </>
+        )}
         {checkedStatus.homeFunCheck && !privilegedMembers("Student") && scheduleDetial.role_type !== "Student" && (
           <Box className={css.fieldBox} style={{ position: "relative" }}>
             <Autocomplete
@@ -2347,7 +2368,7 @@ function EditBox(props: CalendarStateProps) {
               </Button>
             </Box>
           )}
-        {!checkedStatus.homeFunCheck && (
+        {scheduleList.class_type !== "Task" && !checkedStatus.homeFunCheck && (
           <Box
             className={css.fieldset}
             style={{
