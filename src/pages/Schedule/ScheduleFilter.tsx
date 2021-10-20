@@ -425,7 +425,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
   };
   return (
     <Box>
-      <p onClick={handleChange} className={css.schoolTemplateStyleTitle}>
+      <div onClick={handleChange} className={css.schoolTemplateStyleTitle} style={{ marginBlockStart: "1em", marginBlockEnd: "1em" }}>
         <span>
           {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
           {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
@@ -433,10 +433,10 @@ function SchoolTemplate(props: SchoolTemplateProps) {
         <div className={clsx(css.changeColor, css.subsets)} style={{ width: "83%", paddingLeft: "1em" }}>
           {d("All My Schools").t("schedule_filter_all_my_schools")}
         </div>
-      </p>
+      </div>
       <Collapse in={checked}>
         {((schoolsConnection?.schoolsConnection?.totalCount ?? 0) > 5 || searchValue) && (
-          <p style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center", marginBlockStart: "1em", marginBlockEnd: "1em" }}>
             <TextField
               id="filled-size-small"
               size="small"
@@ -445,12 +445,12 @@ function SchoolTemplate(props: SchoolTemplateProps) {
                 getSeacherResult(e.target.value);
               }}
             />
-          </p>
+          </div>
         )}
         <div>
           {(edges.length ? edges : schoolsConnection?.schoolsConnection?.edges)?.map((item: any) => {
             return (
-              <p className={css.schoolTemplateStyleLabel}>
+              <div className={css.schoolTemplateStyleLabel} style={{ marginBlockStart: "1em", marginBlockEnd: "1em" }} key={item?.node?.id}>
                 <Checkbox color="primary" inputProps={{ "aria-label": "primary checkbox" }} style={{ visibility: "hidden" }} />
                 <div
                   className={clsx(css.changeColor, css.label)}
@@ -461,7 +461,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
                 >
                   {item?.node?.name}
                 </div>
-              </p>
+              </div>
             );
           })}
         </div>
@@ -733,7 +733,7 @@ function FilterTemplate(props: FilterProps) {
     return treeItem.map((item: FilterDataItemsProps) => {
       return (
         !item.isHide && (
-          <>
+          <div key={item.id}>
             {["School+1", "Programs+1"].includes(item.id) && <div className={css.fliterRouter}></div>}
             <StyledTreeItem
               nodeId={item.id}
@@ -755,7 +755,7 @@ function FilterTemplate(props: FilterProps) {
             >
               {item.child && styledTreeItemTemplate(item.child)}
             </StyledTreeItem>
-          </>
+          </div>
         )
       );
     });
@@ -777,7 +777,6 @@ function FilterTemplate(props: FilterProps) {
       )}
       <TreeView
         className={css.containerRoot}
-        defaultExpanded={["1"]}
         defaultCollapseIcon={<KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
         defaultExpandIcon={<KeyboardArrowDownOutlinedIcon className={css.filterArrow} style={{ cursor: "pointer" }} />}
         multiSelect
