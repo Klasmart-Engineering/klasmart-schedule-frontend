@@ -21,7 +21,7 @@ export default function () {
       label: t("report_label_student_assignments_completion_rate"),
       data: 387,
       // data: Math.ceil(assignmentsCompletion.reduce((prev, current) => {
-      //  return prev + item.student_designated_subject
+      //  return prev + current.student_designated_subject
       // }, 0) / assignmentsCompletion.length * 100) + "%"
       idx: 0,
     },
@@ -29,7 +29,7 @@ export default function () {
       label: t("report_label_class_average_assignments_completion_rate"),
       data: 361,
       // data: Math.ceil(assignmentsCompletion.reduce((prev, current) => {
-      //  return prev + item.class_designated_subject
+      //  return prev + current.class_designated_subject
       // }, 0) / assignmentsCompletion.length * 100) + "%"
       idx: 1,
     },
@@ -37,7 +37,7 @@ export default function () {
       label: t("report_label_subject_average_assignments_completion_rate"),
       data: 358,
       // data: Math.ceil(assignmentsCompletion.reduce((prev, current) => {
-      //  return prev + item.student_non_designated_subject
+      //  return prev + current.student_non_designated_subject
       // }, 0) / assignmentsCompletion.length * 100) + "%"
       idx: 2,
     },

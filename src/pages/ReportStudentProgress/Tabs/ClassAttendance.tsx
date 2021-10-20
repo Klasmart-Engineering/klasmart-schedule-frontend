@@ -21,24 +21,24 @@ export default function () {
     {
       label: t("report_label_student_attendance_rate"),
       data: 387,
-      // data: Math.ceil(learnOutcomeClassAttendance.reduce((prev, current) => {
-      //  return prev + item.attendance_percentage
+      // data: Math.ceil(learnOutcomeClassAttendance?.items.reduce((prev, current) => {
+      //  return prev + current.attendance_percentage
       // }, 0) / learnOutcomeClassAttendance.length * 100) + "%"
       idx: 0,
     },
     {
       label: t("report_label_class_average_attendance_rate"),
       data: 361,
-      // data: Math.ceil(learnOutcomeClassAttendance.reduce((prev, current) => {
-      //  return prev + item.class_average_attendance_percentage
+      // data: Math.ceil(learnOutcomeClassAttendance?.items.reduce((prev, current) => {
+      //  return prev + current.class_average_attendance_percentage
       // }, 0) / learnOutcomeClassAttendance.length * 100) + "%"
       idx: 1,
     },
     {
       label: t("report_label_subject_average_attendance_rate"),
       data: 358,
-      // data: Math.ceil(learnOutcomeClassAttendance.reduce((prev, current) => {
-      //  return prev + item.un_selected_subjects_average_attendance_percentage
+      // data: Math.ceil(learnOutcomeClassAttendance?.items.reduce((prev, current) => {
+      //  return prev + current.un_selected_subjects_average_attendance_percentage
       // }, 0) / learnOutcomeClassAttendance.length * 100) + "%"
       idx: 2,
     },

@@ -40,7 +40,7 @@ export default function () {
     {
       label: t("report_label_total_achieved_lo_subject_average"),
       data: 387,
-      // data: learnOutcomeAchievement["un_selected_subjects_average_achieve_count"],
+      // data: learnOutcomeAchievement["un_selected_subjects_average_achieved_count"],
       idx: 3,
     },
   ];
