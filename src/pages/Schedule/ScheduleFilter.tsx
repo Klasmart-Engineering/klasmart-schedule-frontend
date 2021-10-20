@@ -767,7 +767,7 @@ function FilterTemplate(props: FilterProps) {
 
   return (
     <>
-      {schoolsConnection?.schoolsConnection?.edges && (
+      {schoolsConnection?.schoolsConnection?.edges?.length! > 0 && (
         <SchoolTemplate
           openClassMenu={openClassMenu}
           schoolsConnection={schoolsConnection}
