@@ -163,6 +163,7 @@ export const recursiveListFolderItems = async ({
 export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
+  sessionStorage.clear();
   window.history.replaceState(null, document.title, url.toString());
 };
 
@@ -223,10 +224,14 @@ export function apiIsEnableReport() {
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
-  const permission = await api.organizationPermissions.hasOrganizationPermissions({
-    permission_name: premissions,
-  });
-  let returnData: NonNullable<QeuryMeQuery> = {
+  const res = sessionStorage.getItem("permission");
+  if(res){
+    return JSON.parse(res || "");
+  }else {
+    const permission = await api.organizationPermissions.hasOrganizationPermissions({
+     permission_name: premissions,
+   });
+   let returnData: NonNullable<QeuryMeQuery> = {
     me: {
       user_id: "",
       membership: {
@@ -243,5 +248,7 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });
+  sessionStorage.setItem("permission", JSON.stringify(returnData));
   return returnData;
+  }
 }
