@@ -1,14 +1,26 @@
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
 import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
+import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import { PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
+import "moment/locale/en-au";
+import "moment/locale/es";
+import "moment/locale/id";
+import "moment/locale/ko";
+import "moment/locale/th";
+import "moment/locale/vi";
+import "moment/locale/zh-cn";
 import React, { useCallback } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { EntityScheduleTimeView, EntityScheduleViewDetail } from "../../api/api.auto";
 import { d, localeManager } from "../../locale/LocaleManager";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
@@ -16,20 +28,9 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
-import { modeViewType, repeatOptionsType, timestampType, scheduleInfoViewProps, memberType } from "../../types/scheduleTypes";
+import { memberType, modeViewType, repeatOptionsType, scheduleInfoViewProps, timestampType } from "../../types/scheduleTypes";
 import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
-import { EntityScheduleTimeView, EntityScheduleViewDetail } from "../../api/api.auto";
-import "moment/locale/zh-cn";
-import "moment/locale/vi";
-import "moment/locale/ko";
-import "moment/locale/id";
-import "moment/locale/en-au";
-import "moment/locale/es";
-import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
-import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
-import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
-import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -109,7 +110,7 @@ function MyCalendar(props: CalendarProps) {
 
   const views = { work_week: true, day: true, agenda: true, month: true, week: true };
 
-  const lang = { en: "en-au", zh: "zh-cn", vi: "vi", ko: "ko", id: "id", es: "es" };
+  const lang = { en: "en-au", zh: "zh-cn", vi: "vi", ko: "ko", id: "id", es: "es", th: "th" };
 
   // Setup the localizer by providing the moment (or globalize) Object
   // to the correct localizer.
