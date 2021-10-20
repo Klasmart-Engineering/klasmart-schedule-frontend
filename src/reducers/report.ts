@@ -1646,37 +1646,37 @@ const { actions, reducer } = createSlice({
       const data = {
         items: [
           {
-            class_average_achieve_percent: 0,
+            class_average_achieved_percentage: 0,
             duration: "string",
             first_achieved_percentage: 0,
             re_achieved_percentage: 0,
-            un_selected_subjects_average_achieve_percentage: 0,
+            un_selected_subjects_average_achieved_percentage: 0,
           },
           {
-            class_average_achieve_percent: 10,
+            class_average_achieved_percentage: 0,
+            duration: "string",
+            first_achieved_percentage: 0,
+            re_achieved_percentage: 0,
+            un_selected_subjects_average_achieved_percentage: 0,
+          },
+          {
+            class_average_achieved_percentage: 0,
+            duration: "string",
+            first_achieved_percentage: 0,
+            re_achieved_percentage: 0,
+            un_selected_subjects_average_achieved_percentage: 0,
+          },
+          {
+            class_average_achieved_percentage: 10,
             duration: "string",
             first_achieved_percentage: 20,
             re_achieved_percentage: 0,
-            un_selected_subjects_average_achieve_percentage: 0,
-          },
-          {
-            class_average_achieve_percent: 10,
-            duration: "string",
-            first_achieved_percentage: 20,
-            re_achieved_percentage: 0,
-            un_selected_subjects_average_achieve_percentage: 0,
-          },
-          {
-            class_average_achieve_percent: 10,
-            duration: "string",
-            first_achieved_percentage: 20,
-            re_achieved_percentage: 0,
-            un_selected_subjects_average_achieve_percentage: 0,
+            un_selected_subjects_average_achieved_percentage: 0,
           },
         ],
       };
       // const studentName = state.studentList.find(item => item.user_id === payload?.request.student_id)
-      state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(data);
+      state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(data.items);
       // if (payload?.items?.length === 4 ) {
       //  state.fourWeekslearnOutcomeAchievementMassage =  getLearnOutcomeAchievementFeedback(payload?.items, payload)
       //    state.fourWeekslearnOutcomeAchievementMassage =  payload?.items
