@@ -8,12 +8,14 @@ import Typography from "@material-ui/core/Typography";
 import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { TreeItemProps } from "@material-ui/lab/TreeItem";
-import React, { useMemo } from "react";
+import React from "react";
 import { d } from "../../locale/LocaleManager";
 import { FilterDataItemsProps, memberType, FilterItemInfo, FilterSchoolInfo } from "../../types/scheduleTypes";
 import CloseIcon from "@material-ui/icons/Close";
-import Pagination from "@material-ui/lab/Pagination";
 import Tooltip from "@material-ui/core/Tooltip";
+import { ArrowForwardIosOutlined, ArrowBackIosOutlined, LastPageOutlined, FirstPageOutlined } from "@material-ui/icons";
+import IconButton from "@material-ui/core/IconButton";
+import * as Types from "../../api/api-ko-schema.auto";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -255,13 +257,24 @@ function FilterLabel(props: FilterLabelProps) {
 }
 
 function FilterOverall(props: FilterTreeProps) {
-  const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine } = props;
-  const total = classDataBySchool.classes.length;
+  const {
+    classDataBySchool,
+    handleChangeShowAnyTime,
+    pageY,
+    hideClassMenu,
+    handleChangeOnlyMine,
+    stateOnlyMine,
+    total,
+    pageInfo,
+    getClassesConnection,
+  } = props;
+  // const total = classDataBySchool.classes.length;
   const pageSize = 5;
   const [page, setPage] = React.useState(1);
   const [checkMine, setCheckMine] = React.useState(false);
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+  const handleChange = async (cursor: string, direction: "FORWARD" | "BACKWARD", page: number) => {
+    await getClassesConnection(cursor, classDataBySchool.school_id, true, direction);
+    setPage(page);
   };
   const reBytesStr = (str: string, len: number) => {
     let bytesNum = 0;
@@ -278,13 +291,7 @@ function FilterOverall(props: FilterTreeProps) {
     const CharacterCount = 16;
     return value ? reBytesStr(value, CharacterCount) : "";
   };
-  const getClassDataBySchool = useMemo(() => {
-    const classes = classDataBySchool.classes.filter((item, index) => {
-      const condition = page === 1 ? index < pageSize : index > (page - 1) * pageSize - 1 && index < page * pageSize;
-      return condition;
-    });
-    return { ...classDataBySchool, classes: classes };
-  }, [page, pageSize, classDataBySchool]);
+
   const getCLassData = (type: string) => {
     let data: string[] = [];
     if (type === "Mine") {
@@ -326,13 +333,6 @@ function FilterOverall(props: FilterTreeProps) {
     handleChangeOnlyMine(data);
   };
 
-  const stateOnlyMineCheckAll = () => {
-    return classDataBySchool.classes.every((item) => {
-      const cid = `class+${item.class_id}+${classDataBySchool.school_id}`;
-      return stateOnlyMine.includes(cid);
-    });
-  };
-
   const stateOnlyMineCheck = (id: string) => {
     const cid = `class+${id}+${classDataBySchool.school_id}`;
     return stateOnlyMine.includes(cid);
@@ -342,20 +342,8 @@ function FilterOverall(props: FilterTreeProps) {
     <div style={{ textAlign: "center", padding: "16px" }}>{d("No Data").t("schedule_filter_no_data")}</div>
   ) : (
     <>
-      {classDataBySchool.classes.length > 1 && (
-        <FilterLabel
-          handleChangeClassId={handleChangeClassId}
-          class_name={d("Select All Classes").t("schedule_filter_select_all_classes")}
-          class_id="All"
-          showIcon={false}
-          handleChangeShowAnyTime={handleChangeShowAnyTime}
-          hideActive={false}
-          check={stateOnlyMineCheckAll()}
-          disabled={checkMine}
-        />
-      )}
-      <ul style={{ margin: "0px 0px 0px -26px" }}>
-        {getClassDataBySchool.classes.map((item) => {
+      <ul style={{ marginLeft: "-50px" }}>
+        {classDataBySchool.classes.map((item) => {
           return (
             <FilterLabel
               hideActive={true}
@@ -370,21 +358,65 @@ function FilterOverall(props: FilterTreeProps) {
           );
         })}
       </ul>
-
-      <Pagination
-        count={total < pageSize ? 1 : Math.ceil(total / pageSize)}
-        style={{ display: "flex", justifyContent: "center", padding: "12px" }}
-        size="small"
-        page={page}
-        onChange={handleChange}
-      />
+      {pageSize < total && (
+        <Box style={{ display: "flex", justifyContent: "space-evenly", width: "60%", margin: "auto", padding: "2px 0px 3px 0px" }}>
+          <IconButton
+            size="small"
+            color="inherit"
+            disabled={!pageInfo?.hasPreviousPage}
+            onClick={() => {
+              handleChange("", "FORWARD", 1);
+            }}
+          >
+            <FirstPageOutlined fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="inherit"
+            disabled={!pageInfo?.hasPreviousPage}
+            onClick={() => {
+              handleChange(pageInfo?.startCursor as string, "BACKWARD", page - 1);
+            }}
+          >
+            <ArrowBackIosOutlined fontSize="small" style={{ width: "14px" }} />
+          </IconButton>
+          <span
+            style={{
+              fontSize: "14px",
+              paddingTop: "2px",
+            }}
+          >
+            {page}/{Math.ceil(total / pageSize)}
+          </span>
+          <IconButton
+            size="small"
+            color="inherit"
+            disabled={!pageInfo?.hasNextPage}
+            onClick={() => {
+              handleChange(pageInfo?.endCursor as string, "FORWARD", page + 1);
+            }}
+          >
+            <ArrowForwardIosOutlined fontSize="small" style={{ width: "14px" }} />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="inherit"
+            disabled={!pageInfo?.hasNextPage}
+            onClick={() => {
+              handleChange("", "BACKWARD", Math.ceil(total / pageSize));
+            }}
+          >
+            <LastPageOutlined fontSize="small" />
+          </IconButton>
+        </Box>
+      )}
     </>
   );
   return (
     <Box
       style={{
         position: "absolute",
-        width: "300px",
+        width: "280px",
         left: "23.1%",
         top: pageY + "px",
         zIndex: 999,
@@ -392,7 +424,7 @@ function FilterOverall(props: FilterTreeProps) {
         backgroundColor: "white",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 10px 10px 10px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 10px 0px 10px" }}>
         <span style={{ fontSize: "17px", fontWeight: "bold" }}>
           <Tooltip title={classDataBySchool.school_name as string} placement="top-start">
             <span>{textEllipsis(classDataBySchool.school_name)}</span>
@@ -436,10 +468,25 @@ interface FilterTreeProps {
   hideClassMenu: () => void;
   handleChangeOnlyMine: (data: string[]) => void;
   stateOnlyMine: string[];
+  total?: number;
+  getClassesConnection: (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => void;
+  pageInfo?: Types.Maybe<
+    { __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor">
+  >;
 }
 
 export default function FilterTree(props: FilterTreeProps) {
-  const { classDataBySchool, handleChangeShowAnyTime, pageY, hideClassMenu, handleChangeOnlyMine, stateOnlyMine } = props;
+  const {
+    classDataBySchool,
+    handleChangeShowAnyTime,
+    pageY,
+    hideClassMenu,
+    handleChangeOnlyMine,
+    stateOnlyMine,
+    total,
+    getClassesConnection,
+    pageInfo,
+  } = props;
   return (
     <FilterOverall
       stateOnlyMine={stateOnlyMine}
@@ -448,6 +495,9 @@ export default function FilterTree(props: FilterTreeProps) {
       classDataBySchool={classDataBySchool}
       handleChangeShowAnyTime={handleChangeShowAnyTime}
       pageY={pageY}
+      total={total}
+      getClassesConnection={getClassesConnection}
+      pageInfo={pageInfo}
     />
   );
 }

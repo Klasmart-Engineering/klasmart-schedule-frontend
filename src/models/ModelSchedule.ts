@@ -11,7 +11,7 @@ import {
 } from "../types/scheduleTypes";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
 import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
-import { GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { Status } from "../api/api-ko-schema.auto";
 import { d } from "../locale/LocaleManager";
 import { LinkedMockOptionsItem } from "../reducers/content";
@@ -240,7 +240,13 @@ export class modelSchedule {
     } as ParticipantsData;
   }
 
-  static classDataConversion(userId: string, schoolId: string, schools: EntityScheduleSchoolInfo[], role: boolean) {
+  static classDataConversion(
+    userId: string,
+    schoolId: string,
+    schools: EntityScheduleSchoolInfo[],
+    role: boolean,
+    classesConnection?: GetClassFilterListQuery
+  ) {
     const data: { class_id: string; class_name: string; showIcon: boolean }[] = [];
     let school_name = "";
     let school_id = "";
@@ -263,6 +269,14 @@ export class modelSchedule {
       }
     });
     return { school_name: school_name, school_id: school_id, classes: data, onlyMine: onlyMine };
+  }
+
+  static classDataConversion2(school_name: string, school_id: string, classesConnection?: GetClassFilterListQuery) {
+    const data: { class_id: string; class_name: string; showIcon: boolean }[] = [];
+    classesConnection?.classesConnection?.edges?.forEach((item) => {
+      data.push({ class_id: item?.node?.id!, class_name: item?.node?.name!, showIcon: false });
+    });
+    return { school_name: school_name, school_id: school_id, classes: data, onlyMine: false };
   }
 
   static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {
