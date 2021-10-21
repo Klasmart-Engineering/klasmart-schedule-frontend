@@ -34,7 +34,7 @@ export default function () {
         parsePercent(
           assignmentsCompletion.reduce((prev, current) => {
             return prev + (current.student_designated_subject || 0);
-          }, 0)
+          }, 0) / assignmentsCompletion.length || 0
         ) + "%",
       idx: 0,
     },

@@ -1703,7 +1703,6 @@ const { actions, reducer } = createSlice({
       };
 
       // const studentName = state.studentList.find(item => item.user_id === payload?.request.student_id)
-      console.log("studentList", state.summaryReportOptions.students);
 
       // const studentName = state.summaryReportOptions.students.find(item => item.user_id === data?.request.student_id)?.user_name || "lisi"
       const studentName = "lisi";
