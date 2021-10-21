@@ -16,6 +16,14 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "#000",
       // background: '#000'
     },
+    content: {
+      "& div:last-child": {
+        marginBottom: 0,
+      },
+    },
+    itemTitle: {
+      maxWidth: "190px",
+    },
     container: {
       color: "#fff",
       minWidth: "156px",
@@ -35,9 +43,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+type Content = { count: number | string } & Omit<EntityContentUsage, "count">;
 interface Props {
+  hideTotal?: boolean;
   totalText?: string;
-  content: EntityContentUsage[];
+  content: Content[];
   children: ReactElement;
 }
 
@@ -56,19 +67,23 @@ export default function ReportTooltip(props: Props) {
       placement="top"
       title={
         count !== 0 ? (
-          <Grid container direction={"column"} style={{ width: "280px" }}>
+          <Grid container direction={"column"} style={{ width: "280px" }} className={classes.content}>
             {props.content.map((item, key) => {
               return (
                 <Grid container justify={"space-between"} className={classes.item} key={key}>
-                  {item.type}
+                  <div className={classes.itemTitle}>{item.type}</div>
                   <label>{item.count}</label>
                 </Grid>
               );
             })}
-            <Grid container justify={"space-between"} className={classes.item} style={{ margin: 0 }}>
-              {props.totalText || d("Total").t("report_student_usage_total")}
-              <label>{count}</label>
-            </Grid>
+            {props.hideTotal ? (
+              ""
+            ) : (
+              <Grid container justify={"space-between"} className={classes.item} style={{ margin: 0 }}>
+                {props.totalText || d("Total").t("report_student_usage_total")}
+                <label>{count}</label>
+              </Grid>
+            )}
           </Grid>
         ) : (
           ""

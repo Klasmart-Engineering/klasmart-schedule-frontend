@@ -1,3 +1,5 @@
+import { createStyles, makeStyles } from "@material-ui/styles";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { d, t } from "../../../locale/LocaleManager";
@@ -5,12 +7,22 @@ import { getFourWeeks, getSixMonths } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getLearnOutcomeAchievement } from "../../../reducers/report";
 import LearningOutcomeAchievedTotalType from "../components/LearningOutcomeAchievedTotalType";
+import StudentProgressBarChart, { BarGroupProps } from "../components/StudentProgressBarChart";
 import StudentProgressReportFeedback from "../components/StudentProgressReportFeedback";
 import StudentProgressReportFilter from "../components/StudentProgressReportFilter";
 
+const useStyle = makeStyles((theme) =>
+  createStyles({
+    chart: {
+      maxHeight: "415px",
+      height: "415px",
+    },
+  })
+);
 export default function () {
   const [durationTime, setDurationTime] = useState(4);
   const dispatch = useDispatch();
+  const style = useStyle();
   const { learnOutcomeAchievement } = useSelector<RootState, RootState["report"]>((state) => state.report);
   console.log(learnOutcomeAchievement);
   const colors = ["#0e78d5", "#ededed", "#bed6eb", "#a8c0ef"];
@@ -48,6 +60,18 @@ export default function () {
     );
   }, [dispatch, durationTime]);
 
+  const data: BarGroupProps["data"] =
+    learnOutcomeAchievement.items?.map((item) => {
+      const time = item.duration?.split("-") || [];
+      return {
+        time: `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment(Number(time[1]) * 1000).format("MM.DD")}`,
+        v1: [Math.ceil((item.first_achieved_percentage || 0) * 100), item.re_achieved_percentage || 0],
+        v2: item.class_average_achieve_percent || 0,
+        v3: item.un_selected_subjects_average_achieve_percentage || 0,
+      } as BarGroupProps["data"][0];
+    }) || [];
+
+  const label = { v1: [totalType[0].label, totalType[1].label], v2: totalType[2].label, v3: totalType[3].label };
   return (
     <div>
       <StudentProgressReportFilter
@@ -55,6 +79,9 @@ export default function () {
         setDurationTime={setDurationTime}
         studentProgressReportTitle={d("Learning Outcomes Achievement").t("report_label_learning_outcomes_achievement")}
       />
+      <div className={style.chart}>
+        <StudentProgressBarChart data={data} label={label} itemUnit={"%"} />
+      </div>
       <div>
         <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} />
         <StudentProgressReportFeedback />
