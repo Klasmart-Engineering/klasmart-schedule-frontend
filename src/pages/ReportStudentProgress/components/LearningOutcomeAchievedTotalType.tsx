@@ -39,15 +39,23 @@ const useStyle = makeStyles(() =>
 interface ITotalType {
   totalType: { label: string; data: string | number; idx: number }[];
   colors: string[];
+  isLearningOutcomeAchieved: boolean;
 }
 
 export default function LearningOutcomeAchievedTotalType(props: ITotalType) {
   const css = useStyle();
-  const { totalType, colors } = props;
+  const { totalType, colors, isLearningOutcomeAchieved } = props;
   const renderLineFooterBlock = (content: string, count: string | number, index: number) => {
     return (
       <div className={css.dataBlock} key={index}>
-        <div className={css.square} style={{ background: colors[index] }}></div>
+        <div
+          className={css.square}
+          style={{
+            background: colors[index],
+            border: isLearningOutcomeAchieved && index === 1 ? "1px solid #0e78d5" : "",
+            boxSizing: "border-box",
+          }}
+        ></div>
         <div className={css.blockRight}>
           {content}
           <div className={css.blockCount}>{count}</div>

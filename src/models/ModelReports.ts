@@ -469,11 +469,10 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
       return t("report_msg_lo_low_class_3w", {
         Name: studentName,
         LOCompareClass3week: Math.ceil(
-          (data[3].first_achieved_percentage +
-            data[3].re_achieved_percentage -
-            data[3].class_average_achieved_percentage +
-            (data[2].first_achieved_percentage + data[2].re_achieved_percentage - data[2].class_average_achieved_percentage) +
-            (data[1].first_achieved_percentage + data[1].re_achieved_percentage - data[1].class_average_achieved_percentage)) /
+          (data[3].class_average_achieved_percentage -
+            (data[3].first_achieved_percentage + data[3].re_achieved_percentage) +
+            (data[2].class_average_achieved_percentage - (data[2].first_achieved_percentage + data[2].re_achieved_percentage)) +
+            (data[1].class_average_achieved_percentage - (data[1].first_achieved_percentage + data[1].re_achieved_percentage))) /
             3
         ),
       });
@@ -755,10 +754,10 @@ export function getClassAttendanceFeedback(newData: any, value: any, studentName
       });
     }
   } else if (
-    (data && data[3].attendance_percentage - data[2].attendance_percentage < 20) ||
+    data[3].attendance_percentage - data[2].attendance_percentage < 20 ||
     data[2].attendance_percentage - data[3].attendance_percentage < 20
   ) {
-    if (data && (data[3].attendance_percentage - data[2].attendance_percentage) / data[2].attendance_percentage < 20) {
+    if (data[3].attendance_percentage - data[2].attendance_percentage < 20) {
       return t("report_msg_att_increase_previous_w", {
         Name: studentName,
         AttendCompareLastWeek: Math.ceil(data[3].attendance_percentage - data[2].attendance_percentage),
