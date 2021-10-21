@@ -924,15 +924,24 @@ export type Permission = {
 };
 
 export type PermissionFilter = {
-  permission_id?: Maybe<StringFilter>;
-  permission_name?: Maybe<StringFilter>;
-  permission_category?: Maybe<StringFilter>;
-  permission_group?: Maybe<StringFilter>;
-  permission_level?: Maybe<StringFilter>;
-  permission_description?: Maybe<StringFilter>;
+  roleId?: Maybe<UuidFilter>;
+  name?: Maybe<StringFilter>;
   allow?: Maybe<BooleanFilter>;
   AND?: Maybe<Array<PermissionFilter>>;
   OR?: Maybe<Array<PermissionFilter>>;
+};
+
+export enum PermissionSortBy {
+  Id = "id",
+  Name = "name",
+  Category = "category",
+  Group = "group",
+  Level = "level",
+}
+
+export type PermissionSortInput = {
+  field: PermissionSortBy;
+  order: SortOrder;
 };
 
 export type PermissionsConnectionEdge = IConnectionEdge & {
@@ -943,13 +952,13 @@ export type PermissionsConnectionEdge = IConnectionEdge & {
 
 export type PermissionsConnectionNode = {
   __typename?: "PermissionsConnectionNode";
-  permission_id?: Maybe<Scalars["ID"]>;
-  permission_name: Scalars["ID"];
-  permission_category?: Maybe<Scalars["String"]>;
-  permission_group?: Maybe<Scalars["String"]>;
-  permission_level?: Maybe<Scalars["String"]>;
-  permission_description?: Maybe<Scalars["String"]>;
-  allow?: Maybe<Scalars["Boolean"]>;
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  category?: Maybe<Scalars["String"]>;
+  group?: Maybe<Scalars["String"]>;
+  level?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  allow: Scalars["Boolean"];
 };
 
 export type PermissionsConnectionResponse = IConnectionResponse & {
@@ -1087,8 +1096,9 @@ export type Query = {
   subject?: Maybe<Subject>;
   subjectsConnection?: Maybe<SubjectsConnectionResponse>;
   me?: Maybe<User>;
-  /** @deprecated Use 'usersConnection' with 'userId' filter. */
+  /** @deprecated Use 'userNode' */
   user?: Maybe<User>;
+  userNode?: Maybe<UserConnectionNode>;
   usersConnection?: Maybe<UsersConnectionResponse>;
   /** @deprecated Unused */
   users?: Maybe<Array<Maybe<User>>>;
@@ -1151,6 +1161,7 @@ export type QueryOrganizationsConnectionArgs = {
 export type QueryPermissionsConnectionArgs = {
   direction: ConnectionDirection;
   directionArgs?: Maybe<ConnectionsDirectionArgs>;
+  sort?: Maybe<PermissionSortInput>;
   filter?: Maybe<PermissionFilter>;
 };
 
@@ -1197,6 +1208,10 @@ export type QuerySubjectsConnectionArgs = {
 
 export type QueryUserArgs = {
   user_id: Scalars["ID"];
+};
+
+export type QueryUserNodeArgs = {
+  id: Scalars["ID"];
 };
 
 export type QueryUsersConnectionArgs = {

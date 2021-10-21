@@ -11864,7 +11864,7 @@
         },
         "class_type": {
           "type": "string",
-          "enum": ["OnlineClass", "OfflineClass", "Homework"]
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "description": {
           "type": "string"
@@ -11960,7 +11960,7 @@
         },
         "class_type": {
           "type": "string",
-          "enum": ["OnlineClass", "OfflineClass", "Homework"]
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "class_type_label": {
           "$ref": "#/definitions/entity.ScheduleShortInfo"
@@ -12173,7 +12173,7 @@
         },
         "class_type": {
           "type": "string",
-          "enum": ["OnlineClass", "OfflineClass", "Homework"]
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "class_type_label": {
           "$ref": "#/definitions/entity.ScheduleShortInfo"
@@ -12314,7 +12314,7 @@
         },
         "class_type": {
           "type": "string",
-          "enum": ["OnlineClass", "OfflineClass", "Homework"]
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "due_at": {
           "type": "integer"
@@ -12422,7 +12422,7 @@
         },
         "class_type": {
           "type": "string",
-          "enum": ["OnlineClass", "OfflineClass", "Homework"]
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "description": {
           "type": "string"

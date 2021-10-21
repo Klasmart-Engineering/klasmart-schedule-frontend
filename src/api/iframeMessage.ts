@@ -26,6 +26,7 @@ interface Listener<T> {
 
 export function subscribeIframeMessage<T extends IframeMessage["type"]>(type: T, listener: Listener<T>) {
   window.addEventListener("message", function (e) {
+    console.log("e.data?.type =", e.data?.type)
     if (e.data?.type !== type) return;
     listener(e.data.payload);
   });

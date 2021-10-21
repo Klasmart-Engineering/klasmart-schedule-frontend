@@ -15,13 +15,11 @@ import React, { Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, us
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { apiIsEnableNewH5p } from "../../api/extra";
 import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr, PermissionType, usePermission } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { addAllInSearchLOListOption, ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
-import { formLiteFileType } from "../../models/ModelH5pSchema";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
@@ -38,7 +36,6 @@ import {
   searchContentLists,
   searchPublishedLearningOutcomes
 } from "../../reducers/content";
-import { H5pComposeEditor } from "../H5pEditor/H5pComposeEditor";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
@@ -169,9 +166,6 @@ function ContentEditForm() {
     { regulation, contentDetail, linkedMockOptions },
     { program, developmental, subject }
   );
-  // 兼容现在的国际版专用变量
-  const isEnableNewH5p = apiIsEnableNewH5p();
-  const isOldH5p = formLiteFileType(id, allDefaultValueAndKey["data.file_type"]?.value, inputSource)?.isOldH5p;
   const nodeRef: LegacyRef<HTMLElement> = (node) => {
     unmountRef.current?.();
     const update = debounce(() => void (offsetRef.current = node?.scrollTop ?? 0), 200);
@@ -466,60 +460,6 @@ function ContentEditForm() {
             PermissionType.edit_org_published_content_235,
           ]}
           render={(value) =>
-            isEnableNewH5p ? (
-              <Controller
-                name="data.input_source"
-                control={control}
-                defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
-                key={allDefaultValueAndKey["data.input_source"]?.key}
-                render={(dataInputSourceProps) => (
-                  <Controller
-                    name="data.source"
-                    control={control}
-                    defaultValue={allDefaultValueAndKey["data.source"]?.value}
-                    key={allDefaultValueAndKey["data.source"]?.key}
-                    render={(dataSourceProps) =>
-                      isOldH5p ? (
-                        <Controller
-                          name="source_type"
-                          control={control}
-                          defaultValue={allDefaultValueAndKey["source_type"]?.value}
-                          key={allDefaultValueAndKey["source_type"]?.key}
-                          render={(sourceTypeProps) => (
-                            <ContentH5p
-                              sub={id ? H5pSub.clone : H5pSub.new}
-                              value={dataSourceProps.value}
-                              onChange={dataSourceProps.onChange}
-                              onChangeSourceType={sourceTypeProps.onChange}
-                            />
-                          )}
-                        />
-                      ) : (
-                        <H5pComposeEditor
-                          key={`H5pComposeEditor:${contentDetail.data}`}
-                          formMethods={formMethods}
-                          allDefaultValueAndKey={allDefaultValueAndKey}
-                          dataInputSource={dataInputSourceProps.value}
-                          onChangeDataSource={dataSourceProps.onChange}
-                          onChangeDataInputSource={dataInputSourceProps.onChange}
-                          assetEditor={
-                            <MediaAssetsEdit
-                              value={dataSourceProps.value}
-                              onChange={dataSourceProps.onChange}
-                              onChangeInputSource={dataInputSourceProps.onChange}
-                              readonly={false}
-                              overlay={false}
-                              contentDetail={contentDetail}
-                              disabled={id ? !contentDetail.permission.allow_edit : !value}
-                            />
-                          }
-                        />
-                      )
-                    }
-                  />
-                )}
-              />
-            ) : (
               <Fragment>
                 <Controller
                   name="data.input_source"
@@ -575,7 +515,6 @@ function ContentEditForm() {
                   )}
                 />
               </Fragment>
-            )
           }
         />
       )}
