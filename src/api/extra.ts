@@ -12,6 +12,7 @@ import premissionAll from "./permission_all.json";
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
 export const LOCALE_KEY = "locale";
+export const PERMISSION_KEY = "perm";
 
 export const apiGetMockOptions = () =>
   fetch("https://launch.kidsloop.cn/static/mock-korea-data/select-options.json").then((res) => {
@@ -224,7 +225,7 @@ export function apiIsEnableReport() {
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
-  const res = sessionStorage.getItem("permission");
+  const res = sessionStorage.getItem(PERMISSION_KEY);
   if(res){
     return JSON.parse(res || "");
   }else {
@@ -248,7 +249,7 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });
-  sessionStorage.setItem("permission", JSON.stringify(returnData));
+  sessionStorage.setItem(PERMISSION_KEY, JSON.stringify(returnData));
   return returnData;
   }
 }
