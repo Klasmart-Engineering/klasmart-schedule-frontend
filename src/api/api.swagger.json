@@ -5621,10 +5621,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.ClassAttendanceResponseItem"
-              }
+              "$ref": "#/definitions/entity.ClassAttendanceResponse"
             }
           },
           "400": {
@@ -6505,7 +6502,7 @@
             "in": "query"
           },
           {
-            "enum": ["create_at", "-create_at", "start_at", "-start_at"],
+            "enum": ["create_at", "-create_at", "start_at", "-start_at", "schedule_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",
@@ -9445,11 +9442,17 @@
         "duration": {
           "type": "string"
         },
+        "student_complete_assignment": {
+          "type": "integer"
+        },
         "student_designated_subject": {
           "type": "number"
         },
         "student_non_designated_subject": {
           "type": "number"
+        },
+        "student_total_assignment": {
+          "type": "integer"
         }
       }
     },
@@ -9846,6 +9849,23 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "entity.ClassAttendanceResponse": {
+      "type": "object",
+      "properties": {
+        "attended_count": {
+          "type": "integer"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ClassAttendanceResponseItem"
+          }
+        },
+        "scheduled_count": {
+          "type": "integer"
         }
       }
     },
@@ -10797,11 +10817,20 @@
         "duration": {
           "type": "string"
         },
+        "first_achieved_count": {
+          "type": "integer"
+        },
         "first_achieved_percentage": {
           "type": "number"
         },
+        "re_achieved_count": {
+          "type": "integer"
+        },
         "re_achieved_percentage": {
           "type": "number"
+        },
+        "un_achieved_count": {
+          "type": "integer"
         },
         "un_selected_subjects_average_achieve_percentage": {
           "type": "number"

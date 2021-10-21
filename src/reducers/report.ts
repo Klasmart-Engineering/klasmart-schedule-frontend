@@ -48,7 +48,7 @@ import {
   EntityAssignmentCompletionRate,
   EntityAssignmentRequest,
   EntityClassAttendanceRequest,
-  EntityClassAttendanceResponseItem,
+  EntityClassAttendanceResponse,
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
@@ -80,7 +80,14 @@ import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { IParamQueryRemainFilter } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
-import { formatTimeToMonDay, getAllUsers, getTimeOffSecond, ModelReport, sortByStudentName } from "../models/ModelReports";
+import {
+  formatTimeToMonDay,
+  getAllUsers,
+  getLearnOutcomeAchievementFeedback,
+  getTimeOffSecond,
+  ModelReport,
+  sortByStudentName,
+} from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
 import {
@@ -149,8 +156,11 @@ interface IreportState {
   next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
   listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse;
   assignmentsCompletion: EntityAssignmentCompletionRate[];
-  learnOutcomeClassAttendance: EntityClassAttendanceResponseItem[];
+  learnOutcomeClassAttendance: EntityClassAttendanceResponse;
   learnOutcomeAchievement: EntityLearnOutcomeAchievementResponse;
+  fourWeekslearnOutcomeAchievementMassage: string;
+  fourWeeksAssignmentsCompletionMassage: string;
+  fourWeeksClassAttendanceMassage: string;
 }
 
 interface IObj {
@@ -264,8 +274,11 @@ const initialState: IreportState = {
   next7DaysLessonLoadList: [],
   listTeacherMissedLessons: {},
   assignmentsCompletion: [],
-  learnOutcomeClassAttendance: [],
+  learnOutcomeClassAttendance: {},
   learnOutcomeAchievement: {},
+  fourWeekslearnOutcomeAchievementMassage: "",
+  fourWeeksAssignmentsCompletionMassage: "",
+  fourWeeksClassAttendanceMassage: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1165,7 +1178,7 @@ export const getAssignmentsCompletion = createAsyncThunk<EntityAssignmentComplet
 );
 
 export const getLearnOutcomeClassAttendance = createAsyncThunk<
-  EntityClassAttendanceResponseItem[],
+  EntityClassAttendanceResponse,
   EntityClassAttendanceRequest & LoadingMetaPayload
 >("getLearnOutcomeClassAttendance", async ({ metaLoading, ...query }) => await api.reports.getLearnOutcomeClassAttendance(query));
 
@@ -1611,18 +1624,95 @@ const { actions, reducer } = createSlice({
     },
     [getAssignmentsCompletion.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentsCompletion>>) => {
       state.assignmentsCompletion = payload;
+      // const studentName = state.summaryReportOptions.students.find(item => item.user_id === payload?.request.student_id)?.user_name
+      if (payload?.length === 4) {
+        //  state.fourWeeksAssignmentsCompletionMassage =  getAssignmentCompletionFeedback(payload, studentName)
+        //  state.fourWeeksAssignmentsCompletionMassage = payload
+      }
     },
     [getLearnOutcomeClassAttendance.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeClassAttendance>>
     ) => {
       state.learnOutcomeClassAttendance = payload;
+      // const studentName = state.summaryReportOptions.students.find(item => item.user_id === payload?.request.student_id)?.user_name
+      if (payload?.items?.length === 4) {
+        //  state.fourWeeksClassAttendanceMassage = getClassAttendanceFeedback(payload?.items, payload, studentName)
+        //  state.fourWeeksClassAttendanceMassage = payload
+      }
     },
     [getLearnOutcomeAchievement.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeAchievement>>
     ) => {
       state.learnOutcomeAchievement = payload;
+      const data = {
+        request: {
+          class_id: "335bc743-919e-4906-8418-a066ceeb76fa",
+          student_id: "842e71b3-e92e-43ee-83d3-95149bc04801",
+          selected_subject_id_list: ["b997e0d1-2dd7-40d8-847a-b8670247e96b"],
+          un_selected_subject_id_list: ["20d6ca2f-13df-4a7a-8dcb-955908db7baa", ""],
+          durations: ["1-88888888", "88888888-999999999999"],
+        },
+        first_achieved_count: 5,
+        re_achieved_count: 0,
+        class_average_achieved_count: 5,
+        un_selected_subjects_average_achieve_count: 10,
+        items: [
+          {
+            duration: "1-88888888",
+            first_achieved_percentage: 0,
+            re_achieved_percentage: 0,
+            class_average_achieved_percentage: 0,
+            un_selected_subjects_average_achieved_percentage: 0,
+            first_achieved_count: 0,
+            re_achieved_count: 0,
+            un_achieved_count: 0,
+          },
+          {
+            duration: "88888888-999999999999",
+            first_achieved_percentage: 0,
+            re_achieved_percentage: 0.56,
+            class_average_achieved_percentage: 0.95,
+            un_selected_subjects_average_achieved_percentage: 0.8333333333333334,
+            first_achieved_count: 5,
+            re_achieved_count: 0,
+            un_achieved_count: 0,
+          },
+          {
+            duration: "1-88888888",
+            first_achieved_percentage: 0.1,
+            re_achieved_percentage: 0.7,
+            class_average_achieved_percentage: 0.2,
+            un_selected_subjects_average_achieved_percentage: 0,
+            first_achieved_count: 0,
+            re_achieved_count: 0,
+            un_achieved_count: 0,
+          },
+          {
+            duration: "88888888-999999999999",
+            first_achieved_percentage: 0.1,
+            re_achieved_percentage: 0.7,
+            class_average_achieved_percentage: 0.7,
+            un_selected_subjects_average_achieved_percentage: 0.8333333333333334,
+            first_achieved_count: 5,
+            re_achieved_count: 0,
+            un_achieved_count: 0,
+          },
+        ],
+      };
+
+      // const studentName = state.studentList.find(item => item.user_id === payload?.request.student_id)
+      console.log("studentList", state.summaryReportOptions.students);
+
+      // const studentName = state.summaryReportOptions.students.find(item => item.user_id === data?.request.student_id)?.user_name || "lisi"
+      const studentName = "lisi";
+      console.log("studentName", studentName);
+      state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(data.items, studentName);
+      if (payload?.items?.length === 4) {
+        state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(payload?.items, studentName);
+        //  state.fourWeekslearnOutcomeAchievementMassage =  payload?.items
+      }
     },
   },
 });

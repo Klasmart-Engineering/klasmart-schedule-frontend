@@ -328,8 +328,10 @@ export interface EntityAssessmentsSummary {
 export interface EntityAssignmentCompletionRate {
   class_designated_subject?: number;
   duration?: string;
+  student_complete_assignment?: number;
   student_designated_subject?: number;
   student_non_designated_subject?: number;
+  student_total_assignment?: number;
 }
 
 export interface EntityAssignmentRequest {
@@ -451,6 +453,12 @@ export interface EntityClassAttendanceRequest {
   selected_subject_id_list?: string[];
   student_id: string;
   un_selected_subject_id_list?: string[];
+}
+
+export interface EntityClassAttendanceResponse {
+  attended_count?: number;
+  items?: EntityClassAttendanceResponseItem[];
+  scheduled_count?: number;
 }
 
 export interface EntityClassAttendanceResponseItem {
@@ -773,8 +781,11 @@ export interface EntityLearnOutcomeAchievementResponse {
 export interface EntityLearnOutcomeAchievementResponseItem {
   class_average_achieve_percent?: number;
   duration?: string;
+  first_achieved_count?: number;
   first_achieved_percentage?: number;
+  re_achieved_count?: number;
   re_achieved_percentage?: number;
+  un_achieved_count?: number;
   un_selected_subjects_average_achieve_percentage?: number;
 }
 
@@ -3703,7 +3714,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/reports/student_progress/class_attendance
      */
     getLearnOutcomeClassAttendance: (request: EntityClassAttendanceRequest, params?: RequestParams) =>
-      this.request<EntityClassAttendanceResponseItem[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityClassAttendanceResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/student_progress/class_attendance`,
         "POST",
         params,
@@ -3969,7 +3980,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         teacher_name?: string;
         time_zone_offset: number;
         start_at?: number;
-        order_by?: "create_at" | "-create_at" | "start_at" | "-start_at";
+        order_by?: "create_at" | "-create_at" | "start_at" | "-start_at" | "schedule_at";
         page?: number;
         page_size?: number;
       },
