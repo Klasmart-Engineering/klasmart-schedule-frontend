@@ -12,6 +12,7 @@ import premissionAll from "./permission_all.json";
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
 export const LOCALE_KEY = "locale";
+export const PERMISSION_KEY = "perm";
 
 export const apiGetMockOptions = () =>
   fetch("https://launch.kidsloop.cn/static/mock-korea-data/select-options.json").then((res) => {
@@ -163,6 +164,7 @@ export const recursiveListFolderItems = async ({
 export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
+  sessionStorage.clear();
   window.history.replaceState(null, document.title, url.toString());
 };
 
@@ -219,10 +221,14 @@ export function apiIsEnableReport() {
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
-  const permission = await api.organizationPermissions.hasOrganizationPermissions({
-    permission_name: premissions,
-  });
-  let returnData: NonNullable<QeuryMeQuery> = {
+  const res = sessionStorage.getItem(PERMISSION_KEY);
+  if(res){
+    return JSON.parse(res || "");
+  }else {
+    const permission = await api.organizationPermissions.hasOrganizationPermissions({
+     permission_name: premissions,
+   });
+   let returnData: NonNullable<QeuryMeQuery> = {
     me: {
       user_id: "",
       membership: {
@@ -239,5 +245,7 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });
+  sessionStorage.setItem(PERMISSION_KEY, JSON.stringify(returnData));
   return returnData;
+  }
 }
