@@ -30,7 +30,6 @@ export default function () {
   const totalType = [
     {
       label: t("report_label_student_assignments_completion_rate"),
-      // data: "387",
       data:
         parsePercent(
           assignmentsCompletion.reduce((prev, current) => {
@@ -41,7 +40,6 @@ export default function () {
     },
     {
       label: t("report_label_class_average_assignments_completion_rate"),
-      // data: "361",
       data:
         parsePercent(
           assignmentsCompletion.reduce((prev, current) => {
@@ -52,7 +50,6 @@ export default function () {
     },
     {
       label: t("report_label_subject_average_assignments_completion_rate"),
-      // data: "358",
       data:
         parsePercent(
           assignmentsCompletion.reduce((prev, current) => {
@@ -83,6 +80,7 @@ export default function () {
     setDurationTime(4);
     dispatch(
       getAssignmentsCompletion({
+        metaLoading: true,
         class_id: "",
         durations: getFourWeeks(),
         selected_subject_id_list: [""],
@@ -96,6 +94,7 @@ export default function () {
       setDurationTime(value);
       dispatch(
         getAssignmentsCompletion({
+          metaLoading: true,
           class_id: "",
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
           selected_subject_id_list: [""],
@@ -118,7 +117,7 @@ export default function () {
         <StudentProgressBarChart itemUnit={"%"} data={chartData} label={label} />
       </div>
       <div>
-        <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} />
+        <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} isLearningOutcomeAchieved={false} />
         <StudentProgressReportFeedback fourWeeksMassage={fourWeeksAssignmentsCompletionMassage} />
       </div>
     </div>

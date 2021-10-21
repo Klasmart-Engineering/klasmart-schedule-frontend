@@ -31,26 +31,23 @@ export default function () {
   const totalType = [
     {
       label: t("report_label_total_newly_achieved_lo"),
-      data: 387,
-      // data: learnOutcomeAchievement["first_achieved_count"],
+      data: learnOutcomeAchievement.first_achieved_count || 0,
       idx: 0,
     },
     {
       label: t("report_label_total_reachieved_lo"),
-      data: 361,
-      // data: learnOutcomeAchievement["re_achieved_count"],
+      data: learnOutcomeAchievement.re_achieved_count || 0,
       idx: 1,
     },
     {
       label: t("report_label_total_achieved_lo_class_average"),
-      data: 358,
-      // data: learnOutcomeAchievement["class_average_achieved_count"],
+      data: learnOutcomeAchievement.class_average_achieved_count || 0,
       idx: 2,
     },
     {
       label: t("report_label_total_achieved_lo_subject_average"),
-      data: 387,
-      // data: learnOutcomeAchievement["un_selected_subjects_average_achieved_count"],
+      data: 365,
+      // data: learnOutcomeAchievement.un_selected_subjects_average_achieved_count || 0,
       idx: 3,
     },
   ];
@@ -58,6 +55,7 @@ export default function () {
     setDurationTime(4);
     dispatch(
       getLearnOutcomeAchievement({
+        metaLoading: true,
         class_id: "",
         durations: getFourWeeks(),
         selected_subject_id_list: [""],
@@ -71,6 +69,7 @@ export default function () {
       setDurationTime(value);
       dispatch(
         getLearnOutcomeAchievement({
+          metaLoading: true,
           class_id: "",
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
           selected_subject_id_list: [""],
@@ -108,7 +107,7 @@ export default function () {
         <StudentProgressBarChart data={data} label={label} itemUnit={"%"} />
       </div>
       <div>
-        <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} />
+        <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} isLearningOutcomeAchieved={true} />
         <StudentProgressReportFeedback fourWeeksMassage={fourWeekslearnOutcomeAchievementMassage} />
       </div>
     </div>

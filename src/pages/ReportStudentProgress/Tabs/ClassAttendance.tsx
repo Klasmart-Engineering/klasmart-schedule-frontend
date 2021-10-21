@@ -33,7 +33,6 @@ export default function () {
   const totalType = [
     {
       label: t("report_label_student_attendance_rate"),
-      // data: 387,
       data:
         parsePercent(
           items.reduce((prev, current) => {
@@ -44,7 +43,6 @@ export default function () {
     },
     {
       label: t("report_label_class_average_attendance_rate"),
-      // data: "361",
       data:
         parsePercent(
           items.reduce((prev, current) => {
@@ -55,7 +53,6 @@ export default function () {
     },
     {
       label: t("report_label_subject_average_attendance_rate"),
-      // data: 358,
       data:
         parsePercent(
           items.reduce((prev, current) => {
@@ -86,6 +83,7 @@ export default function () {
     setDurationTime(4);
     dispatch(
       getLearnOutcomeClassAttendance({
+        metaLoading: true,
         class_id: "",
         durations: getFourWeeks(),
         selected_subject_id_list: [""],
@@ -100,6 +98,7 @@ export default function () {
       setDurationTime(value);
       dispatch(
         getLearnOutcomeClassAttendance({
+          metaLoading: true,
           class_id: "",
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
           selected_subject_id_list: [""],
@@ -122,7 +121,7 @@ export default function () {
         <StudentProgressBarChart data={chartData} label={label} />
       </div>
       <div>
-        <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} />
+        <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} isLearningOutcomeAchieved={false} />
         <StudentProgressReportFeedback fourWeeksMassage={fourWeeksClassAttendanceMassage} />
       </div>
     </div>
