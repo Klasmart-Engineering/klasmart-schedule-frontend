@@ -414,7 +414,14 @@ export function getFourWeeks() {
   return array;
 }
 
-export function getLearnOutcomeAchievementFeedback(data: any) {
+export function getLearnOutcomeAchievementFeedback(newData: any, studentName: string) {
+  const data = newData.map((item: any) => ({
+    class_average_achieved_percentage: item.class_average_achieved_percentage * 100,
+    first_achieved_percentage: item.first_achieved_percentage * 100,
+    re_achieved_percentage: item.re_achieved_percentage * 100,
+    un_selected_subjects_average_achieved_percentage: item.un_selected_subjects_average_achieved_percentage * 100,
+  }));
+
   if (
     data[0].class_average_achieved_percentage === 0 &&
     data[0].first_achieved_percentage === 0 &&
@@ -430,7 +437,7 @@ export function getLearnOutcomeAchievementFeedback(data: any) {
     data[2].un_selected_subjects_average_achieved_percentage === 0
   ) {
     return t("report_msg_lo_new", {
-      Name: "zhangsan",
+      Name: studentName,
       AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
       LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
     });
@@ -448,28 +455,26 @@ export function getLearnOutcomeAchievementFeedback(data: any) {
       data[3].first_achieved_percentage + data[3].re_achieved_percentage > data[3].class_average_achieved_percentage
     ) {
       return t("report_msg_lo_high_class_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareClass3week: Math.ceil(
-          ((data[3].first_achieved_percentage +
+          (data[3].first_achieved_percentage +
             data[3].re_achieved_percentage -
             data[3].class_average_achieved_percentage +
             (data[2].first_achieved_percentage + data[2].re_achieved_percentage - data[2].class_average_achieved_percentage) +
             (data[1].first_achieved_percentage + data[1].re_achieved_percentage - data[1].class_average_achieved_percentage)) /
-            3) *
-            100
+            3
         ),
       });
     } else {
       return t("report_msg_lo_low_class_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareClass3week: Math.ceil(
-          ((data[3].first_achieved_percentage +
+          (data[3].first_achieved_percentage +
             data[3].re_achieved_percentage -
             data[3].class_average_achieved_percentage +
             (data[2].first_achieved_percentage + data[2].re_achieved_percentage - data[2].class_average_achieved_percentage) +
             (data[1].first_achieved_percentage + data[1].re_achieved_percentage - data[1].class_average_achieved_percentage)) /
-            3) *
-            100
+            3
         ),
       });
     }
@@ -477,51 +482,49 @@ export function getLearnOutcomeAchievementFeedback(data: any) {
     data[3].first_achieved_percentage +
       data[3].re_achieved_percentage -
       (data[2].first_achieved_percentage + data[2].re_achieved_percentage) >=
-      0.2 ||
+      20 ||
     data[2].first_achieved_percentage +
       data[2].re_achieved_percentage -
       (data[3].first_achieved_percentage + data[3].re_achieved_percentage) >=
-      0.2
+      20
   ) {
     if (
       data[3].first_achieved_percentage +
         data[3].re_achieved_percentage -
         (data[2].first_achieved_percentage + data[2].re_achieved_percentage) >=
-      0.2
+      20
     ) {
       return t("report_msg_lo_increase_previous_large_w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareLastWeek: Math.ceil(
-          (data[3].first_achieved_percentage +
+          data[3].first_achieved_percentage +
             data[3].re_achieved_percentage -
-            (data[2].first_achieved_percentage + data[2].re_achieved_percentage)) *
-            100
+            (data[2].first_achieved_percentage + data[2].re_achieved_percentage)
         ),
       });
     } else {
       return t("report_msg_lo_decrease_previous_large_w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareLastWeek: Math.ceil(
-          (data[2].first_achieved_percentage +
+          data[2].first_achieved_percentage +
             data[2].re_achieved_percentage -
-            (data[3].first_achieved_percentage + data[3].re_achieved_percentage)) *
-            100
+            (data[3].first_achieved_percentage + data[3].re_achieved_percentage)
         ),
       });
     }
   } else if (
-    data[3].re_achieved_percentage - data[3].class_average_achieved_percentage >= 0.1 ||
-    data[3].class_average_achieved_percentage - data[3].re_achieved_percentage >= 0.1
+    data[3].re_achieved_percentage - data[3].class_average_achieved_percentage >= 10 ||
+    data[3].class_average_achieved_percentage - data[3].re_achieved_percentage >= 10
   ) {
-    if ((data[3].re_achieved_percentage - data[3].class_average_achieved_percentage) / data[3].class_average_achieved_percentage >= 0.1) {
+    if (data[3].re_achieved_percentage - data[3].class_average_achieved_percentage >= 10) {
       return t("report_msg_lo_high_class_review_w", {
-        Name: "zhangsan",
-        LOReviewCompareClass: Math.ceil((data[3].re_achieved_percentage - data[3].class_average_achieved_percentage) * 100),
+        Name: studentName,
+        LOReviewCompareClass: Math.ceil(data[3].re_achieved_percentage - data[3].class_average_achieved_percentage),
       });
     } else {
       return t("report_msg_lo_low_class_review_w", {
-        Name: "zhangsan",
-        LOReviewCompareClass: Math.ceil((data[3].class_average_achieved_percentage - data[3].re_achieved_percentage) * 100),
+        Name: studentName,
+        LOReviewCompareClass: Math.ceil(data[3].class_average_achieved_percentage - data[3].re_achieved_percentage),
       });
     }
   } else if (
@@ -565,22 +568,20 @@ export function getLearnOutcomeAchievementFeedback(data: any) {
         0
     ) {
       return t("report_msg_lo_increase_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareLast3Week: Math.ceil(
-          (data[3].first_achieved_percentage +
+          data[3].first_achieved_percentage +
             data[3].re_achieved_percentage -
-            (data[0].first_achieved_percentage + data[0].re_achieved_percentage)) *
-            100
+            (data[0].first_achieved_percentage + data[0].re_achieved_percentage)
         ),
       });
     } else {
       return t("report_msg_lo_decrease_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareLast3Week: Math.ceil(
-          (data[0].first_achieved_percentage +
+          data[0].first_achieved_percentage +
             data[0].re_achieved_percentage -
-            (data[3].first_achieved_percentage + data[3].re_achieved_percentage)) *
-            100
+            (data[3].first_achieved_percentage + data[3].re_achieved_percentage)
         ),
       });
     }
@@ -590,16 +591,16 @@ export function getLearnOutcomeAchievementFeedback(data: any) {
   ) {
     if (data[3].first_achieved_percentage + data[3].re_achieved_percentage > data[3].class_average_achieved_percentage) {
       return t("report_msg_lo_high_class_w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareClass: Math.ceil(
-          (data[3].first_achieved_percentage + data[3].re_achieved_percentage - data[3].class_average_achieved_percentage) * 100
+          data[3].first_achieved_percentage + data[3].re_achieved_percentage - data[3].class_average_achieved_percentage
         ),
       });
     } else {
       return t("report_msg_lo_low_class_w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareClass: Math.ceil(
-          (data[3].class_average_achieved_percentage - (data[3].first_achieved_percentage + data[3].re_achieved_percentage)) * 100
+          data[3].class_average_achieved_percentage - (data[3].first_achieved_percentage + data[3].re_achieved_percentage)
         ),
       });
     }
@@ -607,48 +608,51 @@ export function getLearnOutcomeAchievementFeedback(data: any) {
     data[3].first_achieved_percentage +
       data[3].re_achieved_percentage -
       (data[2].first_achieved_percentage + data[2].re_achieved_percentage) <
-      0.2 ||
+      20 ||
     data[2].first_achieved_percentage +
       data[2].re_achieved_percentage -
       (data[3].first_achieved_percentage + data[3].re_achieved_percentage) <
-      0.2
+      20
   ) {
     if (
       data[3].first_achieved_percentage +
         data[3].re_achieved_percentage -
         (data[2].first_achieved_percentage + data[2].re_achieved_percentage) <
-      0.2
+      20
     ) {
       return t("report_msg_lo_increase_previous_w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareLastWeek: Math.ceil(
-          (data[3].first_achieved_percentage +
+          data[3].first_achieved_percentage +
             data[3].re_achieved_percentage -
-            (data[2].first_achieved_percentage + data[2].re_achieved_percentage)) *
-            100
+            (data[2].first_achieved_percentage + data[2].re_achieved_percentage)
         ),
       });
     } else {
       return t("report_msg_lo_decrease_previous_w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareLastWeek: Math.ceil(
-          (data[2].first_achieved_percentage +
+          data[2].first_achieved_percentage +
             data[2].re_achieved_percentage -
-            (data[3].first_achieved_percentage + data[3].re_achieved_percentage)) *
-            100
+            (data[3].first_achieved_percentage + data[3].re_achieved_percentage)
         ),
       });
     }
   } else {
     return t("report_msg_lo_default", {
-      Name: "zhangsan",
+      Name: studentName,
       AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
       LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
     });
   }
 }
 
-export function getClassAttendanceFeedback(data: any, value: any) {
+export function getClassAttendanceFeedback(newData: any, value: any, studentName: string) {
+  const data = newData.map((item: any) => ({
+    attendance_percentage: item.attendance_percentage * 100,
+    class_average_attendance_percentage: item.class_average_attendance_percentage * 100,
+    un_selected_subjects_average_attendance_percentage: item.un_selected_subjects_average_attendance_percentage * 100,
+  }));
   if (
     data[0].attendance_percentage === 0 &&
     data[0].class_average_attendance_percentage === 0 &&
@@ -660,7 +664,7 @@ export function getClassAttendanceFeedback(data: any, value: any) {
     data[2].class_average_attendance_percentage === 0 &&
     data[2].un_selected_subjects_average_attendance_percentage === 0
   ) {
-    return t("report_msg_att_new", { Name: "zhangsan", AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
+    return t("report_msg_att_new", { Name: studentName, AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
   } else if (
     (data[1].attendance_percentage > data[1].class_average_attendance_percentage &&
       data[2].attendance_percentage > data[2].class_average_attendance_percentage &&
@@ -675,42 +679,40 @@ export function getClassAttendanceFeedback(data: any, value: any) {
       data[3].attendance_percentage > data[3].class_average_attendance_percentage
     ) {
       return t("report_msg_att_high_class_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareClass3week: Math.ceil(
-          ((data[3].attendance_percentage -
+          (data[3].attendance_percentage -
             data[3].class_average_attendance_percentage +
             (data[2].attendance_percentage - data[2].class_average_attendance_percentage) +
             (data[1].attendance_percentage - data[1].class_average_attendance_percentage)) /
-            3) *
-            100
+            3
         ),
       });
     } else {
       return t("report_msg_att_low_class_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         LOCompareClass3week: Math.ceil(
-          ((data[3].class_average_attendance_percentage -
+          (data[3].class_average_attendance_percentage -
             data[3].attendance_percentage +
             (data[2].class_average_attendance_percentage - data[2].attendance_percentage) +
             (data[1].class_average_attendance_percentage - data[1].attendance_percentage)) /
-            3) *
-            100
+            3
         ),
       });
     }
   } else if (
-    data[3].attendance_percentage - data[2].attendance_percentage >= 0.2 ||
-    data[2].attendance_percentage - data[3].attendance_percentage >= 0.2
+    data[3].attendance_percentage - data[2].attendance_percentage >= 20 ||
+    data[2].attendance_percentage - data[3].attendance_percentage >= 20
   ) {
-    if (data[3].attendance_percentage - data[2].attendance_percentage >= 0.2) {
+    if (data[3].attendance_percentage - data[2].attendance_percentage >= 20) {
       return t("report_msg_att_increase_previous_large_w", {
-        Name: "zhangsan",
-        AttendCompareLastWeek: Math.ceil((data[3].attendance_percentage - data[2].attendance_percentage) * 100),
+        Name: studentName,
+        AttendCompareLastWeek: Math.ceil(data[3].attendance_percentage - data[2].attendance_percentage),
       });
     } else {
       return t("report_msg_att_decrease_previous_large_w", {
-        Name: "zhangsan",
-        AttendCompareLastWeek: Math.ceil((data[2].attendance_percentage - data[3].attendance_percentage) * 100),
+        Name: studentName,
+        AttendCompareLastWeek: Math.ceil(data[2].attendance_percentage - data[3].attendance_percentage),
       });
     }
   } else if (
@@ -728,13 +730,13 @@ export function getClassAttendanceFeedback(data: any, value: any) {
       data[3].attendance_percentage - data[2].attendance_percentage > 0
     ) {
       return t("report_msg_att_increase_3w", {
-        Name: "zhangsan",
-        AttendCompareLast3Week: Math.ceil((data[3].attendance_percentage - data[0].attendance_percentage) * 100),
+        Name: studentName,
+        AttendCompareLast3Week: Math.ceil(data[3].attendance_percentage - data[0].attendance_percentage),
       });
     } else {
       return t("report_msg_att_decrease_3w", {
-        Name: "zhangsan",
-        AttendCompareLast3Week: Math.ceil((data[0].attendance_percentage - data[3].attendance_percentage) * 100),
+        Name: studentName,
+        AttendCompareLast3Week: Math.ceil(data[0].attendance_percentage - data[3].attendance_percentage),
       });
     }
   } else if (
@@ -743,36 +745,41 @@ export function getClassAttendanceFeedback(data: any, value: any) {
   ) {
     if (data[3].attendance_percentage > data[3].class_average_attendance_percentage) {
       return t("report_msg_att_high_class_w", {
-        Name: "zhangsan",
-        LOCompareClass: Math.ceil((data[3].attendance_percentage - data[3].class_average_attendance_percentage) * 100),
+        Name: studentName,
+        LOCompareClass: Math.ceil(data[3].attendance_percentage - data[3].class_average_attendance_percentage),
       });
     } else {
       return t("report_msg_att_low_class_w", {
-        Name: "zhangsan",
-        LOCompareClass: Math.ceil((data[3].class_average_attendance_percentage - data[3].attendance_percentage) * 100),
+        Name: studentName,
+        LOCompareClass: Math.ceil(data[3].class_average_attendance_percentage - data[3].attendance_percentage),
       });
     }
   } else if (
-    (data && data[3].attendance_percentage - data[2].attendance_percentage < 0.2) ||
-    data[2].attendance_percentage - data[3].attendance_percentage < 0.2
+    (data && data[3].attendance_percentage - data[2].attendance_percentage < 20) ||
+    data[2].attendance_percentage - data[3].attendance_percentage < 20
   ) {
-    if (data && (data[3].attendance_percentage - data[2].attendance_percentage) / data[2].attendance_percentage < 0.2) {
+    if (data && (data[3].attendance_percentage - data[2].attendance_percentage) / data[2].attendance_percentage < 20) {
       return t("report_msg_att_increase_previous_w", {
-        Name: "zhangsan",
-        AttendCompareLastWeek: Math.ceil((data[3].attendance_percentage - data[2].attendance_percentage) * 100),
+        Name: studentName,
+        AttendCompareLastWeek: Math.ceil(data[3].attendance_percentage - data[2].attendance_percentage),
       });
     } else {
       return t("report_msg_att_decrease_previous_w", {
-        Name: "zhangsan",
-        AttendCompareLastWeek: Math.ceil((data[2].attendance_percentage - data[3].attendance_percentage) * 100),
+        Name: studentName,
+        AttendCompareLastWeek: Math.ceil(data[2].attendance_percentage - data[3].attendance_percentage),
       });
     }
   } else {
-    return t("report_msg_att_default", { Name: "zhangsan", AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
+    return t("report_msg_att_default", { Name: studentName, AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
   }
 }
 
-export function getAssignmentCompletionFeedback(data: any) {
+export function getAssignmentCompletionFeedback(newData: any, studentName: string) {
+  const data = newData.map((item: any) => ({
+    class_designated_subject: item.class_designated_subject * 100,
+    student_designated_subject: item.student_designated_subject * 100,
+    student_non_designated_subject: item.student_non_designated_subject * 100,
+  }));
   if (
     data[0].class_designated_subject === 0 &&
     data[0].student_designated_subject === 0 &&
@@ -785,7 +792,7 @@ export function getAssignmentCompletionFeedback(data: any) {
     data[2].student_non_designated_subject === 0
   ) {
     return t("report_msg_assign_new", {
-      Name: "zhangsan",
+      Name: studentName,
       AssignmentCompleteCount: data[3].student_complete_assignment,
       AssignmentCount: data[3].student_total_assignment,
     });
@@ -803,42 +810,40 @@ export function getAssignmentCompletionFeedback(data: any) {
       data[3].student_designated_subject > data[3].class_designated_subject
     ) {
       return t("report_msg_assign_high_class_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         AssignCompareClass3week: Math.ceil(
-          ((data[3].student_designated_subject -
+          (data[3].student_designated_subject -
             data[3].class_designated_subject +
             (data[2].student_designated_subject - data[2].class_designated_subject) +
             (data[1].student_designated_subject - data[1].class_designated_subject)) /
-            3) *
-            100
+            3
         ),
       });
     } else {
       return t("report_msg_assign_low_class_3w", {
-        Name: "zhangsan",
+        Name: studentName,
         AssignCompareClass3week: Math.ceil(
-          ((data[3].class_designated_subject -
+          (data[3].class_designated_subject -
             data[3].student_designated_subject +
             (data[2].class_designated_subject - data[2].student_designated_subject) +
             (data[1].class_designated_subject - data[1].student_designated_subject)) /
-            3) *
-            100
+            3
         ),
       });
     }
   } else if (
-    data[3].student_designated_subject - data[2].student_designated_subject >= 0.2 ||
-    data[2].student_designated_subject - data[3].student_designated_subject >= 0.2
+    data[3].student_designated_subject - data[2].student_designated_subject >= 20 ||
+    data[2].student_designated_subject - data[3].student_designated_subject >= 20
   ) {
-    if (data[3].student_designated_subject - data[2].student_designated_subject >= 0.2) {
+    if (data[3].student_designated_subject - data[2].student_designated_subject >= 20) {
       return t("report_msg_assign_increase_previous_large_w", {
-        Name: "zhangsan",
-        AssignCompareLastWeek: Math.ceil((data[3].student_designated_subject - data[2].student_designated_subject) * 100),
+        Name: studentName,
+        AssignCompareLastWeek: Math.ceil(data[3].student_designated_subject - data[2].student_designated_subject),
       });
     } else {
       return t("report_msg_assign_decrease_previous_large_w", {
-        Name: "zhangsan",
-        AssignCompareLastWeek: Math.ceil((data[2].student_designated_subject - data[3].student_designated_subject) * 100),
+        Name: studentName,
+        AssignCompareLastWeek: Math.ceil(data[2].student_designated_subject - data[3].student_designated_subject),
       });
     }
   } else if (
@@ -855,13 +860,13 @@ export function getAssignmentCompletionFeedback(data: any) {
       data[3].student_designated_subject - data[2].student_designated_subject > 0
     ) {
       return t("report_msg_assign_increase_3w", {
-        Name: "zhangsan",
-        AssignCompare3Week: Math.ceil((data[3].student_designated_subject - data[0].student_designated_subject) * 100),
+        Name: studentName,
+        AssignCompare3Week: Math.ceil(data[3].student_designated_subject - data[0].student_designated_subject),
       });
     } else {
       return t("report_msg_assign_decrease_3w", {
-        Name: "zhangsan",
-        AssignCompare3Week: Math.ceil((data[0].student_designated_subject - data[3].student_designated_subject) * 100),
+        Name: studentName,
+        AssignCompare3Week: Math.ceil(data[0].student_designated_subject - data[3].student_designated_subject),
       });
     }
   } else if (
@@ -870,33 +875,33 @@ export function getAssignmentCompletionFeedback(data: any) {
   ) {
     if (data[3].student_designated_subject > data[3].class_designated_subject) {
       return t("report_msg_assign_high_class_w", {
-        Name: "zhangsan",
-        AssignCompareClass: Math.ceil((data[3].student_designated_subject - data[3].class_designated_subject) * 100),
+        Name: studentName,
+        AssignCompareClass: Math.ceil(data[3].student_designated_subject - data[3].class_designated_subject),
       });
     } else {
       return t("report_msg_assign_low_class_w", {
-        Name: "zhangsan",
-        AssignCompareClass: Math.ceil((data[3].class_designated_subject - data[3].student_designated_subject) * 100),
+        Name: studentName,
+        AssignCompareClass: Math.ceil(data[3].class_designated_subject - data[3].student_designated_subject),
       });
     }
   } else if (
-    data[3].student_designated_subject - data[2].student_designated_subject < 0.2 ||
-    data[2].student_designated_subject - data[3].student_designated_subject < 0.2
+    data[3].student_designated_subject - data[2].student_designated_subject < 20 ||
+    data[2].student_designated_subject - data[3].student_designated_subject < 20
   ) {
-    if (data[3].student_designated_subject - data[2].student_designated_subject < 0.2) {
+    if (data[3].student_designated_subject - data[2].student_designated_subject < 20) {
       return t("report_msg_assign_increase_previous_w", {
-        Name: "zhangsan",
-        AssignCompareLastWeek: Math.ceil((data[3].student_designated_subject - data[2].student_designated_subject) * 100),
+        Name: studentName,
+        AssignCompareLastWeek: Math.ceil(data[3].student_designated_subject - data[2].student_designated_subject),
       });
     } else {
       return t("report_msg_assign_decrease_previous_w", {
-        Name: "zhangsan",
-        AssignCompareLastWeek: Math.ceil((data[2].student_designated_subject - data[3].student_designated_subject) * 100),
+        Name: studentName,
+        AssignCompareLastWeek: Math.ceil(data[2].student_designated_subject - data[3].student_designated_subject),
       });
     }
   } else {
     return t("report_msg_assign_default", {
-      Name: "zhangsan",
+      Name: studentName,
       AssignCompleteCount: data[3].student_complete_assignment,
       AssignmentCount: data[3].student_total_assignment,
     });
