@@ -1,12 +1,13 @@
 import { createStyles, makeStyles } from "@material-ui/core";
+import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { d, t } from "../../../locale/LocaleManager";
-import { getFourWeeks, getSixMonths } from "../../../models/ModelReports";
+import { getFourWeeks, getSixMonths, parsePercent, translateMonth } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getAssignmentsCompletion } from "../../../reducers/report";
 import LearningOutcomeAchievedTotalType from "../components/LearningOutcomeAchievedTotalType";
-import StudentProgressBarChart from "../components/StudentProgressBarChart";
+import StudentProgressBarChart, { BarGroupProps } from "../components/StudentProgressBarChart";
 import StudentProgressReportFeedback from "../components/StudentProgressReportFeedback";
 import StudentProgressReportFilter from "../components/StudentProgressReportFilter";
 const useStyle = makeStyles(() =>
@@ -26,16 +27,15 @@ export default function () {
   const { assignmentsCompletion, fourWeeksAssignmentsCompletionMassage } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
-  console.log(assignmentsCompletion);
   const totalType = [
     {
       label: t("report_label_student_assignments_completion_rate"),
       // data: "387",
       data:
-        Math.ceil(
-          (assignmentsCompletion.reduce((prev, current) => {
+        parsePercent(
+          assignmentsCompletion.reduce((prev, current) => {
             return prev + (current.student_designated_subject || 0);
-          }, 0) / assignmentsCompletion.length || 0) * 100
+          }, 0)
         ) + "%",
       idx: 0,
     },
@@ -43,10 +43,10 @@ export default function () {
       label: t("report_label_class_average_assignments_completion_rate"),
       // data: "361",
       data:
-        Math.ceil(
-          (assignmentsCompletion.reduce((prev, current) => {
+        parsePercent(
+          assignmentsCompletion.reduce((prev, current) => {
             return prev + (current.class_designated_subject || 0);
-          }, 0) / assignmentsCompletion.length || 0) * 100
+          }, 0) / assignmentsCompletion.length || 0
         ) + "%",
       idx: 1,
     },
@@ -54,14 +54,28 @@ export default function () {
       label: t("report_label_subject_average_assignments_completion_rate"),
       // data: "358",
       data:
-        Math.ceil(
-          (assignmentsCompletion.reduce((prev, current) => {
+        parsePercent(
+          assignmentsCompletion.reduce((prev, current) => {
             return prev + (current.student_non_designated_subject || 0);
-          }, 0) / assignmentsCompletion.length || 0) * 100
+          }, 0) / assignmentsCompletion.length || 0
         ) + "%",
       idx: 2,
     },
   ];
+
+  const chartData: BarGroupProps["data"] =
+    assignmentsCompletion.map((item) => {
+      const time = item.duration?.split("-") || [];
+      return {
+        time:
+          durationTime === 4
+            ? `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment(Number(time[1]) * 1000).format("MM.DD")}`
+            : translateMonth(moment(Number(time[0]) * 1000).get("month")),
+        v1: parsePercent(item.student_designated_subject),
+        v2: parsePercent(item.class_designated_subject),
+        v3: parsePercent(item.student_non_designated_subject),
+      } as BarGroupProps["data"][0];
+    }) || [];
 
   const label = { v1: totalType[0].label, v2: totalType[1].label, v3: totalType[2].label };
 
@@ -101,7 +115,7 @@ export default function () {
         studentProgressReportTitle={d("Assignment Completion").t("report_label_assignment_completion")}
       />
       <div className={css.chart}>
-        <StudentProgressBarChart data={[]} label={label} />
+        <StudentProgressBarChart itemUnit={"%"} data={chartData} label={label} />
       </div>
       <div>
         <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} />

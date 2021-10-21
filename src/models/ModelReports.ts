@@ -907,3 +907,25 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
     });
   }
 }
+
+export function translateMonth(month: number) {
+  const months = [
+    d("January").t("schedule_calendar_january"),
+    d("February").t("schedule_calendar_february"),
+    d("March").t("schedule_calendar_march"),
+    d("April").t("schedule_calendar_april"),
+    d("May").t("schedule_calendar_may"),
+    d("June").t("schedule_calendar_june"),
+    d("July").t("schedule_calendar_july"),
+    d("August").t("schedule_calendar_august"),
+    d("September").t("schedule_calendar_september"),
+    d("October").t("schedule_calendar_october"),
+    d("November").t("schedule_calendar_november"),
+    d("December").t("schedule_calendar_december"),
+  ];
+  return months[month];
+}
+
+export function parsePercent(decimal?: number) {
+  return Math.ceil((decimal || 0) * 100);
+}

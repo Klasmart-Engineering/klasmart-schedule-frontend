@@ -3,7 +3,7 @@ import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { d, t } from "../../../locale/LocaleManager";
-import { getFourWeeks, getSixMonths } from "../../../models/ModelReports";
+import { getFourWeeks, getSixMonths, parsePercent, translateMonth } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getLearnOutcomeAchievement } from "../../../reducers/report";
 import LearningOutcomeAchievedTotalType from "../components/LearningOutcomeAchievedTotalType";
@@ -26,8 +26,6 @@ export default function () {
   const { learnOutcomeAchievement, fourWeekslearnOutcomeAchievementMassage } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
-  console.log(learnOutcomeAchievement);
-  console.log("fourWeeksMassage1", fourWeekslearnOutcomeAchievementMassage);
 
   const colors = ["#0e78d5", "#ededed", "#bed6eb", "#a8c0ef"];
   const totalType = [
@@ -88,10 +86,13 @@ export default function () {
     learnOutcomeAchievement.items?.map((item) => {
       const time = item.duration?.split("-") || [];
       return {
-        time: `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment(Number(time[1]) * 1000).format("MM.DD")}`,
-        v1: [Math.ceil((item.first_achieved_percentage || 0) * 100), item.re_achieved_percentage || 0],
-        v2: item.class_average_achieve_percent || 0,
-        v3: item.un_selected_subjects_average_achieve_percentage || 0,
+        time:
+          durationTime === 4
+            ? `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment(Number(time[1]) * 1000).format("MM.DD")}`
+            : translateMonth(moment(Number(time[0]) * 1000).get("month")),
+        v1: [parsePercent(item.first_achieved_percentage), parsePercent(item.re_achieved_percentage)],
+        v2: parsePercent(item.class_average_achieve_percent),
+        v3: parsePercent(item.un_selected_subjects_average_achieve_percentage),
       } as BarGroupProps["data"][0];
     }) || [];
 
