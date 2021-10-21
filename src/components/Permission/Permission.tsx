@@ -450,6 +450,10 @@ export enum PermissionType {
   report_school_student_usage_655 = "report_school_student_usage_655",
   report_teacher_student_usage_656 = "report_teacher_student_usage_656",
   student_usage_report_657 = "student_usage_report_657",
+  report_student_progress_organization_658 = "report_student_progress_organization_658",
+  report_student_progress_school_659 = "report_student_progress_school_659",
+  report_student_progress_teacher_660 = "report_student_progress_teacher_660",
+  report_student_progress_student_661 = "report_student_progress_student_661",
   student_progress_report_662 = "student_progress_report_662",
 }
 
