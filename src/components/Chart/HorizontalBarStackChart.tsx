@@ -14,8 +14,6 @@ import React, { Attributes, ReactNode, SVGAttributes, useMemo } from "react";
 const useStyle = makeStyles({
   svg: {
     position: "relative",
-    // backgroundColor: "rgba(0,0,0, .02)",
-    fontFamily: "Helvetica",
   },
   axiosLine: {
     stroke: "#999999",
@@ -37,7 +35,7 @@ export interface HorizontalBarStackChartStructSize {
 
 const getPixels = (px: number) => ({
   barStackWidth: 400 * px,
-  barStackHeight: 40 * px,
+  barStackHeight: 20 * px,
   barStackMargin: 48 * px,
   xMarginTop: 0 * px,
   yMarginLeft: 180 * px,
@@ -73,12 +71,10 @@ const getInlineStyles = (px: number, pixels: HorizontalBarStackChartStructSize) 
       stroke: "#999",
       textAnchor: "end" as const,
       fontWeight: 100,
-      fontFamily: "Helvetica",
     },
     xAxiosTickLabel: {
       fontSize: 16 * px,
       fontWeight: 400,
-      fontFamily: "Helvetica",
       color: "rgba(0,0,0,0.87)",
       textAnchor: "middle" as const,
     },

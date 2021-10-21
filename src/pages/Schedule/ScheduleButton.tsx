@@ -46,7 +46,12 @@ function RouterButton(props: ButtonProps) {
         color="primary"
         variant="contained"
         className={buttonClass[templateType]}
-        disabled={!scheduleInfo.lesson_plan_id || scheduleInfo.lesson_plan?.is_auth === false || scheduleInfo.role_type === "Student"}
+        disabled={
+          !scheduleInfo.lesson_plan_id ||
+          scheduleInfo.lesson_plan?.is_auth === false ||
+          scheduleInfo.role_type === "Student" ||
+          scheduleInfo.class_type_label?.id === "Task"
+        }
         style={{
           display:
             (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "Homework") ||

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { Maybe, SchoolMembership } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -21,15 +21,7 @@ import {
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
-  ParticipantsByClassDocument,
   ParticipantsByClassQuery,
-  ParticipantsByClassQueryVariables,
-  ParticipantsByOrganizationDocument,
-  ParticipantsByOrganizationQuery,
-  ParticipantsByOrganizationQueryVariables,
-  ParticipantsBySchoolDocument,
-  ParticipantsBySchoolQuery,
-  ParticipantsBySchoolQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -39,6 +31,7 @@ import {
   SchoolByUserQueryDocument,
   GetSchoolsFilterListDocument,
   GetClassFilterListDocument,
+  GetUserDocument,
   SchoolByUserQueryQuery,
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
@@ -51,6 +44,8 @@ import {
   GetSchoolsFilterListQueryVariables,
   GetClassFilterListQuery,
   GetClassFilterListQueryVariables,
+  GetUserQuery,
+  GetUserQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -414,31 +409,40 @@ export const getParticipantsData = createAsyncThunk(
   // @ts-ignore
   async (is_org: boolean) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+    let filterQuery = {};
     if (is_org) {
-      const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
-        query: ParticipantsByOrganizationDocument,
-        variables: {
-          organization_id,
-        },
-      });
-      return data.organization;
+      filterQuery = { organizationId: { operator: UuidExclusiveOperator.Eq, value: organization_id } };
     } else {
       const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
         query: MySchoolIDsDocument,
         variables: { organization_id },
       });
-      if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
-        const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
-          query: ParticipantsBySchoolDocument,
-          variables: {
-            school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
-          },
-        });
-        return data.school;
-      } else {
+      const school_ids = schoolInfo.me?.membership?.schoolMemberships?.map((item) => {
+        return { schoolId: { operator: UuidExclusiveOperator.Eq, value: item?.school_id } };
+      });
+      filterQuery = { OR: school_ids };
+      if (!school_ids?.length) {
         return { classes: [{ students: [], teachers: [] }] };
       }
     }
+    const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
+      query: GetUserDocument,
+      variables: {
+        filter: filterQuery,
+        direction: ConnectionDirection.Forward,
+      },
+    });
+    const participantListOrigin = data;
+    const students: { user_id: string | undefined; user_name: string | null | undefined }[] = [];
+    const teachers: { user_id: string | undefined; user_name: string | null | undefined }[] = [];
+    participantListOrigin.usersConnection?.edges?.forEach((item) => {
+      if (item?.node?.status !== "active") return;
+      item?.node?.roles.forEach((role) => {
+        if (role.name === "Teacher") teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName });
+        if (role.name === "Student") students.push({ user_id: item.node?.id, user_name: item.node?.givenName });
+      });
+    });
+    return { classes: [{ students: students, teachers: teachers }] };
   }
 );
 
@@ -656,11 +660,28 @@ export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { 
 export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
   "getParticipant",
   async ({ class_id }) => {
-    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
-      query: ParticipantsByClassDocument,
-      variables: { class_id },
+    const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
+      query: GetUserDocument,
+      variables: {
+        filter: { classId: { operator: UuidExclusiveOperator.Eq, value: class_id } },
+        direction: ConnectionDirection.Forward,
+      },
     });
-    const participantList = data;
+    const participantListOrigin = data;
+    const participantList: {
+      class: { teachers: { user_id: string; user_name: string }[]; students: { user_id: string; user_name: string }[] };
+    } = { class: { teachers: [], students: [] } };
+    participantListOrigin.usersConnection?.edges?.forEach((item) => {
+      if (item?.node?.status !== "active") return;
+      item?.node?.roles.forEach((role) => {
+        if (role.name === "Teacher") {
+          participantList.class.teachers.push({ user_id: item.node?.id as string, user_name: item.node?.givenName as string });
+        }
+        if (role.name === "Student") {
+          participantList.class.students.push({ user_id: item.node?.id as string, user_name: item.node?.givenName as string });
+        }
+      });
+    });
     return { participantList };
   }
 );
