@@ -415,11 +415,14 @@ export function getFourWeeks() {
 }
 
 export function getLearnOutcomeAchievementFeedback(newData: any, studentName: string) {
-  const data = newData.map((item: any) => ({
+  let data = newData.map((item: any) => ({
     class_average_achieved_percentage: item.class_average_achieved_percentage * 100,
     first_achieved_percentage: item.first_achieved_percentage * 100,
     re_achieved_percentage: item.re_achieved_percentage * 100,
     un_selected_subjects_average_achieved_percentage: item.un_selected_subjects_average_achieved_percentage * 100,
+    first_achieved_count: item.first_achieved_count,
+    re_achieved_count: item.re_achieved_count,
+    un_achieved_count: item.un_achieved_count,
   }));
 
   if (
@@ -646,11 +649,13 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
   }
 }
 
-export function getClassAttendanceFeedback(newData: any, value: any, studentName: string) {
+export function getClassAttendanceFeedback(newData: any, studentName: string) {
   const data = newData.map((item: any) => ({
     attendance_percentage: item.attendance_percentage * 100,
     class_average_attendance_percentage: item.class_average_attendance_percentage * 100,
     un_selected_subjects_average_attendance_percentage: item.un_selected_subjects_average_attendance_percentage * 100,
+    attended_count: item.attended_count,
+    scheduled_count: item.scheduled_count,
   }));
   if (
     data[0].attendance_percentage === 0 &&
@@ -663,7 +668,7 @@ export function getClassAttendanceFeedback(newData: any, value: any, studentName
     data[2].class_average_attendance_percentage === 0 &&
     data[2].un_selected_subjects_average_attendance_percentage === 0
   ) {
-    return t("report_msg_att_new", { Name: studentName, AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
+    return t("report_msg_att_new", { Name: studentName, AttendedCount: data[3].attended_count, ScheduledCount: data[3].scheduled_count });
   } else if (
     (data[1].attendance_percentage > data[1].class_average_attendance_percentage &&
       data[2].attendance_percentage > data[2].class_average_attendance_percentage &&
@@ -769,7 +774,11 @@ export function getClassAttendanceFeedback(newData: any, value: any, studentName
       });
     }
   } else {
-    return t("report_msg_att_default", { Name: studentName, AttendedCount: value.attended_count, ScheduledCount: value.scheduled_count });
+    return t("report_msg_att_default", {
+      Name: studentName,
+      AttendedCount: data[3].attended_count,
+      ScheduledCount: data[3].scheduled_count,
+    });
   }
 }
 
@@ -778,6 +787,8 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
     class_designated_subject: item.class_designated_subject * 100,
     student_designated_subject: item.student_designated_subject * 100,
     student_non_designated_subject: item.student_non_designated_subject * 100,
+    student_complete_assignment: item.student_complete_assignment,
+    student_total_assignment: item.student_total_assignment,
   }));
   if (
     data[0].class_designated_subject === 0 &&

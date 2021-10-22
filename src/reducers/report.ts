@@ -1815,7 +1815,7 @@ const { actions, reducer } = createSlice({
       );
       const studentName = stuList?.find((val) => val.id === payload?.request_student_id)?.name || "";
       if (payload?.items?.length === 4) {
-        state.fourWeeksClassAttendanceMassage = getClassAttendanceFeedback(payload?.items, payload, studentName);
+        state.fourWeeksClassAttendanceMassage = getClassAttendanceFeedback(payload?.items, studentName);
       }
     },
     [getLearnOutcomeAchievement.fulfilled.type]: (
