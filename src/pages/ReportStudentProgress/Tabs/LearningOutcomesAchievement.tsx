@@ -84,8 +84,8 @@ export default function () {
           un_selected_subject_id_list: unselectedSubjectId,
         })
       );
-      // eslint-disable-next-line
     },
+    // eslint-disable-next-line
     [classId, selectedSubjectId, studentId]
   );
 
