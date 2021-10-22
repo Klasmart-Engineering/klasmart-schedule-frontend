@@ -767,14 +767,12 @@ function FilterTemplate(props: FilterProps) {
 
   return (
     <>
-      {schoolsConnection?.schoolsConnection?.edges?.length! > 0 && (
-        <SchoolTemplate
-          openClassMenu={openClassMenu}
-          schoolsConnection={schoolsConnection}
-          getSchoolsConnection={getSchoolsConnection}
-          getClassesConnection={getClassesConnection}
-        />
-      )}
+      <SchoolTemplate
+        openClassMenu={openClassMenu}
+        schoolsConnection={schoolsConnection}
+        getSchoolsConnection={getSchoolsConnection}
+        getClassesConnection={getClassesConnection}
+      />
       <TreeView
         className={css.containerRoot}
         defaultCollapseIcon={<KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
