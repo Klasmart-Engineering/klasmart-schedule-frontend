@@ -164,7 +164,7 @@ export const recursiveListFolderItems = async ({
 export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
-  sessionStorage.clear();
+  // sessionStorage.clear();
   window.history.replaceState(null, document.title, url.toString());
 };
 
@@ -221,10 +221,18 @@ export function apiIsEnableReport() {
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
-  const res = sessionStorage.getItem(PERMISSION_KEY);
-  if(res){
-    return JSON.parse(res || "");
-  }else {
+  // const organization_id = apiOrganizationOfPage() || "";
+  // const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+  //   query: QeuryMeDocument,
+  //   variables: {
+  //     organization_id,
+  //   },
+  // });
+  // const myUserId = meInfo.me?.user_id;
+  // const res = sessionStorage.getItem(`${PERMISSION_KEY}${organization_id}${myUserId}`);
+  // if(res){
+  //   return JSON.parse(res || "");
+  // }else {
     const permission = await api.organizationPermissions.hasOrganizationPermissions({
      permission_name: premissions,
    });
@@ -245,7 +253,7 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });
-  sessionStorage.setItem(PERMISSION_KEY, JSON.stringify(returnData));
+  // sessionStorage.setItem(`${PERMISSION_KEY}${organization_id}${myUserId}`, JSON.stringify(returnData));
   return returnData;
-  }
+  // }
 }
