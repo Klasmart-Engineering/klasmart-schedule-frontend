@@ -81,17 +81,19 @@ export default function () {
 
   useEffect(() => {
     setDurationTime(4);
-    dispatch(
-      getAssignmentsCompletion({
-        metaLoading: true,
-        class_id: classId,
-        school_id: "6879ac4b-7d4b-4462-9ba6-ff60e54777e4",
-        durations: getFourWeeks(),
-        selected_subject_id_list: selectedSubjectId,
-        student_id: studentId,
-        un_selected_subject_id_list: unselectedSubjectId,
-      })
-    );
+    if (classId && studentId) {
+      dispatch(
+        getAssignmentsCompletion({
+          metaLoading: true,
+          class_id: classId,
+          school_id: "6879ac4b-7d4b-4462-9ba6-ff60e54777e4",
+          durations: getFourWeeks(),
+          selected_subject_id_list: selectedSubjectId,
+          student_id: studentId,
+          un_selected_subject_id_list: unselectedSubjectId,
+        })
+      );
+    }
     // eslint-disable-next-line
   }, [dispatch, classId, selectedSubjectId, studentId]);
   const handleChange = useMemo(
