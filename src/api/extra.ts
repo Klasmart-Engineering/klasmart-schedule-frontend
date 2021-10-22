@@ -1,10 +1,10 @@
 import Cookies from "js-cookie";
 import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
-import api, { gqlapi } from ".";
+import api from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
-import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "./api-ko.auto";
+import { QeuryMeQuery } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 import premissionAll from "./permission_all.json";
@@ -164,7 +164,7 @@ export const recursiveListFolderItems = async ({
 export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
-  sessionStorage.clear();
+  // sessionStorage.clear();
   window.history.replaceState(null, document.title, url.toString());
 };
 
@@ -225,18 +225,18 @@ export function apiIsEnableReport() {
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
-  const organization_id = apiOrganizationOfPage() || "";
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  const myUserId = meInfo.me?.user_id;
-  const res = sessionStorage.getItem(`${PERMISSION_KEY}${organization_id}${myUserId}`);
-  if(res){
-    return JSON.parse(res || "");
-  }else {
+  // const organization_id = apiOrganizationOfPage() || "";
+  // const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+  //   query: QeuryMeDocument,
+  //   variables: {
+  //     organization_id,
+  //   },
+  // });
+  // const myUserId = meInfo.me?.user_id;
+  // const res = sessionStorage.getItem(`${PERMISSION_KEY}${organization_id}${myUserId}`);
+  // if(res){
+  //   return JSON.parse(res || "");
+  // }else {
     const permission = await api.organizationPermissions.hasOrganizationPermissions({
      permission_name: premissions,
    });
@@ -257,7 +257,7 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });
-  sessionStorage.setItem(`${PERMISSION_KEY}${organization_id}${myUserId}`, JSON.stringify(returnData));
+  // sessionStorage.setItem(`${PERMISSION_KEY}${organization_id}${myUserId}`, JSON.stringify(returnData));
   return returnData;
-  }
+  // }
 }
