@@ -132,6 +132,7 @@ export default function SearchList(props: SearchListProps) {
       page_size: 10,
       time_zone_offset: -new Date().getTimezoneOffset() * 60,
       start_at: timesTamp.start,
+      order_by: "schedule_at",
     };
     dispatch(getSearchScheduleList({ data, metaLoading: true }));
   }, [dispatch, name, timesTamp.start]);
