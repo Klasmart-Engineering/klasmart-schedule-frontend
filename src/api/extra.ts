@@ -1,10 +1,10 @@
 import Cookies from "js-cookie";
 import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
-import api from ".";
+import api, { gqlapi } from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
-import { QeuryMeQuery } from "./api-ko.auto";
+import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 import premissionAll from "./permission_all.json";
@@ -225,7 +225,15 @@ export function apiIsEnableReport() {
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
-  const res = sessionStorage.getItem(PERMISSION_KEY);
+  const organization_id = apiOrganizationOfPage() || "";
+  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+    query: QeuryMeDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  const myUserId = meInfo.me?.user_id;
+  const res = sessionStorage.getItem(`${PERMISSION_KEY}${organization_id}${myUserId}`);
   if(res){
     return JSON.parse(res || "");
   }else {
@@ -249,7 +257,7 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });
-  sessionStorage.setItem(PERMISSION_KEY, JSON.stringify(returnData));
+  sessionStorage.setItem(`${PERMISSION_KEY}${organization_id}${myUserId}`, JSON.stringify(returnData));
   return returnData;
   }
 }
