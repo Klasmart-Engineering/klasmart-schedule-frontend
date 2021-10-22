@@ -1,6 +1,6 @@
 import { createStyles, makeStyles } from "@material-ui/styles";
 import moment from "moment";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { d, t } from "../../../locale/LocaleManager";
 import { getFourWeeks, getSixMonths, parsePercent, translateMonth } from "../../../models/ModelReports";
@@ -10,6 +10,7 @@ import LearningOutcomeAchievedTotalType from "../components/LearningOutcomeAchie
 import StudentProgressBarChart, { BarGroupProps } from "../components/StudentProgressBarChart";
 import StudentProgressReportFeedback from "../components/StudentProgressReportFeedback";
 import StudentProgressReportFilter from "../components/StudentProgressReportFilter";
+import { SelectContext } from "../index";
 
 const useStyle = makeStyles((theme) =>
   createStyles({
@@ -22,6 +23,8 @@ const useStyle = makeStyles((theme) =>
 export default function () {
   const [durationTime, setDurationTime] = useState(4);
   const dispatch = useDispatch();
+  const { classId, studentId, allSubjectId, selectedSubjectId } = useContext(SelectContext);
+  const unselectedSubjectId = allSubjectId.filter((item) => selectedSubjectId.every((val) => val !== item));
   const style = useStyle();
   const { learnOutcomeAchievement, fourWeekslearnOutcomeAchievementMassage } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
@@ -56,29 +59,29 @@ export default function () {
     dispatch(
       getLearnOutcomeAchievement({
         metaLoading: true,
-        class_id: "",
+        class_id: classId,
         durations: getFourWeeks(),
-        selected_subject_id_list: [""],
-        student_id: "",
-        un_selected_subject_id_list: [""],
+        selected_subject_id_list: selectedSubjectId,
+        student_id: studentId,
+        un_selected_subject_id_list: unselectedSubjectId,
       })
     );
-  }, [dispatch]);
+  }, [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]);
   const handleChange = useMemo(
     () => (value: number) => {
       setDurationTime(value);
       dispatch(
         getLearnOutcomeAchievement({
           metaLoading: true,
-          class_id: "",
+          class_id: classId,
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
-          selected_subject_id_list: [""],
-          student_id: "",
-          un_selected_subject_id_list: [""],
+          selected_subject_id_list: selectedSubjectId,
+          student_id: studentId,
+          un_selected_subject_id_list: unselectedSubjectId,
         })
       );
     },
-    [dispatch]
+    [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]
   );
 
   const data: BarGroupProps["data"] =

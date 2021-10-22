@@ -1,7 +1,8 @@
 import { createStyles, makeStyles } from "@material-ui/core";
 import moment from "moment";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { SelectContext } from "..";
 import { EntityClassAttendanceResponseItem } from "../../../api/api.auto";
 import { d, t } from "../../../locale/LocaleManager";
 import { getFourWeeks, getSixMonths, parsePercent, translateMonth } from "../../../models/ModelReports";
@@ -22,6 +23,8 @@ const useStyle = makeStyles(() =>
 
 export default function () {
   const [durationTime, setDurationTime] = useState(4);
+  const { classId, studentId, allSubjectId, selectedSubjectId } = useContext(SelectContext);
+  const unselectedSubjectId = allSubjectId.filter((item) => selectedSubjectId.every((val) => val !== item));
   const colors = ["#0e78d5", "#bed6eb", "#a8c0ef"];
   const css = useStyle();
   const dispatch = useDispatch();
@@ -84,14 +87,14 @@ export default function () {
     dispatch(
       getLearnOutcomeClassAttendance({
         metaLoading: true,
-        class_id: "",
+        class_id: classId,
         durations: getFourWeeks(),
-        selected_subject_id_list: [""],
-        student_id: "",
-        un_selected_subject_id_list: [""],
+        selected_subject_id_list: selectedSubjectId,
+        student_id: studentId,
+        un_selected_subject_id_list: unselectedSubjectId,
       })
     );
-  }, [dispatch]);
+  }, [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]);
 
   const handleChange = useMemo(
     () => (value: number) => {
@@ -99,15 +102,15 @@ export default function () {
       dispatch(
         getLearnOutcomeClassAttendance({
           metaLoading: true,
-          class_id: "",
+          class_id: classId,
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
-          selected_subject_id_list: [""],
-          student_id: "",
-          un_selected_subject_id_list: [""],
+          selected_subject_id_list: selectedSubjectId,
+          student_id: studentId,
+          un_selected_subject_id_list: unselectedSubjectId,
         })
       );
     },
-    [dispatch]
+    [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]
   );
 
   return (
