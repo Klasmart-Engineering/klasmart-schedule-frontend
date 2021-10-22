@@ -33,38 +33,27 @@ export default function () {
   );
   const items: EntityClassAttendanceResponseItem[] = learnOutcomeClassAttendance.items ? learnOutcomeClassAttendance.items : [];
 
-  const totalType = [
-    {
-      label: t("report_label_student_attendance_rate"),
-      data:
-        parsePercent(
-          items.reduce((prev, current) => {
-            return prev + (current.attendance_percentage || 0);
-          }, 0) / items.length || 0
-        ) + "%",
-      idx: 0,
-    },
-    {
-      label: t("report_label_class_average_attendance_rate"),
-      data:
-        parsePercent(
-          items.reduce((prev, current) => {
-            return prev + (current.class_average_attendance_percentage || 0);
-          }, 0) / items.length || 0
-        ) + "%",
-      idx: 1,
-    },
-    {
-      label: t("report_label_subject_average_attendance_rate"),
-      data:
-        parsePercent(
-          items.reduce((prev, current) => {
-            return prev + (current.un_selected_subjects_average_attendance_percentage || 0);
-          }, 0) / items.length || 0
-        ) + "%",
-      idx: 2,
-    },
+  const type = [
+    t("report_label_student_attendance_rate"),
+    t("report_label_class_average_attendance_rate"),
+    t("report_label_subject_average_attendance_rate"),
   ];
+  const value: string[] = [
+    "attendance_percentage",
+    "class_average_attendance_percentage",
+    "un_selected_subjects_average_attendance_percentage",
+  ];
+
+  const totalType = type.map((item, idx) => ({
+    label: item,
+    data:
+      parsePercent(
+        items.reduce((prev, current) => {
+          return prev + (Object(current)[value[idx]] || 0);
+        }, 0) / items.length || 0
+      ) + "%",
+    idx,
+  }));
 
   const chartData: BarGroupProps["data"] =
     learnOutcomeClassAttendance.items?.map((item) => {

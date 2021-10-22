@@ -30,38 +30,23 @@ export default function () {
   const { assignmentsCompletion, fourWeeksAssignmentsCompletionMassage } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   );
-  const totalType = [
-    {
-      label: t("report_label_student_assignments_completion_rate"),
-      data:
-        parsePercent(
-          assignmentsCompletion.reduce((prev, current) => {
-            return prev + (current.student_designated_subject || 0);
-          }, 0) / assignmentsCompletion.length || 0
-        ) + "%",
-      idx: 0,
-    },
-    {
-      label: t("report_label_class_average_assignments_completion_rate"),
-      data:
-        parsePercent(
-          assignmentsCompletion.reduce((prev, current) => {
-            return prev + (current.class_designated_subject || 0);
-          }, 0) / assignmentsCompletion.length || 0
-        ) + "%",
-      idx: 1,
-    },
-    {
-      label: t("report_label_subject_average_assignments_completion_rate"),
-      data:
-        parsePercent(
-          assignmentsCompletion.reduce((prev, current) => {
-            return prev + (current.student_non_designated_subject || 0);
-          }, 0) / assignmentsCompletion.length || 0
-        ) + "%",
-      idx: 2,
-    },
+  const type = [
+    t("report_label_student_assignments_completion_rate"),
+    t("report_label_class_average_assignments_completion_rate"),
+    t("report_label_subject_average_assignments_completion_rate"),
   ];
+  const value: string[] = ["student_designated_subject", "class_designated_subject", "student_non_designated_subject"];
+
+  const totalType = type.map((item, idx) => ({
+    label: item,
+    data:
+      parsePercent(
+        assignmentsCompletion.reduce((prev, current) => {
+          return prev + (Object(current)[value[idx]] || 0);
+        }, 0) / assignmentsCompletion.length || 0
+      ) + "%",
+    idx,
+  }));
 
   const chartData: BarGroupProps["data"] =
     assignmentsCompletion.map((item) => {
