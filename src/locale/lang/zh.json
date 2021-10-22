@@ -1042,5 +1042,6 @@
   "report_label_assignments_completion_rate": "Assignments Completion Rate",
   "report_label_student_assignments_completion_rate": "Student Assignments Completion Rate",
   "report_label_class_average_assignments_completion_rate": "Class Average Assignments Completion Rate",
-  "report_label_subject_average_assignments_completion_rate": "Subject Average Assignments Completion Rate"
+  "report_label_subject_average_assignments_completion_rate": "Subject Average Assignments Completion Rate",
+  "report_label_student_progress_report": "Student Progress Report"
 }
