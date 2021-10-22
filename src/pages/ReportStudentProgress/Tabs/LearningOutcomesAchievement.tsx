@@ -1,6 +1,6 @@
 import { createStyles, makeStyles } from "@material-ui/styles";
 import moment from "moment";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { d, t } from "../../../locale/LocaleManager";
 import { getFourWeeks, getSixMonths, parsePercent, translateMonth } from "../../../models/ModelReports";
@@ -49,25 +49,28 @@ export default function () {
     },
     {
       label: t("report_label_total_achieved_lo_subject_average"),
-      data: 365,
-      // data: learnOutcomeAchievement.un_selected_subjects_average_achieved_count || 0,
+      data: learnOutcomeAchievement.un_selected_subjects_average_achieve_count || 0,
       idx: 3,
     },
   ];
   useEffect(() => {
     setDurationTime(4);
-    dispatch(
-      getLearnOutcomeAchievement({
-        metaLoading: true,
-        class_id: classId,
-        durations: getFourWeeks(),
-        selected_subject_id_list: selectedSubjectId,
-        student_id: studentId,
-        un_selected_subject_id_list: unselectedSubjectId,
-      })
-    );
-  }, [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]);
-  const handleChange = useMemo(
+    if (classId && studentId) {
+      dispatch(
+        getLearnOutcomeAchievement({
+          metaLoading: true,
+          class_id: classId,
+          durations: getFourWeeks(),
+          school_id: "",
+          selected_subject_id_list: selectedSubjectId,
+          student_id: studentId,
+          un_selected_subject_id_list: unselectedSubjectId,
+        })
+      );
+    }
+    // eslint-disable-next-line
+  }, [classId, selectedSubjectId, studentId]);
+  const handleChange = React.useMemo(
     () => (value: number) => {
       setDurationTime(value);
       dispatch(
@@ -77,11 +80,13 @@ export default function () {
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
           selected_subject_id_list: selectedSubjectId,
           student_id: studentId,
+          school_id: "",
           un_selected_subject_id_list: unselectedSubjectId,
         })
       );
+      // eslint-disable-next-line
     },
-    [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]
+    [classId, selectedSubjectId, studentId]
   );
 
   const data: BarGroupProps["data"] =
@@ -93,8 +98,8 @@ export default function () {
             ? `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment(Number(time[1]) * 1000).format("MM.DD")}`
             : translateMonth(moment(Number(time[0]) * 1000).get("month")),
         v1: [parsePercent(item.first_achieved_percentage), parsePercent(item.re_achieved_percentage)],
-        v2: parsePercent(item.class_average_achieve_percent),
-        v3: parsePercent(item.un_selected_subjects_average_achieve_percentage),
+        v2: parsePercent(item.class_average_achieved_percentage),
+        v3: parsePercent(item.un_selected_subjects_average_achieved_percentage),
       } as BarGroupProps["data"][0];
     }) || [];
 

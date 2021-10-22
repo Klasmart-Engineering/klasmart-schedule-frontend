@@ -86,6 +86,8 @@ import { d } from "../locale/LocaleManager";
 import {
   formatTimeToMonDay,
   getAllUsers,
+  getAssignmentCompletionFeedback,
+  getClassAttendanceFeedback,
   getLearnOutcomeAchievementFeedback,
   getTimeOffSecond,
   ModelReport,
@@ -1792,9 +1794,9 @@ const { actions, reducer } = createSlice({
           })
         )
       );
-      // const studentName = stuList?.find(val => val.id === payload?.request?.student_id)?.name || ""
+      const studentName = stuList?.find((val) => val.id === payload[0].student_id)?.name || "";
       if (payload?.length === 4) {
-        //  state.fourWeeksAssignmentsCompletionMassage =  getAssignmentCompletionFeedback(payload, studentName)
+        state.fourWeeksAssignmentsCompletionMassage = getAssignmentCompletionFeedback(payload, studentName);
       }
     },
     [getLearnOutcomeClassAttendance.fulfilled.type]: (
@@ -1811,9 +1813,9 @@ const { actions, reducer } = createSlice({
           })
         )
       );
-      // const studentName = stuList?.find(val => val.id === payload?.request?.student_id)?.name || ""
+      const studentName = stuList?.find((val) => val.id === payload?.request_student_id)?.name || "";
       if (payload?.items?.length === 4) {
-        //  state.fourWeeksClassAttendanceMassage = getClassAttendanceFeedback(payload?.items, payload, studentName)
+        state.fourWeeksClassAttendanceMassage = getClassAttendanceFeedback(payload?.items, payload, studentName);
       }
     },
     [getLearnOutcomeAchievement.fulfilled.type]: (
@@ -1821,61 +1823,6 @@ const { actions, reducer } = createSlice({
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeAchievement>>
     ) => {
       state.learnOutcomeAchievement = payload;
-      // const data = {
-      //   request: {
-      //     class_id: "335bc743-919e-4906-8418-a066ceeb76fa",
-      //     student_id: "842e71b3-e92e-43ee-83d3-95149bc04801",
-      //     selected_subject_id_list: ["b997e0d1-2dd7-40d8-847a-b8670247e96b"],
-      //     un_selected_subject_id_list: ["20d6ca2f-13df-4a7a-8dcb-955908db7baa", ""],
-      //     durations: ["1-88888888", "88888888-999999999999"],
-      //   },
-      //   first_achieved_count: 5,
-      //   re_achieved_count: 0,
-      //   class_average_achieved_count: 5,
-      //   un_selected_subjects_average_achieve_count: 10,
-      //   items: [
-      //     {
-      //       duration: "1-88888888",
-      //       first_achieved_percentage: 0,
-      //       re_achieved_percentage: 0,
-      //       class_average_achieved_percentage: 0,
-      //       un_selected_subjects_average_achieved_percentage: 0,
-      //       first_achieved_count: 0,
-      //       re_achieved_count: 0,
-      //       un_achieved_count: 0,
-      //     },
-      //     {
-      //       duration: "88888888-999999999999",
-      //       first_achieved_percentage: 0,
-      //       re_achieved_percentage: 0.56,
-      //       class_average_achieved_percentage: 0.95,
-      //       un_selected_subjects_average_achieved_percentage: 0.8333333333333334,
-      //       first_achieved_count: 5,
-      //       re_achieved_count: 0,
-      //       un_achieved_count: 0,
-      //     },
-      //     {
-      //       duration: "1-88888888",
-      //       first_achieved_percentage: 0.1,
-      //       re_achieved_percentage: 0.7,
-      //       class_average_achieved_percentage: 0.2,
-      //       un_selected_subjects_average_achieved_percentage: 0,
-      //       first_achieved_count: 0,
-      //       re_achieved_count: 0,
-      //       un_achieved_count: 0,
-      //     },
-      //     {
-      //       duration: "88888888-999999999999",
-      //       first_achieved_percentage: 0.1,
-      //       re_achieved_percentage: 0.7,
-      //       class_average_achieved_percentage: 0.7,
-      //       un_selected_subjects_average_achieved_percentage: 0.8333333333333334,
-      //       first_achieved_count: 5,
-      //       re_achieved_count: 0,
-      //       un_achieved_count: 0,
-      //     },
-      //   ],
-      // };
       const stuList = [{ id: "", name: "" }];
       state.schoolClassesStudentsSubjects.classList.map((item) =>
         item.students?.map((val) =>
@@ -1885,8 +1832,7 @@ const { actions, reducer } = createSlice({
           })
         )
       );
-      // const studentName = stuList?.find(val => val.id === payload?.request?.student_id)?.name || ""
-      const studentName = stuList?.find((val) => val.id === "70eb76d1-91d3-4edf-9bf6-a2dfcfb51407")?.name || "";
+      const studentName = stuList?.find((val) => val.id === payload?.request?.student_id)?.name || "";
       console.log("studentName", studentName);
       if (payload?.items?.length === 4) {
         state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(payload?.items, studentName);

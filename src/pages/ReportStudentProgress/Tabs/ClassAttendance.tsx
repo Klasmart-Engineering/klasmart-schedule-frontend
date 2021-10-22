@@ -88,13 +88,15 @@ export default function () {
       getLearnOutcomeClassAttendance({
         metaLoading: true,
         class_id: classId,
+        school_id: "",
         durations: getFourWeeks(),
         selected_subject_id_list: selectedSubjectId,
         student_id: studentId,
         un_selected_subject_id_list: unselectedSubjectId,
       })
     );
-  }, [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]);
+    // eslint-disable-next-line
+  }, [dispatch, classId, selectedSubjectId, studentId]);
 
   const handleChange = useMemo(
     () => (value: number) => {
@@ -103,6 +105,7 @@ export default function () {
         getLearnOutcomeClassAttendance({
           metaLoading: true,
           class_id: classId,
+          school_id: "",
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
           selected_subject_id_list: selectedSubjectId,
           student_id: studentId,
@@ -110,7 +113,8 @@ export default function () {
         })
       );
     },
-    [dispatch, classId, selectedSubjectId, studentId, unselectedSubjectId]
+    // eslint-disable-next-line
+    [dispatch, classId, selectedSubjectId, studentId]
   );
 
   return (

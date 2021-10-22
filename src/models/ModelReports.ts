@@ -359,7 +359,7 @@ export function getSixMonths() {
     }
     day = mGetDate(year, month) + 1;
   }
-  var lastDate = formatDate(`${year}/${month}/01 00:00:00`) + " - " + formatDate(`${year}/${month}/${day} 00:00:00`);
+  var lastDate = formatDate(`${year}/${month}/01 00:00:00`) + "-" + formatDate(`${year}/${month}/${day} 00:00:00`);
   var arry = [];
   for (var i = 0; i < 5; i++) {
     month = month - 1;
@@ -372,7 +372,7 @@ export function getSixMonths() {
     }
     arry[i] =
       formatDate(year + "/" + month + "/01 00:00:00") +
-      " - " +
+      "-" +
       (formatDate(year + "/" + month + "/" + mGetDate(year, month) + " 23:59:59") + 1);
   }
   arry.unshift(lastDate);
@@ -403,13 +403,13 @@ export function getFourWeeks() {
   var array = [];
   if (dd === 1) {
     for (let i = 1; i <= 4; i++) {
-      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1} - ${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
+      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
     }
   } else {
     for (let i = 1; i <= 3; i++) {
-      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1} - ${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
+      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
     }
-    array.push(`${newDate + 1} - ${newDate + 3600 * 24 * (dd - 1) + 1}`);
+    array.push(`${newDate + 1}-${newDate + 3600 * 24 * (dd - 1) + 1}`);
   }
   return array;
 }

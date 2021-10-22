@@ -9448,6 +9448,9 @@
         "student_designated_subject": {
           "type": "number"
         },
+        "student_id": {
+          "type": "string"
+        },
         "student_non_designated_subject": {
           "type": "number"
         },
@@ -9458,7 +9461,7 @@
     },
     "entity.AssignmentRequest": {
       "type": "object",
-      "required": ["class_id", "student_id"],
+      "required": ["class_id", "school_id", "student_id"],
       "properties": {
         "class_id": {
           "type": "string"
@@ -9468,6 +9471,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "school_id": {
+          "type": "string"
         },
         "selected_subject_id_list": {
           "type": "array",
@@ -9824,7 +9830,7 @@
     },
     "entity.ClassAttendanceRequest": {
       "type": "object",
-      "required": ["class_id", "student_id"],
+      "required": ["class_id", "school_id", "student_id"],
       "properties": {
         "class_id": {
           "type": "string"
@@ -9834,6 +9840,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "school_id": {
+          "type": "string"
         },
         "selected_subject_id_list": {
           "type": "array",
@@ -9855,17 +9864,14 @@
     "entity.ClassAttendanceResponse": {
       "type": "object",
       "properties": {
-        "attended_count": {
-          "type": "integer"
-        },
         "items": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/entity.ClassAttendanceResponseItem"
           }
         },
-        "scheduled_count": {
-          "type": "integer"
+        "request_student_id": {
+          "type": "string"
         }
       }
     },
@@ -9875,11 +9881,17 @@
         "attendance_percentage": {
           "type": "number"
         },
+        "attended_count": {
+          "type": "integer"
+        },
         "class_average_attendance_percentage": {
           "type": "number"
         },
         "duration": {
           "type": "string"
+        },
+        "scheduled_count": {
+          "type": "integer"
         },
         "un_selected_subjects_average_attendance_percentage": {
           "type": "number"
@@ -10757,7 +10769,7 @@
     },
     "entity.LearnOutcomeAchievementRequest": {
       "type": "object",
-      "required": ["class_id", "student_id"],
+      "required": ["class_id", "school_id", "student_id"],
       "properties": {
         "class_id": {
           "type": "string"
@@ -10767,6 +10779,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "school_id": {
+          "type": "string"
         },
         "selected_subject_id_list": {
           "type": "array",
@@ -10789,7 +10804,7 @@
       "type": "object",
       "properties": {
         "class_average_achieved_count": {
-          "type": "integer"
+          "type": "number"
         },
         "first_achieved_count": {
           "type": "integer"
@@ -10803,15 +10818,18 @@
         "re_achieved_count": {
           "type": "integer"
         },
+        "request": {
+          "$ref": "#/definitions/entity.LearnOutcomeAchievementRequest"
+        },
         "un_selected_subjects_average_achieve_count": {
-          "type": "integer"
+          "type": "number"
         }
       }
     },
     "entity.LearnOutcomeAchievementResponseItem": {
       "type": "object",
       "properties": {
-        "class_average_achieve_percent": {
+        "class_average_achieved_percentage": {
           "type": "number"
         },
         "duration": {
@@ -10832,7 +10850,7 @@
         "un_achieved_count": {
           "type": "integer"
         },
-        "un_selected_subjects_average_achieve_percentage": {
+        "un_selected_subjects_average_achieved_percentage": {
           "type": "number"
         }
       }

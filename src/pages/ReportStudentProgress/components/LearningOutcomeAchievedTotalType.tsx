@@ -9,8 +9,7 @@ const useStyle = makeStyles(() =>
       alignItems: "flex-start",
     },
     blockRight: {
-      marginBottom: "16px",
-      maxWidth: "180px",
+      maxWidth: "227px",
       color: "#666666",
       wordWrap: "break-word",
       wordBreak: "normal",
@@ -26,11 +25,11 @@ const useStyle = makeStyles(() =>
     blockCount: {
       fontSize: "20px",
       fontWeight: "bold",
-      marginTop: "16px",
+      marginTop: "10px",
       color: "#000",
     },
     totalType: {
-      paddingTop: "40px",
+      paddingTop: "20px",
       borderTop: "1px solid #e9e9e9",
     },
   })
