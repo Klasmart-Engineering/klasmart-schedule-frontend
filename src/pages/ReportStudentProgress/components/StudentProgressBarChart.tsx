@@ -72,7 +72,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
   const style = useStyle();
   const keys = ["v1", "v2", "v3"];
   const tempScale = scaleLinear<number>({
-    domain: [0, Math.max(...props.data.map((d) => Math.max(handleV1(d.v1), d.v2, d.v3)))],
+    domain: [0, props.itemUnit === "%" ? 100 : Math.max(...props.data.map((d) => Math.max(handleV1(d.v1), d.v2, d.v3)))],
   });
   const colorScale = scaleOrdinal<string, string>({
     domain: keys,
