@@ -30,7 +30,7 @@ const useStyle = makeStyles((theme) =>
     },
     background: {
       position: "absolute",
-      height: "calc(100% - 40px)",
+      height: "calc(100% - 45px)",
       width: "100%",
       top: 0,
       display: "flex",
