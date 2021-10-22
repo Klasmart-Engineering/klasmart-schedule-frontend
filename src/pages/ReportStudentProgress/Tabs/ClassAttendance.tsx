@@ -61,7 +61,7 @@ export default function () {
       return {
         time:
           durationTime === 4
-            ? `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment(Number(time[1]) * 1000).format("MM.DD")}`
+            ? `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment((Number(time[1]) - 1) * 1000).format("MM.DD")}`
             : translateMonth(moment(Number(time[0]) * 1000).get("month")),
         v1: parsePercent(item.attendance_percentage),
         v2: parsePercent(item.class_average_attendance_percentage),
