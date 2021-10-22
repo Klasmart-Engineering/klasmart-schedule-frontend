@@ -3969,7 +3969,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         teacher_name?: string;
         time_zone_offset: number;
         start_at?: number;
-        order_by?: "create_at" | "-create_at" | "start_at" | "-start_at";
+        order_by?: "create_at" | "-create_at" | "start_at" | "-start_at" | "schedule_at";
         page?: number;
         page_size?: number;
       },

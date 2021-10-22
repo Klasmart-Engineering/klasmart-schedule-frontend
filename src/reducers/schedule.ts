@@ -438,8 +438,10 @@ export const getParticipantsData = createAsyncThunk(
     participantListOrigin.usersConnection?.edges?.forEach((item) => {
       if (item?.node?.status !== "active") return;
       item?.node?.roles.forEach((role) => {
-        if (role.name === "Teacher") teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName });
-        if (role.name === "Student") students.push({ user_id: item.node?.id, user_name: item.node?.givenName });
+        if (role.name === "Teacher")
+          teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
+        if (role.name === "Student")
+          students.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
       });
     });
     return { classes: [{ students: students, teachers: teachers }] };
@@ -675,10 +677,16 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
       if (item?.node?.status !== "active") return;
       item?.node?.roles.forEach((role) => {
         if (role.name === "Teacher") {
-          participantList.class.teachers.push({ user_id: item.node?.id as string, user_name: item.node?.givenName as string });
+          participantList.class.teachers.push({
+            user_id: item.node?.id as string,
+            user_name: item.node?.givenName + " " + item.node?.familyName,
+          });
         }
         if (role.name === "Student") {
-          participantList.class.students.push({ user_id: item.node?.id as string, user_name: item.node?.givenName as string });
+          participantList.class.students.push({
+            user_id: item.node?.id as string,
+            user_name: item.node?.givenName + " " + item.node?.familyName,
+          });
         }
       });
     });
