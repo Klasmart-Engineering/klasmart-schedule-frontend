@@ -17,6 +17,7 @@ const useStyle = makeStyles(({ palette }) =>
       borderRadius: "8px",
       boxShadow: "0px 2px 4px 0px rgba(0,0,0,0.20), 0px 1px 10px 0px rgba(0,0,0,0.12), 0px 4px 5px 0px rgba(0,0,0,0.14)",
       marginTop: "45px",
+      marginBottom: "36px",
     },
     checkCircleStyle: {
       position: "absolute",
