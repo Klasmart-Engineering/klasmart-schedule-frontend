@@ -125,6 +125,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                       const secondHeight = bar.height * (secondNumber / count);
                       return (
                         <ReportTooltip
+                          key={`bar-group-top-${barGroup.index}`}
                           hideTotal
                           content={[
                             { count: firstNumber + (props.itemUnit || ""), type: Object(props.label)[bar.key][0] },
@@ -141,7 +142,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                               x={(xMax / props.data.length - 38 * 3) / 2 + 1}
                               y={bar.y}
                               width={26}
-                              height={firstHeight}
+                              height={firstHeight ? bar.height : 0}
                               fill={"#EDEDED"}
                               stroke={"#0E78D5"}
                               style={{
@@ -153,7 +154,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                               x={(xMax / props.data.length - 38 * 3) / 2 + index * 38}
                               y={bar.y + firstHeight}
                               width={28}
-                              height={secondHeight}
+                              height={secondHeight ? bar.height : 0}
                               fill={bar.color}
                               style={{
                                 cursor: "pointer",
@@ -165,15 +166,15 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                     }
                     return (
                       <ReportTooltip
+                        key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
                         hideTotal
                         content={[{ count: bar.value + (props.itemUnit || ""), type: Object(props.label)[bar.key] }]}
                       >
                         <rect
-                          key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
                           x={(xMax / props.data.length - 38 * 3) / 2 + index * 38}
                           y={bar.y}
                           width={28}
-                          height={bar.height}
+                          height={bar.value ? bar.height : 0}
                           fill={bar.color}
                           style={{
                             cursor: "pointer",
