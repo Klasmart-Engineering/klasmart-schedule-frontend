@@ -114,7 +114,7 @@ export default function () {
         studentProgressReportTitle={d("Class Attendance").t("report_label_class_attendance")}
       />
       <div className={css.chart}>
-        <StudentProgressBarChart data={chartData} label={label} />
+        <StudentProgressBarChart data={chartData} label={label} itemUnit={"%"} />
       </div>
       <div>
         <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} isLearningOutcomeAchieved={false} />
