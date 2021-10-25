@@ -182,7 +182,7 @@ export function ReportDashboard() {
       hasPerm: hasStudentUsagePermission,
     },
     {
-      title: "report_student_usage_report",
+      title: "report_label_student_progress_report",
       url: ReportStudentProgress.routeBasePath,
       icon: <ShortText />,
       bgColor: "#607d8b",
