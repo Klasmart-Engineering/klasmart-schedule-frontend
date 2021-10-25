@@ -60,8 +60,8 @@ export default function TabPages({ tabs }: IProps) {
         })}
       </AntTabs>
       <Suspense fallback={<Loading />}>
-        {activeTabs.map(({ display, Component, index }) => {
-          return display && state.tabIndex === index && <Component />;
+        {activeTabs.map(({ display, Component, index }, key) => {
+          return display && state.tabIndex === index && <Component key={key} />;
         })}
       </Suspense>
     </>
