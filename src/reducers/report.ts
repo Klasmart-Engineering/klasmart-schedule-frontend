@@ -51,7 +51,7 @@ import {
   EntityAssignmentCompletionRate,
   EntityAssignmentRequest,
   EntityClassAttendanceRequest,
-  EntityClassAttendanceResponseItem,
+  EntityClassAttendanceResponse,
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
@@ -83,7 +83,16 @@ import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { IParamQueryRemainFilter } from "../api/type";
 import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
-import { formatTimeToMonDay, getAllUsers, getTimeOffSecond, ModelReport, sortByStudentName } from "../models/ModelReports";
+import {
+  formatTimeToMonDay,
+  getAllUsers,
+  getAssignmentCompletionFeedback,
+  getClassAttendanceFeedback,
+  getLearnOutcomeAchievementFeedback,
+  getTimeOffSecond,
+  ModelReport,
+  sortByStudentName,
+} from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
 import {
@@ -160,8 +169,11 @@ interface IreportState {
   next7DaysLessonLoadList: EntityReportListTeachingLoadResult["items"];
   listTeacherMissedLessons: EntityTeacherLoadMissedLessonsResponse;
   assignmentsCompletion: EntityAssignmentCompletionRate[];
-  learnOutcomeClassAttendance: EntityClassAttendanceResponseItem[];
+  learnOutcomeClassAttendance: EntityClassAttendanceResponse;
   learnOutcomeAchievement: EntityLearnOutcomeAchievementResponse;
+  fourWeekslearnOutcomeAchievementMassage: string;
+  fourWeeksAssignmentsCompletionMassage: string;
+  fourWeeksClassAttendanceMassage: string;
 }
 
 interface IObj {
@@ -282,8 +294,11 @@ const initialState: IreportState = {
   next7DaysLessonLoadList: [],
   listTeacherMissedLessons: {},
   assignmentsCompletion: [],
-  learnOutcomeClassAttendance: [],
+  learnOutcomeClassAttendance: {},
   learnOutcomeAchievement: {},
+  fourWeekslearnOutcomeAchievementMassage: "",
+  fourWeeksAssignmentsCompletionMassage: "",
+  fourWeeksClassAttendanceMassage: "",
 };
 
 export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
@@ -1234,7 +1249,7 @@ export const getAssignmentsCompletion = createAsyncThunk<EntityAssignmentComplet
 );
 
 export const getLearnOutcomeClassAttendance = createAsyncThunk<
-  EntityClassAttendanceResponseItem[],
+  EntityClassAttendanceResponse,
   EntityClassAttendanceRequest & LoadingMetaPayload
 >("getLearnOutcomeClassAttendance", async ({ metaLoading, ...query }) => await api.reports.getLearnOutcomeClassAttendance(query));
 
@@ -1770,18 +1785,58 @@ const { actions, reducer } = createSlice({
     },
     [getAssignmentsCompletion.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentsCompletion>>) => {
       state.assignmentsCompletion = payload;
+      const stuList = [{ id: "", name: "" }];
+      state.schoolClassesStudentsSubjects.classList.map((item) =>
+        item.students?.map((val) =>
+          stuList.push({
+            id: val?.user_id!,
+            name: val?.full_name!,
+          })
+        )
+      );
+      const studentName = stuList?.find((val) => val.id === payload[0].student_id)?.name || "";
+      if (payload?.length === 4) {
+        state.fourWeeksAssignmentsCompletionMassage = getAssignmentCompletionFeedback(payload, studentName);
+      }
     },
     [getLearnOutcomeClassAttendance.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeClassAttendance>>
     ) => {
       state.learnOutcomeClassAttendance = payload;
+      const stuList = [{ id: "", name: "" }];
+      state.schoolClassesStudentsSubjects.classList.map((item) =>
+        item.students?.map((val) =>
+          stuList.push({
+            id: val?.user_id!,
+            name: val?.full_name!,
+          })
+        )
+      );
+      const studentName = stuList?.find((val) => val.id === payload?.request_student_id)?.name || "";
+      if (payload?.items?.length === 4) {
+        state.fourWeeksClassAttendanceMassage = getClassAttendanceFeedback(payload?.items, studentName);
+      }
     },
     [getLearnOutcomeAchievement.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnOutcomeAchievement>>
     ) => {
       state.learnOutcomeAchievement = payload;
+      const stuList = [{ id: "", name: "" }];
+      state.schoolClassesStudentsSubjects.classList.map((item) =>
+        item.students?.map((val) =>
+          stuList.push({
+            id: val?.user_id!,
+            name: val?.full_name!,
+          })
+        )
+      );
+      const studentName = stuList?.find((val) => val.id === payload?.request?.student_id)?.name || "";
+      console.log("studentName", studentName);
+      if (payload?.items?.length === 4) {
+        state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(payload?.items, studentName);
+      }
     },
   },
 });

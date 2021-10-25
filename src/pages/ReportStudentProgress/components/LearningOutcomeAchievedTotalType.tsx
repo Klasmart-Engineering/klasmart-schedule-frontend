@@ -9,8 +9,7 @@ const useStyle = makeStyles(() =>
       alignItems: "flex-start",
     },
     blockRight: {
-      marginBottom: "16px",
-      maxWidth: "180px",
+      maxWidth: "227px",
       color: "#666666",
       wordWrap: "break-word",
       wordBreak: "normal",
@@ -26,28 +25,36 @@ const useStyle = makeStyles(() =>
     blockCount: {
       fontSize: "20px",
       fontWeight: "bold",
-      marginTop: "16px",
+      marginTop: "10px",
       color: "#000",
     },
     totalType: {
-      paddingTop: "40px",
+      paddingTop: "20px",
       borderTop: "1px solid #e9e9e9",
     },
   })
 );
 
 interface ITotalType {
-  totalType: { label: string; data: number; idx: number }[];
+  totalType: { label: string; data: string | number; idx: number }[];
   colors: string[];
+  isLearningOutcomeAchieved: boolean;
 }
 
 export default function LearningOutcomeAchievedTotalType(props: ITotalType) {
   const css = useStyle();
-  const { totalType, colors } = props;
-  const renderLineFooterBlock = (content: string, count: number, index: number) => {
+  const { totalType, colors, isLearningOutcomeAchieved } = props;
+  const renderLineFooterBlock = (content: string, count: string | number, index: number) => {
     return (
       <div className={css.dataBlock} key={index}>
-        <div className={css.square} style={{ background: colors[index] }}></div>
+        <div
+          className={css.square}
+          style={{
+            background: colors[index],
+            border: isLearningOutcomeAchieved && index === 1 ? "1px solid #0e78d5" : "",
+            boxSizing: "border-box",
+          }}
+        ></div>
         <div className={css.blockRight}>
           {content}
           <div className={css.blockCount}>{count}</div>
