@@ -1603,6 +1603,11 @@ type LangRecord<T = string> =
       id: "report_msg_avg_days_pending";
       description: "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.";
       values: undefined;
+    }
+  | {
+      id: "report_label_student_progress_report";
+      description: "Student Progress Report";
+      values: undefined;
     };
 
 export type LangRecordId = LangRecord["id"];
