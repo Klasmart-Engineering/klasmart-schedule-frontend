@@ -71,7 +71,6 @@ export default function () {
         getAssignmentsCompletion({
           metaLoading: true,
           class_id: classId,
-          school_id: "6879ac4b-7d4b-4462-9ba6-ff60e54777e4",
           durations: getFourWeeks(),
           selected_subject_id_list: selectedSubjectId,
           student_id: studentId,
@@ -88,7 +87,6 @@ export default function () {
         getAssignmentsCompletion({
           metaLoading: true,
           class_id: classId,
-          school_id: "6879ac4b-7d4b-4462-9ba6-ff60e54777e4",
           durations: value === 4 ? getFourWeeks() : getSixMonths(),
           selected_subject_id_list: selectedSubjectId,
           student_id: studentId,
