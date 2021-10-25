@@ -338,7 +338,6 @@ export interface EntityAssignmentCompletionRate {
 export interface EntityAssignmentRequest {
   class_id: string;
   durations?: string[];
-  school_id: string;
   selected_subject_id_list?: string[];
   student_id: string;
   un_selected_subject_id_list?: string[];
@@ -452,7 +451,6 @@ export interface EntityBatchDeleteAuthedContentByOrgsRequest {
 export interface EntityClassAttendanceRequest {
   class_id: string;
   durations?: string[];
-  school_id: string;
   selected_subject_id_list?: string[];
   student_id: string;
   un_selected_subject_id_list?: string[];
@@ -607,6 +605,21 @@ export interface EntityContentPermission {
   allow_reject?: boolean;
   allow_republish?: boolean;
   id?: string;
+}
+
+export interface EntityContentSimplified {
+  author_id?: string;
+  content_name?: string;
+  content_type?: number;
+  create_at?: number;
+  data?: string;
+  id?: string;
+  publish_status?: string;
+}
+
+export interface EntityContentSimplifiedList {
+  list?: EntityContentSimplified[];
+  total?: number;
 }
 
 export interface EntityContentStatisticsInfo {
@@ -769,7 +782,6 @@ export interface EntityJwtToken {
 export interface EntityLearnOutcomeAchievementRequest {
   class_id: string;
   durations?: string[];
-  school_id: string;
   selected_subject_id_list?: string[];
   student_id: string;
   un_selected_subject_id_list?: string[];
@@ -1278,6 +1290,7 @@ export interface EntityScheduleRealTimeView {
 
 export interface EntityScheduleSearchView {
   class?: EntityScheduleAccessibleUserView;
+  due_at?: number;
   end_at?: number;
   id?: string;
   lesson_plan?: EntityScheduleShortInfo;
@@ -1293,6 +1306,17 @@ export interface EntityScheduleSearchView {
 export interface EntityScheduleShortInfo {
   id?: string;
   name?: string;
+}
+
+export interface EntityScheduleSimplified {
+  id?: string;
+  lesson_plan_id?: string;
+  org_id?: string;
+}
+
+export interface EntityScheduleSimplifiedPageView {
+  data?: EntityScheduleSimplified[];
+  total?: number;
 }
 
 export interface EntityScheduleTimeView {
@@ -3129,6 +3153,55 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "PUT",
         params,
         assess_home_fun_study_args
+      ),
+  };
+  internal = {
+    /**
+     * @tags content
+     * @name queryContentInternal
+     * @summary queryContentInternal
+     * @request GET:/internal/contents
+     * @description query content internal
+     */
+    queryContentInternal: (
+      query?: {
+        org_id?: string;
+        content_ids?: string;
+        content_type?: number;
+        plan_id?: string;
+        source_id?: string;
+        order_by?: "id" | "-id" | "content_name" | "-content_name" | "create_at" | "-create_at" | "update_at" | "-update_at";
+        page_size?: number;
+        page?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityContentSimplifiedList, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/internal/contents${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name queryScheduleInternal
+     * @summary queryScheduleInternal
+     * @request GET:/internal/schedules
+     * @description query schedule internal
+     */
+    queryScheduleInternal: (
+      query?: {
+        schedule_ids?: string;
+        order_by?: "create_at" | "-create_at" | "start_at" | "-start_at";
+        page?: number;
+        page_size?: number;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityScheduleSimplifiedPageView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/internal/schedules${this.addQueryParams(query)}`,
+        "GET",
+        params
       ),
   };
   learningOutcomes = {

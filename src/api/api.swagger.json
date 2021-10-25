@@ -3535,6 +3535,148 @@
         }
       }
     },
+    "/internal/contents": {
+      "get": {
+        "description": "query content internal",
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryContentInternal",
+        "operationId": "queryContentInternal",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content under the organization",
+            "name": "org_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content id list, separated by commas",
+            "name": "content_ids",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search content type, 1 for materials \u0026 2 for plans",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search materials from lesson_plan",
+            "name": "plan_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content by source id",
+            "name": "source_id",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentSimplifiedList"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/schedules": {
+      "get": {
+        "description": "query schedule internal",
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "queryScheduleInternal",
+        "operationId": "queryScheduleInternal",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search schedule id list, separated by commas",
+            "name": "schedule_ids",
+            "in": "query"
+          },
+          {
+            "enum": ["create_at", "-create_at", "start_at", "-start_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page index, not paging if page \u003c=0",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "records per page, not paging if page_size \u003c= 0",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleSimplifiedPageView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/learning_outcomes": {
       "get": {
         "description": "search learning outcomes",
@@ -9461,7 +9603,7 @@
     },
     "entity.AssignmentRequest": {
       "type": "object",
-      "required": ["class_id", "school_id", "student_id"],
+      "required": ["class_id", "student_id"],
       "properties": {
         "class_id": {
           "type": "string"
@@ -9471,9 +9613,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "school_id": {
-          "type": "string"
         },
         "selected_subject_id_list": {
           "type": "array",
@@ -9830,7 +9969,7 @@
     },
     "entity.ClassAttendanceRequest": {
       "type": "object",
-      "required": ["class_id", "school_id", "student_id"],
+      "required": ["class_id", "student_id"],
       "properties": {
         "class_id": {
           "type": "string"
@@ -9840,9 +9979,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "school_id": {
-          "type": "string"
         },
         "selected_subject_id_list": {
           "type": "array",
@@ -10308,6 +10444,46 @@
         }
       }
     },
+    "entity.ContentSimplified": {
+      "type": "object",
+      "properties": {
+        "author_id": {
+          "type": "string"
+        },
+        "content_name": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "integer"
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ContentSimplifiedList": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ContentSimplified"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.ContentStatisticsInfo": {
       "type": "object",
       "properties": {
@@ -10769,7 +10945,7 @@
     },
     "entity.LearnOutcomeAchievementRequest": {
       "type": "object",
-      "required": ["class_id", "school_id", "student_id"],
+      "required": ["class_id", "student_id"],
       "properties": {
         "class_id": {
           "type": "string"
@@ -10779,9 +10955,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "school_id": {
-          "type": "string"
         },
         "selected_subject_id_list": {
           "type": "array",
@@ -12272,6 +12445,9 @@
         "class": {
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
+        "due_at": {
+          "type": "integer"
+        },
         "end_at": {
           "type": "integer"
         },
@@ -12321,6 +12497,34 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleSimplified": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "lesson_plan_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleSimplifiedPageView": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleSimplified"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
