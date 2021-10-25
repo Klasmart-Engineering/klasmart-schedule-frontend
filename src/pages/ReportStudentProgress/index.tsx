@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
 import TabPages from "../../components/TabPages";
+import { t } from "../../locale/LocaleManager";
 import { getStudentSubjectsByOrg } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import StudentSubjectFilter from "./components/StudentSubjectFilter";
@@ -58,7 +59,7 @@ export default function ReportStudentProgress() {
   }, [dispatch]);
   return (
     <>
-      <ReportTitle title="Student Progress Report"></ReportTitle>
+      <ReportTitle title={t("report_label_student_progress_report")}></ReportTitle>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
         <StudentSubjectFilter
           onInitial={(allSubjectId) => {
