@@ -204,10 +204,6 @@ export class modelSchedule {
     mySchoolId: string[]
   ) {
     const rosterIdSet = { students: [], teachers: [] };
-    const isVested = (item: any): boolean => {
-      if (is_org) return true;
-      return item.some((list: any) => mySchoolId.includes(list.school_id));
-    };
     const deDuplication = (arr: any) => {
       const obj: any = [];
       return arr.reduce((item: any, next: any) => {
@@ -227,14 +223,10 @@ export class modelSchedule {
     return {
       classes: {
         students: deDuplication(
-          ParticipantsDatas?.classes.students.filter(
-            (item: RolesData) => !rosterIdSet.students.includes(item.user_id as never) && isVested(item.school_memberships)
-          )
+          ParticipantsDatas?.classes.students.filter((item: RolesData) => !rosterIdSet.students.includes(item.user_id as never))
         ),
         teachers: deDuplication(
-          ParticipantsDatas?.classes.teachers.filter(
-            (item: RolesData) => !rosterIdSet.teachers.includes(item.user_id as never) && isVested(item.school_memberships)
-          )
+          ParticipantsDatas?.classes.teachers.filter((item: RolesData) => !rosterIdSet.teachers.includes(item.user_id as never))
         ),
       },
     } as ParticipantsData;

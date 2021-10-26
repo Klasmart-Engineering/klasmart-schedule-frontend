@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -15,9 +15,18 @@ import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
   ClassesTeachingQueryQueryVariables,
+  GetClassFilterListDocument,
+  GetClassFilterListQuery,
+  GetClassFilterListQueryVariables,
   GetProgramsDocument,
   GetProgramsQuery,
   GetProgramsQueryVariables,
+  GetSchoolsFilterListDocument,
+  GetSchoolsFilterListQuery,
+  GetSchoolsFilterListQueryVariables,
+  GetUserDocument,
+  GetUserQuery,
+  GetUserQueryVariables,
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
@@ -29,9 +38,6 @@ import {
   SchoolByOrgQueryQuery,
   SchoolByOrgQueryQueryVariables,
   SchoolByUserQueryDocument,
-  GetSchoolsFilterListDocument,
-  GetClassFilterListDocument,
-  GetUserDocument,
   SchoolByUserQueryQuery,
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
@@ -40,12 +46,6 @@ import {
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
   UserSchoolIDsQueryVariables,
-  GetSchoolsFilterListQuery,
-  GetSchoolsFilterListQueryVariables,
-  GetClassFilterListQuery,
-  GetClassFilterListQueryVariables,
-  GetUserQuery,
-  GetUserQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -662,10 +662,14 @@ export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { 
 export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
   "getParticipant",
   async ({ class_id }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
       query: GetUserDocument,
       variables: {
-        filter: { classId: { operator: UuidExclusiveOperator.Eq, value: class_id } },
+        filter: {
+          organizationId: { operator: UuidOperator.Eq, value: organization_id },
+          classId: { operator: UuidExclusiveOperator.Eq, value: class_id },
+        },
         direction: ConnectionDirection.Forward,
       },
     });
