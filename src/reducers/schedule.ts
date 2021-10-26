@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -30,7 +30,9 @@ import {
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
+  ParticipantsByClassDocument,
   ParticipantsByClassQuery,
+  ParticipantsByClassQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -662,38 +664,11 @@ export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { 
 export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
   "getParticipant",
   async ({ class_id }) => {
-    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-    const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
-      query: GetUserDocument,
-      variables: {
-        filter: {
-          organizationId: { operator: UuidOperator.Eq, value: organization_id },
-          classId: { operator: UuidExclusiveOperator.Eq, value: class_id },
-        },
-        direction: ConnectionDirection.Forward,
-      },
+    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
+      query: ParticipantsByClassDocument,
+      variables: { class_id },
     });
-    const participantListOrigin = data;
-    const participantList: {
-      class: { teachers: { user_id: string; user_name: string }[]; students: { user_id: string; user_name: string }[] };
-    } = { class: { teachers: [], students: [] } };
-    participantListOrigin.usersConnection?.edges?.forEach((item) => {
-      if (item?.node?.status !== "active") return;
-      item?.node?.roles.forEach((role) => {
-        if (role.name === "Teacher") {
-          participantList.class.teachers.push({
-            user_id: item.node?.id as string,
-            user_name: item.node?.givenName + " " + item.node?.familyName,
-          });
-        }
-        if (role.name === "Student") {
-          participantList.class.students.push({
-            user_id: item.node?.id as string,
-            user_name: item.node?.givenName + " " + item.node?.familyName,
-          });
-        }
-      });
-    });
+    const participantList = data;
     return { participantList };
   }
 );
