@@ -1605,6 +1605,11 @@ type LangRecord<T = string> =
       values: undefined;
     }
   | {
+      id: "schedule_msg_one_assignment";
+      description: "Please upload at least one assignment.";
+      values: undefined;
+    }
+  | {
       id: "report_label_student_progress_report";
       description: "Student Progress Report";
       values: undefined;
