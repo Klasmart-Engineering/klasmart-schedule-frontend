@@ -65,7 +65,7 @@ export default function ReportStudentProgress() {
           onInitial={(allSubjectId) => {
             setState({
               ...state,
-              allSubjectId,
+              allSubjectId: allSubjectId.concat([""]),
             });
           }}
           onChange={(classId, studentId, selectedSubjectId) => {
