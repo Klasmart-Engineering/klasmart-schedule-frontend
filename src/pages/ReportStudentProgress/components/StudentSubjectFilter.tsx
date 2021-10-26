@@ -131,7 +131,7 @@ export default function ({ onInitial, onChange }: IProps) {
   };
 
   const changeCb = () => {
-    console.log("payload", state.studentId, state.subjectId);
+    // console.log("payload", state.studentId, state.subjectId);
     if (onChange && state.studentId && state.subjectId) {
       onChange(state.classId, state.studentId, state.subjectId === allValue ? subjectOptions.map((opt) => opt.value) : [state.subjectId]);
     }

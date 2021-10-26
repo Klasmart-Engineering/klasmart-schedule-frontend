@@ -23,8 +23,13 @@ const useStyle = makeStyles((theme) =>
 export default function () {
   const [durationTime, setDurationTime] = useState(4);
   const dispatch = useDispatch();
-  const { classId, studentId, allSubjectId, selectedSubjectId } = useContext(SelectContext);
-  const unselectedSubjectId = allSubjectId.filter((item) => selectedSubjectId.every((val) => val !== item));
+  const { classId, studentId, allSubjectId, selectedSubjectId: selectedSubjectID } = useContext(SelectContext);
+  const selectedSubjectId: string[] =
+    selectedSubjectID.length === allSubjectId.length - 1 ? selectedSubjectID.concat([""]) : selectedSubjectID;
+  const unselectedSubjectId =
+    selectedSubjectID.length === allSubjectId.length - 1
+      ? []
+      : allSubjectId.filter((item) => selectedSubjectID.every((val) => val !== item || item));
   const style = useStyle();
   const { learnOutcomeAchievement, fourWeekslearnOutcomeAchievementMassage } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
@@ -68,7 +73,7 @@ export default function () {
       );
     }
     // eslint-disable-next-line
-  }, [classId, selectedSubjectId, studentId]);
+  }, [classId, selectedSubjectID, studentId]);
   const handleChange = React.useMemo(
     () => (value: number) => {
       setDurationTime(value);
@@ -84,7 +89,7 @@ export default function () {
       );
     },
     // eslint-disable-next-line
-    [classId, selectedSubjectId, studentId]
+    [classId, selectedSubjectID, studentId]
   );
 
   const data: BarGroupProps["data"] =
