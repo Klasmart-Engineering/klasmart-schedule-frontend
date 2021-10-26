@@ -140,7 +140,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                             <rect
                               key={`bar-group-top-${barGroup.index}`}
                               x={(xMax / props.data.length - 38 * 3) / 2 + 1}
-                              y={bar.y}
+                              y={bar.y || 0}
                               width={26}
                               height={firstHeight ? bar.height : 0}
                               fill={"#EDEDED"}
@@ -152,7 +152,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                             <rect
                               key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
                               x={(xMax / props.data.length - 38 * 3) / 2 + index * 38}
-                              y={bar.y + firstHeight}
+                              y={bar.y + firstHeight || 0}
                               width={28}
                               height={secondHeight ? bar.height : 0}
                               fill={bar.color}
@@ -172,7 +172,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                       >
                         <rect
                           x={(xMax / props.data.length - 38 * 3) / 2 + index * 38}
-                          y={bar.y}
+                          y={bar.y || 0}
                           width={28}
                           height={bar.value ? bar.height : 0}
                           fill={bar.color}
