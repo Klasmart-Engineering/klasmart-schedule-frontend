@@ -50,9 +50,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
     .toString()
-    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",
@@ -340,7 +340,7 @@ export function mGetDate(year: number, month: number) {
   return d.getDate();
 }
 
-export function formatDate(time: string) {
+export function formatDate(time: any) {
   var date = new Date(time);
   return Math.floor(date.getTime() / 1000);
 }
@@ -401,16 +401,20 @@ export function getFourWeeks() {
   }
   var newDate = formatDate(`${year}/${month}/${day} 23:59:59`);
   var array = [];
-  if (dd === 1) {
-    for (let i = 1; i <= 4; i++) {
-      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
-    }
-  } else {
-    for (let i = 1; i <= 3; i++) {
-      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
-    }
-    array.push(`${newDate + 1}-${newDate + 3600 * 24 * (dd - 1) + 1}`);
+  // if (dd === 1) {
+  //   for (let i = 1; i <= 4; i++) {
+  //     array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
+  //   }
+  // } else {
+  //   for (let i = 1; i <= 3; i++) {
+  //     array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
+  //   }
+  // array.push(`${newDate + 1}-${newDate + 3600 * 24 * (dd - 1) + 1}`);
+  for (let i = 1; i <= 3; i++) {
+    array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
   }
+  array.push(`${newDate + 1}-${formatDate(date)}`);
+  // }
   return array;
 }
 
