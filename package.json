@@ -122,8 +122,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm run lint",
-      "commit-msg": "npx --no-install commitlint --edit $1"
+      "pre-push": "npm run lint"
     }
   },
   "browserslist": {
