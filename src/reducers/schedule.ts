@@ -901,6 +901,15 @@ const { actions, reducer } = createSlice({
       payload?.forEach((item: any) => {
         result = [...result, ...item];
       });
+      const reduceTemporaryStorage: { [class_id: string]: boolean } = {};
+      result = [...result].reduce<any>((item, next) => {
+        if (next !== null)
+          if (!reduceTemporaryStorage[next.class_id as string] && next.class_id) {
+            item.push(next);
+            reduceTemporaryStorage[next.class_id as string] = true;
+          }
+        return item;
+      }, []);
       state.classOptions.classListSchool = { school: { classes: result } };
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
