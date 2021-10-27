@@ -142,7 +142,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                               x={(xMax / props.data.length - 38 * 3) / 2 + 1}
                               y={bar.y || 0}
                               width={26}
-                              height={firstHeight ? bar.height : 0}
+                              height={firstHeight ? firstHeight : 0}
                               fill={"#EDEDED"}
                               stroke={"#0E78D5"}
                               style={{
@@ -154,7 +154,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                               x={(xMax / props.data.length - 38 * 3) / 2 + index * 38}
                               y={bar.y + firstHeight || 0}
                               width={28}
-                              height={secondHeight ? bar.height : 0}
+                              height={secondHeight ? secondHeight : 0}
                               fill={bar.color}
                               style={{
                                 cursor: "pointer",
