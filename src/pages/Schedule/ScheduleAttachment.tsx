@@ -159,7 +159,7 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
             dispatch(
               actError(
                 error.type === MultipleUploaderErrorType.MaxAmountError
-                  ? d("Please upload at least one assignment.").t("schedule_msg_one_assignment")
+                  ? d("You can upload only one attachment.").t("schedule_msg_one_attachment")
                   : d("The attachment you uploaded does not meet the requirement.").t("schedule_msg_attachment")
               )
             )
