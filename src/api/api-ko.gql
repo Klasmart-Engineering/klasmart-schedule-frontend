@@ -149,6 +149,14 @@ query qeuryMe($organization_id: ID!) {
   }
 }
 
+query checkAllowed($organization_id: ID!) {
+  me{
+    membership(organization_id: $organization_id) {
+      ...checkAllowedFields
+    }
+  }
+}
+
 query myPermissionsAndClassesTeachingQuery($organization_id: ID!) {
   me {
     user_id

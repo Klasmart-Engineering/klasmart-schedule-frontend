@@ -1,7 +1,8 @@
+import { gql } from "@apollo/client";
 import Cookies from "js-cookie";
 import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
-import api from ".";
+import api, { gqlapi } from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
 import { QeuryMeQuery } from "./api-ko.auto";
@@ -256,4 +257,33 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
   // sessionStorage.setItem(`${PERMISSION_KEY}${organization_id}${myUserId}`, JSON.stringify(returnData));
   return returnData;
   // }
+}
+
+export async function apiGetPartPermission(
+  permissions: string[]
+): Promise<{
+  [key: string]: boolean;
+}> {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const fragmentStr = permissions
+    .map((permission) => {
+      return `${permission}: checkAllowed(permission_name: "${permission}")`;
+    })
+    .join(",");
+
+  return await gqlapi
+    .query({
+      query: gql`
+      query{
+        me{
+          membership(organization_id: "${organization_id}"){
+            ${fragmentStr}
+          }
+        }
+      }
+    `,
+    })
+    .then((resp) => {
+      return resp.data?.me?.membership || {};
+    });
 }
