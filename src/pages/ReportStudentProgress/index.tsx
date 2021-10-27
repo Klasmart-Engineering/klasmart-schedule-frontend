@@ -1,3 +1,4 @@
+import { uniq } from "lodash";
 import React from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
@@ -65,7 +66,8 @@ export default function ReportStudentProgress() {
           onInitial={(allSubjectId) => {
             setState({
               ...state,
-              allSubjectId: allSubjectId.concat([""]),
+              // allSubjectId: allSubjectId.concat([""]),
+              allSubjectId: uniq(allSubjectId.concat([""])),
             });
           }}
           onChange={(classId, studentId, selectedSubjectId) => {
@@ -73,7 +75,7 @@ export default function ReportStudentProgress() {
               ...state,
               classId,
               studentId,
-              selectedSubjectId,
+              selectedSubjectId: uniq(selectedSubjectId),
             });
           }}
         />

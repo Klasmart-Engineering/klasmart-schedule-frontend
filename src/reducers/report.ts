@@ -1280,13 +1280,13 @@ const { actions, reducer } = createSlice({
     },
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
-      state.reportMockOptions.classList = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching
-        : undefined) as Pick<Class, "class_id" | "class_name">[];
+      state.reportMockOptions.classList = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching : undefined
+      ) as Pick<Class, "class_id" | "class_name">[];
 
-      state.reportMockOptions.class_id = (payload.user && payload.user.membership?.classesTeaching
-        ? payload.user.membership?.classesTeaching[0]?.class_id
-        : undefined) as string;
+      state.reportMockOptions.class_id = (
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching[0]?.class_id : undefined
+      ) as string;
     },
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1833,7 +1833,6 @@ const { actions, reducer } = createSlice({
         )
       );
       const studentName = stuList?.find((val) => val.id === payload?.request?.student_id)?.name || "";
-      console.log("studentName", studentName);
       if (payload?.items?.length === 4) {
         state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(payload?.items, studentName);
       }
