@@ -976,17 +976,19 @@ function EditBox(props: CalendarStateProps) {
       dispatch(actError(d("Please confirm the fileld of ‘Add Participants’ by clicking OK").t("schedule_msg_participants_no_ok")));
       return;
     }
-    addData["participants_student_ids"] = participantsIds?.student.map((item: ClassOptionsItem) => {
-      return item.id;
-    });
-    addData["participants_teacher_ids"] = participantsIds?.teacher.map((item: ClassOptionsItem) => {
-      return item.id;
-    });
     addData["class_roster_student_ids"] = classRosterIds?.student.map((item: ClassOptionsItem) => {
       return item.id;
     });
     addData["class_roster_teacher_ids"] = classRosterIds?.teacher.map((item: ClassOptionsItem) => {
       return item.id;
+    });
+    addData["participants_student_ids"] = [];
+    participantsIds?.student.forEach((item: ClassOptionsItem) => {
+      if (!addData["class_roster_student_ids"].includes(item.id)) addData["participants_student_ids"].push(item.id);
+    });
+    addData["participants_teacher_ids"] = [];
+    participantsIds?.teacher.forEach((item: ClassOptionsItem) => {
+      if (!addData["class_roster_teacher_ids"].includes(item.id)) addData["participants_teacher_ids"].push(item.id);
     });
 
     let resultInfo: any;
