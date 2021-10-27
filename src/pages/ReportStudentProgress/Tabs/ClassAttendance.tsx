@@ -29,7 +29,7 @@ export default function () {
   const unselectedSubjectId =
     selectedSubjectID.length === allSubjectId.length - 1
       ? []
-      : allSubjectId.filter((item) => selectedSubjectID.every((val) => val !== item || item));
+      : allSubjectId.filter((item) => selectedSubjectID.every((val) => val !== item));
   const colors = ["#0e78d5", "#bed6eb", "#a8c0ef"];
   const css = useStyle();
   const dispatch = useDispatch();

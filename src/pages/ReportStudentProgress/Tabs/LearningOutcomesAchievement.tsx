@@ -29,7 +29,7 @@ export default function () {
   const unselectedSubjectId =
     selectedSubjectID.length === allSubjectId.length - 1
       ? []
-      : allSubjectId.filter((item) => selectedSubjectID.every((val) => val !== item || item));
+      : allSubjectId.filter((item) => selectedSubjectID.every((val) => val !== item));
   const style = useStyle();
   const { learnOutcomeAchievement, fourWeekslearnOutcomeAchievementMassage } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
