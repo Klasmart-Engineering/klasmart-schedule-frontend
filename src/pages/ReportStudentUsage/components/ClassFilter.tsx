@@ -17,8 +17,6 @@ interface IState {
   classes: MutiSelect.ISelect[];
 }
 
-type IOptions = MutiSelect.ISelect[][];
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {

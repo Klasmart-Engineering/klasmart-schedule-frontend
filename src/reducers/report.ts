@@ -45,7 +45,7 @@ import {
   StudentsByOrganizationQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables,
+  TeacherByOrgIdQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityAssignmentCompletionRate,
@@ -77,7 +77,7 @@ import {
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { IParamQueryRemainFilter } from "../api/type";
@@ -91,7 +91,7 @@ import {
   getLearnOutcomeAchievementFeedback,
   getTimeOffSecond,
   ModelReport,
-  sortByStudentName,
+  sortByStudentName
 } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
@@ -101,7 +101,7 @@ import {
   QueryLearningSummaryTimeFilterCondition,
   ReportType,
   TimeFilter,
-  UserType,
+  UserType
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
@@ -327,7 +327,6 @@ export const getAchievementDetail = createAsyncThunk<
   return await api.reports.getStudentAchievementReport(id, query);
 });
 
-type aa = AsyncReturnType<typeof api.schedulesLessonPlans.getLessonPlans>;
 export const getLessonPlan = createAsyncThunk<
   AsyncReturnType<typeof api.schedulesLessonPlans.getLessonPlans>,
   Parameters<typeof api.schedulesLessonPlans.getLessonPlans>[0] & LoadingMetaPayload

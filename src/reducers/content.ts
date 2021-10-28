@@ -9,7 +9,7 @@ import {
   OrganizationsQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
-  QeuryMeQueryVariables,
+  QeuryMeQueryVariables
 } from "../api/api-ko.auto";
 // import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
@@ -22,7 +22,7 @@ import {
   EntityOrganizationProperty,
   EntityOutcomeCondition,
   ModelPublishedOutcomeView,
-  ModelSearchPublishedOutcomeResponse,
+  ModelSearchPublishedOutcomeResponse
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
@@ -720,7 +720,6 @@ export const bulkPublishContent = createAsyncThunk<
   if (!isConfirmed) return Promise.reject();
   return api.contentsBulk.publishContentBulk({ id: ids });
 });
-type aa = Required<EntityContentInfoWithDetails>["id"];
 export const approveContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.approveContentReview>,
   Required<EntityContentInfoWithDetails>["id"]
