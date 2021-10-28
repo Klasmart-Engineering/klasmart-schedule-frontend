@@ -25,22 +25,23 @@ export type LButtonProps<TAs extends ComponentType<any> | "button" = typeof Butt
 export function LButton<TAs extends ComponentType<any> | "button" = typeof Button>(props: LButtonProps<TAs>) {
   const { onClick, children, replace, disabled, ...restProps } = props;
   const As = props.as ?? Button;
-  const css = useStyles(props);
+  const css = useStyles(restProps);
   const validRef = useRef<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
   const handleClick = useMemo<AsProps<TAs>["onClick"]>(
-    () => (...args: Parameters<AsProps<TAs>["onClick"]>) => {
-      setPending(true);
-      return onClick(...args)
-        .then((result) => {
-          validRef.current && setPending(false);
-          return result;
-        })
-        .catch((err) => {
-          validRef.current && setPending(false);
-          // throw err;
-        });
-    },
+    () =>
+      (...args: Parameters<AsProps<TAs>["onClick"]>) => {
+        setPending(true);
+        return onClick(...args)
+          .then((result) => {
+            validRef.current && setPending(false);
+            return result;
+          })
+          .catch((err) => {
+            validRef.current && setPending(false);
+            // throw err;
+          });
+      },
     [onClick, setPending]
   );
   useEffect(() => {

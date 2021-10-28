@@ -44,7 +44,7 @@ const initialState: IConfirmState = {
   rules: undefined,
 };
 
-let resolve: (value?: ConfirmResult | PromiseLike<ConfirmResult>) => void;
+let resolve: (value: ConfirmResult | PromiseLike<ConfirmResult>) => void;
 
 const { actions, reducer } = createSlice({
   name: "confirm",
