@@ -6,7 +6,7 @@ import {
   CategoryOutlined,
   ChevronRight,
   InfoOutlined,
-  KeyboardBackspace, ShortText, ShowChart
+  KeyboardBackspace, ShowChart
 } from "@material-ui/icons";
 import React, { cloneElement, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
@@ -21,7 +21,6 @@ import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import { ReportLearningSummary } from "../ReportLearningSummary";
-import ReportStudentProgress from "../ReportStudentProgress";
 import ReportStudentUsage from "../ReportStudentUsage";
 import ReportTeachingLoad from "../ReportTeachingLoad";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -180,13 +179,13 @@ export function ReportDashboard() {
       hasPerm: hasStudentUsagePermission,
     },
     // 2021-10-28.隐藏 student progress report 入口
-    {
-      title: "report_label_student_progress_report",
-      url: ReportStudentProgress.routeBasePath,
-      icon: <ShortText />,
-      bgColor: "#607d8b",
-      hasPerm: true,
-    },
+    // {
+    //   title: "report_label_student_progress_report",
+    //   url: ReportStudentProgress.routeBasePath,
+    //   icon: <ShortText />,
+    //   bgColor: "#607d8b",
+    //   hasPerm: true,
+    // },
   ];
   const handleClick = useMemo(
     () => (value: string) => {
