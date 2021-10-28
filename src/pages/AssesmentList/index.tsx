@@ -1,4 +1,3 @@
-import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -41,10 +40,6 @@ const toQueryString = (hash: Record<string, any>): string => {
   const search = new URLSearchParams(hash);
   return `?${search.toString()}`;
 };
-
-interface RefreshWithDispatch {
-  <T>(result: Promise<PayloadAction<T>>): Promise<PayloadAction<T>>;
-}
 
 export function AssessmentList() {
   const condition = useQuery();

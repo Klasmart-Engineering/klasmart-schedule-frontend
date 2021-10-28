@@ -20,7 +20,7 @@ const useStyle = makeStyles(() =>
   })
 );
 
-export default function () {
+export default function AssignmentCompletion() {
   const [durationTime, setDurationTime] = useState(4);
   const { classId, studentId, allSubjectId, selectedSubjectId: selectedSubjectID } = useContext(SelectContext);
   const selectedSubjectId: string[] =

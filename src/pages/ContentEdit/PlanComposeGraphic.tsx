@@ -19,7 +19,7 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
     flexDirection: "column",
     overflow: "scroll",
     [breakpoints.down("md")]: {
-      maxHeight: 'fit-content',
+      maxHeight: "fit-content",
       overflow: "visible",
     },
   },
@@ -158,6 +158,7 @@ const useGraphicComputedStyles = makeStyles({
   }),
 });
 
+type allColorPalette = "primary" | "success" | "error" | "secondary";
 interface ConditionBtnUIProps extends HTMLAttributes<HTMLDivElement> {
   color: string;
   label: string;
@@ -169,7 +170,7 @@ const ConditionBtnUI = forwardRef<HTMLDivElement, ConditionBtnUIProps>((props, r
   const { palette } = useTheme();
   return (
     <div className={clsx(css.conditionBtnUI, className)} {...restProps} ref={ref}>
-      <Box py={2} px={1.5} mr={3} bgcolor={palette[color].main} color="white">
+      <Box py={2} px={1.5} mr={3} bgcolor={palette[color as unknown as allColorPalette].main} color="white">
         <Icon color="inherit" />
       </Box>
       <Typography className={css.conditionBtnLabel}>{label}</Typography>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
@@ -73,10 +74,11 @@ export function formatTime(time: any) {
 export default function ClassesAndAssignments() {
   const css = useStyles();
   const dispatch = useDispatch();
-  const { classesAssignments, overview, classesAssignmentsUnattend: classesAssignmentsUnattendRow } = useSelector<
-    RootState,
-    RootState["report"]
-  >((state) => state.report);
+  const {
+    classesAssignments,
+    overview,
+    classesAssignmentsUnattend: classesAssignmentsUnattendRow,
+  } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [classList, setClassList] = useState<MutiSelect.ISelect[] | undefined>(undefined);
   const [unattendedTableOpenId, setUnattendedTableOpenId] = useState<string | undefined>("");
   const [page, setPage] = React.useState(1);

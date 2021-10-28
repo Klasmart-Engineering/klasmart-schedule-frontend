@@ -126,7 +126,7 @@ const useFormatTime = () => {
 
 const PAGE_SIZE = 5;
 
-export default function (props: Props) {
+export default function LessonChart(props: Props) {
   const style = useStyle();
   const dispatch = useDispatch();
   const [selectItem, setSelectItem] = useState(7);

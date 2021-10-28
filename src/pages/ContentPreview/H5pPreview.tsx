@@ -238,12 +238,12 @@ function EmptyContent() {
     </div>
   );
 }
-interface H5pPreview extends PreviewBaseProps {
+interface IH5pPreviewProps extends PreviewBaseProps {
   h5pArray: (EntityContentInfoWithDetails | undefined)[];
   classType: EntityScheduleDetailsView["class_type"];
   content_type: EntityContentInfoWithDetails["content_type"];
 }
-export function H5pPreview(props: H5pPreview) {
+export function H5pPreview(props: IH5pPreviewProps) {
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
   const { h5pArray, onGoLive, classType, content_type } = props;
@@ -280,7 +280,7 @@ export function H5pPreview(props: H5pPreview) {
   };
   const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
-  
+
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>

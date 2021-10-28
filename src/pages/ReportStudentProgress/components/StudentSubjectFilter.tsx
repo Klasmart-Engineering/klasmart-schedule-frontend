@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import clsx from "clsx";
 import { orderBy } from "lodash";
@@ -39,7 +40,7 @@ interface IProps {
   onChange?: (classId: string, studentId: string, selectedSubjectId: string[]) => void;
 }
 
-export default function ({ onInitial, onChange }: IProps) {
+export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
   const classes = useStyles();
   const allFields = ["schoolId", "classId", "studentId"];
   const { allValue, noneValue, selectAllOption, selectNoneSchoolOption } = useTranslation();

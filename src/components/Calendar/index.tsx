@@ -120,11 +120,11 @@ function MyCalendar(props: CalendarProps) {
   const deleteScheduleByid = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoViewProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
-      const { payload } = ((await dispatch(
+      const { payload } = (await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
-      if (payload) {
+      if (await payload) {
         dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
         dispatch(
           getScheduleTimeViewData({
