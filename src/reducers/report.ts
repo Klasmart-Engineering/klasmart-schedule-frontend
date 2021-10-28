@@ -79,9 +79,9 @@ import {
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
-import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
+import { apiWaitForOrganizationOfPage } from "../api/extra";
+import PermissionType from "../api/PermissionType";
 import { IParamQueryRemainFilter } from "../api/type";
-import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
 import {
   formatTimeToMonDay,
@@ -103,6 +103,7 @@ import {
   TimeFilter,
   UserType,
 } from "../pages/ReportLearningSummary/types";
+import permissionCache, { ICacheData } from "../services/permissionCahceService";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface IreportState {
@@ -342,11 +343,17 @@ export const getLessonPlan = createAsyncThunk<
  */
 
 export const getSchoolsByOrg = createAsyncThunk<
-  [ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<SchoolsByOrganizationQuery>],
+  [ICacheData, ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<SchoolsByOrganizationQuery>],
   LoadingMetaPayload
 >("getSchoolsByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.student_usage_report_657,
+      PermissionType.report_organization_student_usage_654,
+      PermissionType.report_school_student_usage_655,
+      PermissionType.report_teacher_student_usage_656,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -363,11 +370,17 @@ export const getSchoolsByOrg = createAsyncThunk<
 });
 
 export const getStudentsByOrg = createAsyncThunk<
-  [ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<StudentsByOrganizationQuery>],
+  [ICacheData, ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<StudentsByOrganizationQuery>],
   LoadingMetaPayload
 >("getStudentsByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_learning_summary_org_652,
+      PermissionType.report_learning_summary_school_651,
+      PermissionType.report_learning_summary_teacher_650,
+      PermissionType.report_learning_summary_student_649,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -390,6 +403,7 @@ export const getStudentsByOrg = createAsyncThunk<
 
 export const getTeachersByOrg = createAsyncThunk<
   [
+    ICacheData,
     ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
@@ -399,6 +413,11 @@ export const getTeachersByOrg = createAsyncThunk<
 >("getTeachersByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_organization_teaching_load_617,
+      PermissionType.report_school_teaching_load_618,
+      PermissionType.report_my_teaching_load_619,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -434,6 +453,7 @@ export const getTeachersByOrg = createAsyncThunk<
 
 export const getStudentSubjectsByOrg = createAsyncThunk<
   [
+    ICacheData,
     ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
@@ -444,6 +464,12 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
 >("getStudentSubjectsByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_student_progress_organization_658,
+      PermissionType.report_student_progress_school_659,
+      PermissionType.report_student_progress_teacher_660,
+      PermissionType.report_student_progress_student_661,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -585,17 +611,15 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
         organization_id,
       },
     });
-    const meInfoPerm = await apiGetPermission();
     const myTearchId = meInfo.me?.user_id || "";
-    const perm = hasPermissionOfMe(
-      [
-        PermissionType.view_my_reports_614,
-        PermissionType.view_reports_610,
-        PermissionType.view_my_organizations_reports_612,
-        PermissionType.view_my_school_reports_611,
-      ],
-      meInfoPerm.me
-    );
+
+    const perm = await permissionCache.usePermission([
+      PermissionType.view_my_reports_614,
+      PermissionType.view_reports_610,
+      PermissionType.view_my_organizations_reports_612,
+      PermissionType.view_my_school_reports_611,
+    ]);
+
     // const perm = await api.organizationPermissions.hasOrganizationPermissions({
     //   permission_name: premissionAll,
     // })
@@ -714,16 +738,14 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
         organization_id,
       },
     });
-    const meInfoPerm = await apiGetPermission();
-    const perm = hasPermissionOfMe(
-      [
-        PermissionType.view_my_reports_614,
-        PermissionType.view_reports_610,
-        PermissionType.view_my_school_reports_611,
-        PermissionType.view_my_organizations_reports_612,
-      ],
-      meInfoPerm.me
-    );
+
+    const perm = await permissionCache.usePermission([
+      PermissionType.view_my_reports_614,
+      PermissionType.view_reports_610,
+      PermissionType.view_my_school_reports_611,
+      PermissionType.view_my_organizations_reports_612,
+    ]);
+
     const my_id = meInfo?.me?.user_id || "";
 
     if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
@@ -934,16 +956,12 @@ export const onLoadLearningSummary = createAsyncThunk<
     },
   });
   const myUserId = meInfo.me?.user_id;
-
-  const perm = hasPermissionOfMe(
-    [
-      PermissionType.report_learning_summary_org_652,
-      PermissionType.report_learning_summary_school_651,
-      PermissionType.report_learning_summary_teacher_650,
-      PermissionType.report_learning_summary_student_649,
-    ],
-    meInfo.me
-  );
+  const perm = await permissionCache.usePermission([
+    PermissionType.report_learning_summary_org_652,
+    PermissionType.report_learning_summary_school_651,
+    PermissionType.report_learning_summary_teacher_650,
+    PermissionType.report_learning_summary_student_649,
+  ]);
   const isOrg = perm.report_learning_summary_org_652;
   const isSchool = perm.report_learning_summary_school_651;
   const isTeacher = perm.report_learning_summary_teacher_650;
@@ -1291,11 +1309,10 @@ const { actions, reducer } = createSlice({
     [getClassList.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
-      const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const membership = payload[0].data.me?.membership;
+    [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentsByOrg>>) => {
+      const classes = payload[2].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
+      const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const membership = payload[1].data.me?.membership;
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
@@ -1305,15 +1322,7 @@ const { actions, reducer } = createSlice({
         membership?.classesTeaching?.map((item) => {
           return item?.class_id;
         }) || [];
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.report_learning_summary_org_652,
-          PermissionType.report_learning_summary_school_651,
-          PermissionType.report_learning_summary_teacher_650,
-          PermissionType.report_learning_summary_student_649,
-        ],
-        myPermissionsAndClassesTeaching
-      );
+      const permissions = payload[0];
       if (permissions[PermissionType.report_learning_summary_org_652]) {
         state.learningSummary.schoolList = schools;
         state.learningSummary.noneSchoolClasses = noneSchoolClasses;
@@ -1345,10 +1354,9 @@ const { actions, reducer } = createSlice({
       }
     },
     [getSchoolsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
-      const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const membership = payload[0].data.me?.membership;
+      const classes = payload[2].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
+      const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const membership = payload[1].data.me?.membership;
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
 
       const schoolIDs =
@@ -1359,15 +1367,7 @@ const { actions, reducer } = createSlice({
         membership?.classesTeaching?.map((item) => {
           return item?.class_id;
         }) || [];
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.student_usage_report_657,
-          PermissionType.report_organization_student_usage_654,
-          PermissionType.report_school_student_usage_655,
-          PermissionType.report_teacher_student_usage_656,
-        ],
-        myPermissionsAndClassesTeaching
-      );
+      const permissions = payload[0];
       state.studentUsage.organization_id = membership?.organization_id || "";
       if (permissions[PermissionType.report_organization_student_usage_654]) {
         state.studentUsage.schoolList = schools;
@@ -1398,22 +1398,13 @@ const { actions, reducer } = createSlice({
     },
 
     [getTeachersByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersByOrg>>) => {
-      const classesSchools = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
-      const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      const classesTeachers = payload[3].data.organization?.classes as Pick<Class, "class_id" | "teachers">[];
+      const classesSchools = payload[2].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
+      const schools = payload[3].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const classesTeachers = payload[4].data.organization?.classes as Pick<Class, "class_id" | "teachers">[];
+      const myId = payload[1].data.me?.user_id;
+      const permissions = payload[0];
 
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const myId = payload[0].data.me?.user_id;
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.report_organization_teaching_load_617,
-          PermissionType.report_school_teaching_load_618,
-          PermissionType.report_my_teaching_load_619,
-        ],
-        myPermissionsAndClassesTeaching
-      );
-
-      const membership = payload[0].data.me?.membership;
+      const membership = payload[1].data.me?.membership;
       //const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
@@ -1491,15 +1482,14 @@ const { actions, reducer } = createSlice({
     },
 
     [getStudentSubjectsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentSubjectsByOrg>>) => {
-      let classesSchools = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
-      let schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      let classesStudents = payload[3].data.organization?.classes as Pick<Class, "class_id" | "students">[];
-      let programs = payload[4].data.organization?.programs as Pick<Program, "id" | "name" | "subjects">[];
+      let classesSchools = payload[2].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
+      let schools = payload[3].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      let classesStudents = payload[4].data.organization?.classes as Pick<Class, "class_id" | "students">[];
+      let programs = payload[5].data.organization?.programs as Pick<Program, "id" | "name" | "subjects">[];
 
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const membership = payload[0].data.me?.membership;
+      const membership = payload[1].data.me?.membership;
 
-      const myId = payload[0].data.me?.user_id;
+      const myId = payload[1].data.me?.user_id;
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
           return item?.school_id;
@@ -1508,15 +1498,7 @@ const { actions, reducer } = createSlice({
         membership?.classesTeaching?.map((item) => {
           return item?.class_id;
         }) || [];
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.report_student_progress_organization_658,
-          PermissionType.report_student_progress_school_659,
-          PermissionType.report_student_progress_teacher_660,
-          PermissionType.report_student_progress_student_661,
-        ],
-        myPermissionsAndClassesTeaching
-      );
+      const permissions = payload[0];
 
       let canSelectStudent = true;
       if (permissions["report_student_progress_organization_658"]) {

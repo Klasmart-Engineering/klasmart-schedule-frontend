@@ -38,7 +38,8 @@ import {
   EntityScheduleShortInfo,
 } from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
-import { PermissionType, usePermission } from "../../components/Permission";
+import PermissionType from "../../api/PermissionType";
+import { usePermission } from "../../hooks/usePermission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, localeManager, t } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
@@ -408,13 +409,16 @@ function EditBox(props: CalendarStateProps) {
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
   const [scheduleRestNum, setScheduleRestNum] = React.useState(0);
-  const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+
   const perm = usePermission([
+    PermissionType.attend_live_class_as_a_teacher_186,
     PermissionType.create_event_520,
     PermissionType.create_my_schedule_events_521,
     PermissionType.create_my_schools_schedule_events_522,
     PermissionType.attend_live_class_as_a_student_187,
   ]);
+
+  const permissionShowPreview = perm.attend_live_class_as_a_teacher_186;
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 

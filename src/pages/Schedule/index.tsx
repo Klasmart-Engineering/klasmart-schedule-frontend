@@ -7,10 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
 import { apiLivePath } from "../../api/extra";
+import PermissionType from "../../api/PermissionType";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
 import ModalBox from "../../components/ModalBox";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
@@ -19,12 +20,15 @@ import { RootState } from "../../reducers";
 import { AsyncTrunkReturned, contentLists, onLoadContentPreview } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import {
+  actOutcomeListLoading,
   changeParticipants,
   getClassesByOrg,
   getClassesBySchool,
   getClassesByStudent,
   getClassesByTeacher,
+  getClassFilterList,
   getContentsAuthed,
+  getLinkedMockOptions,
   getParticipantsData,
   getScheduleAnyTimeViewData,
   getScheduleFilterClasses,
@@ -37,15 +41,12 @@ import {
   getSchoolByOrg,
   getSchoolByUser,
   getSchoolInfo,
+  getSchoolsFilterList,
   getSubjectByProgramId,
   ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   searchAuthContentLists,
-  getLinkedMockOptions,
-  actOutcomeListLoading,
-  getSchoolsFilterList,
-  getClassFilterList,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -236,11 +237,19 @@ function ScheduleContent() {
     setTimesTamp(times);
   };
 
-  const isAdmin = usePermission(PermissionType.create_event_520);
-  const isSchool = usePermission(PermissionType.create_my_schools_schedule_events_522);
-  const isTeacher = usePermission(PermissionType.create_my_schedule_events_521);
-  const isStudent = usePermission(PermissionType.attend_live_class_as_a_student_187);
-  const viewSubjectPermission = usePermission(PermissionType.view_subjects_20115);
+  const perms = usePermission([
+    PermissionType.create_event_520,
+    PermissionType.create_my_schools_schedule_events_522,
+    PermissionType.create_my_schedule_events_521,
+    PermissionType.attend_live_class_as_a_student_187,
+    PermissionType.view_subjects_20115,
+  ]);
+
+  const isAdmin = perms.create_event_520;
+  const isSchool = perms.create_my_schools_schedule_events_522;
+  const isTeacher = perms.create_my_schedule_events_521;
+  const isStudent = perms.attend_live_class_as_a_student_187;
+  const viewSubjectPermission = perms.view_subjects_20115;
 
   const privilegedMembers = useCallback(
     (member: memberType): boolean => {

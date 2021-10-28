@@ -22,9 +22,10 @@ import { cloneDeep } from "lodash";
 import React, { useCallback, useMemo } from "react";
 import { Control } from "react-hook-form";
 import { EntityOutcome, EntityOutcomeCondition } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import { ReactComponent as SortSvg } from "../../assets/icons/Slice 1.svg";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { resultsTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { getOutcomeList } from "../../models/ModelContentDetailForm";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
@@ -131,9 +132,16 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
   } = props;
   const css = useStyles();
   const [sortUp, toggle] = React.useReducer((sortUp) => !sortUp, false);
-  const associateLOC = usePermission(PermissionType.associate_learning_outcomes_284);
-  const createContent = usePermission(PermissionType.create_content_page_201);
-  const editAll = usePermission(PermissionType.edit_org_published_content_235);
+
+  const perm = usePermission([
+    PermissionType.associate_learning_outcomes_284,
+    PermissionType.create_content_page_201,
+    PermissionType.edit_org_published_content_235,
+  ]);
+
+  const associateLOC = perm.associate_learning_outcomes_284;
+  const createContent = perm.create_content_page_201;
+  const editAll = perm.edit_org_published_content_235;
   const isPermission = associateLOC || createContent || editAll;
   const handleAction = (item: EntityOutcome, type: "add" | "remove") => {
     const { outcome_id: id } = item;

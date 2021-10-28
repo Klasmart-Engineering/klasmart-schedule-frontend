@@ -5,10 +5,11 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProps, useHistory, useLocation } from "react-router-dom";
 import { EntityFolderContentData } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionType, usePermission } from "../../components/Permission/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
@@ -32,7 +33,7 @@ import {
   renameFolder1,
   searchOrgFolderItems,
   setUserSetting,
-  shareFolders
+  shareFolders,
 } from "../../reducers/content";
 import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
@@ -50,7 +51,7 @@ import {
   SEARCH_TEXT_KEY,
   SecondSearchHeader,
   SecondSearchHeaderMb,
-  SecondSearchHeaderProps
+  SecondSearchHeaderProps,
 } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
@@ -238,7 +239,7 @@ export default function MyContentList() {
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
-    const parent_id = (condition.path || "");
+    const parent_id = condition.path || "";
     if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
       if (condition.path && condition.path !== ROOT_PATH) {
         history.replace(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?parent_id=${parent_id}`);
@@ -249,7 +250,7 @@ export default function MyContentList() {
       if (condition.path && condition.path !== ROOT_PATH) {
         history.replace({
           pathname: `/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic`,
-          search: toQueryString({parent_id: parent_id, back: toFullUrl(history.location) }),
+          search: toQueryString({ parent_id: parent_id, back: toFullUrl(history.location) }),
         });
       } else {
         history.push({

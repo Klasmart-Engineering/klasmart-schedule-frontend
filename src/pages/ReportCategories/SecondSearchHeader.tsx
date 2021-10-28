@@ -3,8 +3,9 @@ import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
 import { User } from "../../api/api-ko-schema.auto";
+import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { QueryCondition } from "../ReportAchievementList/types";
 

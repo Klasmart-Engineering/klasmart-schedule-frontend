@@ -11,6 +11,8 @@ import TuneOutlinedIcon from "@material-ui/icons/TuneOutlined";
 import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { AssessmentList } from "../../pages/AssesmentList";
 import { HomeFunAssessmentList } from "../../pages/HomeFunAssessmentList";
@@ -21,7 +23,8 @@ import { OutcomeList } from "../../pages/OutcomeList";
 import { LoBlueIcon, LoIcon } from "../../pages/OutcomeList/Icons";
 import { StudyAssessmentList } from "../../pages/StudyAssessmentList";
 import LayoutBox from "../LayoutBox";
-import { Permission, PermissionType, usePermission } from "../Permission";
+import { Permission } from "../Permission";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,

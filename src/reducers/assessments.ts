@@ -9,10 +9,11 @@ import {
   EntityScheduleFeedbackView,
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
+import PermissionType from "../api/PermissionType";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem, UpdateAssessmentRequestData } from "../api/type";
-import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
 import { ModelAssessment } from "../models/ModelAssessment";
+import permissionCache from "../services/permissionCahceService";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actInfo } from "./notify";
@@ -144,8 +145,10 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
     const detail = await api.homeFunStudies.getHomeFunStudy(id);
     const { schedule_id, student_id: user_id } = detail;
     const feedbacks = await api.schedulesFeedbacks.queryFeedback({ schedule_id, user_id });
-    const hasPermissionOfHomefun =
-      !!detail.teacher_ids?.includes(myUserId) && hasPermissionOfMe(PermissionType.edit_in_progress_assessment_439, meInfo.me);
+
+    const perm = await permissionCache.usePermission([PermissionType.edit_in_progress_assessment_439]);
+
+    const hasPermissionOfHomefun = !!detail.teacher_ids?.includes(myUserId) && perm[PermissionType.edit_in_progress_assessment_439];
     if (detail.assess_feedback_id && detail.assess_feedback_id !== feedbacks[0]?.id)
       dispatch(actInfo(d("We update to get this student's newest assignment, please assess again.").t("assess_new_version_comment")));
     return { detail, feedbacks, hasPermissionOfHomefun };

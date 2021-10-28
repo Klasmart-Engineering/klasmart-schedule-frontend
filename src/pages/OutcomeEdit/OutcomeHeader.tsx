@@ -4,8 +4,9 @@ import { ArrowBack, Cancel, CancelOutlined, Check, Clear, ClearSharp, Create, De
 import clsx from "clsx";
 import React, { Fragment } from "react";
 import { useHistory } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionOr, PermissionType } from "../../components/Permission/Permission";
+import { Permission, PermissionOr } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({

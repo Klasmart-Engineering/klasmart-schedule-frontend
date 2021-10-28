@@ -138,6 +138,19 @@ export enum BrandingImageTag {
   Icon = "ICON",
 }
 
+export type CategoriesConnectionEdge = IConnectionEdge & {
+  __typename?: "CategoriesConnectionEdge";
+  cursor?: Maybe<Scalars["String"]>;
+  node?: Maybe<CategoryConnectionNode>;
+};
+
+export type CategoriesConnectionResponse = IConnectionResponse & {
+  __typename?: "CategoriesConnectionResponse";
+  totalCount?: Maybe<Scalars["Int"]>;
+  pageInfo?: Maybe<ConnectionPageInfo>;
+  edges?: Maybe<Array<Maybe<CategoriesConnectionEdge>>>;
+};
+
 export type Category = {
   __typename?: "Category";
   id: Scalars["ID"];
@@ -157,11 +170,36 @@ export type CategoryDeleteArgs = {
   _?: Maybe<Scalars["Int"]>;
 };
 
+export type CategoryConnectionNode = {
+  __typename?: "CategoryConnectionNode";
+  id: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  status: Status;
+  system: Scalars["Boolean"];
+};
+
 export type CategoryDetail = {
   id?: Maybe<Scalars["ID"]>;
   name?: Maybe<Scalars["String"]>;
   subcategories?: Maybe<Array<Scalars["ID"]>>;
   system?: Maybe<Scalars["Boolean"]>;
+};
+
+export type CategoryFilter = {
+  status?: Maybe<StringFilter>;
+  system?: Maybe<BooleanFilter>;
+  AND?: Maybe<Array<Maybe<CategoryFilter>>>;
+  OR?: Maybe<Array<Maybe<CategoryFilter>>>;
+};
+
+export enum CategorySortBy {
+  Id = "id",
+  Name = "name",
+}
+
+export type CategorySortInput = {
+  field: CategorySortBy;
+  order: SortOrder;
 };
 
 export type CategorySummaryNode = {
@@ -1073,6 +1111,7 @@ export type Query = {
   age_range?: Maybe<AgeRange>;
   ageRangesConnection?: Maybe<AgeRangesConnectionResponse>;
   category?: Maybe<Category>;
+  categoriesConnection?: Maybe<CategoriesConnectionResponse>;
   /** @deprecated Use 'classesConnection'. */
   classes?: Maybe<Array<Maybe<Class>>>;
   /** @deprecated Use 'classesConnection' with 'id' filter. */
@@ -1089,6 +1128,7 @@ export type Query = {
   programsConnection?: Maybe<ProgramsConnectionResponse>;
   role?: Maybe<Role>;
   roles?: Maybe<Array<Maybe<Role>>>;
+  rolesConnection?: Maybe<RolesConnectionResponse>;
   /** @deprecated Use 'schoolsConnection' with 'schoolId' filter. */
   school?: Maybe<School>;
   schoolsConnection?: Maybe<SchoolsConnectionResponse>;
@@ -1119,6 +1159,13 @@ export type QueryAgeRangesConnectionArgs = {
 
 export type QueryCategoryArgs = {
   id: Scalars["ID"];
+};
+
+export type QueryCategoriesConnectionArgs = {
+  direction: ConnectionDirection;
+  directionArgs?: Maybe<ConnectionsDirectionArgs>;
+  filter?: Maybe<CategoryFilter>;
+  sort?: Maybe<CategorySortInput>;
 };
 
 export type QueryClassArgs = {
@@ -1178,6 +1225,13 @@ export type QueryProgramsConnectionArgs = {
 
 export type QueryRoleArgs = {
   role_id: Scalars["ID"];
+};
+
+export type QueryRolesConnectionArgs = {
+  direction: ConnectionDirection;
+  directionArgs?: Maybe<ConnectionsDirectionArgs>;
+  filter?: Maybe<RoleFilter>;
+  sort?: Maybe<RoleSortInput>;
 };
 
 export type QuerySchoolArgs = {
@@ -1270,6 +1324,34 @@ export type RoleDelete_RoleArgs = {
   _?: Maybe<Scalars["Int"]>;
 };
 
+export type RoleConnectionNode = {
+  __typename?: "RoleConnectionNode";
+  id: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+  description: Scalars["String"];
+  status: Status;
+  system: Scalars["Boolean"];
+};
+
+export type RoleFilter = {
+  name?: Maybe<StringFilter>;
+  status?: Maybe<StringFilter>;
+  system?: Maybe<BooleanFilter>;
+  organizationId?: Maybe<UuidFilter>;
+  AND?: Maybe<Array<Maybe<RoleFilter>>>;
+  OR?: Maybe<Array<Maybe<RoleFilter>>>;
+};
+
+export enum RoleSortBy {
+  Id = "id",
+  Name = "name",
+}
+
+export type RoleSortInput = {
+  field: RoleSortBy;
+  order: SortOrder;
+};
+
 export type RoleSummaryNode = {
   __typename?: "RoleSummaryNode";
   id: Scalars["ID"];
@@ -1277,6 +1359,19 @@ export type RoleSummaryNode = {
   organizationId?: Maybe<Scalars["String"]>;
   schoolId?: Maybe<Scalars["String"]>;
   status?: Maybe<Status>;
+};
+
+export type RolesConnectionEdge = IConnectionEdge & {
+  __typename?: "RolesConnectionEdge";
+  cursor?: Maybe<Scalars["String"]>;
+  node?: Maybe<RoleConnectionNode>;
+};
+
+export type RolesConnectionResponse = IConnectionResponse & {
+  __typename?: "RolesConnectionResponse";
+  totalCount?: Maybe<Scalars["Int"]>;
+  pageInfo?: Maybe<ConnectionPageInfo>;
+  edges?: Maybe<Array<Maybe<RolesConnectionEdge>>>;
 };
 
 export type ScheduleEntry = {

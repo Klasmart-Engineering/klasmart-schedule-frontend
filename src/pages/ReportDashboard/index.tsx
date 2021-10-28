@@ -13,9 +13,9 @@ import {
 import React, { cloneElement, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
+import PermissionType from "../../api/PermissionType";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionType } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
 import { usePermission } from "../../hooks/usePermission";
 import { LangRecordId } from "../../locale/lang/type";

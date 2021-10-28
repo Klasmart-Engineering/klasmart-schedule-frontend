@@ -23,9 +23,10 @@ import clsx from "clsx";
 import React, { forwardRef, Fragment, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import { ContentInputSourceType, ContentType } from "../../api/type";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm, ContentDetailMaterialType } from "../../models/ModelContentDetailForm";
 

@@ -5,9 +5,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import { OutcomeSetResult } from "../../api/type";
 import ModalBox from "../../components/ModalBox";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { RootState } from "../../reducers";
@@ -56,7 +57,8 @@ const useQuery = () => {
 export default function CreateOutcomings() {
   const classes = useStyles();
   const { outcome_id, status, before, readOnly, is_unpub } = useQuery();
-  const perm_439 = usePermission(PermissionType.view_org_pending_learning_outcome_413);
+  const perm = usePermission([PermissionType.view_org_pending_learning_outcome_413]);
+  const perm_439 = perm.view_org_pending_learning_outcome_413;
   const [openStatus, setOpenStatus] = React.useState(false);
   const dispatch = useDispatch();
   const history = useHistory();

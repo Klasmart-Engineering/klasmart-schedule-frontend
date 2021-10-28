@@ -9,7 +9,8 @@ import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
-import { Permission, PermissionType } from "../../components/Permission";
+import PermissionType from "../../api/PermissionType";
+import { Permission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { modeViewType, timestampType } from "../../types/scheduleTypes";
 
