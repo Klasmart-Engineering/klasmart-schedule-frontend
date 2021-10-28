@@ -284,16 +284,11 @@ type publishOutcomeResponse = AsyncReturnType<typeof api.learningOutcomes.publis
 type publishOutcomeRequest = Parameters<typeof api.learningOutcomes.publishLearningOutcomes>[0];
 export const publishOutcome = createAsyncThunk<publishOutcomeResponse, publishOutcomeRequest>(
   "outcome/publishOutcome",
-  async (id, { dispatch }) => {
-    // const content = `Are you sure you want to publish this outcome?`;
-    // const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
-    // if (!isConfirmed) return Promise.reject();
+  async (id, ) => {
     return api.learningOutcomes.publishLearningOutcomes(id, { scope: "" });
   }
 );
 
-// type BulkActionIds = Parameters<typeof>
-type BulkDeleteOutcomeResult = ReturnType<typeof api.bulk.deleteOutcomeBulk>;
 type BulkDeleteOutcomeParams = Parameters<typeof api.bulk.deleteOutcomeBulk>[0];
 export const bulkDeleteOutcome = createAsyncThunk<string, BulkDeleteOutcomeParams["outcome_ids"]>(
   "outcome/bulkDeleteOutcome",
@@ -434,7 +429,6 @@ export const pullOutcomeSet = createAsyncThunk<IQueryPullOutcomeSetResult, IQuer
 );
 
 type IQueryCreateOutcomeSetParams = Parameters<typeof api.sets.createOutcomeSet>[0];
-type IQueryCreateOutcomeSetResult = AsyncReturnType<typeof api.sets.createOutcomeSet>;
 export const createOutcomeSet = createAsyncThunk<IQueryPullOutcomeSetResult, IQueryCreateOutcomeSetParams>(
   "sets/createOutcomeSet",
   async (params) => {
