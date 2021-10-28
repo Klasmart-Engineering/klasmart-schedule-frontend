@@ -59,8 +59,10 @@ query classesSchoolsByOrganization($organization_id: ID!) {
     classes {
       class_id
       class_name
+      status
       schools {
         school_id
+        status
       }
     }
   }
@@ -70,11 +72,13 @@ query classesTeachersByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
       class_id
+      status
       teachers {
         user_id
         user_name
         school_memberships {
           school_id
+          status
         }
       }
     }
@@ -86,6 +90,7 @@ query classStudentsByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
       class_id
+      status
       students{
         user_id
         full_name
@@ -99,6 +104,7 @@ query schoolsIdNameByOrganization($organization_id: ID!) {
     schools {
       school_id
       school_name
+      status
     }
   }
 }
@@ -107,16 +113,20 @@ query schoolsByOrganization($organization_id: ID!) {
     classes {
       class_id
       class_name
+      status
       schools {
         school_id
+        status
       }
     }
     schools {
       school_id
       school_name
+      status
       classes {
         class_id
         class_name
+        status
       }
     }
   }
@@ -161,9 +171,11 @@ query myPermissionsAndClassesTeachingQuery($organization_id: ID!) {
       }
       schoolMemberships {
         school_id
+        status
       }
       classesTeaching {
         class_id
+        status
       }
     }
   }
