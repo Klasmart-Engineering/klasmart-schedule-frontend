@@ -1,20 +1,21 @@
+/* eslint-disable array-callback-return */
+import { Status } from "../api/api-ko-schema.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
+import { d } from "../locale/LocaleManager";
+import { LinkedMockOptionsItem } from "../reducers/content";
+import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import {
   ClassOptionsItem,
   EntityScheduleClassesInfo,
   EntityScheduleSchoolInfo,
   EntityScheduleShortInfo,
   FilterQueryTypeProps,
+  LearningComesFilterQuery,
   ParticipantsData,
   ParticipantsShortInfo,
   RolesData,
-  LearningComesFilterQuery,
 } from "../types/scheduleTypes";
-import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
-import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
-import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
-import { Status } from "../api/api-ko-schema.auto";
-import { d } from "../locale/LocaleManager";
-import { LinkedMockOptionsItem } from "../reducers/content";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";

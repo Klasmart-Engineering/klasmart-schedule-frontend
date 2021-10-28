@@ -20,7 +20,7 @@ const useStyle = makeStyles((theme) =>
     },
   })
 );
-export default function () {
+export default function LearningOutcomesAchievement() {
   const [durationTime, setDurationTime] = useState(4);
   const dispatch = useDispatch();
   const { classId, studentId, allSubjectId, selectedSubjectId: selectedSubjectID } = useContext(SelectContext);

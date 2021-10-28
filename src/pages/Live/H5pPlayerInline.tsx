@@ -1,14 +1,10 @@
 import { createStyles, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import { iframeResizer } from "iframe-resizer";
 import React, { memo, useEffect, useMemo, useRef } from "react";
 import { apiCreateContentTypeLibrary, apiResourcePathById } from "../../api/extra";
 import { extractH5pStatement, h5pName2libId, H5PStatement, parseLibraryContent, sha1 } from "../../models/ModelH5pSchema";
 import { InlineIframeManager, InlineIframeManagerInjectHandler } from "./InlineIframeManager";
 import l10n from "./l10n.json";
-interface FixedIFrameResizerObject extends iframeResizer.IFrameObject {
-  removeListeners: () => void;
-}
 
 const SPECIAL_SYMBOL = "***";
 const INITIAL_EVENT_VERB_ID = "http://verb.kidsloop.cn/verbs/initgame";
@@ -59,10 +55,6 @@ const metadata = {
   title: "title",
   defaultLanguage: "en",
 };
-interface ISize {
-  width?: number;
-  height?: number;
-}
 
 interface H5pPlayerInlineProps {
   id?: string;

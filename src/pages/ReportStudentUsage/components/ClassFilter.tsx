@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import uniqBy from "lodash/uniqBy";
 import React from "react";
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ({ onChange }: IProps) {
+export default function ClassFilter({ onChange }: IProps) {
   const classes = useStyles();
   const { allValue, noneValue, selectAllOption, selectNoneSchoolOption } = useTranslation();
   const [state, setState] = React.useState<IState>({

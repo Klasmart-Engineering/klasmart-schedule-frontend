@@ -272,9 +272,7 @@ function FeedbackTemplate(props: FeedbackProps) {
       schedule_id: schedule_id,
     };
     let resultInfo: any;
-    resultInfo = ((await dispatch(saveScheduleFeedback(data))) as unknown) as PayloadAction<
-      AsyncTrunkReturned<typeof saveScheduleFeedback>
-    >;
+    resultInfo = (await dispatch(saveScheduleFeedback(data))) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleFeedback>>;
     if (resultInfo.payload) {
       dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
@@ -286,7 +284,7 @@ function FeedbackTemplate(props: FeedbackProps) {
 
   const handleFileData = (id: string, type: string) => {
     if (type === "delete") {
-      fileName?.map((item: Pick<FileLikeWithId, "id" | "name">, index: number) => {
+      fileName?.forEach((item: Pick<FileLikeWithId, "id" | "name">, index: number) => {
         if (item.id === id) fileName.splice(index, 1);
       });
       setFileName([...fileName!]);

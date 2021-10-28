@@ -206,7 +206,7 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
   );
 }
 
-export default (props: Omit<BarGroupProps, "height" | "width">) => {
+export default function StudentProgressBarChart(props: Omit<BarGroupProps, "height" | "width">) {
   return (
     <ParentSize>
       {(info) => {
@@ -214,4 +214,4 @@ export default (props: Omit<BarGroupProps, "height" | "width">) => {
       }}
     </ParentSize>
   );
-};
+}

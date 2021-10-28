@@ -60,7 +60,6 @@ interface FileLikeWithId extends FileLike {
   id?: string;
 }
 
-type FetchUploadUrlResult = ReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   partition: NonNullable<Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0]>["partition"];
   value?: string;
@@ -80,7 +79,7 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
         try {
           const file = transformFile ? await transformFile(items[0].file) : items[0].file;
           const extension = parseExtension(file.name);
-          const { payload } = ((await dispatch(getContentResourceUploadPath({ partition, extension }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(getContentResourceUploadPath({ partition, extension }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof getContentResourceUploadPath>
           >;
           const { path, resource_id } = payload;

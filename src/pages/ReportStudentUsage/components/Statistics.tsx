@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export default function ({ title, value, total, active }: IProps) {
+export default function Statistics({ title, value, total, active }: IProps) {
   const classes = useStyles();
   return (
     <Paper className={clsx(classes.container, active ? "active" : "")}>

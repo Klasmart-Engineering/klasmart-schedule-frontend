@@ -13,7 +13,7 @@ export interface IState {
   days: number;
 }
 
-export default function () {
+export default function Lessons() {
   const dispatch = useDispatch();
   const { teachers, classes } = useContext(SelectContext);
   const [state, setState] = React.useState<IState>({
