@@ -99,9 +99,10 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
         <Group top={margin.top} left={margin.left}>
           <BarGroup
             data={props.data.map((item) => {
+              console.log(item);
               return {
                 ...item,
-                v1: item.v1 instanceof Array ? item.v1.reduce((count, item) => item + count) : item.v1,
+                v1: item.v1 instanceof Array ? item.v1.reduce((count, item) => item + count) * 100 : item.v1,
               };
             })}
             keys={keys}
@@ -113,25 +114,23 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
             color={colorScale}
           >
             {(barGroups) => {
-              console.log(barGroups);
               return barGroups.map((barGroup, barIndex) => (
                 <Group key={`bar-group-${barGroup.index}-${barGroup.x0}`} left={barGroup.x0}>
                   {barGroup.bars.map((bar, index) => {
                     if (props.data[barIndex][bar.key] instanceof Array) {
-                      const firstNumber = props.data[barIndex][bar.key][0];
-                      const secondNumber = props.data[barIndex][bar.key][1];
-                      const count = firstNumber + secondNumber;
-                      const firstHeight = bar.height * (firstNumber / count);
-                      const secondHeight = bar.height * (secondNumber / count);
+                      const firstNumber = props.data[barIndex][bar.key][0] * 100;
+                      const secondNumber = props.data[barIndex][bar.key][1] * 100;
+                      const firstHeight = bar.height * (firstNumber / bar.value);
+                      const secondHeight = bar.height * (secondNumber / bar.value);
                       return (
                         <ReportTooltip
                           key={`bar-group-top-${barGroup.index}`}
                           hideTotal
                           content={[
-                            { count: firstNumber + (props.itemUnit || ""), type: Object(props.label)[bar.key][0] },
-                            { count: secondNumber + (props.itemUnit || ""), type: Object(props.label)[bar.key][1] },
+                            { count: Math.ceil(firstNumber) + (props.itemUnit || ""), type: Object(props.label)[bar.key][0] },
+                            { count: Math.ceil(secondNumber) + (props.itemUnit || ""), type: Object(props.label)[bar.key][1] },
                             {
-                              count: count + (props.itemUnit || ""),
+                              count: Math.ceil(bar.value) + (props.itemUnit || ""),
                               type: d("Total").t("report_student_usage_total"),
                             },
                           ]}
@@ -142,8 +141,9 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                               x={(xMax / props.data.length - 38 * 3) / 2 + 1}
                               y={bar.y || 0}
                               width={26}
-                              height={firstHeight ? firstHeight : 0}
-                              fill={bar.color}
+                              height={secondHeight ? secondHeight : 0}
+                              fill={"#EDEDED"}
+                              stroke={"#0E78D5"}
                               style={{
                                 cursor: "pointer",
                               }}
@@ -151,11 +151,10 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
                             <rect
                               key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
                               x={(xMax / props.data.length - 38 * 3) / 2 + index * 38}
-                              y={bar.y + firstHeight || 0}
+                              y={bar.y + secondHeight || 0}
                               width={28}
-                              height={secondHeight ? secondHeight : 0}
-                              fill={"#EDEDED"}
-                              stroke={"#0E78D5"}
+                              height={firstHeight ? firstHeight : 0}
+                              fill={bar.color}
                               style={{
                                 cursor: "pointer",
                               }}

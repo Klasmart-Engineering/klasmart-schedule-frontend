@@ -100,7 +100,7 @@ export default function () {
           durationTime === 4
             ? `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment((Number(time[1]) - 1) * 1000).format("MM.DD")}`
             : translateMonth(moment(Number(time[0]) * 1000).get("month")),
-        v1: [parsePercent(item.first_achieved_percentage), parsePercent(item.re_achieved_percentage)],
+        v1: [item.first_achieved_percentage, item.re_achieved_percentage],
         v2: parsePercent(item.class_average_achieved_percentage),
         v3: parsePercent(item.un_selected_subjects_average_achieved_percentage),
       } as BarGroupProps["data"][0];
