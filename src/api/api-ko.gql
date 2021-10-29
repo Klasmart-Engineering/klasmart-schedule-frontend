@@ -516,6 +516,7 @@ query studentsByOrganization($organization_id: ID!) {
     classes {
       class_id
       class_name
+      status
       schools {
         school_id
       }
@@ -530,6 +531,7 @@ query studentsByOrganization($organization_id: ID!) {
       classes {
         class_id
         class_name
+        status
         students {
           user_id
           user_name

@@ -722,7 +722,7 @@ export type StudentsByOrganizationQuery = (
     { __typename?: 'Organization' }
     & { classes?: Types.Maybe<Array<Types.Maybe<(
       { __typename?: 'Class' }
-      & Pick<Types.Class, 'class_id' | 'class_name'>
+      & Pick<Types.Class, 'class_id' | 'class_name' | 'status'>
       & { schools?: Types.Maybe<Array<Types.Maybe<(
         { __typename?: 'School' }
         & Pick<Types.School, 'school_id'>
@@ -735,7 +735,7 @@ export type StudentsByOrganizationQuery = (
       & Pick<Types.School, 'school_id' | 'school_name'>
       & { classes?: Types.Maybe<Array<Types.Maybe<(
         { __typename?: 'Class' }
-        & Pick<Types.Class, 'class_id' | 'class_name'>
+        & Pick<Types.Class, 'class_id' | 'class_name' | 'status'>
         & { students?: Types.Maybe<Array<Types.Maybe<(
           { __typename?: 'User' }
           & Pick<Types.User, 'user_id' | 'user_name'>
@@ -2223,6 +2223,7 @@ export const StudentsByOrganizationDocument = gql`
     classes {
       class_id
       class_name
+      status
       schools {
         school_id
       }
@@ -2237,6 +2238,7 @@ export const StudentsByOrganizationDocument = gql`
       classes {
         class_id
         class_name
+        status
         students {
           user_id
           user_name
