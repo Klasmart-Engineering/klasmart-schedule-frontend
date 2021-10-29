@@ -756,7 +756,7 @@ export type GetSubjectsQuery = (
     { __typename?: 'Organization' }
     & { subjects?: Types.Maybe<Array<(
       { __typename?: 'Subject' }
-      & Pick<Types.Subject, 'id' | 'name'>
+      & Pick<Types.Subject, 'id' | 'name' | 'status'>
     )>> }
   )> }
 );
@@ -772,10 +772,10 @@ export type GetProgramsAndSubjectsQuery = (
     { __typename?: 'Organization' }
     & { programs?: Types.Maybe<Array<(
       { __typename?: 'Program' }
-      & Pick<Types.Program, 'id' | 'name'>
+      & Pick<Types.Program, 'id' | 'name' | 'status'>
       & { subjects?: Types.Maybe<Array<(
         { __typename?: 'Subject' }
-        & Pick<Types.Subject, 'id' | 'name'>
+        & Pick<Types.Subject, 'id' | 'name' | 'status'>
       )>> }
     )>> }
   )> }
@@ -2282,6 +2282,7 @@ export const GetSubjectsDocument = gql`
     subjects {
       id
       name
+      status
     }
   }
 }
@@ -2320,9 +2321,11 @@ export const GetProgramsAndSubjectsDocument = gql`
     programs {
       id
       name
+      status
       subjects {
         id
         name
+        status
       }
     }
   }

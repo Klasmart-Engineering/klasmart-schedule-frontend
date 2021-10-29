@@ -546,6 +546,7 @@ query getSubjects($organization_id: ID!) {
     subjects {
       id
       name
+      status
     }
   }
 }
@@ -555,9 +556,11 @@ query getProgramsAndSubjects($organization_id: ID!) {
     programs {
       id
       name
+      status
       subjects {
         id
         name
+        status
       }
     }
   }
