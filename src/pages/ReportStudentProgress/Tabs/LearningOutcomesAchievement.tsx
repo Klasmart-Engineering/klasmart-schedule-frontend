@@ -39,22 +39,22 @@ export default function () {
   const totalType = [
     {
       label: t("report_label_total_newly_achieved_lo"),
-      data: learnOutcomeAchievement.first_achieved_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.first_achieved_count || 0),
       idx: 0,
     },
     {
       label: t("report_label_total_reachieved_lo"),
-      data: learnOutcomeAchievement.re_achieved_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.re_achieved_count || 0),
       idx: 1,
     },
     {
       label: t("report_label_total_achieved_lo_class_average"),
-      data: learnOutcomeAchievement.class_average_achieved_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.class_average_achieved_count || 0),
       idx: 2,
     },
     {
       label: t("report_label_total_achieved_lo_subject_average"),
-      data: learnOutcomeAchievement.un_selected_subjects_average_achieve_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.un_selected_subjects_average_achieve_count || 0),
       idx: 3,
     },
   ];
