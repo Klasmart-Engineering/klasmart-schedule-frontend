@@ -445,8 +445,8 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
   ) {
     return t("report_msg_lo_new", {
       Name: studentName,
-      AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
-      LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
+      AchievedLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count),
+      LearntLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count),
     });
   } else if (
     (data[1].first_achieved_percentage + data[1].re_achieved_percentage > data[1].class_average_achieved_percentage &&
@@ -647,8 +647,8 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
   } else {
     return t("report_msg_lo_default", {
       Name: studentName,
-      AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
-      LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
+      AchievedLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count),
+      LearntLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count),
     });
   }
 }
@@ -672,7 +672,11 @@ export function getClassAttendanceFeedback(newData: any, studentName: string) {
     data[2].class_average_attendance_percentage === 0 &&
     data[2].un_selected_subjects_average_attendance_percentage === 0
   ) {
-    return t("report_msg_att_new", { Name: studentName, AttendedCount: data[3].attended_count, ScheduledCount: data[3].scheduled_count });
+    return t("report_msg_att_new", {
+      Name: studentName,
+      AttendedCount: Math.ceil(data[3].attended_count),
+      ScheduledCount: Math.ceil(data[3].scheduled_count),
+    });
   } else if (
     (data[1].attendance_percentage > data[1].class_average_attendance_percentage &&
       data[2].attendance_percentage > data[2].class_average_attendance_percentage &&
@@ -780,8 +784,8 @@ export function getClassAttendanceFeedback(newData: any, studentName: string) {
   } else {
     return t("report_msg_att_default", {
       Name: studentName,
-      AttendedCount: data[3].attended_count,
-      ScheduledCount: data[3].scheduled_count,
+      AttendedCount: Math.ceil(data[3].attended_count),
+      ScheduledCount: Math.ceil(data[3].scheduled_count),
     });
   }
 }
@@ -807,8 +811,8 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
   ) {
     return t("report_msg_assign_new", {
       Name: studentName,
-      AssignmentCompleteCount: data[3].student_complete_assignment,
-      AssignmentCount: data[3].student_total_assignment,
+      AssignmentCompleteCount: Math.ceil(data[3].student_complete_assignment),
+      AssignmentCount: Math.ceil(data[3].student_total_assignment),
     });
   } else if (
     (data[1].student_designated_subject > data[1].class_designated_subject &&
@@ -916,8 +920,8 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
   } else {
     return t("report_msg_assign_default", {
       Name: studentName,
-      AssignCompleteCount: data[3].student_complete_assignment,
-      AssignmentCount: data[3].student_total_assignment,
+      AssignCompleteCount: Math.ceil(data[3].student_complete_assignment),
+      AssignmentCount: Math.ceil(data[3].student_total_assignment),
     });
   }
 }
