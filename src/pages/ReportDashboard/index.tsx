@@ -6,7 +6,9 @@ import {
   CategoryOutlined,
   ChevronRight,
   InfoOutlined,
-  KeyboardBackspace, ShowChart
+  KeyboardBackspace,
+  ShortText,
+  ShowChart,
 } from "@material-ui/icons";
 import React, { cloneElement, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
@@ -21,6 +23,7 @@ import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import { ReportLearningSummary } from "../ReportLearningSummary";
+import ReportStudentProgress from "../ReportStudentProgress";
 import ReportStudentUsage from "../ReportStudentUsage";
 import ReportTeachingLoad from "../ReportTeachingLoad";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -140,7 +143,7 @@ export function ReportDashboard() {
     (perm.view_my_school_reports_611 as boolean);
   const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
   const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
-  //const hasStudentProgressPermission  = perm.student_progress_report_662 as boolean;
+  const hasStudentProgressPermission = perm.student_progress_report_662 as boolean;
   const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
   const reportList: ReportItem[] = [
     {
@@ -178,14 +181,13 @@ export function ReportDashboard() {
       bgColor: "#DCCDFF",
       hasPerm: hasStudentUsagePermission,
     },
-    // 2021-10-28.隐藏 student progress report 入口
-    // {
-    //   title: "report_label_student_progress_report",
-    //   url: ReportStudentProgress.routeBasePath,
-    //   icon: <ShortText />,
-    //   bgColor: "#607d8b",
-    //   hasPerm: true,
-    // },
+    {
+      title: "report_label_student_progress_report",
+      url: ReportStudentProgress.routeBasePath,
+      icon: <ShortText />,
+      bgColor: "#607d8b",
+      hasPerm: hasStudentProgressPermission,
+    },
   ];
   const handleClick = useMemo(
     () => (value: string) => {
@@ -199,54 +201,54 @@ export function ReportDashboard() {
         <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
       </div>
       {isPending ? (
-    ""
-    ) : hasPerm || hasSummaryPerm ? (
-      <>
-      <Hidden smDown>
-        <div className={css.reportList}>
-          {reportList.map(
-            (item) =>
-              item.hasPerm && (
-                <div key={item.title} className={css.reportItem} onClick={() => handleClick(item.url)}>
-                  <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                    {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
-                  </div>
-                  <div className={css.reportItemTitleBox}>
-                    <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
-                    <ChevronRight style={{ opacity: 0.54 }} />
-                  </div>
-                </div>
-              )
-          )}
-        </div>
-      </Hidden>
-      <Hidden mdUp>
-        <Grid container spacing={4}>
-          {reportList.map(
-            (item) =>
-              item.hasPerm && (
-                <Grid key={item.title} item xs={6} className={css.gridCon}>
-                  <div className={css.reportItemMb} onClick={() => handleClick(item.url)}>
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+        ""
+      ) : hasPerm || hasSummaryPerm ? (
+        <>
+          <Hidden smDown>
+            <div className={css.reportList}>
+              {reportList.map(
+                (item) =>
+                  item.hasPerm && (
+                    <div key={item.title} className={css.reportItem} onClick={() => handleClick(item.url)}>
                       <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                        {cloneElement(item.icon, { style: { fontSize: 22 } })}{" "}
+                        {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
+                      </div>
+                      <div className={css.reportItemTitleBox}>
+                        <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
+                        <ChevronRight style={{ opacity: 0.54 }} />
                       </div>
                     </div>
-                    <div className={css.reportItemTitleBox}>
-                      <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
-                      <ChevronRight style={{ opacity: 0.54, marginTop: 7 }} />
-                    </div>
-                  </div>
-                </Grid>
-              )
-          )}
-        </Grid>
-      </Hidden>
-    </>
-    ) : (
-      permissionTip
-    )}
-  </LayoutBox>
+                  )
+              )}
+            </div>
+          </Hidden>
+          <Hidden mdUp>
+            <Grid container spacing={4}>
+              {reportList.map(
+                (item) =>
+                  item.hasPerm && (
+                    <Grid key={item.title} item xs={6} className={css.gridCon}>
+                      <div className={css.reportItemMb} onClick={() => handleClick(item.url)}>
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                          <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
+                            {cloneElement(item.icon, { style: { fontSize: 22 } })}{" "}
+                          </div>
+                        </div>
+                        <div className={css.reportItemTitleBox}>
+                          <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
+                          <ChevronRight style={{ opacity: 0.54, marginTop: 7 }} />
+                        </div>
+                      </div>
+                    </Grid>
+                  )
+              )}
+            </Grid>
+          </Hidden>
+        </>
+      ) : (
+        permissionTip
+      )}
+    </LayoutBox>
   );
 }
 
