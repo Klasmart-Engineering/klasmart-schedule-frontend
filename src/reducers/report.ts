@@ -614,7 +614,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
             organization_id,
           },
         });
-        data.organization?.classes?.forEach((classItem) => {
+        data.organization?.classes?.filter(item => item?.status === Status.Active)?.forEach((classItem) => {
           teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
         });
       }
@@ -657,7 +657,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       },
     });
 
-    const classList = result.user && (result.user.membership?.classesTeaching as Pick<Class, "class_id" | "class_name">[]);
+    const classList = result.user && (result.user.membership?.classesTeaching?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "class_name">[]);
     const firstClassId = classList && classList[0]?.class_id;
     const finalClassId = class_id ? class_id : firstClassId;
     //获取plan_id
@@ -734,7 +734,7 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
             organization_id,
           },
         });
-        data.organization?.classes?.forEach((classItem) => {
+        data.organization?.classes?.filter(item => item?.status === Status.Active).forEach((classItem) => {
           teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
         });
       }
@@ -748,7 +748,7 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
         data.user?.school_memberships
           ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
           .map((schoolItem) =>
-            schoolItem?.school?.classes?.forEach(
+            schoolItem?.school?.classes?.filter(item => item?.status === Status.Active)?.forEach(
               (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
             )
           );
@@ -1011,13 +1011,13 @@ export const onLoadLearningSummary = createAsyncThunk<
     },
   });
   const list = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
-    query: GetProgramsAndSubjectsDocument,
+    query: GetProgramsAndSubjectsDocument,   
     variables: {
       organization_id,
     },
   });
-  const _subjects = data.data.organization?.subjects || [];
-  const programs = list.data.organization?.programs || [];
+  const _subjects = data.data.organization?.subjects?.filter(item => item?.status === Status.Active) || [];
+  const programs = list.data.organization?.programs?.filter(item => item?.status === Status.Active) || [];
   subjects = _subjects?.map((item) => {
     const name = programs.find((item2) => item2.subjects?.some((val) => item.id === val.id))?.name + " - " + item.name;
     return {
@@ -1280,7 +1280,7 @@ const { actions, reducer } = createSlice({
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
       state.reportMockOptions.classList = (
-        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching : undefined
+        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching.filter(item => item?.status === Status.Active) : undefined
       ) as Pick<Class, "class_id" | "class_name">[];
 
       state.reportMockOptions.class_id = (
@@ -1513,7 +1513,7 @@ const { actions, reducer } = createSlice({
         Class,
         "class_id" | "students"
       >[];
-      let programs = payload[4].data.organization?.programs as Pick<Program, "id" | "name" | "subjects">[];
+      let programs = payload[4].data.organization?.programs?.filter(item => item?.status === Status.Active) as Pick<Program, "id" | "name" | "subjects">[];
 
       const myPermissionsAndClassesTeaching = payload[0].data.me;
       const membership = payload[0].data.me?.membership;
