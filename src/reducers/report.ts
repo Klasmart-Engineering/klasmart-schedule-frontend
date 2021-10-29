@@ -45,7 +45,7 @@ import {
   StudentsByOrganizationQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables
+  TeacherByOrgIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityAssignmentCompletionRate,
@@ -77,7 +77,7 @@ import {
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory
+  EntityTeacherReportCategory,
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { IParamQueryRemainFilter } from "../api/type";
@@ -91,7 +91,7 @@ import {
   getLearnOutcomeAchievementFeedback,
   getTimeOffSecond,
   ModelReport,
-  sortByStudentName
+  sortByStudentName,
 } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
@@ -101,7 +101,7 @@ import {
   QueryLearningSummaryTimeFilterCondition,
   ReportType,
   TimeFilter,
-  UserType
+  UserType,
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
@@ -123,7 +123,7 @@ interface IreportState {
   studentList: Pick<User, "user_id" | "user_name">[];
   studentUsage: {
     organization_id: string;
-    schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
+    schoolList: Pick<School, "classes" | "school_id" | "school_name" | "status">[];
     noneSchoolClasses: Pick<Class, "class_id" | "class_name">[];
   };
   learningSummary: {
@@ -1292,7 +1292,7 @@ const { actions, reducer } = createSlice({
     },
     [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentsByOrg>>) => {
       const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name" | "status">[];
       const myPermissionsAndClassesTeaching = payload[0].data.me;
       const membership = payload[0].data.me?.membership;
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
@@ -1301,9 +1301,11 @@ const { actions, reducer } = createSlice({
           return item?.school_id;
         }) || [];
       const classIDs =
-        membership?.classesTeaching?.map((item) => {
-          return item?.class_id;
-        }) || [];
+        membership?.classesTeaching
+          ?.filter((item) => item?.status === Status.Active)
+          .map((item) => {
+            return item?.class_id;
+          }) || [];
       const permissions = hasPermissionOfMe(
         [
           PermissionType.report_learning_summary_org_652,
@@ -1326,7 +1328,7 @@ const { actions, reducer } = createSlice({
         state.learningSummary.schools = [...allSchools];
       } else if (permissions[PermissionType.report_learning_summary_teacher_650]) {
         state.learningSummary.schoolList = schools.reduce((prev, cur) => {
-          const classes = cur.classes?.filter((item) => classIDs.indexOf(item?.class_id) >= 0);
+          const classes = cur.classes?.filter((item) => item?.status === Status.Active && classIDs.indexOf(item?.class_id) >= 0);
           if (classes && classes.length > 0) {
             prev.push({
               school_id: cur.school_id,
@@ -1344,19 +1346,24 @@ const { actions, reducer } = createSlice({
       }
     },
     [getSchoolsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
-      const classes = payload[1].data.organization?.classes?.filter((item) => item?.status=== Status.Active) as Pick<Class, "class_id" | "class_name" | "schools" | "status">[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name"| "status">[];
+      const classes = payload[1].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+        Class,
+        "class_id" | "class_name" | "schools" | "status"
+      >[];
+      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name" | "status">[];
       const myPermissionsAndClassesTeaching = payload[0].data.me;
       const membership = payload[0].data.me?.membership;
-      const noneSchoolClasses = classes.filter((item) =>(item?.schools || []).length === 0);
+      const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
           return item?.school_id;
         }) || [];
       const classIDs =
-        membership?.classesTeaching?.filter(item => item?.status === Status.Active).map((item) => {
-          return item?.class_id;
-        }) || [];
+        membership?.classesTeaching
+          ?.filter((item) => item?.status === Status.Active)
+          .map((item) => {
+            return item?.class_id;
+          }) || [];
       const permissions = hasPermissionOfMe(
         [
           PermissionType.student_usage_report_657,
@@ -1376,7 +1383,7 @@ const { actions, reducer } = createSlice({
         });
       } else if (permissions[PermissionType.report_teacher_student_usage_656]) {
         state.studentUsage.schoolList = schools.reduce((prev, cur) => {
-          const classes = cur.classes?.filter((item) => item?.status === Status.Active &&(classIDs.indexOf(item?.class_id) >= 0));
+          const classes = cur.classes?.filter((item) => item?.status === Status.Active && classIDs.indexOf(item?.class_id) >= 0);
           if (classes && classes.length > 0) {
             prev.push({
               school_id: cur.school_id,
@@ -1396,9 +1403,15 @@ const { actions, reducer } = createSlice({
     },
 
     [getTeachersByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersByOrg>>) => {
-      const classesSchools = payload[1].data.organization?.classes?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "class_name" | "schools">[];
+      const classesSchools = payload[1].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+        Class,
+        "class_id" | "class_name" | "schools"
+      >[];
       const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      const classesTeachers = payload[3].data.organization?.classes?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "teachers">[];
+      const classesTeachers = payload[3].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+        Class,
+        "class_id" | "teachers"
+      >[];
 
       const myPermissionsAndClassesTeaching = payload[0].data.me;
       const myId = payload[0].data.me?.user_id;
@@ -1418,9 +1431,11 @@ const { actions, reducer } = createSlice({
           return item?.school_id;
         }) || [];
       const classIDs =
-        membership?.classesTeaching?.filter(item => item?.status === Status.Active).map((item) => {
-          return item?.class_id;
-        }) || [];
+        membership?.classesTeaching
+          ?.filter((item) => item?.status === Status.Active)
+          .map((item) => {
+            return item?.class_id;
+          }) || [];
 
       let classList: Pick<Class, "class_id" | "schools" | "class_name">[] = [];
       let schoolList: Pick<School, "classes" | "school_id" | "school_name">[] = [];
@@ -1489,9 +1504,15 @@ const { actions, reducer } = createSlice({
     },
 
     [getStudentSubjectsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentSubjectsByOrg>>) => {
-      let classesSchools = payload[1].data.organization?.classes?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "class_name" | "schools">[];
+      let classesSchools = payload[1].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+        Class,
+        "class_id" | "class_name" | "schools"
+      >[];
       let schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      let classesStudents = payload[3].data.organization?.classes?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "students">[];
+      let classesStudents = payload[3].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+        Class,
+        "class_id" | "students"
+      >[];
       let programs = payload[4].data.organization?.programs as Pick<Program, "id" | "name" | "subjects">[];
 
       const myPermissionsAndClassesTeaching = payload[0].data.me;
@@ -1503,9 +1524,11 @@ const { actions, reducer } = createSlice({
           return item?.school_id;
         }) || [];
       const classIDs =
-        membership?.classesTeaching?.filter(item => item?.status === Status.Active).map((item) => {
-          return item?.class_id;
-        }) || [];
+        membership?.classesTeaching
+          ?.filter((item) => item?.status === Status.Active)
+          .map((item) => {
+            return item?.class_id;
+          }) || [];
       const permissions = hasPermissionOfMe(
         [
           PermissionType.report_student_progress_organization_658,
