@@ -45,7 +45,7 @@ import {
   StudentsByOrganizationQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables,
+  TeacherByOrgIdQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityAssignmentCompletionRate,
@@ -77,7 +77,7 @@ import {
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
 import { IParamQueryRemainFilter } from "../api/type";
@@ -91,7 +91,7 @@ import {
   getLearnOutcomeAchievementFeedback,
   getTimeOffSecond,
   ModelReport,
-  sortByStudentName,
+  sortByStudentName
 } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
@@ -101,7 +101,7 @@ import {
   QueryLearningSummaryTimeFilterCondition,
   ReportType,
   TimeFilter,
-  UserType,
+  UserType
 } from "../pages/ReportLearningSummary/types";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
@@ -1081,13 +1081,13 @@ export const getAfterClassFilter = createAsyncThunk<
     report: { learningSummary, summaryReportOptions },
   } = getState();
   if (filter_type === "class") {
-    classes = learningSummary.schools.find((item) => item.id === school_id)?.classes || [];
+    classes = learningSummary.schools.find((item) => item.id === school_id)?.classes?.filter(item => item?.status === Status.Active) || [];
     classes = uniqBy(classes, "id");
     _class_id = classes.length ? classes[0].id : "none";
   }
   _class_id = class_id ? class_id : _class_id;
   if (filter_type === "class" || filter_type === "student") {
-    students = learningSummary.schools.find((item) => item.id === school_id)?.classes.find((item) => item.id === _class_id)?.students || [];
+    students = learningSummary.schools.find((item) => item.id === school_id)?.classes?.filter(item => item?.status === Status.Active).find((item) => item.id === _class_id)?.students || [];
     students = uniqBy(students, "id");
     students = students.slice().sort(sortByStudentName("name"));
     _student_id = students.length ? students[0].id : "none";
@@ -1291,7 +1291,7 @@ const { actions, reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentsByOrg>>) => {
-      const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
+      const classes = payload[1].data.organization?.classes?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
       const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name" | "status">[];
       const myPermissionsAndClassesTeaching = payload[0].data.me;
       const membership = payload[0].data.me?.membership;

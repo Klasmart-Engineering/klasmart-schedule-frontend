@@ -1,5 +1,7 @@
 import { IWeeks } from "..";
 import api from "../../../api";
+import { Maybe, Status } from "../../../api/api-ko-schema.auto";
+
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
   [K in keyof T]: NonOnlyNull<T[K]>;
@@ -77,6 +79,7 @@ export type UserType = {
   classes: {
     id: string;
     name: string;
+    status: Maybe<Status> | undefined;
     students: {
       id: string;
       name: string;
