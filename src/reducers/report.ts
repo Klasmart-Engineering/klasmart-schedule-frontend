@@ -989,7 +989,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     _school_id = school_id ? school_id : "all";
     const school = learningSummary.schools.find((item) => item.id === _school_id);
     const _classes =
-      school?.classes.map((item) => ({
+      school?.classes?.filter(item=> item?.status === Status.Active).map((item) => ({
         id: item.id,
         name: item.name,
       })) || [];
@@ -997,7 +997,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     classes = uniqBy(_classes, "id");
     _class_id = class_id ? class_id : "all";
     students =
-      learningSummary.schools.find((item) => item.id === _school_id)?.classes.find((item) => item.id === _class_id)?.students || [];
+      learningSummary.schools.find((item) => item.id === _school_id)?.classes?.filter(item=> item?.status === Status.Active).find((item) => item.id === _class_id)?.students || [];
     students = uniqBy(students, "id");
     students = students.slice().sort(sortByStudentName("name"));
     _student_id = students.length ? (student_id ? student_id : students[0].id) : "none";
