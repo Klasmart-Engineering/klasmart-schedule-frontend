@@ -183,7 +183,20 @@ const initialState: ScheduleState = {
     },
     subjectList: [],
     programList: [],
-    classTypeList: [],
+    classTypeList: [
+      {
+        id: "OfflineClass",
+        name: "schedule_detail_offline_class",
+      },
+      {
+        id: "OnlineClass",
+        name: "schedule_detail_online_class",
+      },
+      {
+        id: "OnlineClass",
+        name: "schedule_detail_online_class",
+      },
+    ],
   },
   participantMockOptions: {
     participantList: {
@@ -237,7 +250,20 @@ const initialState: ScheduleState = {
     is_allow_submit: false,
   },
   filterOption: {
-    classType: [],
+    classType: [
+      {
+        id: "Homework",
+        name: "schedule_detail_homework",
+      },
+      {
+        id: "OfflineClass",
+        name: "schedule_detail_offline_class",
+      },
+      {
+        id: "OnlineClass",
+        name: "schedule_detail_online_class",
+      },
+    ],
     programs: [],
     others: [],
   },
@@ -581,10 +607,6 @@ export const ScheduleFilterSubject = createAsyncThunk<ScheduleFilterSubjectResul
   }
 );
 
-export const ScheduleClassTypesFilter = createAsyncThunk("schedule/filterClassType", () => {
-  return api.schedulesFilter.getClassTypesInScheduleFilter();
-});
-
 export interface getScheduleParticipantsPayLoad extends LoadingMetaPayload {
   class_id: string;
 }
@@ -614,7 +636,6 @@ export interface getScheduleMockOptionsAllSettledResponse {
   teacherList: TeachersByOrgnizationQuery;
   subjectList: PromiseSettledResult<LinkedMockOptionsItem[]>;
   programList: PromiseSettledResult<LinkedMockOptionsItem[]>;
-  classTypeList: PromiseSettledResult<EntityClassType[]>;
 }
 
 /**
@@ -633,12 +654,8 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsAll
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
 
-    const [subjectList, programList, classTypeList] = await Promise.allSettled([
-      api.subjects.getSubject(),
-      api.programs.getProgram(),
-      api.classTypes.getClassType(),
-    ]);
-    return { subjectList, programList, classTypeList, teacherList };
+    const [subjectList, programList] = await Promise.allSettled([api.subjects.getSubject(), api.programs.getProgram()]);
+    return { subjectList, programList, teacherList };
   }
 );
 
@@ -876,7 +893,6 @@ const { actions, reducer } = createSlice({
       state.mockOptions = payload;
     },
     [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
-      state.scheduleMockOptions.classTypeList = payload.classTypeList.status === "fulfilled" ? payload.classTypeList.value : [];
       state.scheduleMockOptions.subjectList = payload.subjectList.status === "fulfilled" ? payload.subjectList.value : [];
       state.scheduleMockOptions.programList = payload.programList.status === "fulfilled" ? payload.programList.value : [];
       state.scheduleMockOptions.teacherList = payload.teacherList;
@@ -937,9 +953,6 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleAnyTimeViewData = payload;
-    },
-    [ScheduleClassTypesFilter.fulfilled.type]: (state, { payload }: any) => {
-      state.filterOption.classType = payload;
     },
     [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
       state.filterOption.others = payload;
