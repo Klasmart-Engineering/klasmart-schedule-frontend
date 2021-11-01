@@ -151,7 +151,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
               </Box>
               <Box className={clsx(css.rightContainer, css.marginItem)}>
                 <div className={clsx(css.colorPart, css.gray)}></div>
-                <span>{d("Not Attempted").t("assess_option_not_attempted")}</span>
+                <span>{d("Not Covered").t("assess_option_not_attempted")}</span>
               </Box>
             </Box>
           )}

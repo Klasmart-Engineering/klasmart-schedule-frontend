@@ -40,7 +40,7 @@ export function EditScore(props: EditScoreProps) {
           attempted ? (
             d("Attempted").t("assessment_activity_attempted")
           ) : (
-            d("Not Attempted").t("assess_option_not_attempted")
+            d("Not Attempted").t("assess_detail_not_attempted")
           )
         ) : not_applicable_scoring ? (
           d("Not Applicable").t("assessment_not_applicable")
@@ -73,7 +73,7 @@ export function EditScore(props: EditScoreProps) {
             )}
           </>
         ) : (
-          d("Not Attempted").t("assess_option_not_attempted")
+          d("Not Attempted").t("assess_detail_not_attempted")
         )
       ) : (
         d("Not Applicable").t("assessment_not_applicable")
