@@ -353,6 +353,9 @@ export function getSixMonths() {
   var year = data.getFullYear();
   var month = data.getMonth() + 1;
   var day = data.getDate();
+  var lastDate;
+  var curYear = year;
+  var curMonth = month;
   if (day === 1) {
     if (month === 1) {
       year = year - 1;
@@ -360,9 +363,9 @@ export function getSixMonths() {
     } else {
       month = month - 1;
     }
-    day = mGetDate(year, month) + 1;
   }
-  var lastDate = formatDate(`${year}/${month}/01 00:00:00`) + "-" + formatDate(`${year}/${month}/${day} 00:00:00`);
+  lastDate = formatDate(`${year}/${month}/01 00:00:00`) + "-" + formatDate(`${curYear}/${curMonth}/${day} 00:00:00`);
+
   var arry = [];
   for (var i = 0; i < 5; i++) {
     month = month - 1;
