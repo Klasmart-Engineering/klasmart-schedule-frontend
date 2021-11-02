@@ -7,8 +7,6 @@ import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiIsEnableNewH5p } from "../../api/extra";
-import { ContentFileType } from "../../api/type";
 import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
@@ -34,9 +32,9 @@ const useStyles = makeStyles(({ breakpoints, shadows }) => ({
     marginTop: 5,
     maxHeight: 700,
     marginBottom: 20,
-    [breakpoints.down('md')]: {
-      maxHeight: 'fit-content',
-    }
+    [breakpoints.down("md")]: {
+      maxHeight: "fit-content",
+    },
   },
   table: {
     minWidth: 700 - 162,
@@ -60,34 +58,6 @@ const useStyles = makeStyles(({ breakpoints, shadows }) => ({
     textAlign: "center",
   },
 }));
-
-interface Asset {
-  status: string;
-  type: string;
-  name: string;
-  img: string;
-  fileType: string;
-  developmental: string;
-  skills: string;
-  age: string;
-  created: string;
-  author: string;
-}
-
-interface mockAsset {
-  type: string;
-  name: string;
-  developmental: string;
-  img: string;
-  fileType: string;
-  skills: string;
-  age: string;
-  settings: string;
-  status: string;
-  created: string;
-  author: string;
-  action: string;
-}
 
 const mapContentType = (lesson: DraggableItemProps["lesson"], item: DraggableItemProps["item"]) => {
   return lesson === "material"
@@ -149,8 +119,7 @@ export default function MediaAssets(props: MediaAssetsProps) {
     [onChangePage]
   );
   const rows = list?.map((item, idx) => {
-    const fileType: ContentFileType = item.data && JSON.parse(item.data)?.file_type;
-    const dragType = apiIsEnableNewH5p() && lesson === "material" ? `LIBRARY_ITEM_FILE_TYPE_${fileType}` : "LIBRARY_ITEM";
+    const dragType = "LIBRARY_ITEM";
     return (
       <TableRow key={item.id}>
         <TableCell className={css.cellThumnbnail}>

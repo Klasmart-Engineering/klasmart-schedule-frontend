@@ -32,7 +32,7 @@ import {
   renameFolder1,
   searchOrgFolderItems,
   setUserSetting,
-  shareFolders
+  shareFolders,
 } from "../../reducers/content";
 import { actWarning } from "../../reducers/notify";
 import ContentEdit from "../ContentEdit";
@@ -42,7 +42,7 @@ import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderForm, useFolderForm } from "./FolderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
-import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
+import { OrganizationList, OrganizationListProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import {
   ExectSearch,
@@ -50,7 +50,7 @@ import {
   SEARCH_TEXT_KEY,
   SecondSearchHeader,
   SecondSearchHeaderMb,
-  SecondSearchHeaderProps
+  SecondSearchHeaderProps,
 } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
@@ -147,19 +147,12 @@ export default function MyContentList() {
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, selectedId), [folderTree, selectedId]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
-  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
-    EntityFolderContentData[]
-  >();
+  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } =
+    useFolderTree<EntityFolderContentData[]>();
   const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
   const filterOrgList = useMemo(() => excludeMyOrg(orgList, myOrgId), [myOrgId, orgList]);
-  const {
-    organizationListActive,
-    closeOrganizationList,
-    openOrganizationList,
-    organizationListShowIndex,
-    shareFolder,
-    setShareFolder,
-  } = useOrganizationList<OrgInfoProps[]>();
+  const { organizationListActive, closeOrganizationList, openOrganizationList, organizationListShowIndex, shareFolder, setShareFolder } =
+    useOrganizationList();
   const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
   const [folderForm, setFolderForm] = useState<EntityFolderContentData>();
   const [parentId, setParentId] = useState<string>();
@@ -238,7 +231,7 @@ export default function MyContentList() {
   const handleChangeAssets: FirstSearchHeaderProps["onChangeAssets"] = (content_type, scope) =>
     history.push({ search: toQueryString({ content_type, page: 1, order_by: OrderBy._updated_at, scope }) });
   const handleCreateContent = () => {
-    const parent_id = (condition.path || "");
+    const parent_id = condition.path || "";
     if (condition.content_type === SearchContentsRequestContentType.assetsandfolder) {
       if (condition.path && condition.path !== ROOT_PATH) {
         history.replace(`/library/content-edit/lesson/assets/tab/assetDetails/rightside/assetsEdit?parent_id=${parent_id}`);
@@ -249,7 +242,7 @@ export default function MyContentList() {
       if (condition.path && condition.path !== ROOT_PATH) {
         history.replace({
           pathname: `/library/content-edit/lesson/plan/tab/details/rightside/planComposeGraphic`,
-          search: toQueryString({parent_id: parent_id, back: toFullUrl(history.location) }),
+          search: toQueryString({ parent_id: parent_id, back: toFullUrl(history.location) }),
         });
       } else {
         history.push({

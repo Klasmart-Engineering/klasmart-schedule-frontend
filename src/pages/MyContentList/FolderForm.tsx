@@ -159,7 +159,7 @@ export function FolderForm(props: FolderFormProps) {
     </Dialog>
   );
 }
-export function useFolderForm<T>() {
+export function useFolderForm() {
   const [active, setActive] = useState(false);
   const [folderFormShowIndex, setFolderFormShowIndex] = useState(2);
   return useMemo(

@@ -10,9 +10,7 @@ import noH5pUrl from "../../assets/icons/noh5p.svg";
 import { Thumbnail } from "../../components/Thumbnail";
 import { AssetPreview } from "../../components/UIAssetPreview/AssetPreview";
 import { d } from "../../locale/LocaleManager";
-import { formLiteFileType } from "../../models/ModelH5pSchema";
 import ContentH5p from "../ContentEdit/ContentH5p";
-import { H5pPlayer } from "../ContentEdit/H5pPlayer";
 import { PreviewBaseProps } from "./type";
 
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
@@ -240,12 +238,12 @@ function EmptyContent() {
     </div>
   );
 }
-interface H5pPreview extends PreviewBaseProps {
+interface IH5pPreviewProps extends PreviewBaseProps {
   h5pArray: (EntityContentInfoWithDetails | undefined)[];
   classType: EntityScheduleDetailsView["class_type"];
   content_type: EntityContentInfoWithDetails["content_type"];
 }
-export function H5pPreview(props: H5pPreview) {
+export function H5pPreview(props: IH5pPreviewProps) {
   const css = useStyles();
   const [currIndex, setCurrIndex] = useState(0);
   const { h5pArray, onGoLive, classType, content_type } = props;
@@ -281,22 +279,8 @@ export function H5pPreview(props: H5pPreview) {
     h5pItem = h5pArray[currIndex];
   };
   const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
-  // const path = h5pItem ? (parsedData ? apiResourcePathById(parsedData.source) : "") : "";
-  const isNewH5p = h5pItem ? formLiteFileType(h5pItem.id, parsedData.file_type, parsedData.input_source)?.isNewH5p : false;
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
-  // const showAssets = () => {
-  //   if (fileFormat.image.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-  //     return <AssetImg src={path} />;
-  //   } else if (fileFormat.video.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-  //     return <AssetVideo src={path} />;
-  //   } else if (fileFormat.audio.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-  //     return <AssetAudio src={path} />;
-  //   } else if (fileFormat.document.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-  //     return <AssetFile src={parsedData.source} />;
-  //   } else if (fileFormat.pdf.indexOf(`.${getSuffix(parsedData)}`) >= 0) {
-  //     return <AssetPdf src={path} />;
-  //   }
-  // };
+
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>
@@ -304,15 +288,8 @@ export function H5pPreview(props: H5pPreview) {
           {isEmpty ? (
             <EmptyContent />
           ) : !getSuffix(parsedData) ? (
-            isNewH5p ? (
-              <Box className={css.innerH5pCon}>
-                <H5pPlayer valueSource={parsedData.content} />
-              </Box>
-            ) : (
-              <ContentH5p sub={H5pSub.view} value={parsedData.source} />
-            )
+            <ContentH5p sub={H5pSub.view} value={parsedData.source} />
           ) : (
-            // showAssets()
             <AssetPreview resourceId={parsedData} isHideFileType={true} className={css.assetPreview} />
           )}
           {h5pArray.length > 1 && (

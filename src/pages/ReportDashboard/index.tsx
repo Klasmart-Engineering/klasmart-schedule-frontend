@@ -7,9 +7,10 @@ import {
   ChevronRight,
   InfoOutlined,
   KeyboardBackspace,
+  ShortText,
   ShowChart,
 } from "@material-ui/icons";
-import React, { cloneElement, Fragment, useCallback, useMemo } from "react";
+import React, { cloneElement, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
@@ -22,6 +23,7 @@ import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
 import { ReportLearningSummary } from "../ReportLearningSummary";
+import ReportStudentProgress from "../ReportStudentProgress";
 import ReportStudentUsage from "../ReportStudentUsage";
 import ReportTeachingLoad from "../ReportTeachingLoad";
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -131,7 +133,9 @@ export function ReportDashboard() {
     PermissionType.view_my_school_reports_611,
     PermissionType.learning_summary_report_653,
     PermissionType.student_usage_report_657,
+    PermissionType.student_progress_report_662,
   ]);
+
   const hasPerm =
     perm.view_reports_610 ||
     perm.view_my_reports_614 ||
@@ -139,6 +143,7 @@ export function ReportDashboard() {
     (perm.view_my_school_reports_611 as boolean);
   const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
   const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
+  const hasStudentProgressPermission = perm.student_progress_report_662 as boolean;
   const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
   const reportList: ReportItem[] = [
     {
@@ -176,6 +181,13 @@ export function ReportDashboard() {
       bgColor: "#DCCDFF",
       hasPerm: hasStudentUsagePermission,
     },
+    {
+      title: "report_label_student_progress_report",
+      url: ReportStudentProgress.routeBasePath,
+      icon: <ShortText />,
+      bgColor: "#607d8b",
+      hasPerm: hasStudentProgressPermission,
+    },
   ];
   const handleClick = useMemo(
     () => (value: string) => {
@@ -184,14 +196,14 @@ export function ReportDashboard() {
     [history]
   );
   return (
-    <Fragment>
+    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+      <div className={css.reportTitle}>
+        <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
+      </div>
       {isPending ? (
         ""
       ) : hasPerm || hasSummaryPerm ? (
-        <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-          <div className={css.reportTitle}>
-            <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
-          </div>
+        <>
           <Hidden smDown>
             <div className={css.reportList}>
               {reportList.map(
@@ -232,11 +244,11 @@ export function ReportDashboard() {
               )}
             </Grid>
           </Hidden>
-        </LayoutBox>
+        </>
       ) : (
         permissionTip
       )}
-    </Fragment>
+    </LayoutBox>
   );
 }
 

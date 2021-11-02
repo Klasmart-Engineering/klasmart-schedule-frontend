@@ -23,12 +23,14 @@ import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { enAU, id, ko, vi, zhCN, es } from "date-fns/esm/locale";
+import clsx from "clsx";
+import { enAU, es, id, ko, th, vi, zhCN } from "date-fns/esm/locale";
 import React, { useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { Maybe, User } from "../../api/api-ko-schema.auto";
-import { GetProgramsQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import { ConnectionDirection, Maybe, User } from "../../api/api-ko-schema.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, GetSchoolsFilterListQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
   EntityScheduleAddView,
@@ -46,6 +48,7 @@ import { actError, actSuccess } from "../../reducers/notify";
 import {
   actOutcomeList,
   changeParticipants,
+  getProgramChild,
   getScheduleLiveToken,
   getScheduleMockOptionsResponse,
   getScheduleParticipant,
@@ -54,13 +57,12 @@ import {
   getSubjectByProgramId,
   initScheduleDetial,
   removeSchedule,
+  resetActOutcomeList,
   resetParticipantList,
   resetScheduleDetial,
   saveScheduleData,
   ScheduleFilterPrograms,
   scheduleShowOption,
-  resetActOutcomeList,
-  getProgramChild,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -71,26 +73,24 @@ import {
   EntityScheduleSchoolInfo,
   filterOptionItem,
   FilterQueryTypeProps,
+  LearningComesFilterQuery,
+  LearningContentListForm,
   memberType,
   modeViewType,
   ParticipantsData,
   ParticipantsShortInfo,
   repeatOptionsType,
   timestampType,
-  LearningContentListForm,
-  LearningComesFilterQuery,
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
+import LearingOutcome from "./LearingOutcome";
 import RepeatSchedule from "./Repeat";
 import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import LearingOutcome from "./LearingOutcome";
-import { useForm } from "react-hook-form";
-import clsx from "clsx";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -286,6 +286,10 @@ function SmallCalendar(props: CalendarStateProps) {
     user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
+    schoolsConnection,
+    getSchoolsConnection,
+    getClassesConnection,
+    classesConnection,
   } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
@@ -314,7 +318,7 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
-  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es };
+  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th };
 
   return (
     <Box className={css.smallCalendarBox}>
@@ -336,6 +340,10 @@ function SmallCalendar(props: CalendarStateProps) {
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
+          schoolsConnection={schoolsConnection}
+          getSchoolsConnection={getSchoolsConnection}
+          getClassesConnection={getClassesConnection}
+          classesConnection={classesConnection}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -792,7 +800,7 @@ function EditBox(props: CalendarStateProps) {
 
   const setScheduleData = (name: string, value: string | number | object | null) => {
     const newTopocList = { ...scheduleList, [name]: value as string | number | object | null };
-    setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+    setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
   };
   /**
    * form input validator
@@ -968,23 +976,25 @@ function EditBox(props: CalendarStateProps) {
       dispatch(actError(d("Please confirm the fileld of ‘Add Participants’ by clicking OK").t("schedule_msg_participants_no_ok")));
       return;
     }
-    addData["participants_student_ids"] = participantsIds?.student.map((item: ClassOptionsItem) => {
-      return item.id;
-    });
-    addData["participants_teacher_ids"] = participantsIds?.teacher.map((item: ClassOptionsItem) => {
-      return item.id;
-    });
     addData["class_roster_student_ids"] = classRosterIds?.student.map((item: ClassOptionsItem) => {
       return item.id;
     });
     addData["class_roster_teacher_ids"] = classRosterIds?.teacher.map((item: ClassOptionsItem) => {
       return item.id;
     });
+    addData["participants_student_ids"] = [];
+    participantsIds?.student.forEach((item: ClassOptionsItem) => {
+      if (!addData["class_roster_student_ids"].includes(item.id)) addData["participants_student_ids"].push(item.id);
+    });
+    addData["participants_teacher_ids"] = [];
+    participantsIds?.teacher.forEach((item: ClassOptionsItem) => {
+      if (!addData["class_roster_teacher_ids"].includes(item.id)) addData["participants_teacher_ids"].push(item.id);
+    });
 
     let resultInfo: any;
-    resultInfo = ((await dispatch(
+    resultInfo = (await dispatch(
       saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -1277,7 +1287,7 @@ function EditBox(props: CalendarStateProps) {
         start_at: timestampToTime(scheduleList.start_at, "all_day_start"),
         end_at: timestampToTime(scheduleList.end_at, "all_day_end"),
       };
-      setScheduleList((newTopocList as unknown) as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
+      setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
@@ -1717,9 +1727,9 @@ function EditBox(props: CalendarStateProps) {
     let resultInfo: any;
     if (scheduleList.program_id) {
       if (viewSubjectPermission) {
-        resultInfo = ((await dispatch(
+        resultInfo = (await dispatch(
           getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+        )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
       } else {
         dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
       }
@@ -2427,6 +2437,15 @@ interface CalendarStateProps {
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
+  schoolsConnection: GetSchoolsFilterListQuery;
+  getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
+  getClassesConnection: (
+    cursor: string,
+    school_id: string,
+    loading: boolean,
+    direction: ConnectionDirection.Forward | ConnectionDirection.Backward
+  ) => void;
+  classesConnection: GetClassFilterListQuery;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2471,6 +2490,10 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
+    schoolsConnection,
+    getSchoolsConnection,
+    getClassesConnection,
+    classesConnection,
   } = props;
 
   const template = (
@@ -2510,6 +2533,10 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
+          schoolsConnection={schoolsConnection}
+          getSchoolsConnection={getSchoolsConnection}
+          getClassesConnection={getClassesConnection}
+          classesConnection={classesConnection}
         />
       </Box>
       <Box
@@ -2554,6 +2581,10 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
+          schoolsConnection={schoolsConnection}
+          getSchoolsConnection={getSchoolsConnection}
+          getClassesConnection={getClassesConnection}
+          classesConnection={classesConnection}
         />
       </Box>
     </>

@@ -126,7 +126,7 @@ const useFormatTime = () => {
 
 const PAGE_SIZE = 5;
 
-export default function (props: Props) {
+export default function LessonChart(props: Props) {
   const style = useStyle();
   const dispatch = useDispatch();
   const [selectItem, setSelectItem] = useState(7);
@@ -195,6 +195,7 @@ export default function (props: Props) {
     const params = {
       ...queryParams.current,
       metaLoading: true,
+      allTeacher_ids: queryParams.current.teacher_ids,
       teacher_ids: queryParams.current.teacher_ids?.slice(pageRef.current * PAGE_SIZE, pageRef.current * PAGE_SIZE + PAGE_SIZE),
     };
     await dispatch(getLessonTeacherLoad(params));

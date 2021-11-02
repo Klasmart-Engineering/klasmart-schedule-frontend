@@ -3535,6 +3535,148 @@
         }
       }
     },
+    "/internal/contents": {
+      "get": {
+        "description": "query content internal",
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "queryContentInternal",
+        "operationId": "queryContentInternal",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search content under the organization",
+            "name": "org_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content id list, separated by commas",
+            "name": "content_ids",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search content type, 1 for materials \u0026 2 for plans",
+            "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search materials from lesson_plan",
+            "name": "plan_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content by source id",
+            "name": "source_id",
+            "in": "query"
+          },
+          {
+            "enum": ["id", "-id", "content_name", "-content_name", "create_at", "-create_at", "update_at", "-update_at"],
+            "type": "string",
+            "description": "search content order by column name",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page size",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "content list page index",
+            "name": "page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ContentSimplifiedList"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/schedules": {
+      "get": {
+        "description": "query schedule internal",
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "queryScheduleInternal",
+        "operationId": "queryScheduleInternal",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "search schedule id list, separated by commas",
+            "name": "schedule_ids",
+            "in": "query"
+          },
+          {
+            "enum": ["create_at", "-create_at", "start_at", "-start_at"],
+            "type": "string",
+            "description": "order by",
+            "name": "order_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page index, not paging if page \u003c=0",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "records per page, not paging if page_size \u003c= 0",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleSimplifiedPageView"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/learning_outcomes": {
       "get": {
         "description": "search learning outcomes",
@@ -5345,99 +5487,6 @@
         }
       }
     },
-    "/reports/learning_summary/remaining_filter": {
-      "get": {
-        "description": "query remaining learning summary filter",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["reports/learningSummary"],
-        "summary": "query remaining learning summary filter",
-        "operationId": "queryLearningSummaryRemainingFilter",
-        "parameters": [
-          {
-            "enum": ["live_class", "assignment"],
-            "type": "string",
-            "description": "learning summary type",
-            "name": "summary_type",
-            "in": "query",
-            "required": true
-          },
-          {
-            "enum": ["school", "class", "teacher", "student", "subject"],
-            "type": "string",
-            "description": "filter type",
-            "name": "filter_type",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "description": "week start timestamp(unit: second)",
-            "name": "week_start",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "week end timestamp(unit: second)",
-            "name": "week_end",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "school ids, use commas to separate",
-            "name": "school_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "class id",
-            "name": "class_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "teacher_id",
-            "name": "teacher_id",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "student_id",
-            "name": "student_id",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.QueryLearningSummaryRemainingFilterResultItem"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/api.ForbiddenResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/reports/learning_summary/time_filter": {
       "get": {
         "description": "query learning summary time filter",
@@ -5632,6 +5681,147 @@
             "description": "Not Found",
             "schema": {
               "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_progress/assignment_completion": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentProgress"],
+        "summary": "getAssignmentsCompletion",
+        "operationId": "getAssignmentsCompletion",
+        "parameters": [
+          {
+            "description": "request ",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.AssignmentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.AssignmentCompletionRate"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_progress/class_attendance": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentProgress"],
+        "summary": "getClassAttendance",
+        "operationId": "getLearnOutcomeClassAttendance",
+        "parameters": [
+          {
+            "description": "request ",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.ClassAttendanceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ClassAttendanceResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/reports/student_progress/learn_outcome_achievement": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/studentProgress"],
+        "summary": "getLearnOutcomeAchievement",
+        "operationId": "getLearnOutcomeAchievement",
+        "parameters": [
+          {
+            "description": "request ",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.LearnOutcomeAchievementRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.LearnOutcomeAchievementResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
             }
           },
           "500": {
@@ -6454,7 +6644,7 @@
             "in": "query"
           },
           {
-            "enum": ["create_at", "-create_at", "start_at", "-start_at"],
+            "enum": ["create_at", "-create_at", "start_at", "-start_at", "schedule_at"],
             "type": "string",
             "description": "order by",
             "name": "order_by",
@@ -9385,6 +9575,62 @@
         }
       }
     },
+    "entity.AssignmentCompletionRate": {
+      "type": "object",
+      "properties": {
+        "class_designated_subject": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "student_complete_assignment": {
+          "type": "integer"
+        },
+        "student_designated_subject": {
+          "type": "number"
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "student_non_designated_subject": {
+          "type": "number"
+        },
+        "student_total_assignment": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.AssignmentRequest": {
+      "type": "object",
+      "required": ["class_id", "student_id"],
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "durations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "selected_subject_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "un_selected_subject_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "entity.AssignmentsSummaryItem": {
       "type": "object",
       "properties": {
@@ -9718,6 +9964,73 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "entity.ClassAttendanceRequest": {
+      "type": "object",
+      "required": ["class_id", "student_id"],
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "durations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "selected_subject_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "un_selected_subject_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.ClassAttendanceResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ClassAttendanceResponseItem"
+          }
+        },
+        "request_student_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ClassAttendanceResponseItem": {
+      "type": "object",
+      "properties": {
+        "attendance_percentage": {
+          "type": "number"
+        },
+        "attended_count": {
+          "type": "integer"
+        },
+        "class_average_attendance_percentage": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "scheduled_count": {
+          "type": "integer"
+        },
+        "un_selected_subjects_average_attendance_percentage": {
+          "type": "number"
         }
       }
     },
@@ -10128,6 +10441,46 @@
         },
         "id": {
           "type": "string"
+        }
+      }
+    },
+    "entity.ContentSimplified": {
+      "type": "object",
+      "properties": {
+        "author_id": {
+          "type": "string"
+        },
+        "content_name": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "integer"
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "publish_status": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ContentSimplifiedList": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ContentSimplified"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
@@ -10587,6 +10940,91 @@
       "properties": {
         "token": {
           "type": "string"
+        }
+      }
+    },
+    "entity.LearnOutcomeAchievementRequest": {
+      "type": "object",
+      "required": ["class_id", "student_id"],
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "durations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "selected_subject_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "un_selected_subject_id_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entity.LearnOutcomeAchievementResponse": {
+      "type": "object",
+      "properties": {
+        "class_average_achieved_count": {
+          "type": "number"
+        },
+        "first_achieved_count": {
+          "type": "integer"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.LearnOutcomeAchievementResponseItem"
+          }
+        },
+        "re_achieved_count": {
+          "type": "integer"
+        },
+        "request": {
+          "$ref": "#/definitions/entity.LearnOutcomeAchievementRequest"
+        },
+        "un_selected_subjects_average_achieve_count": {
+          "type": "number"
+        }
+      }
+    },
+    "entity.LearnOutcomeAchievementResponseItem": {
+      "type": "object",
+      "properties": {
+        "class_average_achieved_percentage": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "first_achieved_count": {
+          "type": "integer"
+        },
+        "first_achieved_percentage": {
+          "type": "number"
+        },
+        "re_achieved_count": {
+          "type": "integer"
+        },
+        "re_achieved_percentage": {
+          "type": "number"
+        },
+        "un_achieved_count": {
+          "type": "integer"
+        },
+        "un_selected_subjects_average_achieved_percentage": {
+          "type": "number"
         }
       }
     },
@@ -11261,50 +11699,6 @@
           }
         },
         "study_count": {
-          "type": "integer"
-        }
-      }
-    },
-    "entity.QueryLearningSummaryRemainingFilterResultItem": {
-      "type": "object",
-      "properties": {
-        "class_id": {
-          "type": "string"
-        },
-        "class_name": {
-          "type": "string"
-        },
-        "school_id": {
-          "type": "string"
-        },
-        "school_name": {
-          "type": "string"
-        },
-        "student_id": {
-          "type": "string"
-        },
-        "student_name": {
-          "type": "string"
-        },
-        "subject_id": {
-          "type": "string"
-        },
-        "subject_name": {
-          "type": "string"
-        },
-        "teacher_id": {
-          "type": "string"
-        },
-        "teacher_name": {
-          "type": "string"
-        },
-        "week_end": {
-          "type": "integer"
-        },
-        "week_start": {
-          "type": "integer"
-        },
-        "year": {
           "type": "integer"
         }
       }
@@ -12051,6 +12445,9 @@
         "class": {
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
         },
+        "due_at": {
+          "type": "integer"
+        },
         "end_at": {
           "type": "integer"
         },
@@ -12100,6 +12497,34 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleSimplified": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "lesson_plan_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleSimplifiedPageView": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleSimplified"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },

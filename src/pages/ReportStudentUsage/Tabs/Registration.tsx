@@ -132,7 +132,7 @@ const useStyles = makeStyles(() =>
   })
 );
 
-export default function () {
+export default function Registration() {
   const css = useStyles();
 
   const renderLineFooterBlock = (content: string, count: number, color: string) => {

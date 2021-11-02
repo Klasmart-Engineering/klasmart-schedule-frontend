@@ -204,3 +204,31 @@ export enum ExectSeachType {
   class_name = "class_name",
   teacher_name = "teacher_name",
 }
+// 添加的被删除的接口的类型-learningsummaryreport相关 s
+export interface EntityQueryLearningSummaryRemainingFilterResultItem {
+  class_id?: string;
+  class_name?: string;
+  school_id?: string;
+  school_name?: string;
+  student_id?: string;
+  student_name?: string;
+  subject_id?: string;
+  subject_name?: string;
+  teacher_id?: string;
+  teacher_name?: string;
+  week_end?: number;
+  week_start?: number;
+  year?: number;
+}
+
+export type IParamQueryRemainFilter = {
+  summary_type: "live_class" | "assignment";
+  filter_type: "school" | "class" | "teacher" | "student" | "subject";
+  week_start?: number;
+  week_end?: number;
+  school_id?: string;
+  class_id?: string;
+  teacher_id?: string;
+  student_id?: string;
+};
+// 添加的被删除的接口的类型-learningsummaryreport相关 e

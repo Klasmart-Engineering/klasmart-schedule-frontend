@@ -5,11 +5,6 @@ import isEqual from "lodash/isEqual";
 import React, { ChangeEvent } from "react";
 import useTranslation from "../../pages/ReportStudentUsage/hooks/useTranslation";
 
-interface IState {
-  schoolId: string;
-  classes: MutiSelect.ISelect[];
-}
-
 interface IMutiSelectProps {
   options: MutiSelect.ISelect[];
   label?: string;
@@ -52,6 +47,7 @@ export default React.memo(
       //!disabled && onInitial && onInitial(allOptions.slice(1, allOptions.length));
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     React.useEffect(resetState, [id, allOptions]);
 
     const onSelectChange = (event: ChangeEvent<{ name?: string | undefined; value: unknown }>) => {

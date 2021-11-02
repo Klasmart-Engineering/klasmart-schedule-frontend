@@ -18,8 +18,10 @@ const AntTab = withStyles((theme) => ({
   root: {
     textTransform: "none",
     minWidth: 72,
+    marginTop: 10,
     fontWeight: theme.typography.fontWeightBold,
     marginRight: theme.spacing(4),
+    fontSize: 16,
     "&:hover": {
       color: "#40a9ff",
       opacity: 1,
@@ -58,8 +60,8 @@ export default function TabPages({ tabs }: IProps) {
         })}
       </AntTabs>
       <Suspense fallback={<Loading />}>
-        {activeTabs.map(({ display, Component, index }) => {
-          return display && state.tabIndex === index && <Component />;
+        {activeTabs.map(({ display, Component, index }, key) => {
+          return display && state.tabIndex === index && <Component key={key} />;
         })}
       </Suspense>
     </>

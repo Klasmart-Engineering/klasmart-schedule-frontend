@@ -429,7 +429,7 @@ export default function Details(props: DetailsProps) {
           <Box>
             <TextField
               defaultValue={formattedTime(contentDetail.updated_at)}
-              key={allDefaultValueAndKey.created_at?.value}
+              key={allDefaultValueAndKey.updated_at?.value}
               className={sm ? css.fieldset : css.halfFieldset}
               fullWidth={sm}
               disabled

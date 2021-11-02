@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { Maybe, SchoolMembership } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -15,21 +15,24 @@ import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
   ClassesTeachingQueryQueryVariables,
+  GetClassFilterListDocument,
+  GetClassFilterListQuery,
+  GetClassFilterListQueryVariables,
   GetProgramsDocument,
   GetProgramsQuery,
   GetProgramsQueryVariables,
+  GetSchoolsFilterListDocument,
+  GetSchoolsFilterListQuery,
+  GetSchoolsFilterListQueryVariables,
+  GetUserDocument,
+  GetUserQuery,
+  GetUserQueryVariables,
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
   ParticipantsByClassDocument,
   ParticipantsByClassQuery,
   ParticipantsByClassQueryVariables,
-  ParticipantsByOrganizationDocument,
-  ParticipantsByOrganizationQuery,
-  ParticipantsByOrganizationQueryVariables,
-  ParticipantsBySchoolDocument,
-  ParticipantsBySchoolQuery,
-  ParticipantsBySchoolQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -118,6 +121,8 @@ export interface ScheduleState {
   programChildInfo: GetProgramsQuery;
   developmental: LinkedMockOptionsItem[];
   skills: LinkedMockOptionsItem[];
+  schoolsConnection: GetSchoolsFilterListQuery;
+  classesConnection: GetClassFilterListQuery;
 }
 
 interface Rootstate {
@@ -246,6 +251,8 @@ const initialState: ScheduleState = {
   programChildInfo: {},
   developmental: [],
   skills: [],
+  schoolsConnection: {},
+  classesConnection: {},
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -404,31 +411,42 @@ export const getParticipantsData = createAsyncThunk(
   // @ts-ignore
   async (is_org: boolean) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+    let filterQuery = {};
     if (is_org) {
-      const { data } = await gqlapi.query<ParticipantsByOrganizationQuery, ParticipantsByOrganizationQueryVariables>({
-        query: ParticipantsByOrganizationDocument,
-        variables: {
-          organization_id,
-        },
-      });
-      return data.organization;
+      filterQuery = { organizationId: { operator: UuidExclusiveOperator.Eq, value: organization_id } };
     } else {
       const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
         query: MySchoolIDsDocument,
         variables: { organization_id },
       });
-      if (schoolInfo.me?.membership?.schoolMemberships![0]?.school_id) {
-        const { data } = await gqlapi.query<ParticipantsBySchoolQuery, ParticipantsBySchoolQueryVariables>({
-          query: ParticipantsBySchoolDocument,
-          variables: {
-            school_id: schoolInfo.me?.membership?.schoolMemberships![0]?.school_id as string,
-          },
-        });
-        return data.school;
-      } else {
+      const school_ids = schoolInfo.me?.membership?.schoolMemberships?.map((item) => {
+        return { schoolId: { operator: UuidExclusiveOperator.Eq, value: item?.school_id } };
+      });
+      filterQuery = { OR: school_ids };
+      if (!school_ids?.length) {
         return { classes: [{ students: [], teachers: [] }] };
       }
     }
+    const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
+      query: GetUserDocument,
+      variables: {
+        filter: filterQuery,
+        direction: ConnectionDirection.Forward,
+      },
+    });
+    const participantListOrigin = data;
+    const students: { user_id: string | undefined; user_name: string | null | undefined }[] = [];
+    const teachers: { user_id: string | undefined; user_name: string | null | undefined }[] = [];
+    participantListOrigin.usersConnection?.edges?.forEach((item) => {
+      if (item?.node?.status !== "active") return;
+      item?.node?.roles.forEach((role) => {
+        if (role.name === "Teacher")
+          teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
+        if (role.name === "Student")
+          students.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
+      });
+    });
+    return { classes: [{ students: students, teachers: teachers }] };
   }
 );
 
@@ -706,6 +724,36 @@ export const getSchoolByUser = createAsyncThunk("getSchoolByUser", async () => {
   });
 });
 
+export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables & LoadingMetaPayload>(
+  "getSchoolsFilterList",
+  // @ts-ignore
+  ({ filter, direction, directionArgs }) => {
+    return gqlapi.query<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>({
+      query: GetSchoolsFilterListDocument,
+      variables: {
+        filter: filter,
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
+
+export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
+  "getClassFilterList",
+  // @ts-ignore
+  ({ filter, direction, directionArgs }) => {
+    return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
+      query: GetClassFilterListDocument,
+      variables: {
+        filter: filter,
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
+
 export const getSchoolByOrg = createAsyncThunk("getSchoolByOrg", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
@@ -853,6 +901,15 @@ const { actions, reducer } = createSlice({
       payload?.forEach((item: any) => {
         result = [...result, ...item];
       });
+      const reduceTemporaryStorage: { [class_id: string]: boolean } = {};
+      result = [...result].reduce<any>((item, next) => {
+        if (next !== null)
+          if (!reduceTemporaryStorage[next.class_id as string] && next.class_id) {
+            item.push(next);
+            reduceTemporaryStorage[next.class_id as string] = true;
+          }
+        return item;
+      }, []);
       state.classOptions.classListSchool = { school: { classes: result } };
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
@@ -910,6 +967,12 @@ const { actions, reducer } = createSlice({
     [getLinkedMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.developmental = payload.developmental;
       state.skills = payload.skills;
+    },
+    [getSchoolsFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.schoolsConnection = payload.data;
+    },
+    [getClassFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.classesConnection = payload.data;
     },
   },
 });

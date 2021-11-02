@@ -1,10 +1,9 @@
-import { IntlFormatters, MessageDescriptor } from "react-intl";
+import { MessageDescriptor } from "react-intl";
 
-type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
-export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es";
+export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id", "es"].includes(name)) throw new TypeError();
+  if (!name || !["en", "ko", "zh", "vi", "id", "es", "th"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -12,7 +11,7 @@ export function shouldBeLangName(name?: string): LangName {
   return name;
 }
 
-type LangRecord<T = string> =
+type LangRecord =
   | { id: "library_label_create"; description: "Create"; values: undefined }
   | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
@@ -1342,10 +1341,234 @@ type LangRecord<T = string> =
   | { id: "report_label_feedback"; description: "% Feedback"; values: undefined }
   | { id: "report_label_assessments_pending"; description: "Assessments Pending"; values: undefined }
   | { id: "report_label_avg_days_pending"; description: "Avg Days Pending"; values: undefined }
+  | { id: "report_label_learning_outcomes_achievement"; description: "Learning Outcomes Achievement"; values: undefined }
+  | { id: "report_label_class_attendance"; description: "Class Attendance"; values: undefined }
+  | { id: "report_label_assignment_completion"; description: "Assignment Completion"; values: undefined }
+  | { id: "report_label_4_weeks"; description: "4 Weeks"; values: undefined }
+  | { id: "report_label_6_months"; description: "6 Months"; values: undefined }
+  | { id: "report_label_learning_outcomes_achieved"; description: "Learning Outcomes Achieved %"; values: undefined }
+  | { id: "report_label_class_attendance_rate"; description: "Class Attendance Rate (Live only)"; values: undefined }
+  | { id: "report_label_assignments_completion_rate"; description: "Assignments Completion Rate"; values: undefined }
+  | { id: "report_label_total_newly_achieved_lo"; description: "Total Newly Achieved Learning Outcomes"; values: undefined }
+  | { id: "report_label_total_reachieved_lo"; description: "Total Re-achieved Learning Outcomes"; values: undefined }
+  | {
+      id: "report_label_total_achieved_lo_class_average";
+      description: "Total Achieved Learning Outcomes for Class Average";
+      values: undefined;
+    }
+  | {
+      id: "report_label_total_achieved_lo_subject_average";
+      description: "Total Achieved Learning Outcomes for Subject Average";
+      values: undefined;
+    }
+  | { id: "report_label_student_attendance_rate"; description: "Student Attendance Rate"; values: undefined }
+  | { id: "report_label_class_average_attendance_rate"; description: "Class Average Attendance Rate"; values: undefined }
+  | { id: "report_label_subject_average_attendance_rate"; description: "Subject Average Attendance Rate"; values: undefined }
+  | { id: "report_label_student_assignments_completion_rate"; description: "Student Assignments Completion Rate"; values: undefined }
+  | {
+      id: "report_label_class_average_assignments_completion_rate";
+      description: "Class Average Assignments Completion Rate";
+      values: undefined;
+    }
+  | {
+      id: "report_label_subject_average_assignments_completion_rate";
+      description: "Subject Average Assignments Completion Rate";
+      values: undefined;
+    }
   | {
       id: "report_msg_learning_outcomes_covered";
       description: "Observable competency that can be demonstrated by the student by the end of the lesson.";
       values: undefined;
+    }
+  | {
+      id: "report_msg_lo_default";
+      description: "{Name} is continue learning in KidsLoop. In this week, {Name} achieved {AchievedLoCount} learning outcomes among {LearntLoCount}.";
+      values: { Name: string; AchievedLoCount: number; LearntLoCount: number };
+    }
+  | {
+      id: "report_msg_lo_new";
+      description: "{Name} started learning in KidsLoop this week. So far, {Name} achieved {AchievedLoCount} learning outcomes among {LearntLoCount}.";
+      values: { Name: string; AchievedLoCount: number; LearntLoCount: number };
+    }
+  | {
+      id: "report_msg_lo_increase_previous_w";
+      description: "{Name} has achieved {LOCompareLastWeek}% more learning outcomes compare to the previous week.";
+      values: { Name: string; LOCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_lo_decrease_previous_w";
+      description: "{Name} has achieved {LOCompareLastWeek}% less learning outcomes compare to the previous week.";
+      values: { Name: string; LOCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_lo_increase_previous_large_w";
+      description: "{Name} has achieved {LOCompareLastWeek}% more learning outcomes compare to the previous week. Give {Name} a big compliment!";
+      values: { Name: string; LOCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_lo_decrease_previous_large_w";
+      description: "{Name} has achieved {LOCompareLastWeek}% less learning outcomes compare to the previous week. Please check if {Name} has any problem with the learning environment.";
+      values: { Name: string; LOCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_lo_increase_3w";
+      description: "In this 3 consequent weeks, {Name} has achieved {LOCompareLast3Week}% more learning outcomes.";
+      values: { Name: string; LOCompareLast3Week: number | string };
+    }
+  | {
+      id: "report_msg_lo_decrease_3w";
+      description: "In this 3 consequent weeks, {Name} has achieved {LOCompareLast3Week}% less learning outcomes.";
+      values: { Name: string; LOCompareLast3Week: number | string };
+    }
+  | {
+      id: "report_msg_lo_high_class_w";
+      description: "In this week, {Name} has achieved {LOCompareClass}% more learning outcomes than the class average.";
+      values: { Name: string; LOCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_lo_low_class_w";
+      description: "In this week, {Name} has achieved {LOCompareClass}% less learning outcomes than the class average.";
+      values: { Name: string; LOCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_lo_high_class_3w";
+      description: "In this 3 consequent weeks, {Name} has achieved {LOCompareClass3week}% more learning outcomes than the class average.";
+      values: { Name: string; LOCompareClass3week: number | string };
+    }
+  | {
+      id: "report_msg_lo_low_class_3w";
+      description: "In this 3 consequent weeks, {Name} has achieved {LOCompareClass3week}% less learning outcomes than the class average.";
+      values: { Name: string; LOCompareClass3week: number | string };
+    }
+  | {
+      id: "report_msg_lo_high_class_review_w";
+      description: "In this week, {Name} has achieved {LOReviewCompareClass}% more reviewed learning outcomes than the class average.";
+      values: { Name: string; LOReviewCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_lo_low_class_review_w";
+      description: "In this week, {Name} has achieved {LOReviewCompareClass}% less reviewed learning outcomes than the class average.";
+      values: { Name: string; LOReviewCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_att_default";
+      description: "{Name} is continue learning in KidsLoop. In this week, {Name} attended {AttendedCount} classes among the {ScheduledCount} scheduled classes.";
+      values: { Name: string; AttendedCount: number | string; ScheduledCount: number | string };
+    }
+  | {
+      id: "report_msg_att_new";
+      description: "{Name} started learning in KidsLoop. So far, {Name} attended {AttendedCount} classes among the {ScheduledCount} scheduled classes.";
+      values: { Name: string; AttendedCount: number | string; ScheduledCount: number | string };
+    }
+  | {
+      id: "report_msg_att_increase_previous_w";
+      description: "{Name} has attended {AttendCompareLastWeek}% more classes compare to the previous week.";
+      values: { Name: string; AttendCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_att_decrease_previous_w";
+      description: "{Name} has attended {AttendCompareLastWeek}% less classes compare to the previous week.";
+      values: { Name: string; AttendCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_att_increase_previous_large_w";
+      description: "{Name} has attended {AttendCompareLastWeek}% more classes compare to the previous week. Give {Name} a big compliment!";
+      values: { Name: string; AttendCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_att_decrease_previous_large_w";
+      description: "{Name} has attended {AttendCompareLastWeek}% less classes compare to the previous week. Please check if {Name} has any problem with the learning environment.";
+      values: { Name: string; AttendCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_att_increase_3w";
+      description: "In this 3 consequent weeks, {Name} has attended {AttendCompareLast3Week}% more classes.";
+      values: { Name: string; AttendCompareLast3Week: number | string };
+    }
+  | {
+      id: "report_msg_att_decrease_3w";
+      description: "In this 3 consequent weeks, {Name} has attended {AttendCompareLast3Week}% less classes.";
+      values: { Name: string; AttendCompareLast3Week: number | string };
+    }
+  | {
+      id: "report_msg_att_high_class_w";
+      description: "In this week, {Name} has attended {LOCompareClass}% more classes than the class average.";
+      values: { Name: string; LOCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_att_low_class_w";
+      description: "In this week, {Name} has achieved {LOCompareClass}% less classes than the class average.";
+      values: { Name: string; LOCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_att_high_class_3w";
+      description: "In this 3 consequent weeks, {Name} has attended {LOCompareClass3week}% more classes than the class average.";
+      values: { Name: string; LOCompareClass3week: number | string };
+    }
+  | {
+      id: "report_msg_att_low_class_3w";
+      description: "In this 3 consequent weeks, {Name} has attended {LOCompareClass3week}% less classes than the class average.";
+      values: { Name: string; LOCompareClass3week: number | string };
+    }
+  | {
+      id: "report_msg_assign_default";
+      description: "{Name} is continue learning in KidsLoop. In this week, {Name} completed {AssignCompleteCount} assignments among the {AssignmentCount} given assignments.";
+      values: { Name: string; AssignCompleteCount: number | string; AssignmentCount: number | string };
+    }
+  | {
+      id: "report_msg_assign_new";
+      description: "{Name} started learning in KidsLoop. So far, {Name} completed {AssignmentCompleteCount} assignments among the {AssignmentCount} given assignments.";
+      values: { Name: string; AssignmentCompleteCount: number | string; AssignmentCount: number | string };
+    }
+  | {
+      id: "report_msg_assign_increase_previous_w";
+      description: "{Name} has completed {AssignCompareLastWeek}% more assignments compare to the previous week.";
+      values: { Name: string; AssignCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_assign_decrease_previous_w";
+      description: "{Name} has completed {AssignCompareLastWeek}% less assignments compare to the previous week.";
+      values: { Name: string; AssignCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_assign_increase_previous_large_w";
+      description: "{Name} has completed {AssignCompareLastWeek}% more assignments compare to the previous week. Give {Name} a big compliment!";
+      values: { Name: string; AssignCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_assign_decrease_previous_large_w";
+      description: "{Name} has completed {AssignCompareLastWeek}% less assignments compare to the previous week. Please check if {Name} has any problem with the learning environment.";
+      values: { Name: string; AssignCompareLastWeek: number | string };
+    }
+  | {
+      id: "report_msg_assign_increase_3w";
+      description: "In this 3 consequent weeks, {Name} has completed {AssignCompare3Week}% more assignments.";
+      values: { Name: string; AssignCompare3Week: number | string };
+    }
+  | {
+      id: "report_msg_assign_decrease_3w";
+      description: "In this 3 consequent weeks, {Name} has achieved {AssignCompare3Week}% less assignments.";
+      values: { Name: string; AssignCompare3Week: number | string };
+    }
+  | {
+      id: "report_msg_assign_high_class_w";
+      description: "In this week, {Name} has attended {AssignCompareClass}% more assignments than the class average.";
+      values: { Name: string; AssignCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_assign_low_class_w";
+      description: "In this week, {Name} has achieved {AssignCompareClass}% less assignments than the class average.";
+      values: { Name: string; AssignCompareClass: number | string };
+    }
+  | {
+      id: "report_msg_assign_high_class_3w";
+      description: "In this 3 consequent weeks, {Name} has attended {AssignCompareClass3week}% more assignments than the class average.";
+      values: { Name: string; AssignCompareClass3week: number | string };
+    }
+  | {
+      id: "report_msg_assign_low_class_3w";
+      description: "In this 3 consequent weeks, {Name} has attended {AssignCompareClass3week}% less assignments than the class average.";
+      values: { Name: string; AssignCompareClass3week: number | string };
     }
   | { id: "report_label_teaching_hours"; description: "Teaching Hours in Next 7 Days"; values: undefined }
   | {
@@ -1381,6 +1604,16 @@ type LangRecord<T = string> =
   | {
       id: "report_msg_avg_days_pending";
       description: "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_one_assignment";
+      description: "Please upload at least one assignment.";
+      values: undefined;
+    }
+  | {
+      id: "report_label_student_progress_report";
+      description: "Student Progress Report";
       values: undefined;
     };
 

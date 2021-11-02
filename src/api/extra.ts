@@ -7,11 +7,12 @@ import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
 import { QeuryMeQuery } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
-import premissionAll from "./permission_all.json";
+import premissionAll from "./permission_quote.json";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
 export const LOCALE_KEY = "locale";
+export const PERMISSION_KEY = "perm";
 
 export const apiGetMockOptions = () =>
   fetch("https://launch.kidsloop.cn/static/mock-korea-data/select-options.json").then((res) => {
@@ -163,6 +164,7 @@ export const recursiveListFolderItems = async ({
 export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
+  // sessionStorage.clear();
   window.history.replaceState(null, document.title, url.toString());
 };
 
@@ -214,15 +216,23 @@ export function domainSwitch() {
   return window.location.host.includes("kidsloop.live");
 }
 
-export function apiIsEnableNewH5p() {
-  return process.env.REACT_APP_ENABLE_NEW_H5P === "1";
-}
-
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
+  // const organization_id = apiOrganizationOfPage() || "";
+  // const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
+  //   query: QeuryMeDocument,
+  //   variables: {
+  //     organization_id,
+  //   },
+  // });
+  // const myUserId = meInfo.me?.user_id;
+  // const res = sessionStorage.getItem(`${PERMISSION_KEY}${organization_id}${myUserId}`);
+  // if(res){
+  //   return JSON.parse(res || "");
+  // }else {
   const permission = await api.organizationPermissions.hasOrganizationPermissions({
     permission_name: premissions,
   });
@@ -243,5 +253,7 @@ export async function apiGetPermission(): Promise<QeuryMeQuery> {
       returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
     }
   });
+  // sessionStorage.setItem(`${PERMISSION_KEY}${organization_id}${myUserId}`, JSON.stringify(returnData));
   return returnData;
+  // }
 }
