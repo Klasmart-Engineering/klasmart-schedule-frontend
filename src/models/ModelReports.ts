@@ -349,79 +349,48 @@ export function formatDate(time: any) {
 }
 
 export function getSixMonths() {
-  var data = new Date();
-  var year = data.getFullYear();
-  var month = data.getMonth() + 1;
-  var day = data.getDate();
-  var lastDate;
-  var curYear = year;
-  var curMonth = month;
-  if (day === 1) {
-    if (month === 1) {
-      year = year - 1;
-      month = 12;
+  const arr = [];
+  const needAddOne = moment().get("date") === 1 ? 1 : 0;
+  for (let i = 5 + needAddOne; i >= 0 + needAddOne; i--) {
+    if (i === 0 && moment().get("date") !== 1) {
+      arr.push(`${moment().set("date", 1).startOf("day").unix()}-${moment().unix()}`);
     } else {
-      month = month - 1;
+      arr.push(
+        `${moment().subtract(i, "month").set("date", 1).startOf("day").unix()}-${moment()
+          .subtract(i - 1, "month")
+          .set("date", 1)
+          .startOf("day")
+          .unix()}`
+      );
     }
   }
-  lastDate = formatDate(`${year}/${month}/01 00:00:00`) + "-" + formatDate(`${curYear}/${curMonth}/${day} 00:00:00`);
-
-  var arry = [];
-  for (var i = 0; i < 5; i++) {
-    month = month - 1;
-    if (month <= 0) {
-      year = year - 1;
-      month = month + 12;
-    }
-    if (month < 10) {
-      month = Number("0" + month);
-    }
-    arry[i] =
-      formatDate(year + "/" + month + "/01 00:00:00") +
-      "-" +
-      (formatDate(year + "/" + month + "/" + mGetDate(year, month) + " 23:59:59") + 1);
-  }
-  arry.unshift(lastDate);
-  return arry.reverse();
+  return arr;
 }
 
 export function getFourWeeks() {
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth() + 1;
-  var day = date.getDate();
-  var dd = date.getDay();
-  if (dd === 0) {
-    dd = 7;
-  }
-  if (day <= dd) {
-    if (month === 1) {
-      year = year - 1;
-      month = 12;
+  const arr = [];
+  var dd = moment().get("day");
+  const needAddOne = moment().get("day") === 1 ? 1 : 0;
+  for (let i = 3 + needAddOne; i >= 0 + needAddOne; i--) {
+    if (i === 0 && moment().get("day") !== 1) {
+      arr.push(
+        `${moment()
+          .subtract(dd - 1, "day")
+          .startOf("day")
+          .unix()}-${moment().startOf("day").unix()}`
+      );
     } else {
-      month = month - 1;
+      arr.push(
+        `${moment().subtract(i, "week").set("day", 1).startOf("day").unix()}-${moment()
+          .subtract(i, "week")
+          .set("day", 7)
+          .add(1, "day")
+          .startOf("day")
+          .unix()}`
+      );
     }
-    day = mGetDate(year, month) + day - dd;
-  } else {
-    day = day - dd;
   }
-  var newDate = formatDate(`${year}/${month}/${day} 23:59:59`);
-  var array = [];
-  // if (dd === 1) {
-  //   for (let i = 1; i <= 4; i++) {
-  //     array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
-  //   }
-  // } else {
-  //   for (let i = 1; i <= 3; i++) {
-  //     array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
-  //   }
-  // array.push(`${newDate + 1}-${newDate + 3600 * 24 * (dd - 1) + 1}`);
-  for (let i = 1; i <= 3; i++) {
-    array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
-  }
-  array.push(`${newDate + 1}-${formatDate(date)}`);
-  // }
-  return array;
+  return arr;
 }
 
 export function getLearnOutcomeAchievementFeedback(newData: any, studentName: string) {

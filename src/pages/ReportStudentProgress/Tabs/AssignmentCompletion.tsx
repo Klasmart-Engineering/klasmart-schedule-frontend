@@ -108,7 +108,7 @@ export default function AssignmentCompletion() {
       <StudentProgressReportFilter
         durationTime={durationTime}
         handleChange={handleChange}
-        studentProgressReportTitle={d("Assignment Completion").t("report_label_assignment_completion")}
+        studentProgressReportTitle={d("Assignments Completion Rate").t("report_label_assignments_completion_rate")}
       />
       <div className={css.chart}>
         <StudentProgressBarChart itemUnit={"%"} data={chartData} label={label} />

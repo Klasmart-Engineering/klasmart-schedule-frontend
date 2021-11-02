@@ -116,7 +116,7 @@ export default function ClassAttendance() {
       <StudentProgressReportFilter
         durationTime={durationTime}
         handleChange={handleChange}
-        studentProgressReportTitle={d("Class Attendance").t("report_label_class_attendance")}
+        studentProgressReportTitle={d("Class Attendance Rate (Live only)").t("report_label_class_attendance_rate")}
       />
       <div className={css.chart}>
         <StudentProgressBarChart data={chartData} label={label} itemUnit={"%"} />
