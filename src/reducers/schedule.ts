@@ -326,20 +326,21 @@ export const saveScheduleData = createAsyncThunk<
   }
 );
 
-export interface viewSchedulesResultResponse {
-  scheduleTimeViewData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
-  scheduleTimeViewYearData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduledDates>;
-}
-
 type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeViewList>[0] & LoadingMetaPayload;
+type viewSchedulesResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultResponse, viewSchedulesParams>(
   "schedule/schedules_time_view",
   async (query) => {
-    const [scheduleTimeViewData, scheduleTimeViewYearData] = await Promise.all([
-      api.schedulesTimeView.getScheduleTimeViewList({ ...query }),
-      api.schedulesTimeView.postScheduledDates({ ...query }),
-    ]);
-    return { scheduleTimeViewData, scheduleTimeViewYearData };
+    return api.schedulesTimeView.getScheduleTimeViewList({ ...query });
+  }
+);
+
+type yearSchedulesParams = Parameters<typeof api.schedulesTimeView.postScheduledDates>[0] & LoadingMetaPayload;
+type yearSchedulesResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduledDates>;
+export const getScheduleTimeViewDataByYear = createAsyncThunk<yearSchedulesResultResponse, yearSchedulesParams>(
+  "schedule/schedules_time_view_year",
+  async (query) => {
+    return api.schedulesTimeView.postScheduledDates({ ...query });
   }
 );
 
@@ -836,11 +837,9 @@ const { actions, reducer } = createSlice({
       state.outcomeTotal = payload.total;
     },
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
-      // state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.searchScheduleList = payload.data;
       state.total = payload.total;
     },
-    [getSearchScheduleList.rejected.type]: (state, { error }: any) => {},
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
       if (payload.label !== "schedule_msg_users_conflict") state.scheduleDetial = payload;
     },
@@ -848,8 +847,10 @@ const { actions, reducer } = createSlice({
       state.errorLable = error.message;
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleTimeViewData = payload.scheduleTimeViewData;
-      state.scheduleTimeViewYearData = payload.scheduleTimeViewYearData;
+      state.scheduleTimeViewData = payload;
+    },
+    [getScheduleTimeViewDataByYear.fulfilled.type]: (state, { payload }: any) => {
+      state.scheduleTimeViewYearData = payload;
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = initScheduleDetial;

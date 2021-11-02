@@ -36,6 +36,7 @@ import {
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
+  getScheduleTimeViewDataByYear,
   getScheduleUserId,
   getScheduleViewInfo,
   getSchoolsFilterList,
@@ -336,6 +337,19 @@ function ScheduleContent() {
       })
     );
   }, [modelView, timesTamp, stateOnlyMine, dispatch]);
+
+  React.useEffect(() => {
+    if (modelYear)
+      dispatch(
+        getScheduleTimeViewDataByYear({
+          view_type: "year",
+          time_at: timesTamp.start,
+          time_zone_offset: -new Date().getTimezoneOffset() * 60,
+          ...modelSchedule.AssemblyFilterParameter(stateOnlyMine),
+          metaLoading: true,
+        })
+      );
+  }, [modelYear, timesTamp, stateOnlyMine, dispatch]);
 
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
