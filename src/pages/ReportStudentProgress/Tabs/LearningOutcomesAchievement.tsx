@@ -112,7 +112,7 @@ export default function () {
       <StudentProgressReportFilter
         durationTime={durationTime}
         handleChange={handleChange}
-        studentProgressReportTitle={d("Learning Outcomes Achievement").t("report_label_learning_outcomes_achievement")}
+        studentProgressReportTitle={d("Learning Outcomes Achieved %").t("report_label_learning_outcomes_achieved")}
       />
       <div className={style.chart}>
         <StudentProgressBarChart data={data} label={label} itemUnit={"%"} />

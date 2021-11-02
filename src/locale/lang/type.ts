@@ -1347,6 +1347,9 @@ type LangRecord<T = string> =
   | { id: "report_label_assignment_completion"; description: "Assignment Completion"; values: undefined }
   | { id: "report_label_4_weeks"; description: "4 Weeks"; values: undefined }
   | { id: "report_label_6_months"; description: "6 Months"; values: undefined }
+  | { id: "report_label_learning_outcomes_achieved"; description: "Learning Outcomes Achieved %"; values: undefined }
+  | { id: "report_label_class_attendance_rate"; description: "Class Attendance Rate (Live only)"; values: undefined }
+  | { id: "report_label_assignments_completion_rate"; description: "Assignments Completion Rate"; values: undefined }
   | { id: "report_label_total_newly_achieved_lo"; description: "Total Newly Achieved Learning Outcomes"; values: undefined }
   | { id: "report_label_total_reachieved_lo"; description: "Total Re-achieved Learning Outcomes"; values: undefined }
   | {
