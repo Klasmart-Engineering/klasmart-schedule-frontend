@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -45,9 +45,6 @@ import {
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
   TeachersByOrgnizationQueryVariables,
-  UserSchoolIDsDocument,
-  UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -193,8 +190,8 @@ const initialState: ScheduleState = {
         name: "schedule_detail_online_class",
       },
       {
-        id: "OnlineClass",
-        name: "schedule_detail_online_class",
+        id: "Homework",
+        name: "schedule_detail_homework",
       },
     ],
   },
@@ -495,22 +492,6 @@ export const getClassesBySchool = createAsyncThunk("getClassesBySchool", async (
       })
     );
   }
-});
-
-export const getSchoolInfo = createAsyncThunk("getSchoolInfo", async () => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  return gqlapi.query<UserSchoolIDsQuery, UserSchoolIDsQueryVariables>({
-    query: UserSchoolIDsDocument,
-    variables: {
-      user_id: meInfo.me?.user_id as string,
-    },
-  });
 });
 
 type feedbackSchedulesParams = Parameters<typeof api.schedules.getScheduleNewestFeedbackByOperator>[0];
@@ -936,11 +917,6 @@ const { actions, reducer } = createSlice({
         students = students.concat(item.students);
       });
       state.ParticipantsData = { classes: { students, teachers } };
-    },
-    [getSchoolInfo.fulfilled.type]: (state, { payload }: any) => {
-      state.mySchoolId = payload.data.user.school_memberships.map((item: Maybe<SchoolMembership>) => {
-        return item?.school_id;
-      });
     },
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
       state.feedbackData = payload;
