@@ -353,7 +353,7 @@ export function getSixMonths() {
   const needAddOne = moment().get("date") === 1 ? 1 : 0;
   for (let i = 5 + needAddOne; i >= 0 + needAddOne; i--) {
     if (i === 0 && moment().get("date") !== 1) {
-      arr.push(`${moment().set("date", 1).startOf("day").unix()}-${moment().unix()}`);
+      arr.push(`${moment().set("date", 1).startOf("day").unix()}-${moment().startOf("day").unix()}`);
     } else {
       arr.push(
         `${moment().subtract(i, "month").set("date", 1).startOf("day").unix()}-${moment()
