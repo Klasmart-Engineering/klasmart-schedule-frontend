@@ -350,15 +350,13 @@ export function getSixMonths() {
   const needAddOne = moment().get("date") === 1 ? 1 : 0;
   for (let i = 5 + needAddOne; i >= 0 + needAddOne; i--) {
     if (i === 0 && moment().get("date") !== 1) {
-      arr.push(`${moment().set("date", 1).set("minute", 0).set("hour", 0).set("second", 0).unix()}-${moment().unix()}`);
+      arr.push(`${moment().set("date", 1).startOf("day").unix()}-${moment().unix()}`);
     } else {
       arr.push(
-        `${moment().subtract(i, "month").set("date", 1).set("minute", 0).set("hour", 0).set("second", 0).unix()}-${moment()
+        `${moment().subtract(i, "month").set("date", 1).startOf("day").unix()}-${moment()
           .subtract(i - 1, "month")
           .set("date", 1)
-          .set("minute", 0)
-          .set("second", 0)
-          .set("hour", 0)
+          .startOf("day")
           .unix()}`
       );
     }
@@ -375,20 +373,16 @@ export function getFourWeeks() {
       arr.push(
         `${moment()
           .subtract(dd - 1, "day")
-          .set("minute", 0)
-          .set("hour", 0)
-          .set("second", 0)
-          .unix()}-${moment().set("minute", 0).set("hour", 0).set("second", 0).unix()}`
+          .startOf("day")
+          .unix()}-${moment().startOf("day").unix()}`
       );
     } else {
       arr.push(
-        `${moment().subtract(i, "week").set("day", 1).set("minute", 0).set("hour", 0).set("second", 0).unix()}-${moment()
+        `${moment().subtract(i, "week").set("day", 1).startOf("day").unix()}-${moment()
           .subtract(i, "week")
           .set("day", 7)
           .add(1, "day")
-          .set("minute", 0)
-          .set("second", 0)
-          .set("hour", 0)
+          .startOf("day")
           .unix()}`
       );
     }
