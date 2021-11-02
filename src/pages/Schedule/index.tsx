@@ -38,12 +38,9 @@ import {
   getScheduleTimeViewData,
   getScheduleUserId,
   getScheduleViewInfo,
-  getSchoolByOrg,
-  getSchoolByUser,
   getSchoolInfo,
   getSchoolsFilterList,
   getSubjectByProgramId,
-  ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   searchAuthContentLists,
@@ -114,6 +111,7 @@ function ScheduleContent() {
   const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
   const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
+  const [stateFlag, setStateFlag] = React.useState<number>(1);
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -313,14 +311,6 @@ function ScheduleContent() {
     );
   }, [modelView, timesTamp, stateOnlyMine, dispatch]);
 
-  /*  const initialization_assembly_filter_data = useMemo(() => {
-    return modelSchedule.SetInitializationAssemblyFilterParameter(schoolByOrgOrUserData, filterOption.others);
-  }, [filterOption, schoolByOrgOrUserData]);*/
-
-  /*  React.useEffect(() => {
-    if (initialization_assembly_filter_data.length) setStateOnlyMine(initialization_assembly_filter_data);
-  }, [initialization_assembly_filter_data]);*/
-
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
   }, [dispatch, scheduleDetial, scheduleId]);
@@ -332,19 +322,10 @@ function ScheduleContent() {
   React.useEffect(() => {
     dispatch(getScheduleMockOptions({}));
     dispatch(getSchoolInfo());
-    dispatch(ScheduleClassTypesFilter());
     dispatch(ScheduleFilterPrograms());
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(getScheduleUserId());
     dispatch(getLinkedMockOptions({ metaLoading: true }));
-    dispatch(
-      searchAuthContentLists({
-        metaLoading: true,
-        program_group: "More Featured Content",
-        page_size: 0,
-        content_type: "2",
-      })
-    );
     dispatch(
       getSchoolsFilterList({
         filter: { status: { operator: StringOperator.Eq, value: "active" } },
@@ -362,27 +343,26 @@ function ScheduleContent() {
   React.useEffect(() => {
     if (privilegedMembers("Admin")) {
       dispatch(getClassesByOrg());
-      dispatch(getSchoolByOrg());
-      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("School")) {
       dispatch(getClassesBySchool());
-      dispatch(getSchoolByUser());
-      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("Teacher")) {
       dispatch(getClassesByTeacher());
-      dispatch(getSchoolByUser());
-      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
     } else if (privilegedMembers("Student")) {
       dispatch(getClassesByStudent());
-      dispatch(getSchoolByUser());
     }
   }, [dispatch, privilegedMembers]);
 
   React.useEffect(() => {
-    if (privilegedMembers("Admin") || privilegedMembers("School") || privilegedMembers("Teacher")) {
+    if (privilegedMembers("Student") !== undefined && !privilegedMembers("Student") && stateFlag) {
+      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
+      dispatch(getContentsAuthed({ content_type: "2", page_size: 0 }));
       dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 0, order_by: "create_at" }));
+      dispatch(searchAuthContentLists({ metaLoading: true, program_group: "More Featured Content", page_size: 0, content_type: "2" }));
+      setStateFlag(0);
     }
-    dispatch(getContentsAuthed({ content_type: "2", page_size: 0 }));
+  }, [dispatch, privilegedMembers, stateFlag]);
+
+  React.useEffect(() => {
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
       setStateMaterialArr([]);
@@ -399,7 +379,7 @@ function ScheduleContent() {
       buttons: [],
       handleClose: () => {},
     });
-  }, [scheduleId, setModalDate, privilegedMembers, dispatch]);
+  }, [scheduleId, setModalDate, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
   return (
