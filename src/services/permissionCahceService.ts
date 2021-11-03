@@ -1,4 +1,4 @@
-import { apiGetPartPermission } from "../api/extra";
+import { apiGetPartPermission, getUserIdAndOrgId } from "../api/extra";
 import PermissionType from "../api/PermissionType";
 
 export type ICacheData = {
@@ -6,13 +6,17 @@ export type ICacheData = {
 };
 
 class PermissionCahce {
+  private cacheKey = "";
   private data: ICacheData = {};
-  private _add(data: ICacheData) {
+
+  private _add(cacheKey: string, data: ICacheData) {
+    this.cacheKey = cacheKey;
     this.data = {
       ...this.data,
       ...data,
     };
   }
+
   private _get(perms: PermissionType[]) {
     return perms.reduce((prev, cur) => {
       if (this.data.hasOwnProperty(cur)) {
@@ -21,32 +25,38 @@ class PermissionCahce {
       return prev;
     }, {} as ICacheData);
   }
+
   private flush() {
     this.data = {};
   }
 
   usePermission(perms: PermissionType[]): Promise<ICacheData> {
-    const existPerms = this._get(perms);
-    const noneExistPerms = perms.filter((perm) => !existPerms.hasOwnProperty(perm));
     return new Promise((resolve, reject) => {
-      if (noneExistPerms.length === 0) {
-        resolve(existPerms);
-      } else {
-        apiGetPartPermission(noneExistPerms).then((data: ICacheData) => {
-          const permData = noneExistPerms.reduce((prev, cur) => {
-            if (data && data.hasOwnProperty(cur) && "boolean" === typeof data[cur]) {
-              prev[cur] = data[cur];
-            }
-            return prev;
-          }, {} as ICacheData);
-          this._add(permData);
-          resolve({
-            ...existPerms,
-            ...permData,
+      getUserIdAndOrgId().then((orgId) => {
+        const keyChanged = this.cacheKey !== "" && orgId !== this.cacheKey;
+        keyChanged && this.flush();
+        const existPerms = keyChanged ? {} : this._get(perms);
+        const noneExistPerms = keyChanged ? perms : perms.filter((perm) => !existPerms.hasOwnProperty(perm));
+        if (noneExistPerms.length === 0) {
+          resolve(existPerms);
+        } else {
+          apiGetPartPermission(noneExistPerms).then((data: ICacheData) => {
+            const permData = noneExistPerms.reduce((prev, cur) => {
+              if (data && data.hasOwnProperty(cur) && "boolean" === typeof data[cur]) {
+                prev[cur] = data[cur];
+              }
+              return prev;
+            }, {} as ICacheData);
+            this._add(orgId, permData);
+            resolve({
+              ...existPerms,
+              ...permData,
+            });
           });
-        });
-      }
+        }
+      });
     });
   }
 }
+
 export default new PermissionCahce();
