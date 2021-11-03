@@ -219,9 +219,7 @@ export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
 
-export async function apiGetPartPermission(
-  permissions: string[]
-): Promise<{
+export async function apiGetPartPermission(permissions: string[]): Promise<{
   [key: string]: boolean;
 }> {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
@@ -235,7 +233,7 @@ export async function apiGetPartPermission(
     .query({
       query: gql`
       query{
-        me{
+        meMembership: me{
           membership(organization_id: "${organization_id}"){
             ${fragmentStr}
           }
@@ -244,6 +242,12 @@ export async function apiGetPartPermission(
     `,
     })
     .then((resp) => {
-      return resp.data?.me?.membership || {};
+      return resp.data?.meMembership?.membership || {};
     });
+}
+
+export async function getUserIdAndOrgId() {
+  const organizationId = ((await apiWaitForOrganizationOfPage()) as string) || "";
+
+  return organizationId;
 }
