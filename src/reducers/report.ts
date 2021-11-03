@@ -45,7 +45,7 @@ import {
   StudentsByOrganizationQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables,
+  TeacherByOrgIdQueryVariables
 } from "../api/api-ko.auto";
 import {
   EntityAssignmentCompletionRate,
@@ -77,7 +77,7 @@ import {
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory,
+  EntityTeacherReportCategory
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
 import PermissionType from "../api/PermissionType";
@@ -91,7 +91,7 @@ import {
   getLearnOutcomeAchievementFeedback,
   getTimeOffSecond,
   ModelReport,
-  sortByStudentName,
+  sortByStudentName
 } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
@@ -101,7 +101,7 @@ import {
   QueryLearningSummaryTimeFilterCondition,
   ReportType,
   TimeFilter,
-  UserType,
+  UserType
 } from "../pages/ReportLearningSummary/types";
 import permissionCache, { ICacheData } from "../services/permissionCahceService";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -1618,6 +1618,7 @@ const { actions, reducer } = createSlice({
     },
 
     [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
+      if(!payload) return;
       state.reportMockOptions.lessonPlanList = payload;
       state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
       state.stuReportMockOptions.lessonPlanList = payload;
