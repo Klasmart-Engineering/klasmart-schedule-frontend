@@ -261,7 +261,7 @@ type LangRecord =
   | { id: "assess_msg_compete_successfully"; description: "Completed Successfully."; values: undefined }
   | { id: "assess_option_all_achieved"; description: "All Achieved"; values: undefined }
   | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
-  | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
+  | { id: "assess_option_not_attempted"; description: "Not Covered"; values: undefined }
   | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature."; values: undefined }
   | { id: "assess_class_type"; description: "Class Type"; values: undefined }
   | { id: "assess_class_type_class_live"; description: "Class / Live"; values: undefined }
