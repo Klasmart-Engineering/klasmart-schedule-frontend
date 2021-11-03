@@ -99,10 +99,10 @@ const AssessAction = (props: AssessActionProps) => {
   const none_achieved: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].none_achieved) || false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const allValue: string[] = formValue.attendance_ids || [];
-  const checked_attendance_ids = useMemo(
-    () => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0),
-    [allValue, attendance_ids]
-  );
+  const checked_attendance_ids = useMemo(() => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0), [
+    allValue,
+    attendance_ids,
+  ]);
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
       setValue(`outcomes[${index}].${name}`, value);
@@ -235,7 +235,7 @@ const AssessAction = (props: AssessActionProps) => {
                   render={(props: { value: boolean | undefined }) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
-                      label={d("Not Attempted").t("assess_option_not_attempted")}
+                      label={d("Not Covered").t("assess_option_not_attempted")}
                       disabled={!editable}
                     />
                   )}
@@ -290,8 +290,16 @@ export interface OutcomesTableProps {
 }
 export function OutcomesTable(props: OutcomesTableProps) {
   const css = useStyles();
-  const { outcomesList, attendanceList, formMethods, formValue, editable, filterOutcomes, changeAssessmentTableDetail, studentViewItems } =
-    props;
+  const {
+    outcomesList,
+    attendanceList,
+    formMethods,
+    formValue,
+    editable,
+    filterOutcomes,
+    changeAssessmentTableDetail,
+    studentViewItems,
+  } = props;
 
   const OutcomesHeader: PLField[] = [
     {
