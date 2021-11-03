@@ -114,7 +114,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id]
+    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id, condition.status,condition.sort_by]
   );
   useEffect(() => {
     dispatch(
