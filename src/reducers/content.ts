@@ -720,7 +720,6 @@ export const bulkPublishContent = createAsyncThunk<
   if (!isConfirmed) return Promise.reject();
   return api.contentsBulk.publishContentBulk({ id: ids });
 });
-type aa = Required<EntityContentInfoWithDetails>["id"];
 export const approveContent = createAsyncThunk<
   AsyncReturnType<typeof api.contents.approveContentReview>,
   Required<EntityContentInfoWithDetails>["id"]

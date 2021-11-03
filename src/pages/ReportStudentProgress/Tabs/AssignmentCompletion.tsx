@@ -20,10 +20,15 @@ const useStyle = makeStyles(() =>
   })
 );
 
-export default function () {
+export default function AssignmentCompletion() {
   const [durationTime, setDurationTime] = useState(4);
-  const { classId, studentId, allSubjectId, selectedSubjectId } = useContext(SelectContext);
-  const unselectedSubjectId = allSubjectId.filter((item) => selectedSubjectId.every((val) => val !== item));
+  const { classId, studentId, allSubjectId, selectedSubjectId: selectedSubjectID } = useContext(SelectContext);
+  const selectedSubjectId: string[] =
+    selectedSubjectID.length === allSubjectId.length - 1 ? selectedSubjectID.concat([""]) : selectedSubjectID;
+  const unselectedSubjectId =
+    selectedSubjectID.length === allSubjectId.length - 1
+      ? []
+      : allSubjectId.filter((item) => selectedSubjectID.every((val) => val !== item));
   const colors = ["#0e78d5", "#bed6eb", "#a8c0ef"];
   const dispatch = useDispatch();
   const css = useStyle();
@@ -79,7 +84,7 @@ export default function () {
       );
     }
     // eslint-disable-next-line
-  }, [dispatch, classId, selectedSubjectId, studentId]);
+  }, [dispatch, classId, selectedSubjectID, studentId]);
   const handleChange = useMemo(
     () => (value: number) => {
       setDurationTime(value);
@@ -95,7 +100,7 @@ export default function () {
       );
     },
     // eslint-disable-next-line
-    [dispatch, classId, selectedSubjectId, studentId]
+    [dispatch, classId, selectedSubjectID, studentId]
   );
 
   return (
@@ -103,7 +108,7 @@ export default function () {
       <StudentProgressReportFilter
         durationTime={durationTime}
         handleChange={handleChange}
-        studentProgressReportTitle={d("Assignment Completion").t("report_label_assignment_completion")}
+        studentProgressReportTitle={d("Assignments Completion Rate").t("report_label_assignments_completion_rate")}
       />
       <div className={css.chart}>
         <StudentProgressBarChart itemUnit={"%"} data={chartData} label={label} />

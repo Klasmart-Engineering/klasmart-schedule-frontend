@@ -43,7 +43,7 @@ import { ContentCardList, ContentCardListProps } from "./ContentCardList";
 import FirstSearchHeader, { FirstSearchHeaderMb, FirstSearchHeaderProps } from "./FirstSearchHeader";
 import { FolderForm, useFolderForm } from "./FolderForm";
 import { FolderTree, FolderTreeProps, useFolderTree } from "./FolderTree";
-import { OrganizationList, OrganizationListProps, OrgInfoProps, useOrganizationList } from "./OrganizationList";
+import { OrganizationList, OrganizationListProps, useOrganizationList } from "./OrganizationList";
 import ProgramSearchHeader, { ProgramGroup, ProgramSearchHeaderMb } from "./ProgramSearchHeader";
 import {
   ExectSearch,
@@ -148,19 +148,12 @@ export default function MyContentList() {
   const filteredFolderTree = useMemo(() => excludeFolderOfTree(folderTree, selectedId), [folderTree, selectedId]);
   const [actionObj, setActionObj] = useState<ThirdSearchHeaderProps["actionObj"]>();
   const dispatch = useDispatch<AppDispatch>();
-  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } = useFolderTree<
-    EntityFolderContentData[]
-  >();
+  const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } =
+    useFolderTree<EntityFolderContentData[]>();
   const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
   const filterOrgList = useMemo(() => excludeMyOrg(orgList, myOrgId), [myOrgId, orgList]);
-  const {
-    organizationListActive,
-    closeOrganizationList,
-    openOrganizationList,
-    organizationListShowIndex,
-    shareFolder,
-    setShareFolder,
-  } = useOrganizationList<OrgInfoProps[]>();
+  const { organizationListActive, closeOrganizationList, openOrganizationList, organizationListShowIndex, shareFolder, setShareFolder } =
+    useOrganizationList();
   const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
   const [folderForm, setFolderForm] = useState<EntityFolderContentData>();
   const [parentId, setParentId] = useState<string>();

@@ -11,7 +11,7 @@ import { InfoTeacherLoad } from "../components/InfoTeacherLoad";
 import { TeacherLoadChart } from "../components/TeacherLoadChart";
 const PAGESIZE = 5;
 const TIME_OFFSET = moment().utcOffset() * 60;
-export default function () {
+export default function NextSevenDaysLessonLoad() {
   const dispatch = useDispatch();
   const { next7DaysLessonLoadList } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [page, setPage] = React.useState(1);

@@ -1,21 +1,20 @@
 import { Box } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import IconButton from "@material-ui/core/IconButton";
 import Popover from "@material-ui/core/Popover";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
-import Typography from "@material-ui/core/Typography";
-import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { TreeItemProps } from "@material-ui/lab/TreeItem";
-import React from "react";
-import { d } from "../../locale/LocaleManager";
-import { FilterDataItemsProps, memberType, FilterItemInfo, FilterSchoolInfo } from "../../types/scheduleTypes";
-import CloseIcon from "@material-ui/icons/Close";
 import Tooltip from "@material-ui/core/Tooltip";
-import { ArrowForwardIosOutlined, ArrowBackIosOutlined, LastPageOutlined, FirstPageOutlined } from "@material-ui/icons";
-import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import { ArrowBackIosOutlined, ArrowForwardIosOutlined, FirstPageOutlined, LastPageOutlined } from "@material-ui/icons";
+import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
+import CloseIcon from "@material-ui/icons/Close";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import React from "react";
 import * as Types from "../../api/api-ko-schema.auto";
+import { ConnectionDirection } from "../../api/api-ko-schema.auto";
+import { d } from "../../locale/LocaleManager";
+import { FilterSchoolInfo } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -130,26 +129,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-type StyledTreeItemProps = TreeItemProps & {
-  bgColor?: string;
-  color?: string;
-  labelIcon?: React.ElementType<SvgIconProps>;
-  labelInfo?: string;
-  labelText?: string;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id: string) => void;
-  isShowIcon?: boolean;
-  isOnlyMine?: boolean;
-  item: FilterDataItemsProps;
-  handleChangeExits: (data: string[], checked: boolean, node: FilterItemInfo, existData: string[]) => void;
-  stateOnlyMine: string[];
-  handleSetStateOnlySelectMine: (mine: string, is_check: boolean) => void;
-  stateOnlySelectMine: string[];
-  stateOnlySelectMineExistData: any;
-  privilegedMembers: (member: memberType) => boolean;
-  fullSelectionStatusSet: { id: string; status: boolean }[];
-  fullOtherSelectionStatusSet: boolean;
-};
 
 function FilterOnlyMineBox() {
   return (
@@ -272,7 +251,7 @@ function FilterOverall(props: FilterTreeProps) {
   const pageSize = 5;
   const [page, setPage] = React.useState(1);
   const [checkMine, setCheckMine] = React.useState(false);
-  const handleChange = async (cursor: string, direction: "FORWARD" | "BACKWARD", page: number) => {
+  const handleChange = async (cursor: string, direction: ConnectionDirection.Forward | ConnectionDirection.Backward, page: number) => {
     await getClassesConnection(cursor, classDataBySchool.school_id, true, direction);
     setPage(page);
   };
@@ -365,7 +344,7 @@ function FilterOverall(props: FilterTreeProps) {
             color="inherit"
             disabled={!pageInfo?.hasPreviousPage}
             onClick={() => {
-              handleChange("", "FORWARD", 1);
+              handleChange("", ConnectionDirection.Forward, 1);
             }}
           >
             <FirstPageOutlined fontSize="small" />
@@ -375,7 +354,7 @@ function FilterOverall(props: FilterTreeProps) {
             color="inherit"
             disabled={!pageInfo?.hasPreviousPage}
             onClick={() => {
-              handleChange(pageInfo?.startCursor as string, "BACKWARD", page - 1);
+              handleChange(pageInfo?.startCursor as string, ConnectionDirection.Backward, page - 1);
             }}
           >
             <ArrowBackIosOutlined fontSize="small" style={{ width: "14px" }} />
@@ -393,7 +372,7 @@ function FilterOverall(props: FilterTreeProps) {
             color="inherit"
             disabled={!pageInfo?.hasNextPage}
             onClick={() => {
-              handleChange(pageInfo?.endCursor as string, "FORWARD", page + 1);
+              handleChange(pageInfo?.endCursor as string, ConnectionDirection.Forward, page + 1);
             }}
           >
             <ArrowForwardIosOutlined fontSize="small" style={{ width: "14px" }} />
@@ -403,7 +382,7 @@ function FilterOverall(props: FilterTreeProps) {
             color="inherit"
             disabled={!pageInfo?.hasNextPage}
             onClick={() => {
-              handleChange("", "BACKWARD", Math.ceil(total / pageSize));
+              handleChange("", ConnectionDirection.Backward, Math.ceil(total / pageSize));
             }}
           >
             <LastPageOutlined fontSize="small" />
@@ -469,7 +448,12 @@ interface FilterTreeProps {
   handleChangeOnlyMine: (data: string[]) => void;
   stateOnlyMine: string[];
   total?: number;
-  getClassesConnection: (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => void;
+  getClassesConnection: (
+    cursor: string,
+    school_id: string,
+    loading: boolean,
+    direction: ConnectionDirection.Forward | ConnectionDirection.Backward
+  ) => void;
   pageInfo?: Types.Maybe<
     { __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor">
   >;

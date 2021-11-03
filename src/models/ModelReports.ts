@@ -1,6 +1,6 @@
 import moment from "moment";
 import { ReactNode } from "react";
-import { Class, School, User } from "../api/api-ko-schema.auto";
+import { Class, School, Status, User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
@@ -11,6 +11,7 @@ import { d, t } from "../locale/LocaleManager";
 import { UserType } from "../pages/ReportLearningSummary/types";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
 import { Iitem } from "../reducers/report";
+
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];
   xLabels?: string[][];
@@ -50,9 +51,9 @@ export function formatTime(seconds: number | undefined) {
   const hour = date.getHours();
   const min = date.getMinutes();
   const second = date.getSeconds();
-  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}  ${hour.toString().padStart(2, "0")}:${min
     .toString()
-    .padStart(2, "0")}:${min.toString().padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${second.toString().padStart(2, "0")}`;
 }
 enum formatTimeToMonWekType {
   hasTh = "hasTh",
@@ -258,7 +259,7 @@ export interface ILatestThreeMonths {
 
 export function getAllUsers(
   schools: Pick<School, "classes" | "school_id" | "school_name">[],
-  noneSchoolClasses: Pick<Class, "class_id" | "class_name" | "schools" | "students">[],
+  noneSchoolClasses: Pick<Class, "class_id" | "class_name" | "schools" | "students" | "status">[],
   isSchool: boolean
 ) {
   let freedomClass: UserType["classes"] = [];
@@ -269,6 +270,7 @@ export function getAllUsers(
   freedomClass = noneSchoolClasses.map((item) => ({
     id: item.class_id!,
     name: item.class_name!,
+    status: item.status,
     students:
       item.students?.map((item) => ({
         id: item?.user_id!,
@@ -286,7 +288,10 @@ export function getAllUsers(
   freedomClass.forEach((item) => {
     noSchoolAllStudents = [...noSchoolAllStudents, ...item.students];
   });
-  freedomClass = [{ id: "all", name: d("All").t("report_label_all"), students: [...noSchoolAllStudents] }, ...freedomClass];
+  freedomClass = [
+    { id: "all", name: d("All").t("report_label_all"), students: [...noSchoolAllStudents], status: Status.Active },
+    ...freedomClass,
+  ];
   // 所有学校
   const allSchools = schools.map((item) => ({
     id: item.school_id!,
@@ -295,6 +300,7 @@ export function getAllUsers(
       item.classes?.map((item) => ({
         id: item?.class_id!,
         name: item?.class_name!,
+        status: item?.status,
         students:
           item?.students?.map((item) => ({
             id: item?.user_id!,
@@ -315,14 +321,14 @@ export function getAllUsers(
     allStudents = [...allStudents, ...item.students];
   });
   // allStudents = allStudents.slice().sort(sortByStudentName("name"));
-  allClasses.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...allStudents] });
+  allClasses.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...allStudents], status: Status.Active });
   // 给每个学校的班级添加all选项
   allSchools.forEach((item) => {
     let curAllStudent: UserType["classes"][0]["students"] = [];
     item.classes.forEach((item) => {
       curAllStudent = [...curAllStudent, ...item.students];
     });
-    item.classes.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...curAllStudent] });
+    item.classes.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...curAllStudent], status: Status.Active });
   });
   allSchools.unshift({ id: "all", name: d("All").t("report_label_all"), classes: [...allClasses] });
   if (!isSchool) {
@@ -340,78 +346,54 @@ export function mGetDate(year: number, month: number) {
   return d.getDate();
 }
 
-export function formatDate(time: string) {
+export function formatDate(time: any) {
   var date = new Date(time);
   return Math.floor(date.getTime() / 1000);
 }
 
 export function getSixMonths() {
-  var data = new Date();
-  var year = data.getFullYear();
-  var month = data.getMonth() + 1;
-  var day = data.getDate();
-  if (day === 1) {
-    if (month === 1) {
-      year = year - 1;
-      month = 12;
+  const arr = [];
+  const needAddOne = moment().get("date") === 1 ? 1 : 0;
+  for (let i = 5 + needAddOne; i >= 0 + needAddOne; i--) {
+    if (i === 0 && moment().get("date") !== 1) {
+      arr.push(`${moment().set("date", 1).startOf("day").unix()}-${moment().startOf("day").unix()}`);
     } else {
-      month = month - 1;
+      arr.push(
+        `${moment().subtract(i, "month").set("date", 1).startOf("day").unix()}-${moment()
+          .subtract(i - 1, "month")
+          .set("date", 1)
+          .startOf("day")
+          .unix()}`
+      );
     }
-    day = mGetDate(year, month) + 1;
   }
-  var lastDate = formatDate(`${year}/${month}/01 00:00:00`) + "-" + formatDate(`${year}/${month}/${day} 00:00:00`);
-  var arry = [];
-  for (var i = 0; i < 5; i++) {
-    month = month - 1;
-    if (month <= 0) {
-      year = year - 1;
-      month = month + 12;
-    }
-    if (month < 10) {
-      month = Number("0" + month);
-    }
-    arry[i] =
-      formatDate(year + "/" + month + "/01 00:00:00") +
-      "-" +
-      (formatDate(year + "/" + month + "/" + mGetDate(year, month) + " 23:59:59") + 1);
-  }
-  arry.unshift(lastDate);
-  return arry.reverse();
+  return arr;
 }
 
 export function getFourWeeks() {
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth() + 1;
-  var day = date.getDate();
-  var dd = date.getDay();
-  if (dd === 0) {
-    dd = 7;
-  }
-  if (day <= dd) {
-    if (month === 1) {
-      year = year - 1;
-      month = 12;
+  const arr = [];
+  var dd = moment().get("day");
+  const needAddOne = moment().get("day") === 1 ? 1 : 0;
+  for (let i = 3 + needAddOne; i >= 0 + needAddOne; i--) {
+    if (i === 0 && moment().get("day") !== 1) {
+      arr.push(
+        `${moment()
+          .subtract(dd - 1, "day")
+          .startOf("day")
+          .unix()}-${moment().startOf("day").unix()}`
+      );
     } else {
-      month = month - 1;
+      arr.push(
+        `${moment().subtract(i, "week").set("day", 1).startOf("day").unix()}-${moment()
+          .subtract(i, "week")
+          .set("day", 7)
+          .add(1, "day")
+          .startOf("day")
+          .unix()}`
+      );
     }
-    day = mGetDate(year, month) + day - dd;
-  } else {
-    day = day - dd;
   }
-  var newDate = formatDate(`${year}/${month}/${day} 23:59:59`);
-  var array = [];
-  if (dd === 1) {
-    for (let i = 1; i <= 4; i++) {
-      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
-    }
-  } else {
-    for (let i = 1; i <= 3; i++) {
-      array.unshift(`${newDate - 3600 * 24 * i * 7 + 1}-${newDate - 3600 * 24 * (i - 1) * 7 + 1}`);
-    }
-    array.push(`${newDate + 1}-${newDate + 3600 * 24 * (dd - 1) + 1}`);
-  }
-  return array;
+  return arr;
 }
 
 export function getLearnOutcomeAchievementFeedback(newData: any, studentName: string) {
@@ -441,8 +423,8 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
   ) {
     return t("report_msg_lo_new", {
       Name: studentName,
-      AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
-      LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
+      AchievedLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count),
+      LearntLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count),
     });
   } else if (
     (data[1].first_achieved_percentage + data[1].re_achieved_percentage > data[1].class_average_achieved_percentage &&
@@ -643,8 +625,8 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
   } else {
     return t("report_msg_lo_default", {
       Name: studentName,
-      AchievedLoCount: data[3].first_achieved_count + data[3].re_achieved_count,
-      LearntLoCount: data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count,
+      AchievedLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count),
+      LearntLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count),
     });
   }
 }
@@ -668,7 +650,11 @@ export function getClassAttendanceFeedback(newData: any, studentName: string) {
     data[2].class_average_attendance_percentage === 0 &&
     data[2].un_selected_subjects_average_attendance_percentage === 0
   ) {
-    return t("report_msg_att_new", { Name: studentName, AttendedCount: data[3].attended_count, ScheduledCount: data[3].scheduled_count });
+    return t("report_msg_att_new", {
+      Name: studentName,
+      AttendedCount: Math.ceil(data[3].attended_count),
+      ScheduledCount: Math.ceil(data[3].scheduled_count),
+    });
   } else if (
     (data[1].attendance_percentage > data[1].class_average_attendance_percentage &&
       data[2].attendance_percentage > data[2].class_average_attendance_percentage &&
@@ -776,8 +762,8 @@ export function getClassAttendanceFeedback(newData: any, studentName: string) {
   } else {
     return t("report_msg_att_default", {
       Name: studentName,
-      AttendedCount: data[3].attended_count,
-      ScheduledCount: data[3].scheduled_count,
+      AttendedCount: Math.ceil(data[3].attended_count),
+      ScheduledCount: Math.ceil(data[3].scheduled_count),
     });
   }
 }
@@ -803,8 +789,8 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
   ) {
     return t("report_msg_assign_new", {
       Name: studentName,
-      AssignmentCompleteCount: data[3].student_complete_assignment,
-      AssignmentCount: data[3].student_total_assignment,
+      AssignmentCompleteCount: Math.ceil(data[3].student_complete_assignment),
+      AssignmentCount: Math.ceil(data[3].student_total_assignment),
     });
   } else if (
     (data[1].student_designated_subject > data[1].class_designated_subject &&
@@ -912,8 +898,8 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
   } else {
     return t("report_msg_assign_default", {
       Name: studentName,
-      AssignCompleteCount: data[3].student_complete_assignment,
-      AssignmentCount: data[3].student_total_assignment,
+      AssignCompleteCount: Math.ceil(data[3].student_complete_assignment),
+      AssignmentCount: Math.ceil(data[3].student_total_assignment),
     });
   }
 }

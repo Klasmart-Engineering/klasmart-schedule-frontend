@@ -37,7 +37,11 @@ export function EditScore(props: EditScoreProps) {
     <div className={classes.scoreEditBox}>
       {is_h5p ? (
         has_sub_items ? (
-          d("Attempted").t("assessment_activity_attempted")
+          attempted ? (
+            d("Attempted").t("assessment_activity_attempted")
+          ) : (
+            d("Not Attempted").t("assess_option_not_attempted")
+          )
         ) : not_applicable_scoring ? (
           d("Not Applicable").t("assessment_not_applicable")
         ) : attempted ? (

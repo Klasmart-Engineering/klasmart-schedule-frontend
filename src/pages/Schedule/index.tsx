@@ -5,6 +5,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
+import { ConnectionDirection, StringOperator, UuidExclusiveOperator } from "../../api/api-ko-schema.auto";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
 import { apiLivePath } from "../../api/extra";
 import PermissionType from "../../api/PermissionType";
@@ -73,8 +74,13 @@ const parseModel = (model: RouteParams["model"]) => ({
   includePreview: model.includes("preview"),
 });
 
+interface ParamTypes {
+  model: "edit" | "preview";
+  rightside: "scheduleTable" | "scheduleList";
+}
+
 function ScheduleContent() {
-  const { model, rightside } = useParams();
+  const { model, rightside } = useParams<ParamTypes>();
   const { includeTable, includeList } = parseRightside(rightside);
   const { includePreview } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
@@ -120,7 +126,7 @@ function ScheduleContent() {
 
   const handleChangeProgramId = async (programId: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown) as PayloadAction<
+    resultInfo = (await dispatch(getSubjectByProgramId({ program_id: programId, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getSubjectByProgramId>
     >;
     return resultInfo.payload ? resultInfo.payload : [{ id: "5e9a201e-9c2f-4a92-bb6f-1ccf8177bb71", name: "None Specified" }];
@@ -128,9 +134,9 @@ function ScheduleContent() {
 
   const LinkageLessonPlan = async (content_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(
+    resultInfo = (await dispatch(
       onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
-    )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
     const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
     const materialArr = ModelLessonPlan.toArray(segment);
     const newMaterialArr: (EntityContentInfoWithDetails | undefined)[] = [];
@@ -210,7 +216,7 @@ function ScheduleContent() {
    */
   const getParticipantOptions = async (class_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getScheduleParticipant({ class_id: class_id, metaLoading: true }))) as unknown) as PayloadAction<
+    resultInfo = (await dispatch(getScheduleParticipant({ class_id: class_id, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleParticipant>
     >;
     if (resultInfo.payload.participantList.class.teachers.concat(resultInfo.payload.participantList.class.students).length < 1)
@@ -220,7 +226,7 @@ function ScheduleContent() {
 
   const getHandleScheduleViewInfo = async (schedule_id: string) => {
     let resultInfo: any;
-    resultInfo = ((await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown) as PayloadAction<
+    resultInfo = (await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleViewInfo>
     >;
     return resultInfo.payload as EntityScheduleViewDetail;
@@ -273,10 +279,18 @@ function ScheduleContent() {
     dispatch(getParticipantsData(is_org));
   };
 
-  const getClassesConnection = async (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => {
+  const getClassesConnection = async (
+    cursor: string,
+    school_id: string,
+    loading: boolean,
+    direction: ConnectionDirection.Forward | ConnectionDirection.Backward
+  ) => {
     await dispatch(
       getClassFilterList({
-        filter: { schoolId: { operator: "eq", value: school_id }, status: { operator: "eq", value: "active" } },
+        filter: {
+          schoolId: { operator: UuidExclusiveOperator.Eq, value: school_id },
+          status: { operator: StringOperator.Eq, value: "active" },
+        },
         direction: direction,
         directionArgs: { count: 5, cursor: cursor ?? "" },
         metaLoading: loading,
@@ -288,8 +302,8 @@ function ScheduleContent() {
     let resultInfo: any;
     resultInfo = await dispatch(
       getSchoolsFilterList({
-        filter: { name: { operator: "contains", value: value }, status: { operator: "eq", value: "active" } },
-        direction: "FORWARD",
+        filter: { name: { operator: StringOperator.Contains, value: value }, status: { operator: StringOperator.Eq, value: "active" } },
+        direction: ConnectionDirection.Forward,
         directionArgs: { count: 5, cursor: cursor ?? "" },
         metaLoading: loading,
       })
@@ -342,8 +356,8 @@ function ScheduleContent() {
     );
     dispatch(
       getSchoolsFilterList({
-        filter: { status: { operator: "eq", value: "active" } },
-        direction: "FORWARD",
+        filter: { status: { operator: StringOperator.Eq, value: "active" } },
+        direction: ConnectionDirection.Forward,
         directionArgs: { count: 5 },
         metaLoading: true,
       })

@@ -1,14 +1,15 @@
 import { Box, TextField } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
+import Collapse from "@material-ui/core/Collapse";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Popover from "@material-ui/core/Popover";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { SvgIconProps } from "@material-ui/core/SvgIcon";
 import Typography from "@material-ui/core/Typography";
 import AccessibilityNewIcon from "@material-ui/icons/AccessibilityNew";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { TreeView } from "@material-ui/lab";
 import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
@@ -16,27 +17,27 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
 import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
+import { ConnectionDirection } from "../../api/api-ko-schema.auto";
+import { GetClassFilterListQuery, GetSchoolsFilterListQuery } from "../../api/api-ko.auto";
 import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsOptionsItem } from "../../api/extra";
+import FilterTree from "../../components/FilterTree";
 import { d, t } from "../../locale/LocaleManager";
+import { modelSchedule } from "../../models/ModelSchedule";
 import { AsyncTrunkReturned } from "../../reducers/content";
+import { actError } from "../../reducers/notify";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
   classTypeLabel,
   EntityScheduleSchoolInfo,
   FilterDataItemsProps,
+  FilterItemInfo,
+  filterOptionItem,
   FilterQueryTypeProps,
   memberType,
   modeViewType,
   timestampType,
-  filterOptionItem,
-  FilterItemInfo,
 } from "../../types/scheduleTypes";
-import { modelSchedule } from "../../models/ModelSchedule";
-import FilterTree from "../../components/FilterTree";
-import { actError } from "../../reducers/notify";
-import Collapse from "@material-ui/core/Collapse";
-import { GetClassFilterListQuery, GetSchoolsFilterListQuery } from "../../api/api-ko.auto";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -398,7 +399,12 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 interface SchoolTemplateProps {
   schoolsConnection?: GetSchoolsFilterListQuery;
   getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
-  getClassesConnection: (cursor: string, school_id: string, loading: boolean, direction: "FORWARD" | "BACKWARD") => void;
+  getClassesConnection: (
+    cursor: string,
+    school_id: string,
+    loading: boolean,
+    direction: ConnectionDirection.Forward | ConnectionDirection.Backward
+  ) => void;
   classesConnection?: GetClassFilterListQuery;
   openClassMenu?: (pageY: number, schoolItem: { id: string; name: string }) => void;
 }
@@ -587,7 +593,7 @@ function FilterTemplate(props: FilterProps) {
     if (node.label === "program" && checked) {
       if (viewSubjectPermission) {
         let resultInfo: any;
-        resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown) as PayloadAction<
+        resultInfo = (await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown as PayloadAction<
           AsyncTrunkReturned<typeof ScheduleFilterSubject>
         >;
         if (resultInfo.payload.length > 0) {
@@ -680,7 +686,7 @@ function FilterTemplate(props: FilterProps) {
   const openClassMenu = async (pageY: number, schoolItem: { id: string; name: string }) => {
     setShowClassMenu(false);
     if (schoolItem.id === "All_My_Schools") return;
-    await getClassesConnection("", schoolItem.id, true, "FORWARD");
+    await getClassesConnection("", schoolItem.id, true, ConnectionDirection.Forward);
     setPageY(pageY);
     setShowClassMenu(true);
     setCheckSchoolItem(schoolItem);

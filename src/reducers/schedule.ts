@@ -15,13 +15,24 @@ import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
   ClassesTeachingQueryQueryVariables,
+  GetClassFilterListDocument,
+  GetClassFilterListQuery,
+  GetClassFilterListQueryVariables,
   GetProgramsDocument,
   GetProgramsQuery,
   GetProgramsQueryVariables,
+  GetSchoolsFilterListDocument,
+  GetSchoolsFilterListQuery,
+  GetSchoolsFilterListQueryVariables,
+  GetUserDocument,
+  GetUserQuery,
+  GetUserQueryVariables,
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
+  ParticipantsByClassDocument,
   ParticipantsByClassQuery,
+  ParticipantsByClassQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -29,9 +40,6 @@ import {
   SchoolByOrgQueryQuery,
   SchoolByOrgQueryQueryVariables,
   SchoolByUserQueryDocument,
-  GetSchoolsFilterListDocument,
-  GetClassFilterListDocument,
-  GetUserDocument,
   SchoolByUserQueryQuery,
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
@@ -40,12 +48,6 @@ import {
   UserSchoolIDsDocument,
   UserSchoolIDsQuery,
   UserSchoolIDsQueryVariables,
-  GetSchoolsFilterListQuery,
-  GetSchoolsFilterListQueryVariables,
-  GetClassFilterListQuery,
-  GetClassFilterListQueryVariables,
-  GetUserQuery,
-  GetUserQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -662,34 +664,11 @@ export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { 
 export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
   "getParticipant",
   async ({ class_id }) => {
-    const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
-      query: GetUserDocument,
-      variables: {
-        filter: { classId: { operator: UuidExclusiveOperator.Eq, value: class_id } },
-        direction: ConnectionDirection.Forward,
-      },
+    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
+      query: ParticipantsByClassDocument,
+      variables: { class_id },
     });
-    const participantListOrigin = data;
-    const participantList: {
-      class: { teachers: { user_id: string; user_name: string }[]; students: { user_id: string; user_name: string }[] };
-    } = { class: { teachers: [], students: [] } };
-    participantListOrigin.usersConnection?.edges?.forEach((item) => {
-      if (item?.node?.status !== "active") return;
-      item?.node?.roles.forEach((role) => {
-        if (role.name === "Teacher") {
-          participantList.class.teachers.push({
-            user_id: item.node?.id as string,
-            user_name: item.node?.givenName + " " + item.node?.familyName,
-          });
-        }
-        if (role.name === "Student") {
-          participantList.class.students.push({
-            user_id: item.node?.id as string,
-            user_name: item.node?.givenName + " " + item.node?.familyName,
-          });
-        }
-      });
-    });
+    const participantList = data;
     return { participantList };
   }
 );
@@ -922,6 +901,15 @@ const { actions, reducer } = createSlice({
       payload?.forEach((item: any) => {
         result = [...result, ...item];
       });
+      const reduceTemporaryStorage: { [class_id: string]: boolean } = {};
+      result = [...result].reduce<any>((item, next) => {
+        if (next !== null)
+          if (!reduceTemporaryStorage[next.class_id as string] && next.class_id) {
+            item.push(next);
+            reduceTemporaryStorage[next.class_id as string] = true;
+          }
+        return item;
+      }, []);
       state.classOptions.classListSchool = { school: { classes: result } };
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {

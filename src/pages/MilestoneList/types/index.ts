@@ -1,11 +1,5 @@
 import api from "../../../api";
 
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
-
 type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
   [K in keyof T]: NonOnlyNull<T[K]>;

@@ -32,9 +32,9 @@ const useStyles = makeStyles(({ breakpoints, shadows }) => ({
     marginTop: 5,
     maxHeight: 700,
     marginBottom: 20,
-    [breakpoints.down('md')]: {
-      maxHeight: 'fit-content',
-    }
+    [breakpoints.down("md")]: {
+      maxHeight: "fit-content",
+    },
   },
   table: {
     minWidth: 700 - 162,
@@ -58,34 +58,6 @@ const useStyles = makeStyles(({ breakpoints, shadows }) => ({
     textAlign: "center",
   },
 }));
-
-interface Asset {
-  status: string;
-  type: string;
-  name: string;
-  img: string;
-  fileType: string;
-  developmental: string;
-  skills: string;
-  age: string;
-  created: string;
-  author: string;
-}
-
-interface mockAsset {
-  type: string;
-  name: string;
-  developmental: string;
-  img: string;
-  fileType: string;
-  skills: string;
-  age: string;
-  settings: string;
-  status: string;
-  created: string;
-  author: string;
-  action: string;
-}
 
 const mapContentType = (lesson: DraggableItemProps["lesson"], item: DraggableItemProps["item"]) => {
   return lesson === "material"

@@ -20,11 +20,16 @@ const useStyle = makeStyles((theme) =>
     },
   })
 );
-export default function () {
+export default function LearningOutcomesAchievement() {
   const [durationTime, setDurationTime] = useState(4);
   const dispatch = useDispatch();
-  const { classId, studentId, allSubjectId, selectedSubjectId } = useContext(SelectContext);
-  const unselectedSubjectId = allSubjectId.filter((item) => selectedSubjectId.every((val) => val !== item));
+  const { classId, studentId, allSubjectId, selectedSubjectId: selectedSubjectID } = useContext(SelectContext);
+  const selectedSubjectId: string[] =
+    selectedSubjectID.length === allSubjectId.length - 1 ? selectedSubjectID.concat([""]) : selectedSubjectID;
+  const unselectedSubjectId =
+    selectedSubjectID.length === allSubjectId.length - 1
+      ? []
+      : allSubjectId.filter((item) => selectedSubjectID.every((val) => val !== item));
   const style = useStyle();
   const { learnOutcomeAchievement, fourWeekslearnOutcomeAchievementMassage } = useSelector<RootState, RootState["report"]>(
     (state) => state.report
@@ -34,22 +39,22 @@ export default function () {
   const totalType = [
     {
       label: t("report_label_total_newly_achieved_lo"),
-      data: learnOutcomeAchievement.first_achieved_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.first_achieved_count || 0),
       idx: 0,
     },
     {
       label: t("report_label_total_reachieved_lo"),
-      data: learnOutcomeAchievement.re_achieved_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.re_achieved_count || 0),
       idx: 1,
     },
     {
       label: t("report_label_total_achieved_lo_class_average"),
-      data: learnOutcomeAchievement.class_average_achieved_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.class_average_achieved_count || 0),
       idx: 2,
     },
     {
       label: t("report_label_total_achieved_lo_subject_average"),
-      data: learnOutcomeAchievement.un_selected_subjects_average_achieve_count || 0,
+      data: Math.ceil(learnOutcomeAchievement.un_selected_subjects_average_achieve_count || 0),
       idx: 3,
     },
   ];
@@ -68,7 +73,7 @@ export default function () {
       );
     }
     // eslint-disable-next-line
-  }, [classId, selectedSubjectId, studentId]);
+  }, [classId, selectedSubjectID, studentId]);
   const handleChange = React.useMemo(
     () => (value: number) => {
       setDurationTime(value);
@@ -84,7 +89,7 @@ export default function () {
       );
     },
     // eslint-disable-next-line
-    [classId, selectedSubjectId, studentId]
+    [classId, selectedSubjectID, studentId]
   );
 
   const data: BarGroupProps["data"] =
@@ -95,7 +100,7 @@ export default function () {
           durationTime === 4
             ? `${moment(Number(time[0]) * 1000).format("MM.DD")}-${moment((Number(time[1]) - 1) * 1000).format("MM.DD")}`
             : translateMonth(moment(Number(time[0]) * 1000).get("month")),
-        v1: [parsePercent(item.first_achieved_percentage), parsePercent(item.re_achieved_percentage)],
+        v1: [item.first_achieved_percentage, item.re_achieved_percentage],
         v2: parsePercent(item.class_average_achieved_percentage),
         v3: parsePercent(item.un_selected_subjects_average_achieved_percentage),
       } as BarGroupProps["data"][0];
@@ -107,7 +112,7 @@ export default function () {
       <StudentProgressReportFilter
         durationTime={durationTime}
         handleChange={handleChange}
-        studentProgressReportTitle={d("Learning Outcomes Achievement").t("report_label_learning_outcomes_achievement")}
+        studentProgressReportTitle={d("Learning Outcomes Achieved %").t("report_label_learning_outcomes_achieved")}
       />
       <div className={style.chart}>
         <StudentProgressBarChart data={data} label={label} itemUnit={"%"} />

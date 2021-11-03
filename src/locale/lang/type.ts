@@ -1,6 +1,5 @@
-import { IntlFormatters, MessageDescriptor } from "react-intl";
+import { MessageDescriptor } from "react-intl";
 
-type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
 export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
 
 export function assertLangName(name?: string): asserts name is LangName {
@@ -12,7 +11,7 @@ export function shouldBeLangName(name?: string): LangName {
   return name;
 }
 
-type LangRecord<T = string> =
+type LangRecord =
   | { id: "library_label_create"; description: "Create"; values: undefined }
   | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
@@ -1347,6 +1346,9 @@ type LangRecord<T = string> =
   | { id: "report_label_assignment_completion"; description: "Assignment Completion"; values: undefined }
   | { id: "report_label_4_weeks"; description: "4 Weeks"; values: undefined }
   | { id: "report_label_6_months"; description: "6 Months"; values: undefined }
+  | { id: "report_label_learning_outcomes_achieved"; description: "Learning Outcomes Achieved %"; values: undefined }
+  | { id: "report_label_class_attendance_rate"; description: "Class Attendance Rate (Live only)"; values: undefined }
+  | { id: "report_label_assignments_completion_rate"; description: "Assignments Completion Rate"; values: undefined }
   | { id: "report_label_total_newly_achieved_lo"; description: "Total Newly Achieved Learning Outcomes"; values: undefined }
   | { id: "report_label_total_reachieved_lo"; description: "Total Re-achieved Learning Outcomes"; values: undefined }
   | {
@@ -1602,6 +1604,11 @@ type LangRecord<T = string> =
   | {
       id: "report_msg_avg_days_pending";
       description: "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_one_assignment";
+      description: "Please upload at least one assignment.";
       values: undefined;
     }
   | {

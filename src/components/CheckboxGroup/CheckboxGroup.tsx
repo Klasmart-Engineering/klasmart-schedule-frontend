@@ -29,7 +29,9 @@ function toHash(list: string[]): HashValue {
 
 export function CheckboxGroup(props: CheckboxGroupProps) {
   const { render, onChange } = props;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const value = props.value ?? [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const allValue = props.allValue ?? [];
   const hashValue = useMemo(() => toHash(value), [value]);
   const isAllvalue = allValue.length > 0 && value.length === allValue.length;

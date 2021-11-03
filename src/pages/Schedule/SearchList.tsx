@@ -102,20 +102,6 @@ const useQuery = () => {
   return { name };
 };
 
-// const timestampToTime = () => {
-//   const date = new Date();
-//   const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
-//   const [Y, M, D] = [
-//     date.getFullYear(),
-//     dateNumFun(date.getMonth() + 1),
-//     dateNumFun(date.getDate()),
-//     dateNumFun(date.getHours()),
-//     dateNumFun(date.getMinutes()),
-//     dateNumFun(date.getSeconds()),
-//   ];
-//   return `${Y}-${M}-${D}`;
-// };
-
 interface SearchListProps {
   timesTamp: timestampType;
 }
@@ -149,7 +135,10 @@ export default function SearchList(props: SearchListProps) {
     } else {
       searchScheduleList.forEach((item: EntityScheduleSearchView, index: number) => {
         if (index < number) {
-          if (timeFormat(item.start_at as number, "dateDay") === timeFormat(date.start_at as number, "dateDay")) {
+          if (
+            timeFormat((item.start_at! > 0 ? item.start_at : item.due_at) as number, "dateDay") ===
+            timeFormat((date.start_at! > 0 ? date.start_at : date.due_at) as number, "dateDay")
+          ) {
             flag = false;
             return;
           } else {
@@ -175,6 +164,7 @@ export default function SearchList(props: SearchListProps) {
       page_size: 10,
       time_zone_offset: -new Date().getTimezoneOffset() * 60,
       start_at: timesTamp.start,
+      order_by: "schedule_at" as "create_at" | "-create_at" | "start_at" | "-start_at" | "schedule_at" | undefined,
     };
     dispatch(getSearchScheduleList({ data, metaLoading: true }));
     document.documentElement.scrollTop = 0;
@@ -216,8 +206,10 @@ export default function SearchList(props: SearchListProps) {
         <>
           {searchScheduleList.map((item: EntityScheduleSearchView, index: number) => (
             <div key={item.id} className={classes.partItem}>
-              {isTitleSame(item, index) && <h1 className={classes.titleDate}>{timeFormat(item.start_at as number, "dateDay")}</h1>}
-              <Card className={classes.cardItem} onClick={() => previewSchedule((item.id as unknown) as number)}>
+              {isTitleSame(item, index) && (
+                <h1 className={classes.titleDate}>{timeFormat((item.start_at! > 0 ? item.start_at : item.due_at) as number, "dateDay")}</h1>
+              )}
+              <Card className={classes.cardItem} onClick={() => previewSchedule(item.id as unknown as number)}>
                 <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
                 <Grid container alignItems="center" className={classes.firstLine}>
                   <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>

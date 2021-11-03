@@ -140,7 +140,7 @@ export function ReportDashboard() {
     PermissionType.student_progress_report_662,
   ]);
 
-  const [hasPerm, hasSummaryPerm, hasStudentUsagePermission, isPending] = React.useMemo(() => {
+  const [hasPerm, hasSummaryPerm, hasStudentUsagePermission, hasStudentProgressPermission, isPending] = React.useMemo(() => {
     const hasPerm =
       perm.view_reports_610 ||
       perm.view_my_reports_614 ||
@@ -148,9 +148,9 @@ export function ReportDashboard() {
       (perm.view_my_school_reports_611 as boolean);
     const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
     const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
-    //const hasStudentProgressPermission  = perm.student_progress_report_662 as boolean;
+    const hasStudentProgressPermission = perm.student_progress_report_662 as boolean;
     const isPending = perm.view_reports_610 === undefined;
-    return [hasPerm, hasSummaryPerm, hasStudentUsagePermission, isPending];
+    return [hasPerm, hasSummaryPerm, hasStudentUsagePermission, hasStudentProgressPermission, isPending];
   }, [perm]);
 
   React.useEffect(() => {
@@ -202,7 +202,7 @@ export function ReportDashboard() {
       url: ReportStudentProgress.routeBasePath,
       icon: <ShortText />,
       bgColor: "#607d8b",
-      hasPerm: true,
+      hasPerm: hasStudentProgressPermission,
     },
   ];
   const handleClick = useMemo(

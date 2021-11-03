@@ -139,9 +139,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
 
   const finalData = (afterTreatment: InnerItem[], preTreatment?: ClassOptionsItem[]) => {
     const filterData =
-      afterTreatment?.map((item: InnerItem) => {
-        if (item.selected === "not_schedule") return item.id;
-      }) ?? [];
+      afterTreatment?.filter((item: InnerItem) => item.selected === "not_schedule").map((item: InnerItem) => item.id) ?? [];
     return preTreatment?.filter((treatment: ClassOptionsItem) => !filterData.includes(treatment.id));
   };
 

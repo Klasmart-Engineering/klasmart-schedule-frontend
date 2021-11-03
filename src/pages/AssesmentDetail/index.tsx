@@ -117,7 +117,7 @@ export function AssessmentDetail() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateStudyAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateStudyAssessment>
           >;
           if (payload) {
@@ -148,9 +148,9 @@ export function AssessmentDetail() {
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
           }
         }
-        const { payload } = ((await dispatch(
-          completeStudyAssessment({ id, data, filter_student_view_items })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateStudyAssessment>>;
+        const { payload } = (await dispatch(completeStudyAssessment({ id, data, filter_student_view_items }))) as unknown as PayloadAction<
+          AsyncTrunkReturned<typeof updateStudyAssessment>
+        >;
         if (payload) {
           dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
           history.replace({
@@ -162,14 +162,15 @@ export function AssessmentDetail() {
   );
 
   const changeAutocompleteValue = useMemo(
-    () => (
-      value: {
-        id: string | number;
-        title: string;
-      }[]
-    ) => {
-      setChangeAutocompleteValue(value);
-    },
+    () =>
+      (
+        value: {
+          id: string | number;
+          title: string;
+        }[]
+      ) => {
+        setChangeAutocompleteValue(value);
+      },
     []
   );
 

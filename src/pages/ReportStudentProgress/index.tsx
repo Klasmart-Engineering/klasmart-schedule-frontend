@@ -1,8 +1,9 @@
+import { uniq } from "lodash";
 import React from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
 import TabPages from "../../components/TabPages";
-import { t } from "../../locale/LocaleManager";
+import { d, t } from "../../locale/LocaleManager";
 import { getStudentSubjectsByOrg } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import StudentSubjectFilter from "./components/StudentSubjectFilter";
@@ -32,19 +33,19 @@ export default function ReportStudentProgress() {
   });
   const tabs: ITabItem[] = [
     {
-      label: "Learning Outcomes Achievement",
+      label: d("Learning Outcomes Achievement").t("report_label_learning_outcomes_achievement"),
       index: 0,
       display: true,
       Component: LearningOutcomesAchievement,
     },
     {
-      label: "Class Attendance",
+      label: d("Class Attendance").t("report_label_class_attendance"),
       index: 1,
       display: true,
       Component: ClassAttendance,
     },
     {
-      label: "Assignment Completion",
+      label: d("Assignment Completion").t("report_label_assignment_completion"),
       index: 2,
       display: true,
       Component: AssignmentCompletion,
@@ -65,7 +66,8 @@ export default function ReportStudentProgress() {
           onInitial={(allSubjectId) => {
             setState({
               ...state,
-              allSubjectId,
+              // allSubjectId: allSubjectId.concat([""]),
+              allSubjectId: uniq(allSubjectId.concat([""])),
             });
           }}
           onChange={(classId, studentId, selectedSubjectId) => {
@@ -73,7 +75,7 @@ export default function ReportStudentProgress() {
               ...state,
               classId,
               studentId,
-              selectedSubjectId,
+              selectedSubjectId: uniq(selectedSubjectId),
             });
           }}
         />

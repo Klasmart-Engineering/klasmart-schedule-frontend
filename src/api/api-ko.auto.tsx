@@ -96,8 +96,8 @@ export type ClassesSchoolsByOrganizationQuery = { __typename?: "Query" } & {
         Array<
           Types.Maybe<
             { __typename?: "Class" } & {
-              schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id">>>>;
-            } & ClassIdNameFragment
+              schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "status">>>>;
+            } & ClassIdNameStatusFragment
           >
         >
       >;
@@ -115,13 +115,13 @@ export type ClassesTeachersByOrganizationQuery = { __typename?: "Query" } & {
       classes?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "class_id"> & {
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "status"> & {
                 teachers?: Types.Maybe<
                   Array<
                     Types.Maybe<
                       { __typename?: "User" } & {
                         school_memberships?: Types.Maybe<
-                          Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
+                          Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id" | "status">>>
                         >;
                       } & UserIdNameFragment
                     >
@@ -145,7 +145,7 @@ export type ClassStudentsByOrganizationQuery = { __typename?: "Query" } & {
       classes?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "class_id"> & {
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "status"> & {
                 students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "full_name">>>>;
               }
           >
@@ -162,7 +162,7 @@ export type SchoolsIdNameByOrganizationQueryVariables = Types.Exact<{
 export type SchoolsIdNameByOrganizationQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
     { __typename?: "Organization" } & {
-      schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+      schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name" | "status">>>>;
     }
   >;
 };
@@ -177,8 +177,8 @@ export type SchoolsByOrganizationQuery = { __typename?: "Query" } & {
       classes?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name"> & {
-                schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id">>>>;
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
+                schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "status">>>>;
               }
           >
         >
@@ -186,8 +186,8 @@ export type SchoolsByOrganizationQuery = { __typename?: "Query" } & {
       schools?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "School" } & Pick<Types.School, "school_id" | "school_name"> & {
-                classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & ClassIdNameFragment>>>;
+            { __typename?: "School" } & Pick<Types.School, "school_id" | "school_name" | "status"> & {
+                classes?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & ClassIdNameStatusFragment>>>;
               }
           >
         >
@@ -243,9 +243,9 @@ export type MyPermissionsAndClassesTeachingQueryQuery = { __typename?: "Query" }
         membership?: Types.Maybe<
           { __typename?: "OrganizationMembership" } & Pick<Types.OrganizationMembership, "organization_id"> & {
               schoolMemberships?: Types.Maybe<
-                Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
+                Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id" | "status">>>
               >;
-              classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id">>>>;
+              classesTeaching?: Types.Maybe<Array<Types.Maybe<{ __typename?: "Class" } & Pick<Types.Class, "class_id" | "status">>>>;
             }
         >;
       }
@@ -323,19 +323,19 @@ export type TeacherByOrgIdQuery = { __typename?: "Query" } & {
       classes?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "status"> & {
-                teachers?: Types.Maybe<
-                  Array<
-                    Types.Maybe<
-                      { __typename?: "User" } & {
-                        school_memberships?: Types.Maybe<
-                          Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
-                        >;
-                      } & UserIdNameFragment
-                    >
+            { __typename?: "Class" } & {
+              teachers?: Types.Maybe<
+                Array<
+                  Types.Maybe<
+                    { __typename?: "User" } & {
+                      school_memberships?: Types.Maybe<
+                        Array<Types.Maybe<{ __typename?: "SchoolMembership" } & Pick<Types.SchoolMembership, "school_id">>>
+                      >;
+                    } & UserIdNameFragment
                   >
-                >;
-              } & ClassIdNameFragment
+                >
+              >;
+            } & ClassIdNameStatusFragment
           >
         >
       >;
@@ -371,11 +371,11 @@ export type ClassesBySchoolQuery = { __typename?: "Query" } & {
       classes?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "status"> & {
-                schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
-                teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & UserIdNameFragment>>>;
-                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & UserIdNameFragment>>>;
-              } & ClassIdNameFragment
+            { __typename?: "Class" } & {
+              schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id" | "school_name">>>>;
+              teachers?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & UserIdNameFragment>>>;
+              students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & UserIdNameFragment>>>;
+            } & ClassIdNameStatusFragment
           >
         >
       >;
@@ -743,7 +743,7 @@ export type StudentsByOrganizationQuery = { __typename?: "Query" } & {
       classes?: Types.Maybe<
         Array<
           Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name"> & {
+            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                 schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id">>>>;
                 students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
               }
@@ -757,7 +757,7 @@ export type StudentsByOrganizationQuery = { __typename?: "Query" } & {
                 classes?: Types.Maybe<
                   Array<
                     Types.Maybe<
-                      { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name"> & {
+                      { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status"> & {
                           students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">>>>;
                         }
                     >
@@ -777,7 +777,9 @@ export type GetSubjectsQueryVariables = Types.Exact<{
 
 export type GetSubjectsQuery = { __typename?: "Query" } & {
   organization?: Types.Maybe<
-    { __typename?: "Organization" } & { subjects?: Types.Maybe<Array<{ __typename?: "Subject" } & Pick<Types.Subject, "id" | "name">>> }
+    { __typename?: "Organization" } & {
+      subjects?: Types.Maybe<Array<{ __typename?: "Subject" } & Pick<Types.Subject, "id" | "name" | "status">>>;
+    }
   >;
 };
 
@@ -790,8 +792,8 @@ export type GetProgramsAndSubjectsQuery = { __typename?: "Query" } & {
     { __typename?: "Organization" } & {
       programs?: Types.Maybe<
         Array<
-          { __typename?: "Program" } & Pick<Types.Program, "id" | "name"> & {
-              subjects?: Types.Maybe<Array<{ __typename?: "Subject" } & Pick<Types.Subject, "id" | "name">>>;
+          { __typename?: "Program" } & Pick<Types.Program, "id" | "name" | "status"> & {
+              subjects?: Types.Maybe<Array<{ __typename?: "Subject" } & Pick<Types.Subject, "id" | "name" | "status">>>;
             }
         >
       >;
@@ -877,7 +879,7 @@ export type GetUserQuery = { __typename?: "Query" } & {
 
 export type UserIdNameFragment = { __typename?: "User" } & Pick<Types.User, "user_id" | "user_name">;
 
-export type ClassIdNameFragment = { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name">;
+export type ClassIdNameStatusFragment = { __typename?: "Class" } & Pick<Types.Class, "class_id" | "class_name" | "status">;
 
 export const UserIdNameFragmentDoc = gql`
   fragment userIdName on User {
@@ -885,10 +887,11 @@ export const UserIdNameFragmentDoc = gql`
     user_name
   }
 `;
-export const ClassIdNameFragmentDoc = gql`
-  fragment classIdName on Class {
+export const ClassIdNameStatusFragmentDoc = gql`
+  fragment classIdNameStatus on Class {
     class_id
     class_name
+    status
   }
 `;
 export const RoleBasedUsersByOrgnizationDocument = gql`
@@ -1090,14 +1093,15 @@ export const ClassesSchoolsByOrganizationDocument = gql`
   query classesSchoolsByOrganization($organization_id: ID!) {
     organization(organization_id: $organization_id) {
       classes {
-        ...classIdName
+        ...classIdNameStatus
         schools {
           school_id
+          status
         }
       }
     }
   }
-  ${ClassIdNameFragmentDoc}
+  ${ClassIdNameStatusFragmentDoc}
 `;
 
 /**
@@ -1145,10 +1149,12 @@ export const ClassesTeachersByOrganizationDocument = gql`
     organization(organization_id: $organization_id) {
       classes {
         class_id
+        status
         teachers {
           ...userIdName
           school_memberships {
             school_id
+            status
           }
         }
       }
@@ -1202,6 +1208,7 @@ export const ClassStudentsByOrganizationDocument = gql`
     organization(organization_id: $organization_id) {
       classes {
         class_id
+        status
         students {
           user_id
           full_name
@@ -1257,6 +1264,7 @@ export const SchoolsIdNameByOrganizationDocument = gql`
       schools {
         school_id
         school_name
+        status
       }
     }
   }
@@ -1308,20 +1316,23 @@ export const SchoolsByOrganizationDocument = gql`
       classes {
         class_id
         class_name
+        status
         schools {
           school_id
+          status
         }
       }
       schools {
         school_id
         school_name
+        status
         classes {
-          ...classIdName
+          ...classIdNameStatus
         }
       }
     }
   }
-  ${ClassIdNameFragmentDoc}
+  ${ClassIdNameStatusFragmentDoc}
 `;
 
 /**
@@ -1451,9 +1462,11 @@ export const MyPermissionsAndClassesTeachingQueryDocument = gql`
         organization_id
         schoolMemberships {
           school_id
+          status
         }
         classesTeaching {
           class_id
+          status
         }
       }
     }
@@ -1637,8 +1650,7 @@ export const TeacherByOrgIdDocument = gql`
   query teacherByOrgId($organization_id: ID!) {
     organization(organization_id: $organization_id) {
       classes {
-        status
-        ...classIdName
+        ...classIdNameStatus
         teachers {
           ...userIdName
           school_memberships {
@@ -1648,7 +1660,7 @@ export const TeacherByOrgIdDocument = gql`
       }
     }
   }
-  ${ClassIdNameFragmentDoc}
+  ${ClassIdNameStatusFragmentDoc}
   ${UserIdNameFragmentDoc}
 `;
 
@@ -1722,8 +1734,7 @@ export const ClassesBySchoolDocument = gql`
   query classesBySchool($school_id: ID!) {
     school(school_id: $school_id) {
       classes {
-        ...classIdName
-        status
+        ...classIdNameStatus
         schools {
           school_id
           school_name
@@ -1737,7 +1748,7 @@ export const ClassesBySchoolDocument = gql`
       }
     }
   }
-  ${ClassIdNameFragmentDoc}
+  ${ClassIdNameStatusFragmentDoc}
   ${UserIdNameFragmentDoc}
 `;
 
@@ -2391,6 +2402,7 @@ export const StudentsByOrganizationDocument = gql`
       classes {
         class_id
         class_name
+        status
         schools {
           school_id
         }
@@ -2405,6 +2417,7 @@ export const StudentsByOrganizationDocument = gql`
         classes {
           class_id
           class_name
+          status
           students {
             user_id
             user_name
@@ -2452,6 +2465,7 @@ export const GetSubjectsDocument = gql`
       subjects {
         id
         name
+        status
       }
     }
   }
@@ -2490,9 +2504,11 @@ export const GetProgramsAndSubjectsDocument = gql`
       programs {
         id
         name
+        status
         subjects {
           id
           name
+          status
         }
       }
     }
