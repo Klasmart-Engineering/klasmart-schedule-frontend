@@ -7,7 +7,7 @@ import {
   rectIntersection,
   TouchSensor,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import debounce from "lodash/debounce";
@@ -36,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchPublishedLearningOutcomes,
+  searchPublishedLearningOutcomes
 } from "../../reducers/content";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";

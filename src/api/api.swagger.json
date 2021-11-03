@@ -1097,7 +1097,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+              "$ref": "#/definitions/entity.QueryContentResponse"
             }
           },
           "400": {
@@ -1958,7 +1958,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+              "$ref": "#/definitions/entity.QueryContentResponse"
             }
           },
           "400": {
@@ -2276,7 +2276,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+              "$ref": "#/definitions/entity.QueryContentResponse"
             }
           },
           "400": {
@@ -2388,7 +2388,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ContentInfoWithDetailsResponse"
+              "$ref": "#/definitions/entity.QueryContentResponse"
             }
           },
           "400": {
@@ -10407,20 +10407,6 @@
         }
       }
     },
-    "entity.ContentInfoWithDetailsResponse": {
-      "type": "object",
-      "properties": {
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/entity.ContentInfoWithDetails"
-          }
-        },
-        "total": {
-          "type": "integer"
-        }
-      }
-    },
     "entity.ContentPermission": {
       "type": "object",
       "properties": {
@@ -11699,6 +11685,55 @@
           }
         },
         "study_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.QueryContentItem": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "integer"
+        },
+        "content_type_name": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "#/definitions/entity.ContentPermission"
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.QueryContentResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.QueryContentItem"
+          }
+        },
+        "total": {
           "type": "integer"
         }
       }
