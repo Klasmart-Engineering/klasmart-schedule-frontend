@@ -13,12 +13,14 @@ import {
 import React, { cloneElement, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
+import PermissionType from "../../api/PermissionType";
 import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
+import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
 import { ReportCategories } from "../ReportCategories";
@@ -26,6 +28,7 @@ import { ReportLearningSummary } from "../ReportLearningSummary";
 import ReportStudentProgress from "../ReportStudentProgress";
 import ReportStudentUsage from "../ReportStudentUsage";
 import ReportTeachingLoad from "../ReportTeachingLoad";
+
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   reportTitle: {
     height: 129,
@@ -126,6 +129,7 @@ const DiyTooltip = withStyles((theme: Theme) => ({
 export function ReportDashboard() {
   const css = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const perm = usePermission([
     PermissionType.view_reports_610,
     PermissionType.view_my_reports_614,
@@ -136,15 +140,27 @@ export function ReportDashboard() {
     PermissionType.student_progress_report_662,
   ]);
 
-  const hasPerm =
-    perm.view_reports_610 ||
-    perm.view_my_reports_614 ||
-    perm.view_my_organizations_reports_612 ||
-    (perm.view_my_school_reports_611 as boolean);
-  const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
-  const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
-  const hasStudentProgressPermission = perm.student_progress_report_662 as boolean;
-  const isPending = useMemo(() => perm.view_reports_610 === undefined, [perm.view_reports_610]);
+  const [hasPerm, hasSummaryPerm, hasStudentUsagePermission, hasStudentProgressPermission, isPending] = React.useMemo(() => {
+    const hasPerm =
+      perm.view_reports_610 ||
+      perm.view_my_reports_614 ||
+      perm.view_my_organizations_reports_612 ||
+      (perm.view_my_school_reports_611 as boolean);
+    const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
+    const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
+    const hasStudentProgressPermission = perm.student_progress_report_662 as boolean;
+    const isPending = perm.view_reports_610 === undefined;
+    return [hasPerm, hasSummaryPerm, hasStudentUsagePermission, hasStudentProgressPermission, isPending];
+  }, [perm]);
+
+  React.useEffect(() => {
+    if (Object.keys(perm).length === 0) {
+      dispatch(actSetLoading(true));
+    } else {
+      dispatch(actSetLoading(false));
+    }
+  }, [dispatch, perm]);
+
   const reportList: ReportItem[] = [
     {
       title: "report_label_student_achievement",

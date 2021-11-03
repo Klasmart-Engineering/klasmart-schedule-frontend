@@ -7,7 +7,7 @@ import {
   rectIntersection,
   TouchSensor,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import debounce from "lodash/debounce";
@@ -15,9 +15,11 @@ import React, { Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, us
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
-import { PermissionOr, PermissionType, usePermission } from "../../components/Permission";
+import { PermissionOr } from "../../components/Permission";
 import { permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import mockLessonPlan from "../../mocks/lessonPlan.json";
 import { addAllInSearchLOListOption, ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
@@ -34,7 +36,7 @@ import {
   save,
   searchAuthContentLists,
   searchContentLists,
-  searchPublishedLearningOutcomes
+  searchPublishedLearningOutcomes,
 } from "../../reducers/content";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
@@ -116,13 +118,13 @@ function ContentEditForm() {
   const { routeBasePath } = ContentEdit;
   const { includeAsset, includeH5p, readonly, includePlanComposeGraphic, includePlanComposeText } = parseRightside(rightside);
   const content_type = lesson === "material" ? ContentType.material : lesson === "assets" ? ContentType.assets : ContentType.plan;
-  const { program, developmental, subject,skills,grade, age } = watch(["program", "subject", "developmental", "skills", "grade","age"]);
+  const { program, developmental, subject, skills, grade, age } = watch(["program", "subject", "developmental", "skills", "grade", "age"]);
   const outcomeSearchDefault = {
-    program: `${program||"all"}/${subject?.length ? subject?.join(",") : "all"}`,
-    category: `${developmental?.[0] || "all"}/${skills?.length ? skills?.join(","): "all"}`,
+    program: `${program || "all"}/${subject?.length ? subject?.join(",") : "all"}`,
+    category: `${developmental?.[0] || "all"}/${skills?.length ? skills?.join(",") : "all"}`,
     grade_ids: grade,
     age_ids: age,
-  }
+  };
   const inputSource: ContentInputSourceType = watch("data.input_source");
   const teacherManualBatchLengthWatch = watch("teacher_manual_batch")?.length;
   const addedLOLength = watch("outcome_entities")?.length ?? contentDetail.outcome_entities.length;
@@ -184,10 +186,10 @@ function ContentEditForm() {
       handleSubmit(async (value: ContentDetailForm) => {
         const { outcome_entities, ...restValues } = value;
         const outcomes = outcome_entities?.map((v) => v.outcome_id as string);
-        const parent_folderLastId = parent_folder.split("/").pop() || ""
+        const parent_folderLastId = parent_folder.split("/").pop() || "";
         const input = { ...restValues, parent_folder: parent_folderLastId, content_type, outcomes };
         const contentDetail = ModelContentDetailForm.encode(input);
-        const { payload: id } = (await dispatch(save(contentDetail))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
+        const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
           if (lesson === "assets") {
             // assets 创建直接返回列表
@@ -226,52 +228,50 @@ function ContentEditForm() {
   }, [dispatch, id, history]);
 
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
-    () =>
-      ({ value = "", exactSerch = "all", isShare = "org" }) => {
-        history.replace({
-          search: setQuery(history.location.search, { searchMedia: value, isShare }),
-        });
-        const contentNameValue = exactSerch === "all" ? "" : value;
-        const nameValue = exactSerch === "all" ? value : "";
-        isShare === "badanamu" && lesson === "plan"
-          ? dispatch(
-              searchAuthContentLists({
-                metaLoading: true,
-                content_type: searchContentType,
-                name: nameValue,
-                content_name: contentNameValue,
-              })
-            )
-          : dispatch(
-              searchContentLists({
-                metaLoading: true,
-                content_type: searchContentType,
-                name: nameValue,
-                content_name: contentNameValue,
-              })
-            );
-        setMediaPage(1);
-      },
+    () => ({ value = "", exactSerch = "all", isShare = "org" }) => {
+      history.replace({
+        search: setQuery(history.location.search, { searchMedia: value, isShare }),
+      });
+      const contentNameValue = exactSerch === "all" ? "" : value;
+      const nameValue = exactSerch === "all" ? value : "";
+      isShare === "badanamu" && lesson === "plan"
+        ? dispatch(
+            searchAuthContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: nameValue,
+              content_name: contentNameValue,
+            })
+          )
+        : dispatch(
+            searchContentLists({
+              metaLoading: true,
+              content_type: searchContentType,
+              name: nameValue,
+              content_name: contentNameValue,
+            })
+          );
+      setMediaPage(1);
+    },
     [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () =>
-      ({ value = "", assumed, exactSerch="outcome_name", page = 1, ...resQuery }) => {
-        history.replace({
-          search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
-        });
-        dispatch(
-          searchPublishedLearningOutcomes({
-            exactSerch,
-            metaLoading: true,
-            search_key: value,
-            assumed: assumed ? 1 : -1,
-            page,
-            ...resQuery,
-          })
-        );
-        setOutcomePage(page);
-      },
+    () => ({ value = "", assumed, exactSerch = "outcome_name", page = 1, ...resQuery }) => {
+      history.replace({
+        search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
+      });
+      dispatch(
+        searchPublishedLearningOutcomes({
+          exactSerch,
+          metaLoading: true,
+          search_key: value,
+          assumed: assumed ? 1 : -1,
+          page,
+          ...resQuery,
+        })
+      );
+      setOutcomePage(page);
+    },
     [dispatch, history]
   );
   const handleGoBack = useCallback(() => {
@@ -459,63 +459,63 @@ function ContentEditForm() {
             PermissionType.create_content_page_201,
             PermissionType.edit_org_published_content_235,
           ]}
-          render={(value) =>
-              <Fragment>
-                <Controller
-                  name="data.input_source"
-                  defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
-                  key={allDefaultValueAndKey["data.input_source"]?.key}
-                  control={control}
-                  render={(dataInputSourceProps) => (
-                    <Fragment>
-                      <SelectH5PRadio formMethods={formMethods} disabled={!!id} {...dataInputSourceProps} />
-                      <Controller
-                        name="data.source"
-                        control={control}
-                        defaultValue={allDefaultValueAndKey["data.source"]?.value}
-                        key={allDefaultValueAndKey["data.source"]?.key}
-                        render={(dataSourceProps) =>
-                          inputSource === ContentInputSourceType.h5p || dataInputSourceProps.value === ContentInputSourceType.h5p ? (
-                            <Controller
-                              name="source_type"
-                              control={control}
-                              defaultValue={allDefaultValueAndKey["source_type"]?.value}
-                              key={allDefaultValueAndKey["source_type"]?.key}
-                              render={(sourceTypeProps) => (
-                                <ContentH5p
-                                  sub={
-                                    id
-                                      ? dataSourceProps.value === allDefaultValueAndKey["data.source"]?.value
-                                        ? H5pSub.clone
-                                        : H5pSub.view
-                                      : dataSourceProps.value
-                                      ? H5pSub.view
-                                      : H5pSub.new
-                                  }
-                                  value={dataSourceProps.value}
-                                  onChange={dataSourceProps.onChange}
-                                  onChangeSourceType={sourceTypeProps.onChange}
-                                />
-                              )}
-                            />
-                          ) : (
-                            <MediaAssetsEdit
-                              value={dataSourceProps.value}
-                              onChange={dataSourceProps.onChange}
-                              onChangeInputSource={dataInputSourceProps.onChange}
-                              readonly={false}
-                              overlay={false}
-                              contentDetail={contentDetail}
-                              disabled={id ? !contentDetail.permission.allow_edit : !value}
-                            />
-                          )
-                        }
-                      />
-                    </Fragment>
-                  )}
-                />
-              </Fragment>
-          }
+          render={(value) => (
+            <Fragment>
+              <Controller
+                name="data.input_source"
+                defaultValue={allDefaultValueAndKey["data.input_source"]?.value}
+                key={allDefaultValueAndKey["data.input_source"]?.key}
+                control={control}
+                render={(dataInputSourceProps) => (
+                  <Fragment>
+                    <SelectH5PRadio formMethods={formMethods} disabled={!!id} {...dataInputSourceProps} />
+                    <Controller
+                      name="data.source"
+                      control={control}
+                      defaultValue={allDefaultValueAndKey["data.source"]?.value}
+                      key={allDefaultValueAndKey["data.source"]?.key}
+                      render={(dataSourceProps) =>
+                        inputSource === ContentInputSourceType.h5p || dataInputSourceProps.value === ContentInputSourceType.h5p ? (
+                          <Controller
+                            name="source_type"
+                            control={control}
+                            defaultValue={allDefaultValueAndKey["source_type"]?.value}
+                            key={allDefaultValueAndKey["source_type"]?.key}
+                            render={(sourceTypeProps) => (
+                              <ContentH5p
+                                sub={
+                                  id
+                                    ? dataSourceProps.value === allDefaultValueAndKey["data.source"]?.value
+                                      ? H5pSub.clone
+                                      : H5pSub.view
+                                    : dataSourceProps.value
+                                    ? H5pSub.view
+                                    : H5pSub.new
+                                }
+                                value={dataSourceProps.value}
+                                onChange={dataSourceProps.onChange}
+                                onChangeSourceType={sourceTypeProps.onChange}
+                              />
+                            )}
+                          />
+                        ) : (
+                          <MediaAssetsEdit
+                            value={dataSourceProps.value}
+                            onChange={dataSourceProps.onChange}
+                            onChangeInputSource={dataInputSourceProps.onChange}
+                            readonly={false}
+                            overlay={false}
+                            contentDetail={contentDetail}
+                            disabled={id ? !contentDetail.permission.allow_edit : !value}
+                          />
+                        )
+                      }
+                    />
+                  </Fragment>
+                )}
+              />
+            </Fragment>
+          )}
         />
       )}
       {!includeH5p && includeAsset && (

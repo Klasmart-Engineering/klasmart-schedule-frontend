@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import { AssessmentOrderBy, AssessmentStatus, HomeFunAssessmentOrderBy, StudyAssessmentOrderBy } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { AssessmentTypeValues } from "../../components/AssessmentType";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { AppDispatch, RootState } from "../../reducers";
 import { actAssessmentList } from "../../reducers/assessments";
 import { AssessmentsEdit } from "../AssessmentEdit";

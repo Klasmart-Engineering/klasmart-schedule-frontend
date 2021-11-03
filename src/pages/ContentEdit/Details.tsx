@@ -16,7 +16,7 @@ import {
   ThemeProvider,
   Typography,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@material-ui/core";
 import { AccessTime, CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
@@ -198,25 +198,25 @@ const SuggestTime = forwardRef<HTMLDivElement, SuggestTimeProps>((props, ref) =>
   );
 });
 export const menuItemList = (list?: LinkedMockOptionsItem[]) =>
-list &&
-list.map((item) => (
-  <MenuItem key={item.id} value={item.id}>
-    {item.name}
-  </MenuItem>
-));
+  list &&
+  list.map((item) => (
+    <MenuItem key={item.id} value={item.id}>
+      {item.name}
+    </MenuItem>
+  ));
 
 const NeedTransilationMenuItemList = (list: LinkedMockOptionsItem[]) =>
-list &&
-list.map((item) => (
-  <MenuItem key={item.id} value={item.id}>
-    {t(item.name as NeedTransilationMenuItem)}
-  </MenuItem>
-));
+  list &&
+  list.map((item) => (
+    <MenuItem key={item.id} value={item.id}>
+      {t(item.name as NeedTransilationMenuItem)}
+    </MenuItem>
+  ));
 
 const rejectReasonTransilation = (reson?: string[], remark?: string) => {
-const reson_remark = reson && reson.map((item) => t(item as LangRecordId));
-if (reson_remark && remark) reson_remark.push(remark);
-return reson_remark ? reson_remark : remark && [remark];
+  const reson_remark = reson && reson.map((item) => t(item as LangRecordId));
+  if (reson_remark && remark) reson_remark.push(remark);
+  return reson_remark ? reson_remark : remark && [remark];
 };
 export interface DetailsProps {
   allDefaultValueAndKey: CreateAllDefaultValueAndKeyResult;
@@ -507,7 +507,7 @@ export default function Details(props: DetailsProps) {
                 disabled={disabled}
                 {...props}
                 onChange={(e) => {
-                  const value = (e.target.value as unknown) as string[];
+                  const value = e.target.value as unknown as string[];
                   value.length > 0 && onChangeSubject(value);
                   value.length > 0 && props.onChange(value);
                 }}
@@ -530,7 +530,7 @@ export default function Details(props: DetailsProps) {
             }}
             render={(props) => (
               <FormattedTextField
-                select 
+                select
                 error={errors.developmental ? true : false}
                 className={sm ? css.fieldset : css.halfFieldset}
                 label={d("Category").t("library_label_category")}

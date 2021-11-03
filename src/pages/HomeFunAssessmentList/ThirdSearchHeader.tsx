@@ -5,11 +5,12 @@ import FilterListOutlinedIcon from "@material-ui/icons/FilterListOutlined";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
+import PermissionType from "../../api/PermissionType";
 import { HomeFunAssessmentOrderBy, HomeFunAssessmentStatus } from "../../api/type";
 import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
 import { assessmentTypes, AssessmentTypeValues } from "../../components/AssessmentType";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { useChoosePermission, usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { HomeFunAssessmentQueryConditionBaseProps } from "./types";
 const useStyles = makeStyles((theme) => ({
@@ -94,12 +95,22 @@ export interface ThirdSearchHeaderProps extends HomeFunAssessmentQueryConditionB
 export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const completed_perm = usePermission([
+
+  const perms = usePermission([
+    PermissionType.view_completed_assessments_414,
+    PermissionType.view_org_completed_assessments_424,
+    PermissionType.view_school_in_progress_assessments_427,
+    PermissionType.view_in_progress_assessments_415,
+    PermissionType.view_org_in_progress_assessments_425,
+    PermissionType.view_school_in_progress_assessments_427,
+  ]);
+
+  const completed_perm = useChoosePermission(perms, [
     PermissionType.view_completed_assessments_414,
     PermissionType.view_org_completed_assessments_424,
     PermissionType.view_school_in_progress_assessments_427,
   ]);
-  const in_progress_perm = usePermission([
+  const in_progress_perm = useChoosePermission(perms, [
     PermissionType.view_in_progress_assessments_415,
     PermissionType.view_org_in_progress_assessments_425,
     PermissionType.view_school_in_progress_assessments_427,

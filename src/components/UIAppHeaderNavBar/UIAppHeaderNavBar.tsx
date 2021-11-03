@@ -11,9 +11,10 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import clsx from "clsx";
 import React from "react";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import imgUrl1 from "../../assets/icons/kidsloop-logo.svg";
 import { OutcomeList } from "../../pages/OutcomeList";
-import { Permission, PermissionType } from "../Permission";
+import { Permission } from "../Permission";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {

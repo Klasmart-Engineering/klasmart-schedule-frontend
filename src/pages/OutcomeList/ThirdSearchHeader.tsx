@@ -7,9 +7,11 @@ import ImportExportIcon from "@material-ui/icons/ImportExport";
 import clsx from "clsx";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
+import PermissionType from "../../api/PermissionType";
 import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
+import { Permission, PermissionResult } from "../../components/Permission/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 

@@ -282,12 +282,9 @@ export const deleteOutcome = createAsyncThunk<string, ParamDeleteLearningOutcome
 
 type publishOutcomeResponse = AsyncReturnType<typeof api.learningOutcomes.publishLearningOutcomes>;
 type publishOutcomeRequest = Parameters<typeof api.learningOutcomes.publishLearningOutcomes>[0];
-export const publishOutcome = createAsyncThunk<publishOutcomeResponse, publishOutcomeRequest>(
-  "outcome/publishOutcome",
-  async (id, ) => {
-    return api.learningOutcomes.publishLearningOutcomes(id, { scope: "" });
-  }
-);
+export const publishOutcome = createAsyncThunk<publishOutcomeResponse, publishOutcomeRequest>("outcome/publishOutcome", async (id) => {
+  return api.learningOutcomes.publishLearningOutcomes(id, { scope: "" });
+});
 
 type BulkDeleteOutcomeParams = Parameters<typeof api.bulk.deleteOutcomeBulk>[0];
 export const bulkDeleteOutcome = createAsyncThunk<string, BulkDeleteOutcomeParams["outcome_ids"]>(

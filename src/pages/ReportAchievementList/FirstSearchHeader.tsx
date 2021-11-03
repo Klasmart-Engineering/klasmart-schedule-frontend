@@ -7,8 +7,9 @@ import ShowChartIcon from "@material-ui/icons/ShowChart";
 import clsx from "clsx";
 import React from "react";
 import { apiIsEnableReport } from "../../api/extra";
+import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission } from "../../components/Permission";
 import { d, t } from "../../locale/LocaleManager";
 import { LoInCategoryBlueIcon, LoInCategoryIcon, SaBlueIcon, SaIcon } from "../OutcomeList/Icons";
 const useStyles = makeStyles((theme) => ({

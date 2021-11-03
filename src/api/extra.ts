@@ -1,13 +1,12 @@
+import { gql } from "@apollo/client";
 import Cookies from "js-cookie";
 import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
-import api from ".";
+import api, { gqlapi } from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
-import { QeuryMeQuery } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
-import premissionAll from "./permission_quote.json";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
@@ -219,41 +218,32 @@ export function domainSwitch() {
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
-export async function apiGetPermission(): Promise<QeuryMeQuery> {
-  const premissions = Object.keys(premissionAll);
-  // const organization_id = apiOrganizationOfPage() || "";
-  // const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-  //   query: QeuryMeDocument,
-  //   variables: {
-  //     organization_id,
-  //   },
-  // });
-  // const myUserId = meInfo.me?.user_id;
-  // const res = sessionStorage.getItem(`${PERMISSION_KEY}${organization_id}${myUserId}`);
-  // if(res){
-  //   return JSON.parse(res || "");
-  // }else {
-  const permission = await api.organizationPermissions.hasOrganizationPermissions({
-    permission_name: premissions,
-  });
-  let returnData: NonNullable<QeuryMeQuery> = {
-    me: {
-      user_id: "",
-      membership: {
-        roles: [
-          {
-            permissions: [],
-          },
-        ],
-      },
-    },
-  };
-  Object.keys(permission).forEach((permissionName) => {
-    if (returnData?.me?.membership?.roles?.length && permission[permissionName]) {
-      returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
-    }
-  });
-  // sessionStorage.setItem(`${PERMISSION_KEY}${organization_id}${myUserId}`, JSON.stringify(returnData));
-  return returnData;
-  // }
+
+export async function apiGetPartPermission(
+  permissions: string[]
+): Promise<{
+  [key: string]: boolean;
+}> {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const fragmentStr = permissions
+    .map((permission) => {
+      return `${permission}: checkAllowed(permission_name: "${permission}")`;
+    })
+    .join(",");
+
+  return await gqlapi
+    .query({
+      query: gql`
+      query{
+        me{
+          membership(organization_id: "${organization_id}"){
+            ${fragmentStr}
+          }
+        }
+      }
+    `,
+    })
+    .then((resp) => {
+      return resp.data?.me?.membership || {};
+    });
 }

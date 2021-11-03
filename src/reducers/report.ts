@@ -45,7 +45,7 @@ import {
   StudentsByOrganizationQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables
+  TeacherByOrgIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityAssignmentCompletionRate,
@@ -77,11 +77,11 @@ import {
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
   // EntityStudentsPerformanceH5PReportItem,
-  EntityTeacherReportCategory
+  EntityTeacherReportCategory,
 } from "../api/api.auto";
-import { apiGetPermission, apiWaitForOrganizationOfPage } from "../api/extra";
+import { apiWaitForOrganizationOfPage } from "../api/extra";
+import PermissionType from "../api/PermissionType";
 import { IParamQueryRemainFilter } from "../api/type";
-import { hasPermissionOfMe, PermissionType } from "../components/Permission";
 import { d } from "../locale/LocaleManager";
 import {
   formatTimeToMonDay,
@@ -91,7 +91,7 @@ import {
   getLearnOutcomeAchievementFeedback,
   getTimeOffSecond,
   ModelReport,
-  sortByStudentName
+  sortByStudentName,
 } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
 import { IWeeks } from "../pages/ReportLearningSummary";
@@ -101,8 +101,9 @@ import {
   QueryLearningSummaryTimeFilterCondition,
   ReportType,
   TimeFilter,
-  UserType
+  UserType,
 } from "../pages/ReportLearningSummary/types";
+import permissionCache, { ICacheData } from "../services/permissionCahceService";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 
 interface IreportState {
@@ -341,11 +342,17 @@ export const getLessonPlan = createAsyncThunk<
  */
 
 export const getSchoolsByOrg = createAsyncThunk<
-  [ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<SchoolsByOrganizationQuery>],
+  [ICacheData, ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<SchoolsByOrganizationQuery>],
   LoadingMetaPayload
 >("getSchoolsByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.student_usage_report_657,
+      PermissionType.report_organization_student_usage_654,
+      PermissionType.report_school_student_usage_655,
+      PermissionType.report_teacher_student_usage_656,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -362,11 +369,17 @@ export const getSchoolsByOrg = createAsyncThunk<
 });
 
 export const getStudentsByOrg = createAsyncThunk<
-  [ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<StudentsByOrganizationQuery>],
+  [ICacheData, ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<StudentsByOrganizationQuery>],
   LoadingMetaPayload
 >("getStudentsByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_learning_summary_org_652,
+      PermissionType.report_learning_summary_school_651,
+      PermissionType.report_learning_summary_teacher_650,
+      PermissionType.report_learning_summary_student_649,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -389,6 +402,7 @@ export const getStudentsByOrg = createAsyncThunk<
 
 export const getTeachersByOrg = createAsyncThunk<
   [
+    ICacheData,
     ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
@@ -398,6 +412,11 @@ export const getTeachersByOrg = createAsyncThunk<
 >("getTeachersByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_organization_teaching_load_617,
+      PermissionType.report_school_teaching_load_618,
+      PermissionType.report_my_teaching_load_619,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -433,6 +452,7 @@ export const getTeachersByOrg = createAsyncThunk<
 
 export const getStudentSubjectsByOrg = createAsyncThunk<
   [
+    ICacheData,
     ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
@@ -443,6 +463,12 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
 >("getStudentSubjectsByOrg", async ({ metaLoading }) => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_student_progress_organization_658,
+      PermissionType.report_student_progress_school_659,
+      PermissionType.report_student_progress_teacher_660,
+      PermissionType.report_student_progress_student_661,
+    ]),
     gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
       query: MyPermissionsAndClassesTeachingQueryDocument,
       variables: {
@@ -584,17 +610,15 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
         organization_id,
       },
     });
-    const meInfoPerm = await apiGetPermission();
     const myTearchId = meInfo.me?.user_id || "";
-    const perm = hasPermissionOfMe(
-      [
-        PermissionType.view_my_reports_614,
-        PermissionType.view_reports_610,
-        PermissionType.view_my_organizations_reports_612,
-        PermissionType.view_my_school_reports_611,
-      ],
-      meInfoPerm.me
-    );
+
+    const perm = await permissionCache.usePermission([
+      PermissionType.view_my_reports_614,
+      PermissionType.view_reports_610,
+      PermissionType.view_my_organizations_reports_612,
+      PermissionType.view_my_school_reports_611,
+    ]);
+
     // const perm = await api.organizationPermissions.hasOrganizationPermissions({
     //   permission_name: premissionAll,
     // })
@@ -614,9 +638,11 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
             organization_id,
           },
         });
-        data.organization?.classes?.filter(item => item?.status === Status.Active)?.forEach((classItem) => {
-          teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-        });
+        data.organization?.classes
+          ?.filter((item) => item?.status === Status.Active)
+          ?.forEach((classItem) => {
+            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+          });
       }
       // 2 如果有查看自己学校的report的权限或者查看所有report的权限
       //    teacherList => 通过我的user_id 获取我所在的所有学校 => 过滤出当前组织的学校 => 遍历出所有的teacher
@@ -657,7 +683,12 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
       },
     });
 
-    const classList = result.user && (result.user.membership?.classesTeaching?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "class_name">[]);
+    const classList =
+      result.user &&
+      (result.user.membership?.classesTeaching?.filter((item) => item?.status === Status.Active) as Pick<
+        Class,
+        "class_id" | "class_name"
+      >[]);
     const firstClassId = classList && classList[0]?.class_id;
     const finalClassId = class_id ? class_id : firstClassId;
     //获取plan_id
@@ -713,16 +744,14 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
         organization_id,
       },
     });
-    const meInfoPerm = await apiGetPermission();
-    const perm = hasPermissionOfMe(
-      [
-        PermissionType.view_my_reports_614,
-        PermissionType.view_reports_610,
-        PermissionType.view_my_school_reports_611,
-        PermissionType.view_my_organizations_reports_612,
-      ],
-      meInfoPerm.me
-    );
+
+    const perm = await permissionCache.usePermission([
+      PermissionType.view_my_reports_614,
+      PermissionType.view_reports_610,
+      PermissionType.view_my_school_reports_611,
+      PermissionType.view_my_organizations_reports_612,
+    ]);
+
     const my_id = meInfo?.me?.user_id || "";
 
     if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
@@ -734,9 +763,11 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
             organization_id,
           },
         });
-        data.organization?.classes?.filter(item => item?.status === Status.Active).forEach((classItem) => {
-          teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-        });
+        data.organization?.classes
+          ?.filter((item) => item?.status === Status.Active)
+          .forEach((classItem) => {
+            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+          });
       }
       if (perm.view_my_school_reports_611 || perm.view_reports_610) {
         const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
@@ -748,9 +779,9 @@ export const reportCategoriesOnload = createAsyncThunk<ReportCategoriesPayLoadRe
         data.user?.school_memberships
           ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
           .map((schoolItem) =>
-            schoolItem?.school?.classes?.filter(item => item?.status === Status.Active)?.forEach(
-              (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
-            )
+            schoolItem?.school?.classes
+              ?.filter((item) => item?.status === Status.Active)
+              ?.forEach((classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[])))
           );
       }
       teacherList = ModelReport.teacherListSetDiff(teacherList);
@@ -933,16 +964,12 @@ export const onLoadLearningSummary = createAsyncThunk<
     },
   });
   const myUserId = meInfo.me?.user_id;
-
-  const perm = hasPermissionOfMe(
-    [
-      PermissionType.report_learning_summary_org_652,
-      PermissionType.report_learning_summary_school_651,
-      PermissionType.report_learning_summary_teacher_650,
-      PermissionType.report_learning_summary_student_649,
-    ],
-    meInfo.me
-  );
+  const perm = await permissionCache.usePermission([
+    PermissionType.report_learning_summary_org_652,
+    PermissionType.report_learning_summary_school_651,
+    PermissionType.report_learning_summary_teacher_650,
+    PermissionType.report_learning_summary_student_649,
+  ]);
   const isOrg = perm.report_learning_summary_org_652;
   const isSchool = perm.report_learning_summary_school_651;
   const isTeacher = perm.report_learning_summary_teacher_650;
@@ -989,15 +1016,20 @@ export const onLoadLearningSummary = createAsyncThunk<
     _school_id = school_id ? school_id : "all";
     const school = learningSummary.schools.find((item) => item.id === _school_id);
     const _classes =
-      school?.classes?.filter(item=> item?.status === Status.Active).map((item) => ({
-        id: item.id,
-        name: item.name,
-      })) || [];
+      school?.classes
+        ?.filter((item) => item?.status === Status.Active)
+        .map((item) => ({
+          id: item.id,
+          name: item.name,
+        })) || [];
 
     classes = uniqBy(_classes, "id");
     _class_id = class_id ? class_id : "all";
     students =
-      learningSummary.schools.find((item) => item.id === _school_id)?.classes?.filter(item=> item?.status === Status.Active).find((item) => item.id === _class_id)?.students || [];
+      learningSummary.schools
+        .find((item) => item.id === _school_id)
+        ?.classes?.filter((item) => item?.status === Status.Active)
+        .find((item) => item.id === _class_id)?.students || [];
     students = uniqBy(students, "id");
     students = students.slice().sort(sortByStudentName("name"));
     _student_id = students.length ? (student_id ? student_id : students[0].id) : "none";
@@ -1011,13 +1043,13 @@ export const onLoadLearningSummary = createAsyncThunk<
     },
   });
   const list = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
-    query: GetProgramsAndSubjectsDocument,   
+    query: GetProgramsAndSubjectsDocument,
     variables: {
       organization_id,
     },
   });
-  const _subjects = data.data.organization?.subjects?.filter(item => item?.status === Status.Active) || [];
-  const programs = list.data.organization?.programs?.filter(item => item?.status === Status.Active) || [];
+  const _subjects = data.data.organization?.subjects?.filter((item) => item?.status === Status.Active) || [];
+  const programs = list.data.organization?.programs?.filter((item) => item?.status === Status.Active) || [];
   subjects = _subjects?.map((item) => {
     const name = programs.find((item2) => item2.subjects?.some((val) => item.id === val.id))?.name + " - " + item.name;
     return {
@@ -1081,13 +1113,18 @@ export const getAfterClassFilter = createAsyncThunk<
     report: { learningSummary, summaryReportOptions },
   } = getState();
   if (filter_type === "class") {
-    classes = learningSummary.schools.find((item) => item.id === school_id)?.classes?.filter(item => item?.status === Status.Active) || [];
+    classes =
+      learningSummary.schools.find((item) => item.id === school_id)?.classes?.filter((item) => item?.status === Status.Active) || [];
     classes = uniqBy(classes, "id");
     _class_id = classes.length ? classes[0].id : "none";
   }
   _class_id = class_id ? class_id : _class_id;
   if (filter_type === "class" || filter_type === "student") {
-    students = learningSummary.schools.find((item) => item.id === school_id)?.classes?.filter(item => item?.status === Status.Active).find((item) => item.id === _class_id)?.students || [];
+    students =
+      learningSummary.schools
+        .find((item) => item.id === school_id)
+        ?.classes?.filter((item) => item?.status === Status.Active)
+        .find((item) => item.id === _class_id)?.students || [];
     students = uniqBy(students, "id");
     students = students.slice().sort(sortByStudentName("name"));
     _student_id = students.length ? students[0].id : "none";
@@ -1280,7 +1317,9 @@ const { actions, reducer } = createSlice({
 
     [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassList>>) => {
       state.reportMockOptions.classList = (
-        payload.user && payload.user.membership?.classesTeaching ? payload.user.membership?.classesTeaching.filter(item => item?.status === Status.Active) : undefined
+        payload.user && payload.user.membership?.classesTeaching
+          ? payload.user.membership?.classesTeaching.filter((item) => item?.status === Status.Active)
+          : undefined
       ) as Pick<Class, "class_id" | "class_name">[];
 
       state.reportMockOptions.class_id = (
@@ -1291,10 +1330,12 @@ const { actions, reducer } = createSlice({
       // alert(JSON.stringify(error));
     },
     [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentsByOrg>>) => {
-      const classes = payload[1].data.organization?.classes?.filter(item => item?.status === Status.Active) as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name" | "status">[];
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const membership = payload[0].data.me?.membership;
+      const classes = payload[2].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+        Class,
+        "class_id" | "class_name" | "schools" | "students"
+      >[];
+      const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const membership = payload[1].data.me?.membership;
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
@@ -1306,15 +1347,7 @@ const { actions, reducer } = createSlice({
           .map((item) => {
             return item?.class_id;
           }) || [];
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.report_learning_summary_org_652,
-          PermissionType.report_learning_summary_school_651,
-          PermissionType.report_learning_summary_teacher_650,
-          PermissionType.report_learning_summary_student_649,
-        ],
-        myPermissionsAndClassesTeaching
-      );
+      const permissions = payload[0];
       if (permissions[PermissionType.report_learning_summary_org_652]) {
         state.learningSummary.schoolList = schools;
         state.learningSummary.noneSchoolClasses = noneSchoolClasses;
@@ -1346,13 +1379,12 @@ const { actions, reducer } = createSlice({
       }
     },
     [getSchoolsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
-      const classes = payload[1].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+      const classes = payload[2].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
         Class,
         "class_id" | "class_name" | "schools" | "status"
       >[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name" | "status">[];
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const membership = payload[0].data.me?.membership;
+      const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name" | "status">[];
+      const membership = payload[1].data.me?.membership;
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
@@ -1364,15 +1396,7 @@ const { actions, reducer } = createSlice({
           .map((item) => {
             return item?.class_id;
           }) || [];
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.student_usage_report_657,
-          PermissionType.report_organization_student_usage_654,
-          PermissionType.report_school_student_usage_655,
-          PermissionType.report_teacher_student_usage_656,
-        ],
-        myPermissionsAndClassesTeaching
-      );
+      const permissions = payload[0];
       state.studentUsage.organization_id = membership?.organization_id || "";
       if (permissions[PermissionType.report_organization_student_usage_654]) {
         state.studentUsage.schoolList = schools;
@@ -1403,28 +1427,19 @@ const { actions, reducer } = createSlice({
     },
 
     [getTeachersByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersByOrg>>) => {
-      const classesSchools = payload[1].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+      const classesSchools = payload[2].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
         Class,
         "class_id" | "class_name" | "schools"
       >[];
-      const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      const classesTeachers = payload[3].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+      const schools = payload[3].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const classesTeachers = payload[4].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
         Class,
         "class_id" | "teachers"
       >[];
+      const myId = payload[1].data.me?.user_id;
+      const permissions = payload[0];
 
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const myId = payload[0].data.me?.user_id;
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.report_organization_teaching_load_617,
-          PermissionType.report_school_teaching_load_618,
-          PermissionType.report_my_teaching_load_619,
-        ],
-        myPermissionsAndClassesTeaching
-      );
-
-      const membership = payload[0].data.me?.membership;
+      const membership = payload[1].data.me?.membership;
       //const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
@@ -1504,21 +1519,23 @@ const { actions, reducer } = createSlice({
     },
 
     [getStudentSubjectsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentSubjectsByOrg>>) => {
-      let classesSchools = payload[1].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+      let classesSchools = payload[2].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
         Class,
         "class_id" | "class_name" | "schools"
       >[];
-      let schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      let classesStudents = payload[3].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
+      let schools = payload[3].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      let classesStudents = payload[4].data.organization?.classes?.filter((item) => item?.status === Status.Active) as Pick<
         Class,
         "class_id" | "students"
       >[];
-      let programs = payload[4].data.organization?.programs?.filter(item => item?.status === Status.Active) as Pick<Program, "id" | "name" | "subjects">[];
+      let programs = payload[5].data.organization?.programs?.filter((item) => item?.status === Status.Active) as Pick<
+        Program,
+        "id" | "name" | "subjects"
+      >[];
 
-      const myPermissionsAndClassesTeaching = payload[0].data.me;
-      const membership = payload[0].data.me?.membership;
+      const membership = payload[1].data.me?.membership;
 
-      const myId = payload[0].data.me?.user_id;
+      const myId = payload[1].data.me?.user_id;
       const schoolIDs =
         membership?.schoolMemberships?.map((item) => {
           return item?.school_id;
@@ -1529,15 +1546,7 @@ const { actions, reducer } = createSlice({
           .map((item) => {
             return item?.class_id;
           }) || [];
-      const permissions = hasPermissionOfMe(
-        [
-          PermissionType.report_student_progress_organization_658,
-          PermissionType.report_student_progress_school_659,
-          PermissionType.report_student_progress_teacher_660,
-          PermissionType.report_student_progress_student_661,
-        ],
-        myPermissionsAndClassesTeaching
-      );
+      const permissions = payload[0];
 
       let canSelectStudent = true;
       if (permissions["report_student_progress_organization_658"]) {

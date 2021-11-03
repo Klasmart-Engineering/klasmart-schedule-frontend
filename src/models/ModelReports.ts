@@ -4,7 +4,7 @@ import { Class, School, Status, User } from "../api/api-ko-schema.auto";
 import {
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityReportListTeachingLoadItem,
-  EntityStudentAchievementReportCategoryItem
+  EntityStudentAchievementReportCategoryItem,
 } from "../api/api.auto";
 import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarStackChart";
 import { d, t } from "../locale/LocaleManager";
@@ -288,7 +288,10 @@ export function getAllUsers(
   freedomClass.forEach((item) => {
     noSchoolAllStudents = [...noSchoolAllStudents, ...item.students];
   });
-  freedomClass = [{ id: "all", name: d("All").t("report_label_all"), students: [...noSchoolAllStudents], status:Status.Active }, ...freedomClass];
+  freedomClass = [
+    { id: "all", name: d("All").t("report_label_all"), students: [...noSchoolAllStudents], status: Status.Active },
+    ...freedomClass,
+  ];
   // 所有学校
   const allSchools = schools.map((item) => ({
     id: item.school_id!,
@@ -318,14 +321,14 @@ export function getAllUsers(
     allStudents = [...allStudents, ...item.students];
   });
   // allStudents = allStudents.slice().sort(sortByStudentName("name"));
-  allClasses.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...allStudents],  status:Status.Active });
+  allClasses.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...allStudents], status: Status.Active });
   // 给每个学校的班级添加all选项
   allSchools.forEach((item) => {
     let curAllStudent: UserType["classes"][0]["students"] = [];
     item.classes.forEach((item) => {
       curAllStudent = [...curAllStudent, ...item.students];
     });
-    item.classes.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...curAllStudent], status:Status.Active });
+    item.classes.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...curAllStudent], status: Status.Active });
   });
   allSchools.unshift({ id: "all", name: d("All").t("report_label_all"), classes: [...allClasses] });
   if (!isSchool) {

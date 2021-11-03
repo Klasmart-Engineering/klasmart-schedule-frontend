@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { PermissionType, usePermission } from "../../components/Permission";
+import PermissionType from "../../api/PermissionType";
 import { emptyTip, permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { t } from "../../locale/LocaleManager";
 import { toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";

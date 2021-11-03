@@ -7,9 +7,11 @@ import ImportExportIcon from "@material-ui/icons/ImportExport";
 import clsx from "clsx";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
+import PermissionType from "../../api/PermissionType";
 import { MilestoneOrderBy, MilestoneStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionOr, PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
+import { Permission, PermissionOr, PermissionResult } from "../../components/Permission/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { MilestoneQueryCondition, MilestoneQueryConditionBaseProps } from "./types";
 
