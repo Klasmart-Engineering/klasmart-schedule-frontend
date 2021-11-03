@@ -4,12 +4,14 @@ import permissionCache, { ICacheData } from "../services/permissionCahceService"
 
 function usePermission(perms: PermissionType[]) {
   const [state, setState] = React.useState<ICacheData>({});
+
   React.useEffect(() => {
     (async () => {
       const permsData = await permissionCache.usePermission(perms);
       setState(permsData);
     })();
-  }, [perms]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return state;
 }
