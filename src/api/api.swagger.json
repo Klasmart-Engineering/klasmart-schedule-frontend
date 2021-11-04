@@ -851,72 +851,6 @@
         }
       }
     },
-    "/class_types": {
-      "get": {
-        "description": "get class type",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["classType"],
-        "summary": "getClassType",
-        "operationId": "getClassType",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.ClassType"
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/class_types/{id}": {
-      "get": {
-        "description": "get classType by id",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["classType"],
-        "summary": "getClassTypeByID",
-        "operationId": "getClassTypeByID",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "classType id",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/entity.ClassType"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/api.NotFoundResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/classes_members": {
       "post": {
         "description": "add members to class",
@@ -1121,47 +1055,6 @@
         "tags": ["content"],
         "summary": "createContent",
         "operationId": "createContent",
-        "parameters": [
-          {
-            "description": "create request",
-            "name": "content",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/entity.CreateContentRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/api.CreateContentResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/api.BadRequestResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/contents/copy": {
-      "post": {
-        "description": "copy lesson plan, lesson material",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["content"],
-        "summary": "copyContent",
-        "operationId": "copyContent",
         "parameters": [
           {
             "description": "create request",
@@ -7197,33 +7090,6 @@
         }
       }
     },
-    "/schedules_filter/class_types": {
-      "get": {
-        "description": "get schedule filter classTypes",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["schedule"],
-        "summary": "get schedule filter classTypes",
-        "operationId": "getClassTypesInScheduleFilter",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/entity.ScheduleShortInfo"
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/api.InternalServerErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/schedules_filter/classes": {
       "get": {
         "description": "get schedule filter classes",
@@ -7737,7 +7603,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.ScheduleTimeViewQuery"
+              "$ref": "#/definitions/entity.ScheduleTimeViewListRequest"
             }
           }
         ],
@@ -7745,7 +7611,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ScheduleTimeView"
+              "$ref": "#/definitions/entity.ScheduleTimeViewListResponse"
             }
           },
           "400": {
@@ -10042,38 +9908,6 @@
         }
       }
     },
-    "entity.ClassType": {
-      "type": "object",
-      "properties": {
-        "createAt": {
-          "type": "integer"
-        },
-        "createID": {
-          "type": "string"
-        },
-        "deleteAt": {
-          "type": "integer"
-        },
-        "deleteID": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "number": {
-          "type": "integer"
-        },
-        "updateAt": {
-          "type": "integer"
-        },
-        "updateID": {
-          "type": "string"
-        }
-      }
-    },
     "entity.ClassUsage": {
       "type": "object",
       "properties": {
@@ -11719,6 +11553,9 @@
         "publish_status": {
           "type": "string"
         },
+        "suggest_time": {
+          "type": "integer"
+        },
         "thumbnail": {
           "type": "string"
         }
@@ -12566,6 +12403,9 @@
     "entity.ScheduleTimeView": {
       "type": "object",
       "properties": {
+        "assessment_status": {
+          "type": "string"
+        },
         "class_id": {
           "type": "string"
         },
@@ -12582,6 +12422,15 @@
         "id": {
           "type": "string"
         },
+        "is_home_fun": {
+          "type": "boolean"
+        },
+        "is_repeat": {
+          "type": "boolean"
+        },
+        "lesson_plan_id": {
+          "type": "string"
+        },
         "start_at": {
           "type": "integer"
         },
@@ -12591,6 +12440,94 @@
         },
         "title": {
           "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleTimeViewListRequest": {
+      "type": "object",
+      "properties": {
+        "anytime": {
+          "type": "boolean"
+        },
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "due_at_eq": {
+          "type": "integer"
+        },
+        "end_at_le": {
+          "type": "integer"
+        },
+        "order_by": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "program_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "school_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start_at_ge": {
+          "type": "integer"
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_at": {
+          "type": "integer"
+        },
+        "time_zone_offset": {
+          "type": "integer"
+        },
+        "view_type": {
+          "type": "string"
+        },
+        "with_assessment_status": {
+          "type": "boolean"
+        }
+      }
+    },
+    "entity.ScheduleTimeViewListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleTimeView"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
