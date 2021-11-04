@@ -128,13 +128,12 @@ function Tool(props: ToolProps) {
                       <Button
                         variant="contained"
                         color="primary"
-                        className={css.searchBtn}
-                        startIcon={<SearchOutlined />}
+                        className={css.btnRadio}
                         onClick={() => {
-                          toolRouter("search");
+                          toolRouter("create");
                         }}
                       >
-                        {d("Search").t("schedule_button_search")}
+                        {d("Schedule Class").t("schedue_button_schedule_class")}
                       </Button>
                     )
                   }
@@ -180,31 +179,32 @@ function Tool(props: ToolProps) {
                 }
               />
             </Grid>
+
+            <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
+              {!includeList && (
+                <FormControl className={css.selectControl}>
+                  <NativeSelect
+                    id="demo-customized-select-native"
+                    value={modelYear ? "year" : modelView}
+                    onChange={changeModelView}
+                    input={<BootstrapInput />}
+                  >
+                    <option value="work_week">{d("Workweek").t("schedule_option_workweek")}</option>
+                    <option value="day">{d("Day").t("schedule_option_day")}</option>
+                    <option value="week">{d("Week").t("schedule_option_week")}</option>
+                    <option value="month">{d("Month").t("schedule_detail_month")}</option>
+                    <option value="year">{d("Year").t("schedule_detail_year")}</option>
+                  </NativeSelect>
+                </FormControl>
+              )}
+              {!includeList && (
+                <Button size="large" variant="outlined" color="primary" style={{ margin: "0 12px 0 16px" }} onClick={selectToday}>
+                  {d("Today").t("schedule_button_today")}
+                </Button>
+              )}
+            </Grid>
           </>
         </PermissionsWrapper>
-        <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
-          {!includeList && (
-            <FormControl className={css.selectControl}>
-              <NativeSelect
-                id="demo-customized-select-native"
-                value={modelYear ? "year" : modelView}
-                onChange={changeModelView}
-                input={<BootstrapInput />}
-              >
-                <option value="work_week">{d("Workweek").t("schedule_option_workweek")}</option>
-                <option value="day">{d("Day").t("schedule_option_day")}</option>
-                <option value="week">{d("Week").t("schedule_option_week")}</option>
-                <option value="month">{d("Month").t("schedule_detail_month")}</option>
-                <option value="year">{d("Year").t("schedule_detail_year")}</option>
-              </NativeSelect>
-            </FormControl>
-          )}
-          {!includeList && (
-            <Button size="large" variant="outlined" color="primary" style={{ margin: "0 12px 0 16px" }} onClick={selectToday}>
-              {d("Today").t("schedule_button_today")}
-            </Button>
-          )}
-        </Grid>
       </Grid>
     </Box>
   );
