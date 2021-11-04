@@ -66,7 +66,7 @@ export function ReportAchievementList() {
 
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
-      const { payload: data } = ((await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown) as PayloadAction<
+      const { payload: data } = (await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
       if (data) {
@@ -87,6 +87,16 @@ export function ReportAchievementList() {
         history.push({
           search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
         });
+        dispatch(
+          reportOnload({
+            teacher_id: value,
+            class_id: "",
+            lesson_plan_id: "",
+            status: condition.status,
+            sort_by: condition.sort_by,
+            metaLoading: true,
+          })
+        );
       }
       if (tab === "class_id") {
         getFirstLessonPlanId(condition.teacher_id, value);
@@ -104,7 +114,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id]
+    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id, condition.status, condition.sort_by]
   );
   useEffect(() => {
     dispatch(
@@ -119,7 +129,7 @@ export function ReportAchievementList() {
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.teacher_id, condition.sort_by, condition.status, dispatch]);
+  }, [condition.sort_by, condition.status, dispatch]);
 
   useEffect(() => {
     if (reportMockOptions) {

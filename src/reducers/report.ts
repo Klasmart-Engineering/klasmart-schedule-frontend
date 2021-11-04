@@ -1618,6 +1618,7 @@ const { actions, reducer } = createSlice({
     },
 
     [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
+      if (!payload) return;
       state.reportMockOptions.lessonPlanList = payload;
       state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
       state.stuReportMockOptions.lessonPlanList = payload;

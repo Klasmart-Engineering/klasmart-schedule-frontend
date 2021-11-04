@@ -37,14 +37,11 @@ import {
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
+  getScheduleTimeViewDataByYear,
   getScheduleUserId,
   getScheduleViewInfo,
-  getSchoolByOrg,
-  getSchoolByUser,
-  getSchoolInfo,
   getSchoolsFilterList,
   getSubjectByProgramId,
-  ScheduleClassTypesFilter,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   searchAuthContentLists,
@@ -82,7 +79,7 @@ interface ParamTypes {
 function ScheduleContent() {
   const { model, rightside } = useParams<ParamTypes>();
   const { includeTable, includeList } = parseRightside(rightside);
-  const { includePreview } = parseModel(model);
+  const { includePreview, includeEdit } = parseModel(model);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const {
     mockOptions,
@@ -115,6 +112,7 @@ function ScheduleContent() {
   const [stateOnlyMine, setStateOnlyMine] = React.useState<string[]>([]);
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
   const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
+  const [stateFlag, setStateFlag] = React.useState<boolean>(true);
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -312,6 +310,33 @@ function ScheduleContent() {
   };
 
   React.useEffect(() => {
+    if (includeEdit && stateFlag) {
+      // get content
+      if (privilegedMembers("Student") !== undefined && !privilegedMembers("Student")) {
+        dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
+        dispatch(getContentsAuthed({ content_type: "2", page_size: 0 }));
+        dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 0, order_by: "create_at" }));
+        dispatch(searchAuthContentLists({ metaLoading: true, program_group: "More Featured Content", page_size: 0, content_type: "2" }));
+      }
+      // get class by role
+      if (privilegedMembers("Admin")) {
+        dispatch(getClassesByOrg());
+      } else if (privilegedMembers("School")) {
+        dispatch(getClassesBySchool());
+      } else if (privilegedMembers("Teacher")) {
+        dispatch(getClassesByTeacher());
+      } else if (privilegedMembers("Student")) {
+        dispatch(getClassesByStudent());
+      }
+      // get material
+      dispatch(getScheduleMockOptions({}));
+      dispatch(getLinkedMockOptions({ metaLoading: true }));
+      dispatch(getParticipantsData(isAdmin as boolean));
+      setStateFlag(false);
+    }
+  }, [includeEdit, privilegedMembers, stateFlag, isAdmin, dispatch]);
+
+  React.useEffect(() => {
     dispatch(
       getScheduleTimeViewData({
         view_type: modelView,
@@ -322,13 +347,18 @@ function ScheduleContent() {
     );
   }, [modelView, timesTamp, stateOnlyMine, dispatch]);
 
-  /*  const initialization_assembly_filter_data = useMemo(() => {
-    return modelSchedule.SetInitializationAssemblyFilterParameter(schoolByOrgOrUserData, filterOption.others);
-  }, [filterOption, schoolByOrgOrUserData]);*/
-
-  /*  React.useEffect(() => {
-    if (initialization_assembly_filter_data.length) setStateOnlyMine(initialization_assembly_filter_data);
-  }, [initialization_assembly_filter_data]);*/
+  React.useEffect(() => {
+    if (modelYear)
+      dispatch(
+        getScheduleTimeViewDataByYear({
+          view_type: "year",
+          time_at: timesTamp.start,
+          time_zone_offset: -new Date().getTimezoneOffset() * 60,
+          ...modelSchedule.AssemblyFilterParameter(stateOnlyMine),
+          metaLoading: true,
+        })
+      );
+  }, [modelYear, timesTamp, stateOnlyMine, dispatch]);
 
   React.useEffect(() => {
     if (scheduleId && scheduleDetial.id) setIsHidden(scheduleDetial.is_hidden as boolean);
@@ -339,21 +369,9 @@ function ScheduleContent() {
   }, [timesTamp]);
 
   React.useEffect(() => {
-    dispatch(getScheduleMockOptions({}));
-    dispatch(getSchoolInfo());
-    dispatch(ScheduleClassTypesFilter());
+    dispatch(getScheduleUserId());
     dispatch(ScheduleFilterPrograms());
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
-    dispatch(getScheduleUserId());
-    dispatch(getLinkedMockOptions({ metaLoading: true }));
-    dispatch(
-      searchAuthContentLists({
-        metaLoading: true,
-        program_group: "More Featured Content",
-        page_size: 0,
-        content_type: "2",
-      })
-    );
     dispatch(
       getSchoolsFilterList({
         filter: { status: { operator: StringOperator.Eq, value: "active" } },
@@ -365,33 +383,6 @@ function ScheduleContent() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(getParticipantsData(isAdmin as boolean));
-  }, [dispatch, isAdmin]);
-
-  React.useEffect(() => {
-    if (privilegedMembers("Admin")) {
-      dispatch(getClassesByOrg());
-      dispatch(getSchoolByOrg());
-      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
-    } else if (privilegedMembers("School")) {
-      dispatch(getClassesBySchool());
-      dispatch(getSchoolByUser());
-      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
-    } else if (privilegedMembers("Teacher")) {
-      dispatch(getClassesByTeacher());
-      dispatch(getSchoolByUser());
-      dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
-    } else if (privilegedMembers("Student")) {
-      dispatch(getClassesByStudent());
-      dispatch(getSchoolByUser());
-    }
-  }, [dispatch, privilegedMembers]);
-
-  React.useEffect(() => {
-    if (privilegedMembers("Admin") || privilegedMembers("School") || privilegedMembers("Teacher")) {
-      dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 0, order_by: "create_at" }));
-    }
-    dispatch(getContentsAuthed({ content_type: "2", page_size: 0 }));
     if (scheduleId) {
       dispatch(getScheduleInfo(scheduleId));
       setStateMaterialArr([]);
@@ -408,7 +399,7 @@ function ScheduleContent() {
       buttons: [],
       handleClose: () => {},
     });
-  }, [scheduleId, setModalDate, privilegedMembers, dispatch]);
+  }, [scheduleId, setModalDate, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
   return (

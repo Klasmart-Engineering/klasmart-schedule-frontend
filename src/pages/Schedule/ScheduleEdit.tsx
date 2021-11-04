@@ -324,7 +324,7 @@ function SmallCalendar(props: CalendarStateProps) {
   return (
     <Box className={css.smallCalendarBox}>
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
-        <Grid container justify="space-around">
+        <Grid container justifyContent="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
         <ScheduleFilter
@@ -396,9 +396,7 @@ function EditBox(props: CalendarStateProps) {
     stateMaterialArr,
     viewSubjectPermission,
   } = props;
-  const { contentsAuthList, classOptions, mySchoolId, outcomeListInit } = useSelector<RootState, RootState["schedule"]>(
-    (state) => state.schedule
-  );
+  const { contentsAuthList, classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -1251,12 +1249,7 @@ function EditBox(props: CalendarStateProps) {
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
     // will class roster data remove in ParticipantsData
-    const participantsFilterData = modelSchedule.FilterParticipants(
-      ParticipantsData,
-      participantMockOptions.participantList,
-      perm.create_event_520 as boolean,
-      mySchoolId
-    );
+    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantMockOptions.participantList);
     changeModalDate({
       openStatus: true,
       enableCustomization: true,
@@ -1799,7 +1792,7 @@ function EditBox(props: CalendarStateProps) {
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
         <Box>
-          <Grid container justify="space-between" alignItems="center">
+          <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={6}>
               <Close
                 style={{
@@ -1874,7 +1867,7 @@ function EditBox(props: CalendarStateProps) {
         {scheduleList.class_type !== "Homework" && (
           <Box>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Grid container justify="space-between" alignItems="center">
+              <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item xs={12}>
                   <TextField
                     id="datetime-local"
@@ -1933,7 +1926,7 @@ function EditBox(props: CalendarStateProps) {
           }}
         >
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-between" alignItems="center">
+            <Grid container justifyContent="space-between" alignItems="center">
               <Grid item xs={5}>
                 <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
