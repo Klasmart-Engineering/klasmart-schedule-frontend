@@ -173,7 +173,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
   const { viewPort, colorScale, pieValue, radiusScale } = useMemo(() => computed(props), [props]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
   const { tooltipOpen, tooltipData, showTooltip, hideTooltip, tooltipLeft, tooltipTop } = useTooltip<TooltipData>();
-  const pieItem = ({ pie, arc }: PieItemProps) => {
+  const pieItem = ({ pie, arc }: PieItemProps, index:number) => {
     const [centroidX, centroidY] = pie.path.centroid(arc);
     const angle = (arc.startAngle + arc.endAngle) / 2;
     const isBottom = angle > Math.PI / 2 && angle < Math.PI * 1.5;
@@ -183,8 +183,9 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
     const x1 = centroidX * radiusScale(pixels.extendRadius);
     const y1 = centroidY * radiusScale(pixels.extendRadius);
     const x2 = sig(isRight) * (pixels.outerRadius + pixels.tooltipMargin);
+    const colorKey = `${arc.data.name}${index}`;
     const showPieTooltip = () => {
-      setActiveCategoryName(arc.data.name as string);
+      setActiveCategoryName(colorKey as string);
       showTooltip({
         tooltipLeft: x2 + viewPort[2] / 2,
         tooltipTop: y1 + viewPort[3] / 2,
@@ -196,7 +197,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
       });
     };
     return (
-      <g key={arc.data.name}>
+      <g key={colorKey}>
         <path
           d={pie.path({ ...arc }) || undefined}
           fill={colorScale(arc.data.name as string)}
@@ -209,8 +210,8 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
         <Text x={centroidX} y={centroidY} style={inlineStyles.pieText}>
           {arc.data.items_ratio < 0.05 ? "" : (100 * arc.data.items_ratio).toFixed(1) + "%"}
         </Text>
-        {activeCategoryName === arc.data.name && (
-          <path d={`M${x0},${y0} L${x1},${y1} H${x2}`} stroke={colorScale(arc.data.name)} {...inlineStyles.tooltipLinker} />
+        {activeCategoryName === colorKey && (
+          <path d={`M${x0},${y0} L${x1},${y1} H${x2}`} stroke={colorScale(arc.data.name as string)} {...inlineStyles.tooltipLinker} />
         )}
       </g>
     );
@@ -218,8 +219,8 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
   return (
     <div className={css.chart}>
       <div className={css.legend}>
-        {data.map(({ name }) => (
-          <div className={css.legendItem} key={name}>
+        {data.map(({ name },index) => (
+          <div className={css.legendItem} key={index}>
             <div className={css.legendIcon} style={{ backgroundColor: colorScale(name as string) }} />
             <div className={css.legendTitle}>{name}</div>
           </div>
@@ -228,7 +229,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
       <svg width={viewPort[2]} height={viewPort[3]} className={css.svg}>
         <Group top={0.5 * viewPort[3]} left={0.5 * viewPort[2]}>
           <Pie data={data} pieValue={pieValue} outerRadius={pixels.outerRadius} innerRadius={pixels.innerRadius}>
-            {(pie) => pie.arcs.map((arc) => pieItem({ pie, arc }))}
+            {(pie) => pie.arcs.map((arc, index) => pieItem({ pie, arc }, index))}
           </Pie>
         </Group>
       </svg>
