@@ -1,6 +1,4 @@
-import { UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails, EntityContentPermission, EntityTeacherManualFile } from "../api/api.auto";
-import { MockOptions, MockOptionsItem } from "../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../api/type";
 import { Regulation } from "../pages/ContentEdit/type";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
@@ -43,29 +41,24 @@ export interface CreateAllDefaultValueAndKeyResult extends PartialDefaultValueAn
   };
 }
 
-interface GetReportFirstValueResult {
-  teacher_id: string;
-  class_id: string;
-}
 
 export class ModelMockOptions {
-  static updateValuesWhenProgramChange(
-    setValue: UseFormMethods["setValue"],
-    mockOptions: LinkedMockOptions,
-    programId: MockOptionsItem["id"]
-  ): boolean {
-    const { developmental_id: defaultDevelopmentalId, program, subject, developmental, skills, grade, age } = mockOptions;
-    if (!defaultDevelopmentalId || !programId) return false;
-    setValue("developmental", [defaultDevelopmentalId]);
-    ["subject", "skills", "age", "grade"].forEach((name) => setValue(name, []));
-    const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
-    Object.keys(onlyOneOptionValue).forEach((item) => {
-      const value = onlyOneOptionValue[item as keyof FlattenedMockOptionsOnlyOption];
-      if (value) setValue(item, value);
-    });
-
-    return true;
-  }
+  // static updateValuesWhenProgramChange(
+  //   setValue: UseFormMethods["setValue"],
+  //   mockOptions: LinkedMockOptions,
+  //   programId: MockOptionsItem["id"]
+  // ): boolean {
+  //   const { developmental_id: defaultDevelopmentalId, program, subject, developmental, skills, grade, age } = mockOptions;
+  //   if (!defaultDevelopmentalId || !programId) return false;
+  //   setValue("developmental", [defaultDevelopmentalId]);
+  //   ["subject", "skills", "age", "grade"].forEach((name) => setValue(name, []));
+  //   const onlyOneOptionValue = ModelMockOptions.getOnlyOneOptionValue({ program, subject, developmental, skills, grade, age });
+  //   Object.keys(onlyOneOptionValue).forEach((item) => {
+  //     const value = onlyOneOptionValue[item as keyof FlattenedMockOptionsOnlyOption];
+  //     if (value) setValue(item, value);
+  //   });
+  //   return true;
+  // }
 
   static getOnlyOneOptionValue(MockOptionsOnly: FlattenedMockOptionsOnlyOption): GetOnlyOneOptionValueResult {
     return Object.keys(MockOptionsOnly).reduce((result, key) => {
@@ -74,15 +67,6 @@ export class ModelMockOptions {
       result[name] = MockOptionsOnly[name]?.map((item) => item.id as string);
       return result;
     }, {} as GetOnlyOneOptionValueResult);
-  }
-
-  static getReportFirstValue(mockOptions: MockOptions): GetReportFirstValueResult {
-    if (mockOptions.teacher_class_relationship.length) {
-      const teacher_id = mockOptions.teacher_class_relationship[0].teacher_id;
-      const class_id = mockOptions.teacher_class_relationship[0].class_ids[0];
-      return { teacher_id, class_id };
-    }
-    return { teacher_id: "", class_id: "" };
   }
 
   static createMandatoryDefaultValue(props: CreateDefaultValueProps, name: "program" | "developmental"): string {
