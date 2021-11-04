@@ -32,7 +32,7 @@ export default function NextSevenDaysLessonLoad() {
     setPage(1);
     const class_ids = classes?.map((item) => item.value);
     const teacher_ids = teachers?.slice(0, PAGESIZE).map((item) => item.value);
-    if(!class_ids.length || !teacher_ids.length) return;
+    if (!class_ids.length || !teacher_ids.length) return;
     dispatch(getTeachingLoadReport({ metaLoading: true, time_offset: TIME_OFFSET, teacher_ids, class_ids }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, classes]);

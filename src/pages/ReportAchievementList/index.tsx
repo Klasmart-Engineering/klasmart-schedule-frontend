@@ -66,7 +66,7 @@ export function ReportAchievementList() {
 
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
-      const { payload: data } = ((await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown) as PayloadAction<
+      const { payload: data } = (await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
       if (data) {
@@ -114,7 +114,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id, condition.status,condition.sort_by]
+    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id, condition.status, condition.sort_by]
   );
   useEffect(() => {
     dispatch(

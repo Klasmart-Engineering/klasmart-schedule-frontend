@@ -9,7 +9,7 @@ import {
   TableRow,
   TextField,
   Tooltip,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { InfoOutlined } from "@material-ui/icons";
@@ -50,14 +50,14 @@ const useStyles = makeStyles(({ palette }) => ({
     left: 5,
     cursor: "pointer",
   },
-  TableCell:{
+  TableCell: {
     width: 154,
-  }
+  },
 }));
 const TooltipBlack = withStyles((theme: Theme) => ({
   tooltip: {
     backgroundColor: theme.palette.common.black,
-    fontSize: 14, 
+    fontSize: 14,
     color: theme.palette.common.white,
     maxWidth: 290,
     padding: 8,
@@ -65,9 +65,9 @@ const TooltipBlack = withStyles((theme: Theme) => ({
     boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.20)",
     fontFamily: "Helvetica, Helvetica-Regular",
   },
-  arrow:{
+  arrow: {
     color: theme.palette.common.black,
-  }
+  },
 }))(Tooltip);
 
 export default function Assignments() {
@@ -110,7 +110,7 @@ export default function Assignments() {
     const class_type_list = classType === "all" ? ["study", "home_fun"] : [classType];
     const class_id_list = classes?.map((item) => item.value);
     const teacher_id_list = teachers?.slice(0, PAGESIZE).map((item) => item.value);
-    if(!class_id_list.length || !teacher_id_list.length) return;
+    if (!class_id_list.length || !teacher_id_list.length) return;
     dispatch(getTeacherLoadAssignment({ metaLoading: true, class_type_list, duration, class_id_list, teacher_id_list }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, durationDay, classType, classes]);
@@ -146,7 +146,7 @@ export default function Assignments() {
           SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
         >
           <MenuItem key={7} value={7}>
-           {t("report_label_past_7_days")}
+            {t("report_label_past_7_days")}
           </MenuItem>
           <MenuItem key={30} value={30}>
             {t("report_label_past_30_days")}
@@ -175,90 +175,95 @@ const AssignmentsTabel = (props: IAssignmentsProps) => {
           {item.teacher_name}
         </Typography>
       </TableCell>
-      <TableCell align="center" >{item.count_of_classes}</TableCell>
-      <TableCell align="center" >{item.count_of_students} </TableCell>
-      <TableCell align="center" >{item.count_of_scheduled_assignment} </TableCell>
-      <TableCell align="center" >{item.count_of_completed_assignment} </TableCell>
-      <TableCell align="center" >{`${Math.floor(item.feedback_percentage ? item.feedback_percentage * 100 : 0)}%`} </TableCell>
-      <TableCell align="center" >{item.count_of_pending_assignment} </TableCell>
-      <TableCell align="center" >{Math.ceil(item.avg_days_of_pending_assignment ?? 0)} </TableCell>
+      <TableCell align="center">{item.count_of_classes}</TableCell>
+      <TableCell align="center">{item.count_of_students} </TableCell>
+      <TableCell align="center">{item.count_of_scheduled_assignment} </TableCell>
+      <TableCell align="center">{item.count_of_completed_assignment} </TableCell>
+      <TableCell align="center">{`${Math.floor(item.feedback_percentage ? item.feedback_percentage * 100 : 0)}%`} </TableCell>
+      <TableCell align="center">{item.count_of_pending_assignment} </TableCell>
+      <TableCell align="center">{Math.ceil(item.avg_days_of_pending_assignment ?? 0)} </TableCell>
     </TableRow>
   ));
   return (
     <ParentSize>
-    {(info) => (
-     <TableContainer style={{width:info.width}} >
-      <Table>
-        <TableHead className={css.tableHead}>
-          <TableRow>
-            <TableCell align="center">{d("Teacher").t("report_label_teacher")}</TableCell>
-            <TableCell align="center">
-              <div>
-                {t("report_label_classes_number")}
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <Typography noWrap style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>({t("report_label_current")})</Typography>
-                  <TooltipBlack arrow placement="top" title={t("report_msg_classes_number")} style={{cursor:"pointer"}}>
-                    <InfoOutlined fontSize="small" />
-                  </TooltipBlack>
-                </div>
-              </div>
-            </TableCell>
-            <TableCell align="center">
-              <div>
-                {t("report_label_students_number")}
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <Typography noWrap style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>({t("report_label_current")})</Typography>
-                  <TooltipBlack arrow placement="top" title={t("report_msg_students_number")} style={{cursor:"pointer"}}>
-                    <InfoOutlined fontSize="small" />
-                  </TooltipBlack>
-                </div>
-              </div>
-            </TableCell>
-            <TableCell align="center" className={css.TableCell} >
-              <div className={css.TableCell} >
-                {t("report_label_assignments_scheduled")} 
-                <TooltipBlack arrow placement="top" title={t("report_msg_assignments_scheduled")} className={css.infoIcon}>
-                  <InfoOutlined fontSize="small" />
-                </TooltipBlack>
-              </div>
-            </TableCell>
-            <TableCell align="center" className={css.TableCell}>
-              <div className={css.TableCell}>
-                {t("report_label_assessments_completed")}
-                <TooltipBlack arrow placement="top" title={t("report_msg_assessments_completed")} className={css.infoIcon}>
-                  <InfoOutlined fontSize="small" />
-                </TooltipBlack>
-              </div>
-            </TableCell>
-            <TableCell align="center">
-              <div style={{ whiteSpace: "nowrap" }}>
-                {t("report_label_feedback")}
-                <TooltipBlack arrow placement="top" title={t("report_msg_feedback")} className={css.infoIcon}>
-                  <InfoOutlined fontSize="small" />
-                </TooltipBlack>
-              </div>
-            </TableCell>
-            <TableCell align="center" style={{ width: 113 }}>
-              <div style={{ width: 113 }} >
-                {t("report_label_assessments_pending")}
-                <TooltipBlack arrow placement="top" title={t("report_msg_assessments_pending")} className={css.infoIcon}>
-                  <InfoOutlined fontSize="small" />
-                </TooltipBlack>
-              </div>
-            </TableCell>
-            <TableCell align="center" style={{ width: 113 }}>
-              <div style={{ width: 113 }} >
-                {t("report_label_avg_days_pending")}
-                <TooltipBlack arrow placement="top" title={t("report_msg_avg_days_pending")} className={css.infoIcon} >
-                <InfoOutlined fontSize="small" />
-                </TooltipBlack>
-              </div>
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{rows}</TableBody>
-      </Table>
-    </TableContainer>
-   )}</ParentSize>
+      {(info) => (
+        <TableContainer style={{ width: info.width }}>
+          <Table>
+            <TableHead className={css.tableHead}>
+              <TableRow>
+                <TableCell align="center">{d("Teacher").t("report_label_teacher")}</TableCell>
+                <TableCell align="center">
+                  <div>
+                    {t("report_label_classes_number")}
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <Typography noWrap style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>
+                        ({t("report_label_current")})
+                      </Typography>
+                      <TooltipBlack arrow placement="top" title={t("report_msg_classes_number")} style={{ cursor: "pointer" }}>
+                        <InfoOutlined fontSize="small" />
+                      </TooltipBlack>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell align="center">
+                  <div>
+                    {t("report_label_students_number")}
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <Typography noWrap style={{ color: "rgba(102,102,102,.6)", marginRight: 5 }}>
+                        ({t("report_label_current")})
+                      </Typography>
+                      <TooltipBlack arrow placement="top" title={t("report_msg_students_number")} style={{ cursor: "pointer" }}>
+                        <InfoOutlined fontSize="small" />
+                      </TooltipBlack>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell align="center" className={css.TableCell}>
+                  <div className={css.TableCell}>
+                    {t("report_label_assignments_scheduled")}
+                    <TooltipBlack arrow placement="top" title={t("report_msg_assignments_scheduled")} className={css.infoIcon}>
+                      <InfoOutlined fontSize="small" />
+                    </TooltipBlack>
+                  </div>
+                </TableCell>
+                <TableCell align="center" className={css.TableCell}>
+                  <div className={css.TableCell}>
+                    {t("report_label_assessments_completed")}
+                    <TooltipBlack arrow placement="top" title={t("report_msg_assessments_completed")} className={css.infoIcon}>
+                      <InfoOutlined fontSize="small" />
+                    </TooltipBlack>
+                  </div>
+                </TableCell>
+                <TableCell align="center">
+                  <div style={{ whiteSpace: "nowrap" }}>
+                    {t("report_label_feedback")}
+                    <TooltipBlack arrow placement="top" title={t("report_msg_feedback")} className={css.infoIcon}>
+                      <InfoOutlined fontSize="small" />
+                    </TooltipBlack>
+                  </div>
+                </TableCell>
+                <TableCell align="center" style={{ width: 113 }}>
+                  <div style={{ width: 113 }}>
+                    {t("report_label_assessments_pending")}
+                    <TooltipBlack arrow placement="top" title={t("report_msg_assessments_pending")} className={css.infoIcon}>
+                      <InfoOutlined fontSize="small" />
+                    </TooltipBlack>
+                  </div>
+                </TableCell>
+                <TableCell align="center" style={{ width: 113 }}>
+                  <div style={{ width: 113 }}>
+                    {t("report_label_avg_days_pending")}
+                    <TooltipBlack arrow placement="top" title={t("report_msg_avg_days_pending")} className={css.infoIcon}>
+                      <InfoOutlined fontSize="small" />
+                    </TooltipBlack>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{rows}</TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </ParentSize>
   );
 };

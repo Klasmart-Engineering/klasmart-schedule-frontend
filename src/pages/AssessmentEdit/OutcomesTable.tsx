@@ -80,10 +80,10 @@ const AssessAction = (props: AssessActionProps) => {
   const none_achieved: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].none_achieved) || false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const allValue: string[] = formValue.attendance_ids || [];
-  const checked_attendance_ids = useMemo(() => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0), [
-    allValue,
-    attendance_ids,
-  ]);
+  const checked_attendance_ids = useMemo(
+    () => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0),
+    [allValue, attendance_ids]
+  );
   const funSetValue = useMemo(
     () => (name: string, value: boolean | string[]) => {
       setValue(`outcomes[${index}].${name}`, value);

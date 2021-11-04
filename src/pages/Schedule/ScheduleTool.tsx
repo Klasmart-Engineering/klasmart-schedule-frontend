@@ -10,7 +10,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
-import { Permission } from "../../components/Permission";
+import { Permission, PermissionsWrapper } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { modeViewType, timestampType } from "../../types/scheduleTypes";
 
@@ -117,66 +117,71 @@ function Tool(props: ToolProps) {
   return (
     <Box className={css.toolBox}>
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={12} md={3} lg={3}>
-          {!includeList && (
-            <Permission
-              value={PermissionType.create_schedule_page_501}
-              render={(value) =>
-                value && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={css.btnRadio}
-                    onClick={() => {
-                      toolRouter("create");
-                    }}
-                  >
-                    {d("Schedule Class").t("schedue_button_schedule_class")}
-                  </Button>
-                )
-              }
-            />
-          )}
-        </Grid>
-        <Grid item xs={12} sm={8} md={4} lg={4} style={{ display: "flex", alignItems: "center" }}>
-          <Permission
-            value={PermissionType.schedule_search_582}
-            render={(value) =>
-              value && (
-                <>
-                  {includeList && (
-                    <ArrowBackIosOutlined
-                      className={css.arrowLeft}
-                      onClick={() => {
-                        toolRouter("create");
-                      }}
-                    />
-                  )}
-                  <FormControl>
-                    <BootstrapInput
-                      id="demo-customized-textbox"
-                      value={teacherName}
-                      onChange={(event) => setTeacherName(event.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder={d("Search teacher").t("schedule_text_search_teacher")}
-                    />
-                  </FormControl>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={css.searchBtn}
-                    startIcon={<SearchOutlined />}
-                    onClick={() => {
-                      toolRouter("search");
-                    }}
-                  >
-                    {d("Search").t("schedule_button_search")}
-                  </Button>
-                </>
-              )
-            }
-          />
-        </Grid>
+        <PermissionsWrapper value={[PermissionType.create_schedule_page_501, PermissionType.schedule_search_582]}>
+          <>
+            <Grid item xs={12} sm={12} md={3} lg={3}>
+              {!includeList && (
+                <Permission
+                  value={PermissionType.create_schedule_page_501}
+                  render={(value) =>
+                    value && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={css.searchBtn}
+                        startIcon={<SearchOutlined />}
+                        onClick={() => {
+                          toolRouter("search");
+                        }}
+                      >
+                        {d("Search").t("schedule_button_search")}
+                      </Button>
+                    )
+                  }
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={8} md={4} lg={4} style={{ display: "flex", alignItems: "center" }}>
+              <Permission
+                value={PermissionType.schedule_search_582}
+                render={(value) =>
+                  value && (
+                    <>
+                      {includeList && (
+                        <ArrowBackIosOutlined
+                          className={css.arrowLeft}
+                          onClick={() => {
+                            toolRouter("create");
+                          }}
+                        />
+                      )}
+                      <FormControl>
+                        <BootstrapInput
+                          id="demo-customized-textbox"
+                          value={teacherName}
+                          onChange={(event) => setTeacherName(event.target.value)}
+                          onKeyDown={handleKeyDown}
+                          placeholder={d("Search teacher").t("schedule_text_search_teacher")}
+                        />
+                      </FormControl>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={css.searchBtn}
+                        startIcon={<SearchOutlined />}
+                        onClick={() => {
+                          toolRouter("search");
+                        }}
+                      >
+                        {d("Search").t("schedule_button_search")}
+                      </Button>
+                    </>
+                  )
+                }
+              />
+            </Grid>
+          </>
+        </PermissionsWrapper>
         <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
           {!includeList && (
             <FormControl className={css.selectControl}>

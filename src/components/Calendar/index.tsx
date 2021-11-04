@@ -226,7 +226,6 @@ function MyCalendar(props: CalendarProps) {
       const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
       const firstNode: any = document.getElementsByClassName("rbc-time-header-cell")[0].firstChild;
       const startWeek = firstNode.getElementsByTagName("span")[0].textContent.split(" ")[0] as number;
-      debugger;
       const timestampResult =
         type === "preve"
           ? getTimestamp(`${year}-${dateNumFun(month + 1)}-${startWeek}`) - offsets

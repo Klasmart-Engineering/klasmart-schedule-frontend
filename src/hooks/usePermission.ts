@@ -16,6 +16,18 @@ function usePermission(perms: PermissionType[]) {
   return state;
 }
 
+function useLoadPermission(perms: PermissionType[]) {
+  const [loaded, setLoaded] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    (async () => {
+      await permissionCache.usePermission(perms);
+      setLoaded(true);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return loaded;
+}
+
 function useChoosePermission(perms: ICacheData, permsToChoose: PermissionType[]): ICacheData {
   return permsToChoose.reduce((prev, cur) => {
     prev[cur] = perms[cur];
@@ -23,4 +35,4 @@ function useChoosePermission(perms: ICacheData, permsToChoose: PermissionType[])
   }, {} as ICacheData);
 }
 
-export { usePermission, useChoosePermission };
+export { usePermission, useLoadPermission, useChoosePermission };
