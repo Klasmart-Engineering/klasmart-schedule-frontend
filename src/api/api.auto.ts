@@ -593,11 +593,6 @@ export interface EntityContentInfoWithDetails {
   version?: number;
 }
 
-export interface EntityContentInfoWithDetailsResponse {
-  list?: EntityContentInfoWithDetails[];
-  total?: number;
-}
-
 export interface EntityContentPermission {
   allow_approve?: boolean;
   allow_delete?: boolean;
@@ -1032,6 +1027,24 @@ export interface EntityQueryAssignmentsSummaryResult {
   home_fun_study_count?: number;
   items?: EntityAssignmentsSummaryItem[];
   study_count?: number;
+}
+
+export interface EntityQueryContentItem {
+  author?: string;
+  author_name?: string;
+  content_type?: number;
+  content_type_name?: string;
+  data?: string;
+  id?: string;
+  name?: string;
+  permission?: EntityContentPermission;
+  publish_status?: string;
+  thumbnail?: string;
+}
+
+export interface EntityQueryContentResponse {
+  list?: EntityQueryContentItem[];
+  total?: number;
 }
 
 export interface EntityQueryLiveClassesSummaryResult {
@@ -2433,7 +2446,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityQueryContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents${this.addQueryParams(query)}`,
         "GET",
         params
@@ -2686,7 +2699,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityQueryContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents_authed${this.addQueryParams(query)}`,
         "GET",
         params
@@ -2772,7 +2785,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityQueryContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents_pending${this.addQueryParams(query)}`,
         "GET",
         params
@@ -2804,7 +2817,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntityContentInfoWithDetailsResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityQueryContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents_private${this.addQueryParams(query)}`,
         "GET",
         params

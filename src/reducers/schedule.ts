@@ -44,13 +44,11 @@ import {
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
-  TeachersByOrgnizationQueryVariables,
+  TeachersByOrgnizationQueryVariables
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
-  EntityClassType,
-  EntityContentInfoWithDetails,
-  EntityScheduleAddView,
+  EntityClassType, EntityQueryContentItem, EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleFeedbackAddInput,
   EntityScheduleFeedbackView,
@@ -58,7 +56,7 @@ import {
   EntityScheduleSearchView,
   EntityScheduleTimeView,
   EntityScheduleViewDetail,
-  ModelPublishedOutcomeView,
+  ModelPublishedOutcomeView
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
@@ -69,7 +67,7 @@ import {
   filterOptionItem,
   ParticipantsData,
   ParticipantsShortInfo,
-  RolesData,
+  RolesData
 } from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -100,7 +98,7 @@ export interface ScheduleState {
   scheduleMockOptions: getScheduleMockOptionsResponse;
   participantMockOptions: getScheduleParticipantsMockOptionsResponse;
   liveToken: string;
-  contentsAuthList: EntityContentInfoWithDetails[];
+  contentsAuthList: EntityQueryContentItem[];
   classOptions: classOptionsProp;
   ParticipantsData: ParticipantsData;
   participantsIds: ParticipantsShortInfo;
@@ -110,7 +108,7 @@ export interface ScheduleState {
   filterOption: filterOptionItem;
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
-  mediaList: EntityContentInfoWithDetails[];
+  mediaList: EntityQueryContentItem[];
   ScheduleViewInfo: EntityScheduleViewDetail;
   outcomeList: ModelPublishedOutcomeView[];
   outcomeListInit: ModelPublishedOutcomeView[];
