@@ -91,9 +91,8 @@ export const toMapGroup = (group?: string) => {
 type options = Omit<LinkedMockOptions, "program_id" | "developmental_id">;
 export const addAllInSearchLOListOption = (linkedMockOptions: LinkedMockOptions): LinkedMockOptions => {
   const all: LinkedMockOptionsItem | undefined = { id: "all", name: "all" };
-  const { program_id, developmental_id, ...resOptions } = linkedMockOptions;
   const resault: LinkedMockOptions = {};
-  Object.keys(resOptions).forEach((item) => {
+  Object.keys(linkedMockOptions).forEach((item) => {
     const key = item as keyof options;
     if (key === "age" || key === "grade") {
       resault[key] = linkedMockOptions[key];

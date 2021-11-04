@@ -11,7 +11,6 @@ import {
   QeuryMeQuery,
   QeuryMeQueryVariables
 } from "../api/api-ko.auto";
-// import { Content, ContentIDListRequest, CreateContentRequest, LearningOutcomes } from "../api/api";
 import {
   ApiContentBulkOperateRequest,
   EntityContentInfoWithDetails,
@@ -20,7 +19,9 @@ import {
   EntityFolderItemInfo,
   EntityOrganizationInfo,
   EntityOrganizationProperty,
-  EntityOutcomeCondition, EntityQueryContentItem, ModelPublishedOutcomeView,
+  EntityOutcomeCondition,
+  EntityQueryContentItem,
+  ModelPublishedOutcomeView,
   ModelSearchPublishedOutcomeResponse
 } from "../api/api.auto";
 import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
@@ -130,8 +131,6 @@ const initialState: IContentState = {
     age: [],
     grade: [],
     skills: [],
-    program_id: "",
-    developmental_id: "",
   },
   searchLOListOptions: {
     program: [],
@@ -140,8 +139,6 @@ const initialState: IContentState = {
     age: [],
     grade: [],
     skills: [],
-    program_id: "",
-    developmental_id: "",
   },
   outcomesFullOptions: {
     program: [],
@@ -211,18 +208,7 @@ const initialState: IContentState = {
   myOrgId: "",
   user_id: "",
 };
-
-// const ADD_FOLDER_MODEL_INFO = {
-//   title: d("New Folder").t("library_label_new_folder"),
-//   content: d("Folder Name").t("library_label_folder_name"),
-//   type: ConfirmDialogType.onlyInput,
-// };
 const UNKNOW_ERROR_LABEL: LangRecordId = "general_error_unknown";
-// const RENAME_FOLDER_NAME_MODEL_INFO = {
-//   title: d("Rename").t("library_label_rename"),
-//   content: d("Folder Name").t("library_label_folder_name"),
-//   type: ConfirmDialogType.onlyInput,
-// };
 
 export enum Action {
   remove = "remove",
@@ -292,8 +278,6 @@ export interface LinkedMockOptions {
   age?: LinkedMockOptionsItem[];
   grade?: LinkedMockOptionsItem[];
   skills?: LinkedMockOptionsItem[];
-  program_id?: string;
-  developmental_id?: string;
 }
 export enum ILinkedMockOptionsType {
   contents = "contents",
@@ -315,7 +299,7 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
       const subject = await api.subjects.getSubject({ program_id });
       const subject_ids = default_subject_ids ? default_subject_ids : subject.length ? subject[0].id : undefined;
       if (!subject_ids)
-        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
+        return { program, subject: [], developmental: [], age: [], grade: [], skills: []};
       const [developmental, age, grade] = await Promise.all([
         api.developmentals.getDevelopmental({ program_id, subject_ids }),
         api.ages.getAge({ program_id }),
@@ -324,12 +308,12 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
       const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
       if (developmental_id) {
         const skills = await api.skills.getSkill({ program_id, developmental_id });
-        return { program, subject, developmental, age, grade, skills, program_id, developmental_id };
+        return { program, subject, developmental, age, grade, skills};
       } else {
-        return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" };
+        return { program, subject, developmental, age, grade, skills: [] };
       }
     } else {
-      return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
+      return { program, subject: [], developmental: [], age: [], grade: [], skills: [] };
     }
   }
 );
@@ -369,30 +353,15 @@ export const getOutcomesOptions = createAsyncThunk<LinkedMockOptions, IQueryOutc
       age,
       grade,
       skills,
-      program_id,
-      developmental_id,
     };
   }
 );
 export const getOutcomesFullOptions = createAsyncThunk<LinkedMockOptions, LoadingMetaPayload>(
   "content/getOutcomesFullOptions",
   async () => {
-    // const program = await api.programs.getProgram();
-    const subject = await api.subjects.getSubject();
-    const [developmental, age, grade] = await Promise.all([
-      api.developmentals.getDevelopmental(),
-      api.ages.getAge(),
-      api.grades.getGrade(),
-    ]);
-    const skills = await api.skills.getSkill();
-    return {
-      // program,
-      subject,
-      developmental,
-      age,
-      grade,
-      skills,
-    };
+    const [developmental, skills] = await Promise.all([
+      api.developmentals.getDevelopmental(), api.skills.getSkill()])
+    return {developmental, skills};
   }
 );
 export const getOutcomesOptionSkills = createAsyncThunk<LinkedMockOptions["skills"], IQueryOutcomesOptions>(
@@ -427,7 +396,6 @@ interface onLoadContentEditPayload extends LoadingMetaPayload {
 }
 
 interface onLoadContentEditResult {
-  outcomeList?: AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
   contentDetail?: AsyncReturnType<typeof api.contents.getContentById>;
   mediaList?: AsyncReturnType<typeof api.contents.searchContents>;
   lesson_types?: LinkedMockOptionsItem[];
@@ -435,7 +403,7 @@ interface onLoadContentEditResult {
 }
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
-  async ({ id, type, searchMedia, searchOutcome, assumed, isShare, exactSerch }, { dispatch }) => {
+  async ({ id, type, searchMedia,isShare,  }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
     const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
@@ -454,9 +422,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
               })
             )
         : undefined,
-      // type === "material" || type === "plan"
-      //   ? dispatch(searchPublishedLearningOutcomes({ search_key: searchOutcome, exactSerch, page: 1, assumed: assumed ? 1 : -1 }))
-      //   : undefined,
+      
       dispatch(
         getLinkedMockOptions({
           default_program_id: contentDetail.program,
@@ -612,7 +578,7 @@ export const searchContentLists = createAsyncThunk<IQueryContentsResult, IQueryC
     return { list, total };
   }
 );
-// contentEdit搜索contentlist
+// contentEdit搜索Authcontentlist
 export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQueryContentsParams>(
   "searchAuthContentLists",
   async ({ metaLoading, ...query }) => {
@@ -854,8 +820,6 @@ export const renameFolder1 = createAsyncThunk<IQueryRenameFolderResult1, IQueryR
       conditionFormMethods.setError(ContentListFormKey.FOLDER_NAME, { message: t(err.label || UNKNOW_ERROR_LABEL) });
       throw err;
     });
-    // .then(() => true)
-    // .catch((err) => t(err.label || UNKNOW_ERROR_LABEL));
   }
 );
 
@@ -1018,11 +982,7 @@ export const getFoldersSharedRecords = createAsyncThunk<IQueryGetFoldersSharedRe
     return res;
   }
 );
-// type IQueryH5pEventParams = Parameters<typeof api.h5P.createH5PEvent>[0];
-// type IQueryH5pEventResult = AsyncReturnType<typeof api.h5P.createH5PEvent>;
-// export const h5pEvent = createAsyncThunk<IQueryH5pEventResult, IQueryH5pEventParams>("content/h5pEvent", async (h5pSegment) => {
-//   return await api.h5P.createH5PEvent(h5pSegment);
-// });
+
 type IGetDownloadPathParams = Parameters<typeof api.contentsResources.getDownloadPath>[0];
 type IGetDownloadPathResult = AsyncReturnType<typeof api.contentsResources.getDownloadPath>;
 export const getDownloadPath = createAsyncThunk<IGetDownloadPathResult, IGetDownloadPathParams>("content/getDownloadPath", (query) => {
@@ -1096,12 +1056,6 @@ const { actions, reducer } = createSlice({
       if (payload.mediaList?.list) {
         state.mediaList = payload.mediaList.list;
       }
-      if (payload.outcomeList?.total) {
-        state.OutcomesListTotal = payload.outcomeList.total;
-      }
-      if (payload.outcomeList?.list) {
-        state.outcomeList = payload.outcomeList.list;
-      }
       if (payload.lesson_types) {
         state.lesson_types = payload.lesson_types;
       }
@@ -1124,7 +1078,7 @@ const { actions, reducer } = createSlice({
     [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptionsSkills>>) => {
       // alert("success");
       state.linkedMockOptions.skills = payload;
     },
@@ -1134,70 +1088,57 @@ const { actions, reducer } = createSlice({
       state.outcomesFullOptions.program = cloneDeep(state.linkedMockOptions.program);
       state.searchLOListOptions.program = cloneDeep(state.linkedMockOptions.program);
     },
-    [getOutcomesOptionSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [getOutcomesOptionSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesOptionSkills>>) => {
       state.searchLOListOptions.skills = payload;
     },
-    [getOutcomesOptionCategorys.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [getOutcomesOptionCategorys.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesOptionCategorys>>) => {
       state.searchLOListOptions.developmental = payload;
     },
     [getLinkedMockOptionsSkills.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [searchPublishedLearningOutcomes.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.outcomeList = payload.list;
-      state.OutcomesListTotal = payload.total;
+    [searchPublishedLearningOutcomes.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchPublishedLearningOutcomes>>) => {
+      state.outcomeList = payload.list || [];
+      state.OutcomesListTotal = payload.total ||0;
     },
-    // [searchPublishedLearningOutcomes.pending.type]: (state, { payload }: PayloadAction<any>) => {
-    //   state.outcomeList = initialState.outcomeList;
-    //   state.OutcomesListTotal = initialState.OutcomesListTotal;
-    // },
-    [searchContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.mediaList = payload.list;
-      state.mediaListTotal = payload.total;
+    [searchContentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchContentLists>>) => {
+      state.mediaList = payload.list || [];
+      state.mediaListTotal = payload.total || 0;
     },
-    // [searchContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
-    //   state.mediaList = initialState.mediaList;
-    //   state.mediaListTotal = initialState.mediaListTotal;
-    // },
-    [searchAuthContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.mediaList = payload.list;
-      state.mediaListTotal = payload.total;
+    [searchAuthContentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchAuthContentLists>>) => {
+      state.mediaList = payload.list || [];
+      state.mediaListTotal = payload.total || 0;
     },
-    // [searchContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
-    //   state.mediaList = initialState.mediaList;
-    //   state.mediaListTotal = initialState.mediaListTotal;
-    // },
-
     // contentList页面
-    [contentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    [contentLists.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentLists>>) => {
       state.contentsList = initialState.contentsList;
       state.total = initialState.total;
     },
-    [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.contentsList = payload.list;
-      state.mediaList = payload.list;
+    [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentLists>>) => {
+      state.contentsList = payload.list || [];
+      state.mediaList = payload.list || [];
       state.total = payload.total;
     },
-    [folderContentLists.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    [folderContentLists.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
       state.contentsList = initialState.contentsList;
       state.total = initialState.total;
     },
-    [folderContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.contentsList = payload.list;
+    [folderContentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
+      state.contentsList = payload.list|| [];
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {},
 
-    [onLoadContentPreview.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    [onLoadContentPreview.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
       // alert("success");
       state.contentPreview = initialState.contentPreview;
       state.user_id = initialState.user_id;
       state.token = initialState.token;
     },
-    [onLoadContentPreview.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [onLoadContentPreview.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
       // alert("success");
       state.contentPreview = payload.contentDetail;
-      state.user_id = payload.user_id;
+      state.user_id = payload.user_id || "";
       state.token = payload.token;
     },
     [onLoadContentPreview.rejected.type]: (state, { error }: any) => {
@@ -1259,47 +1200,47 @@ const { actions, reducer } = createSlice({
     [getContentLiveToken.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.token = payload.token;
     },
-    [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
       state.page_size = payload.cms_page_size;
     },
-    [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
       state.page_size = payload.cms_page_size;
     },
-    [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchOrgFolderItems>>) => {
       state.folderTree = payload;
     },
-    [getFolderItemById.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    [getFolderItemById.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesFullOptions>>) => {
       state.parentFolderInfo = initialState.parentFolderInfo;
     },
-    [getFolderItemById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [getFolderItemById.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getFolderItemById>>) => {
       state.parentFolderInfo = payload;
     },
-    [onLoadContentList.pending.type]: (state, { payload }: PayloadAction<any>) => {
+    [onLoadContentList.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesFullOptions>>) => {
       state.contentsList = initialState.contentsList;
       state.total = initialState.total;
       state.parentFolderInfo = initialState.parentFolderInfo;
     },
-    [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+    [onLoadContentList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentList>>) => {
       state.myOrgId = payload.organization_id;
       if (payload.folderRes) {
         state.total = payload.folderRes.total;
-        state.contentsList = payload.folderRes.list;
+        state.contentsList = payload.folderRes.list || [];
       }
       if (payload.pendingRes) {
         state.total = payload.pendingRes.total;
-        state.contentsList = payload.pendingRes.list;
+        state.contentsList = payload.pendingRes.list || [];
       }
       if (payload.privateRes) {
         state.total = payload.privateRes.total;
-        state.contentsList = payload.privateRes.list;
+        state.contentsList = payload.privateRes.list || [];
       }
       if (payload.contentRes) {
         state.total = payload.contentRes.total;
-        state.contentsList = payload.contentRes.list;
+        state.contentsList = payload.contentRes.list || [];
       }
       if (payload.badaContent) {
         state.total = payload.badaContent.total;
-        state.contentsList = payload.badaContent.list;
+        state.contentsList = payload.badaContent.list || [];
       }
     },
     [getOrgProperty.fulfilled.type]: (state, { payload }: any) => {
