@@ -44,11 +44,12 @@ import {
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
-  TeachersByOrgnizationQueryVariables
+  TeachersByOrgnizationQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
-  EntityClassType, EntityQueryContentItem, EntityScheduleAddView,
+  EntityQueryContentItem,
+  EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleFeedbackAddInput,
   EntityScheduleFeedbackView,
@@ -56,7 +57,7 @@ import {
   EntityScheduleSearchView,
   EntityScheduleTimeView,
   EntityScheduleViewDetail,
-  ModelPublishedOutcomeView
+  ModelPublishedOutcomeView,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
@@ -67,7 +68,7 @@ import {
   filterOptionItem,
   ParticipantsData,
   ParticipantsShortInfo,
-  RolesData
+  RolesData,
 } from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
@@ -88,6 +89,7 @@ export interface ScheduleState {
   saveResult: number;
   scheduleDetial: EntityScheduleDetailsView;
   scheduleTimeViewData: EntityScheduleTimeView[];
+  scheduleTimeViewTotal: number;
   scheduleAnyTimeViewData: EntityScheduleListView[];
   scheduleTimeViewYearData: [];
   attachement_id: string;
@@ -152,6 +154,7 @@ const initialState: ScheduleState = {
   searchScheduleList: [],
   scheduleDetial: initScheduleDetial,
   scheduleTimeViewData: [],
+  scheduleTimeViewTotal: 0,
   scheduleAnyTimeViewData: [],
   scheduleTimeViewYearData: [],
   attachement_id: "",
@@ -190,6 +193,10 @@ const initialState: ScheduleState = {
       {
         id: "Homework",
         name: "schedule_detail_homework",
+      },
+      {
+        id: "Task",
+        name: "schedule_detail_task",
       },
     ],
   },
@@ -257,6 +264,10 @@ const initialState: ScheduleState = {
       {
         id: "OnlineClass",
         name: "schedule_detail_online_class",
+      },
+      {
+        id: "Task",
+        name: "schedule_detail_task",
       },
     ],
     programs: [],
@@ -601,6 +612,11 @@ export interface getProgramsChildResponse {
   programChildInfo: GetProgramsQuery;
 }
 
+export interface EntityClassType {
+  id?: string;
+  name?: string;
+}
+
 export interface getScheduleMockOptionsResponse {
   teacherList: TeachersByOrgnizationQuery;
   subjectList: LinkedMockOptionsItem[];
@@ -845,7 +861,8 @@ const { actions, reducer } = createSlice({
       state.errorLable = error.message;
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleTimeViewData = payload;
+      state.scheduleTimeViewData = payload.data;
+      state.scheduleTimeViewTotal = payload.total;
     },
     [getScheduleTimeViewDataByYear.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleTimeViewYearData = payload;

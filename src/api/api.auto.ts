@@ -474,18 +474,6 @@ export interface EntityClassEventBody {
   token?: string;
 }
 
-export interface EntityClassType {
-  createAt?: number;
-  createID?: string;
-  deleteAt?: number;
-  deleteID?: string;
-  id?: string;
-  name?: string;
-  number?: number;
-  updateAt?: number;
-  updateID?: string;
-}
-
 export interface EntityClassUsage {
   content_usage_list?: EntityContentUsage[];
   id?: string;
@@ -1039,6 +1027,7 @@ export interface EntityQueryContentItem {
   name?: string;
   permission?: EntityContentPermission;
   publish_status?: string;
+  suggest_time?: number;
   thumbnail?: string;
 }
 
@@ -1333,14 +1322,43 @@ export interface EntityScheduleSimplifiedPageView {
 }
 
 export interface EntityScheduleTimeView {
+  assessment_status?: string;
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   due_at?: number;
   end_at?: number;
   id?: string;
+  is_home_fun?: boolean;
+  is_repeat?: boolean;
+  lesson_plan_id?: string;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   title?: string;
+}
+
+export interface EntityScheduleTimeViewListRequest {
+  anytime?: boolean;
+  class_ids?: string[];
+  class_types?: string[];
+  due_at_eq?: number;
+  end_at_le?: number;
+  order_by?: string;
+  page?: number;
+  page_size?: number;
+  program_ids?: string[];
+  school_ids?: string[];
+  start_at_ge?: number;
+  subject_ids?: string[];
+  teacher_ids?: string[];
+  time_at?: number;
+  time_zone_offset?: number;
+  view_type?: string;
+  with_assessment_status?: boolean;
+}
+
+export interface EntityScheduleTimeViewListResponse {
+  data?: EntityScheduleTimeView[];
+  total?: number;
 }
 
 export interface EntityScheduleTimeViewQuery {
@@ -2367,27 +2385,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         bulk_reject_list
       ),
   };
-  classTypes = {
-    /**
-     * @tags classType
-     * @name getClassType
-     * @summary getClassType
-     * @request GET:/class_types
-     * @description get class type
-     */
-    getClassType: (params?: RequestParams) =>
-      this.request<EntityClassType[], ApiInternalServerErrorResponse>(`/class_types`, "GET", params),
-
-    /**
-     * @tags classType
-     * @name getClassTypeByID
-     * @summary getClassTypeByID
-     * @request GET:/class_types/{id}
-     * @description get classType by id
-     */
-    getClassTypeById: (id: string, params?: RequestParams) =>
-      this.request<EntityClassType, ApiNotFoundResponse | ApiInternalServerErrorResponse>(`/class_types/${id}`, "GET", params),
-  };
   classesMembers = {
     /**
      * @tags classAddMembersEvent
@@ -2461,21 +2458,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     createContent: (content: EntityCreateContentRequest, params?: RequestParams) =>
       this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents`, "POST", params, content),
-
-    /**
-     * @tags content
-     * @name copyContent
-     * @summary copyContent
-     * @request POST:/contents/copy
-     * @description copy lesson plan, lesson material
-     */
-    copyContent: (content: EntityCreateContentRequest, params?: RequestParams) =>
-      this.request<ApiCreateContentResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/contents/copy`,
-        "POST",
-        params,
-        content
-      ),
 
     /**
      * @tags content
@@ -4227,16 +4209,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   schedulesFilter = {
     /**
      * @tags schedule
-     * @name getClassTypesInScheduleFilter
-     * @summary get schedule filter classTypes
-     * @request GET:/schedules_filter/class_types
-     * @description get schedule filter classTypes
-     */
-    getClassTypesInScheduleFilter: (params?: RequestParams) =>
-      this.request<EntityScheduleShortInfo[], ApiInternalServerErrorResponse>(`/schedules_filter/class_types`, "GET", params),
-
-    /**
-     * @tags schedule
      * @name getScheduleFilterClasses
      * @summary get schedule filter classes
      * @request GET:/schedules_filter/classes
@@ -4394,8 +4366,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request POST:/schedules_time_view/list
      * @description get schedule time view list without relation info
      */
-    getScheduleTimeViewList: (queryData: EntityScheduleTimeViewQuery, params?: RequestParams) =>
-      this.request<EntityScheduleTimeView, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+    getScheduleTimeViewList: (queryData: EntityScheduleTimeViewListRequest, params?: RequestParams) =>
+      this.request<EntityScheduleTimeViewListResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/schedules_time_view/list`,
         "POST",
         params,
