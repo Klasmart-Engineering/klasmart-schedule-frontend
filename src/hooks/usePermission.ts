@@ -16,6 +16,12 @@ function usePermission(perms: PermissionType[]) {
   return state;
 }
 
+/**
+ *
+ * use this hook to preload some permissions
+ *
+ */
+
 function useLoadPermission(perms: PermissionType[]) {
   const [loaded, setLoaded] = React.useState<boolean>(false);
   React.useEffect(() => {
@@ -27,7 +33,12 @@ function useLoadPermission(perms: PermissionType[]) {
   }, []);
   return loaded;
 }
-
+/**
+ *  choose some permissions from list
+ *  @perms  permissions list, return value from function usePermission
+ *  @permsToChoose permissions to choose
+ *
+ */
 function useChoosePermission(perms: ICacheData, permsToChoose: PermissionType[]): ICacheData {
   return permsToChoose.reduce((prev, cur) => {
     prev[cur] = perms[cur];
