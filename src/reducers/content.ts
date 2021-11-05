@@ -1,4 +1,6 @@
+import { gql } from "@apollo/client";
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { uniqBy } from "lodash";
 import cloneDeep from "lodash/cloneDeep";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
@@ -465,13 +467,78 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
-      dispatch(getOutcomesFullOptions({})),
+      // dispatch(getOutcomesFullOptions({})),
     ]);
+    dispatch(
+      getOutcomesResourceOptions({
+        developmentals: contentDetail.outcome_entities?.filter((item) => item.developmental).map((item) => item.developmental || "") ?? [],
+        skillIds: contentDetail.outcome_entities?.filter((item) => item.skills).map((item) => item.skills || "") ?? [],
+      })
+    );
 
     return { contentDetail, lesson_types, visibility_settings };
   }
 );
 
+interface getOutcomesResourceOptionsPayload {
+  developmentals: string[]; // category,
+  skillIds: string[]; // subCategory,
+}
+export const getOutcomesResourceOptions = createAsyncThunk<LinkedMockOptions, getOutcomesResourceOptionsPayload>(
+  "content/getOutcomesResourceOptions",
+  async ({ developmentals, skillIds }, { getState }) => {
+    const {
+      content: { outcomesFullOptions },
+    } = getState() as RootState;
+    const filteredDevelopmentals = developmentals.filter((item) => !outcomesFullOptions.developmental?.find((v) => v.id === item));
+    const filteredSkills = skillIds.filter((item) => !outcomesFullOptions.skills?.find((v) => v.id === item));
+    const developmentalsQuery = filteredDevelopmentals
+      .map(
+        (id, index) => `
+    developmental${index}: category(id: "${id}") {
+      id
+      name
+      status
+    }
+  `
+      )
+      .join("");
+    const developmentalsResult = filteredDevelopmentals.length
+      ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+          query: gql`
+     query developmentalsListByIds {
+       ${developmentalsQuery}
+     } 
+    `,
+        })
+      : { data: {} };
+
+    const skillsQuery = filteredSkills
+      .map(
+        (id, index) => `
+    skill${index}: subcategory(id: "${id}") {
+      id
+      name
+      status
+    }
+  `
+      )
+      .join("");
+    const skillsResult = filteredSkills.length
+      ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+          query: gql`
+     query skillsListByIds {
+       ${skillsQuery}
+     } 
+    `,
+        })
+      : { data: {} };
+    return {
+      developmental: Object.values(developmentalsResult.data),
+      skills: Object.values(skillsResult.data),
+    };
+  }
+);
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
 type IGetContentsResourseResult = AsyncReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
@@ -591,7 +658,7 @@ export const searchPublishedLearningOutcomes = createAsyncThunk<
   { exactSerch?: string } & EntityOutcomeCondition & LoadingMetaPayload
 >(
   "content/searchPublishedLearningOutcomes",
-  async ({ metaLoading, exactSerch = "search_key", search_key, order_by, assumed, page, ...query }) => {
+  async ({ metaLoading, exactSerch = "search_key", search_key, order_by, assumed, page, ...query }, { dispatch }) => {
     const params = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
@@ -602,6 +669,12 @@ export const searchPublishedLearningOutcomes = createAsyncThunk<
       ...query,
     };
     const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(params);
+    await dispatch(
+      getOutcomesResourceOptions({
+        developmentals: list?.reduce((arr, item) => arr.concat(item.category_ids || []) || "", [] as string[]) ?? [],
+        skillIds: list?.reduce((arr, item) => arr.concat(item.sub_category_ids || []) || "", [] as string[]) ?? [],
+      })
+    );
     return { list, total };
   }
 );
@@ -1135,6 +1208,15 @@ const { actions, reducer } = createSlice({
       state.searchLOListOptions = cloneDeep(payload);
       state.outcomesFullOptions.program = cloneDeep(state.linkedMockOptions.program);
       state.searchLOListOptions.program = cloneDeep(state.linkedMockOptions.program);
+    },
+    [getOutcomesResourceOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesFullOptions>>) => {
+      const developmental = uniqBy([...(state.outcomesFullOptions.developmental || []), ...(payload.developmental || [])], "id");
+      const skills = uniqBy([...(state.outcomesFullOptions.skills || []), ...(payload.skills || [])], "id");
+      state.outcomesFullOptions = {
+        ...state.outcomesFullOptions,
+        developmental,
+        skills,
+      };
     },
     [getOutcomesOptionSkills.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.searchLOListOptions.skills = payload;
