@@ -8,6 +8,7 @@ function usePermission(perms: PermissionType[]) {
   React.useEffect(() => {
     (async () => {
       const permsData = await permissionCache.usePermission(perms);
+      console.log("---", permsData);
       setState(permsData);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -15,6 +16,12 @@ function usePermission(perms: PermissionType[]) {
 
   return state;
 }
+
+/**
+ *
+ * use this hook to preload some permissions
+ *
+ */
 
 function useLoadPermission(perms: PermissionType[]) {
   const [loaded, setLoaded] = React.useState<boolean>(false);
@@ -27,7 +34,12 @@ function useLoadPermission(perms: PermissionType[]) {
   }, []);
   return loaded;
 }
-
+/**
+ *  choose some permissions from list
+ *  @perms  permissions list, return value from function usePermission
+ *  @permsToChoose permissions to choose
+ *
+ */
 function useChoosePermission(perms: ICacheData, permsToChoose: PermissionType[]): ICacheData {
   return permsToChoose.reduce((prev, cur) => {
     prev[cur] = perms[cur];

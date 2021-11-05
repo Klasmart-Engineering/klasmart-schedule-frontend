@@ -31,7 +31,7 @@ class PermissionCahce {
   }
 
   usePermission(perms: PermissionType[]): Promise<ICacheData> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       getUserIdAndOrgId().then((orgId) => {
         const keyChanged = this.cacheKey !== "" && orgId !== this.cacheKey;
         keyChanged && this.flush();
@@ -40,19 +40,23 @@ class PermissionCahce {
         if (noneExistPerms.length === 0) {
           resolve(existPerms);
         } else {
-          apiGetPartPermission(noneExistPerms).then((data: ICacheData) => {
-            const permData = noneExistPerms.reduce((prev, cur) => {
-              if (data && data.hasOwnProperty(cur) && "boolean" === typeof data[cur]) {
-                prev[cur] = data[cur];
-              }
-              return prev;
-            }, {} as ICacheData);
-            this._add(orgId, permData);
-            resolve({
-              ...existPerms,
-              ...permData,
+          apiGetPartPermission(noneExistPerms)
+            .then((data: ICacheData) => {
+              const permData = noneExistPerms.reduce((prev, cur) => {
+                if (data && data.hasOwnProperty(cur) && "boolean" === typeof data[cur]) {
+                  prev[cur] = data[cur];
+                }
+                return prev;
+              }, {} as ICacheData);
+              this._add(orgId, permData);
+              resolve({
+                ...existPerms,
+                ...permData,
+              });
+            })
+            .catch(() => {
+              //resolve({});
             });
-          });
         }
       });
     });
