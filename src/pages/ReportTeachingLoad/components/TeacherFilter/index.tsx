@@ -149,7 +149,6 @@ export default function TeacherFilter({ onChange }: IProps) {
   };
 
   const onChangeTeacher = (value: MutiSelect.ISelect[]) => {
-    console.log("teacher: ", value);
     setState((state) => ({
       ...state,
       teachers: value,

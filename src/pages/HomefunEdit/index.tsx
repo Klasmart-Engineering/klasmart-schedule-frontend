@@ -60,7 +60,6 @@ function AssessmentsHomefunEditIner() {
       data.outcomes?.forEach((o) => {
         if (o.status === "default") errorTimes++;
       });
-      console.log("data:", data, errorTimes);
       if (errorTimes) {
         return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
       }
@@ -83,8 +82,6 @@ function AssessmentsHomefunEditIner() {
   const { breakpoints } = useTheme();
   const xs = useMediaQuery(breakpoints.down("xs"));
   const radioTypography = xs ? "subtitle2" : "h6";
-
-  console.log(homefunDetail.outcomes, 88);
 
   return (
     <>

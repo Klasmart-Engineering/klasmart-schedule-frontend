@@ -856,7 +856,6 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleList.class_type === "Homework") {
       validator.start_at = validator.end_at = false;
     }
-    console.log(validator);
     setValidator({ ...validator });
     return verificaPath;
   };
