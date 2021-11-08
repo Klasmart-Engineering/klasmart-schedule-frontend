@@ -1,8 +1,8 @@
 import { ApolloQueryResult } from "@apollo/client";
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { cloneDeep, pick, uniq, uniqBy } from "lodash";
+import { cloneDeep, orderBy, pick, uniq, uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
-import { Class, Program, School, Status, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
+import { Class, Program, School, Status, Subject, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
@@ -25,9 +25,6 @@ import {
   GetStudentNameByIdDocument,
   GetStudentNameByIdQuery,
   GetStudentNameByIdQueryVariables,
-  GetSubjectsDocument,
-  GetSubjectsQuery,
-  GetSubjectsQueryVariables,
   MyPermissionsAndClassesTeachingQueryDocument,
   MyPermissionsAndClassesTeachingQueryQuery,
   MyPermissionsAndClassesTeachingQueryQueryVariables,
@@ -943,7 +940,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   const { week_end, week_start, year, summary_type, school_id, class_id, student_id, subject_id } = query;
   let years: number[] = [];
   let weeks: IWeeks[] = [];
-  let subjects: ArrProps[] = [];
+  let subjects: Pick<Subject, "id" | "name">[] = [];
   let schools: ArrProps[] = [];
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
@@ -1036,29 +1033,31 @@ export const onLoadLearningSummary = createAsyncThunk<
   }
   _student_id = isOnlyStudent ? myUserId : _student_id;
 
-  const data = await gqlapi.query<GetSubjectsQuery, GetSubjectsQueryVariables>({
-    query: GetSubjectsDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  const list = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
+  const programsResp = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
     query: GetProgramsAndSubjectsDocument,
     variables: {
       organization_id,
     },
   });
-  const _subjects = data.data.organization?.subjects?.filter((item) => item?.status === Status.Active) || [];
-  const programs = list.data.organization?.programs?.filter((item) => item?.status === Status.Active) || [];
-  subjects = _subjects?.map((item) => {
-    const name = programs.find((item2) => item2.subjects?.some((val) => item.id === val.id))?.name + " - " + item.name;
-    return {
-      id: item.id,
-      name,
-    };
-  });
-  subjects = uniqBy(subjects, "id");
-  subjects = subjects.slice().sort(sortByStudentName("name"));
+
+  let programs = ((programsResp.data.programsConnection || {}).edges || [])
+    .map((item) => item?.node)
+    ?.filter((item) => item?.status === Status.Active) as Pick<Program, "id" | "name" | "subjects">[];
+
+  subjects = programs.reduce((prev, cur) => {
+    (cur.subjects || []).forEach((item) => {
+      if (item.status === Status.Active) {
+        prev.push({
+          id: item.id,
+          name: `${cur.name} - ${item.name}`,
+        });
+      }
+    });
+    return prev;
+  }, [] as Pick<Subject, "id" | "name">[]);
+
+  subjects = orderBy(subjects, [(item) => item.name.toLowerCase()], ["asc"]);
+
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
   _subject_id = subject_id ? subject_id : subjects[0].id;
 
@@ -1072,8 +1071,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     subject_id: _subject_id,
   };
   if (_student_id && _subject_id && _student_id !== "none" && _year && _week_start && _week_end) {
-    await dispatch(getLiveClassesSummary({ ...params, metaLoading }));
-    await dispatch(getAssignmentSummary({ ...params, metaLoading }));
+    dispatch(getLiveClassesSummary({ ...params, metaLoading }));
+    dispatch(getAssignmentSummary({ ...params, metaLoading }));
   }
   return { years, weeks, schools, classes, teachers, students, subjects, summary_type, ...params };
 });
@@ -1528,10 +1527,9 @@ const { actions, reducer } = createSlice({
         Class,
         "class_id" | "students"
       >[];
-      let programs = payload[5].data.organization?.programs?.filter((item) => item?.status === Status.Active) as Pick<
-        Program,
-        "id" | "name" | "subjects"
-      >[];
+      let programs = ((payload[5].data.programsConnection || {}).edges || [])
+        .map((item) => item?.node)
+        ?.filter((item) => item?.status === Status.Active) as Pick<Program, "id" | "name" | "subjects">[];
 
       const membership = payload[1].data.me?.membership;
 

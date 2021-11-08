@@ -311,7 +311,7 @@ export type ClassConnectionNode = {
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   programs?: Maybe<Array<ProgramSummaryNode>>;
-  schools?: Maybe<Array<SchoolSimplifiedSummaryNode>>;
+  schools?: Maybe<Array<SchoolSummaryNode>>;
   shortCode?: Maybe<Scalars["String"]>;
   status: Status;
   subjects?: Maybe<Array<SubjectSummaryNode>>;
@@ -872,6 +872,7 @@ export type OrganizationFilter = {
   phone?: Maybe<StringFilter>;
   shortCode?: Maybe<StringFilter>;
   status?: Maybe<StringFilter>;
+  userId?: Maybe<UuidFilter>;
 };
 
 export type OrganizationMembership = {
@@ -1126,7 +1127,9 @@ export type ProgramsConnectionResponse = IConnectionResponse & {
 export type Query = {
   __typename?: "Query";
   _empty?: Maybe<Scalars["String"]>;
+  ageRangeNode?: Maybe<AgeRangeConnectionNode>;
   ageRangesConnection?: Maybe<AgeRangesConnectionResponse>;
+  /** @deprecated Use 'ageRangeNode' */
   age_range?: Maybe<AgeRange>;
   categoriesConnection?: Maybe<CategoriesConnectionResponse>;
   category?: Maybe<Category>;
@@ -1136,12 +1139,17 @@ export type Query = {
   /** @deprecated Use 'classesConnection'. */
   classes?: Maybe<Array<Maybe<Class>>>;
   classesConnection?: Maybe<ClassesConnectionResponse>;
+  /** @deprecated Use 'gradeNode'. */
   grade?: Maybe<Grade>;
+  gradeNode?: Maybe<GradeConnectionNode>;
   gradesConnection?: Maybe<GradesConnectionResponse>;
   me?: Maybe<User>;
   /** @deprecated Use 'usersConnection with a filter for matching 'email' or 'phone' */
   my_users?: Maybe<Array<User>>;
+  /** @deprecated Use 'organizationNode'. */
   organization?: Maybe<Organization>;
+  organizationNode?: Maybe<OrganizationConnectionNode>;
+  /** @deprecated Use 'organizationsConnection'. */
   organizations?: Maybe<Array<Maybe<Organization>>>;
   organizationsConnection?: Maybe<OrganizationsConnectionResponse>;
   permissionsConnection?: Maybe<PermissionsConnectionResponse>;
@@ -1165,6 +1173,10 @@ export type Query = {
   /** @deprecated Unused */
   users?: Maybe<Array<Maybe<User>>>;
   usersConnection?: Maybe<UsersConnectionResponse>;
+};
+
+export type QueryAgeRangeNodeArgs = {
+  id: Scalars["ID"];
 };
 
 export type QueryAgeRangesConnectionArgs = {
@@ -1208,6 +1220,10 @@ export type QueryGradeArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryGradeNodeArgs = {
+  id: Scalars["ID"];
+};
+
 export type QueryGradesConnectionArgs = {
   direction: ConnectionDirection;
   directionArgs?: Maybe<ConnectionsDirectionArgs>;
@@ -1217,6 +1233,10 @@ export type QueryGradesConnectionArgs = {
 
 export type QueryOrganizationArgs = {
   organization_id: Scalars["ID"];
+};
+
+export type QueryOrganizationNodeArgs = {
+  id: Scalars["ID"];
 };
 
 export type QueryOrganizationsArgs = {
@@ -1509,13 +1529,6 @@ export type SchoolMembershipRemoveRoleArgs = {
   role_id: Scalars["ID"];
 };
 
-export type SchoolSimplifiedSummaryNode = {
-  __typename?: "SchoolSimplifiedSummaryNode";
-  id: Scalars["ID"];
-  name?: Maybe<Scalars["String"]>;
-  status: Status;
-};
-
 export enum SchoolSortBy {
   Id = "id",
   Name = "name",
@@ -1532,7 +1545,7 @@ export type SchoolSummaryNode = {
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   organizationId?: Maybe<Scalars["String"]>;
-  status?: Maybe<Status>;
+  status: Status;
   userStatus?: Maybe<Status>;
 };
 
@@ -1830,10 +1843,20 @@ export type UserConnectionNode = {
   gender?: Maybe<Scalars["String"]>;
   givenName?: Maybe<Scalars["String"]>;
   id: Scalars["ID"];
+  /** @deprecated Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw */
   organizations: Array<OrganizationSummaryNode>;
+  organizationsConnection?: Maybe<OrganizationsConnectionResponse>;
   roles: Array<RoleSummaryNode>;
   schools: Array<SchoolSummaryNode>;
   status: Status;
+};
+
+export type UserConnectionNodeOrganizationsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<OrganizationFilter>;
+  sort?: Maybe<OrganizationSortInput>;
 };
 
 export type UserFilter = {
