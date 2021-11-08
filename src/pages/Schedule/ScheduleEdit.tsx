@@ -17,7 +17,7 @@ import {
   ExpandMoreOutlined,
   FileCopyOutlined,
   PermIdentity,
-  VisibilityOff
+  VisibilityOff,
 } from "@material-ui/icons";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -32,9 +32,11 @@ import { useHistory } from "react-router";
 import { ConnectionDirection, Maybe, User } from "../../api/api-ko-schema.auto";
 import { GetClassFilterListQuery, GetProgramsQuery, GetSchoolsFilterListQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import {
-  EntityContentInfoWithDetails, EntityQueryContentItem, EntityScheduleAddView,
+  EntityContentInfoWithDetails,
+  EntityQueryContentItem,
+  EntityScheduleAddView,
   EntityScheduleDetailsView,
-  EntityScheduleShortInfo
+  EntityScheduleShortInfo,
 } from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import PermissionType from "../../api/PermissionType";
@@ -62,7 +64,7 @@ import {
   resetScheduleDetial,
   saveScheduleData,
   ScheduleFilterPrograms,
-  scheduleShowOption
+  scheduleShowOption,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -80,7 +82,7 @@ import {
   ParticipantsData,
   ParticipantsShortInfo,
   repeatOptionsType,
-  timestampType
+  timestampType,
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -572,7 +574,7 @@ function EditBox(props: CalendarStateProps) {
       });
       if (scheduleDetial.class) setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
-      setSubjectItem(scheduleDetial.subjects as EntityScheduleShortInfo[]);
+      setSubjectItem((scheduleDetial.subjects ?? []) as EntityScheduleShortInfo[]);
       setProgramItem(scheduleDetial.program);
       setScheduleList(newData);
       setInitScheduleList(newData);
@@ -1543,7 +1545,7 @@ function EditBox(props: CalendarStateProps) {
       | undefined
     )[];
     return materialArr?.map((item: any, key: number) => (
-      <p style={{ fontWeight: 500, paddingLeft: "10px", wordBreak: "break-all" }}>{`${key + 1}. ${item.name}`}</p>
+      <p key={key} style={{ fontWeight: 500, paddingLeft: "10px", wordBreak: "break-all" }}>{`${key + 1}. ${item.name}`}</p>
     ));
   };
 

@@ -284,8 +284,11 @@ function MyCalendar(props: CalendarProps) {
    */
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoViewProps) => {
+      console.log(scheduleInfo);
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
+      const conditionByLabel = scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task";
+      const condition = scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task";
+      if (conditionByLabel || condition) {
         if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
           changeModalDate({
             title: "",
