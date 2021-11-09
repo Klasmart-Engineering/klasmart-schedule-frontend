@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { apiEmitter, ApiErrorEventData, ApiEvent, ApiInfoEventData } from "./api";
+import { apiEmitter, ApiErrorEventData, ApiEvent, ApiInfoEventData, GraphQLErrorEventData } from "./api";
 import { apiAddOrganizationToPageUrl, subscribeLocaleInCookie } from "./api/extra";
 import { subscribeIframeMessage } from "./api/iframeMessage";
 import App from "./App";
@@ -29,6 +29,13 @@ apiEmitter.on<ApiInfoEventData>(ApiEvent.Info, (e) => {
   const { label } = e;
   const message = String(t(label as LangRecordId) || "");
   if (message) store.dispatch(actInfo(message));
+});
+
+apiEmitter.on<GraphQLErrorEventData>(ApiEvent.GraphQLError, (e) => {
+  if (!e) return;
+  const { label, msg } = e;
+  const message = String(t(label as LangRecordId) || msg || "");
+  if (message) store.dispatch(actError(message));
 });
 
 subscribeLocaleInCookie((locale) => localeManager.toggle(shouldBeLangName(locale.slice(0, 2))));
