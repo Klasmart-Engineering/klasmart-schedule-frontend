@@ -853,7 +853,7 @@
   "h5p_label_link": "链接",
   "library_error_cannot_delete_lesson_plan": "该课件已被引用，您无法删除",
   "library_label_visibility_schools": "学校",
-  "report_msg_no_data": "无有效数据",
+  "report_msg_no_data": "本周没有数据可供展示。",
   "report_navigation_class_view": "查看班级",
   "report_msg_individual_infor": "您可通过该报表查看单独学生基于学习成果的学习情况。",
   "report_msg_overall_infor": "您可通过该报表查看该班级的整体学习情况并对比每位学生的学习成果。您也可点击每位学生的名字以查看该学生的单独报表。",
@@ -1043,5 +1043,10 @@
   "report_label_student_assignments_completion_rate": "学生作业完成率",
   "report_label_class_average_assignments_completion_rate": "班级平均作业完成率",
   "report_label_subject_average_assignments_completion_rate": "学科平均作业完成率",
-  "report_label_student_progress_report": "学生进度报告"
+  "report_label_student_progress_report": "学生进度报告",
+  "report_label_overall_attendance": "总体出席情况",
+  "report_label_overall_completion": "总体完成情况",
+  "report_msg_participants_not_included": "不包括参与者",
+  "report_student_usage_incomplete_students": "未完成学生",
+  "general_error_fail_get_permission": "获取权限失败，请刷新"
 }
