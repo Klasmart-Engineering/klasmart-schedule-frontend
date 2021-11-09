@@ -198,12 +198,7 @@ export class modelSchedule {
     });
   }
 
-  static FilterParticipants(
-    ParticipantsDatas: ParticipantsData | undefined,
-    ClassRoster: ParticipantsByClassQuery,
-    is_org: boolean,
-    mySchoolId: string[]
-  ) {
+  static FilterParticipants(ParticipantsDatas: ParticipantsData | undefined, ClassRoster: ParticipantsByClassQuery) {
     const rosterIdSet = { students: [], teachers: [] };
     const deDuplication = (arr: any) => {
       const obj: any = [];

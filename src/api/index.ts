@@ -29,7 +29,7 @@ fetchIntercept.register({
       .json()
       .catch(async (e) => {
         const errorLabel: LangRecordId = "general_error_unknown";
-        console.error(e);
+        console.log("e", response.body);
         apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: errorLabel });
       });
     return response;

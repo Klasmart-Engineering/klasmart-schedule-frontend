@@ -1,20 +1,21 @@
 import { makeStyles } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Tooltip from "@material-ui/core/Tooltip";
 import { DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
+import GetAppIcon from "@material-ui/icons/GetApp";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { apiLivePath } from "../../api/extra";
-import { Permission, PermissionType, usePermission } from "../../components/Permission";
+import { EntityScheduleViewDetail } from "../../api/api.auto";
+import { apiLivePath, apiResourcePathById } from "../../api/extra";
+import PermissionType from "../../api/PermissionType";
+import { Permission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
-import { scheduleInfoViewProps, EntityScheduleShortInfo, memberType, classTypeLabel, ScheduleEditExtend } from "../../types/scheduleTypes";
-import Box from "@material-ui/core/Box";
-import GetAppIcon from "@material-ui/icons/GetApp";
-import { EntityScheduleViewDetail } from "../../api/api.auto";
-import { apiResourcePathById } from "../../api/extra";
+import { classTypeLabel, EntityScheduleShortInfo, memberType, ScheduleEditExtend, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import ScheduleButton from "./ScheduleButton";
-import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -156,7 +157,8 @@ export default function CustomizeTempalte(props: InfoProps) {
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
+  const perm = usePermission([PermissionType.attend_live_class_as_a_student_187]);
+  const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
   const timestampToTime = (timestamp: number): string => {
     if (!timestamp) return "N/A";

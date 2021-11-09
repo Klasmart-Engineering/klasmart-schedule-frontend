@@ -431,7 +431,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
   };
   return (
     <Box>
-      <div onClick={handleChange} className={css.schoolTemplateStyleTitle} style={{ marginBlockStart: "1em", marginBlockEnd: "1em" }}>
+      <div onClick={handleChange} className={css.schoolTemplateStyleTitle} style={{ marginBlockStart: "1em" }}>
         <span>
           {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
           {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
@@ -442,7 +442,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
       </div>
       <Collapse in={checked}>
         {((schoolsConnection?.schoolsConnection?.totalCount ?? 0) > 5 || searchValue) && (
-          <div style={{ textAlign: "center", marginBlockStart: "1em", marginBlockEnd: "1em" }}>
+          <div style={{ textAlign: "center", marginBlockStart: "1em" }}>
             <TextField
               id="filled-size-small"
               size="small"

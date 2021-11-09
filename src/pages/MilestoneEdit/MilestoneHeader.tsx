@@ -10,9 +10,10 @@ import clsx from "clsx";
 import React from "react";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import { MilestoneDetailResult, MilestoneStatus } from "../../api/type";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 const createContainedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   color: palette.common.white,

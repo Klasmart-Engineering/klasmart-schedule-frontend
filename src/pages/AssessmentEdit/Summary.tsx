@@ -23,6 +23,7 @@ import clsx from "clsx";
 import React, { forwardRef, Fragment, useCallback, useMemo, useReducer } from "react";
 import { Controller, useForm, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import PermissionType from "../../api/PermissionType";
 import {
   AssessmentStatus,
   GetAssessmentResult,
@@ -31,7 +32,7 @@ import {
   UpdateAssessmentRequestDataLessonMaterials,
 } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
-import { PermissionOr, PermissionType } from "../../components/Permission";
+import { PermissionOr } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { formattedTime } from "../../models/ModelContentDetailForm";

@@ -6,7 +6,7 @@ import React, { useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
-import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { EntityQueryContentItem } from "../../api/api.auto";
 import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
@@ -65,9 +65,10 @@ const mapContentType = (lesson: DraggableItemProps["lesson"], item: DraggableIte
     : item.content_type;
 };
 
+
 interface DraggableItemProps {
   type: string;
-  item: EntityContentInfoWithDetails;
+  item: EntityQueryContentItem;
   lesson?: "assets" | "material" | "plan";
   permission: boolean;
 }
@@ -95,7 +96,7 @@ function DraggableImage(props: DraggableItemProps) {
 }
 
 export interface MediaAssetsProps {
-  list: EntityContentInfoWithDetails[];
+  list: EntityQueryContentItem[];
   total: number;
   amountPerPage?: number;
   comingsoon?: boolean;

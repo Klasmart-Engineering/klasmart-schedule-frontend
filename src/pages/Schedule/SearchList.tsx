@@ -209,7 +209,7 @@ export default function SearchList(props: SearchListProps) {
               {isTitleSame(item, index) && (
                 <h1 className={classes.titleDate}>{timeFormat((item.start_at! > 0 ? item.start_at : item.due_at) as number, "dateDay")}</h1>
               )}
-              <Card className={classes.cardItem} onClick={() => previewSchedule((item.id as unknown) as number)}>
+              <Card className={classes.cardItem} onClick={() => previewSchedule(item.id as unknown as number)}>
                 <h1 className={`${classes.titleDate} ${classes.itemTitle}`}>{item.title}</h1>
                 <Grid container alignItems="center" className={classes.firstLine}>
                   <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>

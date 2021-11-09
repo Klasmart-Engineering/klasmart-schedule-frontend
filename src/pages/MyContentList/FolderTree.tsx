@@ -3,8 +3,9 @@ import { AddBoxOutlined, Close, CreateNewFolderOutlined, Folder, IndeterminateCh
 import { TreeItem, TreeView } from "@material-ui/lab";
 import React, { useMemo, useState } from "react";
 import { RecursiveFolderItem } from "../../api/extra";
+import PermissionType from "../../api/PermissionType";
 import { LButton, LButtonProps } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 
 const useStyles = makeStyles((theme) =>

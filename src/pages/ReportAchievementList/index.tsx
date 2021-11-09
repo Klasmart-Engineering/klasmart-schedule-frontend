@@ -1,9 +1,12 @@
+import { Box, Button } from "@material-ui/core";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { getDocumentUrl } from "../../api/extra";
+import PermissionType from "../../api/PermissionType";
 import { emptyTipAndCreate, permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
@@ -14,8 +17,6 @@ import { AchievementListChart, AchievementListChartProps } from "./AchievementLi
 import BriefIntroduction from "./BriefIntroduction";
 import { FilterAchievementReport, FilterAchievementReportProps } from "./FilterAchievementReport";
 import { QueryCondition } from "./types";
-import { Box, Button } from "@material-ui/core";
-import { getDocumentUrl } from "../../api/extra";
 
 const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
@@ -44,6 +45,7 @@ export function ReportAchievementList() {
   const dispatch = useDispatch();
   const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
   const reportList = totalData.reportList ?? [];
+
   const perm = usePermission([
     PermissionType.view_reports_610,
     PermissionType.view_my_reports_614,
@@ -64,7 +66,7 @@ export function ReportAchievementList() {
 
   const getFirstLessonPlanId = useMemo(
     () => async (teacher_id: string, class_id: string) => {
-      const { payload: data } = ((await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown) as PayloadAction<
+      const { payload: data } = (await dispatch(getLessonPlan({ metaLoading: true, teacher_id, class_id }))) as unknown as PayloadAction<
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
       if (data) {
@@ -85,6 +87,16 @@ export function ReportAchievementList() {
         history.push({
           search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
         });
+        dispatch(
+          reportOnload({
+            teacher_id: value,
+            class_id: "",
+            lesson_plan_id: "",
+            status: condition.status,
+            sort_by: condition.sort_by,
+            metaLoading: true,
+          })
+        );
       }
       if (tab === "class_id") {
         getFirstLessonPlanId(condition.teacher_id, value);
@@ -102,7 +114,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id]
+    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id, condition.status, condition.sort_by]
   );
   useEffect(() => {
     dispatch(
@@ -117,7 +129,7 @@ export function ReportAchievementList() {
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [condition.teacher_id, condition.sort_by, condition.status, dispatch]);
+  }, [condition.sort_by, condition.status, dispatch]);
 
   useEffect(() => {
     if (reportMockOptions) {

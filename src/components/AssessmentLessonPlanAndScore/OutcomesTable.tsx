@@ -235,7 +235,7 @@ const AssessAction = (props: AssessActionProps) => {
                   render={(props: { value: boolean | undefined }) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
-                      label={d("Not Attempted").t("assess_option_not_attempted")}
+                      label={d("Not Covered").t("assess_option_not_attempted")}
                       disabled={!editable}
                     />
                   )}

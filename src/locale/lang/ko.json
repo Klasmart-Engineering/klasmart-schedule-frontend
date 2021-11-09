@@ -853,7 +853,7 @@
   "h5p_label_link": "링크",
   "library_error_cannot_delete_lesson_plan": "이 수업 계획은 학습 스케줄에 이미 사용되었기 때문에 삭제할 수 없습니다.",
   "library_label_visibility_schools": "학교",
-  "report_msg_no_data": "학습내용 성취 데이터가 없습니다.",
+  "report_msg_no_data": "이번 주에 표시할 데이터가 없었습니다.",
   "report_navigation_class_view": "클래스 보기",
   "report_msg_individual_infor": "이 리포트는 학습 결과 측면에서 수업에서 개별 학생이 성취한 결과에 대한 통찰을 제공합니다.",
   "report_msg_overall_infor": "전체 학생 성취도 보고서는 학습 결과 및 학생들 간의 비교 측면에서 수업의 성과에 대한 통찰을 제공합니다. 개별 학생 세부 정보를 보려면 학생 이름을 클릭하십시오.",
@@ -1043,5 +1043,10 @@
   "report_label_student_assignments_completion_rate": "학생 과제 완료율",
   "report_label_class_average_assignments_completion_rate": "학급 평균 과제 완료율",
   "report_label_subject_average_assignments_completion_rate": "과목 평균 과제 완료율",
-  "report_label_student_progress_report": "학습 진행 상황 리포트"
+  "report_label_student_progress_report": "학습 진행 상황 리포트",
+  "report_label_overall_attendance": "출석 현황",
+  "report_label_overall_completion": "완료 현황",
+  "report_msg_participants_not_included": "추가 참석자 출석여부는 리포트에 포함되지 않습니다.",
+  "report_student_usage_incomplete_students": "미완료한 학습자",
+  "general_error_fail_get_permission": "권한을 얻지 못했습니다. 새로고침하세요."
 }

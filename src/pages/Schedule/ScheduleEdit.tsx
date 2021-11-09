@@ -33,12 +33,14 @@ import { ConnectionDirection, Maybe, User } from "../../api/api-ko-schema.auto";
 import { GetClassFilterListQuery, GetProgramsQuery, GetSchoolsFilterListQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
+  EntityQueryContentItem,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleShortInfo,
 } from "../../api/api.auto";
 import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
-import { PermissionType, usePermission } from "../../components/Permission";
+import PermissionType from "../../api/PermissionType";
+import { usePermission } from "../../hooks/usePermission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, localeManager, t } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
@@ -323,7 +325,7 @@ function SmallCalendar(props: CalendarStateProps) {
   return (
     <Box className={css.smallCalendarBox}>
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
-        <Grid container justify="space-around">
+        <Grid container justifyContent="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
         <ScheduleFilter
@@ -395,9 +397,7 @@ function EditBox(props: CalendarStateProps) {
     stateMaterialArr,
     viewSubjectPermission,
   } = props;
-  const { contentsAuthList, classOptions, mySchoolId, outcomeListInit } = useSelector<RootState, RootState["schedule"]>(
-    (state) => state.schedule
-  );
+  const { contentsAuthList, classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -408,13 +408,16 @@ function EditBox(props: CalendarStateProps) {
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
   const [scheduleRestNum, setScheduleRestNum] = React.useState(0);
-  const permissionShowPreview = usePermission(PermissionType.attend_live_class_as_a_teacher_186);
+
   const perm = usePermission([
+    PermissionType.attend_live_class_as_a_teacher_186,
     PermissionType.create_event_520,
     PermissionType.create_my_schedule_events_521,
     PermissionType.create_my_schools_schedule_events_522,
     PermissionType.attend_live_class_as_a_student_187,
   ]);
+
+  const permissionShowPreview = perm.attend_live_class_as_a_teacher_186;
 
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
@@ -571,7 +574,7 @@ function EditBox(props: CalendarStateProps) {
       });
       if (scheduleDetial.class) setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
-      setSubjectItem(scheduleDetial.subjects as EntityScheduleShortInfo[]);
+      setSubjectItem((scheduleDetial.subjects ?? []) as EntityScheduleShortInfo[]);
       setProgramItem(scheduleDetial.program);
       setScheduleList(newData);
       setInitScheduleList(newData);
@@ -853,7 +856,6 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleList.class_type === "Homework") {
       validator.start_at = validator.end_at = false;
     }
-    console.log(validator);
     setValidator({ ...validator });
     return verificaPath;
   };
@@ -1247,12 +1249,7 @@ function EditBox(props: CalendarStateProps) {
   const addParticipants = () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
     // will class roster data remove in ParticipantsData
-    const participantsFilterData = modelSchedule.FilterParticipants(
-      ParticipantsData,
-      participantMockOptions.participantList,
-      perm.create_event_520 as boolean,
-      mySchoolId
-    );
+    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantMockOptions.participantList);
     changeModalDate({
       openStatus: true,
       enableCustomization: true,
@@ -1547,7 +1544,7 @@ function EditBox(props: CalendarStateProps) {
       | undefined
     )[];
     return materialArr?.map((item: any, key: number) => (
-      <p style={{ fontWeight: 500, paddingLeft: "10px", wordBreak: "break-all" }}>{`${key + 1}. ${item.name}`}</p>
+      <p key={key} style={{ fontWeight: 500, paddingLeft: "10px", wordBreak: "break-all" }}>{`${key + 1}. ${item.name}`}</p>
     ));
   };
 
@@ -1795,7 +1792,7 @@ function EditBox(props: CalendarStateProps) {
     <ThemeProvider theme={theme}>
       <Box className={css.formControset}>
         <Box>
-          <Grid container justify="space-between" alignItems="center">
+          <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={6}>
               <Close
                 style={{
@@ -1870,7 +1867,7 @@ function EditBox(props: CalendarStateProps) {
         {scheduleList.class_type !== "Homework" && (
           <Box>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Grid container justify="space-between" alignItems="center">
+              <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item xs={12}>
                   <TextField
                     id="datetime-local"
@@ -1929,7 +1926,7 @@ function EditBox(props: CalendarStateProps) {
           }}
         >
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-between" alignItems="center">
+            <Grid container justifyContent="space-between" alignItems="center">
               <Grid item xs={5}>
                 <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
@@ -2427,7 +2424,7 @@ interface CalendarStateProps {
   scheduleDetial: EntityScheduleDetailsView;
   privilegedMembers: (member: memberType) => boolean;
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
-  mediaList: EntityContentInfoWithDetails[];
+  mediaList: EntityQueryContentItem[];
   stateOnlyMine: string[];
   handleChangeOnlyMine: (data: string[]) => void;
   isShowAnyTime: boolean;

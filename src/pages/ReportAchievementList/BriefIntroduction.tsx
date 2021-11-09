@@ -3,8 +3,9 @@ import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
 import { QueryCondition } from "./types";
@@ -151,7 +152,7 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
               </Box>
               <Box className={clsx(css.rightContainer, css.marginItem)}>
                 <div className={clsx(css.colorPart, css.gray)}></div>
-                <span>{d("Not Attempted").t("assess_option_not_attempted")}</span>
+                <span>{d("Not Covered").t("assess_option_not_attempted")}</span>
               </Box>
             </Box>
           )}
