@@ -1,4 +1,5 @@
-import { apiGetPartPermission, getUserIdAndOrgId } from "../api/extra";
+import { apiEmitter, ApiEvent, GraphQLErrorEventData } from "../api";
+import { apiGetPartPermission, getUserIdAndOrgId, IApiGetPartPermissionResp } from "../api/extra";
 import PermissionType from "../api/PermissionType";
 
 export type ICacheData = {
@@ -31,7 +32,7 @@ class PermissionCahce {
   }
 
   usePermission(perms: PermissionType[]): Promise<ICacheData> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       getUserIdAndOrgId().then((orgId) => {
         const keyChanged = this.cacheKey !== "" && orgId !== this.cacheKey;
         keyChanged && this.flush();
@@ -41,21 +42,28 @@ class PermissionCahce {
           resolve(existPerms);
         } else {
           apiGetPartPermission(noneExistPerms)
-            .then((data: ICacheData) => {
-              const permData = noneExistPerms.reduce((prev, cur) => {
-                if (data && data.hasOwnProperty(cur) && "boolean" === typeof data[cur]) {
-                  prev[cur] = data[cur];
-                }
-                return prev;
-              }, {} as ICacheData);
-              this._add(orgId, permData);
-              resolve({
-                ...existPerms,
-                ...permData,
-              });
+            .then(({ error, data }: IApiGetPartPermissionResp) => {
+              // CMS-200
+              if (error) {
+                reject();
+                apiEmitter.emit<GraphQLErrorEventData>(ApiEvent.GraphQLError, { label: "general_error_fail_get_permission" });
+              } else {
+                const permData = noneExistPerms.reduce((prev, cur) => {
+                  if (data && data.hasOwnProperty(cur) && "boolean" === typeof data[cur]) {
+                    prev[cur] = data[cur];
+                  }
+                  return prev;
+                }, {} as ICacheData);
+                this._add(orgId, permData);
+                resolve({
+                  ...existPerms,
+                  ...permData,
+                });
+              }
             })
-            .catch(() => {
-              //resolve({});
+            .catch((error) => {
+              reject();
+              //
             });
         }
       });

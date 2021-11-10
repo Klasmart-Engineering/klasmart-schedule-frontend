@@ -3,6 +3,7 @@ import mitt from "mitt";
 export enum ApiEvent {
   ResponseError = "ResponseError",
   Info = "Info",
+  GraphQLError = "GraphQLError",
 }
 
 export interface ApiErrorEventData {
@@ -10,6 +11,11 @@ export interface ApiErrorEventData {
   label?: string;
   data?: any;
   onError?: (message: string) => any;
+}
+
+export interface GraphQLErrorEventData {
+  msg?: string;
+  label?: string;
 }
 
 export interface ApiInfoEventData {

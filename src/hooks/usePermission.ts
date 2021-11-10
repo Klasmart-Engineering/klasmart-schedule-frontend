@@ -1,7 +1,6 @@
 import React from "react";
 import PermissionType from "../api/PermissionType";
 import permissionCache, { ICacheData } from "../services/permissionCahceService";
-
 function usePermission(perms: PermissionType[]) {
   const [state, setState] = React.useState<ICacheData>({});
 

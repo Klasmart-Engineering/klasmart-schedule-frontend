@@ -5,6 +5,7 @@ import merge from "lodash/merge";
 import api, { gqlapi } from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
+import { ICacheData } from "../services/permissionCahceService";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
@@ -219,9 +220,12 @@ export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
 
-export async function apiGetPartPermission(permissions: string[]): Promise<{
-  [key: string]: boolean;
-}> {
+export interface IApiGetPartPermissionResp {
+  error: boolean;
+  data: ICacheData;
+}
+
+export async function apiGetPartPermission(permissions: string[]): Promise<IApiGetPartPermissionResp> {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
   const fragmentStr = permissions
     .map((permission) => {
@@ -242,7 +246,10 @@ export async function apiGetPartPermission(permissions: string[]): Promise<{
     `,
     })
     .then((resp) => {
-      return resp.data?.meMembership?.membership || {};
+      return {
+        error: (resp.errors || []).length > 0 || resp.data?.meMembership?.membership === null,
+        data: resp.data?.meMembership?.membership || {},
+      };
     });
 }
 

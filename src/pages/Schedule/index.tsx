@@ -328,7 +328,7 @@ function ScheduleContent() {
       } else if (privilegedMembers("Student")) {
         dispatch(getClassesByStudent());
       }
-      // get material
+      // get materials
       dispatch(getScheduleMockOptions({}));
       dispatch(getLinkedMockOptions({ metaLoading: true }));
       dispatch(getParticipantsData(isAdmin as boolean));

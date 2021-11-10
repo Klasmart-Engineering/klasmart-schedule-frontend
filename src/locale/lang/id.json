@@ -853,7 +853,7 @@
   "h5p_label_link": "Tautan",
   "library_error_cannot_delete_lesson_plan": "Rencana belajar ini tidak dapat dihapus karena sudah berjalan sesuai jadwal.",
   "library_label_visibility_schools": "Sekolah",
-  "report_msg_no_data": "Tidak ada data pencapaian tersedia.",
+  "report_msg_no_data": "Tidak ada data untuk ditampilkan dalam minggu ini.",
   "report_navigation_class_view": "Tampilan Kelas",
   "report_msg_individual_infor": "Laporan ini memperlihatkan informasi tentang kinerja individu siswa di pelajaran berdasarkan hasilnya.",
   "report_msg_overall_infor": "Laporan Prestasi Siswa Menyeluruh memberikan informasi mengenai kinerja kelas dalam memberikan hasil belajar, dan perbandingan antar siswa. Klik nama siswa untuk melihat rincian siswa.",
@@ -1043,5 +1043,10 @@
   "report_label_student_assignments_completion_rate": "Tingkat Penyelesaian Tugas Siswa",
   "report_label_class_average_assignments_completion_rate": "Tingkat Penyelesaian Tugas Rata-rata Kelas",
   "report_label_subject_average_assignments_completion_rate": "Tingkat Penyelesaian Tugas Rata-rata Subjek",
-  "report_label_student_progress_report": "Laporan Kemajuan Siswa"
+  "report_label_student_progress_report": "Laporan Kemajuan Siswa",
+  "report_label_overall_attendance": "Kehadiran Keseluruhan",
+  "report_label_overall_completion": "Penyelesaian Keseluruhan",
+  "report_msg_participants_not_included": "Peserta tidak termasuk",
+  "report_student_usage_incomplete_students": "Tidak Lengkap oleh Siswa",
+  "general_error_fail_get_permission": "Gagal mendapatkan izin, harap segarkan"
 }
