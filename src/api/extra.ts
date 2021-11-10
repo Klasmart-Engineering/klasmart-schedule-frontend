@@ -1,9 +1,11 @@
+import { gql } from "@apollo/client";
 import Cookies from "js-cookie";
 import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
-import api from ".";
+import api, { gqlapi } from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
+import { LinkedMockOptionsItem } from "../reducers/content";
 import { QeuryMeQuery } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -222,30 +224,78 @@ export function apiIsEnableReport() {
 export async function apiGetPermission(): Promise<QeuryMeQuery> {
   const premissions = Object.keys(premissionAll);
   const res = sessionStorage.getItem(PERMISSION_KEY);
-  if(res){
+  if (res) {
     return JSON.parse(res || "");
-  }else {
+  } else {
     const permission = await api.organizationPermissions.hasOrganizationPermissions({
-     permission_name: premissions,
-   });
-   let returnData: NonNullable<QeuryMeQuery> = {
-    me: {
-      user_id: "",
-      membership: {
-        roles: [
-          {
-            permissions: [],
-          },
-        ],
+      permission_name: premissions,
+    });
+    let returnData: NonNullable<QeuryMeQuery> = {
+      me: {
+        user_id: "",
+        membership: {
+          roles: [
+            {
+              permissions: [],
+            },
+          ],
+        },
       },
-    },
-  };
-  Object.keys(permission).forEach((permissionName) => {
-    if (returnData?.me?.membership?.roles?.length && permission[permissionName]) {
-      returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
-    }
-  });
-  sessionStorage.setItem(PERMISSION_KEY, JSON.stringify(returnData));
-  return returnData;
+    };
+    Object.keys(permission).forEach((permissionName) => {
+      if (returnData?.me?.membership?.roles?.length && permission[permissionName]) {
+        returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
+      }
+    });
+    sessionStorage.setItem(PERMISSION_KEY, JSON.stringify(returnData));
+    return returnData;
   }
+}
+
+export async function apiSkillsListByIds(skillIds: string[]) {
+  const skillsQuery = skillIds
+    .map(
+      (id, index) => `
+    skill${index}: subcategory(id: "${id}") {
+      id
+      name
+      status
+    }
+    `
+    )
+    .join("");
+  const skillsResult = skillIds.length
+    ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+        query: gql`
+    query skillsListByIds {
+      ${skillsQuery}
+    } 
+    `,
+      })
+    : { data: {} };
+  return skillsResult;
+}
+
+export async function apiDevelopmentalListIds(developmental: string[]) {
+  const developmentalQuery = developmental
+    .map(
+      (id, index) => `
+    developmental${index}: category(id: "${id}") {
+      id
+      name
+      status
+    }
+    `
+    )
+    .join("");
+  const developmentalResult = developmental.length
+    ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+        query: gql`
+    query developmentalListByIds {
+      ${developmentalQuery}
+    } 
+    `,
+      })
+    : { data: {} };
+  return developmentalResult;
 }

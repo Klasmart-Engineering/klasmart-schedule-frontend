@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { uniqBy } from "lodash";
 import cloneDeep from "lodash/cloneDeep";
@@ -26,7 +25,13 @@ import {
   ModelPublishedOutcomeView,
   ModelSearchPublishedOutcomeResponse,
 } from "../api/api.auto";
-import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
+import {
+  apiDevelopmentalListIds,
+  apiSkillsListByIds,
+  apiWaitForOrganizationOfPage,
+  RecursiveFolderItem,
+  recursiveListFolderItems,
+} from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -492,47 +497,10 @@ export const getOutcomesResourceOptions = createAsyncThunk<LinkedMockOptions, ge
     } = getState() as RootState;
     const filteredDevelopmentals = developmentals.filter((item) => !outcomesFullOptions.developmental?.find((v) => v.id === item));
     const filteredSkills = skillIds.filter((item) => !outcomesFullOptions.skills?.find((v) => v.id === item));
-    const developmentalsQuery = filteredDevelopmentals
-      .map(
-        (id, index) => `
-    developmental${index}: category(id: "${id}") {
-      id
-      name
-      status
-    }
-  `
-      )
-      .join("");
-    const developmentalsResult = filteredDevelopmentals.length
-      ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
-          query: gql`
-     query developmentalsListByIds {
-       ${developmentalsQuery}
-     } 
-    `,
-        })
-      : { data: {} };
 
-    const skillsQuery = filteredSkills
-      .map(
-        (id, index) => `
-    skill${index}: subcategory(id: "${id}") {
-      id
-      name
-      status
-    }
-  `
-      )
-      .join("");
-    const skillsResult = filteredSkills.length
-      ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
-          query: gql`
-     query skillsListByIds {
-       ${skillsQuery}
-     } 
-    `,
-        })
-      : { data: {} };
+    const developmentalsResult = await apiDevelopmentalListIds(filteredDevelopmentals);
+
+    const skillsResult = await apiSkillsListByIds(filteredSkills);
     return {
       developmental: Object.values(developmentalsResult.data),
       skills: Object.values(skillsResult.data),
