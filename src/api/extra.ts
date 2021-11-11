@@ -5,6 +5,7 @@ import merge from "lodash/merge";
 import api, { gqlapi } from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
+import { LinkedMockOptionsItem } from "../reducers/content";
 import { ICacheData } from "../services/permissionCahceService";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -220,6 +221,53 @@ export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
 
+export async function apiSkillsListByIds(skillIds: string[]) {
+  const skillsQuery = skillIds
+    .map(
+      (id, index) => `
+    skill${index}: subcategory(id: "${id}") {
+      id
+      name
+      status
+    }
+    `
+    )
+    .join("");
+  const skillsResult = skillIds.length
+    ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+        query: gql`
+    query skillsListByIds {
+      ${skillsQuery}
+    } 
+    `,
+      })
+    : { data: {} };
+  return skillsResult;
+}
+
+export async function apiDevelopmentalListIds(developmental: string[]) {
+  const developmentalQuery = developmental
+    .map(
+      (id, index) => `
+    developmental${index}: category(id: "${id}") {
+      id
+      name
+      status
+    }
+    `
+    )
+    .join("");
+  const developmentalResult = developmental.length
+    ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+        query: gql`
+    query developmentalListByIds {
+      ${developmentalQuery}
+    } 
+    `,
+      })
+    : { data: {} };
+  return developmentalResult;
+}
 export interface IApiGetPartPermissionResp {
   error: boolean;
   data: ICacheData;

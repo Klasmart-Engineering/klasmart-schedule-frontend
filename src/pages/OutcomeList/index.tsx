@@ -109,9 +109,10 @@ export function OutcomeList() {
     perm.view_org_unpublished_learning_outcome_411 ||
     perm.view_my_pending_learning_outcome_412 ||
     perm.view_org_pending_learning_outcome_413;
-  const isPending = useMemo(() => perm.view_my_unpublished_learning_outcome_410 === undefined, [
-    perm.view_my_unpublished_learning_outcome_410,
-  ]);
+  const isPending = useMemo(
+    () => perm.view_my_unpublished_learning_outcome_410 === undefined,
+    [perm.view_my_unpublished_learning_outcome_410]
+  );
   const [showSetList, setShowSetList] = React.useState(false);
   const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<OutcomeSetResult>([]);
   const { addSetActive, openAddSet, closeAddSet } = useAddSet();

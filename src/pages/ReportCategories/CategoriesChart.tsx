@@ -173,7 +173,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
   const { viewPort, colorScale, pieValue, radiusScale } = useMemo(() => computed(props), [props]);
   const inlineStyles = useMemo(() => getInlineStyles(px), [px]);
   const { tooltipOpen, tooltipData, showTooltip, hideTooltip, tooltipLeft, tooltipTop } = useTooltip<TooltipData>();
-  const pieItem = ({ pie, arc }: PieItemProps, index:number) => {
+  const pieItem = ({ pie, arc }: PieItemProps, index: number) => {
     const [centroidX, centroidY] = pie.path.centroid(arc);
     const angle = (arc.startAngle + arc.endAngle) / 2;
     const isBottom = angle > Math.PI / 2 && angle < Math.PI * 1.5;
@@ -219,7 +219,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
   return (
     <div className={css.chart}>
       <div className={css.legend}>
-        {data.map(({ name },index) => (
+        {data.map(({ name }, index) => (
           <div className={css.legendItem} key={index}>
             <div className={css.legendIcon} style={{ backgroundColor: colorScale(name as string) }} />
             <div className={css.legendTitle}>{name}</div>

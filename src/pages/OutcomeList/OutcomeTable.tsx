@@ -155,10 +155,12 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
-  e.stopPropagation();
-  if (handler) return handler(e);
-};
+const stopPropagation =
+  <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) =>
+  (e: T) => {
+    e.stopPropagation();
+    if (handler) return handler(e);
+  };
 
 interface OutcomeProps extends OutcomeActionProps {
   outcome: GetOutcomeDetail;
@@ -354,19 +356,8 @@ export interface OutcomeTableProps extends OutcomeActionProps {
 }
 export function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();
-  const {
-    formMethods,
-    list,
-    total,
-    userId,
-    queryCondition,
-    onPublish,
-    onDelete,
-    onChangePage,
-    onClickOutcome,
-    onApprove,
-    onReject,
-  } = props;
+  const { formMethods, list, total, userId, queryCondition, onPublish, onDelete, onChangePage, onClickOutcome, onApprove, onReject } =
+    props;
   const amountPerPage = props.amountPerPage ?? 20;
   // const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const allValue = useMemo(
