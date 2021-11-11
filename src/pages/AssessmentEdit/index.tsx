@@ -5,10 +5,11 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import { AssessmentStatus, FinalOutcomeList, UpdateAssessmentRequestData } from "../../api/type";
 import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { NoOutcome } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
@@ -36,7 +37,8 @@ export function AssessmentsEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { filterOutcomes, id, editindex, classType } = useQuery();
-  const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
+  const perm = usePermission([PermissionType.edit_in_progress_assessment_439]);
+  const perm_439 = perm.edit_in_progress_assessment_439;
   const { assessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const isLive = classType ? classType === "OnlineClass" : assessmentDetail.schedule?.class_type === "OnlineClass";
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
@@ -93,8 +95,8 @@ export function AssessmentsEdit() {
         let allIds = uniq(curOutcomes.map((co) => co.attendance_ids).flat());
         allIds.forEach((id) => {
           if (curOutcomes.filter((co) => co.attendance_ids?.find((i) => i === id)).length === curOutcomes.length)
-            outcome.attendance_ids?.push(id);
-          else outcome.partial_ids?.push(id);
+            outcome.attendance_ids?.push(id!);
+          else outcome.partial_ids?.push(id!);
         });
         /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
         outcome.none_achieved = curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length;
@@ -114,7 +116,7 @@ export function AssessmentsEdit() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdateAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {
@@ -149,7 +151,7 @@ export function AssessmentsEdit() {
           if (!isLive && errorlist && errorlist.length) {
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
           }
-          const { payload } = ((await dispatch(updateAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateAssessment>
           >;
           if (payload) {

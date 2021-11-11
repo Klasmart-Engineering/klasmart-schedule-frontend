@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, MenuItem, TextField, Theme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/styles";
 import clsx from "clsx";
@@ -44,7 +45,7 @@ interface IProps {
   onChange?: (teachers: MutiSelect.ISelect[], classes: MutiSelect.ISelect[]) => void;
 }
 
-export default function ({ onChange }: IProps) {
+export default function TeacherFilter({ onChange }: IProps) {
   const classes = useStyles();
   const { allValue, noneValue, selectAllOption, selectNoneSchoolOption } = useTranslation();
   const [state, setState] = React.useState<IState>({
@@ -148,7 +149,6 @@ export default function ({ onChange }: IProps) {
   };
 
   const onChangeTeacher = (value: MutiSelect.ISelect[]) => {
-    console.log("teacher: ", value);
     setState((state) => ({
       ...state,
       teachers: value,

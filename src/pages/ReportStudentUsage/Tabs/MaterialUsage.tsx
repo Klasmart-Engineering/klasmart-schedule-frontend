@@ -173,7 +173,7 @@ const computeTimestamp = (month: Moment, now?: boolean): string => {
 };
 
 const momentRef = moment().locale("en").set("h", 0).set("s", 0).set("minute", 0);
-export default function () {
+export default function MaterialUsage() {
   const style = useStyles();
   const dispatch = useDispatch();
   const pageRef = useRef(0);

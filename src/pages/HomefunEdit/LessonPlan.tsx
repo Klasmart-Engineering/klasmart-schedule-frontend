@@ -214,7 +214,7 @@ export function LessonPlan(props: AssignmentProps) {
                                 disabled={isComplete}
                               />
                             }
-                            label={d("Not Attempted").t("assess_option_not_attempted")}
+                            label={d("Not Covered").t("assess_option_not_attempted")}
                           />
                         </FormGroup>
                       </FormControl>

@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import clsx from "clsx";
 import { orderBy } from "lodash";
 import React from "react";
 import { useSelector } from "react-redux";
+import { Status } from "../../../api/api-ko-schema.auto";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import useTranslation from "../hooks/useTranslation";
@@ -39,7 +41,7 @@ interface IProps {
   onChange?: (classId: string, studentId: string, selectedSubjectId: string[]) => void;
 }
 
-export default function ({ onInitial, onChange }: IProps) {
+export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
   const classes = useStyles();
   const allFields = ["schoolId", "classId", "studentId"];
   const { allValue, noneValue, selectAllOption, selectNoneSchoolOption } = useTranslation();
@@ -96,12 +98,14 @@ export default function ({ onInitial, onChange }: IProps) {
   const getAllSubjectList = (): MutiSelect.ISelect[] => {
     let data = [] as MutiSelect.ISelect[];
     programs.forEach((program) => {
-      (program.subjects || []).forEach((subject) => {
-        data.push({
-          value: subject.id,
-          label: `${program.name} - ${subject.name}`,
+      (program.subjects || [])
+        ?.filter((item) => item?.status === Status.Active)
+        .forEach((subject) => {
+          data.push({
+            value: subject.id,
+            label: `${program.name} - ${subject.name}`,
+          });
         });
-      });
     });
     return data;
   };

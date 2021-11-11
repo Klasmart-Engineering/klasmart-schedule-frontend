@@ -5,9 +5,10 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
 import { EntityAssessmentStudentViewH5PItem, EntityUpdateAssessmentH5PStudent } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import { AssessmentStatus, FinalOutcomeList, UpdataStudyAssessmentRequestData } from "../../api/type";
 import { LessonPlanAndScore } from "../../components/AssessmentLessonPlanAndScore";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
@@ -34,7 +35,8 @@ export function AssessmentDetail() {
   const dispatch = useDispatch<AppDispatch>();
   const formMethods = useForm<UpdateStudyAssessmentDataOmitAction>();
   const { studyAssessmentDetail, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
-  const perm_439 = usePermission(PermissionType.edit_in_progress_assessment_439);
+  const perm = usePermission([PermissionType.edit_in_progress_assessment_439]);
+  const perm_439 = perm.edit_in_progress_assessment_439;
   const isMyAssessmentlist = studyAssessmentDetail.teachers?.filter((item) => item.id === my_id);
   const isMyAssessment = Boolean(isMyAssessmentlist && isMyAssessmentlist.length > 0);
   const hasRemainTime = studyAssessmentDetail.remaining_time ? studyAssessmentDetail.remaining_time > 0 : false;
@@ -95,8 +97,8 @@ export function AssessmentDetail() {
         let allIds = uniq(curOutcomes.map((co) => co.attendance_ids).flat());
         allIds.forEach((id) => {
           if (curOutcomes.filter((co) => co.attendance_ids?.find((i) => i === id)).length === curOutcomes.length)
-            outcome.attendance_ids?.push(id);
-          else outcome.partial_ids?.push(id);
+            outcome.attendance_ids?.push(id!);
+          else outcome.partial_ids?.push(id!);
         });
         /** 如果下面都选了 none_achieved 则上面也要选中 none_achieved **/
         outcome.none_achieved = curOutcomes.filter((co) => co.none_achieved).length === curOutcomes.length;
@@ -115,7 +117,7 @@ export function AssessmentDetail() {
         const formValue = { ...value, student_view_items };
         if (id) {
           const data: UpdataStudyAssessmentRequestData = { ...formValue, action: "save" };
-          const { payload } = ((await dispatch(updateStudyAssessment({ id, data }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateStudyAssessment({ id, data }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateStudyAssessment>
           >;
           if (payload) {
@@ -146,9 +148,9 @@ export function AssessmentDetail() {
             return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
           }
         }
-        const { payload } = ((await dispatch(
-          completeStudyAssessment({ id, data, filter_student_view_items })
-        )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateStudyAssessment>>;
+        const { payload } = (await dispatch(completeStudyAssessment({ id, data, filter_student_view_items }))) as unknown as PayloadAction<
+          AsyncTrunkReturned<typeof updateStudyAssessment>
+        >;
         if (payload) {
           dispatch(actSuccess(d("Completed Successfully.").t("assess_msg_compete_successfully")));
           history.replace({
@@ -160,14 +162,15 @@ export function AssessmentDetail() {
   );
 
   const changeAutocompleteValue = useMemo(
-    () => (
-      value: {
-        id: string | number;
-        title: string;
-      }[]
-    ) => {
-      setChangeAutocompleteValue(value);
-    },
+    () =>
+      (
+        value: {
+          id: string | number;
+          title: string;
+        }[]
+      ) => {
+        setChangeAutocompleteValue(value);
+      },
     []
   );
 

@@ -32,6 +32,11 @@ function writepermissionJson(permissionDef) {
   const filePath = path.resolve(permissionDir, `permission_all.json`)
   fs.writeFileSync(filePath, formatJson(permissionDef));
   console.log(g('Successfully'), ` update file: `, g(`${permissionDir}/permission_all.json`));
+  // write types
+  const typeFilePath = path.resolve(permissionDir, `PermissionType.ts`);
+  fs.writeFileSync(typeFilePath, `enum PermissionType${formatJson(permissionDef).replace(/"(.*)":(.*)/g, '$1 = $2')}
+  export default PermissionType;`);
+  console.log(g('Successfully'), ` update file: `, g(`${permissionDir}/PermissionType.ts`));
 }
 
 async function syncPermission(){

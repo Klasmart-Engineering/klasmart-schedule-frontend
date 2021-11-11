@@ -6,9 +6,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import { GetOutcomeDetail, MilestoneDetailResult, MilestoneOrderBy, MilestoneStatus } from "../../api/type";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { NoOutcome } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { ModelMilestoneOptions } from "../../models/ModelMilestone";
 import { RootState } from "../../reducers";
@@ -116,7 +117,7 @@ function MilestoneEditForm() {
       handleSubmit(async (value) => {
         setRegulation(Regulation.ByMilestoneDetail);
         if (!value.shortcode?.trim()) {
-          const resultInfo = ((await dispatch(generateShortcode({ kind: "milestones" }))) as unknown) as PayloadAction<
+          const resultInfo = (await dispatch(generateShortcode({ kind: "milestones" }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof generateShortcode>
           >;
           value.shortcode = resultInfo.payload.shortcode;
@@ -125,15 +126,15 @@ function MilestoneEditForm() {
         const outcome_ancestor_ids = outcomes?.map((v) => v.ancestor_id as string);
         const inputValue = { ...restValues, outcome_ancestor_ids };
         if (id) {
-          const { payload } = ((await dispatch(
+          const { payload } = (await dispatch(
             updateMilestone({ milestone_id: id, milestone: inputValue, metaLoading: true })
-          )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof updateMilestone>>;
+          )) as unknown as PayloadAction<AsyncTrunkReturned<typeof updateMilestone>>;
           if (payload === "ok") {
             reset(inputValue);
             dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
           }
         } else {
-          const { payload } = ((await dispatch(saveMilestone(inputValue))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(saveMilestone(inputValue))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof saveMilestone>
           >;
           if (payload.milestone_id) {
@@ -147,7 +148,7 @@ function MilestoneEditForm() {
     [dispatch, handleSubmit, history, id, reset]
   );
   const handlePublish: MilestoneHeaderProps["onPublish"] = async () => {
-    const { payload } = ((await dispatch(bulkPublishMilestone([milestoneDetail.milestone_id as string]))) as unknown) as PayloadAction<
+    const { payload } = (await dispatch(bulkPublishMilestone([milestoneDetail.milestone_id as string]))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof bulkPublishMilestone>
     >;
     if (payload === "ok") {
@@ -172,13 +173,13 @@ function MilestoneEditForm() {
     }
   };
   const handleDelete = async () => {
-    const { payload } = ((await dispatch(deleteMilestone([id]))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteMilestone>>;
+    const { payload } = (await dispatch(deleteMilestone([id]))) as unknown as PayloadAction<AsyncTrunkReturned<typeof deleteMilestone>>;
     if (payload === "ok") {
       history.goBack();
     }
   };
   const handleReject: MilestoneHeaderProps["onReject"] = async () => {
-    const { payload } = ((await dispatch(bulkReject([milestoneDetail.milestone_id as string]))) as unknown) as PayloadAction<
+    const { payload } = (await dispatch(bulkReject([milestoneDetail.milestone_id as string]))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof bulkReject>
     >;
     if (payload === "ok") {
@@ -187,7 +188,7 @@ function MilestoneEditForm() {
     }
   };
   const handleApprove: MilestoneHeaderProps["onApprove"] = async () => {
-    const { payload } = ((await dispatch(approveMilestone([milestoneDetail.milestone_id as string]))) as unknown) as PayloadAction<
+    const { payload } = (await dispatch(approveMilestone([milestoneDetail.milestone_id as string]))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof bulkReject>
     >;
     if (payload === "ok") {
@@ -202,10 +203,11 @@ function MilestoneEditForm() {
   );
 
   const handleChangeProgram = useMemo(
-    () => ([programId]: string[]) => {
-      setRegulation(Regulation.ByOptionCount);
-      dispatch(getLinkedMockOptions({ default_program_id: programId, metaLoading: true }));
-    },
+    () =>
+      ([programId]: string[]) => {
+        setRegulation(Regulation.ByOptionCount);
+        dispatch(getLinkedMockOptions({ default_program_id: programId, metaLoading: true }));
+      },
     [dispatch]
   );
   const handleChangeSubject = useMemo(
@@ -219,19 +221,20 @@ function MilestoneEditForm() {
     [dispatch, getValues]
   );
   const handleChangeCategory = useMemo(
-    () => ([catetory_id]: string[]) => {
-      setRegulation(Regulation.ByOptionCount);
-      const program = getValues("program_ids") as string[];
-      const subject = getValues("subject_ids") as string[];
-      dispatch(
-        getLinkedMockOptions({
-          default_program_id: program[0],
-          default_subject_ids: subject.join(","),
-          default_developmental_id: catetory_id,
-          metaLoading: true,
-        })
-      );
-    },
+    () =>
+      ([catetory_id]: string[]) => {
+        setRegulation(Regulation.ByOptionCount);
+        const program = getValues("program_ids") as string[];
+        const subject = getValues("subject_ids") as string[];
+        dispatch(
+          getLinkedMockOptions({
+            default_program_id: program[0],
+            default_subject_ids: subject.join(","),
+            default_developmental_id: catetory_id,
+            metaLoading: true,
+          })
+        );
+      },
     [dispatch, getValues]
   );
   const handleClickSearch: OutcomeSearchProps["onSearch"] = (exect_search: string, search_key: string, assumed: boolean) => {

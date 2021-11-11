@@ -43,20 +43,8 @@ const REJECT_REASON_VALUES = () => [
 ];
 
 export function ConfirmDialog() {
-  const {
-    open,
-    title,
-    content,
-    type,
-    label,
-    confirmText,
-    cancelText,
-    rules,
-    placeholder,
-    defaultValue,
-    hideConfirm,
-    hideCancel,
-  } = useSelector<RootState, RootState["confirm"]>((state) => state.confirm);
+  const { open, title, content, type, label, confirmText, cancelText, rules, placeholder, defaultValue, hideConfirm, hideCancel } =
+    useSelector<RootState, RootState["confirm"]>((state) => state.confirm);
   const dispatch = useDispatch();
   const { control, setError, errors, watch, handleSubmit } = useForm({
     mode: "onSubmit",
@@ -95,7 +83,6 @@ export function ConfirmDialog() {
         }
 
         if (type === ConfirmDialogType.textField) {
-          debugger;
           if (values[OTHER_REASON] && !values[INPUT_NAME]) {
             return setError(INPUT_NAME, {
               type: "manual",

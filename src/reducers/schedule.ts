@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, Maybe, SchoolMembership, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -15,13 +15,24 @@ import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
   ClassesTeachingQueryQueryVariables,
+  GetClassFilterListDocument,
+  GetClassFilterListQuery,
+  GetClassFilterListQueryVariables,
   GetProgramsDocument,
   GetProgramsQuery,
   GetProgramsQueryVariables,
+  GetSchoolsFilterListDocument,
+  GetSchoolsFilterListQuery,
+  GetSchoolsFilterListQueryVariables,
+  GetUserDocument,
+  GetUserQuery,
+  GetUserQueryVariables,
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
+  ParticipantsByClassDocument,
   ParticipantsByClassQuery,
+  ParticipantsByClassQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -29,28 +40,15 @@ import {
   SchoolByOrgQueryQuery,
   SchoolByOrgQueryQueryVariables,
   SchoolByUserQueryDocument,
-  GetSchoolsFilterListDocument,
-  GetClassFilterListDocument,
-  GetUserDocument,
   SchoolByUserQueryQuery,
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
   TeachersByOrgnizationQueryVariables,
-  UserSchoolIDsDocument,
-  UserSchoolIDsQuery,
-  UserSchoolIDsQueryVariables,
-  GetSchoolsFilterListQuery,
-  GetSchoolsFilterListQueryVariables,
-  GetClassFilterListQuery,
-  GetClassFilterListQueryVariables,
-  GetUserQuery,
-  GetUserQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
-  EntityClassType,
-  EntityContentInfoWithDetails,
+  EntityQueryContentItem,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleFeedbackAddInput,
@@ -91,6 +89,7 @@ export interface ScheduleState {
   saveResult: number;
   scheduleDetial: EntityScheduleDetailsView;
   scheduleTimeViewData: EntityScheduleTimeView[];
+  scheduleTimeViewTotal: number;
   scheduleAnyTimeViewData: EntityScheduleListView[];
   scheduleTimeViewYearData: [];
   attachement_id: string;
@@ -101,7 +100,7 @@ export interface ScheduleState {
   scheduleMockOptions: getScheduleMockOptionsResponse;
   participantMockOptions: getScheduleParticipantsMockOptionsResponse;
   liveToken: string;
-  contentsAuthList: EntityContentInfoWithDetails[];
+  contentsAuthList: EntityQueryContentItem[];
   classOptions: classOptionsProp;
   ParticipantsData: ParticipantsData;
   participantsIds: ParticipantsShortInfo;
@@ -111,7 +110,7 @@ export interface ScheduleState {
   filterOption: filterOptionItem;
   user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
-  mediaList: EntityContentInfoWithDetails[];
+  mediaList: EntityQueryContentItem[];
   ScheduleViewInfo: EntityScheduleViewDetail;
   outcomeList: ModelPublishedOutcomeView[];
   outcomeListInit: ModelPublishedOutcomeView[];
@@ -155,6 +154,7 @@ const initialState: ScheduleState = {
   searchScheduleList: [],
   scheduleDetial: initScheduleDetial,
   scheduleTimeViewData: [],
+  scheduleTimeViewTotal: 0,
   scheduleAnyTimeViewData: [],
   scheduleTimeViewYearData: [],
   attachement_id: "",
@@ -181,7 +181,24 @@ const initialState: ScheduleState = {
     },
     subjectList: [],
     programList: [],
-    classTypeList: [],
+    classTypeList: [
+      {
+        id: "OfflineClass",
+        name: "schedule_detail_offline_class",
+      },
+      {
+        id: "OnlineClass",
+        name: "schedule_detail_online_class",
+      },
+      {
+        id: "Homework",
+        name: "schedule_detail_homework",
+      },
+      {
+        id: "Task",
+        name: "schedule_detail_task",
+      },
+    ],
   },
   participantMockOptions: {
     participantList: {
@@ -235,7 +252,24 @@ const initialState: ScheduleState = {
     is_allow_submit: false,
   },
   filterOption: {
-    classType: [],
+    classType: [
+      {
+        id: "Homework",
+        name: "schedule_detail_homework",
+      },
+      {
+        id: "OfflineClass",
+        name: "schedule_detail_offline_class",
+      },
+      {
+        id: "OnlineClass",
+        name: "schedule_detail_online_class",
+      },
+      {
+        id: "Task",
+        name: "schedule_detail_task",
+      },
+    ],
     programs: [],
     others: [],
   },
@@ -301,20 +335,21 @@ export const saveScheduleData = createAsyncThunk<
   }
 );
 
-export interface viewSchedulesResultResponse {
-  scheduleTimeViewData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
-  scheduleTimeViewYearData?: AsyncReturnType<typeof api.schedulesTimeView.getScheduledDates>;
-}
-
 type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeViewList>[0] & LoadingMetaPayload;
+type viewSchedulesResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultResponse, viewSchedulesParams>(
   "schedule/schedules_time_view",
   async (query) => {
-    const [scheduleTimeViewData, scheduleTimeViewYearData] = await Promise.all([
-      api.schedulesTimeView.getScheduleTimeViewList({ ...query }),
-      api.schedulesTimeView.postScheduledDates({ ...query }),
-    ]);
-    return { scheduleTimeViewData, scheduleTimeViewYearData };
+    return api.schedulesTimeView.getScheduleTimeViewList({ ...query });
+  }
+);
+
+type yearSchedulesParams = Parameters<typeof api.schedulesTimeView.postScheduledDates>[0] & LoadingMetaPayload;
+type yearSchedulesResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduledDates>;
+export const getScheduleTimeViewDataByYear = createAsyncThunk<yearSchedulesResultResponse, yearSchedulesParams>(
+  "schedule/schedules_time_view_year",
+  async (query) => {
+    return api.schedulesTimeView.postScheduledDates({ ...query });
   }
 );
 
@@ -469,22 +504,6 @@ export const getClassesBySchool = createAsyncThunk("getClassesBySchool", async (
   }
 });
 
-export const getSchoolInfo = createAsyncThunk("getSchoolInfo", async () => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  return gqlapi.query<UserSchoolIDsQuery, UserSchoolIDsQueryVariables>({
-    query: UserSchoolIDsDocument,
-    variables: {
-      user_id: meInfo.me?.user_id as string,
-    },
-  });
-});
-
 type feedbackSchedulesParams = Parameters<typeof api.schedules.getScheduleNewestFeedbackByOperator>[0];
 type feedbackSchedulesResult = ReturnType<typeof api.schedules.getScheduleNewestFeedbackByOperator>;
 export const getScheduleNewetFeedback = createAsyncThunk<feedbackSchedulesResult, feedbackSchedulesParams>(
@@ -579,10 +598,6 @@ export const ScheduleFilterSubject = createAsyncThunk<ScheduleFilterSubjectResul
   }
 );
 
-export const ScheduleClassTypesFilter = createAsyncThunk("schedule/filterClassType", () => {
-  return api.schedulesFilter.getClassTypesInScheduleFilter();
-});
-
 export interface getScheduleParticipantsPayLoad extends LoadingMetaPayload {
   class_id: string;
 }
@@ -595,6 +610,11 @@ export interface getProgramsChildPayLoad extends LoadingMetaPayload {
 }
 export interface getProgramsChildResponse {
   programChildInfo: GetProgramsQuery;
+}
+
+export interface EntityClassType {
+  id?: string;
+  name?: string;
 }
 
 export interface getScheduleMockOptionsResponse {
@@ -612,7 +632,6 @@ export interface getScheduleMockOptionsAllSettledResponse {
   teacherList: TeachersByOrgnizationQuery;
   subjectList: PromiseSettledResult<LinkedMockOptionsItem[]>;
   programList: PromiseSettledResult<LinkedMockOptionsItem[]>;
-  classTypeList: PromiseSettledResult<EntityClassType[]>;
 }
 
 /**
@@ -631,12 +650,8 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsAll
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
 
-    const [subjectList, programList, classTypeList] = await Promise.allSettled([
-      api.subjects.getSubject(),
-      api.programs.getProgram(),
-      api.classTypes.getClassType(),
-    ]);
-    return { subjectList, programList, classTypeList, teacherList };
+    const [subjectList, programList] = await Promise.allSettled([api.subjects.getSubject(), api.programs.getProgram()]);
+    return { subjectList, programList, teacherList };
   }
 );
 
@@ -662,34 +677,11 @@ export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { 
 export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
   "getParticipant",
   async ({ class_id }) => {
-    const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
-      query: GetUserDocument,
-      variables: {
-        filter: { classId: { operator: UuidExclusiveOperator.Eq, value: class_id } },
-        direction: ConnectionDirection.Forward,
-      },
+    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
+      query: ParticipantsByClassDocument,
+      variables: { class_id },
     });
-    const participantListOrigin = data;
-    const participantList: {
-      class: { teachers: { user_id: string; user_name: string }[]; students: { user_id: string; user_name: string }[] };
-    } = { class: { teachers: [], students: [] } };
-    participantListOrigin.usersConnection?.edges?.forEach((item) => {
-      if (item?.node?.status !== "active") return;
-      item?.node?.roles.forEach((role) => {
-        if (role.name === "Teacher") {
-          participantList.class.teachers.push({
-            user_id: item.node?.id as string,
-            user_name: item.node?.givenName + " " + item.node?.familyName,
-          });
-        }
-        if (role.name === "Student") {
-          participantList.class.students.push({
-            user_id: item.node?.id as string,
-            user_name: item.node?.givenName + " " + item.node?.familyName,
-          });
-        }
-      });
-    });
+    const participantList = data;
     return { participantList };
   }
 );
@@ -859,11 +851,9 @@ const { actions, reducer } = createSlice({
       state.outcomeTotal = payload.total;
     },
     [getSearchScheduleList.fulfilled.type]: (state, { payload }: any) => {
-      // state.searchScheduleList = [...state.searchScheduleList, ...payload.data];
       state.searchScheduleList = payload.data;
       state.total = payload.total;
     },
-    [getSearchScheduleList.rejected.type]: (state, { error }: any) => {},
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
       if (payload.label !== "schedule_msg_users_conflict") state.scheduleDetial = payload;
     },
@@ -871,8 +861,11 @@ const { actions, reducer } = createSlice({
       state.errorLable = error.message;
     },
     [getScheduleTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleTimeViewData = payload.scheduleTimeViewData;
-      state.scheduleTimeViewYearData = payload.scheduleTimeViewYearData;
+      state.scheduleTimeViewData = payload.data;
+      state.scheduleTimeViewTotal = payload.total;
+    },
+    [getScheduleTimeViewDataByYear.fulfilled.type]: (state, { payload }: any) => {
+      state.scheduleTimeViewYearData = payload;
     },
     [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleDetial = initScheduleDetial;
@@ -897,7 +890,6 @@ const { actions, reducer } = createSlice({
       state.mockOptions = payload;
     },
     [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
-      state.scheduleMockOptions.classTypeList = payload.classTypeList.status === "fulfilled" ? payload.classTypeList.value : [];
       state.scheduleMockOptions.subjectList = payload.subjectList.status === "fulfilled" ? payload.subjectList.value : [];
       state.scheduleMockOptions.programList = payload.programList.status === "fulfilled" ? payload.programList.value : [];
       state.scheduleMockOptions.teacherList = payload.teacherList;
@@ -922,6 +914,15 @@ const { actions, reducer } = createSlice({
       payload?.forEach((item: any) => {
         result = [...result, ...item];
       });
+      const reduceTemporaryStorage: { [class_id: string]: boolean } = {};
+      result = [...result].reduce<any>((item, next) => {
+        if (next !== null)
+          if (!reduceTemporaryStorage[next.class_id as string] && next.class_id) {
+            item.push(next);
+            reduceTemporaryStorage[next.class_id as string] = true;
+          }
+        return item;
+      }, []);
       state.classOptions.classListSchool = { school: { classes: result } };
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
@@ -932,11 +933,6 @@ const { actions, reducer } = createSlice({
         students = students.concat(item.students);
       });
       state.ParticipantsData = { classes: { students, teachers } };
-    },
-    [getSchoolInfo.fulfilled.type]: (state, { payload }: any) => {
-      state.mySchoolId = payload.data.user.school_memberships.map((item: Maybe<SchoolMembership>) => {
-        return item?.school_id;
-      });
     },
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
       state.feedbackData = payload;
@@ -949,9 +945,6 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleAnyTimeViewData = payload;
-    },
-    [ScheduleClassTypesFilter.fulfilled.type]: (state, { payload }: any) => {
-      state.filterOption.classType = payload;
     },
     [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
       state.filterOption.others = payload;

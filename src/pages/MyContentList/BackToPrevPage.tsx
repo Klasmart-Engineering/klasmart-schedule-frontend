@@ -2,9 +2,10 @@ import { Button, createStyles, Grid, Hidden, Tooltip, Typography } from "@materi
 import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import React from "react";
 import { EntityFolderContentData, EntityFolderItemInfo } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import folderIconUrl from "../../assets/icons/foldericon.svg";
 import prevPageUrl from "../../assets/icons/folderprev.svg";
-import { PermissionType, usePermission } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 const LightTooltip = withStyles((theme: Theme) => ({
   tooltip: {

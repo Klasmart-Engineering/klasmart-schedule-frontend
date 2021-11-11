@@ -7,9 +7,11 @@ import ImportExportIcon from "@material-ui/icons/ImportExport";
 import clsx from "clsx";
 import produce from "immer";
 import React, { ChangeEvent } from "react";
+import PermissionType from "../../api/PermissionType";
 import { OutcomeOrderBy, OutcomePublishStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionResult, PermissionType, usePermission } from "../../components/Permission/Permission";
+import { Permission, PermissionResult, PermissionsWrapper } from "../../components/Permission/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { OutcomeQueryCondition, OutcomeQueryConditionBaseProps } from "./types";
 
@@ -134,58 +136,60 @@ function SubLearningOutcome(props: OutcomeQueryConditionBaseProps) {
   return (
     <>
       <div className={classes.tabCon}>
-        <Permission value={PermissionType.learning_outcome_page_404}>
-          <Button
-            className={clsx(classes.button, { [classes.active]: value?.publish_status === OutcomePublishStatus.published })}
-            onClick={handleClickStatus(OutcomePublishStatus.published)}
-          >
-            {d("Published").t("assess_label_published")}
-          </Button>
-        </Permission>
-        <Permission value={PermissionType.view_org_pending_learning_outcome_413}>
-          <Button
-            className={clsx(classes.button, {
-              [classes.active]: value?.publish_status === OutcomePublishStatus.pending && value.is_unpub !== UNPUB,
-            })}
-            onClick={handleClickStatus(OutcomePublishStatus.pending)}
-          >
-            {d("Pending").t("assess_label_pending")}
-          </Button>
-        </Permission>
-        <Permission value={PermissionType.unpublished_page_402}>
-          <Button
-            ref={anchorRef}
-            className={clsx(classes.button, { [classes.active]: value.is_unpub === UNPUB })}
-            endIcon={<ArrowDropDownOutlinedIcon />}
-            onMouseEnter={showDropdown}
-            onMouseLeave={handleClose}
-          >
-            {d("Unpublished").t("assess_label_unpublished")}
-            <Popper open={open} anchorEl={anchorRef.current} transition disablePortal>
-              {({ TransitionProps, placement }) => (
-                <Grow {...TransitionProps} style={{ transformOrigin: placement === "bottom" ? "center top" : "center bottom" }}>
-                  <Paper>
-                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleClose}>
-                      {unpublished().map((item) => (
-                        <MenuItem
-                          key={item.label}
-                          selected={
-                            value.publish_status === OutcomePublishStatus.pending
-                              ? value.publish_status === item.value && value.is_unpub === UNPUB
-                              : value.publish_status === item.value
-                          }
-                          onClick={(event) => handleClickActionItem(event, item.value)}
-                        >
-                          {item.label}
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Paper>
-                </Grow>
-              )}
-            </Popper>
-          </Button>
-        </Permission>
+        <PermissionsWrapper>
+          <Permission value={PermissionType.learning_outcome_page_404}>
+            <Button
+              className={clsx(classes.button, { [classes.active]: value?.publish_status === OutcomePublishStatus.published })}
+              onClick={handleClickStatus(OutcomePublishStatus.published)}
+            >
+              {d("Published").t("assess_label_published")}
+            </Button>
+          </Permission>
+          <Permission value={PermissionType.view_org_pending_learning_outcome_413}>
+            <Button
+              className={clsx(classes.button, {
+                [classes.active]: value?.publish_status === OutcomePublishStatus.pending && value.is_unpub !== UNPUB,
+              })}
+              onClick={handleClickStatus(OutcomePublishStatus.pending)}
+            >
+              {d("Pending").t("assess_label_pending")}
+            </Button>
+          </Permission>
+          <Permission value={PermissionType.unpublished_page_402}>
+            <Button
+              ref={anchorRef}
+              className={clsx(classes.button, { [classes.active]: value.is_unpub === UNPUB })}
+              endIcon={<ArrowDropDownOutlinedIcon />}
+              onMouseEnter={showDropdown}
+              onMouseLeave={handleClose}
+            >
+              {d("Unpublished").t("assess_label_unpublished")}
+              <Popper open={open} anchorEl={anchorRef.current} transition disablePortal>
+                {({ TransitionProps, placement }) => (
+                  <Grow {...TransitionProps} style={{ transformOrigin: placement === "bottom" ? "center top" : "center bottom" }}>
+                    <Paper>
+                      <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleClose}>
+                        {unpublished().map((item) => (
+                          <MenuItem
+                            key={item.label}
+                            selected={
+                              value.publish_status === OutcomePublishStatus.pending
+                                ? value.publish_status === item.value && value.is_unpub === UNPUB
+                                : value.publish_status === item.value
+                            }
+                            onClick={(event) => handleClickActionItem(event, item.value)}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
+            </Button>
+          </Permission>
+        </PermissionsWrapper>
       </div>
     </>
   );

@@ -1,20 +1,21 @@
+/* eslint-disable array-callback-return */
+import { Status } from "../api/api-ko-schema.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
+import { d } from "../locale/LocaleManager";
+import { LinkedMockOptionsItem } from "../reducers/content";
+import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import {
   ClassOptionsItem,
   EntityScheduleClassesInfo,
   EntityScheduleSchoolInfo,
   EntityScheduleShortInfo,
   FilterQueryTypeProps,
+  LearningComesFilterQuery,
   ParticipantsData,
   ParticipantsShortInfo,
   RolesData,
-  LearningComesFilterQuery,
 } from "../types/scheduleTypes";
-import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
-import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
-import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
-import { Status } from "../api/api-ko-schema.auto";
-import { d } from "../locale/LocaleManager";
-import { LinkedMockOptionsItem } from "../reducers/content";
 
 type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
@@ -197,17 +198,8 @@ export class modelSchedule {
     });
   }
 
-  static FilterParticipants(
-    ParticipantsDatas: ParticipantsData | undefined,
-    ClassRoster: ParticipantsByClassQuery,
-    is_org: boolean,
-    mySchoolId: string[]
-  ) {
+  static FilterParticipants(ParticipantsDatas: ParticipantsData | undefined, ClassRoster: ParticipantsByClassQuery) {
     const rosterIdSet = { students: [], teachers: [] };
-    const isVested = (item: any): boolean => {
-      if (is_org) return true;
-      return item.some((list: any) => mySchoolId.includes(list.school_id));
-    };
     const deDuplication = (arr: any) => {
       const obj: any = [];
       return arr.reduce((item: any, next: any) => {
@@ -227,14 +219,10 @@ export class modelSchedule {
     return {
       classes: {
         students: deDuplication(
-          ParticipantsDatas?.classes.students.filter(
-            (item: RolesData) => !rosterIdSet.students.includes(item.user_id as never) && isVested(item.school_memberships)
-          )
+          ParticipantsDatas?.classes.students.filter((item: RolesData) => !rosterIdSet.students.includes(item.user_id as never))
         ),
         teachers: deDuplication(
-          ParticipantsDatas?.classes.teachers.filter(
-            (item: RolesData) => !rosterIdSet.teachers.includes(item.user_id as never) && isVested(item.school_memberships)
-          )
+          ParticipantsDatas?.classes.teachers.filter((item: RolesData) => !rosterIdSet.teachers.includes(item.user_id as never))
         ),
       },
     } as ParticipantsData;

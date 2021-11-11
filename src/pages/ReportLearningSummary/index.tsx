@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { PermissionType, usePermission } from "../../components/Permission";
+import PermissionType from "../../api/PermissionType";
+import { usePermission } from "../../hooks/usePermission";
 import { t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";

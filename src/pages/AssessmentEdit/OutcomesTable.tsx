@@ -18,10 +18,10 @@ import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { GetAssessmentResultOutcomeAttendanceMap } from "../../api/type";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
+import { PLField, PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
 import { UpdateAssessmentRequestDataOmitAction } from "../../models/ModelAssessment";
 import { IAssessmentState } from "../../reducers/assessments";
-import { PLField, PLTableHeader } from "../../components/PLTable";
 const useStyles = makeStyles({
   tableContainer: {
     marginTop: 5,
@@ -78,6 +78,7 @@ const AssessAction = (props: AssessActionProps) => {
   } = props;
   const skip: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].skip) || false;
   const none_achieved: boolean = (formValue.outcomes && formValue.outcomes[index] && formValue.outcomes[index].none_achieved) || false;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const allValue: string[] = formValue.attendance_ids || [];
   const checked_attendance_ids = useMemo(
     () => allValue && attendance_ids?.filter((item) => allValue.indexOf(item) >= 0),
@@ -149,7 +150,7 @@ const AssessAction = (props: AssessActionProps) => {
                   render={(props: { value: boolean | undefined }) => (
                     <FormControlLabel
                       control={<Checkbox checked={props.value} onChange={(e) => handleChangeSkip(e, "skip")} color="primary" />}
-                      label={d("Not Attempted").t("assess_option_not_attempted")}
+                      label={d("Not Covered").t("assess_option_not_attempted")}
                       disabled={!editable}
                     />
                   )}

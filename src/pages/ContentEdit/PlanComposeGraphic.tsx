@@ -5,10 +5,11 @@ import clsx from "clsx";
 import React, { forwardRef, HTMLAttributes, LegacyRef, useCallback, useMemo } from "react";
 import { ArcherContainer, ArcherElement, Relation } from "react-archer";
 import { NavLink } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import blankImg from "../../assets/icons/deleted.jpg";
 import lessonPlanBgUrl from "../../assets/icons/lesson-plan-bg.svg";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { Thumbnail } from "../../components/Thumbnail";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 
@@ -19,7 +20,7 @@ const useStyles = makeStyles(({ palette, shadows, shape, breakpoints }) => ({
     flexDirection: "column",
     overflow: "scroll",
     [breakpoints.down("md")]: {
-      maxHeight: 'fit-content',
+      maxHeight: "fit-content",
       overflow: "visible",
     },
   },
@@ -158,6 +159,7 @@ const useGraphicComputedStyles = makeStyles({
   }),
 });
 
+type allColorPalette = "primary" | "success" | "error" | "secondary";
 interface ConditionBtnUIProps extends HTMLAttributes<HTMLDivElement> {
   color: string;
   label: string;
@@ -169,7 +171,7 @@ const ConditionBtnUI = forwardRef<HTMLDivElement, ConditionBtnUIProps>((props, r
   const { palette } = useTheme();
   return (
     <div className={clsx(css.conditionBtnUI, className)} {...restProps} ref={ref}>
-      <Box py={2} px={1.5} mr={3} bgcolor={palette[color].main} color="white">
+      <Box py={2} px={1.5} mr={3} bgcolor={palette[color as unknown as allColorPalette].main} color="white">
         <Icon color="inherit" />
       </Box>
       <Typography className={css.conditionBtnLabel}>{label}</Typography>
@@ -223,10 +225,18 @@ interface MaterialCardProps {
 }
 const MaterialCard = forwardRef<HTMLDivElement, MaterialCardProps>((props, ref) => {
   const css = useStyles();
-  const editPlan = usePermission(PermissionType.edit_lesson_plan_content_238);
-  const editAll = usePermission(PermissionType.edit_org_published_content_235);
-  const createAll = usePermission(PermissionType.create_content_page_201);
-  const createplan = usePermission(PermissionType.create_lesson_plan_221);
+  const perms = usePermission([
+    PermissionType.edit_lesson_plan_content_238,
+    PermissionType.edit_org_published_content_235,
+    PermissionType.create_content_page_201,
+    PermissionType.create_lesson_plan_221,
+  ]);
+
+  const editPlan = perms.edit_lesson_plan_content_238;
+  const editAll = perms.edit_org_published_content_235;
+  const createAll = perms.create_content_page_201;
+  const createplan = perms.create_lesson_plan_221;
+
   const editable = editPlan || editAll || createAll || createplan;
   if (JSON.stringify(props.material) === "{}" || !props.material) {
     return (
@@ -276,10 +286,16 @@ interface SegmentBoxProps extends Segment {
 function SegmentBox(props: SegmentBoxProps) {
   const { first, material, condition, next, segmentId, canDropCondition, canDropMaterial, plan, onChange } = props;
   const css = useStyles();
-  const editPlan = usePermission(PermissionType.edit_lesson_plan_content_238);
-  const editAll = usePermission(PermissionType.edit_org_published_content_235);
-  const createAll = usePermission(PermissionType.create_content_page_201);
-  const createplan = usePermission(PermissionType.create_lesson_plan_221);
+  const perms = usePermission([
+    PermissionType.edit_lesson_plan_content_238,
+    PermissionType.edit_org_published_content_235,
+    PermissionType.create_content_page_201,
+    PermissionType.create_lesson_plan_221,
+  ]);
+  const editPlan = perms.edit_lesson_plan_content_238;
+  const editAll = perms.edit_org_published_content_235;
+  const createAll = perms.create_content_page_201;
+  const createplan = perms.create_lesson_plan_221;
   const editable = editPlan || editAll || createAll || createplan;
   const addPlan = (data: DragData) => {
     const type = data.type === "condition" ? "condition" : "material";

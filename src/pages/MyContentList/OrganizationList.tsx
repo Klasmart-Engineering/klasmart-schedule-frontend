@@ -177,7 +177,7 @@ export function OrganizationList(props: OrganizationListProps) {
   );
 }
 
-export function useOrganizationList<T>() {
+export function useOrganizationList() {
   const [active, setActive] = useState(false);
   const [organizationListShowIndex, setOrganizationListShowInex] = useState(100);
   const [shareFolder, setShareFolder] = useState<EntityFolderContentData>();

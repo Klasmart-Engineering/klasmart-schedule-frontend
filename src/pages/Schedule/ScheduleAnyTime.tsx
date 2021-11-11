@@ -6,8 +6,9 @@ import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleListView } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
-import { Permission, PermissionType } from "../../components/Permission";
+import { Permission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
@@ -190,11 +191,11 @@ function AnyTimeSchedule(props: SearchListProps) {
       await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
       );
-      const { payload } = ((await dispatch(
+      const { payload } = (await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
-      if (payload) {
+      if (await payload) {
         dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
         dispatch(
           getScheduleTimeViewData({

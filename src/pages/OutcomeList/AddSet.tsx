@@ -87,7 +87,7 @@ export function AddSet(props: AddSetProps) {
   );
 }
 
-export function useAddSet<T>() {
+export function useAddSet() {
   const [active, setActive] = useState(false);
   const [addSetShowIndex, setAddSetShowIndex] = useState(0);
   return useMemo(

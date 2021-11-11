@@ -5,10 +5,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
 import { OrderBy, OutcomeOrderBy, OutcomePublishStatus, OutcomeSetResult } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
-import { PermissionType, usePermission } from "../../components/Permission";
 import { emptyTip, permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, isAllMineOutcome } from "../../models/ModelOutcomeDetailForm";
 import { AppDispatch, RootState } from "../../reducers";
@@ -108,9 +109,10 @@ export function OutcomeList() {
     perm.view_org_unpublished_learning_outcome_411 ||
     perm.view_my_pending_learning_outcome_412 ||
     perm.view_org_pending_learning_outcome_413;
-  const isPending = useMemo(() => perm.view_my_unpublished_learning_outcome_410 === undefined, [
-    perm.view_my_unpublished_learning_outcome_410,
-  ]);
+  const isPending = useMemo(
+    () => perm.view_my_unpublished_learning_outcome_410 === undefined,
+    [perm.view_my_unpublished_learning_outcome_410]
+  );
   const [showSetList, setShowSetList] = React.useState(false);
   const [selectedOutcomeSet, setSelectedOutcomeSet] = React.useState<OutcomeSetResult>([]);
   const { addSetActive, openAddSet, closeAddSet } = useAddSet();

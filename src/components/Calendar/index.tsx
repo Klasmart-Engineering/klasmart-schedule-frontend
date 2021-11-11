@@ -21,6 +21,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleTimeView, EntityScheduleViewDetail } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
+import { usePermission } from "../../hooks/usePermission";
 import { d, localeManager } from "../../locale/LocaleManager";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
@@ -29,12 +31,12 @@ import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, scheduleInfoViewProps, timestampType } from "../../types/scheduleTypes";
-import { PermissionType, usePermission } from "../Permission";
 import YearCalendar from "./YearView";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
     boxShadow: shadows[3],
+    marginBottom: "10px",
     width: document.body.clientWidth < 450 ? document.body.clientWidth - 40 + "px" : "100%",
   },
   calendarNav: {
@@ -120,11 +122,11 @@ function MyCalendar(props: CalendarProps) {
   const deleteScheduleByid = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoViewProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
-      const { payload } = ((await dispatch(
+      const { payload } = (await dispatch(
         removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
-      )) as unknown) as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
-      if (payload) {
+      if (await payload) {
         dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
         dispatch(
           getScheduleTimeViewData({
@@ -152,7 +154,12 @@ function MyCalendar(props: CalendarProps) {
     [dispatch, modelView, timesTamp]
   );
 
-  const permissionShowLive = usePermission(PermissionType.attend_live_class_as_a_student_187);
+  const perm = usePermission([
+    PermissionType.attend_live_class_as_a_student_187,
+    PermissionType.view_my_calendar_510,
+    PermissionType.create_schedule_page_501,
+  ]);
+  const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
   const scheduleTimeViewDataFormat = (data: EntityScheduleTimeView[]): scheduleInfoViewProps[] => {
     const newViewData: any = [];
@@ -219,7 +226,6 @@ function MyCalendar(props: CalendarProps) {
       const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
       const firstNode: any = document.getElementsByClassName("rbc-time-header-cell")[0].firstChild;
       const startWeek = firstNode.getElementsByTagName("span")[0].textContent.split(" ")[0] as number;
-      debugger;
       const timestampResult =
         type === "preve"
           ? getTimestamp(`${year}-${dateNumFun(month + 1)}-${startWeek}`) - offsets
@@ -279,7 +285,9 @@ function MyCalendar(props: CalendarProps) {
   const handleDelete = useCallback(
     (scheduleInfo: scheduleInfoViewProps) => {
       const currentTime = Math.floor(new Date().getTime());
-      if (scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task") {
+      const conditionByLabel = scheduleInfo.class_type_label?.id === "Homework" || scheduleInfo.class_type_label?.id === "Task";
+      const condition = scheduleInfo.class_type === "Homework" || scheduleInfo.class_type === "Task";
+      if (conditionByLabel || condition) {
         if (scheduleInfo.due_at !== 0 && scheduleInfo.due_at * 1000 < currentTime) {
           changeModalDate({
             title: "",
@@ -406,8 +414,6 @@ function MyCalendar(props: CalendarProps) {
       showScheduleInfo: true,
     });
   };
-
-  const perm = usePermission([PermissionType.view_my_calendar_510, PermissionType.create_schedule_page_501]);
 
   /**
    * crete schedule

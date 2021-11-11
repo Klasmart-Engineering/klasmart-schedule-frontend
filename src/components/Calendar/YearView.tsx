@@ -105,20 +105,24 @@ function MyCalendar(props: CalendarProps) {
     <>
       {monthArr.map((m: string, key: number) => {
         return (
-          <Grid style={{ display: "flex", justifyContent: "center" }} item md={6} lg={4} xl={3}>
+          <Grid key={key} style={{ display: "flex", justifyContent: "center" }} item md={6} lg={4} xl={3}>
             <Box>
               <h3 className={css.monthTitle}>{monthArr[key]}</h3>
               <p>
-                {weekDay.map((val: string) => {
-                  return <span className={css.weekDay}>{val}</span>;
+                {weekDay.map((val: string, index: number) => {
+                  return (
+                    <span key={index} className={css.weekDay}>
+                      {val}
+                    </span>
+                  );
                 })}
               </p>
-              {getMonthDay(key + 1).map((val: []) => {
+              {getMonthDay(key + 1).map((val: [], index: number) => {
                 return (
-                  <p className={css.weekDayTr}>
-                    {val.map((v: number) => {
+                  <p key={index} className={css.weekDayTr}>
+                    {val.map((v: number, index: number) => {
                       return (
-                        <span className={clsx(css.weekDayTd, checkCurrentTime(key, v) ? css.currentBox : "")}>
+                        <span key={index} className={clsx(css.weekDayTd, checkCurrentTime(key, v) ? css.currentBox : "")}>
                           {v}
                           {checkCurrentExist(key, v) && <span className={css.yearTag}></span>}
                         </span>

@@ -7,9 +7,11 @@ import { ArchiveOutlined, PermMediaOutlined, PublishOutlined } from "@material-u
 import ArrowDropDownOutlinedIcon from "@material-ui/icons/ArrowDropDownOutlined";
 import clsx from "clsx";
 import React from "react";
+import PermissionType from "../../api/PermissionType";
 import { Author, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
-import { Permission, PermissionOr, PermissionType, usePermission } from "../../components/Permission";
+import { Permission, PermissionOr } from "../../components/Permission";
+import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { PendingBlueIcon, PendingIcon, UnPubBlueIcon, UnPubIcon } from "../OutcomeList/Icons";
 import { QueryCondition, QueryConditionBaseProps } from "./types";

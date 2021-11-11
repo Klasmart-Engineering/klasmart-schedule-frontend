@@ -6,10 +6,9 @@ import api, { gqlapi } from ".";
 import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
 import { LinkedMockOptionsItem } from "../reducers/content";
-import { QeuryMeQuery } from "./api-ko.auto";
+import { ICacheData } from "../services/permissionCahceService";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
-import premissionAll from "./permission_all.json";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
@@ -166,7 +165,7 @@ export const recursiveListFolderItems = async ({
 export const apiAddOrganizationToPageUrl = (id: string) => {
   const url = new URL(window.location.href);
   url.searchParams.append(ORG_ID_KEY, id);
-  sessionStorage.clear();
+  // sessionStorage.clear();
   window.history.replaceState(null, document.title, url.toString());
 };
 
@@ -221,36 +220,6 @@ export function domainSwitch() {
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
-export async function apiGetPermission(): Promise<QeuryMeQuery> {
-  const premissions = Object.keys(premissionAll);
-  const res = sessionStorage.getItem(PERMISSION_KEY);
-  if (res) {
-    return JSON.parse(res || "");
-  } else {
-    const permission = await api.organizationPermissions.hasOrganizationPermissions({
-      permission_name: premissions,
-    });
-    let returnData: NonNullable<QeuryMeQuery> = {
-      me: {
-        user_id: "",
-        membership: {
-          roles: [
-            {
-              permissions: [],
-            },
-          ],
-        },
-      },
-    };
-    Object.keys(permission).forEach((permissionName) => {
-      if (returnData?.me?.membership?.roles?.length && permission[permissionName]) {
-        returnData?.me?.membership?.roles[0]?.permissions?.push({ permission_name: permissionName });
-      }
-    });
-    sessionStorage.setItem(PERMISSION_KEY, JSON.stringify(returnData));
-    return returnData;
-  }
-}
 
 export async function apiSkillsListByIds(skillIds: string[]) {
   const skillsQuery = skillIds
@@ -298,4 +267,42 @@ export async function apiDevelopmentalListIds(developmental: string[]) {
       })
     : { data: {} };
   return developmentalResult;
+}
+export interface IApiGetPartPermissionResp {
+  error: boolean;
+  data: ICacheData;
+}
+
+export async function apiGetPartPermission(permissions: string[]): Promise<IApiGetPartPermissionResp> {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const fragmentStr = permissions
+    .map((permission) => {
+      return `${permission}: checkAllowed(permission_name: "${permission}")`;
+    })
+    .join(",");
+
+  return await gqlapi
+    .query({
+      query: gql`
+      query{
+        meMembership: me{
+          membership(organization_id: "${organization_id}"){
+            ${fragmentStr}
+          }
+        }
+      }
+    `,
+    })
+    .then((resp) => {
+      return {
+        error: (resp.errors || []).length > 0 || resp.data?.meMembership?.membership === null,
+        data: resp.data?.meMembership?.membership || {},
+      };
+    });
+}
+
+export async function getUserIdAndOrgId() {
+  const organizationId = ((await apiWaitForOrganizationOfPage()) as string) || "";
+
+  return organizationId;
 }

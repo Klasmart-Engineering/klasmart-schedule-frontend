@@ -20,11 +20,12 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import PermissionType from "../../api/PermissionType";
 import { MilestoneDetailResult, MilestoneListResult, MilestoneStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission/Permission";
+import { Permission } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { formatTimeToEng } from "../../models/ModelReports";
@@ -146,10 +147,12 @@ const useStyles = makeStyles((theme) =>
   })
 );
 export const GENERALMILESTONE = "general";
-const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
-  e.stopPropagation();
-  if (handler) return handler(e);
-};
+const stopPropagation =
+  <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) =>
+  (e: T) => {
+    e.stopPropagation();
+    if (handler) return handler(e);
+  };
 
 interface MilestoneProps extends MilestoneActionProps {
   milestone: MilestoneDetailResult;

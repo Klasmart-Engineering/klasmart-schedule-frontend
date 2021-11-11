@@ -1,6 +1,5 @@
-import { IntlFormatters, MessageDescriptor } from "react-intl";
+import { MessageDescriptor } from "react-intl";
 
-type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
 export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
 
 export function assertLangName(name?: string): asserts name is LangName {
@@ -12,7 +11,7 @@ export function shouldBeLangName(name?: string): LangName {
   return name;
 }
 
-type LangRecord<T = string> =
+type LangRecord =
   | { id: "library_label_create"; description: "Create"; values: undefined }
   | { id: "library_label_for_organizations"; description: "For Organizations"; values: undefined }
   | { id: "library_label_cancel"; description: "Cancel"; values: undefined }
@@ -262,7 +261,7 @@ type LangRecord<T = string> =
   | { id: "assess_msg_compete_successfully"; description: "Completed Successfully."; values: undefined }
   | { id: "assess_option_all_achieved"; description: "All Achieved"; values: undefined }
   | { id: "assess_option_none_achieved"; description: "None Achieved"; values: undefined }
-  | { id: "assess_option_not_attempted"; description: "Not Attempted"; values: undefined }
+  | { id: "assess_option_not_attempted"; description: "Not Covered"; values: undefined }
   | { id: "assess_msg_no_permission"; description: "You do not have permission to access this feature."; values: undefined }
   | { id: "assess_class_type"; description: "Class Type"; values: undefined }
   | { id: "assess_class_type_class_live"; description: "Class / Live"; values: undefined }
@@ -1605,6 +1604,11 @@ type LangRecord<T = string> =
   | {
       id: "report_msg_avg_days_pending";
       description: "Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.";
+      values: undefined;
+    }
+  | {
+      id: "schedule_msg_one_assignment";
+      description: "Please upload at least one assignment.";
       values: undefined;
     }
   | {

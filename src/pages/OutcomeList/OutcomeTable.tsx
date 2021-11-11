@@ -20,11 +20,12 @@ import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
+import PermissionType from "../../api/PermissionType";
 import { GetOutcomeDetail, OutcomePublishStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
-import { Permission, PermissionType } from "../../components/Permission/Permission";
+import { Permission } from "../../components/Permission/Permission";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
 import { formatTimeToEng } from "../../models/ModelReports";
@@ -154,10 +155,12 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
-  e.stopPropagation();
-  if (handler) return handler(e);
-};
+const stopPropagation =
+  <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) =>
+  (e: T) => {
+    e.stopPropagation();
+    if (handler) return handler(e);
+  };
 
 interface OutcomeProps extends OutcomeActionProps {
   outcome: GetOutcomeDetail;
@@ -353,19 +356,8 @@ export interface OutcomeTableProps extends OutcomeActionProps {
 }
 export function OutcomeTable(props: OutcomeTableProps) {
   const css = useStyles();
-  const {
-    formMethods,
-    list,
-    total,
-    userId,
-    queryCondition,
-    onPublish,
-    onDelete,
-    onChangePage,
-    onClickOutcome,
-    onApprove,
-    onReject,
-  } = props;
+  const { formMethods, list, total, userId, queryCondition, onPublish, onDelete, onChangePage, onClickOutcome, onApprove, onReject } =
+    props;
   const amountPerPage = props.amountPerPage ?? 20;
   // const allValue = useMemo(() => list.map((outcome) => outcome.outcome_id as string), [list]);
   const allValue = useMemo(

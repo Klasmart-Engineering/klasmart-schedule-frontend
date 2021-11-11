@@ -6,7 +6,7 @@ import React, { useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
-import { EntityContentInfoWithDetails } from "../../api/api.auto";
+import { EntityQueryContentItem } from "../../api/api.auto";
 import { SearchcmsList, SearchItems } from "../../components/SearchcmsList";
 import { Thumbnail } from "../../components/Thumbnail";
 import { comingsoonTip, resultsTip } from "../../components/TipImages";
@@ -32,9 +32,9 @@ const useStyles = makeStyles(({ breakpoints, shadows }) => ({
     marginTop: 5,
     maxHeight: 700,
     marginBottom: 20,
-    [breakpoints.down('md')]: {
-      maxHeight: 'fit-content',
-    }
+    [breakpoints.down("md")]: {
+      maxHeight: "fit-content",
+    },
   },
   table: {
     minWidth: 700 - 162,
@@ -59,34 +59,6 @@ const useStyles = makeStyles(({ breakpoints, shadows }) => ({
   },
 }));
 
-interface Asset {
-  status: string;
-  type: string;
-  name: string;
-  img: string;
-  fileType: string;
-  developmental: string;
-  skills: string;
-  age: string;
-  created: string;
-  author: string;
-}
-
-interface mockAsset {
-  type: string;
-  name: string;
-  developmental: string;
-  img: string;
-  fileType: string;
-  skills: string;
-  age: string;
-  settings: string;
-  status: string;
-  created: string;
-  author: string;
-  action: string;
-}
-
 const mapContentType = (lesson: DraggableItemProps["lesson"], item: DraggableItemProps["item"]) => {
   return lesson === "material"
     ? item.content_type && Number(item.content_type * 10 + (item.data && (JSON.parse(item.data).file_type || 1)))
@@ -95,7 +67,7 @@ const mapContentType = (lesson: DraggableItemProps["lesson"], item: DraggableIte
 
 interface DraggableItemProps {
   type: string;
-  item: EntityContentInfoWithDetails;
+  item: EntityQueryContentItem;
   lesson?: "assets" | "material" | "plan";
   permission: boolean;
 }
@@ -123,7 +95,7 @@ function DraggableImage(props: DraggableItemProps) {
 }
 
 export interface MediaAssetsProps {
-  list: EntityContentInfoWithDetails[];
+  list: EntityQueryContentItem[];
   total: number;
   amountPerPage?: number;
   comingsoon?: boolean;

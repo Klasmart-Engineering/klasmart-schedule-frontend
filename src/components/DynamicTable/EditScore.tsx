@@ -27,7 +27,7 @@ export function EditScore(props: EditScoreProps) {
     isComplete,
     is_h5p,
     student_id,
-    not_applicable_scoring,
+    // not_applicable_scoring,
     has_sub_items,
   } = props;
   const [scoreNum, setScoreNum] = React.useState<number | string | undefined>(score);
@@ -37,10 +37,15 @@ export function EditScore(props: EditScoreProps) {
     <div className={classes.scoreEditBox}>
       {is_h5p ? (
         has_sub_items ? (
-          d("Attempted").t("assessment_activity_attempted")
-        ) : not_applicable_scoring ? (
-          d("Not Applicable").t("assessment_not_applicable")
-        ) : attempted ? (
+          attempted ? (
+            d("Attempted").t("assessment_activity_attempted")
+          ) : (
+            d("Not Attempted").t("assess_detail_not_attempted")
+          )
+        ) : //  : not_applicable_scoring ? (
+        //   d("Not Applicable").t("assessment_not_applicable")
+        // ) :
+        attempted ? (
           <>
             {editable && !isComplete && isSubjectiveActivity ? (
               <>
@@ -63,13 +68,11 @@ export function EditScore(props: EditScoreProps) {
                 / {maxScore}
               </>
             ) : (
-              <>
-                {scoreNum} / {maxScore}
-              </>
+              <>{maxScore === 0 ? d("Attempted").t("assessment_activity_attempted") : `${scoreNum} / ${maxScore}`}</>
             )}
           </>
         ) : (
-          d("Not Attempted").t("assess_option_not_attempted")
+          d("Not Attempted").t("assess_detail_not_attempted")
         )
       ) : (
         d("Not Applicable").t("assessment_not_applicable")

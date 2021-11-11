@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import uniqBy from "lodash/uniqBy";
 import React from "react";
 import { useSelector } from "react-redux";
-import { Class, Maybe } from "../../../api/api-ko-schema.auto";
+import { Class, Maybe, Status } from "../../../api/api-ko-schema.auto";
 import MutiSelect from "../../../components/MutiSelect";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
@@ -16,8 +17,6 @@ interface IState {
   schoolId: string;
   classes: MutiSelect.ISelect[];
 }
-
-type IOptions = MutiSelect.ISelect[][];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ({ onChange }: IProps) {
+export default function ClassFilter({ onChange }: IProps) {
   const classes = useStyles();
   const { allValue, noneValue, selectAllOption, selectNoneSchoolOption } = useTranslation();
   const [state, setState] = React.useState<IState>({
@@ -56,7 +55,7 @@ export default function ({ onChange }: IProps) {
   const getAllSchoolList = (): MutiSelect.ISelect[] => {
     const schoolOptions =
       (studentUsage.schoolList
-        .filter((item) => item.classes && item.classes.length > 0)
+        .filter((item) => item?.status === Status.Active && item.classes && item.classes.length > 0)
         .map((item) => ({
           value: item.school_id,
           label: item.school_name,
@@ -70,14 +69,18 @@ export default function ({ onChange }: IProps) {
     if (state.schoolId === allValue) {
       studentUsage.schoolList.forEach((item) => {
         if (item.classes) {
-          classOptions = classOptions.concat(item.classes!.map(transformClassDataToOption) as MutiSelect.ISelect[]);
+          classOptions = classOptions.concat(
+            item.classes?.filter((item) => item?.status === Status.Active)!.map(transformClassDataToOption) as MutiSelect.ISelect[]
+          );
         }
       });
     }
     if (state.schoolId === allValue || state.schoolId === noneValue) {
       classOptions = classOptions.concat(studentUsage.noneSchoolClasses.map(transformClassDataToOption) as MutiSelect.ISelect[]);
     } else {
-      const classes = studentUsage.schoolList.filter((item) => item.school_id === state.schoolId)[0]?.classes;
+      const classes = studentUsage.schoolList
+        .filter((item) => item.school_id === state.schoolId)[0]
+        ?.classes?.filter((item) => item?.status === Status.Active);
       if (classes) {
         classOptions = classOptions.concat(classes!.map(transformClassDataToOption));
       }
