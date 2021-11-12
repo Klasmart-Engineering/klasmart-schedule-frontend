@@ -1,10 +1,8 @@
 import { gql } from "@apollo/client";
 import Cookies from "js-cookie";
-import cloneDeep from "lodash/cloneDeep";
-import merge from "lodash/merge";
 import api, { gqlapi } from ".";
-import requireContentType from "../../scripts/contentType.macro";
-import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
+// import requireContentType from "../../scripts/contentType.macro";
+import { LangRecordId } from "../locale/lang/type";
 import { LinkedMockOptionsItem } from "../reducers/content";
 import { ICacheData } from "../services/permissionCahceService";
 import { EntityFolderItemInfo } from "./api.auto";
@@ -183,35 +181,30 @@ export const subscribeLocaleInCookie = (handler: { (locale: string): any }) => {
   }, 1000);
 };
 
-export const apiCreateContentTypeLibrary = (id: string) => {
-  return requireContentType("asset", id);
-};
+//  const apiCreateContentTypeLibrary = (id: string) => {
+//   return requireContentType("asset", id);
+// };
 
-export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string, locale: string) {
-  const schema = {} as T;
-  const schemaLanguages = {} as T;
-  for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
-    schema[name as keyof T] = cloneDeep((await value()).default);
-  }
-  for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-    schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-  }
-  return merge(schema, schemaLanguages);
-}
+//  async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string, locale: string) {
+//   const schema = {} as T;
+//   const schemaLanguages = {} as T;
+//   for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
+//     schema[name as keyof T] = cloneDeep((await value()).default);
+//   }
+//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
+//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
+//   }
+//   return merge(schema, schemaLanguages);
+// }
 
-export async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {
-  const schemaLanguages = {} as T;
-  for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-    schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-  }
-  return schemaLanguages;
-}
+//  async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {
+//   const schemaLanguages = {} as T;
+//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
+//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
+//   }
+//   return schemaLanguages;
+// }
 
-export function apiGetContentTypeList() {
-  return import("h5p/libraries/content-types.auto.json").then((x) => {
-    return x.default.contentTypes;
-  });
-}
 
 export function domainSwitch() {
   return window.location.host.includes("kidsloop.live");
