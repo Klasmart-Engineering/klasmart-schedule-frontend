@@ -16,7 +16,6 @@ import ContentEdit from "./pages/ContentEdit/index";
 import ContentPreview from "./pages/ContentPreview";
 import { HomeFunAssessmentList } from "./pages/HomeFunAssessmentList";
 import { AssessmentsHomefunEdit } from "./pages/HomefunEdit";
-import Live from "./pages/Live";
 import MilestoneEdit from "./pages/MilestoneEdit";
 import MilestonesList from "./pages/MilestoneList";
 import MyContentList from "./pages/MyContentList/index";
@@ -92,9 +91,9 @@ function App() {
                   <Route path={AssessmentsHomefunEdit.routeBasePath}>
                     <AssessmentsHomefunEdit />
                   </Route>
-                  <Route path={Live.routeBasePath}>
-                    <Live />
-                  </Route>
+                  {/* <Route path={Live.routeBasePath}> */}
+                    {/* <Live /> */}
+                  {/* </Route> */}
                   <Route path={ReportAchievementList.routeBasePath}>
                     <ReportAchievementList />
                   </Route>
