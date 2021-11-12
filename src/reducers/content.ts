@@ -10,7 +10,7 @@ import {
   OrganizationsQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
-  QeuryMeQueryVariables,
+  QeuryMeQueryVariables
 } from "../api/api-ko.auto";
 import {
   ApiContentBulkOperateRequest,
@@ -23,14 +23,14 @@ import {
   EntityOutcomeCondition,
   EntityQueryContentItem,
   ModelPublishedOutcomeView,
-  ModelSearchPublishedOutcomeResponse,
+  ModelSearchPublishedOutcomeResponse
 } from "../api/api.auto";
 import {
   apiDevelopmentalListIds,
   apiSkillsListByIds,
   apiWaitForOrganizationOfPage,
   RecursiveFolderItem,
-  recursiveListFolderItems,
+  recursiveListFolderItems
 } from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
@@ -515,10 +515,16 @@ interface IQyertOnLoadContentListResult {
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
   async (query, { getState, dispatch }) => {
-    await dispatch(getUserSetting());
     const {
-      content: { page_size },
+      content: { page_size:page_size_init, orgProperty:orgProperty_init },
     } = getState();
+    if(!page_size_init){
+      await dispatch(getUserSetting());
+    }
+    if(!orgProperty_init.id){
+    await dispatch(getOrgProperty());
+    }
+    const { content: { page_size }} = getState();
     const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search } = query;
     const nameValue = exect_search === ExectSearch.all ? name : "";
     const contentNameValue = exect_search === ExectSearch.name ? name : "";
@@ -526,7 +532,6 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) await dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    await dispatch(getOrgProperty());
     const submenu = content_type?.split(",").includes(ContentType.assets.toString())
       ? SubmenuType.assets
       : publish_status === PublishStatus.pending && author === Author.self
