@@ -925,13 +925,3 @@ export function translateMonth(month: number) {
 export function parsePercent(decimal?: number) {
   return Math.ceil((decimal || 0) * 100);
 }
-
-export function formattedTimeToEng(seconds: number) {
-  if (!seconds) return "";
-  const date = new Date(seconds * 1000);
-  const h = date.getHours();
-  const dayType = h > 12 ? "pm" : "am";
-  const hour = h > 12 ? h - 12 : h;
-  const min = date.getMinutes();
-  return `${hour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")} ${dayType}`;
-}

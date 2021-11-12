@@ -17,7 +17,6 @@ import React from "react";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import { d, t } from "../../../locale/LocaleManager";
-import { formattedTimeToEng } from "../../../models/ModelReports";
 import useTranslation from "../hooks/useTranslation";
 
 const PAGESIZE = 10;
@@ -104,7 +103,13 @@ const Row = (props: {
                         </TableCell>
                         <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
                         <TableCell align="center">{item.time ? `${moment(item.time * 1000).format("MM/DD/YYYY")}` : ""}</TableCell>
-                        <TableCell align="center">{item.time ? formattedTimeToEng(item.time) : ""}</TableCell>
+                        <TableCell align="center">
+                          {item.time
+                            ? ` ${moment(item.time * 1000)
+                                .locale("en")
+                                .format("hh:mm a")}`
+                            : ""}
+                        </TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
