@@ -1,5 +1,4 @@
 import api from ".";
-import { apiGetContentTypeList } from "./extra";
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
   ? U
@@ -147,7 +146,6 @@ export enum FolderFileTyoe {
   content = "content",
 }
 
-export type ContentTypeList = AsyncReturnType<typeof apiGetContentTypeList>;
 
 export enum HomeFunAssessmentOrderBy {
   latest_feedback_at = "latest_feedback_at",
