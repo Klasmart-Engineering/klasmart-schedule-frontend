@@ -1,4 +1,4 @@
-import { unwrapResult } from "@reduxjs/toolkit";
+import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import produce from "immer";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,6 +19,7 @@ import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder1,
   approveContent,
+  AsyncTrunkReturned,
   bulkApprove,
   bulkDeleteContent,
   bulkDeleteFolder,
@@ -28,6 +29,8 @@ import {
   deleteContent,
   deleteFolder,
   getOrgList,
+  getOrgProperty,
+  getUserSetting,
   onLoadContentList,
   publishContent,
   rejectContent,
@@ -158,6 +161,7 @@ export default function MyContentList() {
   const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
   const [folderForm, setFolderForm] = useState<EntityFolderContentData>();
   const [parentId, setParentId] = useState<string>();
+  const [cmsPageSize, setCmsPageSize] = useState(page_size);
   const handlePublish: ContentCardListProps["onPublish"] = (id) => {
     return refreshWithDispatch(dispatch(publishContent(id)));
   };
@@ -178,7 +182,8 @@ export default function MyContentList() {
     }
   };
   const handleChangePageSize: ContentCardListProps["onChangePageSize"] = (page_size) => {
-    refreshWithDispatch(dispatch(setUserSetting({ cms_page_size: page_size, metaLoading: true })));
+    dispatch(setUserSetting({ cms_page_size: page_size }));
+    setCmsPageSize(page_size);
   };
   const handleClickConent: ContentCardListProps["onClickContent"] = (id, content_type, dir_path) => {
     if (content_type === ContentType.material || content_type === ContentType.plan) {
@@ -391,13 +396,24 @@ export default function MyContentList() {
   useEffect(() => {
     setActionObj(ids2removeOrDelete(contentsList, ids));
   }, [contentsList, ids]);
+  useEffect(() => {
+    dispatch(getOrgProperty());
+  }, [dispatch]);
+  useEffect(() => {
+    const getUserSettingPageSize = async () => {
+      const { payload } = (await dispatch(getUserSetting())) as unknown as PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>;
+      setCmsPageSize(payload.cms_page_size);
+    };
+    getUserSettingPageSize();
+  }, [dispatch]);
 
   useEffect(() => {
+    if (!cmsPageSize) return;
     (async () => {
-      await dispatch(onLoadContentList({ ...condition, metaLoading: true }));
+      await dispatch(onLoadContentList({ ...condition, page_size: cmsPageSize, metaLoading: true }));
       setTimeout(reset, 500);
     })();
-  }, [condition, reset, dispatch, refreshKey]);
+  }, [condition, reset, dispatch, refreshKey, cmsPageSize]);
   return (
     <div
       onContextMenu={(e) => {
@@ -512,7 +528,7 @@ export default function MyContentList() {
               formMethods={conditionFormMethods}
               list={contentsList}
               total={total as number}
-              amountPerPage={page_size}
+              amountPerPage={cmsPageSize}
               queryCondition={condition}
               orgProperty={orgProperty}
               onChangePage={handleChangePage}
