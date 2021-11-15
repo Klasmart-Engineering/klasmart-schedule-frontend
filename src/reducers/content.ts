@@ -206,7 +206,7 @@ const initialState: IContentState = {
     teacher_manual_batch: [],
   },
   token: "",
-  page_size: 20,
+  page_size: 0,
   folderTree: [],
   parentFolderInfo: {},
   orgProperty: {},
@@ -488,18 +488,6 @@ export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContent
   }
 );
 
-type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
-type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
-export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, IQueryFolderContentParams, { state: RootState }>(
-  "content/folderContentLists",
-  async ({ metaLoading, ...query }, { getState }) => {
-    const {
-      content: { page_size },
-    } = getState();
-    const { list, total } = await api.contentsFolders.queryFolderContent({ ...query, page_size });
-    return { list, total };
-  }
-);
 type IQueryOnLoadContentList = {
   exectSearch?: string;
 } & QueryCondition &
@@ -514,19 +502,14 @@ interface IQyertOnLoadContentListResult {
 }
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
-  async (query, { getState, dispatch }) => {
-    await dispatch(getUserSetting());
-    const {
-      content: { page_size },
-    } = getState();
-    const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search } = query;
+  async (query, { dispatch }) => {
+    const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search, page_size } = query;
     const nameValue = exect_search === ExectSearch.all ? name : "";
     const contentNameValue = exect_search === ExectSearch.name ? name : "";
     const isExectSearch = exect_search === ExectSearch.name;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) await dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    await dispatch(getOrgProperty());
     const submenu = content_type?.split(",").includes(ContentType.assets.toString())
       ? SubmenuType.assets
       : publish_status === PublishStatus.pending && author === Author.self
@@ -1174,14 +1157,6 @@ const { actions, reducer } = createSlice({
     [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentLists>>) => {
       state.contentsList = payload.list || [];
       state.mediaList = payload.list || [];
-      state.total = payload.total;
-    },
-    [folderContentLists.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
-      state.contentsList = initialState.contentsList;
-      state.total = initialState.total;
-    },
-    [folderContentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
-      state.contentsList = payload.list || [];
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {},
