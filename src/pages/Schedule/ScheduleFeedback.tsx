@@ -2,6 +2,7 @@ import { Box, Button, LinearProgress, TextField, Typography } from "@material-ui
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { AccessTime, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import CancelIcon from "@material-ui/icons/Cancel";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { BatchItem } from "@rpldy/shared";
 import React from "react";
@@ -12,7 +13,6 @@ import { apiResourcePathById } from "../../api/extra";
 import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess, actWarning } from "../../reducers/notify";
 import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
 import { HtmlTooltip } from "./ScheduleAttachment";

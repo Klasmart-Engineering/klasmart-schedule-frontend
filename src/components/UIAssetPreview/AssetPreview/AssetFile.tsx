@@ -1,8 +1,9 @@
 import { makeStyles } from "@material-ui/core";
+import { getDownloadPath } from "@reducers/content";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { AsyncTrunkReturned, getDownloadPath } from "../../../reducers/content";
 
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
@@ -23,7 +24,7 @@ export default function AssetFile(props: file) {
   useEffect(() => {
     let isUnmount = false;
     const getResource = async () => {
-      const { payload } = ((await dispatch(getDownloadPath(props.src as string))) as unknown) as PayloadAction<
+      const { payload } = (await dispatch(getDownloadPath(props.src as string))) as unknown as PayloadAction<
         AsyncTrunkReturned<typeof getDownloadPath>
       >;
       payload && !isUnmount && setPath(payload.path);

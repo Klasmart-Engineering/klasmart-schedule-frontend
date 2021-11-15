@@ -1,6 +1,7 @@
 import { Box, Button, createStyles, makeStyles, Theme } from "@material-ui/core";
 import { VisibilityOff } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -10,7 +11,6 @@ import PermissionType from "../../api/PermissionType";
 import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import { Permission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { AsyncTrunkReturned } from "../../reducers/content";
 import { actSuccess } from "../../reducers/notify";
 import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";

@@ -1,5 +1,5 @@
 import { cloneDeep } from "@apollo/client/utilities";
-import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { ExtendedRequestParams, gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import {
@@ -17,6 +17,7 @@ import permissionCache from "../services/permissionCahceService";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actInfo } from "./notify";
+import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
@@ -64,13 +65,6 @@ const initialState: IAssessmentState = {
   my_id: "ed43b8c3-d5c0-52af-ae10-402f1fe2ea46",
   contentOutcomes: [],
 };
-
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
 
 type IQueryAssessmentListParams = ListAssessmentRequest & LoadingMetaPayload;
 export const actAssessmentList = createAsyncThunk<ListAssessmentResult, IQueryAssessmentListParams>(

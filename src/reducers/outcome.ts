@@ -1,4 +1,4 @@
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import { ApiPullOutcomeSetResponse } from "../api/api.auto";
@@ -12,7 +12,7 @@ import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actSuccess, actWarning } from "./notify";
-import { IPermissionState } from "./type";
+import { AsyncReturnType, AsyncTrunkReturned, IPermissionState } from "./type";
 
 interface IOutcomeState extends IPermissionState {
   outcomeDetail: GetOutcomeDetail;
@@ -107,13 +107,6 @@ export const initialState: IOutcomeState = {
   defaultSelectOutcomeset: "",
   shortCode: "",
 };
-
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
 
 interface ParamsGetNewOptions {
   development_id?: string;

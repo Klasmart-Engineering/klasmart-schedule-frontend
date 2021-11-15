@@ -72,7 +72,7 @@ import {
 } from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { AsyncTrunkReturned } from "./report";
+import { AsyncTrunkReturned } from "./type";
 
 const MOCK = false;
 

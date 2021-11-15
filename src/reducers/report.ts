@@ -1,5 +1,5 @@
 import { ApolloQueryResult } from "@apollo/client";
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, orderBy, pick, uniq, uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
 import { Class, Program, School, Status, Subject, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
@@ -102,6 +102,7 @@ import {
 } from "../pages/ReportLearningSummary/types";
 import permissionCache, { ICacheData } from "../services/permissionCahceService";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 
 interface IreportState {
   reportList?: EntityStudentAchievementReportItem[];
@@ -299,12 +300,6 @@ const initialState: IreportState = {
   fourWeeksClassAttendanceMassage: "",
 };
 
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
 type OnloadReportPayload = Parameters<typeof api.reports.listStudentsAchievementReport>[0] & LoadingMetaPayload;
 type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsAchievementReport>;
 export const getAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(

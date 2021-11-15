@@ -1,3 +1,5 @@
+import { getContentResourceUploadPath } from "@reducers/content";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { BatchItem, FileLike } from "@rpldy/shared";
 import { PreSendData, UploadyContextType, useItemProgressListener, useRequestPreSend } from "@rpldy/shared-ui";
@@ -6,7 +8,6 @@ import Uploady, { UploadyContext, UploadyProps } from "@rpldy/uploady";
 import React, { forwardRef, ReactNode, RefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import api from "../../api";
-import { AsyncTrunkReturned, getContentResourceUploadPath } from "../../reducers/content";
 
 export interface SingleUploaderControl {
   uploady: UploadyContextType;
