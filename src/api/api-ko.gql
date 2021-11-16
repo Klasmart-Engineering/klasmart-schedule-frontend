@@ -612,3 +612,10 @@ fragment classIdNameStatus on Class {
   class_name
   status
 }
+query getMyId{
+  myUser{
+    node{
+     id
+    }
+  }
+}
