@@ -19,6 +19,13 @@ export type Scalars = {
   Url: any;
 };
 
+export type AddUsersToOrganizationInput = {
+  organizationId: Scalars["ID"];
+  organizationRoleIds: Array<Scalars["ID"]>;
+  shortcode?: Maybe<Scalars["String"]>;
+  userIds: Array<Scalars["ID"]>;
+};
+
 export type AgeRange = {
   __typename?: "AgeRange";
   delete?: Maybe<Scalars["Boolean"]>;
@@ -311,10 +318,37 @@ export type ClassConnectionNode = {
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   programs?: Maybe<Array<ProgramSummaryNode>>;
-  schools?: Maybe<Array<SchoolSimplifiedSummaryNode>>;
+  schools?: Maybe<Array<SchoolSummaryNode>>;
+  schoolsConnection?: Maybe<SchoolsConnectionResponse>;
   shortCode?: Maybe<Scalars["String"]>;
   status: Status;
+  studentsConnection?: Maybe<UsersConnectionResponse>;
   subjects?: Maybe<Array<SubjectSummaryNode>>;
+  teachersConnection?: Maybe<UsersConnectionResponse>;
+};
+
+export type ClassConnectionNodeSchoolsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<SchoolFilter>;
+  sort?: Maybe<SchoolSortInput>;
+};
+
+export type ClassConnectionNodeStudentsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<UserFilter>;
+  sort?: Maybe<UserSortInput>;
+};
+
+export type ClassConnectionNodeTeachersConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<UserFilter>;
+  sort?: Maybe<UserSortInput>;
 };
 
 export type ClassFilter = {
@@ -479,6 +513,7 @@ export type MembershipUpdate = {
 export type Mutation = {
   __typename?: "Mutation";
   _empty?: Maybe<Scalars["String"]>;
+  addUsersToOrganizations?: Maybe<OrganizationsMutationResult>;
   age_range?: Maybe<AgeRange>;
   category?: Maybe<Category>;
   class?: Maybe<Class>;
@@ -515,6 +550,10 @@ export type Mutation = {
   uploadSubjectsFromCSV?: Maybe<File>;
   uploadUsersFromCSV?: Maybe<File>;
   user?: Maybe<User>;
+};
+
+export type MutationAddUsersToOrganizationsArgs = {
+  input: Array<AddUsersToOrganizationInput>;
 };
 
 export type MutationAge_RangeArgs = {
@@ -662,6 +701,11 @@ export type MyType = {
   myField?: Maybe<Scalars["UUID"]>;
 };
 
+export type MyUser = {
+  __typename?: "MyUser";
+  node?: Maybe<UserConnectionNode>;
+};
+
 export type NumberFilter = {
   operator: NumberOrDateOperator;
   value: Scalars["Float"];
@@ -678,6 +722,7 @@ export enum NumberOrDateOperator {
 
 export type Organization = {
   __typename?: "Organization";
+  /** @deprecated Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2419261457/ */
   addUser?: Maybe<OrganizationMembership>;
   address1?: Maybe<Scalars["String"]>;
   address2?: Maybe<Scalars["String"]>;
@@ -833,11 +878,28 @@ export type OrganizationConnectionNode = {
   contactInfo?: Maybe<OrganizationContactInfo>;
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
+  organizationMembershipsConnection?: Maybe<OrganizationMembershipsConnectionResponse>;
   owners?: Maybe<Array<Maybe<UserSummaryNode>>>;
+  rolesConnection?: Maybe<RolesConnectionResponse>;
   schoolsConnection?: Maybe<SchoolsConnectionResponse>;
   shortCode?: Maybe<Scalars["String"]>;
   status?: Maybe<Status>;
-  usersConnection?: Maybe<UsersConnectionResponse>;
+};
+
+export type OrganizationConnectionNodeOrganizationMembershipsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<OrganizationMembershipFilter>;
+  sort?: Maybe<OrganizationMembershipSortBy>;
+};
+
+export type OrganizationConnectionNodeRolesConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<RoleFilter>;
+  sort?: Maybe<RoleSortInput>;
 };
 
 export type OrganizationConnectionNodeSchoolsConnectionArgs = {
@@ -846,14 +908,6 @@ export type OrganizationConnectionNodeSchoolsConnectionArgs = {
   direction?: Maybe<ConnectionDirection>;
   filter?: Maybe<SchoolFilter>;
   sort?: Maybe<SchoolSortInput>;
-};
-
-export type OrganizationConnectionNodeUsersConnectionArgs = {
-  count?: Maybe<Scalars["PageSize"]>;
-  cursor?: Maybe<Scalars["String"]>;
-  direction?: Maybe<ConnectionDirection>;
-  filter?: Maybe<UserFilter>;
-  sort?: Maybe<UserSortInput>;
 };
 
 export type OrganizationContactInfo = {
@@ -872,6 +926,7 @@ export type OrganizationFilter = {
   phone?: Maybe<StringFilter>;
   shortCode?: Maybe<StringFilter>;
   status?: Maybe<StringFilter>;
+  userId?: Maybe<UuidFilter>;
 };
 
 export type OrganizationMembership = {
@@ -919,6 +974,49 @@ export type OrganizationMembershipSchoolMembershipsArgs = {
   permission_name?: Maybe<Scalars["String"]>;
 };
 
+export type OrganizationMembershipConnectionNode = {
+  __typename?: "OrganizationMembershipConnectionNode";
+  joinTimestamp?: Maybe<Scalars["String"]>;
+  organization?: Maybe<OrganizationConnectionNode>;
+  organizationId: Scalars["String"];
+  shortCode?: Maybe<Scalars["String"]>;
+  status: Status;
+  user?: Maybe<UserConnectionNode>;
+  userId: Scalars["String"];
+};
+
+export type OrganizationMembershipFilter = {
+  AND?: Maybe<Array<Maybe<OrganizationMembershipFilter>>>;
+  OR?: Maybe<Array<Maybe<OrganizationMembershipFilter>>>;
+  organizationId?: Maybe<UuidFilter>;
+  roleId?: Maybe<UuidFilter>;
+  shortCode?: Maybe<StringFilter>;
+  userId?: Maybe<UuidFilter>;
+};
+
+export enum OrganizationMembershipSortBy {
+  OrganizationId = "organizationId",
+  UserId = "userId",
+}
+
+export type OrganizationMembershipSortInput = {
+  field: OrganizationMembershipSortBy;
+  order: SortOrder;
+};
+
+export type OrganizationMembershipsConnectionEdge = IConnectionEdge & {
+  __typename?: "OrganizationMembershipsConnectionEdge";
+  cursor?: Maybe<Scalars["String"]>;
+  node?: Maybe<OrganizationMembershipConnectionNode>;
+};
+
+export type OrganizationMembershipsConnectionResponse = IConnectionResponse & {
+  __typename?: "OrganizationMembershipsConnectionResponse";
+  edges?: Maybe<Array<Maybe<OrganizationMembershipsConnectionEdge>>>;
+  pageInfo?: Maybe<ConnectionPageInfo>;
+  totalCount?: Maybe<Scalars["Int"]>;
+};
+
 export type OrganizationOwnership = {
   __typename?: "OrganizationOwnership";
   organization?: Maybe<Organization>;
@@ -958,6 +1056,11 @@ export type OrganizationsConnectionResponse = IConnectionResponse & {
   edges?: Maybe<Array<Maybe<OrganizationsConnectionEdge>>>;
   pageInfo?: Maybe<ConnectionPageInfo>;
   totalCount?: Maybe<Scalars["Int"]>;
+};
+
+export type OrganizationsMutationResult = {
+  __typename?: "OrganizationsMutationResult";
+  organizations: Array<OrganizationConnectionNode>;
 };
 
 export type PageInfo = {
@@ -1015,6 +1118,15 @@ export type PermissionsConnectionNode = {
   id: Scalars["ID"];
   level?: Maybe<Scalars["String"]>;
   name: Scalars["String"];
+  rolesConnection?: Maybe<RolesConnectionResponse>;
+};
+
+export type PermissionsConnectionNodeRolesConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<RoleFilter>;
+  sort?: Maybe<RoleSortInput>;
 };
 
 export type PermissionsConnectionResponse = IConnectionResponse & {
@@ -1126,45 +1238,65 @@ export type ProgramsConnectionResponse = IConnectionResponse & {
 export type Query = {
   __typename?: "Query";
   _empty?: Maybe<Scalars["String"]>;
+  ageRangeNode?: Maybe<AgeRangeConnectionNode>;
   ageRangesConnection?: Maybe<AgeRangesConnectionResponse>;
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   age_range?: Maybe<AgeRange>;
   categoriesConnection?: Maybe<CategoriesConnectionResponse>;
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   category?: Maybe<Category>;
-  /** @deprecated Use 'classNode'. */
+  categoryNode?: Maybe<CategoryConnectionNode>;
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   class?: Maybe<Class>;
   classNode?: Maybe<ClassConnectionNode>;
   /** @deprecated Use 'classesConnection'. */
   classes?: Maybe<Array<Maybe<Class>>>;
   classesConnection?: Maybe<ClassesConnectionResponse>;
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   grade?: Maybe<Grade>;
+  gradeNode?: Maybe<GradeConnectionNode>;
   gradesConnection?: Maybe<GradesConnectionResponse>;
   me?: Maybe<User>;
+  myUser?: Maybe<MyUser>;
   /** @deprecated Use 'usersConnection with a filter for matching 'email' or 'phone' */
   my_users?: Maybe<Array<User>>;
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   organization?: Maybe<Organization>;
+  organizationNode?: Maybe<OrganizationConnectionNode>;
+  /** @deprecated Use 'organizationsConnection'. */
   organizations?: Maybe<Array<Maybe<Organization>>>;
   organizationsConnection?: Maybe<OrganizationsConnectionResponse>;
+  permissionNode?: Maybe<PermissionsConnectionNode>;
   permissionsConnection?: Maybe<PermissionsConnectionResponse>;
-  /** @deprecated Use 'programNode' */
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   program?: Maybe<Program>;
   programNode?: Maybe<ProgramConnectionNode>;
   programsConnection?: Maybe<ProgramsConnectionResponse>;
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   role?: Maybe<Role>;
+  roleNode?: Maybe<RoleConnectionNode>;
   roles?: Maybe<Array<Maybe<Role>>>;
   rolesConnection?: Maybe<RolesConnectionResponse>;
-  /** @deprecated Use 'schoolsConnection' with 'schoolId' filter. */
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   school?: Maybe<School>;
+  schoolNode?: Maybe<SchoolConnectionNode>;
   schoolsConnection?: Maybe<SchoolsConnectionResponse>;
   subcategoriesConnection?: Maybe<SubcategoriesConnectionResponse>;
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   subcategory?: Maybe<Subcategory>;
+  subcategoryNode?: Maybe<SubcategoryConnectionNode>;
   subject?: Maybe<Subject>;
   subjectsConnection?: Maybe<SubjectsConnectionResponse>;
-  /** @deprecated Use 'userNode' */
+  /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   user?: Maybe<User>;
   userNode?: Maybe<UserConnectionNode>;
   /** @deprecated Unused */
   users?: Maybe<Array<Maybe<User>>>;
   usersConnection?: Maybe<UsersConnectionResponse>;
+};
+
+export type QueryAgeRangeNodeArgs = {
+  id: Scalars["ID"];
 };
 
 export type QueryAgeRangesConnectionArgs = {
@@ -1189,6 +1321,10 @@ export type QueryCategoryArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryCategoryNodeArgs = {
+  id: Scalars["ID"];
+};
+
 export type QueryClassArgs = {
   class_id: Scalars["ID"];
 };
@@ -1208,6 +1344,10 @@ export type QueryGradeArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryGradeNodeArgs = {
+  id: Scalars["ID"];
+};
+
 export type QueryGradesConnectionArgs = {
   direction: ConnectionDirection;
   directionArgs?: Maybe<ConnectionsDirectionArgs>;
@@ -1219,6 +1359,10 @@ export type QueryOrganizationArgs = {
   organization_id: Scalars["ID"];
 };
 
+export type QueryOrganizationNodeArgs = {
+  id: Scalars["ID"];
+};
+
 export type QueryOrganizationsArgs = {
   organization_ids?: Maybe<Array<Scalars["ID"]>>;
 };
@@ -1228,6 +1372,10 @@ export type QueryOrganizationsConnectionArgs = {
   directionArgs?: Maybe<ConnectionsDirectionArgs>;
   filter?: Maybe<OrganizationFilter>;
   sort?: Maybe<OrganizationSortInput>;
+};
+
+export type QueryPermissionNodeArgs = {
+  id: Scalars["ID"];
 };
 
 export type QueryPermissionsConnectionArgs = {
@@ -1256,6 +1404,10 @@ export type QueryRoleArgs = {
   role_id: Scalars["ID"];
 };
 
+export type QueryRoleNodeArgs = {
+  id: Scalars["ID"];
+};
+
 export type QueryRolesConnectionArgs = {
   direction: ConnectionDirection;
   directionArgs?: Maybe<ConnectionsDirectionArgs>;
@@ -1265,6 +1417,10 @@ export type QueryRolesConnectionArgs = {
 
 export type QuerySchoolArgs = {
   school_id: Scalars["ID"];
+};
+
+export type QuerySchoolNodeArgs = {
+  id: Scalars["ID"];
 };
 
 export type QuerySchoolsConnectionArgs = {
@@ -1282,6 +1438,10 @@ export type QuerySubcategoriesConnectionArgs = {
 };
 
 export type QuerySubcategoryArgs = {
+  id: Scalars["ID"];
+};
+
+export type QuerySubcategoryNodeArgs = {
   id: Scalars["ID"];
 };
 
@@ -1372,8 +1532,12 @@ export type RoleConnectionNode = {
 export type RoleFilter = {
   AND?: Maybe<Array<Maybe<RoleFilter>>>;
   OR?: Maybe<Array<Maybe<RoleFilter>>>;
+  membershipOrganizationId?: Maybe<UuidFilter>;
+  membershipOrganizationUserId?: Maybe<UuidFilter>;
   name?: Maybe<StringFilter>;
   organizationId?: Maybe<UuidFilter>;
+  schoolId?: Maybe<UuidFilter>;
+  schoolUserId?: Maybe<UuidFilter>;
   status?: Maybe<StringFilter>;
   system?: Maybe<BooleanFilter>;
 };
@@ -1456,11 +1620,20 @@ export type SchoolSetArgs = {
 
 export type SchoolConnectionNode = {
   __typename?: "SchoolConnectionNode";
+  classesConnection?: Maybe<ClassesConnectionResponse>;
   id: Scalars["ID"];
   name: Scalars["String"];
   organizationId: Scalars["ID"];
   shortCode?: Maybe<Scalars["String"]>;
   status: Status;
+};
+
+export type SchoolConnectionNodeClassesConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<ClassFilter>;
+  sort?: Maybe<ClassSortInput>;
 };
 
 export type SchoolFilter = {
@@ -1471,6 +1644,7 @@ export type SchoolFilter = {
   schoolId?: Maybe<UuidFilter>;
   shortCode?: Maybe<StringFilter>;
   status?: Maybe<StringFilter>;
+  userId?: Maybe<UuidFilter>;
 };
 
 export type SchoolMembership = {
@@ -1509,13 +1683,6 @@ export type SchoolMembershipRemoveRoleArgs = {
   role_id: Scalars["ID"];
 };
 
-export type SchoolSimplifiedSummaryNode = {
-  __typename?: "SchoolSimplifiedSummaryNode";
-  id: Scalars["ID"];
-  name?: Maybe<Scalars["String"]>;
-  status: Status;
-};
-
 export enum SchoolSortBy {
   Id = "id",
   Name = "name",
@@ -1532,7 +1699,7 @@ export type SchoolSummaryNode = {
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   organizationId?: Maybe<Scalars["String"]>;
-  status?: Maybe<Status>;
+  status: Status;
   userStatus?: Maybe<Status>;
 };
 
@@ -1574,15 +1741,7 @@ export enum StringOperator {
 export type SubcategoriesConnectionEdge = IConnectionEdge & {
   __typename?: "SubcategoriesConnectionEdge";
   cursor?: Maybe<Scalars["String"]>;
-  node?: Maybe<SubcategoriesConnectionNode>;
-};
-
-export type SubcategoriesConnectionNode = {
-  __typename?: "SubcategoriesConnectionNode";
-  id: Scalars["ID"];
-  name: Scalars["String"];
-  status: Status;
-  system: Scalars["Boolean"];
+  node?: Maybe<SubcategoryConnectionNode>;
 };
 
 export type SubcategoriesConnectionResponse = IConnectionResponse & {
@@ -1603,6 +1762,14 @@ export type Subcategory = {
 
 export type SubcategoryDeleteArgs = {
   _?: Maybe<Scalars["Int"]>;
+};
+
+export type SubcategoryConnectionNode = {
+  __typename?: "SubcategoryConnectionNode";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  status: Status;
+  system: Scalars["Boolean"];
 };
 
 export type SubcategoryDetail = {
@@ -1728,6 +1895,7 @@ export enum UuidOperator {
 
 export type User = {
   __typename?: "User";
+  /** @deprecated Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2419261457/ */
   addOrganization?: Maybe<OrganizationMembership>;
   addSchool?: Maybe<SchoolMembership>;
   alternate_email?: Maybe<Scalars["String"]>;
@@ -1830,10 +1998,29 @@ export type UserConnectionNode = {
   gender?: Maybe<Scalars["String"]>;
   givenName?: Maybe<Scalars["String"]>;
   id: Scalars["ID"];
+  organizationMembershipsConnection?: Maybe<OrganizationMembershipsConnectionResponse>;
+  /** @deprecated Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw */
   organizations: Array<OrganizationSummaryNode>;
   roles: Array<RoleSummaryNode>;
   schools: Array<SchoolSummaryNode>;
+  schoolsConnection?: Maybe<SchoolsConnectionResponse>;
   status: Status;
+};
+
+export type UserConnectionNodeOrganizationMembershipsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<OrganizationMembershipFilter>;
+  sort?: Maybe<OrganizationMembershipSortBy>;
+};
+
+export type UserConnectionNodeSchoolsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<SchoolFilter>;
+  sort?: Maybe<SchoolSortInput>;
 };
 
 export type UserFilter = {

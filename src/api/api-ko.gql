@@ -612,3 +612,52 @@ fragment classIdNameStatus on Class {
   class_name
   status
 }
+
+query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
+classesConnection(
+    filter: $filter,
+    direction: $direction
+  ) {
+     edges {
+      cursor
+      node {
+        id
+        name
+        studentsConnection(cursor: $studentCursor, direction: $studentDirection) {
+          totalCount
+          edges {
+            node {
+              id
+              givenName
+              familyName
+              status
+            }
+          }
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        },
+        teachersConnection(cursor: $teacherCursor, direction: $teacherDirection) {
+          totalCount
+          edges {
+            node {
+              id
+              givenName
+              familyName
+              status
+            }
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        },
+      }
+    }
+  }
+}
