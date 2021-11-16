@@ -7,7 +7,7 @@ import { usePermission } from "../../hooks/usePermission";
 import { t } from "../../locale/LocaleManager";
 import { toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { reportCategoriesOnload } from "../../reducers/report";
+import { getSkillCoverageReport, reportCategoriesOnload } from "../../reducers/report";
 import { useReportQuery } from "../ReportAchievementList";
 import { ReportTitle } from "../ReportDashboard";
 import { CategoriesChart } from "./CategoriesChart";
@@ -15,7 +15,6 @@ import { SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeade
 
 export function ReportCategories() {
   const condition = useReportQuery();
-  const { teacher_id } = condition;
   const history = useHistory();
   const dispatch = useDispatch();
   const { teacherList, categories } = useSelector<RootState, RootState["report"]["categoriesPage"]>((state) => state.report.categoriesPage);
@@ -26,16 +25,22 @@ export function ReportCategories() {
     PermissionType.view_my_organizations_reports_612,
   ]);
   const handleChangeFilter: SecondSearchHeaderProps["onChange"] = (value, tab) => {
+    if (!value) return;
+    dispatch(getSkillCoverageReport({ teacher_id: value, metaLoading: true }));
     history.replace({ search: toQueryString({ [tab]: value }) });
   };
   const chart = <CategoriesChart data={categories} />;
   useEffect(() => {
-    dispatch(reportCategoriesOnload({ teacher_id, metaLoading: true }));
-  }, [teacher_id, dispatch]);
+    dispatch(reportCategoriesOnload({ metaLoading: true }));
+  }, [dispatch]);
+  useEffect(() => {
+    if (!teacherList.length) return;
+    dispatch(getSkillCoverageReport({ teacher_id: teacherList[0].user_id, metaLoading: true }));
+  }, [dispatch, teacherList]);
   return (
     <>
       <ReportTitle title={t("report_label_lo_in_categories")}></ReportTitle>
-      <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList}></SecondSearchHeader>
+      <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList} perm={perm}></SecondSearchHeader>
       {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612
         ? categories.length > 0
           ? chart

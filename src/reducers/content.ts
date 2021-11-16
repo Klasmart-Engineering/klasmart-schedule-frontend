@@ -5,12 +5,12 @@ import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import api, { gqlapi } from "../api";
 import {
+  GetMyIdDocument,
+  GetMyIdQuery,
+  GetMyIdQueryVariables,
   OrganizationsDocument,
   OrganizationsQuery,
   OrganizationsQueryVariables,
-  QeuryMeDocument,
-  QeuryMeQuery,
-  QeuryMeQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiContentBulkOperateRequest,
@@ -636,15 +636,12 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
       }
     }
     const contentDetail = await api.contents.getContentById(content_id);
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const { data } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
-      fetchPolicy: "cache-first",
+    const {
+      data: { myUser },
+    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+      query: GetMyIdDocument,
     });
-    const user_id = data?.me?.user_id;
+    const user_id = myUser?.node?.id || "";
     return { contentDetail, user_id, token };
   }
 );
