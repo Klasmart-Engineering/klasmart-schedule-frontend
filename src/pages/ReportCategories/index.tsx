@@ -31,12 +31,14 @@ export function ReportCategories() {
   };
   const chart = <CategoriesChart data={categories} />;
   useEffect(() => {
-    dispatch(reportCategoriesOnload({ metaLoading: true }));
+    dispatch(reportCategoriesOnload({}));
   }, [dispatch]);
   useEffect(() => {
     if (!teacherList.length) return;
     dispatch(getSkillCoverageReport({ teacher_id: teacherList[0].user_id, metaLoading: true }));
-  }, [dispatch, teacherList]);
+    history.replace({ search: toQueryString({ teacher_id: teacherList[0].user_id }) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, teacherList.length]);
   return (
     <>
       <ReportTitle title={t("report_label_lo_in_categories")}></ReportTitle>
