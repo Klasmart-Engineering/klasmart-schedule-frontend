@@ -1230,7 +1230,7 @@ const { actions, reducer } = createSlice({
       state.token = payload.token;
     },
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size;
+      state.page_size = payload.cms_page_size || initialState.page_size;
     },
     [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
       state.page_size = payload.cms_page_size;
