@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, UuidExclusiveOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -15,6 +15,9 @@ import {
   ClassesTeachingQueryDocument,
   ClassesTeachingQueryQuery,
   ClassesTeachingQueryQueryVariables,
+  GetClassByInfoDocument,
+  GetClassByInfoQuery,
+  GetClassByInfoQueryVariables,
   GetClassFilterListDocument,
   GetClassFilterListQuery,
   GetClassFilterListQueryVariables,
@@ -30,9 +33,7 @@ import {
   MySchoolIDsDocument,
   MySchoolIDsQuery,
   MySchoolIDsQueryVariables,
-  ParticipantsByClassDocument,
   ParticipantsByClassQuery,
-  ParticipantsByClassQueryVariables,
   QeuryMeDocument,
   QeuryMeQuery,
   QeuryMeQueryVariables,
@@ -108,7 +109,6 @@ export interface ScheduleState {
   mySchoolId: string[];
   feedbackData: EntityScheduleFeedbackView;
   filterOption: filterOptionItem;
-  user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   mediaList: EntityQueryContentItem[];
   ScheduleViewInfo: EntityScheduleViewDetail;
@@ -273,7 +273,6 @@ const initialState: ScheduleState = {
     programs: [],
     others: [],
   },
-  user_id: "",
   schoolByOrgOrUserData: [],
   mediaList: [],
   ScheduleViewInfo: {},
@@ -397,16 +396,6 @@ export const getClassesByStudent = createAsyncThunk("getClassesByStudent", async
     query: ClassesStudentQueryDocument,
     variables: {
       user_id: meInfo.me?.user_id as string,
-      organization_id,
-    },
-  });
-});
-
-export const getScheduleUserId = createAsyncThunk("getScheduleUserId", async () => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  return gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
       organization_id,
     },
   });
@@ -677,11 +666,32 @@ export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { 
 export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
   "getParticipant",
   async ({ class_id }) => {
-    const { data } = await gqlapi.query<ParticipantsByClassQuery, ParticipantsByClassQueryVariables>({
-      query: ParticipantsByClassDocument,
-      variables: { class_id },
+    const { data } = await gqlapi.query<GetClassByInfoQuery, GetClassByInfoQueryVariables>({
+      query: GetClassByInfoDocument,
+      variables: {
+        filter: { id: { operator: UuidOperator.Eq, value: class_id } },
+        direction: ConnectionDirection.Forward,
+      },
     });
-    const participantList = data;
+    const participantList: {
+      class: { teachers: { user_id: string; user_name: string }[]; students: { user_id: string; user_name: string }[] };
+    } = { class: { teachers: [], students: [] } };
+    const studentsConnection = data?.classesConnection?.edges![0]?.node?.studentsConnection?.edges;
+    const teachersConnection = data?.classesConnection?.edges![0]?.node?.teachersConnection?.edges;
+    studentsConnection?.forEach((student) => {
+      if (student?.node?.status === "active")
+        participantList.class.students.push({
+          user_id: student.node?.id as string,
+          user_name: student.node?.givenName + " " + student.node?.familyName,
+        });
+    });
+    teachersConnection?.forEach((teacher) => {
+      if (teacher?.node?.status === "active")
+        participantList.class.teachers.push({
+          user_id: teacher.node?.id as string,
+          user_name: teacher.node?.givenName + " " + teacher.node?.familyName,
+        });
+    });
     return { participantList };
   }
 );
@@ -948,9 +958,6 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
       state.filterOption.others = payload;
-    },
-    [getScheduleUserId.fulfilled.type]: (state, { payload }: any) => {
-      state.user_id = payload.data.me.user_id;
     },
     [getSchoolByUser.fulfilled.type]: (state, { payload }: any) => {
       state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
