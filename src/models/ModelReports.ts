@@ -589,20 +589,32 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
       });
     }
   } else if (
-    data[3].first_achieved_percentage +
+    (data[3].first_achieved_percentage +
       data[3].re_achieved_percentage -
       (data[2].first_achieved_percentage + data[2].re_achieved_percentage) <
-      20 ||
-    data[2].first_achieved_percentage +
+      20 &&
+      data[3].first_achieved_percentage +
+        data[3].re_achieved_percentage -
+        (data[2].first_achieved_percentage + data[2].re_achieved_percentage) >
+        0) ||
+    (data[2].first_achieved_percentage +
       data[2].re_achieved_percentage -
       (data[3].first_achieved_percentage + data[3].re_achieved_percentage) <
-      20
+      20 &&
+      data[2].first_achieved_percentage +
+        data[2].re_achieved_percentage -
+        (data[3].first_achieved_percentage + data[3].re_achieved_percentage) >
+        0)
   ) {
     if (
       data[3].first_achieved_percentage +
         data[3].re_achieved_percentage -
         (data[2].first_achieved_percentage + data[2].re_achieved_percentage) <
-      20
+        20 &&
+      data[3].first_achieved_percentage +
+        data[3].re_achieved_percentage -
+        (data[2].first_achieved_percentage + data[2].re_achieved_percentage) >
+        0
     ) {
       return t("report_msg_lo_increase_previous_w", {
         Name: studentName,
@@ -745,10 +757,15 @@ export function getClassAttendanceFeedback(newData: any, studentName: string) {
       });
     }
   } else if (
-    data[3].attendance_percentage - data[2].attendance_percentage < 20 ||
-    data[2].attendance_percentage - data[3].attendance_percentage < 20
+    (data[3].attendance_percentage - data[2].attendance_percentage < 20 &&
+      data[3].attendance_percentage - data[2].attendance_percentage > 0) ||
+    (data[2].attendance_percentage - data[3].attendance_percentage < 20 &&
+      data[2].attendance_percentage - data[3].attendance_percentage > 0)
   ) {
-    if (data[3].attendance_percentage - data[2].attendance_percentage < 20) {
+    if (
+      data[3].attendance_percentage - data[2].attendance_percentage < 20 &&
+      data[3].attendance_percentage - data[2].attendance_percentage > 0
+    ) {
       return t("report_msg_att_increase_previous_w", {
         Name: studentName,
         AttendCompareLastWeek: Math.ceil(data[3].attendance_percentage - data[2].attendance_percentage),
@@ -881,10 +898,15 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
       });
     }
   } else if (
-    data[3].student_designated_subject - data[2].student_designated_subject < 20 ||
-    data[2].student_designated_subject - data[3].student_designated_subject < 20
+    (data[3].student_designated_subject - data[2].student_designated_subject < 20 &&
+      data[3].student_designated_subject - data[2].student_designated_subject > 0) ||
+    (data[2].student_designated_subject - data[3].student_designated_subject < 20 &&
+      data[2].student_designated_subject - data[3].student_designated_subject > 0)
   ) {
-    if (data[3].student_designated_subject - data[2].student_designated_subject < 20) {
+    if (
+      data[3].student_designated_subject - data[2].student_designated_subject < 20 &&
+      data[3].student_designated_subject - data[2].student_designated_subject > 0
+    ) {
       return t("report_msg_assign_increase_previous_w", {
         Name: studentName,
         AssignCompareLastWeek: Math.ceil(data[3].student_designated_subject - data[2].student_designated_subject),
