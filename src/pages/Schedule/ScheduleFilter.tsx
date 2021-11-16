@@ -403,14 +403,19 @@ function SchoolTemplate(props: SchoolTemplateProps) {
   const [checked, setChecked] = React.useState(false);
   const [edges, setEdges] = React.useState<any>([]);
   const [searchValue, setSearchValue] = React.useState<string>("");
+  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
   const css = useStyles();
-  const getSeacherResult = async (value: string) => {
-    setSearchValue(value);
-    await getSchoolsConnection("", value, false);
-    setEdges([]);
+  const getSearcherResult = (value: string) => {
+    if (timer) clearTimeout(timer);
+    const timers = setTimeout(async () => {
+      setSearchValue(value);
+      await getSchoolsConnection("", value, false);
+      setEdges([]);
+    }, 500);
+    setTimer(timers);
   };
   const getLastCursor = async () => {
     const schoolsConnectionItem = schoolsConnection?.schoolsConnection?.edges!;
@@ -438,7 +443,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
               size="small"
               placeholder="Search School Name"
               onChange={(e) => {
-                getSeacherResult(e.target.value);
+                getSearcherResult(e.target.value);
               }}
             />
           </div>
