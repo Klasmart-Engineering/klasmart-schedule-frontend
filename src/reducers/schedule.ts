@@ -108,7 +108,6 @@ export interface ScheduleState {
   mySchoolId: string[];
   feedbackData: EntityScheduleFeedbackView;
   filterOption: filterOptionItem;
-  user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   mediaList: EntityQueryContentItem[];
   ScheduleViewInfo: EntityScheduleViewDetail;
@@ -273,7 +272,6 @@ const initialState: ScheduleState = {
     programs: [],
     others: [],
   },
-  user_id: "",
   schoolByOrgOrUserData: [],
   mediaList: [],
   ScheduleViewInfo: {},
@@ -397,16 +395,6 @@ export const getClassesByStudent = createAsyncThunk("getClassesByStudent", async
     query: ClassesStudentQueryDocument,
     variables: {
       user_id: meInfo.me?.user_id as string,
-      organization_id,
-    },
-  });
-});
-
-export const getScheduleUserId = createAsyncThunk("getScheduleUserId", async () => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  return gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
       organization_id,
     },
   });
@@ -948,9 +936,6 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
       state.filterOption.others = payload;
-    },
-    [getScheduleUserId.fulfilled.type]: (state, { payload }: any) => {
-      state.user_id = payload.data.me.user_id;
     },
     [getSchoolByUser.fulfilled.type]: (state, { payload }: any) => {
       state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
