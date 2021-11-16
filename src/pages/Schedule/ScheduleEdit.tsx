@@ -1551,7 +1551,7 @@ function EditBox(props: CalendarStateProps) {
     const participantSet = type === "teacher" ? participant?.class?.teachers : participant?.class?.students;
     return participantSet
       ? participantSet?.map((item) => (
-          <Tooltip title={item?.user_name as string} placement="right-start">
+          <Tooltip key={item?.user_id} title={item?.user_name as string} placement="right-start">
             <FormControlLabel
               className={css.participantText}
               control={
