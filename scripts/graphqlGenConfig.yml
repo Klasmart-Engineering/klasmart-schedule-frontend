@@ -2,7 +2,7 @@ overwrite: true
 schema:
   - "https://api.alpha.kidsloop.net/user/":
         headers:
-          cookie: access=eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMjg0OTQ1LTU5MDAtNGFjZC1iZTQzLWY1N2RjNDc4ZTMyNSIsInBob25lIjoiKzE5NTE5MDE4MDYwIiwiZXhwIjoxNjM3MTE4MjQzLCJpc3MiOiJraWRzbG9vcCJ9.JRd_V2QdwJKhdYDvX6EdcLeExNXHosymcnaKz4mWz55nlAZoiSznsATizdTH2nsxxongRGP9LkGe0SHJLbQgjW3fwXPPl9X0gD13qxxWojxwneIA-xZ9yzTsjyjzpivdDLl2rWGsy6xeH0aj6fRi-H1tl9ALJqrmE7CK_cEPklS5gXXROAMREBAjFIpPrgrPsUXQho9WLf0m2rPMMAT8Mt0ypAs3z5ol4m1sd909tMeeQfNU0lItVn_EjnWTMb-eQOuBQ3qPypX9M01hecGU_Lh_TAYcsS4zOoEHZN3T2RRRsJFXnZ_Bk-T8gKOVkI-FgRK0xxBCiiscPxiRyOnH1w
+          cookie: access=
 documents: "src/api/*.gql"
 generates:
   src/api/api-ko-schema.auto.ts:

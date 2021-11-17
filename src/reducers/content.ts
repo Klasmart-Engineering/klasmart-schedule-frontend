@@ -1,15 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import cloneDeep from "lodash/cloneDeep";
+import uniqBy from "lodash/uniqBy";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import api, { gqlapi } from "../api";
 import {
+  GetMyIdDocument,
+  GetMyIdQuery,
+  GetMyIdQueryVariables,
   OrganizationsDocument,
   OrganizationsQuery,
   OrganizationsQueryVariables,
-  QeuryMeDocument,
-  QeuryMeQuery,
-  QeuryMeQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiContentBulkOperateRequest,
@@ -24,7 +25,13 @@ import {
   ModelPublishedOutcomeView,
   ModelSearchPublishedOutcomeResponse,
 } from "../api/api.auto";
-import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
+import {
+  apiDevelopmentalListIds,
+  apiSkillsListByIds,
+  apiWaitForOrganizationOfPage,
+  RecursiveFolderItem,
+  recursiveListFolderItems,
+} from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -201,7 +208,7 @@ const initialState: IContentState = {
     teacher_manual_batch: [],
   },
   token: "",
-  page_size: 20,
+  page_size: 0,
   folderTree: [],
   parentFolderInfo: {},
   orgProperty: {},
@@ -310,14 +317,6 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMo
       const developmental = await api.developmentals.getDevelopmental({ program_id, subject_ids });
       const age = programItem ? programItem.ageRanges || [] : [];
       const grade = programItem ? programItem.grades || [] : [];
-
-      /*
-      const [developmental, age, grade] = await Promise.all([
-        api.developmentals.getDevelopmental({ program_id, subject_ids }),
-        api.ages.getAge({ program_id }),
-        api.grades.getGrade({ program_id }),
-      ]);
-*/
 
       const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
       if (developmental_id) {
@@ -443,13 +442,41 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
-      dispatch(getOutcomesFullOptions({})),
+      // dispatch(getOutcomesFullOptions({})),
     ]);
+    dispatch(
+      getOutcomesResourceOptions({
+        developmentals: contentDetail.outcome_entities?.filter((item) => item.developmental).map((item) => item.developmental || "") ?? [],
+        skillIds: contentDetail.outcome_entities?.filter((item) => item.skills).map((item) => item.skills || "") ?? [],
+      })
+    );
 
     return { contentDetail, lesson_types, visibility_settings };
   }
 );
 
+interface getOutcomesResourceOptionsPayload {
+  developmentals: string[]; // category,
+  skillIds: string[]; // subCategory,
+}
+export const getOutcomesResourceOptions = createAsyncThunk<LinkedMockOptions, getOutcomesResourceOptionsPayload>(
+  "content/getOutcomesResourceOptions",
+  async ({ developmentals, skillIds }, { getState }) => {
+    const {
+      content: { outcomesFullOptions },
+    } = getState() as RootState;
+    const filteredDevelopmentals = developmentals.filter((item) => !outcomesFullOptions.developmental?.find((v) => v.id === item));
+    const filteredSkills = skillIds.filter((item) => !outcomesFullOptions.skills?.find((v) => v.id === item));
+
+    const developmentalsResult = await apiDevelopmentalListIds(filteredDevelopmentals);
+
+    const skillsResult = await apiSkillsListByIds(filteredSkills);
+    return {
+      developmental: Object.values(developmentalsResult.data),
+      skills: Object.values(skillsResult.data),
+    };
+  }
+);
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
 type IGetContentsResourseResult = AsyncReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
@@ -468,18 +495,6 @@ export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContent
   }
 );
 
-type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
-type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
-export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, IQueryFolderContentParams, { state: RootState }>(
-  "content/folderContentLists",
-  async ({ metaLoading, ...query }, { getState }) => {
-    const {
-      content: { page_size },
-    } = getState();
-    const { list, total } = await api.contentsFolders.queryFolderContent({ ...query, page_size });
-    return { list, total };
-  }
-);
 type IQueryOnLoadContentList = {
   exectSearch?: string;
 } & QueryCondition &
@@ -494,19 +509,14 @@ interface IQyertOnLoadContentListResult {
 }
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
-  async (query, { getState, dispatch }) => {
-    await dispatch(getUserSetting());
-    const {
-      content: { page_size },
-    } = getState();
-    const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search } = query;
+  async (query, { dispatch }) => {
+    const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search, page_size } = query;
     const nameValue = exect_search === ExectSearch.all ? name : "";
     const contentNameValue = exect_search === ExectSearch.name ? name : "";
     const isExectSearch = exect_search === ExectSearch.name;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) await dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    await dispatch(getOrgProperty());
     const submenu = content_type?.split(",").includes(ContentType.assets.toString())
       ? SubmenuType.assets
       : publish_status === PublishStatus.pending && author === Author.self
@@ -569,7 +579,7 @@ export const searchPublishedLearningOutcomes = createAsyncThunk<
   { exactSerch?: string } & EntityOutcomeCondition & LoadingMetaPayload
 >(
   "content/searchPublishedLearningOutcomes",
-  async ({ metaLoading, exactSerch = "search_key", search_key, order_by, assumed, page, ...query }) => {
+  async ({ metaLoading, exactSerch = "search_key", search_key, order_by, assumed, page, ...query }, { dispatch }) => {
     const params = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
@@ -580,6 +590,12 @@ export const searchPublishedLearningOutcomes = createAsyncThunk<
       ...query,
     };
     const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(params);
+    await dispatch(
+      getOutcomesResourceOptions({
+        developmentals: list?.reduce((arr, item) => arr.concat(item.category_ids || []) || "", [] as string[]) ?? [],
+        skillIds: list?.reduce((arr, item) => arr.concat(item.sub_category_ids || []) || "", [] as string[]) ?? [],
+      })
+    );
     return { list, total };
   }
 );
@@ -627,15 +643,12 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
       }
     }
     const contentDetail = await api.contents.getContentById(content_id);
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const { data } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
-      fetchPolicy: "cache-first",
+    const {
+      data: { myUser },
+    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+      query: GetMyIdDocument,
     });
-    const user_id = data?.me?.user_id;
+    const user_id = myUser?.node?.id || "";
     return { contentDetail, user_id, token };
   }
 );
@@ -1104,6 +1117,15 @@ const { actions, reducer } = createSlice({
       state.outcomesFullOptions.program = cloneDeep(state.linkedMockOptions.program);
       state.searchLOListOptions.program = cloneDeep(state.linkedMockOptions.program);
     },
+    [getOutcomesResourceOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesFullOptions>>) => {
+      const developmental = uniqBy([...(state.outcomesFullOptions.developmental || []), ...(payload.developmental || [])], "id");
+      const skills = uniqBy([...(state.outcomesFullOptions.skills || []), ...(payload.skills || [])], "id");
+      state.outcomesFullOptions = {
+        ...state.outcomesFullOptions,
+        developmental,
+        skills,
+      };
+    },
     [getOutcomesOptionSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesOptionSkills>>) => {
       state.searchLOListOptions.skills = payload;
     },
@@ -1139,14 +1161,6 @@ const { actions, reducer } = createSlice({
     [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentLists>>) => {
       state.contentsList = payload.list || [];
       state.mediaList = payload.list || [];
-      state.total = payload.total;
-    },
-    [folderContentLists.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
-      state.contentsList = initialState.contentsList;
-      state.total = initialState.total;
-    },
-    [folderContentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
-      state.contentsList = payload.list || [];
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {},
@@ -1223,7 +1237,7 @@ const { actions, reducer } = createSlice({
       state.token = payload.token;
     },
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size;
+      state.page_size = payload.cms_page_size || initialState.page_size;
     },
     [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
       state.page_size = payload.cms_page_size;

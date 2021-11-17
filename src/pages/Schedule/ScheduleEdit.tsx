@@ -285,7 +285,6 @@ function SmallCalendar(props: CalendarStateProps) {
     handleChangeOnlyMine,
     privilegedMembers,
     filterOption,
-    user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
@@ -339,7 +338,6 @@ function SmallCalendar(props: CalendarStateProps) {
           timesTamp={timesTamp}
           privilegedMembers={privilegedMembers}
           filterOption={filterOption}
-          user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
@@ -1553,7 +1551,7 @@ function EditBox(props: CalendarStateProps) {
     const participantSet = type === "teacher" ? participant?.class?.teachers : participant?.class?.students;
     return participantSet
       ? participantSet?.map((item) => (
-          <Tooltip title={item?.user_name as string} placement="right-start">
+          <Tooltip key={item?.user_id} title={item?.user_name as string} placement="right-start">
             <FormControlLabel
               className={css.participantText}
               control={
@@ -2431,7 +2429,6 @@ interface CalendarStateProps {
   stateCurrentCid: string;
   stateMaterialArr: (EntityContentInfoWithDetails | undefined)[];
   filterOption: filterOptionItem;
-  user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
   schoolsConnection: GetSchoolsFilterListQuery;
@@ -2484,7 +2481,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     stateCurrentCid,
     stateMaterialArr,
     filterOption,
-    user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
@@ -2527,7 +2523,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
           filterOption={filterOption}
-          user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
@@ -2575,7 +2570,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
           filterOption={filterOption}
-          user_id={user_id}
           schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}

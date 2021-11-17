@@ -183,7 +183,6 @@ type StyledTreeItemProps = TreeItemProps & {
   stateOnlySelectMine: string[];
   stateOnlySelectMineExistData: any;
   privilegedMembers: (member: memberType) => boolean;
-  fullSelectionStatusSet: { id: string; status: boolean }[];
   fullOtherSelectionStatusSet: boolean;
   openClassMenu: (pageY: number, schoolItem: { id: string; name: string }) => void;
 };
@@ -210,7 +209,6 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     stateOnlySelectMine,
     stateOnlySelectMineExistData,
     privilegedMembers,
-    fullSelectionStatusSet,
     fullOtherSelectionStatusSet,
     openClassMenu,
     ...other
@@ -259,14 +257,6 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     let allStatus = false;
     if (item.id === "class+All+Others") {
       allStatus = fullOtherSelectionStatusSet;
-    } else if (item.id === "All_My_Schools") {
-      allStatus = fullSelectionStatusSet.every((item: { id: string; status: boolean }) => {
-        return item.status;
-      });
-    } else if (item.name === "All") {
-      fullSelectionStatusSet.forEach((item: { id: string; status: boolean }) => {
-        if (item.id === filterItem.school_id) allStatus = item.status;
-      });
     } else {
       allStatus = stateOnlyMine.includes(item.id);
     }
@@ -413,14 +403,19 @@ function SchoolTemplate(props: SchoolTemplateProps) {
   const [checked, setChecked] = React.useState(false);
   const [edges, setEdges] = React.useState<any>([]);
   const [searchValue, setSearchValue] = React.useState<string>("");
+  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
   const css = useStyles();
-  const getSeacherResult = async (value: string) => {
-    setSearchValue(value);
-    await getSchoolsConnection("", value, false);
-    setEdges([]);
+  const getSearcherResult = (value: string) => {
+    if (timer) clearTimeout(timer);
+    const timers = setTimeout(async () => {
+      setSearchValue(value);
+      await getSchoolsConnection("", value, false);
+      setEdges([]);
+    }, 500);
+    setTimer(timers);
   };
   const getLastCursor = async () => {
     const schoolsConnectionItem = schoolsConnection?.schoolsConnection?.edges!;
@@ -448,7 +443,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
               size="small"
               placeholder="Search School Name"
               onChange={(e) => {
-                getSeacherResult(e.target.value);
+                getSearcherResult(e.target.value);
               }}
             />
           </div>
@@ -495,8 +490,6 @@ function FilterTemplate(props: FilterProps) {
     handleChangeOnlyMine,
     privilegedMembers,
     filterOption,
-    user_id,
-    schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
@@ -619,8 +612,6 @@ function FilterTemplate(props: FilterProps) {
   };
 
   const getClassDataBySchool = useMemo(() => {
-    // const role = privilegedMembers("Teacher") || privilegedMembers("Student");
-    // return modelSchedule.classDataConversion(user_id, checkSchoolItem.id, schoolByOrgOrUserData, role, classesConnection);
     return modelSchedule.classDataConversion2(checkSchoolItem.name, checkSchoolItem.id, classesConnection);
   }, [checkSchoolItem, classesConnection]);
 
@@ -729,12 +720,6 @@ function FilterTemplate(props: FilterProps) {
     },
   ];
   const styledTreeItemTemplate = (treeItem: FilterDataItemsProps[]) => {
-    const fullSelectionStatus = modelSchedule.FilterSchoolDigital(
-      schoolByOrgOrUserData,
-      stateOnlyMine,
-      user_id,
-      privilegedMembers("Teacher") || privilegedMembers("Student")
-    );
     const fullOtherSelectionStatus = modelSchedule.FilterOtherDigital(filterOption.others, stateOnlyMine);
     return treeItem.map((item: FilterDataItemsProps) => {
       return (
@@ -755,7 +740,6 @@ function FilterTemplate(props: FilterProps) {
               stateOnlySelectMine={stateOnlySelectMine}
               stateOnlySelectMineExistData={stateOnlySelectMineExistData}
               privilegedMembers={privilegedMembers}
-              fullSelectionStatusSet={fullSelectionStatus}
               fullOtherSelectionStatusSet={fullOtherSelectionStatus}
               openClassMenu={openClassMenu}
             >
@@ -816,7 +800,6 @@ interface FilterProps extends SchoolTemplateProps {
   modelView: modeViewType;
   privilegedMembers: (member: memberType) => boolean;
   filterOption: filterOptionItem;
-  user_id: string;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
 }
@@ -833,7 +816,6 @@ export default function ScheduleFilter(props: FilterProps) {
     timesTamp,
     privilegedMembers,
     filterOption,
-    user_id,
     schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
@@ -853,7 +835,6 @@ export default function ScheduleFilter(props: FilterProps) {
       timesTamp={timesTamp}
       privilegedMembers={privilegedMembers}
       filterOption={filterOption}
-      user_id={user_id}
       schoolByOrgOrUserData={schoolByOrgOrUserData}
       viewSubjectPermission={viewSubjectPermission}
       schoolsConnection={schoolsConnection}

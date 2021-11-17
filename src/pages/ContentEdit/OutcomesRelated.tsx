@@ -97,7 +97,7 @@ const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
 
 export const getNameByIds = (list?: LinkedMockOptionsItem[], ids?: string[]) => {
   return ids?.reduce((names: string[], id) => {
-    const name = list?.find((item) => item.id === id)?.name;
+    const name = list?.find((item) => item?.id === id)?.name;
     return name ? names.concat([name]) : names;
   }, []);
 };

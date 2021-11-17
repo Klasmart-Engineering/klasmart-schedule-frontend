@@ -103,7 +103,7 @@ const Row = (props: {
                         </TableCell>
                         <TableCell align="center">{item?.schedule?.schedule_name}</TableCell>
                         <TableCell align="center">{item.time ? `${moment(item.time * 1000).format("MM/DD/YYYY")}` : ""}</TableCell>
-                        <TableCell align="center">{item.time ? ` ${moment(item.time * 1000).format("HH:mm a")}` : ""}</TableCell>
+                        <TableCell align="center">{item.time ? `${moment(item.time * 1000).format("HH:mm")}` : ""}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>

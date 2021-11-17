@@ -3,11 +3,10 @@ import clsx from "clsx";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { EntityScheduleShortInfo } from "../../api/api.auto";
-import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
-import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
+import { ICacheData } from "../../services/permissionCahceService";
 import { QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -63,39 +62,21 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   },
 }));
 
-/*function getSpecificName(reportMockOptions: GetReportMockOptionsResponse, type: string, id: string) {
-  const teacherList = reportMockOptions.teacherList;
-  const classList = reportMockOptions.classList;
-  if (type === "teacher" && teacherList) {
-    const temp = teacherList.filter((item: Pick<User, "user_id" | "user_name">) => item.user_id === id)[0];
-    return temp ? temp.user_name : "";
-  }
-  if (type === "class" && classList) {
-    const tempClass = classList.filter((item) => item.class_id === id)[0];
-    return tempClass ? tempClass.class_name : "";
-  }
-}*/
-
 interface BriefIntroductionProps {
   value: QueryCondition;
   student_name: string | undefined;
   hiddenLegend?: Boolean;
   backByLessonPlan?: (urlParams: string) => void;
   reportMockOptions?: GetReportMockOptionsResponse;
+  perm?: ICacheData;
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value, student_name, backByLessonPlan, reportMockOptions, hiddenLegend } = props;
+  const { value, student_name, backByLessonPlan, reportMockOptions, hiddenLegend, perm } = props;
   const lessonPlanList = reportMockOptions?.lessonPlanList;
   const css = useStyles();
   const history = useHistory();
   const [, setLessonPlanName] = React.useState("");
-  const perm = usePermission([
-    PermissionType.view_reports_610,
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_school_reports_611,
-    PermissionType.view_my_organizations_reports_612,
-  ]);
   React.useEffect(() => {
     if (lessonPlanList && lessonPlanList.length) {
       const res = lessonPlanList.filter((item: EntityScheduleShortInfo) => item.id === value.lesson_plan_id)[0];
@@ -114,19 +95,12 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Divider className={css.divider} />
-      {(perm.view_my_reports_614 || perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
+      {(perm?.view_my_reports_614 ||
+        perm?.view_reports_610 ||
+        perm?.view_my_school_reports_611 ||
+        perm?.view_my_organizations_reports_612) && (
         <Box className={css.container_intro}>
           <Box className={css.leftName}>
-            {/*            {value.teacher_id && (
-              <span className={css.teacherAndClass}>
-                {getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "teacher", value.teacher_id)}
-              </span>
-            )}
-            {value.class_id && (
-              <span className={css.teacherAndClass}>
-                {" - " + getSpecificName(reportMockOptions as GetReportMockOptionsResponse, "class", value.class_id)}
-              </span>
-            )}*/}
             {value.lesson_plan_id && (
               <span
                 style={{ cursor: value.student_id ? "pointer" : "default", color: value.student_id ? "blue" : "black" }}

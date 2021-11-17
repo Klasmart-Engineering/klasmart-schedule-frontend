@@ -65,7 +65,6 @@ const mapContentType = (lesson: DraggableItemProps["lesson"], item: DraggableIte
     : item.content_type;
 };
 
-
 interface DraggableItemProps {
   type: string;
   item: EntityQueryContentItem;

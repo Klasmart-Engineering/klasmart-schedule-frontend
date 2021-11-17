@@ -39,7 +39,6 @@ import {
   getScheduleParticipant,
   getScheduleTimeViewData,
   getScheduleTimeViewDataByYear,
-  getScheduleUserId,
   getScheduleViewInfo,
   getSchoolsFilterList,
   getSubjectByProgramId,
@@ -96,7 +95,6 @@ function ScheduleContent() {
     mediaList,
     ScheduleViewInfo,
     filterOption,
-    user_id,
     schoolByOrgOrUserData,
     schoolsConnection,
     classesConnection,
@@ -370,7 +368,6 @@ function ScheduleContent() {
   }, [timesTamp]);
 
   React.useEffect(() => {
-    dispatch(getScheduleUserId());
     dispatch(ScheduleFilterPrograms());
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(
@@ -455,7 +452,6 @@ function ScheduleContent() {
               stateCurrentCid={stateCurrentCid}
               stateMaterialArr={stateMaterialArr}
               filterOption={filterOption}
-              user_id={user_id}
               schoolByOrgOrUserData={schoolByOrgOrUserData}
               viewSubjectPermission={viewSubjectPermission}
               schoolsConnection={schoolsConnection}

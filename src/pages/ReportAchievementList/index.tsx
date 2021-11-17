@@ -160,8 +160,9 @@ export function ReportAchievementList() {
         value={condition}
         onChange={handleChangeFilter}
         reportMockOptions={reportMockOptions}
+        perm={perm}
       ></FilterAchievementReport>
-      <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
+      <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} perm={perm} />
       {hasPerm ? (
         reportList && reportList.length > 0 && condition.lesson_plan_id ? (
           <AchievementListChart data={reportList} filter={condition.status} onClickStudent={handleChangeStudent} />
