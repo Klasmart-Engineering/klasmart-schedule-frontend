@@ -31,7 +31,6 @@ export default function AssetPdf(props: file) {
   const [numPages, setNumPages] = useState<number>(0);
   function onDocumentLoadSuccess(pdf: any) {
     setNumPages(pdf.numPages);
-    console.log(pdf);
   }
   return (
     <div className={css.assetsContent}>
