@@ -1,3 +1,4 @@
+import { Status } from "@api/api-ko-schema.auto";
 import { ApolloQueryResult } from "@apollo/client";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
@@ -31,7 +32,7 @@ export function grepActive<T extends JSONValue>(data: T): T {
 
   if (dataIsArray) {
     return (data as JSONArray)
-      .filter((item: JSONValue) => get(item, "status") !== "inactive")
+      .filter((item: JSONValue) => get(item, "status") !== Status.Inactive)
       .map((item: JSONValue) => grepActive(item)) as T;
   } else if (dataIsObject) {
     let res: JSONObject = {};

@@ -1,7 +1,7 @@
-import * as Apollo from "@apollo/client";
-import { gql } from "@apollo/client";
 import * as Types from "./api-ko-schema.auto";
 
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 const defaultOptions = {};
 export type RoleBasedUsersByOrgnizationQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["ID"];
@@ -773,27 +773,41 @@ export type StudentsByOrganizationQuery = { __typename?: "Query" } & {
 
 export type GetProgramsAndSubjectsQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["UUID"];
+  count: Types.Scalars["PageSize"];
+  cursor: Types.Scalars["String"];
 }>;
 
 export type GetProgramsAndSubjectsQuery = { __typename?: "Query" } & {
   programsConnection?: Types.Maybe<
-    { __typename?: "ProgramsConnectionResponse" } & {
-      edges?: Types.Maybe<
-        Array<
-          Types.Maybe<
-            { __typename?: "ProgramsConnectionEdge" } & {
-              node?: Types.Maybe<
-                { __typename?: "ProgramConnectionNode" } & Pick<Types.ProgramConnectionNode, "id" | "name" | "status"> & {
-                    subjects?: Types.Maybe<
-                      Array<{ __typename?: "SubjectSummaryNode" } & Pick<Types.SubjectSummaryNode, "id" | "name" | "status">>
-                    >;
-                  }
-              >;
-            }
+    { __typename?: "ProgramsConnectionResponse" } & Pick<Types.ProgramsConnectionResponse, "totalCount"> & {
+        pageInfo?: Types.Maybe<{ __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "endCursor">>;
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "ProgramsConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "ProgramConnectionNode" } & Pick<Types.ProgramConnectionNode, "id" | "name" | "status" | "system"> & {
+                      ageRanges?: Types.Maybe<
+                        Array<
+                          { __typename?: "AgeRangeConnectionNode" } & Pick<
+                            Types.AgeRangeConnectionNode,
+                            "id" | "name" | "status" | "system"
+                          >
+                        >
+                      >;
+                      grades?: Types.Maybe<
+                        Array<{ __typename?: "GradeSummaryNode" } & Pick<Types.GradeSummaryNode, "id" | "name" | "status" | "system">>
+                      >;
+                      subjects?: Types.Maybe<
+                        Array<{ __typename?: "SubjectSummaryNode" } & Pick<Types.SubjectSummaryNode, "id" | "name" | "status" | "system">>
+                      >;
+                    }
+                >;
+              }
+            >
           >
-        >
-      >;
-    }
+        >;
+      }
   >;
 };
 
@@ -2456,20 +2470,45 @@ export type StudentsByOrganizationQueryHookResult = ReturnType<typeof useStudent
 export type StudentsByOrganizationLazyQueryHookResult = ReturnType<typeof useStudentsByOrganizationLazyQuery>;
 export type StudentsByOrganizationQueryResult = Apollo.QueryResult<StudentsByOrganizationQuery, StudentsByOrganizationQueryVariables>;
 export const GetProgramsAndSubjectsDocument = gql`
-  query getProgramsAndSubjects($organization_id: UUID!) {
+  query getProgramsAndSubjects($organization_id: UUID!, $count: PageSize!, $cursor: String!) {
     programsConnection(
-      filter: { OR: [{ organizationId: { operator: eq, value: $organization_id } }, { system: { operator: eq, value: true } }] }
+      filter: {
+        AND: [
+          { OR: [{ organizationId: { operator: eq, value: $organization_id } }, { system: { operator: eq, value: true } }] }
+          { status: { operator: eq, value: "active" } }
+        ]
+      }
+      directionArgs: { count: $count, cursor: $cursor }
       direction: FORWARD
     ) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
           id
           name
           status
+          system
+          ageRanges {
+            id
+            name
+            status
+            system
+          }
+          grades {
+            id
+            name
+            status
+            system
+          }
           subjects {
             id
             name
             status
+            system
           }
         }
       }
@@ -2490,6 +2529,8 @@ export const GetProgramsAndSubjectsDocument = gql`
  * const { data, loading, error } = useGetProgramsAndSubjectsQuery({
  *   variables: {
  *      organization_id: // value for 'organization_id'
+ *      count: // value for 'count'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */

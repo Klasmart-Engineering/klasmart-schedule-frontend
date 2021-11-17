@@ -522,32 +522,67 @@ query studentsByOrganization($organization_id: ID!) {
 }
 
 
-query getProgramsAndSubjects($organization_id: UUID!) {
+query getProgramsAndSubjects($organization_id: UUID! , $count: PageSize!,  $cursor: String!) {
   programsConnection(filter:{
-    OR : [
+    AND: [
       {
-        organizationId: {
+            OR : [
+            {
+              organizationId: {
+                operator: eq
+                value: $organization_id
+              }
+            }     
+            {
+              system: {
+                operator: eq
+                value: true
+              },
+            }
+          ]
+      }
+      {
+        status: {
           operator: eq
-          value: $organization_id
+          value: "active"
         }
-      },      
-      {
-        system: {
-          operator: eq
-          value: true
-        },
       }
     ]
-  }, direction: FORWARD){
+  }
+  directionArgs: {
+    count:  $count
+    cursor: $cursor
+  }  
+  direction: FORWARD
+){
+    totalCount
+    pageInfo{
+      hasNextPage
+      endCursor
+    }
     edges{
       node{
         id
         name
         status
+        system
+        ageRanges{
+          id
+          name
+          status
+          system
+        }
+        grades{
+          id
+          name
+          status
+          system
+        }
 				subjects{
         	id
         	name
         	status
+          system
         }
       }
     }

@@ -1,8 +1,8 @@
+import { Class, Program, School, Status, Subject, User, UserFilter, UuidOperator } from "@api/api-ko-schema.auto";
+import api, { gqlapi } from "@api/index";
 import { ApolloQueryResult } from "@apollo/client";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { cloneDeep, orderBy, pick, uniq, uniqBy } from "lodash";
-import api, { gqlapi } from "../api";
-import { Class, Program, School, Status, Subject, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
+import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
@@ -16,9 +16,6 @@ import {
   ClassStudentsByOrganizationDocument,
   ClassStudentsByOrganizationQuery,
   ClassStudentsByOrganizationQueryVariables,
-  GetProgramsAndSubjectsDocument,
-  GetProgramsAndSubjectsQuery,
-  GetProgramsAndSubjectsQueryVariables,
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
@@ -101,6 +98,7 @@ import {
   UserType,
 } from "../pages/ReportLearningSummary/types";
 import permissionCache, { ICacheData } from "../services/permissionCahceService";
+import programsHandler from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 
@@ -449,7 +447,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
     ApolloQueryResult<ClassStudentsByOrganizationQuery>,
-    ApolloQueryResult<GetProgramsAndSubjectsQuery>
+    Pick<Program, "id" | "name" | "subjects">[] | Pick<Program, "id" | "name">[]
   ],
   LoadingMetaPayload
 >("getStudentSubjectsByOrg", async ({ metaLoading }) => {
@@ -485,12 +483,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
         organization_id,
       },
     }),
-    gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
-      query: GetProgramsAndSubjectsDocument,
-      variables: {
-        organization_id,
-      },
-    }),
+    programsHandler.getProgramsOptions(true),
   ]);
 });
 
@@ -1028,30 +1021,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   }
   _student_id = isOnlyStudent ? myUserId : _student_id;
 
-  const programsResp = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
-    query: GetProgramsAndSubjectsDocument,
-    variables: {
-      organization_id,
-    },
-  });
-
-  let programs = ((programsResp.data.programsConnection || {}).edges || [])
-    .map((item) => item?.node)
-    ?.filter((item) => item?.status === Status.Active) as Pick<Program, "id" | "name" | "subjects">[];
-
-  subjects = programs.reduce((prev, cur) => {
-    (cur.subjects || []).forEach((item) => {
-      if (item.status === Status.Active) {
-        prev.push({
-          id: item.id,
-          name: `${cur.name} - ${item.name}`,
-        });
-      }
-    });
-    return prev;
-  }, [] as Pick<Subject, "id" | "name">[]);
-
-  subjects = orderBy(subjects, [(item) => item.name.toLowerCase()], ["asc"]);
+  subjects = await programsHandler.getAllSubjects(true);
 
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
   _subject_id = subject_id ? subject_id : subjects[0].id;
@@ -1522,10 +1492,7 @@ const { actions, reducer } = createSlice({
         Class,
         "class_id" | "students"
       >[];
-      let programs = ((payload[5].data.programsConnection || {}).edges || [])
-        .map((item) => item?.node)
-        ?.filter((item) => item?.status === Status.Active) as Pick<Program, "id" | "name" | "subjects">[];
-
+      let programs = payload[5] || [];
       const membership = payload[1].data.me?.membership;
 
       const myId = payload[1].data.me?.user_id;

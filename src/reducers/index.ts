@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import assessments from "./assessments";
 import confirm from "./confirm";
 import content from "./content";
-import contentEdit from "./contentEdit";
 import loading, { actSetLoading } from "./loading";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import milestone from "./milestone";
@@ -22,7 +21,6 @@ export const store = configureStore({
     confirm,
     notify,
     content,
-    contentEdit,
     outcome,
     schedule,
     assessments,
