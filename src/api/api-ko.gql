@@ -612,6 +612,14 @@ fragment classIdNameStatus on Class {
   class_name
   status
 }
+query getMyId{
+  myUser{
+    node{
+     id
+     familyName
+    }
+  }
+}
 
 query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
 classesConnection(
