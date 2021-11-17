@@ -760,7 +760,7 @@ export function getAssignmentCompletionFeedback(newData: any, studentName: strin
     } else {
       return t("report_msg_assign_decrease_previous_large_w", {
         Name: studentName,
-        AssignCompareLastWeek: Math.ceil(getDesignatedSubResult(data[3], data[3])),
+        AssignCompareLastWeek: Math.ceil(getDesignatedSubResult(data[2], data[3])),
       });
     }
   } else if (
