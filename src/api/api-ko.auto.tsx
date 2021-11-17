@@ -886,7 +886,7 @@ export type GetMyIdQueryVariables = Types.Exact<{ [key: string]: never }>;
 export type GetMyIdQuery = { __typename?: "Query" } & {
   myUser?: Types.Maybe<
     { __typename?: "MyUser" } & {
-      node?: Types.Maybe<{ __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "familyName">>;
+      node?: Types.Maybe<{ __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "familyName" | "givenName">>;
     }
   >;
 };
@@ -2790,6 +2790,7 @@ export const GetMyIdDocument = gql`
       node {
         id
         familyName
+        givenName
       }
     }
   }
