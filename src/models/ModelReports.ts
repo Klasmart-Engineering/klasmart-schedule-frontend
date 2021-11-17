@@ -396,35 +396,27 @@ export function getFourWeeks() {
   return arr;
 }
 
-export function getSum(a: number, b: number) {
-  return a + b;
+export function getSum(obj: any) {
+  return obj.firstPercentage + obj.rePercentage;
 }
 
-export function getResult(arr: any) {
+export function getResult(obj1: any, obj2: any, obj3: any) {
   return (
-    arr[3].firstPercentage +
-    arr[3].rePercentage -
-    arr[3].classPercentage +
-    (arr[2].firstPercentage + arr[2].rePercentage - arr[2].classPercentage) +
-    (arr[1].firstPercentage + arr[1].rePercentage - arr[1].classPercentage)
+    obj1.firstPercentage +
+    obj1.rePercentage -
+    obj1.classPercentage +
+    (obj2.firstPercentage + obj2.rePercentage - obj2.classPercentage) +
+    (obj3.firstPercentage + obj3.rePercentage - obj3.classPercentage)
   );
 }
 
-export function getAdverseResult(arr: any) {
+export function getAdverseResult(obj1: any, obj2: any, obj3: any) {
   return (
-    arr[3].classPercentage -
-    (arr[3].firstPercentage + arr[3].rePercentage) +
-    (arr[2].classPercentage - (arr[2].firstPercentage + arr[2].rePercentage)) +
-    (arr[1].classPercentage - (arr[1].firstPercentage + arr[1].rePercentage))
+    obj1.classPercentage -
+    (obj1.firstPercentage + obj1.rePercentage) +
+    (obj2.classPercentage - (obj2.firstPercentage + obj2.rePercentage)) +
+    (obj3.classPercentage - (obj3.firstPercentage + obj3.rePercentage))
   );
-}
-
-export function getAchievedResult(arr: any) {
-  return arr[3].firstPercentage + arr[3].rePercentage - (arr[2].firstPercentage + arr[2].rePercentage);
-}
-
-export function getAbverseAchievedResult(arr: any) {
-  return arr[2].firstPercentage + arr[2].rePercentage - (arr[3].firstPercentage + arr[3].rePercentage);
 }
 
 export function getPercentage(obj1: any, obj2: any) {
@@ -462,38 +454,34 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
       LearntLoCount: Math.ceil(data[3].first_achieved_count + data[3].re_achieved_count + data[3].un_achieved_count),
     });
   } else if (
-    (getSum(data[1].firstPercentage, data[1].rePercentage) > data[1].classPercentage &&
-      getSum(data[2].firstPercentage, data[2].rePercentage) > data[2].classPercentage &&
-      getSum(data[3].firstPercentage, data[3].rePercentage) > data[3].classPercentage) ||
-    (getSum(data[1].firstPercentage, data[1].rePercentage) < data[1].classPercentage &&
-      getSum(data[2].firstPercentage, data[2].rePercentage) < data[2].classPercentage &&
-      getSum(data[3].firstPercentage, data[3].rePercentage) < data[3].classPercentage)
+    (getSum(data[1]) > data[1].classPercentage && getSum(data[2]) > data[2].classPercentage && getSum(data[3]) > data[3].classPercentage) ||
+    (getSum(data[1]) < data[1].classPercentage && getSum(data[2]) < data[2].classPercentage && getSum(data[3]) < data[3].classPercentage)
   ) {
     if (
-      getSum(data[1].firstPercentage, data[1].rePercentage) > data[1].classPercentage &&
-      getSum(data[2].firstPercentage, data[2].rePercentage) > data[2].classPercentage &&
-      getSum(data[3].firstPercentage, data[3].rePercentage) > data[3].classPercentage
+      getSum(data[1]) > data[1].classPercentage &&
+      getSum(data[2]) > data[2].classPercentage &&
+      getSum(data[3]) > data[3].classPercentage
     ) {
       return t("report_msg_lo_high_class_3w", {
         Name: studentName,
-        LOCompareClass3week: Math.ceil(getResult(data) / 3),
+        LOCompareClass3week: Math.ceil(getResult(data[3], data[2], data[1]) / 3),
       });
     } else {
       return t("report_msg_lo_low_class_3w", {
         Name: studentName,
-        LOCompareClass3week: Math.ceil(getAdverseResult(data) / 3),
+        LOCompareClass3week: Math.ceil(getAdverseResult(data[3], data[2], data[1]) / 3),
       });
     }
-  } else if (getAchievedResult(data) >= 20 || getAbverseAchievedResult(data) >= 20) {
-    if (getAchievedResult(data) >= 20) {
+  } else if (getPercentage(data[3], data[2]) >= 20 || getPercentage(data[2], data[3]) >= 20) {
+    if (getPercentage(data[3], data[2]) >= 20) {
       return t("report_msg_lo_increase_previous_large_w", {
         Name: studentName,
-        LOCompareLastWeek: Math.ceil(getAchievedResult(data)),
+        LOCompareLastWeek: Math.ceil(getPercentage(data[3], data[2])),
       });
     } else {
       return t("report_msg_lo_decrease_previous_large_w", {
         Name: studentName,
-        LOCompareLastWeek: Math.ceil(getAbverseAchievedResult(data)),
+        LOCompareLastWeek: Math.ceil(getPercentage(data[2], data[3])),
       });
     }
   } else if (data[3].rePercentage - data[3].classPercentage >= 10 || data[3].classPercentage - data[3].rePercentage >= 10) {
@@ -512,7 +500,7 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
     (getPercentage(data[2], data[1]) > 0 && getPercentage(data[1], data[0]) > 0 && getPercentage(data[3], data[2]) > 0) ||
     (getPercentage(data[2], data[1]) < 0 && getPercentage(data[1], data[0]) < 0 && getPercentage(data[3], data[2]) < 0)
   ) {
-    if (getPercentage(data[2], data[1]) > 0 && getPercentage(data[1], data[0]) > 0 && getPercentage(data[3], data[2]) > 0) {
+    if (getPercentage(data[2], data[1]) > 0 && getPercentage(data[3], data[2]) > 0 && getPercentage(data[1], data[0]) > 0) {
       return t("report_msg_lo_increase_3w", {
         Name: studentName,
         LOCompareLast3Week: Math.ceil(getPercentage(data[3], data[0])),
@@ -523,19 +511,16 @@ export function getLearnOutcomeAchievementFeedback(newData: any, studentName: st
         LOCompareLast3Week: Math.ceil(getPercentage(data[0], data[3])),
       });
     }
-  } else if (
-    getSum(data[3].firstPercentage, data[3].rePercentage) > data[3].classPercentage ||
-    getSum(data[3].firstPercentage, data[3].rePercentage)
-  ) {
-    if (data[3].firstPercentage + data[3].rePercentage > data[3].classPercentage) {
+  } else if (getSum(data[3]) > data[3].classPercentage || getSum(data[3]) < data[3].classPercentage) {
+    if (getSum(data[3]) > data[3].classPercentage) {
       return t("report_msg_lo_high_class_w", {
         Name: studentName,
-        LOCompareClass: Math.ceil(getSum(data[3].firstPercentage, data[3].rePercentage) - data[3].classPercentage),
+        LOCompareClass: Math.ceil(getSum(data[3]) - data[3].classPercentage),
       });
     } else {
       return t("report_msg_lo_low_class_w", {
         Name: studentName,
-        LOCompareClass: Math.ceil(data[3].classPercentage - getSum(data[3].firstPercentage, data[3].rePercentage)),
+        LOCompareClass: Math.ceil(data[3].classPercentage - getSum(data[3])),
       });
     }
   } else if (
