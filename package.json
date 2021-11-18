@@ -151,6 +151,7 @@
     "@hookform/devtools": "^2.2.1",
     "@types/react-pdf": "^5.0.2",
     "babel-plugin-macros": "^3.0.0",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "chalk": "^4.1.0",
     "cli-progress": "^3.8.2",
     "commitlint-plugin-function-rules": "^1.3.2",
