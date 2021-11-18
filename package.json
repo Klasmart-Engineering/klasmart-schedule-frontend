@@ -87,7 +87,7 @@
   },
   "scripts": {
     "start": "react-app-rewired  --max_old_space_size=8192 start",
-    "build": "react-app-rewired  build  && node ./scripts/version.js && node ./scripts/publishSourcemap.js",
+    "build": "react-app-rewired  build && node ./scripts/version.js && node ./scripts/publishSourcemap.js",
     "test": "react-app-rewired  test",
     "syncapi": "node ./scripts/syncapi.js",
     "syncLang": "node ./scripts/syncLang",
@@ -150,6 +150,7 @@
     "@graphql-codegen/typescript-operations": "^1.17.8",
     "@graphql-codegen/typescript-react-apollo": "^2.0.7",
     "@hookform/devtools": "^2.2.1",
+    "@newrelic/publish-sourcemap": "^5.1.0",
     "@types/react-pdf": "^5.0.2",
     "babel-plugin-macros": "^3.0.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
