@@ -521,26 +521,69 @@ query studentsByOrganization($organization_id: ID!) {
   }
 }
 
-query getSubjects($organization_id: ID!) {
-  organization(organization_id: $organization_id) {
-    subjects {
-      id
-      name
-      status
-    }
-  }
-}
 
-query getProgramsAndSubjects($organization_id: ID!) {
-  organization(organization_id: $organization_id) {
-    programs {
-      id
-      name
-      status
-      subjects {
+query getProgramsAndSubjects($organization_id: UUID! , $count: PageSize!,  $cursor: String!) {
+  programsConnection(filter:{
+    AND: [
+      {
+            OR : [
+            {
+              organizationId: {
+                operator: eq
+                value: $organization_id
+              }
+            }     
+            {
+              system: {
+                operator: eq
+                value: true
+              },
+            }
+          ]
+      }
+      {
+        status: {
+          operator: eq
+          value: "active"
+        }
+      }
+    ]
+  }
+  directionArgs: {
+    count:  $count
+    cursor: $cursor
+  }  
+  direction: FORWARD
+){
+    totalCount
+    pageInfo{
+      hasNextPage
+      endCursor
+    }
+    edges{
+      node{
         id
         name
         status
+        system
+        ageRanges{
+          id
+          name
+          status
+          system
+        }
+        grades{
+          id
+          name
+          status
+          system
+        }
+				subjects{
+        	id
+        	name
+        	status
+          system
+        }
       }
     }
   }
@@ -600,6 +643,9 @@ query getUser($filter: UserFilter, $direction: ConnectionDirection!) {
     }
   }
 }
+
+
+
 
 
 fragment userIdName on User {

@@ -1,21 +1,7 @@
-import { PayloadAction } from "@reduxjs/toolkit";
-import { cloneDeep } from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation, useParams } from "react-router-dom";
-import PermissionType from "../../api/PermissionType";
-import { GetOutcomeDetail, MilestoneDetailResult, MilestoneOrderBy, MilestoneStatus } from "../../api/type";
-import { NoOutcome } from "../../components/TipImages";
-import { usePermission } from "../../hooks/usePermission";
-import { d } from "../../locale/LocaleManager";
-import { ModelMilestoneOptions } from "../../models/ModelMilestone";
-import { RootState } from "../../reducers";
+import { GetOutcomeDetail, MilestoneDetailResult, MilestoneOrderBy, MilestoneStatus } from "@api/type";
+import useQueryCms from "@hooks/useQueryCms";
 import {
   approveMilestone,
-  AsyncTrunkReturned,
   bulkPublishMilestone,
   bulkReject,
   deleteMilestone,
@@ -26,13 +12,27 @@ import {
   onLoadOutcomeList,
   saveMilestone,
   updateMilestone,
-} from "../../reducers/milestone";
+} from "@reducers/milestone";
+import { AsyncTrunkReturned } from "@reducers/type";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useParams } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
+import { NoOutcome } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
+import { d } from "../../locale/LocaleManager";
+import { ModelMilestoneOptions } from "../../models/ModelMilestone";
+import { RootState } from "../../reducers";
 import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { TabValue } from "../ContentPreview/type";
 import MilestoneList from "../MilestoneList";
 import { UNPUB } from "../OutcomeList/ThirdSearchHeader";
-import { OutcomeListExectSearch } from "../OutcomeList/types";
 import ContainedOutcomeList, { AddOutcomes, ContainedOutcomeListProps } from "./ContainedOutcomeList";
 import ContentTab from "./ContentTab";
 import MilestoneForm from "./MilestoneForm";
@@ -44,10 +44,7 @@ import { Regulation } from "./type";
 interface RouteParams {
   tab: "details" | "leaningoutcomes";
 }
-const toQueryString = (hash: Record<string, any>): string => {
-  const search = new URLSearchParams(hash);
-  return `?${search.toString()}`;
-};
+
 export const clearNull = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] == null) delete obj[key];
@@ -70,27 +67,14 @@ export interface MilestoneCondition {
   first_save: boolean;
   is_unpub: string;
 }
-export const useQueryCms = (): MilestoneCondition => {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const id = query.get("id") || "";
-  const exect_search = query.get("exect_search") || OutcomeListExectSearch.all;
-  const search_key = query.get("search_key") || "";
-  const aa = query.get("assumed");
-  const assumed = aa ? (aa === "true" ? true : false) : false;
-  const page = Number(query.get("page")) || 1;
-  const first = query.get("first_save");
-  const first_save = first ? (first === "true" ? true : false) : false;
-  const is_unpub = query.get("is_unpub") || "";
-  return { id, exect_search, search_key, assumed, page, search, first_save, is_unpub };
-};
+
 function MilestoneEditForm() {
   // const { breakpoints } = useTheme();
   // const sm = useMediaQuery(breakpoints.down("sm"));
   const dispatch = useDispatch();
   const history = useHistory();
   const condition = useQueryCms();
-  const { id, exect_search, search_key, assumed, page, search, first_save, is_unpub } = condition;
+  const { id, exect_search, search_key, assumed, page, search, first_save, is_unpub, updateQuery } = condition;
   const formMethods = useForm<MilestoneDetailResult>();
   const { watch, getValues, handleSubmit, setValue, control, errors, reset } = formMethods;
   const { tab } = useParams<RouteParams>();
@@ -238,16 +222,22 @@ function MilestoneEditForm() {
     [dispatch, getValues]
   );
   const handleClickSearch: OutcomeSearchProps["onSearch"] = (exect_search: string, search_key: string, assumed: boolean) => {
-    condition.exect_search = exect_search;
-    condition.search_key = search_key;
-    condition.assumed = assumed;
-    condition.page = 1;
-    history.replace({ search: toQueryString(clearNull(condition)) });
+    history.replace({
+      search: updateQuery({
+        exect_search,
+        search_key,
+        assumed,
+        page: 1,
+      }),
+    });
     dispatch(onLoadOutcomeList({ exect_search, search_key, assumed: assumed ? 1 : -1, page, metaLoading: true }));
   };
   const handleChangePage: OutcomesProps["onChangePage"] = (page: number) => {
-    condition.page = page;
-    history.replace({ search: toQueryString(clearNull(condition)) });
+    history.replace({
+      search: updateQuery({
+        page,
+      }),
+    });
     // const {  exect_search, search_key, assumed } = condition;
     dispatch(onLoadOutcomeList({ exect_search, search_key, assumed: assumed ? 1 : -1, page, metaLoading: true }));
   };

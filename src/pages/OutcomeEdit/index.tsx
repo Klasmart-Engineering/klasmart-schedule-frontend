@@ -1,21 +1,11 @@
+import PermissionType from "@api/PermissionType";
+import { OutcomeSetResult } from "@api/type";
+import { usePermission } from "@hooks/usePermission";
 import { Box, makeStyles } from "@material-ui/core";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { cloneDeep } from "lodash";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import PermissionType from "../../api/PermissionType";
-import { OutcomeSetResult } from "../../api/type";
-import ModalBox from "../../components/ModalBox";
-import { usePermission } from "../../hooks/usePermission";
-import { d } from "../../locale/LocaleManager";
-import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
-import { RootState } from "../../reducers";
-import { actSuccess } from "../../reducers/notify";
+import { RootState } from "@reducers/index";
+import { actSuccess } from "@reducers/notify";
 import {
   approve,
-  AsyncTrunkReturned,
   createOutcomeSet,
   deleteOutcome,
   generateShortcode,
@@ -29,7 +19,17 @@ import {
   resetShortCode,
   save,
   updateOutcome,
-} from "../../reducers/outcome";
+} from "@reducers/outcome";
+import { AsyncTrunkReturned } from "@reducers/type";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep } from "lodash";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import ModalBox from "../../components/ModalBox";
+import { d } from "../../locale/LocaleManager";
+import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { OutcomeList } from "../OutcomeList";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";

@@ -9,24 +9,8 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { PayloadAction } from "@reduxjs/toolkit";
-import debounce from "lodash/debounce";
-import React, { Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation, useParams } from "react-router-dom";
-import PermissionType from "../../api/PermissionType";
-import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
-import { PermissionOr } from "../../components/Permission";
-import { permissionTip } from "../../components/TipImages";
-import { usePermission } from "../../hooks/usePermission";
-import mockLessonPlan from "../../mocks/lessonPlan.json";
-import { addAllInSearchLOListOption, ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
-import { ModelLessonPlan } from "../../models/ModelLessonPlan";
-import { ModelMockOptions } from "../../models/ModelMockOptions";
-import { RootState } from "../../reducers";
+import useQueryCms from "@hooks/useQueryCms";
 import {
-  AsyncTrunkReturned,
   deleteContent,
   getLinkedMockOptions,
   getLinkedMockOptionsSkills,
@@ -37,7 +21,24 @@ import {
   searchAuthContentLists,
   searchContentLists,
   searchPublishedLearningOutcomes,
-} from "../../reducers/content";
+} from "@reducers/content";
+import { AsyncTrunkReturned } from "@reducers/type";
+import { PayloadAction } from "@reduxjs/toolkit";
+import debounce from "lodash/debounce";
+import React, { Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useParams } from "react-router-dom";
+import PermissionType from "../../api/PermissionType";
+import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
+import { PermissionOr } from "../../components/Permission";
+import { permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
+import mockLessonPlan from "../../mocks/lessonPlan.json";
+import { addAllInSearchLOListOption, ContentDetailForm, ModelContentDetailForm } from "../../models/ModelContentDetailForm";
+import { ModelLessonPlan } from "../../models/ModelLessonPlan";
+import { ModelMockOptions } from "../../models/ModelMockOptions";
+import { RootState } from "../../reducers";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
@@ -57,21 +58,6 @@ export interface ContentEditRouteParams {
   tab: "details" | "outcomes" | "media" | "assetDetails";
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
-
-export const useQueryCms = () => {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const id = query.get("id");
-  const searchMedia = query.get("searchMedia") || "";
-  const searchOutcome = query.get("searchOutcome") || "";
-  const assumed = (query.get("assumed") || "") === "true" ? true : false;
-  const isShare = query.get("isShare") || "org";
-  const editindex: number = Number(query.get("editindex") || 0);
-  const back = query.get("back") || "";
-  const exactSerch = query.get("exactSerch") || "all";
-  const parent_folder = query.get("parent_id") || "";
-  return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch, parent_folder };
-};
 
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
   const query = new URLSearchParams(search);
@@ -365,6 +351,7 @@ function ContentEditForm() {
         exactSerch,
       })
     );
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch]);
   const assetDetails = (

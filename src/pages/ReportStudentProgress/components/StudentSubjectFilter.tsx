@@ -107,7 +107,7 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
           });
         });
     });
-    return data;
+    return orderBy(data, [(item) => item.label.toLowerCase()], ["asc"]);
   };
 
   const schoolOptions = React.useMemo<MutiSelect.ISelect[]>(getAllSchoolList, [schoolList]);

@@ -205,7 +205,6 @@ export const subscribeLocaleInCookie = (handler: { (locale: string): any }) => {
 //   return schemaLanguages;
 // }
 
-
 export function domainSwitch() {
   return window.location.host.includes("kidsloop.live");
 }

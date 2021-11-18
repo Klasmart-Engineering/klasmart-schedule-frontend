@@ -22,6 +22,7 @@ import {
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
 import { enAU, es, id, ko, th, vi, zhCN } from "date-fns/esm/locale";
@@ -45,7 +46,6 @@ import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d, localeManager, t } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { RootState } from "../../reducers";
-import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
   actOutcomeList,

@@ -1,6 +1,10 @@
 import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
+import { contentLists, onLoadContentPreview } from "@reducers/content";
+import { RootState } from "@reducers/index";
+import { actError } from "@reducers/notify";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,9 +21,6 @@ import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { modelSchedule } from "../../models/ModelSchedule";
-import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, contentLists, onLoadContentPreview } from "../../reducers/content";
-import { actError } from "../../reducers/notify";
 import {
   actOutcomeListLoading,
   changeParticipants,
