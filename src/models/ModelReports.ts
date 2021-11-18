@@ -1,4 +1,3 @@
-import moment from "moment";
 import { ReactNode } from "react";
 import { Class, School, Status, User } from "../api/api-ko-schema.auto";
 import {
@@ -228,34 +227,6 @@ export function sortByStudentName(studentName: any) {
     }
   };
 }
-export function getTimeDots(): ILatestThreeMonths {
-  const currentDate = new Date();
-  var year = currentDate.getFullYear();
-  var month = currentDate.getMonth() + 1;
-  switch (month) {
-    case 1:
-      year--;
-      return {
-        latestThreeMonthsDate: [11, 12, 1],
-        latestThreeMonthsDots: [`${year}/11/01 00:00:00`, `${year}/12/01 00:00:00`, `${year + 1}/01/01 00:00:00`],
-      };
-    case 2:
-      year--;
-      return {
-        latestThreeMonthsDate: [12, 1, 2],
-        latestThreeMonthsDots: [`${year}/12/01 00:00:00`, `${year}/01/01 00:00:00`, `${year + 1}/02/01 00:00:00`],
-      };
-    default:
-      return {
-        latestThreeMonthsDate: [parseInt(`${month - 2}`), parseInt(`${month - 1}`), parseInt(`${month}`)],
-        latestThreeMonthsDots: [`${year}/${month - 2}/01 00:00:00`, `${year}/${month - 1}/01 00:00:00`, `${year}/${month}/01 00:00:00`],
-      };
-  }
-}
-export interface ILatestThreeMonths {
-  latestThreeMonthsDate: number[];
-  latestThreeMonthsDots: string[];
-}
 
 export function getAllUsers(
   schools: Pick<School, "classes" | "school_id" | "school_name">[],
@@ -335,65 +306,6 @@ export function getAllUsers(
     allSchools.push({ id: "none", name: d("None").t("report_label_none"), classes: freedomClass });
   }
   return allSchools;
-}
-export function getDurationByDay(day: number) {
-  const currentDate = moment().startOf("day").unix();
-  return `${currentDate - 3600 * 24 * day}-${currentDate}`;
-}
-
-export function mGetDate(year: number, month: number) {
-  var d = new Date(year, month, 0);
-  return d.getDate();
-}
-
-export function formatDate(time: any) {
-  var date = new Date(time);
-  return Math.floor(date.getTime() / 1000);
-}
-
-export function getSixMonths() {
-  const arr = [];
-  const needAddOne = moment().get("date") === 1 ? 1 : 0;
-  for (let i = 5 + needAddOne; i >= 0 + needAddOne; i--) {
-    if (i === 0 && moment().get("date") !== 1) {
-      arr.push(`${moment().set("date", 1).startOf("day").unix()}-${moment().startOf("day").unix()}`);
-    } else {
-      arr.push(
-        `${moment().subtract(i, "month").set("date", 1).startOf("day").unix()}-${moment()
-          .subtract(i - 1, "month")
-          .set("date", 1)
-          .startOf("day")
-          .unix()}`
-      );
-    }
-  }
-  return arr;
-}
-
-export function getFourWeeks() {
-  const arr = [];
-  var dd = moment().get("day");
-  const needAddOne = moment().get("day") === 1 ? 1 : 0;
-  for (let i = 3 + needAddOne; i >= 0 + needAddOne; i--) {
-    if (i === 0 && moment().get("day") !== 1) {
-      arr.push(
-        `${moment()
-          .subtract(dd - 1, "day")
-          .startOf("day")
-          .unix()}-${moment().startOf("day").unix()}`
-      );
-    } else {
-      arr.push(
-        `${moment().subtract(i, "week").set("day", 1).startOf("day").unix()}-${moment()
-          .subtract(i, "week")
-          .set("day", 7)
-          .add(1, "day")
-          .startOf("day")
-          .unix()}`
-      );
-    }
-  }
-  return arr;
 }
 
 export function getSum(obj: any) {

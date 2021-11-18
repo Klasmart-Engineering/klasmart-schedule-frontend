@@ -1,12 +1,12 @@
 import { Box, Grid, MenuItem, OutlinedInput, Select } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
+import { getDurationByDay } from "@utilities/dateUtilities";
 import clsx from "clsx";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityTeacherLoadLesson, EntityTeacherLoadLessonRequest } from "../../../api/api.auto";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
 import ReportTooltip from "../../../components/ReportTooltip";
-import { getDurationByDay } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getLessonTeacherLoad } from "../../../reducers/report";
 import useTranslation from "../hooks/useTranslation";

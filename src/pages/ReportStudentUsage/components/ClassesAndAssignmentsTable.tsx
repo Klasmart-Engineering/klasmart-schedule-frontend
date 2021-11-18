@@ -12,6 +12,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { InfoOutlined } from "@material-ui/icons";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import { getTimeDots } from "@utilities/dateUtilities";
 import moment from "moment";
 import React from "react";
 import { EntityClassesAssignmentsUnattendedStudentsView, EntityClassesAssignmentsView } from "../../../api/api.auto";
@@ -126,17 +127,11 @@ const numberToEnglish = (month: number) => {
   return Months[month - 1];
 };
 
-interface ILatestThreeMonths {
-  latestThreeMonthsDate: number[];
-  latestThreeMonthsDots: string[];
-}
-
 interface IClassesAndAssignmentsTable {
   classesAssignments: EntityClassesAssignmentsView[];
   classesAssignmentsUnattend: EntityClassesAssignmentsUnattendedStudentsView[];
   handleclickUnattendedTable: (class_id?: string) => any;
   unattendedTableOpenId?: string;
-  latestThreeMonths: ILatestThreeMonths;
   listTitle: string;
   handleChangePage: (page: number) => any;
   page: number;
@@ -149,7 +144,6 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
   const {
     classesAssignments,
     unattendedTableOpenId,
-    latestThreeMonths,
     classesAssignmentsUnattend,
     handleclickUnattendedTable,
     handleChangePage,
@@ -159,7 +153,9 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
     listTitle,
   } = props;
   const { months } = useTranslation();
+  const latestThreeMonths = getTimeDots();
   const styles = useStyles();
+
   return (
     <div>
       <TableContainer>
@@ -185,7 +181,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[0])]}</b>
+                <b>{months[numberToEnglish(latestThreeMonths[0])]}</b>
                 <Tooltip
                   arrow
                   placement="top"
@@ -198,7 +194,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[1])]}</b>
+                <b>{months[numberToEnglish(latestThreeMonths[1])]}</b>
                 <Tooltip
                   arrow
                   placement="top"
@@ -211,7 +207,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 </Tooltip>
               </TableCell>
               <TableCell align="center">
-                <b>{months[numberToEnglish(latestThreeMonths.latestThreeMonthsDate[2])]}</b>
+                <b>{months[numberToEnglish(latestThreeMonths[2])]}</b>
                 <Tooltip
                   arrow
                   placement="top"
