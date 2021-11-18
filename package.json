@@ -14,6 +14,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
+    "@newrelic/publish-sourcemap": "^5.1.0",
     "@reduxjs/toolkit": "^1.4.0",
     "@rpldy/shared": "^0.4.1",
     "@rpldy/shared-ui": "^0.4.1",
@@ -86,7 +87,7 @@
   },
   "scripts": {
     "start": "react-app-rewired  --max_old_space_size=8192 start",
-    "build": "react-app-rewired  build",
+    "build": "react-app-rewired  build  && node ./scripts/version.js && node ./scripts/publishSourcemap.js",
     "test": "react-app-rewired  test",
     "syncapi": "node ./scripts/syncapi.js",
     "syncLang": "node ./scripts/syncLang",
