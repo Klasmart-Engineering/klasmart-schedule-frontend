@@ -1,10 +1,11 @@
 import { createStyles, makeStyles } from "@material-ui/core";
+import { getFourWeeks, getLastedMonths } from "@utilities/dateUtilities";
 import moment from "moment";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SelectContext } from "..";
 import { d, t } from "../../../locale/LocaleManager";
-import { getFourWeeks, getSixMonths, parsePercent, translateMonth } from "../../../models/ModelReports";
+import { parsePercent, translateMonth } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getAssignmentsCompletion } from "../../../reducers/report";
 import LearningOutcomeAchievedTotalType from "../components/LearningOutcomeAchievedTotalType";
@@ -92,7 +93,7 @@ export default function AssignmentCompletion() {
         getAssignmentsCompletion({
           metaLoading: true,
           class_id: classId,
-          durations: value === 4 ? getFourWeeks() : getSixMonths(),
+          durations: value === 4 ? getFourWeeks() : getLastedMonths(6),
           selected_subject_id_list: selectedSubjectId,
           student_id: studentId,
           un_selected_subject_id_list: unselectedSubjectId,

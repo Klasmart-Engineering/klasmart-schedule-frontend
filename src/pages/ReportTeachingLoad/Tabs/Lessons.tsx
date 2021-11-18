@@ -1,7 +1,7 @@
+import { getDurationByDay } from "@utilities/dateUtilities";
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportPagination from "../../../components/ReportPagination/ReportPagination";
-import { getDurationByDay } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getListTeacherMissedLessons } from "../../../reducers/report";
 import LessonChart from "../components/LessonChart";
