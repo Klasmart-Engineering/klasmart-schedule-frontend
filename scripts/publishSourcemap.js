@@ -1,13 +1,17 @@
+require('dotenv').config({path: './.env.production'})
 const publishSourcemap = require("@newrelic/publish-sourcemap").publishSourcemap;
 const listSourcemaps = require("@newrelic/publish-sourcemap").listSourcemaps;
 const deleteSourcemap = require('@newrelic/publish-sourcemap').deleteSourcemap;
 const fs = require("fs");
 const path = require("path");
+const execSync = require('child_process').execSync;
+const commit = execSync('git show -s --format=%H').toString().trim();
 
 const BASE_URL_PATH = `${process.env.REACT_APP_BASE_DOMAIN}/static/js/`;
 const YOUR_NEW_RELIC_APP_ID = "322535870";
 const YOUR_NEW_RELIC_USER_API_KEY = "NRAK-Z0REBBZKUM8SXY5NQHP2DTYQJ9P";
 const SOURCE_MAP_UPLOAD_HOST = "https://sourcemaps.service.eu.newrelic.com";
+const BASE_INDEX_PATH = "./build/index.html"
 
 const sourceMapDir = path.resolve(__dirname, "../build/static/js/");
 
@@ -71,4 +75,9 @@ function deletePublishedMaps(id) {
   },(err) => { console.log(err || 'Deleted source map')})
 }
 
+if (fs.existsSync(BASE_INDEX_PATH)) {
+  const contentHTML = fs.readFileSync(BASE_INDEX_PATH).toString();
+  let date = new Date(execSync('git show -s --format=%cd').toString());
+  fs.writeFileSync(BASE_INDEX_PATH, `${contentHTML}<!--${commit} | ${date}-->`);
+}
 
