@@ -7,6 +7,7 @@ import { d } from "../locale/LocaleManager";
 import { MilestoneQueryCondition } from "../pages/MilestoneList/types";
 import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
+import { LinkedMockOptions, _getLinkedMockOptions } from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actSuccess, actWarning } from "./notify";
 import { AsyncReturnType, AsyncTrunkReturned } from "./type";
@@ -117,53 +118,7 @@ export const onLoadMilestoneList = createAsyncThunk<ResultMilestoneList, ParamsM
   }
 );
 
-export interface LinkedMockOptionsItem {
-  id?: string;
-  name?: string;
-}
-export interface LinkedMockOptions {
-  program: LinkedMockOptionsItem[];
-  subject: LinkedMockOptionsItem[];
-  developmental: LinkedMockOptionsItem[];
-  age: LinkedMockOptionsItem[];
-  grade: LinkedMockOptionsItem[];
-  skills: LinkedMockOptionsItem[];
-  program_id: string;
-  developmental_id: string;
-}
-export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
-  default_program_id?: string;
-  default_subject_ids?: string;
-  default_developmental_id?: string;
-}
-
-export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMockOptionsPayload>(
-  "milestone/getLinkedMockOptions",
-  async ({ default_program_id, default_subject_ids, default_developmental_id }) => {
-    const program = await api.programs.getProgram();
-    const program_id = default_program_id ? default_program_id : program[0].id;
-    if (program_id) {
-      const subject = await api.subjects.getSubject({ program_id });
-      if (!subject.length)
-        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
-      const subject_ids = default_subject_ids ? default_subject_ids : subject[0].id;
-      const [developmental, age, grade] = await Promise.all([
-        api.developmentals.getDevelopmental({ program_id, subject_ids }),
-        api.ages.getAge({ program_id }),
-        api.grades.getGrade({ program_id }),
-      ]);
-      const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
-      if (developmental_id) {
-        const skills = await api.skills.getSkill({ program_id, developmental_id });
-        return { program, subject, developmental, age, grade, skills, program_id, developmental_id };
-      } else {
-        return { program, subject, developmental, age, grade, skills: [], program_id, developmental_id: "" };
-      }
-    } else {
-      return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
-    }
-  }
-);
+export const getLinkedMockOptions = _getLinkedMockOptions("milestone/getLinkedMockOptions");
 
 type ResuleGetMilestoneDetail = AsyncReturnType<typeof api.milestones.obtainMilestone>;
 type ParamsGetMilestoneDetail = { id: Parameters<typeof api.milestones.obtainMilestone>[0] } & LoadingMetaPayload;

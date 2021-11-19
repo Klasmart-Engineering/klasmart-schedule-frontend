@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
+import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import Cookies from "js-cookie";
 import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
-import { LinkedMockOptionsItem } from "../reducers/content";
 import { ICacheData } from "../services/permissionCahceService";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
