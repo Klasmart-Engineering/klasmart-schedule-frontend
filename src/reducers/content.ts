@@ -1,6 +1,6 @@
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
-import { uniqBy } from "lodash";
+import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import cloneDeep from "lodash/cloneDeep";
+import uniqBy from "lodash/uniqBy";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import api, { gqlapi } from "../api";
@@ -41,8 +41,10 @@ import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
+import programsHandler from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
+import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
@@ -221,12 +223,6 @@ export enum Action {
   remove = "remove",
   delete = "delete",
 }
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
 
 export const save = createAsyncThunk<EntityContentInfoWithDetails["id"], EntityCreateContentRequest, { state: RootState }>(
   "content/save",
@@ -300,17 +296,28 @@ export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
 export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMockOptionsPayload>(
   "content/getLinkedMockOptions",
   async ({ default_program_id, default_subject_ids, default_developmental_id }) => {
-    const program = await api.programs.getProgram();
+    //const program = await api.programs.getProgram();
+
+    const program = await programsHandler.getProgramsOptions();
+
     const program_id = default_program_id ? default_program_id : program[0].id;
+
     if (program_id) {
-      const subject = await api.subjects.getSubject({ program_id });
+      const programItem = await programsHandler.getProgramById(program_id);
+
+      console.log(programItem);
+
+      //const subject = await api.subjects.getSubject({ program_id });
+
+      const subject = programItem ? programItem.subjects || [] : [];
+
       const subject_ids = default_subject_ids ? default_subject_ids : subject.length ? subject[0].id : undefined;
       if (!subject_ids) return { program, subject: [], developmental: [], age: [], grade: [], skills: [] };
-      const [developmental, age, grade] = await Promise.all([
-        api.developmentals.getDevelopmental({ program_id, subject_ids }),
-        api.ages.getAge({ program_id }),
-        api.grades.getGrade({ program_id }),
-      ]);
+
+      const developmental = await api.developmentals.getDevelopmental({ program_id, subject_ids });
+      const age = programItem ? programItem.ageRanges || [] : [];
+      const grade = programItem ? programItem.grades || [] : [];
+
       const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
       if (developmental_id) {
         const skills = await api.skills.getSkill({ program_id, developmental_id });

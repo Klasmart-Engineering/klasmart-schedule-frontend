@@ -1,24 +1,17 @@
 // import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
+import { apiLivePath } from "@api/extra";
+import { ContentType } from "@api/type";
 import { Box } from "@material-ui/core";
+import { approveContent, deleteContent, lockContent, onLoadContentPreview, publishContent, rejectContent } from "@reducers/content";
+import { RootState } from "@reducers/index";
+import { actSuccess } from "@reducers/notify";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { Fragment, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiLivePath } from "../../api/extra";
-import { ContentType } from "../../api/type";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
-import { RootState } from "../../reducers";
-import {
-  approveContent,
-  AsyncTrunkReturned,
-  deleteContent,
-  lockContent,
-  onLoadContentPreview,
-  publishContent,
-  rejectContent,
-} from "../../reducers/content";
-import { actSuccess } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import { ContentPreviewHeader } from "./ContentPreviewHeader";
 import { Detail } from "./Detail";
@@ -26,6 +19,7 @@ import { H5pPreview } from "./H5pPreview";
 import { LearningOutcome } from "./LeaningOutcomes";
 import { OperationBtn } from "./OperationBtn";
 import { TabValue } from "./type";
+
 interface RouteParams {
   tab: "details" | "outcomes";
 }
@@ -61,7 +55,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     history.go(-1);
   };
   const handleReject = async () => {
-    const { payload } = ((await dispatch(rejectContent({ id: id }))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof rejectContent>>;
+    const { payload } = (await dispatch(rejectContent({ id: id }))) as unknown as PayloadAction<AsyncTrunkReturned<typeof rejectContent>>;
     if (payload === "ok") {
       dispatch(actSuccess("Reject success"));
       history.go(-1);
@@ -77,7 +71,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
         ? "planComposeGraphic"
         : "contentH5p";
     if (contentPreview.publish_status === "published") {
-      const { payload } = ((await dispatch(lockContent(id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof lockContent>>;
+      const { payload } = (await dispatch(lockContent(id))) as unknown as PayloadAction<AsyncTrunkReturned<typeof lockContent>>;
       if (payload.id) {
         history.push(`/library/content-edit/lesson/${lesson}/tab/details/rightside/${rightSide}?id=${payload.id}`);
       }

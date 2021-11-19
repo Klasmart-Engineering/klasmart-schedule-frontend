@@ -73,7 +73,7 @@ import {
 } from "../types/scheduleTypes";
 import { LinkedMockOptionsItem } from "./content";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
-import { AsyncTrunkReturned } from "./report";
+import { AsyncTrunkReturned } from "./type";
 
 const MOCK = false;
 
@@ -461,7 +461,7 @@ export const getParticipantsData = createAsyncThunk(
     const teachers: { user_id: string | undefined; user_name: string | null | undefined }[] = [];
     participantListOrigin.usersConnection?.edges?.forEach((item) => {
       if (item?.node?.status !== "active") return;
-      item?.node?.roles.forEach((role) => {
+      (item?.node?.roles || []).forEach((role) => {
         if (role.name === "Teacher")
           teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
         if (role.name === "Student")

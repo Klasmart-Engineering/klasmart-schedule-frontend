@@ -1,4 +1,4 @@
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
 import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
 import { apiWaitForOrganizationOfPage } from "../api/extra";
@@ -9,6 +9,7 @@ import { OutcomeListExectSearch, OutcomeQueryCondition } from "../pages/OutcomeL
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actSuccess, actWarning } from "./notify";
+import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 interface IMilestoneState {
   milestoneList: MilestoneListResult;
   milestoneDetail: MilestoneDetailResult;
@@ -80,13 +81,6 @@ const initialState: IMilestoneState = {
   outcomeTotal: undefined,
   user_id: "",
 };
-
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
 
 type ParamsMilestoneList = LoadingMetaPayload & MilestoneQueryCondition;
 type ResultMilestoneList = {

@@ -1,8 +1,8 @@
+import { Class, Program, School, Status, Subject, User, UserFilter, UuidOperator } from "@api/api-ko-schema.auto";
+import api, { gqlapi } from "@api/index";
 import { ApolloQueryResult } from "@apollo/client";
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
-import api, { gqlapi } from "../api";
-import { Class, Program, School, Status, User, UserFilter, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
@@ -19,18 +19,12 @@ import {
   GetMyIdDocument,
   GetMyIdQuery,
   GetMyIdQueryVariables,
-  GetProgramsAndSubjectsDocument,
-  GetProgramsAndSubjectsQuery,
-  GetProgramsAndSubjectsQueryVariables,
   GetSchoolTeacherDocument,
   GetSchoolTeacherQuery,
   GetSchoolTeacherQueryVariables,
   GetStudentNameByIdDocument,
   GetStudentNameByIdQuery,
   GetStudentNameByIdQueryVariables,
-  GetSubjectsDocument,
-  GetSubjectsQuery,
-  GetSubjectsQueryVariables,
   MyPermissionsAndClassesTeachingQueryDocument,
   MyPermissionsAndClassesTeachingQueryQuery,
   MyPermissionsAndClassesTeachingQueryQueryVariables,
@@ -104,7 +98,9 @@ import {
   UserType,
 } from "../pages/ReportLearningSummary/types";
 import permissionCache, { ICacheData } from "../services/permissionCahceService";
+import programsHandler from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
+import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 
 interface IreportState {
   reportList?: EntityStudentAchievementReportItem[];
@@ -302,12 +298,6 @@ const initialState: IreportState = {
   fourWeeksClassAttendanceMassage: "",
 };
 
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
 type OnloadReportPayload = Parameters<typeof api.reports.listStudentsAchievementReport>[0] & LoadingMetaPayload;
 type OnloadReportReturn = AsyncReturnType<typeof api.reports.listStudentsAchievementReport>;
 export const getAchievementList = createAsyncThunk<OnloadReportReturn, OnloadReportPayload>(
@@ -457,7 +447,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
     ApolloQueryResult<ClassStudentsByOrganizationQuery>,
-    ApolloQueryResult<GetProgramsAndSubjectsQuery>
+    Pick<Program, "id" | "name" | "subjects">[] | Pick<Program, "id" | "name">[]
   ],
   LoadingMetaPayload
 >("getStudentSubjectsByOrg", async ({ metaLoading }) => {
@@ -493,12 +483,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
         organization_id,
       },
     }),
-    gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
-      query: GetProgramsAndSubjectsDocument,
-      variables: {
-        organization_id,
-      },
-    }),
+    programsHandler.getProgramsOptions(true),
   ]);
 });
 
@@ -881,7 +866,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   const { week_end, week_start, year, summary_type, school_id, class_id, student_id, subject_id } = query;
   let years: number[] = [];
   let weeks: IWeeks[] = [];
-  let subjects: ArrProps[] = [];
+  let subjects: Pick<Subject, "id" | "name">[] = [];
   let schools: ArrProps[] = [];
   let classes: ArrProps[] = [];
   let teachers: ArrProps[] = [];
@@ -893,8 +878,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   let _subject_id: string | undefined = "";
   let params: IParamsQueryLiveClassSummary = {};
   // let urlParams: IParamsQueryLiveClassSummary = {};
-  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-  // 拉取我的user_id
+
   const {
     data: { myUser },
   } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
@@ -973,29 +957,8 @@ export const onLoadLearningSummary = createAsyncThunk<
   }
   _student_id = isOnlyStudent ? myUserId : _student_id;
 
-  const data = await gqlapi.query<GetSubjectsQuery, GetSubjectsQueryVariables>({
-    query: GetSubjectsDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  const list = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
-    query: GetProgramsAndSubjectsDocument,
-    variables: {
-      organization_id,
-    },
-  });
-  const _subjects = data.data.organization?.subjects?.filter((item) => item?.status === Status.Active) || [];
-  const programs = list.data.organization?.programs?.filter((item) => item?.status === Status.Active) || [];
-  subjects = _subjects?.map((item) => {
-    const name = programs.find((item2) => item2.subjects?.some((val) => item.id === val.id))?.name + " - " + item.name;
-    return {
-      id: item.id,
-      name,
-    };
-  });
-  subjects = uniqBy(subjects, "id");
-  subjects = subjects.slice().sort(sortByStudentName("name"));
+  subjects = await programsHandler.getAllSubjects(true);
+
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
   _subject_id = subject_id ? subject_id : subjects[0].id;
 
@@ -1009,8 +972,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     subject_id: _subject_id,
   };
   if (_student_id && _subject_id && _student_id !== "none" && _year && _week_start && _week_end) {
-    await dispatch(getLiveClassesSummary({ ...params, metaLoading }));
-    await dispatch(getAssignmentSummary({ ...params, metaLoading }));
+    dispatch(getLiveClassesSummary({ ...params, metaLoading }));
+    dispatch(getAssignmentSummary({ ...params, metaLoading }));
   }
   return { years, weeks, schools, classes, teachers, students, subjects, summary_type, ...params };
 });
@@ -1416,11 +1379,7 @@ const { actions, reducer } = createSlice({
         Class,
         "class_id" | "students"
       >[];
-      let programs = payload[5].data.organization?.programs?.filter((item) => item?.status === Status.Active) as Pick<
-        Program,
-        "id" | "name" | "subjects"
-      >[];
-
+      let programs = payload[5] || [];
       const membership = payload[1].data.me?.membership;
 
       const myId = payload[1].data.me?.user_id;

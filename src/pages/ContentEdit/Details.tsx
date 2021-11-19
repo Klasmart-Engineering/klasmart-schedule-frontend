@@ -1,3 +1,4 @@
+import useQueryCms from "@hooks/useQueryCms";
 import {
   Box,
   Button,
@@ -24,7 +25,7 @@ import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { ContentEditRouteParams, useQueryCms } from ".";
+import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails, EntityTeacherManualFile } from "../../api/api.auto";
 import { apiResourcePathById } from "../../api/extra";
 import { CropImage } from "../../components/CropImage";
@@ -250,6 +251,7 @@ export default function Details(props: DetailsProps) {
     onChangeSubject,
     disabled,
   } = props;
+  console.log(linkedMockOptions);
   const css = useStyles();
   const { lesson } = useParams<ContentEditRouteParams>();
   const { id } = useQueryCms();

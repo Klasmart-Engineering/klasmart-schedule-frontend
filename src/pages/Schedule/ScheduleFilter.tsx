@@ -13,6 +13,7 @@ import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutli
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { TreeView } from "@material-ui/lab";
 import TreeItem, { TreeItemProps } from "@material-ui/lab/TreeItem";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
 import React, { useMemo } from "react";
@@ -24,7 +25,6 @@ import { MockOptionsOptionsItem } from "../../api/extra";
 import FilterTree from "../../components/FilterTree";
 import { d, t } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
-import { AsyncTrunkReturned } from "../../reducers/content";
 import { actError } from "../../reducers/notify";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {

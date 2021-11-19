@@ -1,25 +1,6 @@
-import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
-import produce from "immer";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteProps, useHistory, useLocation } from "react-router-dom";
-import { EntityFolderContentData } from "../../api/api.auto";
-import PermissionType from "../../api/PermissionType";
-import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
-import LayoutBox from "../../components/LayoutBox";
-import { PermissionsWrapper } from "../../components/Permission";
-import { emptyTip, permissionTip } from "../../components/TipImages";
-import { usePermission } from "../../hooks/usePermission";
-import { d } from "../../locale/LocaleManager";
-import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
-import { excludeFolderOfTree } from "../../models/ModelFolderTree";
-import { excludeMyOrg, orgs2id } from "../../models/ModelOrgProperty";
-import { AppDispatch, RootState } from "../../reducers";
 import {
   addFolder1,
   approveContent,
-  AsyncTrunkReturned,
   bulkApprove,
   bulkDeleteContent,
   bulkDeleteFolder,
@@ -38,8 +19,27 @@ import {
   searchOrgFolderItems,
   setUserSetting,
   shareFolders,
-} from "../../reducers/content";
-import { actWarning } from "../../reducers/notify";
+} from "@reducers/content";
+import { actWarning } from "@reducers/notify";
+import { AsyncTrunkReturned } from "@reducers/type";
+import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import produce from "immer";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { RouteProps, useHistory, useLocation } from "react-router-dom";
+import { EntityFolderContentData } from "../../api/api.auto";
+import PermissionType from "../../api/PermissionType";
+import { ContentType, OrderBy, PublishStatus, SearchContentsRequestContentType } from "../../api/type";
+import LayoutBox from "../../components/LayoutBox";
+import { PermissionsWrapper } from "../../components/Permission";
+import { emptyTip, permissionTip } from "../../components/TipImages";
+import { usePermission } from "../../hooks/usePermission";
+import { d } from "../../locale/LocaleManager";
+import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
+import { excludeFolderOfTree } from "../../models/ModelFolderTree";
+import { excludeMyOrg, orgs2id } from "../../models/ModelOrgProperty";
+import { AppDispatch, RootState } from "../../reducers";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
 import { BackToPrevPage } from "./BackToPrevPage";

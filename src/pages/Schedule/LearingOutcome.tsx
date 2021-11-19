@@ -1,38 +1,38 @@
+import { GetProgramsQuery } from "@api/api-ko.auto";
 import { makeStyles } from "@material-ui/core";
-import { SearchOutlined } from "@material-ui/icons";
-import React, { useMemo } from "react";
-import { d } from "../../locale/LocaleManager";
 import Box from "@material-ui/core/Box";
-import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { Controller, UseFormMethods } from "react-hook-form";
+import Grid from "@material-ui/core/Grid";
+import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
-import { LearningContentListForm, LearningContentList, EntityScheduleShortInfo, LearningComesFilterQuery } from "../../types/scheduleTypes";
-import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../reducers";
-import { modelSchedule } from "../../models/ModelSchedule";
-import { EntityScheduleDetailsView } from "../../api/api.auto";
+import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import { getProgramChild } from "../../reducers/schedule";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { AsyncTrunkReturned } from "../../reducers/content";
-import { GetProgramsQuery } from "../../api/api-ko.auto";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import { SearchOutlined } from "@material-ui/icons";
+import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import { actError } from "../../reducers/notify";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { RootState } from "@reducers/index";
+import { actError } from "@reducers/notify";
+import { getProgramChild } from "@reducers/schedule";
+import { AsyncTrunkReturned } from "@reducers/type";
+import { PayloadAction } from "@reduxjs/toolkit";
+import React, { useMemo } from "react";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { EntityScheduleDetailsView } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
+import { modelSchedule } from "../../models/ModelSchedule";
+import { EntityScheduleShortInfo, LearningComesFilterQuery, LearningContentList, LearningContentListForm } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme) => ({
   previewContainer: {
@@ -152,7 +152,7 @@ function SelectGroup(props: filterGropProps) {
     if (name === "programs" && program_id && !is_exist()) {
       if (viewSubjectPermission) {
         let resultInfo: any;
-        resultInfo = ((await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown) as PayloadAction<
+        resultInfo = (await dispatch(getProgramChild({ program_id: program_id, metaLoading: true }))) as unknown as PayloadAction<
           AsyncTrunkReturned<typeof getProgramChild>
         >;
         if (resultInfo.payload) {
@@ -189,10 +189,12 @@ function SelectGroup(props: filterGropProps) {
             ...filterQuery,
             [name]: filterQuery && filterQuery[name].includes("1") && !initFilterIds.includes("1") ? [] : filterIds,
           };
-    const filterResult = (programChildInfo?.length
-      ? (modelSchedule.learningOutcomeFilerGroup(filterData as LearningComesFilterQuery, programChildInfo)
-          .query as LearningComesFilterQuery)
-      : filterData) as LearningComesFilterQuery;
+    const filterResult = (
+      programChildInfo?.length
+        ? (modelSchedule.learningOutcomeFilerGroup(filterData as LearningComesFilterQuery, programChildInfo)
+            .query as LearningComesFilterQuery)
+        : filterData
+    ) as LearningComesFilterQuery;
     setFilterQuery && setFilterQuery(filterResult);
     const values = (item: string[]) => (item.length > 0 ? item : null);
     const filterQueryAssembly = {
