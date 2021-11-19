@@ -6,7 +6,6 @@ import { EntityScheduleShortInfo } from "../../api/api.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { GetReportMockOptionsResponse } from "../../reducers/report";
-import { ICacheData } from "../../services/permissionCahceService";
 import { QueryCondition } from "./types";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
@@ -68,11 +67,10 @@ interface BriefIntroductionProps {
   hiddenLegend?: Boolean;
   backByLessonPlan?: (urlParams: string) => void;
   reportMockOptions?: GetReportMockOptionsResponse;
-  perm?: ICacheData;
 }
 
 export default function BriefIntroduction(props: BriefIntroductionProps) {
-  const { value, student_name, backByLessonPlan, reportMockOptions, hiddenLegend, perm } = props;
+  const { value, student_name, backByLessonPlan, reportMockOptions, hiddenLegend } = props;
   const lessonPlanList = reportMockOptions?.lessonPlanList;
   const css = useStyles();
   const history = useHistory();
@@ -95,43 +93,38 @@ export default function BriefIntroduction(props: BriefIntroductionProps) {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <Divider className={css.divider} />
-      {(perm?.view_my_reports_614 ||
-        perm?.view_reports_610 ||
-        perm?.view_my_school_reports_611 ||
-        perm?.view_my_organizations_reports_612) && (
-        <Box className={css.container_intro}>
-          <Box className={css.leftName}>
-            {value.lesson_plan_id && (
-              <span
-                style={{ cursor: value.student_id ? "pointer" : "default", color: value.student_id ? "blue" : "black" }}
-                className={css.lessonPlan}
-                onClick={handleClick}
-              >
-                {d("Class View").t("report_navigation_class_view")}
-              </span>
-            )}
-            {value.student_id && <span className={css.teacherAndClass}>{student_name && ` - ${student_name}`}</span>}
-          </Box>
-          {!hiddenLegend && (
-            <Box className={css.rightContainer}>
-              <Box className={clsx(css.rightContainer, css.marginItem)}>
-                <div className={clsx(css.colorPart, css.blue)}></div>
-                <span>
-                  {d("All").t("report_label_all")} {d("Achieved").t("report_label_achieved")}
-                </span>
-              </Box>
-              <Box className={clsx(css.rightContainer, css.marginItem)}>
-                <div className={clsx(css.colorPart, css.pink)}></div>
-                <span>{d("Not Achieved").t("report_label_not_achieved")}</span>
-              </Box>
-              <Box className={clsx(css.rightContainer, css.marginItem)}>
-                <div className={clsx(css.colorPart, css.gray)}></div>
-                <span>{d("Not Covered").t("assess_option_not_attempted")}</span>
-              </Box>
-            </Box>
+      <Box className={css.container_intro}>
+        <Box className={css.leftName}>
+          {value.lesson_plan_id && (
+            <span
+              style={{ cursor: value.student_id ? "pointer" : "default", color: value.student_id ? "blue" : "black" }}
+              className={css.lessonPlan}
+              onClick={handleClick}
+            >
+              {d("Class View").t("report_navigation_class_view")}
+            </span>
           )}
+          {value.student_id && <span className={css.teacherAndClass}>{student_name && ` - ${student_name}`}</span>}
         </Box>
-      )}
+        {!hiddenLegend && (
+          <Box className={css.rightContainer}>
+            <Box className={clsx(css.rightContainer, css.marginItem)}>
+              <div className={clsx(css.colorPart, css.blue)}></div>
+              <span>
+                {d("All").t("report_label_all")} {d("Achieved").t("report_label_achieved")}
+              </span>
+            </Box>
+            <Box className={clsx(css.rightContainer, css.marginItem)}>
+              <div className={clsx(css.colorPart, css.pink)}></div>
+              <span>{d("Not Achieved").t("report_label_not_achieved")}</span>
+            </Box>
+            <Box className={clsx(css.rightContainer, css.marginItem)}>
+              <div className={clsx(css.colorPart, css.gray)}></div>
+              <span>{d("Not Covered").t("assess_option_not_attempted")}</span>
+            </Box>
+          </Box>
+        )}
+      </Box>
     </LayoutBox>
   );
 }

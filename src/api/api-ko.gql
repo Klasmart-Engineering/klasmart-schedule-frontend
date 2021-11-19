@@ -663,6 +663,7 @@ query getMyId{
     node{
      id
      familyName
+     givenName
     }
   }
 }
