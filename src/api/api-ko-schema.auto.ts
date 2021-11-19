@@ -423,9 +423,30 @@ export type ContactInfo = {
   phone?: Maybe<Scalars["String"]>;
 };
 
+export type ContactInfoInput = {
+  email?: Maybe<Scalars["String"]>;
+  phone?: Maybe<Scalars["String"]>;
+};
+
+export type CreateUserInput = {
+  alternateEmail?: Maybe<Scalars["String"]>;
+  alternatePhone?: Maybe<Scalars["String"]>;
+  contactInfo: ContactInfoInput;
+  dateOfBirth?: Maybe<Scalars["String"]>;
+  familyName: Scalars["String"];
+  gender: Scalars["String"];
+  givenName: Scalars["String"];
+  shortcode?: Maybe<Scalars["String"]>;
+  username?: Maybe<Scalars["String"]>;
+};
+
 export type DateFilter = {
   operator: NumberOrDateOperator;
   value: Scalars["String"];
+};
+
+export type DeleteSubcategoryInput = {
+  id: Scalars["ID"];
 };
 
 export type File = {
@@ -527,8 +548,10 @@ export type Mutation = {
   category?: Maybe<Category>;
   class?: Maybe<Class>;
   classes?: Maybe<Array<Maybe<Class>>>;
+  createUsers?: Maybe<UsersMutationResult>;
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
+  deleteSubcategories?: Maybe<SubcategoriesMutationResult>;
   grade?: Maybe<Grade>;
   me?: Maybe<User>;
   /** @deprecated Use the inviteUser() method */
@@ -582,6 +605,10 @@ export type MutationClassArgs = {
   class_id: Scalars["ID"];
 };
 
+export type MutationCreateUsersArgs = {
+  input: Array<CreateUserInput>;
+};
+
 export type MutationDeleteBrandingColorArgs = {
   organizationId: Scalars["ID"];
 };
@@ -589,6 +616,10 @@ export type MutationDeleteBrandingColorArgs = {
 export type MutationDeleteBrandingImageArgs = {
   organizationId: Scalars["ID"];
   type: BrandingImageTag;
+};
+
+export type MutationDeleteSubcategoriesArgs = {
+  input: Array<DeleteSubcategoryInput>;
 };
 
 export type MutationGradeArgs = {
@@ -721,7 +752,20 @@ export type MyType = {
 
 export type MyUser = {
   __typename?: "MyUser";
+  hasPermissionsInOrganization: Array<UserPermissionStatus>;
+  hasPermissionsInSchool: Array<UserPermissionStatus>;
   node?: Maybe<UserConnectionNode>;
+  profiles: Array<UserConnectionNode>;
+};
+
+export type MyUserHasPermissionsInOrganizationArgs = {
+  organizationId: Scalars["ID"];
+  permissionIds: Array<Scalars["String"]>;
+};
+
+export type MyUserHasPermissionsInSchoolArgs = {
+  permissionIds: Array<Scalars["String"]>;
+  schoolId: Scalars["ID"];
 };
 
 export type NumberFilter = {
@@ -1297,9 +1341,10 @@ export type Query = {
   grade?: Maybe<Grade>;
   gradeNode?: Maybe<GradeConnectionNode>;
   gradesConnection?: Maybe<GradesConnectionResponse>;
+  /** @deprecated Use myUser.node. Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2437513558 */
   me?: Maybe<User>;
   myUser?: Maybe<MyUser>;
-  /** @deprecated Use 'usersConnection with a filter for matching 'email' or 'phone' */
+  /** @deprecated Use myUser.profiles. Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2437513558 */
   my_users?: Maybe<Array<User>>;
   /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   organization?: Maybe<Organization>;
@@ -1326,7 +1371,9 @@ export type Query = {
   /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   subcategory?: Maybe<Subcategory>;
   subcategoryNode?: Maybe<SubcategoryConnectionNode>;
+  /** @deprecated Sunset Date: 09/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   subject?: Maybe<Subject>;
+  subjectNode?: Maybe<SubjectConnectionNode>;
   subjectsConnection?: Maybe<SubjectsConnectionResponse>;
   /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   user?: Maybe<User>;
@@ -1487,6 +1534,10 @@ export type QuerySubcategoryNodeArgs = {
 };
 
 export type QuerySubjectArgs = {
+  id: Scalars["ID"];
+};
+
+export type QuerySubjectNodeArgs = {
   id: Scalars["ID"];
 };
 
@@ -1858,8 +1909,14 @@ export type SubcategoriesConnectionResponse = IConnectionResponse & {
   totalCount?: Maybe<Scalars["Int"]>;
 };
 
+export type SubcategoriesMutationResult = {
+  __typename?: "SubcategoriesMutationResult";
+  subcategories: Array<SubcategoryConnectionNode>;
+};
+
 export type Subcategory = {
   __typename?: "Subcategory";
+  /** @deprecated Sunset Date: 10/02/2022 Details: https://bitbucket.org/calmisland/kidsloop-user-service/src/master/documents/rfc/mutations/050-Subcategory-toplevel-mutations.md */
   delete?: Maybe<Scalars["Boolean"]>;
   id: Scalars["ID"];
   name: Scalars["String"];
@@ -1924,7 +1981,6 @@ export type SubjectConnectionNode = {
   categories?: Maybe<Array<CategorySummaryNode>>;
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
-  programs?: Maybe<Array<ProgramSummaryNode>>;
   status: Status;
   system: Scalars["Boolean"];
 };
@@ -2163,6 +2219,12 @@ export type UserFilter = {
   schoolId?: Maybe<UuidExclusiveFilter>;
   userId?: Maybe<UuidFilter>;
   userStatus?: Maybe<StringFilter>;
+};
+
+export type UserPermissionStatus = {
+  __typename?: "UserPermissionStatus";
+  allowed: Scalars["Boolean"];
+  permissionId: Scalars["String"];
 };
 
 export enum UserSortBy {

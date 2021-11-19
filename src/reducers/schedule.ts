@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -452,7 +452,7 @@ export const getParticipantsData = createAsyncThunk(
     const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
       query: GetUserDocument,
       variables: {
-        filter: filterQuery,
+        filter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" }, ...filterQuery },
         direction: ConnectionDirection.Forward,
       },
     });
@@ -671,6 +671,8 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
       variables: {
         filter: { id: { operator: UuidOperator.Eq, value: class_id } },
         direction: ConnectionDirection.Forward,
+        studentFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
+        teacherFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
       },
     });
     const participantList: {

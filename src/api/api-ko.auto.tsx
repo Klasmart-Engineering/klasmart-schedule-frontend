@@ -904,6 +904,8 @@ export type GetMyIdQuery = { __typename?: "Query" } & {
 export type GetClassByInfoQueryVariables = Types.Exact<{
   filter?: Types.Maybe<Types.ClassFilter>;
   direction: Types.ConnectionDirection;
+  studentFilter?: Types.Maybe<Types.UserFilter>;
+  teacherFilter?: Types.Maybe<Types.UserFilter>;
   studentCursor?: Types.Maybe<Types.Scalars["String"]>;
   studentDirection?: Types.Maybe<Types.ConnectionDirection>;
   teacherCursor?: Types.Maybe<Types.Scalars["String"]>;
@@ -2828,6 +2830,8 @@ export const GetClassByInfoDocument = gql`
   query getClassByInfo(
     $filter: ClassFilter
     $direction: ConnectionDirection!
+    $studentFilter: UserFilter
+    $teacherFilter: UserFilter
     $studentCursor: String
     $studentDirection: ConnectionDirection
     $teacherCursor: String
@@ -2839,7 +2843,7 @@ export const GetClassByInfoDocument = gql`
         node {
           id
           name
-          studentsConnection(cursor: $studentCursor, direction: $studentDirection) {
+          studentsConnection(filter: $studentFilter, cursor: $studentCursor, direction: $studentDirection) {
             totalCount
             edges {
               node {
@@ -2856,7 +2860,7 @@ export const GetClassByInfoDocument = gql`
               endCursor
             }
           }
-          teachersConnection(cursor: $teacherCursor, direction: $teacherDirection) {
+          teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: $teacherDirection) {
             totalCount
             edges {
               node {
@@ -2893,6 +2897,8 @@ export const GetClassByInfoDocument = gql`
  *   variables: {
  *      filter: // value for 'filter'
  *      direction: // value for 'direction'
+ *      studentFilter: // value for 'studentFilter'
+ *      teacherFilter: // value for 'teacherFilter'
  *      studentCursor: // value for 'studentCursor'
  *      studentDirection: // value for 'studentDirection'
  *      teacherCursor: // value for 'teacherCursor'
