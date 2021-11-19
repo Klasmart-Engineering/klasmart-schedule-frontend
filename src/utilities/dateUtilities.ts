@@ -39,12 +39,11 @@ export function getLastedMonths(index: number) {
   const day = moment().get("date");
   const startOfThisMonth = moment().startOf("months");
   let res = [];
-  if (day !== 1) {
-    index === 3
-      ? res.push(`${startOfThisMonth.unix()}-${moment().unix()}`)
-      : res.push(`${startOfThisMonth.unix()}-${moment().startOf("date").unix()}`);
+  index === 3 && res.push(`${startOfThisMonth.unix()}-${moment().unix()}`);
+  if (day !== 1 && index !== 3) {
+    res.push(`${startOfThisMonth.unix()}-${moment().startOf("date").unix()}`);
   }
-  const monthsArr = Array(day === 1 ? index : index - 1).fill(null);
+  const monthsArr = Array(day === 1 && index !== 3 ? index : index - 1).fill(null);
   res = res.concat(
     monthsArr.map(() => {
       return `${startOfThisMonth.subtract(1, "months").unix()}-${startOfThisMonth.clone().endOf("months").add(1, "second").unix()}`;

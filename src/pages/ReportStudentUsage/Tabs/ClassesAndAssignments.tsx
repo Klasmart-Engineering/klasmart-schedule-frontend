@@ -119,7 +119,6 @@ export default function ClassesAndAssignments() {
     ];
   }, [overview]);
   const type = topChatData[state.activeTab].id;
-
   const durations = getLastedMonths(3);
 
   const handleclickUnattendedTable = React.useMemo(
