@@ -1,12 +1,12 @@
+import { MilestoneDetailResult, MilestoneStatus } from "@api/type";
+import { decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "@components/FormattedTextField";
+import { d } from "@locale/LocaleManager";
 import { Box, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
+import { formattedTime } from "@models/ModelContentDetailForm";
+import { CreateDefaultValueAndKeyResult } from "@models/ModelMilestone";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { MilestoneDetailResult, MilestoneStatus } from "../../api/type";
-import { decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
-import { d } from "../../locale/LocaleManager";
-import { formattedTime } from "../../models/ModelContentDetailForm";
-import { CreateDefaultValueAndKeyResult } from "../../models/ModelMilestone";
-import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/milestone";
 import { GENERALMILESTONE } from "../MilestoneList/MilestoneTable";
 const useStyles = makeStyles(({ palette }) => ({
   fieldset: {
@@ -241,7 +241,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
               label={d("Subject").t("assess_label_subject")}
               {...props}
               onChange={(e) => {
-                const value = (e.target.value as unknown) as string[];
+                const value = e.target.value as unknown as string[];
                 value.length > 0 && onChangeSubject(value);
                 value.length > 0 && props.onChange(value);
               }}

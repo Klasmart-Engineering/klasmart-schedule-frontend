@@ -1,5 +1,6 @@
 import { Box, Button, createMuiTheme, makeStyles, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
 import { CloudUploadOutlined } from "@material-ui/icons";
+import { LinkedMockOptions } from "@reducers/contentEdit/programsHandler";
 import React from "react";
 import { Controller, FieldError, UseFormMethods } from "react-hook-form";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
@@ -10,7 +11,6 @@ import { SingleUploader } from "../../components/SingleUploader";
 import { d } from "../../locale/LocaleManager";
 import { ContentDetailForm } from "../../models/ModelContentDetailForm";
 import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
-import { LinkedMockOptions } from "../../reducers/content";
 import { ProgressWithText } from "./Details";
 
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
@@ -220,7 +220,7 @@ export default function AssetsDetails(props: AssetDetailsProps) {
                 disabled={isIdExist()}
                 {...props}
                 onChange={(e) => {
-                  const value = (e.target.value as unknown) as string[];
+                  const value = e.target.value as unknown as string[];
                   value.length > 0 && onChangeSubject(value);
                   value.length > 0 && props.onChange(value);
                 }}

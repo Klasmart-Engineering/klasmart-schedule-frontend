@@ -1,10 +1,10 @@
 /* eslint-disable array-callback-return */
+import { d } from "@locale/LocaleManager";
+import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
+import { getScheduleParticipantsMockOptionsResponse } from "@reducers/schedule";
 import { Status } from "../api/api-ko-schema.auto";
 import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
-import { d } from "../locale/LocaleManager";
-import { LinkedMockOptionsItem } from "../reducers/content";
-import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import {
   ClassOptionsItem,
   EntityScheduleSchoolInfo,

@@ -1,5 +1,7 @@
 import { Box, Button, makeStyles } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
+import { getOutcomesOptionCategorys, getOutcomesOptions, getOutcomesOptionSkills } from "@reducers/content";
+import { LinkedMockOptions } from "@reducers/contentEdit/programsHandler";
 import React, { forwardRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -10,7 +12,6 @@ import { GetOutcomeDetail } from "../../api/type";
 import { comingsoonTip, TipImages, TipImagesType } from "../../components/TipImages";
 import { t } from "../../locale/LocaleManager";
 import { sortOutcomesList, transferSearchParams } from "../../models/ModelContentDetailForm";
-import { getOutcomesOptionCategorys, getOutcomesOptions, getOutcomesOptionSkills, LinkedMockOptions } from "../../reducers/content";
 import { OutComesDialog, OutcomesTable } from "./OutcomesRelated";
 const AMOUNTPERPAGE = 10;
 const useStyles = makeStyles(({ breakpoints, palette, typography }) => ({
