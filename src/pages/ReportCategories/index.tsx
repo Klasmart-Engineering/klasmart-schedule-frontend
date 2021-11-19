@@ -31,7 +31,7 @@ export function ReportCategories() {
   };
   const chart = <CategoriesChart data={categories} />;
   useEffect(() => {
-    dispatch(reportCategoriesOnload({ metaLoading: true }));
+    dispatch(reportCategoriesOnload({}));
   }, [dispatch]);
   useEffect(() => {
     if (!teacherList.length) return;
