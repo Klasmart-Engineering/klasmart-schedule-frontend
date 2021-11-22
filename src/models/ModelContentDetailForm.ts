@@ -1,7 +1,7 @@
-import { EntityContentInfoWithDetails, EntityCreateContentRequest, EntityOutcome, ModelPublishedOutcomeView } from "../api/api.auto";
-import { ContentFileType, ContentInputSourceType, ContentType } from "../api/type";
-import { d } from "../locale/LocaleManager";
-import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
+import { EntityContentInfoWithDetails, EntityCreateContentRequest, EntityOutcome, ModelPublishedOutcomeView } from "@api/api.auto";
+import { ContentFileType, ContentInputSourceType, ContentType } from "@api/type";
+import { d } from "@locale/LocaleManager";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { ModelLessonPlan, Segment } from "./ModelLessonPlan";
 
 interface MyExtendedDetailForm {

@@ -718,7 +718,7 @@ export const reportCategoriesOnload = createAsyncThunk<Pick<User, "user_id" | "u
       }
       teacherList = uniqBy(teacherList, "user_id");
     } else if (perm.view_my_reports_614) {
-      teacherList = [{ user_id: my_id, user_name: myUser?.node?.familyName || "" }];
+      teacherList = [{ user_id: my_id, user_name: `${myUser?.node?.givenName || ""} ${myUser?.node?.familyName || ""}` }];
     }
     return teacherList;
   }

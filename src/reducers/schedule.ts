@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -71,7 +72,7 @@ import {
   ParticipantsShortInfo,
   RolesData,
 } from "../types/scheduleTypes";
-import { LinkedMockOptionsItem } from "./content";
+import programsHandler, { LinkedMockOptionsItem } from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./type";
 
@@ -452,7 +453,7 @@ export const getParticipantsData = createAsyncThunk(
     const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
       query: GetUserDocument,
       variables: {
-        filter: filterQuery,
+        filter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" }, ...filterQuery },
         direction: ConnectionDirection.Forward,
       },
     });
@@ -619,8 +620,8 @@ interface GetScheduleMockOptionsPayLoad {
 
 export interface getScheduleMockOptionsAllSettledResponse {
   teacherList: TeachersByOrgnizationQuery;
-  subjectList: PromiseSettledResult<LinkedMockOptionsItem[]>;
-  programList: PromiseSettledResult<LinkedMockOptionsItem[]>;
+  subjectList: LinkedMockOptionsItem[];
+  programList: LinkedMockOptionsItem[];
 }
 
 /**
@@ -639,8 +640,9 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsAll
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
 
-    const [subjectList, programList] = await Promise.allSettled([api.subjects.getSubject(), api.programs.getProgram()]);
-    return { subjectList, programList, teacherList };
+    const programList = await programsHandler.getProgramsOptions();
+    const _subjectList = await programsHandler.getAllSubjects();
+    return { subjectList: uniqBy(_subjectList, "id"), programList, teacherList };
   }
 );
 
@@ -671,6 +673,8 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
       variables: {
         filter: { id: { operator: UuidOperator.Eq, value: class_id } },
         direction: ConnectionDirection.Forward,
+        studentFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
+        teacherFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
       },
     });
     const participantList: {
@@ -816,7 +820,7 @@ export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, I
   }
 );
 
-export interface LinkedMockOptions {
+interface LinkedMockOptions {
   developmental?: LinkedMockOptionsItem[];
   skills?: LinkedMockOptionsItem[];
 }
@@ -900,8 +904,8 @@ const { actions, reducer } = createSlice({
       state.mockOptions = payload;
     },
     [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
-      state.scheduleMockOptions.subjectList = payload.subjectList.status === "fulfilled" ? payload.subjectList.value : [];
-      state.scheduleMockOptions.programList = payload.programList.status === "fulfilled" ? payload.programList.value : [];
+      state.scheduleMockOptions.subjectList = payload.subjectList;
+      state.scheduleMockOptions.programList = payload.programList;
       state.scheduleMockOptions.teacherList = payload.teacherList;
     },
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {

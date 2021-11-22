@@ -50,12 +50,12 @@
     "axios": "^0.24.0",
     "clsx": "^1.1.1",
     "date-fns": "^2.15.0",
+    "dotenv": "^10.0.0",
     "draft-convert": "^2.1.10",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "fetch-intercept": "^2.3.1",
     "graphql": "^15.4.0",
-    "h5p": "file:./public/h5p",
     "iframe-resizer": "^4.2.11",
     "immer": "^9.0.6",
     "js-cookie": "^2.2.1",
@@ -87,7 +87,7 @@
   },
   "scripts": {
     "start": "react-app-rewired  --max_old_space_size=8192 start",
-    "build": "react-app-rewired  build && node ./scripts/version.js && node ./scripts/publishSourcemap.js",
+    "build": "react-app-rewired  build && node ./scripts/publishSourcemap.js",
     "test": "react-app-rewired  test",
     "syncapi": "node ./scripts/syncapi.js",
     "syncLang": "node ./scripts/syncLang",
@@ -102,11 +102,6 @@
     "extends": "react-app"
   },
   "lint-staged": {
-    "public/h5p/**/*": [
-      "node ./scripts/syncH5pVersion.js",
-      "git add",
-      "git add public/h5p/package.json"
-    ],
     "src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix --max-warnings=0",
       "prettier --write",

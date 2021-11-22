@@ -241,7 +241,7 @@ export function CategoriesStaticChart(props: CategoriesStaticChartProps) {
               {tooltipData.data.items?.length}&nbsp;LOs
             </div>
             {tooltipData.data.items?.map((desc, idx) => (
-              <div key={idx} style={inlineStyles.tooltipContent}>
+              <div key={idx} style={{ ...inlineStyles.tooltipContent, wordBreak: "break-word" }}>
                 {desc}
               </div>
             ))}

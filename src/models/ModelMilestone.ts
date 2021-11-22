@@ -1,3 +1,4 @@
+import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import {
   ModelAge,
   ModelAuthorView,
@@ -11,8 +12,6 @@ import {
 } from "../api/api.auto";
 import { MilestoneDetailResult } from "../api/type";
 import { Regulation } from "../pages/MilestoneEdit/type";
-import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/milestone";
-// import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
 
 interface CreateDefaultValueProps {
   regulation: Regulation;

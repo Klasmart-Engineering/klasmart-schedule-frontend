@@ -1,7 +1,7 @@
+import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { EntityContentInfoWithDetails, EntityContentPermission, EntityTeacherManualFile } from "../api/api.auto";
 import { ContentFileType, ContentInputSourceType } from "../api/type";
 import { Regulation } from "../pages/ContentEdit/type";
-import { LinkedMockOptions, LinkedMockOptionsItem } from "../reducers/content";
 
 export interface FlattenedMockOptionsOnlyOption extends Omit<LinkedMockOptions, "program_id" | "developmental_id"> {}
 

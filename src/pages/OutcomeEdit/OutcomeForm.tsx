@@ -1,14 +1,14 @@
+import { ApiPullOutcomeSetResponse } from "@api/api.auto";
+import { GetOutcomeDetail, OutcomeSetResult } from "@api/type";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "@components/FormattedTextField";
+import { OutcomeSet } from "@components/OutSet";
+import { d, t } from "@locale/LocaleManager";
 import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
+import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
+import { ResultGetNewOptions } from "@reducers/outcome";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { ApiPullOutcomeSetResponse } from "../../api/api.auto";
-import { GetOutcomeDetail, OutcomeSetResult } from "../../api/type";
-import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField } from "../../components/FormattedTextField";
-import { OutcomeSet } from "../../components/OutSet";
-import { d, t } from "../../locale/LocaleManager";
-import { LinkedMockOptionsItem } from "../../reducers/content";
-import { ResultGetNewOptions } from "../../reducers/outcome";
 
 const useStyles = makeStyles((theme) => ({
   outcomings_container: {
@@ -306,7 +306,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     label={d("Subject").t("assess_label_subject")}
                     {...props}
                     onChange={(e) => {
-                      const value = (e.target.value as unknown) as string[];
+                      const value = e.target.value as unknown as string[];
                       value.length > 0 && onChangeSubject(value);
                       value.length > 0 && props.onChange(value);
                     }}
