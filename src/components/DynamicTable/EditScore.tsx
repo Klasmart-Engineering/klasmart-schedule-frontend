@@ -27,7 +27,7 @@ export function EditScore(props: EditScoreProps) {
     isComplete,
     is_h5p,
     student_id,
-    // not_applicable_scoring,
+    not_applicable_scoring,
     has_sub_items,
   } = props;
   const [scoreNum, setScoreNum] = React.useState<number | string | undefined>(score);
@@ -42,10 +42,9 @@ export function EditScore(props: EditScoreProps) {
           ) : (
             d("Not Attempted").t("assess_detail_not_attempted")
           )
-        ) : //  : not_applicable_scoring ? (
-        //   d("Not Applicable").t("assessment_not_applicable")
-        // ) :
-        attempted ? (
+        ) : not_applicable_scoring ? (
+          d("Not Applicable").t("assessment_not_applicable")
+        ) : attempted ? (
           <>
             {editable && !isComplete && isSubjectiveActivity ? (
               <>
