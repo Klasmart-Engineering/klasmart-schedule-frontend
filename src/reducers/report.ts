@@ -937,7 +937,7 @@ export const onLoadLearningSummary = createAsyncThunk<
     schools = uniqBy(_schools, "id");
     _school_id = school_id ? school_id : "all";
     const school = learningSummary.schools.find((item) => item.id === _school_id);
-    const _classes =
+    let _classes =
       school?.classes
         ?.filter((item) => item?.status === Status.Active)
         .map((item) => ({
@@ -945,7 +945,7 @@ export const onLoadLearningSummary = createAsyncThunk<
           name: item.name,
         })) || [];
 
-    classes = [{ id: "all", name: d("All").t("report_label_all") }, ...orderByASC(classes, "name")];
+    _classes = [{ id: "all", name: d("All").t("report_label_all") }, ...orderByASC(_classes, "name")];
     classes = uniqBy(_classes, "id");
     _class_id = class_id ? class_id : "all";
     students =
@@ -1593,7 +1593,10 @@ const { actions, reducer } = createSlice({
         state.summaryReportOptions.student_id = payload.student_id;
       }
       if (payload.classes) {
-        state.summaryReportOptions.classes = payload.classes;
+        state.summaryReportOptions.classes = uniqBy(
+          [{ id: "all", name: d("All").t("report_label_all") }, ...orderByASC(payload.classes, "name")],
+          "id"
+        );
       }
       if (payload.teachers) {
         state.summaryReportOptions.teachers = orderByASC(payload.teachers, "name");
