@@ -147,10 +147,12 @@ const useStyles = makeStyles((theme) =>
   })
 );
 export const GENERALMILESTONE = "general";
-const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
-  e.stopPropagation();
-  if (handler) return handler(e);
-};
+const stopPropagation =
+  <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) =>
+  (e: T) => {
+    e.stopPropagation();
+    if (handler) return handler(e);
+  };
 
 interface MilestoneProps extends MilestoneActionProps {
   milestone: MilestoneDetailResult;

@@ -2075,6 +2075,33 @@
         }
       }
     },
+    "/contents_lesson_plans": {
+      "get": {
+        "description": "get lesson plans for schedule",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["content"],
+        "summary": "getLessonPlansCanSchedule",
+        "operationId": "getLessonPlansCanSchedule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/entity.LessonPlanForSchedule"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/contents_pending": {
       "get": {
         "description": "query pending content by condition",
@@ -3658,7 +3685,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.OutcomeSearchResponse"
+              "$ref": "#/definitions/model.SearchOutcomeResponse"
             }
           },
           "400": {
@@ -3754,7 +3781,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.OutcomeView"
+              "$ref": "#/definitions/model.OutcomeDetailView"
             }
           },
           "400": {
@@ -4260,7 +4287,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.MilestoneSearchResponse"
+              "$ref": "#/definitions/model.SearchMilestoneResponse"
             }
           },
           "400": {
@@ -4297,7 +4324,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/model.MilestoneView"
+              "$ref": "#/definitions/model.CreateMilestoneView"
             }
           }
         ],
@@ -4407,7 +4434,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.MilestoneView"
+              "$ref": "#/definitions/model.MilestoneDetailView"
             }
           },
           "400": {
@@ -4451,7 +4478,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/model.MilestoneView"
+              "$ref": "#/definitions/model.CreateMilestoneView"
             }
           }
         ],
@@ -4730,7 +4757,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.OutcomeSearchResponse"
+              "$ref": "#/definitions/model.SearchOutcomeResponse"
             }
           },
           "400": {
@@ -4824,7 +4851,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.MilestoneSearchResponse"
+              "$ref": "#/definitions/model.SearchMilestoneResponse"
             }
           },
           "400": {
@@ -4966,7 +4993,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.OutcomeSearchResponse"
+              "$ref": "#/definitions/model.SearchOutcomeResponse"
             }
           },
           "400": {
@@ -5060,7 +5087,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/model.MilestoneSearchResponse"
+              "$ref": "#/definitions/model.SearchMilestoneResponse"
             }
           },
           "400": {
@@ -6643,7 +6670,7 @@
     },
     "/schedules/{schedule_id}": {
       "get": {
-        "description": "get schedule by id",
+        "description": "get schedule by id, excluding deleted",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["schedule"],
@@ -10888,6 +10915,20 @@
         }
       }
     },
+    "entity.LessonPlanForSchedule": {
+      "type": "object",
+      "properties": {
+        "group_name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "entity.LessonType": {
       "type": "object",
       "properties": {
@@ -12404,7 +12445,9 @@
       "type": "object",
       "properties": {
         "assessment_status": {
-          "type": "string"
+          "description": "Accurate for Home Fun Study only, in_progress: submitted, complete: completed, empty string: never submitted",
+          "type": "string",
+          "enum": ["in_progress", "complete"]
         },
         "class_id": {
           "type": "string"
@@ -12505,6 +12548,12 @@
         },
         "time_at": {
           "type": "integer"
+        },
+        "time_boundary": {
+          "description": "apply to StartAtGe and EndAtLe, union will include schedules that are only partially within the specified time frame, intersect will not",
+          "type": "string",
+          "default": "intersect",
+          "enum": ["intersect", "union"]
         },
         "time_zone_offset": {
           "type": "integer"
@@ -12741,7 +12790,6 @@
           "type": "integer"
         },
         "exist_assessment": {
-          "description": "LiveToken     string               `json:\"live_token\"`",
           "type": "boolean"
         },
         "exist_feedback": {
@@ -13779,79 +13827,7 @@
         }
       }
     },
-    "model.Developmental": {
-      "type": "object",
-      "properties": {
-        "developmental_id": {
-          "type": "string"
-        },
-        "developmental_name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.Grade": {
-      "type": "object",
-      "properties": {
-        "grade_id": {
-          "type": "string"
-        },
-        "grade_name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.Milestone": {
-      "type": "object",
-      "properties": {
-        "milestone_id": {
-          "type": "string"
-        },
-        "milestone_name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.MilestoneBulkRejectRequest": {
-      "type": "object",
-      "properties": {
-        "milestone_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "reject_reason": {
-          "type": "string"
-        }
-      }
-    },
-    "model.MilestoneList": {
-      "type": "object",
-      "properties": {
-        "ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "model.MilestoneSearchResponse": {
-      "type": "object",
-      "properties": {
-        "milestones": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/model.MilestoneView"
-          }
-        },
-        "total": {
-          "type": "integer"
-        }
-      }
-    },
-    "model.MilestoneView": {
+    "model.CreateMilestoneView": {
       "type": "object",
       "properties": {
         "age": {
@@ -13997,6 +13973,235 @@
         },
         "with_publish": {
           "type": "boolean"
+        }
+      }
+    },
+    "model.Developmental": {
+      "type": "object",
+      "properties": {
+        "developmental_id": {
+          "type": "string"
+        },
+        "developmental_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.Grade": {
+      "type": "object",
+      "properties": {
+        "grade_id": {
+          "type": "string"
+        },
+        "grade_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.Milestone": {
+      "type": "object",
+      "properties": {
+        "milestone_id": {
+          "type": "string"
+        },
+        "milestone_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.MilestoneBulkRejectRequest": {
+      "type": "object",
+      "properties": {
+        "milestone_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reject_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "model.MilestoneDetailView": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Age"
+          }
+        },
+        "author": {
+          "$ref": "#/definitions/model.AuthorView"
+        },
+        "category": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Category"
+          }
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Grade"
+          }
+        },
+        "milestone_id": {
+          "type": "string"
+        },
+        "milestone_name": {
+          "type": "string"
+        },
+        "organization": {
+          "$ref": "#/definitions/model.OrganizationView"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.MilestoneOutcomeView"
+          }
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Program"
+          }
+        },
+        "reject_reason": {
+          "type": "string"
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "sub_category": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.SubCategory"
+          }
+        },
+        "subject": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Subject"
+          }
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "model.MilestoneList": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "model.MilestoneOutcomeView": {
+      "type": "object",
+      "properties": {
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Developmental"
+          }
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Program"
+          }
+        },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeSetCreateView"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        }
+      }
+    },
+    "model.MilestoneView": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "$ref": "#/definitions/model.AuthorView"
+        },
+        "category": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Category"
+          }
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "last_edited_at": {
+          "type": "integer"
+        },
+        "last_edited_by": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "locked_location": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "milestone_id": {
+          "type": "string"
+        },
+        "milestone_name": {
+          "type": "string"
+        },
+        "outcome_count": {
+          "type": "integer"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Program"
+          }
+        },
+        "shortcode": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -14200,51 +14405,7 @@
         }
       }
     },
-    "model.OutcomeIDList": {
-      "type": "object",
-      "properties": {
-        "outcome_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "model.OutcomeRejectReq": {
-      "type": "object",
-      "properties": {
-        "reject_reason": {
-          "type": "string"
-        }
-      }
-    },
-    "model.OutcomeSearchResponse": {
-      "type": "object",
-      "properties": {
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/model.OutcomeView"
-          }
-        },
-        "total": {
-          "type": "integer"
-        }
-      }
-    },
-    "model.OutcomeSetCreateView": {
-      "type": "object",
-      "properties": {
-        "set_id": {
-          "type": "string"
-        },
-        "set_name": {
-          "type": "string"
-        }
-      }
-    },
-    "model.OutcomeView": {
+    "model.OutcomeDetailView": {
       "type": "object",
       "properties": {
         "age": {
@@ -14277,9 +14438,6 @@
             "$ref": "#/definitions/model.Developmental"
           }
         },
-        "estimated_time": {
-          "type": "integer"
-        },
         "grade": {
           "type": "array",
           "items": {
@@ -14296,9 +14454,6 @@
           "type": "integer"
         },
         "last_edited_by": {
-          "type": "string"
-        },
-        "latest_id": {
           "type": "string"
         },
         "locked_by": {
@@ -14334,9 +14489,6 @@
             "$ref": "#/definitions/model.Program"
           }
         },
-        "publish_scope": {
-          "type": "string"
-        },
         "publish_status": {
           "type": "string"
         },
@@ -14358,14 +14510,109 @@
             "$ref": "#/definitions/model.Skill"
           }
         },
-        "source_id": {
-          "type": "string"
-        },
         "subject": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/model.Subject"
           }
+        },
+        "update_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "model.OutcomeIDList": {
+      "type": "object",
+      "properties": {
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "model.OutcomeRejectReq": {
+      "type": "object",
+      "properties": {
+        "reject_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "model.OutcomeSetCreateView": {
+      "type": "object",
+      "properties": {
+        "set_id": {
+          "type": "string"
+        },
+        "set_name": {
+          "type": "string"
+        }
+      }
+    },
+    "model.OutcomeView": {
+      "type": "object",
+      "properties": {
+        "ancestor_id": {
+          "type": "string"
+        },
+        "assumed": {
+          "type": "boolean"
+        },
+        "author_id": {
+          "type": "string"
+        },
+        "author_name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "developmental": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Developmental"
+          }
+        },
+        "last_edited_at": {
+          "type": "integer"
+        },
+        "last_edited_by": {
+          "type": "string"
+        },
+        "locked_by": {
+          "type": "string"
+        },
+        "locked_location": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outcome_id": {
+          "type": "string"
+        },
+        "outcome_name": {
+          "type": "string"
+        },
+        "program": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.Program"
+          }
+        },
+        "publish_status": {
+          "type": "string"
+        },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeSetCreateView"
+          }
+        },
+        "shortcode": {
+          "type": "string"
         },
         "update_at": {
           "type": "integer"
@@ -14400,14 +14647,8 @@
             "type": "string"
           }
         },
-        "ancestor_id": {
-          "type": "string"
-        },
         "assumed": {
           "type": "boolean"
-        },
-        "author_id": {
-          "type": "string"
         },
         "category_ids": {
           "type": "array",
@@ -14415,35 +14656,11 @@
             "type": "string"
           }
         },
-        "created_at": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        },
-        "estimated_time": {
-          "type": "integer"
-        },
         "grade_ids": {
           "type": "array",
           "items": {
             "type": "string"
           }
-        },
-        "keywords": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "latest_id": {
-          "type": "string"
-        },
-        "locked_by": {
-          "type": "string"
-        },
-        "organization_id": {
-          "type": "string"
         },
         "outcome_id": {
           "type": "string"
@@ -14457,15 +14674,6 @@
             "type": "string"
           }
         },
-        "publish_scope": {
-          "type": "string"
-        },
-        "publish_status": {
-          "type": "string"
-        },
-        "reject_reason": {
-          "type": "string"
-        },
         "sets": {
           "type": "array",
           "items": {
@@ -14473,9 +14681,6 @@
           }
         },
         "shortcode": {
-          "type": "string"
-        },
-        "source_id": {
           "type": "string"
         },
         "sub_category_ids": {
@@ -14489,8 +14694,33 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "model.SearchMilestoneResponse": {
+      "type": "object",
+      "properties": {
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.CreateMilestoneView"
+          }
         },
-        "update_at": {
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "model.SearchOutcomeResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/model.OutcomeView"
+          }
+        },
+        "total": {
           "type": "integer"
         }
       }

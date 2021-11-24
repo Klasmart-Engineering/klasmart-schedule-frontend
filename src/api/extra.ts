@@ -1,10 +1,9 @@
 import { gql } from "@apollo/client";
+import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import Cookies from "js-cookie";
-import cloneDeep from "lodash/cloneDeep";
-import merge from "lodash/merge";
 import api, { gqlapi } from ".";
-import requireContentType from "../../scripts/contentType.macro";
-import { LangRecordId, shouldBeLangName } from "../locale/lang/type";
+// import requireContentType from "../../scripts/contentType.macro";
+import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -182,35 +181,29 @@ export const subscribeLocaleInCookie = (handler: { (locale: string): any }) => {
   }, 1000);
 };
 
-export const apiCreateContentTypeLibrary = (id: string) => {
-  return requireContentType("asset", id);
-};
+//  const apiCreateContentTypeLibrary = (id: string) => {
+//   return requireContentType("asset", id);
+// };
 
-export async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string, locale: string) {
-  const schema = {} as T;
-  const schemaLanguages = {} as T;
-  for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
-    schema[name as keyof T] = cloneDeep((await value()).default);
-  }
-  for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-    schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-  }
-  return merge(schema, schemaLanguages);
-}
+//  async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string, locale: string) {
+//   const schema = {} as T;
+//   const schemaLanguages = {} as T;
+//   for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
+//     schema[name as keyof T] = cloneDeep((await value()).default);
+//   }
+//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
+//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
+//   }
+//   return merge(schema, schemaLanguages);
+// }
 
-export async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {
-  const schemaLanguages = {} as T;
-  for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-    schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-  }
-  return schemaLanguages;
-}
-
-export function apiGetContentTypeList() {
-  return import("h5p/libraries/content-types.auto.json").then((x) => {
-    return x.default.contentTypes;
-  });
-}
+//  async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {
+//   const schemaLanguages = {} as T;
+//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
+//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
+//   }
+//   return schemaLanguages;
+// }
 
 export function domainSwitch() {
   return window.location.host.includes("kidsloop.live");
@@ -220,6 +213,53 @@ export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
 
+export async function apiSkillsListByIds(skillIds: string[]) {
+  const skillsQuery = skillIds
+    .map(
+      (id, index) => `
+    skill${index}: subcategory(id: "${id}") {
+      id
+      name
+      status
+    }
+    `
+    )
+    .join("");
+  const skillsResult = skillIds.length
+    ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+        query: gql`
+    query skillsListByIds {
+      ${skillsQuery}
+    } 
+    `,
+      })
+    : { data: {} };
+  return skillsResult;
+}
+
+export async function apiDevelopmentalListIds(developmental: string[]) {
+  const developmentalQuery = developmental
+    .map(
+      (id, index) => `
+    developmental${index}: category(id: "${id}") {
+      id
+      name
+      status
+    }
+    `
+    )
+    .join("");
+  const developmentalResult = developmental.length
+    ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
+        query: gql`
+    query developmentalListByIds {
+      ${developmentalQuery}
+    } 
+    `,
+      })
+    : { data: {} };
+  return developmentalResult;
+}
 export interface IApiGetPartPermissionResp {
   error: boolean;
   data: ICacheData;

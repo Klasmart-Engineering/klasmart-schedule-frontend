@@ -7,14 +7,28 @@ import {
   rectIntersection,
   TouchSensor,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core";
+import useQueryCms from "@hooks/useQueryCms";
+import {
+  deleteContent,
+  getLinkedMockOptions,
+  getLinkedMockOptionsSkills,
+  onLoadContentEdit,
+  publish,
+  publishWidthAssets,
+  save,
+  searchAuthContentLists,
+  searchContentLists,
+  searchPublishedLearningOutcomes,
+} from "@reducers/content";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import debounce from "lodash/debounce";
 import React, { Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
 import { ContentInputSourceType, ContentType, GetOutcomeDetail, H5pSub, SearchContentsRequestContentType } from "../../api/type";
 import { PermissionOr } from "../../components/Permission";
@@ -25,19 +39,6 @@ import { addAllInSearchLOListOption, ContentDetailForm, ModelContentDetailForm }
 import { ModelLessonPlan } from "../../models/ModelLessonPlan";
 import { ModelMockOptions } from "../../models/ModelMockOptions";
 import { RootState } from "../../reducers";
-import {
-  AsyncTrunkReturned,
-  deleteContent,
-  getLinkedMockOptions,
-  getLinkedMockOptionsSkills,
-  onLoadContentEdit,
-  publish,
-  publishWidthAssets,
-  save,
-  searchAuthContentLists,
-  searchContentLists,
-  searchPublishedLearningOutcomes
-} from "../../reducers/content";
 import MyContentList from "../MyContentList";
 import AssetDetails from "./AssetDetails";
 import ContentH5p from "./ContentH5p";
@@ -57,21 +58,6 @@ export interface ContentEditRouteParams {
   tab: "details" | "outcomes" | "media" | "assetDetails";
   rightside: "contentH5p" | "assetPreview" | "assetEdit" | "assetPreviewH5p" | "uploadH5p" | "planComposeGraphic" | "planComposeText";
 }
-
-export const useQueryCms = () => {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const id = query.get("id");
-  const searchMedia = query.get("searchMedia") || "";
-  const searchOutcome = query.get("searchOutcome") || "";
-  const assumed = (query.get("assumed") || "") === "true" ? true : false;
-  const isShare = query.get("isShare") || "org";
-  const editindex: number = Number(query.get("editindex") || 0);
-  const back = query.get("back") || "";
-  const exactSerch = query.get("exactSerch") || "all";
-  const parent_folder = query.get("parent_id") || "";
-  return { id, searchMedia, searchOutcome, search, editindex, assumed, isShare, back, exactSerch, parent_folder };
-};
 
 const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
   const query = new URLSearchParams(search);
@@ -189,7 +175,7 @@ function ContentEditForm() {
         const parent_folderLastId = parent_folder.split("/").pop() || "";
         const input = { ...restValues, parent_folder: parent_folderLastId, content_type, outcomes };
         const contentDetail = ModelContentDetailForm.encode(input);
-        const { payload: id } = ((await dispatch(save(contentDetail))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
+        const { payload: id } = (await dispatch(save(contentDetail))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
         if (id) {
           if (lesson === "assets") {
             // assets 创建直接返回列表
@@ -228,50 +214,52 @@ function ContentEditForm() {
   }, [dispatch, id, history]);
 
   const handleSearchMedia = useMemo<MediaAssetsProps["onSearch"]>(
-    () => ({ value = "", exactSerch = "all", isShare = "org" }) => {
-      history.replace({
-        search: setQuery(history.location.search, { searchMedia: value, isShare }),
-      });
-      const contentNameValue = exactSerch === "all" ? "" : value;
-      const nameValue = exactSerch === "all" ? value : "";
-      isShare === "badanamu" && lesson === "plan"
-        ? dispatch(
-            searchAuthContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: nameValue,
-              content_name: contentNameValue,
-            })
-          )
-        : dispatch(
-            searchContentLists({
-              metaLoading: true,
-              content_type: searchContentType,
-              name: nameValue,
-              content_name: contentNameValue,
-            })
-          );
-      setMediaPage(1);
-    },
+    () =>
+      ({ value = "", exactSerch = "all", isShare = "org" }) => {
+        history.replace({
+          search: setQuery(history.location.search, { searchMedia: value, isShare }),
+        });
+        const contentNameValue = exactSerch === "all" ? "" : value;
+        const nameValue = exactSerch === "all" ? value : "";
+        isShare === "badanamu" && lesson === "plan"
+          ? dispatch(
+              searchAuthContentLists({
+                metaLoading: true,
+                content_type: searchContentType,
+                name: nameValue,
+                content_name: contentNameValue,
+              })
+            )
+          : dispatch(
+              searchContentLists({
+                metaLoading: true,
+                content_type: searchContentType,
+                name: nameValue,
+                content_name: contentNameValue,
+              })
+            );
+        setMediaPage(1);
+      },
     [dispatch, history, searchContentType, lesson]
   );
   const handleSearchOutcomes = useMemo<OutcomesProps["onSearch"]>(
-    () => ({ value = "", assumed, exactSerch = "outcome_name", page = 1, ...resQuery }) => {
-      history.replace({
-        search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
-      });
-      dispatch(
-        searchPublishedLearningOutcomes({
-          exactSerch,
-          metaLoading: true,
-          search_key: value,
-          assumed: assumed ? 1 : -1,
-          page,
-          ...resQuery,
-        })
-      );
-      setOutcomePage(page);
-    },
+    () =>
+      ({ value = "", assumed, exactSerch = "outcome_name", page = 1, ...resQuery }) => {
+        history.replace({
+          search: setQuery(history.location.search, { searchOutcome: value, assumed: assumed ? "true" : "false" }),
+        });
+        dispatch(
+          searchPublishedLearningOutcomes({
+            exactSerch,
+            metaLoading: true,
+            search_key: value,
+            assumed: assumed ? 1 : -1,
+            page,
+            ...resQuery,
+          })
+        );
+        setOutcomePage(page);
+      },
     [dispatch, history]
   );
   const handleGoBack = useCallback(() => {
@@ -363,6 +351,7 @@ function ContentEditForm() {
         exactSerch,
       })
     );
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lesson, dispatch]);
   const assetDetails = (

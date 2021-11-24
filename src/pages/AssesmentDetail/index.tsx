@@ -1,3 +1,7 @@
+import { completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "@reducers/assessments";
+import { AppDispatch, RootState } from "@reducers/index";
+import { actSuccess, actWarning } from "@reducers/notify";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, uniq } from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -12,9 +16,6 @@ import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { ModelAssessment, UpdateStudyAssessmentDataOmitAction } from "../../models/ModelAssessment";
 import { setQuery } from "../../models/ModelContentDetailForm";
-import { AppDispatch, RootState } from "../../reducers";
-import { AsyncTrunkReturned, completeStudyAssessment, getStudyAssessmentDetail, updateStudyAssessment } from "../../reducers/assessments";
-import { actSuccess, actWarning } from "../../reducers/notify";
 import LayoutPair from "../ContentEdit/Layout";
 import DetailForm from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";

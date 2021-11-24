@@ -1,14 +1,13 @@
 import { cloneDeep } from "@apollo/client/utilities";
-import { AsyncThunk, AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { ExtendedRequestParams, gqlapi } from "../api";
-import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
+import { GetMyIdDocument, GetMyIdQuery, GetMyIdQueryVariables } from "../api/api-ko.auto";
 import {
   EntityAssessHomeFunStudyArgs,
   EntityGetHomeFunStudyResult,
   EntityListHomeFunStudiesResultItem,
   EntityScheduleFeedbackView,
 } from "../api/api.auto";
-import { apiWaitForOrganizationOfPage } from "../api/extra";
 import PermissionType from "../api/PermissionType";
 import { ListAssessmentRequest, ListAssessmentResult, ListAssessmentResultItem, UpdateAssessmentRequestData } from "../api/type";
 import { d } from "../locale/LocaleManager";
@@ -17,6 +16,7 @@ import permissionCache from "../services/permissionCahceService";
 import { actAsyncConfirm } from "./confirm";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actInfo } from "./notify";
+import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 
 export interface IAssessmentState {
   assessmentDetail: NonNullable<AsyncReturnType<typeof api.assessments.getAssessment>>;
@@ -65,13 +65,6 @@ const initialState: IAssessmentState = {
   contentOutcomes: [],
 };
 
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
-
 type IQueryAssessmentListParams = ListAssessmentRequest & LoadingMetaPayload;
 export const actAssessmentList = createAsyncThunk<ListAssessmentResult, IQueryAssessmentListParams>(
   "assessments/assessmentList",
@@ -106,15 +99,13 @@ interface getAssessmentResponce {
 export const getAssessment = createAsyncThunk<getAssessmentResponce, { id: string } & LoadingMetaPayload>(
   "assessments/getAssessment",
   async ({ id }) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const {
+      data: { myUser },
+    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+      query: GetMyIdDocument,
     });
-    const my_id = meInfo.me?.user_id || "";
+    const my_id = myUser?.node?.id || "";
     const detail = await api.assessments.getAssessment(id);
     return { detail, my_id };
   }
@@ -128,20 +119,12 @@ interface onLoadHomefunDetailResult {
 export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, { id: string } & LoadingMetaPayload>(
   "assessments/onLoadHomefunDetail",
   async ({ id }, { dispatch }) => {
-    // if (true)
-    //   return {
-    //     detail: mockHomefunStudies as EntityGetHomeFunStudyResult,
-    //     feedbacks: mockFeedbacks as EntityScheduleFeedbackView[],
-    //     hasPermissionOfHomefun: true,
-    //   };
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const {
+      data: { myUser },
+    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+      query: GetMyIdDocument,
     });
-    const myUserId = meInfo.me?.user_id ?? "";
+    const myUserId = myUser?.node?.id || "";
     const detail = await api.homeFunStudies.getHomeFunStudy(id);
     const { schedule_id, student_id: user_id } = detail;
     const feedbacks = await api.schedulesFeedbacks.queryFeedback({ schedule_id, user_id });
@@ -189,15 +172,12 @@ type IQueryStudyAssessmentDetailResult = {
 export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDetailResult, { id: string } & LoadingMetaPayload>(
   "assessments/getStudyAssessmentDetail",
   async ({ id }) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const {
+      data: { myUser },
+    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+      query: GetMyIdDocument,
     });
-    const my_id = meInfo.me?.user_id || "";
+    const my_id = myUser?.node?.id || "";
     const detail = await api.studyAssessments.getStudyAssessmentDetail(id);
     return { detail, my_id };
   }

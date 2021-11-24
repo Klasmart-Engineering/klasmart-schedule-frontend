@@ -1,6 +1,10 @@
 import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
+import { contentLists, onLoadContentPreview } from "@reducers/content";
+import { RootState } from "@reducers/index";
+import { actError } from "@reducers/notify";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,9 +21,6 @@ import { useRepeatSchedule } from "../../hooks/useRepeatSchedule";
 import { d } from "../../locale/LocaleManager";
 import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
 import { modelSchedule } from "../../models/ModelSchedule";
-import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, contentLists, onLoadContentPreview } from "../../reducers/content";
-import { actError } from "../../reducers/notify";
 import {
   actOutcomeListLoading,
   changeParticipants,
@@ -38,7 +39,6 @@ import {
   getScheduleParticipant,
   getScheduleTimeViewData,
   getScheduleTimeViewDataByYear,
-  getScheduleUserId,
   getScheduleViewInfo,
   getSchoolsFilterList,
   getSubjectByProgramId,
@@ -95,7 +95,6 @@ function ScheduleContent() {
     mediaList,
     ScheduleViewInfo,
     filterOption,
-    user_id,
     schoolByOrgOrUserData,
     schoolsConnection,
     classesConnection,
@@ -369,7 +368,6 @@ function ScheduleContent() {
   }, [timesTamp]);
 
   React.useEffect(() => {
-    dispatch(getScheduleUserId());
     dispatch(ScheduleFilterPrograms());
     dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(
@@ -454,7 +452,6 @@ function ScheduleContent() {
               stateCurrentCid={stateCurrentCid}
               stateMaterialArr={stateMaterialArr}
               filterOption={filterOption}
-              user_id={user_id}
               schoolByOrgOrUserData={schoolByOrgOrUserData}
               viewSubjectPermission={viewSubjectPermission}
               schoolsConnection={schoolsConnection}

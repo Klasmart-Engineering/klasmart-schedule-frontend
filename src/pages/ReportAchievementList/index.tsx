@@ -1,16 +1,17 @@
+import { getDocumentUrl } from "@api/extra";
+import PermissionType from "@api/PermissionType";
+import { usePermission } from "@hooks/usePermission";
 import { Box, Button } from "@material-ui/core";
+import { RootState } from "@reducers/index";
+import { getAchievementList, getLessonPlan, reportOnload } from "@reducers/report";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { getDocumentUrl } from "../../api/extra";
-import PermissionType from "../../api/PermissionType";
 import { emptyTipAndCreate, permissionTip } from "../../components/TipImages";
-import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { setQuery, toQueryString } from "../../models/ModelContentDetailForm";
-import { RootState } from "../../reducers";
-import { AsyncTrunkReturned, getAchievementList, getLessonPlan, reportOnload } from "../../reducers/report";
 import { ReportAchievementDetail } from "../ReportAchievementDetail";
 import { ReportTitle } from "../ReportDashboard";
 import { AchievementListChart, AchievementListChartProps } from "./AchievementListChart";
@@ -159,6 +160,7 @@ export function ReportAchievementList() {
         value={condition}
         onChange={handleChangeFilter}
         reportMockOptions={reportMockOptions}
+        perm={perm}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />
       {hasPerm ? (

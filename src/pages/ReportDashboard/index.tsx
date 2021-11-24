@@ -106,6 +106,11 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
       fontSize: 12,
     },
   },
+  infoul: {
+    "& ul": {
+      paddingLeft: 10,
+    },
+  },
 }));
 interface ReportItem {
   title: LangRecordId;
@@ -286,7 +291,7 @@ export const ReportTitle = (props: { title: string; info?: string }) => {
         <Typography className={css.reportItemTitleTop}>
           {title}
           {info && (
-            <DiyTooltip title={info}>
+            <DiyTooltip title={<div className={css.infoul} dangerouslySetInnerHTML={{ __html: info }}></div>}>
               <InfoOutlined style={{ marginLeft: "10px", color: "gray" }} />
             </DiyTooltip>
           )}

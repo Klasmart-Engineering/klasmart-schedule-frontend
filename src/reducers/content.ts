@@ -1,15 +1,16 @@
-import { AsyncThunk, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import cloneDeep from "lodash/cloneDeep";
+import uniqBy from "lodash/uniqBy";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import api, { gqlapi } from "../api";
 import {
+  GetMyIdDocument,
+  GetMyIdQuery,
+  GetMyIdQueryVariables,
   OrganizationsDocument,
   OrganizationsQuery,
   OrganizationsQueryVariables,
-  QeuryMeDocument,
-  QeuryMeQuery,
-  QeuryMeQueryVariables
 } from "../api/api-ko.auto";
 import {
   ApiContentBulkOperateRequest,
@@ -22,9 +23,15 @@ import {
   EntityOutcomeCondition,
   EntityQueryContentItem,
   ModelPublishedOutcomeView,
-  ModelSearchPublishedOutcomeResponse
+  ModelSearchPublishedOutcomeResponse,
 } from "../api/api.auto";
-import { apiWaitForOrganizationOfPage, RecursiveFolderItem, recursiveListFolderItems } from "../api/extra";
+import {
+  apiDevelopmentalListIds,
+  apiSkillsListByIds,
+  apiWaitForOrganizationOfPage,
+  RecursiveFolderItem,
+  recursiveListFolderItems,
+} from "../api/extra";
 import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStatus, SearchContentsRequestContentType } from "../api/type";
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
@@ -34,8 +41,15 @@ import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
+import programsHandler, {
+  getDevelopmentalAndSkills,
+  LinkedMockOptions,
+  LinkedMockOptionsItem,
+  _getLinkedMockOptions,
+} from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
+import { AsyncReturnType, AsyncTrunkReturned } from "./type";
 
 interface IContentState {
   history?: ReturnType<typeof useHistory>;
@@ -199,7 +213,7 @@ const initialState: IContentState = {
     teacher_manual_batch: [],
   },
   token: "",
-  page_size: 20,
+  page_size: 0,
   folderTree: [],
   parentFolderInfo: {},
   orgProperty: {},
@@ -214,12 +228,6 @@ export enum Action {
   remove = "remove",
   delete = "delete",
 }
-export type AsyncTrunkReturned<Type> = Type extends AsyncThunk<infer X, any, any> ? X : never;
-type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
-  ? U
-  : T extends (...args: any) => infer U
-  ? U
-  : any;
 
 export const save = createAsyncThunk<EntityContentInfoWithDetails["id"], EntityCreateContentRequest, { state: RootState }>(
   "content/save",
@@ -265,20 +273,6 @@ export const publishWidthAssets = createAsyncThunk<
   return api.contents.publishContentWithAssets(id, { scope: publish_scope });
 });
 
-export interface LinkedMockOptionsItem {
-  id?: string;
-  name?: string;
-  group?: string;
-}
-
-export interface LinkedMockOptions {
-  program?: LinkedMockOptionsItem[];
-  subject?: LinkedMockOptionsItem[];
-  developmental?: LinkedMockOptionsItem[];
-  age?: LinkedMockOptionsItem[];
-  grade?: LinkedMockOptionsItem[];
-  skills?: LinkedMockOptionsItem[];
-}
 export enum ILinkedMockOptionsType {
   contents = "contents",
   LearningOutcomes = "learningOutcomes",
@@ -290,33 +284,8 @@ export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
   default_developmental_id?: string;
 }
 
-export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMockOptionsPayload>(
-  "content/getLinkedMockOptions",
-  async ({ default_program_id, default_subject_ids, default_developmental_id }) => {
-    const program = await api.programs.getProgram();
-    const program_id = default_program_id ? default_program_id : program[0].id;
-    if (program_id) {
-      const subject = await api.subjects.getSubject({ program_id });
-      const subject_ids = default_subject_ids ? default_subject_ids : subject.length ? subject[0].id : undefined;
-      if (!subject_ids)
-        return { program, subject: [], developmental: [], age: [], grade: [], skills: []};
-      const [developmental, age, grade] = await Promise.all([
-        api.developmentals.getDevelopmental({ program_id, subject_ids }),
-        api.ages.getAge({ program_id }),
-        api.grades.getGrade({ program_id }),
-      ]);
-      const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
-      if (developmental_id) {
-        const skills = await api.skills.getSkill({ program_id, developmental_id });
-        return { program, subject, developmental, age, grade, skills};
-      } else {
-        return { program, subject, developmental, age, grade, skills: [] };
-      }
-    } else {
-      return { program, subject: [], developmental: [], age: [], grade: [], skills: [] };
-    }
-  }
-);
+export const getLinkedMockOptions = _getLinkedMockOptions("content/getLinkedMockOptions");
+
 export const getLinkedMockOptionsSkills = createAsyncThunk<LinkedMockOptions["skills"], LinkedMockOptionsPayload>(
   "content/getLinkedMockOptionsSkills",
   async ({ metaLoading, default_program_id: program_id, default_developmental_id: developmental_id }) => {
@@ -331,22 +300,11 @@ export interface IQueryOutcomesOptions extends LoadingMetaPayload {
 export const getOutcomesOptions = createAsyncThunk<LinkedMockOptions, IQueryOutcomesOptions>(
   "content/getOutcomesOptions",
   async ({ metaLoading, program_id, subject_ids, developmental_id }) => {
-    let subject: LinkedMockOptionsItem[] = [];
-    let skills: LinkedMockOptionsItem[] = [];
-    if (program_id) {
-      subject = await api.subjects.getSubject({ program_id });
-    }
-    const [developmental, age, grade] = await Promise.all([
-      api.developmentals.getDevelopmental({ program_id, subject_ids: subject.length === 1 ? subject[0].id : subject_ids }),
-      api.ages.getAge({ program_id }),
-      api.grades.getGrade({ program_id }),
-    ]);
-    if (developmental_id) {
-      skills = await api.skills.getSkill({
-        program_id,
-        developmental_id: developmental.length === 1 ? developmental[0].id : developmental_id,
-      });
-    }
+    console.log(program_id, subject_ids, developmental_id);
+    const [subject = [], age, grade] = program_id ? await programsHandler.getSubjectAgeGradeByProgramId(program_id) : [[], [], []];
+    const subjectIds = subject.length === 1 ? subject[0].id : subject_ids;
+    const [developmental, skills = []] = program_id && subjectIds ? await getDevelopmentalAndSkills(program_id, subjectIds) : [[], []];
+
     return {
       subject,
       developmental,
@@ -359,9 +317,8 @@ export const getOutcomesOptions = createAsyncThunk<LinkedMockOptions, IQueryOutc
 export const getOutcomesFullOptions = createAsyncThunk<LinkedMockOptions, LoadingMetaPayload>(
   "content/getOutcomesFullOptions",
   async () => {
-    const [developmental, skills] = await Promise.all([
-      api.developmentals.getDevelopmental(), api.skills.getSkill()])
-    return {developmental, skills};
+    const [developmental, skills] = await Promise.all([api.developmentals.getDevelopmental(), api.skills.getSkill()]);
+    return { developmental, skills };
   }
 );
 export const getOutcomesOptionSkills = createAsyncThunk<LinkedMockOptions["skills"], IQueryOutcomesOptions>(
@@ -403,7 +360,7 @@ interface onLoadContentEditResult {
 }
 export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoadContentEditPayload>(
   "content/onLoadContentEdit",
-  async ({ id, type, searchMedia,isShare,  }, { dispatch }) => {
+  async ({ id, type, searchMedia, isShare }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
     const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
@@ -422,7 +379,7 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
               })
             )
         : undefined,
-      
+
       dispatch(
         getLinkedMockOptions({
           default_program_id: contentDetail.program,
@@ -430,13 +387,41 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
-      dispatch(getOutcomesFullOptions({})),
+      // dispatch(getOutcomesFullOptions({})),
     ]);
+    dispatch(
+      getOutcomesResourceOptions({
+        developmentals: contentDetail.outcome_entities?.filter((item) => item.developmental).map((item) => item.developmental || "") ?? [],
+        skillIds: contentDetail.outcome_entities?.filter((item) => item.skills).map((item) => item.skills || "") ?? [],
+      })
+    );
 
     return { contentDetail, lesson_types, visibility_settings };
   }
 );
 
+interface getOutcomesResourceOptionsPayload {
+  developmentals: string[]; // category,
+  skillIds: string[]; // subCategory,
+}
+export const getOutcomesResourceOptions = createAsyncThunk<LinkedMockOptions, getOutcomesResourceOptionsPayload>(
+  "content/getOutcomesResourceOptions",
+  async ({ developmentals, skillIds }, { getState }) => {
+    const {
+      content: { outcomesFullOptions },
+    } = getState() as RootState;
+    const filteredDevelopmentals = developmentals.filter((item) => !outcomesFullOptions.developmental?.find((v) => v.id === item));
+    const filteredSkills = skillIds.filter((item) => !outcomesFullOptions.skills?.find((v) => v.id === item));
+
+    const developmentalsResult = await apiDevelopmentalListIds(filteredDevelopmentals);
+
+    const skillsResult = await apiSkillsListByIds(filteredSkills);
+    return {
+      developmental: Object.values(developmentalsResult.data),
+      skills: Object.values(skillsResult.data),
+    };
+  }
+);
 type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
 type IGetContentsResourseResult = AsyncReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
 export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
@@ -455,18 +440,6 @@ export const contentLists = createAsyncThunk<IQueryContentsResult, IQueryContent
   }
 );
 
-type IQueryFolderContentParams = Parameters<typeof api.contentsFolders.queryFolderContent>[0] & LoadingMetaPayload;
-type IQueryFolderContentsResult = AsyncReturnType<typeof api.contentsFolders.queryFolderContent>;
-export const folderContentLists = createAsyncThunk<IQueryFolderContentsResult, IQueryFolderContentParams, { state: RootState }>(
-  "content/folderContentLists",
-  async ({ metaLoading, ...query }, { getState }) => {
-    const {
-      content: { page_size },
-    } = getState();
-    const { list, total } = await api.contentsFolders.queryFolderContent({ ...query, page_size });
-    return { list, total };
-  }
-);
 type IQueryOnLoadContentList = {
   exectSearch?: string;
 } & QueryCondition &
@@ -481,19 +454,14 @@ interface IQyertOnLoadContentListResult {
 }
 export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult, IQueryOnLoadContentList, { state: RootState }>(
   "content/onLoadContentList",
-  async (query, { getState, dispatch }) => {
-    await dispatch(getUserSetting());
-    const {
-      content: { page_size },
-    } = getState();
-    const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search } = query;
+  async (query, { dispatch }) => {
+    const { name, publish_status, author, content_type, page, program_group, order_by, path, exect_search, page_size } = query;
     const nameValue = exect_search === ExectSearch.all ? name : "";
     const contentNameValue = exect_search === ExectSearch.name ? name : "";
     const isExectSearch = exect_search === ExectSearch.name;
     const parent_id = path?.split("/").pop();
     if (parent_id && page === 1) await dispatch(getFolderItemById(parent_id));
     const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    await dispatch(getOrgProperty());
     const submenu = content_type?.split(",").includes(ContentType.assets.toString())
       ? SubmenuType.assets
       : publish_status === PublishStatus.pending && author === Author.self
@@ -556,7 +524,7 @@ export const searchPublishedLearningOutcomes = createAsyncThunk<
   { exactSerch?: string } & EntityOutcomeCondition & LoadingMetaPayload
 >(
   "content/searchPublishedLearningOutcomes",
-  async ({ metaLoading, exactSerch = "search_key", search_key, order_by, assumed, page, ...query }) => {
+  async ({ metaLoading, exactSerch = "search_key", search_key, order_by, assumed, page, ...query }, { dispatch }) => {
     const params = {
       publish_status: OutcomePublishStatus.published,
       page_size: 10,
@@ -567,6 +535,12 @@ export const searchPublishedLearningOutcomes = createAsyncThunk<
       ...query,
     };
     const { list, total } = await api.publishedLearningOutcomes.searchPublishedLearningOutcomes(params);
+    await dispatch(
+      getOutcomesResourceOptions({
+        developmentals: list?.reduce((arr, item) => arr.concat(item.category_ids || []) || "", [] as string[]) ?? [],
+        skillIds: list?.reduce((arr, item) => arr.concat(item.sub_category_ids || []) || "", [] as string[]) ?? [],
+      })
+    );
     return { list, total };
   }
 );
@@ -614,15 +588,12 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
       }
     }
     const contentDetail = await api.contents.getContentById(content_id);
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const { data } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
-      fetchPolicy: "cache-first",
+    const {
+      data: { myUser },
+    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+      query: GetMyIdDocument,
     });
-    const user_id = data?.me?.user_id;
+    const user_id = myUser?.node?.id || "";
     return { contentDetail, user_id, token };
   }
 );
@@ -1078,7 +1049,10 @@ const { actions, reducer } = createSlice({
     [getLinkedMockOptions.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [getLinkedMockOptionsSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptionsSkills>>) => {
+    [getLinkedMockOptionsSkills.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getLinkedMockOptionsSkills>>
+    ) => {
       // alert("success");
       state.linkedMockOptions.skills = payload;
     },
@@ -1088,18 +1062,33 @@ const { actions, reducer } = createSlice({
       state.outcomesFullOptions.program = cloneDeep(state.linkedMockOptions.program);
       state.searchLOListOptions.program = cloneDeep(state.linkedMockOptions.program);
     },
+    [getOutcomesResourceOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesFullOptions>>) => {
+      const developmental = uniqBy([...(state.outcomesFullOptions.developmental || []), ...(payload.developmental || [])], "id");
+      const skills = uniqBy([...(state.outcomesFullOptions.skills || []), ...(payload.skills || [])], "id");
+      state.outcomesFullOptions = {
+        ...state.outcomesFullOptions,
+        developmental,
+        skills,
+      };
+    },
     [getOutcomesOptionSkills.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesOptionSkills>>) => {
       state.searchLOListOptions.skills = payload;
     },
-    [getOutcomesOptionCategorys.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesOptionCategorys>>) => {
+    [getOutcomesOptionCategorys.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getOutcomesOptionCategorys>>
+    ) => {
       state.searchLOListOptions.developmental = payload;
     },
     [getLinkedMockOptionsSkills.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
-    [searchPublishedLearningOutcomes.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchPublishedLearningOutcomes>>) => {
+    [searchPublishedLearningOutcomes.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof searchPublishedLearningOutcomes>>
+    ) => {
       state.outcomeList = payload.list || [];
-      state.OutcomesListTotal = payload.total ||0;
+      state.OutcomesListTotal = payload.total || 0;
     },
     [searchContentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchContentLists>>) => {
       state.mediaList = payload.list || [];
@@ -1117,14 +1106,6 @@ const { actions, reducer } = createSlice({
     [contentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof contentLists>>) => {
       state.contentsList = payload.list || [];
       state.mediaList = payload.list || [];
-      state.total = payload.total;
-    },
-    [folderContentLists.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
-      state.contentsList = initialState.contentsList;
-      state.total = initialState.total;
-    },
-    [folderContentLists.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof folderContentLists>>) => {
-      state.contentsList = payload.list|| [];
       state.total = payload.total;
     },
     [contentLists.rejected.type]: (state, { error }: any) => {},
@@ -1201,7 +1182,7 @@ const { actions, reducer } = createSlice({
       state.token = payload.token;
     },
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size;
+      state.page_size = payload.cms_page_size || initialState.page_size;
     },
     [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
       state.page_size = payload.cms_page_size;

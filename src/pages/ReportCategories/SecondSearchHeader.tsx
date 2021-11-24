@@ -3,10 +3,9 @@ import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
 import { User } from "../../api/api-ko-schema.auto";
-import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
-import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
+import { ICacheData } from "../../services/permissionCahceService";
 import { QueryCondition } from "../ReportAchievementList/types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
@@ -75,15 +74,11 @@ export interface SecondSearchHeaderProps {
   value: QueryCondition;
   onChange: (value: string, tab: keyof QueryCondition) => any;
   teacherList: Pick<User, "user_id" | "user_name">[];
+  perm: ICacheData;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
-  const { onChange, value, teacherList } = props;
+  const { onChange, value, teacherList, perm } = props;
   const css = useStyles();
-  const perm = usePermission([
-    PermissionType.view_reports_610,
-    PermissionType.view_my_school_reports_611,
-    PermissionType.view_my_organizations_reports_612,
-  ]);
   const [anchorElTeacher, setAnchorElTeacher] = React.useState<null | HTMLElement>(null);
   const showItem = (event: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(event.currentTarget);

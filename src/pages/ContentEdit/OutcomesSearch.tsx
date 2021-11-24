@@ -1,12 +1,12 @@
+import { GroupSelect } from "@components/GroupSelect/GroupSelect";
+import { SearchItems } from "@components/SearchcmsList";
+import { d } from "@locale/LocaleManager";
 import { Box, Button, Checkbox, FormControlLabel, Grid, makeStyles, MenuItem, TextField, TextFieldProps } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import clsx from "clsx";
 import React, { ReactNode } from "react";
 import { Control, Controller } from "react-hook-form";
-import { GroupSelect } from "../../components/GroupSelect/GroupSelect";
-import { SearchItems } from "../../components/SearchcmsList";
-import { d } from "../../locale/LocaleManager";
-import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 import { ISearchOutcomeDefault, ISearchOutcomeForm } from "./Outcomes";
 const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   searchField: {

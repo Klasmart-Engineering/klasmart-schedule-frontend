@@ -1,21 +1,11 @@
+import PermissionType from "@api/PermissionType";
+import { OutcomeSetResult } from "@api/type";
+import { usePermission } from "@hooks/usePermission";
 import { Box, makeStyles } from "@material-ui/core";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { cloneDeep } from "lodash";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import PermissionType from "../../api/PermissionType";
-import { OutcomeSetResult } from "../../api/type";
-import ModalBox from "../../components/ModalBox";
-import { usePermission } from "../../hooks/usePermission";
-import { d } from "../../locale/LocaleManager";
-import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
-import { RootState } from "../../reducers";
-import { actSuccess } from "../../reducers/notify";
+import { RootState } from "@reducers/index";
+import { actSuccess } from "@reducers/notify";
 import {
   approve,
-  AsyncTrunkReturned,
   createOutcomeSet,
   deleteOutcome,
   generateShortcode,
@@ -29,7 +19,17 @@ import {
   resetShortCode,
   save,
   updateOutcome,
-} from "../../reducers/outcome";
+} from "@reducers/outcome";
+import { AsyncTrunkReturned } from "@reducers/type";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep } from "lodash";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import ModalBox from "../../components/ModalBox";
+import { d } from "../../locale/LocaleManager";
+import { excluedOutcomeSet, findSetIndex, ids2OutcomeSet, modelOutcomeDetail } from "../../models/ModelOutcomeDetailForm";
 import { OutcomeList } from "../OutcomeList";
 import { OutcomeForm, OutcomeFormProps } from "./OutcomeForm";
 import OutcomeHeader, { OutcomeHeaderProps } from "./OutcomeHeader";
@@ -81,10 +81,11 @@ export default function CreateOutcomings() {
   } = formMethods;
 
   const handleChangeProgram = React.useMemo(
-    () => ([programId]: string[]) => {
-      setCondition("program");
-      dispatch(getNewOptions({ program_id: programId, metaLoading: true }));
-    },
+    () =>
+      ([programId]: string[]) => {
+        setCondition("program");
+        dispatch(getNewOptions({ program_id: programId, metaLoading: true }));
+      },
     [dispatch]
   );
   const handleChangeSubject = React.useMemo(
@@ -97,11 +98,12 @@ export default function CreateOutcomings() {
   );
 
   const handleChangeDevelopmental = React.useMemo(
-    () => ([developmental_id]: string[]) => {
-      setCondition("development");
-      const [program_id] = getValues("program");
-      dispatch(getSpecialSkills({ developmental_id, metaLoading: true, program_id }));
-    },
+    () =>
+      ([developmental_id]: string[]) => {
+        setCondition("development");
+        const [program_id] = getValues("program");
+        dispatch(getSpecialSkills({ developmental_id, metaLoading: true, program_id }));
+      },
     [dispatch, getValues]
   );
 
@@ -141,14 +143,14 @@ export default function CreateOutcomings() {
     () =>
       handleSubmit(async (value) => {
         if (!value.shortcode.trim()) {
-          const resultInfo = ((await dispatch(generateShortcode({ kind: "outcomes" }))) as unknown) as PayloadAction<
+          const resultInfo = (await dispatch(generateShortcode({ kind: "outcomes" }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof generateShortcode>
           >;
           value.shortcode = resultInfo.payload.shortcode;
         }
         setValue("assumed", isAssumed);
         if (outcome_id) {
-          const { payload } = ((await dispatch(updateOutcome({ outcome_id, value }))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(updateOutcome({ outcome_id, value }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateOutcome>
           >;
           if (payload === "ok") {
@@ -158,7 +160,7 @@ export default function CreateOutcomings() {
             setCondition("default");
           }
         } else {
-          const { payload } = ((await dispatch(save(value))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof save>>;
+          const { payload } = (await dispatch(save(value))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
           if (payload?.outcome_id) {
             history.push(`/assessments/outcome-edit?outcome_id=${payload.outcome_id}&status=createDfaft`);
             dispatch(actSuccess(d("Saved Successfully").t("assess_msg_saved_successfully")));
@@ -173,7 +175,7 @@ export default function CreateOutcomings() {
 
   const handleReject = async (reason: string) => {
     if (!reason) return;
-    const { payload } = ((await dispatch(reject({ id: outcome_id, reject_reason: reason }))) as unknown) as PayloadAction<
+    const { payload } = (await dispatch(reject({ id: outcome_id, reject_reason: reason }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof reject>
     >;
     if (payload === "ok") {
@@ -198,7 +200,7 @@ export default function CreateOutcomings() {
       {
         label: d("Delete").t("assess_label_delete"),
         event: async () => {
-          const { payload } = ((await dispatch(deleteOutcome(outcome_id))) as unknown) as PayloadAction<
+          const { payload } = (await dispatch(deleteOutcome(outcome_id))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof deleteOutcome>
           >;
           setOpenStatus(false);
@@ -213,7 +215,7 @@ export default function CreateOutcomings() {
   };
 
   const handleDelete = async () => {
-    const { payload } = ((await dispatch(deleteOutcome(outcome_id))) as unknown) as PayloadAction<AsyncTrunkReturned<typeof deleteOutcome>>;
+    const { payload } = (await dispatch(deleteOutcome(outcome_id))) as unknown as PayloadAction<AsyncTrunkReturned<typeof deleteOutcome>>;
     setOpenStatus(false);
     if (payload === "ok") {
       history.go(-1);
@@ -231,7 +233,7 @@ export default function CreateOutcomings() {
 
   const handlePublish: OutcomeHeaderProps["handlePublish"] = async () => {
     // if (outcomeDetail.publish_status === "draft") {
-    const { payload } = ((await dispatch(publishOutcome(outcomeDetail.outcome_id as string))) as unknown) as PayloadAction<
+    const { payload } = (await dispatch(publishOutcome(outcomeDetail.outcome_id as string))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof publishOutcome>
     >;
     if (payload === "ok") {

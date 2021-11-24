@@ -8,11 +8,10 @@ import clsx from "clsx";
 import React, { forwardRef } from "react";
 import { Class, User } from "../../api/api-ko-schema.auto";
 import { MockOptionsItem } from "../../api/extra";
-import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
-import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { GetStuReportMockOptionsResponse } from "../../reducers/report";
+import { ICacheData } from "../../services/permissionCahceService";
 import { ALL_STUDENT, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
@@ -158,16 +157,11 @@ export interface FilterAchievementReportProps {
   onChange: (value: string, tab: keyof QueryCondition) => any;
   reportMockOptions: GetStuReportMockOptionsResponse;
   isShowStudentList?: Boolean;
+  perm: ICacheData;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { onChange, value, reportMockOptions, isShowStudentList } = props;
+  const { onChange, value, reportMockOptions, isShowStudentList, perm } = props;
   const css = useStyles();
-  const perm = usePermission([
-    PermissionType.view_reports_610,
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_organizations_reports_612,
-    PermissionType.view_my_school_reports_611,
-  ]);
   const getOptions = (list: MockOptionsItem[]) =>
     list &&
     list.map((item) => (

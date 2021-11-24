@@ -2,10 +2,12 @@ import { makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import ReportPagination from "../../ReportPagination/ReportPagination";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+const ROWSPERPAGE = 100;
 const useStyles = makeStyles((theme) => ({
   assetsContent: {
-    height: "100%",
+    height: "calc(100% - 32px)",
     width: "90%",
     overflowY: "scroll",
     overflowX: "hidden",
@@ -28,20 +30,28 @@ interface file {
 
 export default function AssetPdf(props: file) {
   const css = useStyles();
-  const [numPages, setNumPages] = useState<number>(0);
+  const [page, setPage] = useState(1);
+  const [numPages, setNumPages] = useState<number>(1);
   function onDocumentLoadSuccess(pdf: any) {
     setNumPages(pdf.numPages);
-    console.log(pdf);
   }
+  const num = numPages < 100 ? numPages : (page - 1) * ROWSPERPAGE + ROWSPERPAGE > numPages ? numPages - (page - 1) * ROWSPERPAGE : 100;
   return (
-    <div className={css.assetsContent}>
-      <Document file={props.src} onLoadSuccess={onDocumentLoadSuccess}>
-        {/* <Page pageNumber={1}/> */}
-        {Array.from(new Array(numPages), (el, index) => (
-          <Page className={css.pageCon} key={`page_${index + 1}`} pageNumber={index + 1} />
-        ))}
-      </Document>
-    </div>
+    <>
+      <div className={css.assetsContent}>
+        <Document file={props.src} onLoadSuccess={onDocumentLoadSuccess}>
+          {Array.from(new Array(num), (el, index) => (
+            <Page
+              className={css.pageCon}
+              key={`page_${index + 1 + (page - 1) * ROWSPERPAGE}`}
+              pageNumber={index + 1 + (page - 1) * ROWSPERPAGE}
+            />
+          ))}
+        </Document>
+      </div>
+      {numPages > ROWSPERPAGE && (
+        <ReportPagination page={page} count={numPages} rowsPerPage={ROWSPERPAGE} onChangePage={(page) => setPage(page)} />
+      )}
+    </>
   );
-  // return <embed  className={css.assetsContent} src={`${props.src}#toolbar=0`} />;
 }

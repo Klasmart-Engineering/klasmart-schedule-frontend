@@ -1,3 +1,12 @@
+import { EntityContentInfoWithDetails, EntityTeacherManualFile } from "@api/api.auto";
+import { apiResourcePathById } from "@api/extra";
+import { CropImage } from "@components/CropImage";
+import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "@components/FormattedTextField";
+import { FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "@components/MultipleUploader";
+import { SingleUploader } from "@components/SingleUploader";
+import useQueryCms from "@hooks/useQueryCms";
+import { LangRecordId } from "@locale/lang/type";
+import { d, t } from "@locale/LocaleManager";
 import {
   Box,
   Button,
@@ -20,25 +29,18 @@ import {
 } from "@material-ui/core";
 import { AccessTime, CancelRounded, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
+import { ContentDetailForm, formattedTime, toMapGroup } from "@models/ModelContentDetailForm";
+import { ModelLessonPlan, Segment } from "@models/ModelLessonPlan";
+import { CreateAllDefaultValueAndKeyResult } from "@models/ModelMockOptions";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
+import { actError } from "@reducers/notify";
 import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { ContentEditRouteParams, useQueryCms } from ".";
-import { EntityContentInfoWithDetails, EntityTeacherManualFile } from "../../api/api.auto";
-import { apiResourcePathById } from "../../api/extra";
-import { CropImage } from "../../components/CropImage";
-import { decodeArray, decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "../../components/FormattedTextField";
-import { FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
-import { SingleUploader } from "../../components/SingleUploader";
-import { LangRecordId } from "../../locale/lang/type";
-import { d, t } from "../../locale/LocaleManager";
-import { ContentDetailForm, formattedTime, toMapGroup } from "../../models/ModelContentDetailForm";
-import { ModelLessonPlan, Segment } from "../../models/ModelLessonPlan";
-import { CreateAllDefaultValueAndKeyResult } from "../../models/ModelMockOptions";
-import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
-import { actError } from "../../reducers/notify";
+import { ContentEditRouteParams } from ".";
 import { HtmlTooltip } from "../Schedule/ScheduleAttachment";
+
 const useStyles = makeStyles(({ breakpoints, palette }) => ({
   details: {
     minHeight: 800,
@@ -250,6 +252,7 @@ export default function Details(props: DetailsProps) {
     onChangeSubject,
     disabled,
   } = props;
+  console.log(linkedMockOptions);
   const css = useStyles();
   const { lesson } = useParams<ContentEditRouteParams>();
   const { id } = useQueryCms();

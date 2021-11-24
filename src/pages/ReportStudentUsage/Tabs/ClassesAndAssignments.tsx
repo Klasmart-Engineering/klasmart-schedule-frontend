@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { getLastedMonths } from "@utilities/dateUtilities";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { d, t } from "../../../locale/LocaleManager";
-import { getTimeDots, sortByStudentName } from "../../../models/ModelReports";
+import { sortByStudentName } from "../../../models/ModelReports";
 import { RootState } from "../../../reducers";
 import { getClassesAssignments, getClassesAssignmentsOverview, getClassesAssignmentsUnattended } from "../../../reducers/report";
 import ClassesAndAssignmentsTable from "../components/ClassesAndAssignmentsTable";
@@ -63,10 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export interface ILatestThreeMonths {
-  latestThreeMonthsDate: number[];
-  latestThreeMonthsDots: string[];
-}
+
 export function formatTime(time: any) {
   var date = new Date(time);
   return Math.floor(date.getTime() / 1000);
@@ -121,12 +119,7 @@ export default function ClassesAndAssignments() {
     ];
   }, [overview]);
   const type = topChatData[state.activeTab].id;
-  const latestThreeMonths = getTimeDots();
-  const durations = [
-    `${formatTime(latestThreeMonths.latestThreeMonthsDots[0])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}`,
-    `${formatTime(latestThreeMonths.latestThreeMonthsDots[1])}-${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}`,
-    `${formatTime(latestThreeMonths.latestThreeMonthsDots[2])}-${Math.floor((new Date() as any) / 1000)}`,
-  ];
+  const durations = getLastedMonths(3);
 
   const handleclickUnattendedTable = React.useMemo(
     () => (class_id?: string) => {
@@ -187,7 +180,6 @@ export default function ClassesAndAssignments() {
         page={page}
         handleChangePage={handleChangePage}
         classesAssignments={classesAssignments}
-        latestThreeMonths={latestThreeMonths}
         classList={classList}
         classesAssignmentsUnattend={classesAssignmentsUnattend}
         handleclickUnattendedTable={handleclickUnattendedTable}
