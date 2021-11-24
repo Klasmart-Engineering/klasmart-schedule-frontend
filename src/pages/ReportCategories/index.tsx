@@ -35,8 +35,8 @@ export function ReportCategories() {
   }, [dispatch]);
   useEffect(() => {
     if (!teacherList.length) return;
-    dispatch(getSkillCoverageReport({ teacher_id: teacherList[0].user_id, metaLoading: true }));
-    history.replace({ search: toQueryString({ teacher_id: teacherList[0].user_id }) });
+    dispatch(getSkillCoverageReport({ teacher_id: teacherList[0].id, metaLoading: true }));
+    history.replace({ search: toQueryString({ teacher_id: teacherList[0].id }) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, teacherList.length]);
   return (

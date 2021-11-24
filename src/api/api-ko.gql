@@ -403,42 +403,7 @@ query schoolByOrgQuery($organization_id: ID!) {
     }
   }
 }
-query teacherListBySchoolId($school_id: ID!) {
-  school(school_id: $school_id) {
-    classes {
-      status
-      class_id
-      teachers {
-        user_id
-        user_name
-      }
-    }
-  }
-}
-query notParticipantsByOrganization($organization_id: ID!) {
-  organization(organization_id: $organization_id) {
-    classes {
-      status
-      schools {
-        school_id
-        school_name
-      }
-      teachers {
-        user_id
-        user_name
-        school_memberships {
-          school_id
-          school {
-            school_name
-            organization {
-              organization_id
-            }
-          }
-        }
-      }
-    }
-  }
-}
+
 
 query schoolAndTeacherByOrg($organization_id: ID!) {
   organization(organization_id: $organization_id) {
@@ -664,6 +629,63 @@ query getMyId{
      id
      familyName
      givenName
+    }
+  }
+}
+
+query classesConnection($organization_id: UUID!) {
+   classesConnection(direction: FORWARD,
+    filter: 
+    {
+    AND: [
+      {
+        organizationId: {
+          operator: eq
+          value: $organization_id
+        }
+      }
+      {
+        status: {
+          operator: eq
+          value: "active"
+        }
+      }
+    ]
+    }
+    ){
+    totalCount
+    edges{
+      node{
+        id
+        name
+        status
+        schools{
+          userStatus
+          id
+          name
+        }
+        teachersConnection(direction:FORWARD 
+          filter:
+          {userStatus:{operator:eq value:"active"},organizationUserStatus:{operator:eq value:"active"}}
+          ){
+          totalCount
+          edges{
+            node{
+              id
+              givenName
+              familyName
+              status
+            }
+          }
+          pageInfo{
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        }
+      }
+      
     }
   }
 }

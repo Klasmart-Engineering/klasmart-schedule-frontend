@@ -4,6 +4,9 @@ import { ApolloQueryResult } from "@apollo/client";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
+  ClassesConnectionDocument,
+  ClassesConnectionQuery,
+  ClassesConnectionQueryVariables,
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
   ClassesSchoolsByOrganizationQueryVariables,
@@ -84,7 +87,6 @@ import {
   getClassAttendanceFeedback,
   getLearnOutcomeAchievementFeedback,
   getTimeOffSecond,
-  ModelReport,
   sortByStudentName,
 } from "../models/ModelReports";
 import { ReportFilter, ReportOrderBy } from "../pages/ReportAchievementList/types";
@@ -109,7 +111,7 @@ interface IreportState {
   student_name: string | undefined;
   reportMockOptions: GetReportMockOptionsResponse;
   categoriesPage: {
-    teacherList: Pick<User, "user_id" | "user_name">[];
+    teacherList: Item[];
     categories: EntityTeacherReportCategory[];
   };
   stuReportMockOptions: GetStuReportMockOptionsResponse;
@@ -605,7 +607,7 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
           );
       }
       // 3 去重
-      teacherList = ModelReport.teacherListSetDiff(teacherList);
+      teacherList = uniqBy(teacherList, "user_id");
       finalTearchId = teacher_id || (teacherList && teacherList[0]?.user_id) || "";
       if (!teacherList || !teacherList[0])
         return {
@@ -668,60 +670,92 @@ export const reportOnload = createAsyncThunk<GetReportMockOptionsResponse, GetRe
 export const resetReportMockOptions = createAsyncThunk<null>("report/resetReportMockOptions", () => {
   return null;
 });
-export const reportCategoriesOnload = createAsyncThunk<Pick<User, "user_id" | "user_name">[], LoadingMetaPayload>(
-  "report/reportCategoriesOnload",
-  async () => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    //拉取我的user_id
-    const {
-      data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
-    });
-    const my_id = myUser?.node?.id || "";
-    const perm = await permissionCache.usePermission([
-      PermissionType.view_my_reports_614,
-      PermissionType.view_reports_610,
-      PermissionType.view_my_school_reports_611,
-      PermissionType.view_my_organizations_reports_612,
-    ]);
-    let teacherList: Pick<User, "user_id" | "user_name">[] = [];
-    if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
-      if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
-        const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
-          query: TeacherByOrgIdDocument,
-          variables: {
-            organization_id,
-          },
-        });
-        data.organization?.classes
-          ?.filter((item) => item?.status === Status.Active)
-          .forEach((classItem) => {
-            teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-          });
-      }
-      if (perm.view_my_school_reports_611 || perm.view_reports_610) {
-        const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
-          query: GetSchoolTeacherDocument,
-          variables: {
-            user_id: my_id,
-          },
-        });
-        data.user?.school_memberships
-          ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
-          .map((schoolItem) =>
-            schoolItem?.school?.classes
-              ?.filter((item) => item?.status === Status.Active)
-              ?.forEach((classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[])))
-          );
-      }
-      teacherList = uniqBy(teacherList, "user_id");
-    } else if (perm.view_my_reports_614) {
-      teacherList = [{ user_id: my_id, user_name: `${myUser?.node?.givenName || ""} ${myUser?.node?.familyName || ""}` }];
+export interface Item {
+  id: string;
+  name?: string;
+}
+export const reportCategoriesOnload = createAsyncThunk<Item[], LoadingMetaPayload>("report/reportCategoriesOnload", async () => {
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const {
+    data: { myUser },
+  } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+    query: GetMyIdDocument,
+  });
+  const my_id = myUser?.node?.id || "";
+  const perm = await permissionCache.usePermission([
+    PermissionType.view_my_reports_614,
+    PermissionType.view_reports_610,
+    PermissionType.view_my_school_reports_611,
+    PermissionType.view_my_organizations_reports_612,
+  ]);
+  let teacherList: Item[] = [];
+  const { data } = await gqlapi.query<ClassesConnectionQuery, ClassesConnectionQueryVariables>({
+    query: ClassesConnectionDocument,
+    variables: { organization_id },
+  });
+  if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
+    if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
+      // const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
+      //   query: TeacherByOrgIdDocument,
+      //   variables: {
+      //     organization_id,
+      //   },
+      // });
+      // data.organization?.classes
+      //   ?.filter((item) => item?.status === Status.Active)
+      //   .forEach((classItem) => {
+      //     teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
+      //   });
+      data.classesConnection?.edges?.forEach((item) => {
+        teacherList = teacherList.concat(
+          item?.node?.teachersConnection?.edges?.map((teacherItem) => ({
+            id: teacherItem?.node?.id || "",
+            name: teacherItem?.node?.givenName + "" + teacherItem?.node?.familyName,
+          })) || []
+        );
+      });
     }
-    return teacherList;
+    if (perm.view_my_school_reports_611 || perm.view_reports_610) {
+      // const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
+      //   query: GetSchoolTeacherDocument,
+      //   variables: {
+      //     user_id: my_id,
+      //   },
+      // });
+      // data.user?.school_memberships
+      //   ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
+      //   .map((schoolItem) =>
+      //     schoolItem?.school?.classes
+      //       ?.filter((item) => item?.status === Status.Active)
+      //       ?.forEach((classItem) => (teacherList = teacherList?.concat(classItem?.teachers?.map(item => ({id: item?.user_id, name: item?.user_name})))))
+      //   );
+      data.classesConnection?.edges
+        ?.filter((item) => item?.node?.schools?.length)
+        .forEach((item) => {
+          teacherList = teacherList.concat(
+            item?.node?.teachersConnection?.edges?.map((teacherItem) => ({
+              id: teacherItem?.node?.id || "",
+              name: teacherItem?.node?.givenName + "" + teacherItem?.node?.familyName,
+            })) || []
+          );
+        });
+    }
+  } else if (perm.view_my_reports_614) {
+    teacherList = [{ id: my_id, name: myUser?.node?.givenName + " " + myUser?.node?.familyName || "" }];
   }
-);
+  teacherList = uniqBy(teacherList, "id");
+  // console.log("teacherList=", teacherList)
+
+  // let classList: Item[] = [];
+  // data.classesConnection?.edges?.forEach(item => {
+  //  if(!!(item?.node?.teachersConnection?.edges?.find(teacherItem => teacherItem?.node?.id === teacherList[0].id))){
+  //     classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || ""}])
+  //  }
+
+  //  })
+  //  console.log("classList=", classList)
+  return teacherList;
+});
 interface getSkillCoverageReportPayload extends LoadingMetaPayload {
   teacher_id: string;
 }
