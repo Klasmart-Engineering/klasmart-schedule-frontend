@@ -483,7 +483,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
         organization_id,
       },
     }),
-    programsHandler.getProgramsOptions(true),
+    programsHandler.getProgramsOptions(true, true),
   ]);
 });
 
@@ -943,7 +943,7 @@ export const onLoadLearningSummary = createAsyncThunk<
   }
   _student_id = isOnlyStudent ? myUserId : _student_id;
 
-  subjects = await programsHandler.getAllSubjects(true);
+  subjects = await programsHandler.getAllSubjects(true, true);
 
   subjects = [{ id: "all", name: d("All").t("report_label_all") }, ...subjects];
   _subject_id = subject_id ? subject_id : subjects[0].id;
