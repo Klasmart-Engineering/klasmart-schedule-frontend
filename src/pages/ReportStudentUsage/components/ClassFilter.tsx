@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
+import { orderByASC } from "@utilities/dataUtilities";
 import uniqBy from "lodash/uniqBy";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -61,7 +62,7 @@ export default function ClassFilter({ onChange }: IProps) {
           label: item.school_name,
         }))
         .concat(studentUsage.noneSchoolClasses.length > 0 ? selectNoneSchoolOption : []) as MutiSelect.ISelect[]) || [];
-    return schoolOptions;
+    return orderByASC(schoolOptions, "label");
   };
 
   const getAllClassList = () => {
@@ -82,7 +83,7 @@ export default function ClassFilter({ onChange }: IProps) {
       }
     }
     classOptions = uniqBy(classOptions, "value");
-    return classOptions;
+    return orderByASC(classOptions, "label");
   };
 
   const schoolOptions = React.useMemo<MutiSelect.ISelect[]>(getAllSchoolList, [state.schoolId, studentUsage.schoolList]);

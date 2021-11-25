@@ -29,7 +29,7 @@ export function getImageDimension(file: FileLike): Promise<ImageDimesion> {
       resolve({ width, height });
     };
     img.onerror = reject;
-    img.src = URL.createObjectURL(file);
+    img.src = URL.createObjectURL(file as File);
   });
 }
 export interface BaseUploaderProps {

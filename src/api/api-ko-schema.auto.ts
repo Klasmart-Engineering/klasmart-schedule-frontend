@@ -165,6 +165,11 @@ export type CategoriesConnectionResponse = IConnectionResponse & {
   totalCount?: Maybe<Scalars["Int"]>;
 };
 
+export type CategoriesMutationResult = {
+  __typename?: "CategoriesMutationResult";
+  categories: Array<CategoryConnectionNode>;
+};
+
 export type Category = {
   __typename?: "Category";
   delete?: Maybe<Scalars["Boolean"]>;
@@ -214,14 +219,6 @@ export enum CategorySortBy {
 export type CategorySortInput = {
   field: CategorySortBy;
   order: SortOrder;
-};
-
-export type CategorySummaryNode = {
-  __typename?: "CategorySummaryNode";
-  id: Scalars["ID"];
-  name?: Maybe<Scalars["String"]>;
-  status: Status;
-  system: Scalars["Boolean"];
 };
 
 export type Class = {
@@ -429,6 +426,12 @@ export type ContactInfoInput = {
   phone?: Maybe<Scalars["String"]>;
 };
 
+export type CreateCategoryInput = {
+  name: Scalars["String"];
+  organizationId: Scalars["ID"];
+  subcategories?: Maybe<Array<Scalars["ID"]>>;
+};
+
 export type CreateUserInput = {
   alternateEmail?: Maybe<Scalars["String"]>;
   alternatePhone?: Maybe<Scalars["String"]>;
@@ -553,6 +556,7 @@ export type Mutation = {
   category?: Maybe<Category>;
   class?: Maybe<Class>;
   classes?: Maybe<Array<Maybe<Class>>>;
+  createCategories?: Maybe<CategoriesMutationResult>;
   createUsers?: Maybe<UsersMutationResult>;
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
@@ -576,6 +580,7 @@ export type Mutation = {
   subject?: Maybe<Subject>;
   /** @deprecated Moved to auth service */
   switch_user?: Maybe<User>;
+  updateUsers?: Maybe<UsersMutationResult>;
   uploadAgeRangesFromCSV?: Maybe<File>;
   uploadCategoriesFromCSV?: Maybe<File>;
   uploadClassesFromCSV?: Maybe<File>;
@@ -608,6 +613,10 @@ export type MutationCategoryArgs = {
 
 export type MutationClassArgs = {
   class_id: Scalars["ID"];
+};
+
+export type MutationCreateCategoriesArgs = {
+  input: Array<CreateCategoryInput>;
 };
 
 export type MutationCreateUsersArgs = {
@@ -691,6 +700,10 @@ export type MutationSwitch_UserArgs = {
   user_id: Scalars["ID"];
 };
 
+export type MutationUpdateUsersArgs = {
+  input: Array<UpdateUserInput>;
+};
+
 export type MutationUploadAgeRangesFromCsvArgs = {
   file: Scalars["Upload"];
 };
@@ -762,6 +775,10 @@ export type MyUser = {
   node?: Maybe<UserConnectionNode>;
   /** 'operator' default = 'AND' */
   organizationsWithPermissions?: Maybe<OrganizationsConnectionResponse>;
+  /** Returns a paginated response of the permissions the user has in a given organization. */
+  permissionsInOrganization?: Maybe<PermissionsConnectionResponse>;
+  /** Returns a paginated response of the permissions the user has in a given school. */
+  permissionsInSchool?: Maybe<PermissionsConnectionResponse>;
   profiles: Array<UserConnectionNode>;
   /** 'operator' default = 'AND' */
   schoolsWithPermissions?: Maybe<SchoolsConnectionResponse>;
@@ -785,6 +802,24 @@ export type MyUserOrganizationsWithPermissionsArgs = {
   operator?: Maybe<LogicalOperator>;
   permissionIds: Array<Scalars["String"]>;
   sort?: Maybe<OrganizationSortInput>;
+};
+
+export type MyUserPermissionsInOrganizationArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<PermissionFilter>;
+  organizationId: Scalars["ID"];
+  sort?: Maybe<PermissionSortInput>;
+};
+
+export type MyUserPermissionsInSchoolArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<PermissionFilter>;
+  schoolId: Scalars["ID"];
+  sort?: Maybe<PermissionSortInput>;
 };
 
 export type MyUserSchoolsWithPermissionsArgs = {
@@ -2012,7 +2047,7 @@ export type SubjectDeleteArgs = {
 
 export type SubjectConnectionNode = {
   __typename?: "SubjectConnectionNode";
-  categories?: Maybe<Array<CategorySummaryNode>>;
+  categories?: Maybe<Array<CategoryConnectionNode>>;
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   status: Status;
@@ -2089,6 +2124,21 @@ export enum UuidOperator {
   Eq = "eq",
   Neq = "neq",
 }
+
+export type UpdateUserInput = {
+  alternateEmail?: Maybe<Scalars["String"]>;
+  alternatePhone?: Maybe<Scalars["String"]>;
+  avatar?: Maybe<Scalars["String"]>;
+  dateOfBirth?: Maybe<Scalars["String"]>;
+  email?: Maybe<Scalars["String"]>;
+  familyName?: Maybe<Scalars["String"]>;
+  gender?: Maybe<Scalars["String"]>;
+  givenName?: Maybe<Scalars["String"]>;
+  id: Scalars["ID"];
+  phone?: Maybe<Scalars["String"]>;
+  primaryUser?: Maybe<Scalars["Boolean"]>;
+  username?: Maybe<Scalars["String"]>;
+};
 
 export type User = {
   __typename?: "User";

@@ -2,6 +2,7 @@ import { Class, Program, School, Subject, User, UserFilter, UuidOperator } from 
 import api, { gqlapi } from "@api/index";
 import { ApolloQueryResult } from "@apollo/client";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { orderByASC } from "@utilities/dataUtilities";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
   ClassesSchoolsByOrganizationDocument,
@@ -927,12 +928,12 @@ export const onLoadLearningSummary = createAsyncThunk<
     schools = uniqBy(_schools, "id");
     _school_id = school_id ? school_id : "all";
     const school = learningSummary.schools.find((item) => item.id === _school_id);
-    const _classes =
+    let _classes =
       school?.classes?.map((item) => ({
         id: item.id,
         name: item.name,
       })) || [];
-
+    _classes = [{ id: "all", name: d("All").t("report_label_all") }, ...orderByASC(_classes, "name")];
     classes = uniqBy(_classes, "id");
     _class_id = class_id ? class_id : "all";
     students =
@@ -1325,7 +1326,7 @@ const { actions, reducer } = createSlice({
         canSelectTeacher = false;
       }
       state.schoolClassesTeachers = {
-        classList,
+        classList: orderByASC(classList, "class_name"),
         schoolList,
         classTeacherList: teacherList,
         hasNoneSchoolClasses,
@@ -1420,8 +1421,9 @@ const { actions, reducer } = createSlice({
       };
     },
 
-    [getLessonPlan.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
-      if (!payload) return;
+    [getLessonPlan.fulfilled.type]: (state, action: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
+      if (!action.payload) return;
+      const payload = orderByASC(action.payload, "name");
       state.reportMockOptions.lessonPlanList = payload;
       state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0].id || "");
       state.stuReportMockOptions.lessonPlanList = payload;
@@ -1443,7 +1445,12 @@ const { actions, reducer } = createSlice({
 
     [reportOnload.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof reportOnload>>) => {
       const { reportList, ...reportMockOptions } = payload;
-      state.reportMockOptions = { ...reportMockOptions };
+      state.reportMockOptions = {
+        ...reportMockOptions,
+        classList: orderByASC(reportMockOptions.classList, "class_name"),
+        lessonPlanList: orderByASC(reportMockOptions.lessonPlanList, "name"),
+        teacherList: orderByASC(reportMockOptions.teacherList, "user_name"),
+      };
       state.reportList = reportList;
     },
     [reportOnload.pending.type]: (state) => {
@@ -1456,7 +1463,7 @@ const { actions, reducer } = createSlice({
     [getStudentUsageMaterial.rejected.type]: (state) => {},
 
     [reportCategoriesOnload.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof reportCategoriesOnload>>) => {
-      state.categoriesPage.teacherList = payload;
+      state.categoriesPage.teacherList = orderByASC(payload, "user_name");
     },
     [getSkillCoverageReport.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSkillCoverageReport>>) => {
       state.categoriesPage.categories = payload;
@@ -1541,16 +1548,19 @@ const { actions, reducer } = createSlice({
         state.summaryReportOptions.student_id = payload.student_id;
       }
       if (payload.classes) {
-        state.summaryReportOptions.classes = payload.classes;
+        state.summaryReportOptions.classes = uniqBy(
+          [{ id: "all", name: d("All").t("report_label_all") }, ...orderByASC(payload.classes, "name")],
+          "id"
+        );
       }
       if (payload.teachers) {
-        state.summaryReportOptions.teachers = payload.teachers;
+        state.summaryReportOptions.teachers = orderByASC(payload.teachers, "name");
       }
       if (payload.students) {
-        state.summaryReportOptions.students = payload.students;
+        state.summaryReportOptions.students = orderByASC(payload.students, "name");
       }
       if (payload.subjects) {
-        state.summaryReportOptions.subjects = payload.subjects;
+        state.summaryReportOptions.subjects = orderByASC(payload.subjects, "name");
         state.summaryReportOptions.subject_id = payload.subject_id;
       }
       if (payload.student_id === "none" || payload.subject_id === "none") {

@@ -161,7 +161,7 @@ export enum HomeFunAssessmentStatus {
 
 export type GetOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
 export type GetOutcomeList = NonNullable<GetOutcomeListResult["list"]>;
-export type GetOutcomeDetail = NonNullable<GetOutcomeListResult["list"]>[0];
+export type GetOutcomeDetail = AsyncReturnType<typeof api.learningOutcomes.getLearningOutcomesById>;
 export type OutcomeSetResult = NonNullable<AsyncReturnType<typeof api.sets.pullOutcomeSet>["sets"]>;
 
 export enum MilestoneStatus {

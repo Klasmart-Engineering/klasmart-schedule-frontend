@@ -527,7 +527,7 @@ query getProgramsAndSubjects($count: PageSize!,  $cursor: String!, $filter: Prog
   directionArgs: {
     count:  $count
     cursor: $cursor
-  }  
+  }
   direction: FORWARD
 ){
     totalCount
@@ -643,7 +643,15 @@ query getMyId{
   }
 }
 
-query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
+query getClassByInfo(
+  $filter: ClassFilter,
+  $direction: ConnectionDirection!,
+  $studentFilter: UserFilter,
+  $teacherFilter: UserFilter,
+  $studentCursor: String,
+  $studentDirection: ConnectionDirection,
+  $teacherCursor: String,
+  $teacherDirection: ConnectionDirection) {
 classesConnection(
     filter: $filter,
     direction: $direction
@@ -653,7 +661,7 @@ classesConnection(
       node {
         id
         name
-        studentsConnection(cursor: $studentCursor, direction: $studentDirection) {
+        studentsConnection(filter: $studentFilter, cursor: $studentCursor, direction: $studentDirection) {
           totalCount
           edges {
             node {
@@ -670,7 +678,7 @@ classesConnection(
             endCursor
           }
         },
-        teachersConnection(cursor: $teacherCursor, direction: $teacherDirection) {
+        teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: $teacherDirection) {
           totalCount
           edges {
             node {

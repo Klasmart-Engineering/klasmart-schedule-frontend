@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, MenuItem, TextField, Theme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/styles";
+import { orderByASC } from "@utilities/dataUtilities";
 import clsx from "clsx";
-import { orderBy, uniqBy } from "lodash";
+import { uniqBy } from "lodash";
 import React from "react";
 import { useSelector } from "react-redux";
 import MutiSelect from "../../../../components/MutiSelect";
@@ -99,7 +100,7 @@ export default function TeacherFilter({ onChange }: IProps) {
       return prev;
     }, []);
     teacherOptions = uniqBy(teacherOptions, "value");
-    return orderBy(teacherOptions, [(item) => item.label.toLowerCase()], ["asc"]);
+    return orderByASC(teacherOptions, "label");
   };
 
   const getClassList = (): MutiSelect.ISelect[] => {
