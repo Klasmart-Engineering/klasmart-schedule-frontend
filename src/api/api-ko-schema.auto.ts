@@ -26,6 +26,11 @@ export type AddOrganizationRolesToUserInput = {
   userId: Scalars["ID"];
 };
 
+export type AddSubcategoriesToCategoryInput = {
+  categoryId: Scalars["ID"];
+  subcategoryIds: Array<Scalars["ID"]>;
+};
+
 export type AddUsersToOrganizationInput = {
   organizationId: Scalars["ID"];
   organizationRoleIds: Array<Scalars["ID"]>;
@@ -432,6 +437,11 @@ export type CreateCategoryInput = {
   subcategories?: Maybe<Array<Scalars["ID"]>>;
 };
 
+export type CreateSubcategoryInput = {
+  name: Scalars["String"];
+  organizationId: Scalars["ID"];
+};
+
 export type CreateUserInput = {
   alternateEmail?: Maybe<Scalars["String"]>;
   alternatePhone?: Maybe<Scalars["String"]>;
@@ -551,12 +561,14 @@ export type MembershipUpdate = {
 export type Mutation = {
   __typename?: "Mutation";
   addOrganizationRolesToUsers?: Maybe<UsersMutationResult>;
+  addSubcategoriesToCategories?: Maybe<CategoriesMutationResult>;
   addUsersToOrganizations?: Maybe<OrganizationsMutationResult>;
   age_range?: Maybe<AgeRange>;
   category?: Maybe<Category>;
   class?: Maybe<Class>;
   classes?: Maybe<Array<Maybe<Class>>>;
   createCategories?: Maybe<CategoriesMutationResult>;
+  createSubcategories?: Maybe<SubcategoriesMutationResult>;
   createUsers?: Maybe<UsersMutationResult>;
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
@@ -576,10 +588,12 @@ export type Mutation = {
   roles?: Maybe<Array<Maybe<Role>>>;
   school?: Maybe<School>;
   setBranding?: Maybe<Branding>;
+  /** @deprecated Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2457174175 */
   subcategory?: Maybe<Subcategory>;
   subject?: Maybe<Subject>;
   /** @deprecated Moved to auth service */
   switch_user?: Maybe<User>;
+  updateSubcategories?: Maybe<SubcategoriesMutationResult>;
   updateUsers?: Maybe<UsersMutationResult>;
   uploadAgeRangesFromCSV?: Maybe<File>;
   uploadCategoriesFromCSV?: Maybe<File>;
@@ -597,6 +611,10 @@ export type Mutation = {
 
 export type MutationAddOrganizationRolesToUsersArgs = {
   input: Array<AddOrganizationRolesToUserInput>;
+};
+
+export type MutationAddSubcategoriesToCategoriesArgs = {
+  input: Array<AddSubcategoriesToCategoryInput>;
 };
 
 export type MutationAddUsersToOrganizationsArgs = {
@@ -617,6 +635,10 @@ export type MutationClassArgs = {
 
 export type MutationCreateCategoriesArgs = {
   input: Array<CreateCategoryInput>;
+};
+
+export type MutationCreateSubcategoriesArgs = {
+  input: Array<CreateSubcategoryInput>;
 };
 
 export type MutationCreateUsersArgs = {
@@ -698,6 +720,10 @@ export type MutationSubjectArgs = {
 
 export type MutationSwitch_UserArgs = {
   user_id: Scalars["ID"];
+};
+
+export type MutationUpdateSubcategoriesArgs = {
+  input: Array<UpdateSubcategoryInput>;
 };
 
 export type MutationUpdateUsersArgs = {
@@ -862,6 +888,7 @@ export type Organization = {
   createOrUpdateCategories?: Maybe<Array<Maybe<Category>>>;
   createOrUpdateGrades?: Maybe<Array<Maybe<Grade>>>;
   createOrUpdatePrograms?: Maybe<Array<Maybe<Program>>>;
+  /** @deprecated Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2457174175 */
   createOrUpdateSubcategories?: Maybe<Array<Maybe<Subcategory>>>;
   createOrUpdateSubjects?: Maybe<Array<Maybe<Subject>>>;
   createRole?: Maybe<Role>;
@@ -2124,6 +2151,11 @@ export enum UuidOperator {
   Eq = "eq",
   Neq = "neq",
 }
+
+export type UpdateSubcategoryInput = {
+  id: Scalars["ID"];
+  name?: Maybe<Scalars["String"]>;
+};
 
 export type UpdateUserInput = {
   alternateEmail?: Maybe<Scalars["String"]>;

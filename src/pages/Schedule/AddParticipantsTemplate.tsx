@@ -185,7 +185,7 @@ export default function AddParticipantsTemplate(props: InfoProps) {
   const [name, setName] = React.useState("");
 
   const handleSearch = async () => {
-    if (getParticipantsData) {
+    if (getParticipantsData && !loading) {
       setLoading(true);
       dispatch(resetParticipantsData());
       settScrollTop(0);
@@ -217,7 +217,7 @@ export default function AddParticipantsTemplate(props: InfoProps) {
       }
       if (contentScrollTop + clientHeight >= scrollHeight) {
         setLoading(true);
-        if (suggestParticipants.next && getParticipantsData) {
+        if (suggestParticipants.next && getParticipantsData && !loading) {
           await getParticipantsData(false, name, suggestParticipants.hash ?? "");
           setLoading(false);
         }
