@@ -216,8 +216,8 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         settScrollTop(contentScrollTop);
       }
       if (contentScrollTop + clientHeight >= scrollHeight) {
-        setLoading(true);
         if (suggestParticipants.next && getParticipantsData && !loading) {
+          setLoading(true);
           await getParticipantsData(false, name, suggestParticipants.hash ?? "");
           setLoading(false);
         }
