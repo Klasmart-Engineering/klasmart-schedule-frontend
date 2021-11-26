@@ -59,8 +59,7 @@ export const apiResourcePathById = (resource_id?: string) => {
 };
 export const apiValidatePDFGet = (resource_id: string) => {
   const rid = resource_id.split("-")[1];
-  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${rid}/validate`.replace("/user/", "");
-  // const url = `${process.env.REACT_APP_KO_VALIDATE_PDF_API}/pdf/${rid}/validate`
+  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${rid}/validate`;
   return fetch(url, {
     method: "GET",
     headers: {
@@ -72,8 +71,7 @@ export const apiValidatePDFGet = (resource_id: string) => {
   });
 };
 export const apiValidatePDFPost = (file: FileLike) => {
-  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/validate`.replace("/user/", "");
-  // const url = `${process.env.REACT_APP_KO_VALIDATE_PDF_API}/pdf/validate`;
+  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/validate`;
   const formData = new FormData();
   formData.append("file", file as unknown as Blob);
   return fetch(url, {
