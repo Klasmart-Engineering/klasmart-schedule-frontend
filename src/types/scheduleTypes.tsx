@@ -139,6 +139,9 @@ export interface ClassesData {
 
 export interface ParticipantsData {
   classes: ClassesData;
+  total?: number;
+  hash?: string;
+  next?: boolean;
 }
 
 export interface EntityScheduleShortInfo {
