@@ -238,6 +238,9 @@ const initialState: ScheduleState = {
       students: [],
       teachers: [],
     },
+    total: 0,
+    hash: "",
+    next: false,
   },
   participantsIds: { student: [], teacher: [] },
   classRosterIds: { student: [], teacher: [] },
@@ -428,10 +431,16 @@ export const getProgramChild = createAsyncThunk<getProgramsChildResponse, getPro
   }
 );
 
-export const getParticipantsData = createAsyncThunk(
+interface participantsDataInterface extends LoadingMetaPayload {
+  is_org: boolean;
+  hash: string;
+  name: string;
+}
+
+export const getParticipantsData = createAsyncThunk<ParticipantsData, participantsDataInterface>(
   "getParticipantsData",
   // @ts-ignore
-  async (is_org: boolean) => {
+  async ({ is_org, hash, name }) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     let filterQuery = {};
     if (is_org) {
@@ -449,11 +458,25 @@ export const getParticipantsData = createAsyncThunk(
         return { classes: [{ students: [], teachers: [] }] };
       }
     }
+    if (name) {
+      filterQuery = {
+        AND: [
+          {
+            OR: [
+              { givenName: { operator: "contains", value: name, caseInsensitive: true } },
+              { familyName: { operator: "contains", value: name, caseInsensitive: true } },
+            ],
+          },
+        ],
+        ...filterQuery,
+      };
+    }
     const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
       query: GetUserDocument,
       variables: {
         filter: filterQuery,
         direction: ConnectionDirection.Forward,
+        directionArgs: { count: 50, cursor: hash },
       },
     });
     const participantListOrigin = data;
@@ -461,14 +484,19 @@ export const getParticipantsData = createAsyncThunk(
     const teachers: { user_id: string | undefined; user_name: string | null | undefined }[] = [];
     participantListOrigin.usersConnection?.edges?.forEach((item) => {
       if (item?.node?.status !== "active") return;
-      item?.node?.roles.forEach((role) => {
+      item?.node?.roles?.forEach((role) => {
         if (role.name === "Teacher")
           teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
         if (role.name === "Student")
           students.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
       });
     });
-    return { classes: [{ students: students, teachers: teachers }] };
+    return {
+      classes: [{ students: students, teachers: teachers }],
+      total: participantListOrigin.usersConnection?.totalCount,
+      hash: participantListOrigin.usersConnection?.pageInfo?.endCursor,
+      next: participantListOrigin.usersConnection?.pageInfo?.hasNextPage,
+    };
   }
 );
 
@@ -851,6 +879,17 @@ const { actions, reducer } = createSlice({
     resetActOutcomeList: (state, { payload }: PayloadAction<any>) => {
       state.outcomeList = payload;
     },
+    resetParticipantsData: (state) => {
+      state.ParticipantsData = {
+        classes: {
+          students: [],
+          teachers: [],
+        },
+        total: 0,
+        hash: "",
+        next: false,
+      };
+    },
   },
   extraReducers: {
     [actOutcomeListLoading.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
@@ -936,13 +975,13 @@ const { actions, reducer } = createSlice({
       state.classOptions.classListSchool = { school: { classes: result } };
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
-      let teachers: RolesData[] = [];
-      let students: RolesData[] = [];
+      let teachers: RolesData[] = [...state.ParticipantsData.classes.teachers];
+      let students: RolesData[] = [...state.ParticipantsData.classes.students];
       payload?.classes.forEach((item: ClassesData) => {
         teachers = teachers.concat(item.teachers);
         students = students.concat(item.students);
       });
-      state.ParticipantsData = { classes: { students, teachers } };
+      state.ParticipantsData = { classes: { students, teachers }, total: payload?.total, next: payload?.next, hash: payload?.hash };
     },
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
       state.feedbackData = payload;
@@ -988,5 +1027,12 @@ const { actions, reducer } = createSlice({
     },
   },
 });
-export const { resetScheduleDetial, resetParticipantList, changeParticipants, resetScheduleTimeViewData, resetActOutcomeList } = actions;
+export const {
+  resetScheduleDetial,
+  resetParticipantList,
+  changeParticipants,
+  resetScheduleTimeViewData,
+  resetActOutcomeList,
+  resetParticipantsData,
+} = actions;
 export default reducer;
