@@ -12,10 +12,16 @@ import {
   withStyles,
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
-import React from "react";
+import React, { useMemo } from "react";
 import { d } from "../../locale/LocaleManager";
-import { ClassOptionsItem, ParticipantsData, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
+import { ClassOptionsItem, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
 import InputBase from "@material-ui/core/InputBase/InputBase";
+import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import { resetParticipantsData } from "../../reducers/schedule";
+import { modelSchedule } from "../../models/ModelSchedule";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../reducers";
+import { LinearProgress, Box } from "@material-ui/core";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -84,6 +90,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "30px",
   },
   checkboxContainer: {
+    paddingBottom: "8px",
     paddingLeft: "50px",
     marginTop: "30px",
     maxHeight: "250px",
@@ -98,30 +105,49 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: "4px",
     },
   },
+  schoolTemplateStyleMore: {
+    color: "RGB(0,98,192)",
+    display: "flex",
+    alignItems: "center",
+    fontSize: "13px",
+    cursor: "pointer",
+  },
 }));
 
 interface InfoProps {
   handleClose: () => void;
-  ParticipantsData?: ParticipantsData;
   handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
-  getParticipantsData?: (is_org: boolean) => void;
+  getParticipantsData?: (metaLoading: boolean, search: string, hash: string) => void;
   participantsIds: ParticipantsShortInfo;
+  participantList: ParticipantsByClassQuery;
 }
 
 export default function AddParticipantsTemplate(props: InfoProps) {
-  const { handleClose, ParticipantsData, handleChangeParticipants, participantsIds } = props;
+  const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { handleClose, handleChangeParticipants, participantsIds, getParticipantsData, participantList } = props;
   const css = useStyles();
   const [defaultFilter, setDefaultFilter] = React.useState("students");
+  const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
+  const [tScrollTop, settScrollTop] = React.useState(0);
+  const [sScrollTop, setsScrollTop] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
+  const dispatch = useDispatch();
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (dom) {
+      dom.scrollTop = event.target.value === "students" ? sScrollTop : tScrollTop;
+    }
     setDefaultFilter(event.target.value);
   };
 
-  const [searchData, setSearchData] = React.useState(ParticipantsData);
+  const suggestParticipants = useMemo(() => {
+    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantList);
+    const filterData: RolesData[] = (
+      defaultFilter === "students" ? participantsFilterData?.classes.students : participantsFilterData?.classes.teachers
+    ) as RolesData[];
+    return { filterData: filterData, next: ParticipantsData.next, hash: ParticipantsData.hash };
+  }, [ParticipantsData, participantList, defaultFilter]);
 
-  const filterData: RolesData[] = (defaultFilter === "students"
-    ? searchData?.classes.students
-    : searchData?.classes.teachers) as RolesData[];
   const [part, setPart] = React.useState<ParticipantsShortInfo>(participantsIds);
 
   const is_tea_or_stu =
@@ -158,18 +184,14 @@ export default function AddParticipantsTemplate(props: InfoProps) {
 
   const [name, setName] = React.useState("");
 
-  const handleSearch = () => {
-    setSearchData(ParticipantsData);
-    if (name) {
-      // @ts-ignore
-      const result = ParticipantsData?.classes[defaultFilter].filter((item) => item.user_name.includes(name));
-      setSearchData({
-        classes: {
-          teachers: searchData?.classes.teachers as RolesData[],
-          students: searchData?.classes.students as RolesData[],
-          [defaultFilter]: result,
-        },
-      });
+  const handleSearch = async () => {
+    if (getParticipantsData && !loading) {
+      setLoading(true);
+      dispatch(resetParticipantsData());
+      settScrollTop(0);
+      setsScrollTop(0);
+      await getParticipantsData(false, name, "");
+      setLoading(false);
     }
   };
 
@@ -180,6 +202,26 @@ export default function AddParticipantsTemplate(props: InfoProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.keyCode === 13) {
       handleSearch();
+    }
+  };
+
+  const handleOnScroll = async () => {
+    if (dom) {
+      const contentScrollTop = dom.scrollTop; //滚动条距离顶部
+      const clientHeight = dom.clientHeight; //可视区域
+      const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
+      if (defaultFilter === "students") {
+        setsScrollTop(contentScrollTop);
+      } else {
+        settScrollTop(contentScrollTop);
+      }
+      if (contentScrollTop + clientHeight >= scrollHeight) {
+        setLoading(true);
+        if (suggestParticipants.next && getParticipantsData && !loading) {
+          await getParticipantsData(false, name, suggestParticipants.hash ?? "");
+          setLoading(false);
+        }
+      }
     }
   };
 
@@ -219,9 +261,15 @@ export default function AddParticipantsTemplate(props: InfoProps) {
           />
         </RadioGroup>
       </Grid>
-      <FormGroup className={css.checkboxContainer}>
-        {filterData &&
-          filterData.map((item: RolesData) => {
+      <FormGroup
+        className={css.checkboxContainer}
+        ref={(dom) => {
+          setDom(dom as any);
+        }}
+        onScrollCapture={(e) => handleOnScroll()}
+      >
+        {suggestParticipants.filterData &&
+          suggestParticipants.filterData.map((item: RolesData) => {
             return (
               <FormControlLabel
                 key={item.user_id}
@@ -237,6 +285,11 @@ export default function AddParticipantsTemplate(props: InfoProps) {
               />
             );
           })}
+        {loading && (
+          <Box sx={{ width: "98%" }}>
+            <LinearProgress />
+          </Box>
+        )}
       </FormGroup>
       <div className={css.buttons}>
         <Button variant="outlined" onClick={handleClose}>

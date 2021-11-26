@@ -1244,10 +1244,10 @@ function EditBox(props: CalendarStateProps) {
     }
   };
 
-  const addParticipants = () => {
+  const addParticipants = async () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
+    if (!ParticipantsData?.total && getParticipantsData) await getParticipantsData(true, "", "");
     // will class roster data remove in ParticipantsData
-    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantMockOptions.participantList);
     changeModalDate({
       openStatus: true,
       enableCustomization: true,
@@ -1258,10 +1258,10 @@ function EditBox(props: CalendarStateProps) {
               openStatus: false,
             });
           }}
-          ParticipantsData={participantsFilterData}
           handleChangeParticipants={handleChangeParticipants}
           getParticipantsData={getParticipantsData}
           participantsIds={participantsIds as ParticipantsShortInfo}
+          participantList={participantMockOptions.participantList}
         />
       ),
     });
@@ -2414,7 +2414,7 @@ interface CalendarStateProps {
   classRosterIds?: ParticipantsShortInfo;
   handleChangeParticipants: (type: string, data: ParticipantsShortInfo) => void;
   ParticipantsData?: ParticipantsData;
-  getParticipantsData?: (is_org: boolean) => void;
+  getParticipantsData?: (metaLoading: boolean, search: string, hash: string) => void;
   LinkageLessonPlan: (content_id: string) => void;
   contentPreview: EntityContentInfoWithDetails;
   handleChangeHidden: (is_hidden: boolean) => void;

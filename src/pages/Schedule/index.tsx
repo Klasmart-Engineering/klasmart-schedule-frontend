@@ -272,8 +272,8 @@ function ScheduleContent() {
     if (liveToken || token) window.open(apiLivePath(token ?? liveToken));
   };
 
-  const getParticipants = (is_org: boolean = true) => {
-    dispatch(getParticipantsData(is_org));
+  const getParticipants = async (metaLoading: boolean = true, search: string, hash: string) => {
+    await dispatch(getParticipantsData({ is_org: isAdmin as boolean, hash: hash, name: search, metaLoading: metaLoading }));
   };
 
   const getClassesConnection = async (
@@ -330,7 +330,6 @@ function ScheduleContent() {
       // get materials
       dispatch(getScheduleMockOptions({}));
       dispatch(getLinkedMockOptions({ metaLoading: true }));
-      dispatch(getParticipantsData(isAdmin as boolean));
       setStateFlag(false);
     }
   }, [includeEdit, privilegedMembers, stateFlag, isAdmin, dispatch]);
