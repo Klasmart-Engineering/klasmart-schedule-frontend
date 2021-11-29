@@ -833,13 +833,34 @@ export type GetMyIdQueryVariables = Types.Exact<{ [key: string]: never }>;
 export type GetMyIdQuery = { __typename?: "Query" } & {
   myUser?: Types.Maybe<
     { __typename?: "MyUser" } & {
-      node?: Types.Maybe<{ __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "familyName" | "givenName">>;
+      node?: Types.Maybe<
+        { __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "familyName" | "givenName"> & {
+            schoolMembershipsConnection?: Types.Maybe<
+              { __typename?: "SchoolMembershipsConnectionResponse" } & {
+                edges?: Types.Maybe<
+                  Array<
+                    Types.Maybe<
+                      { __typename?: "SchoolMembershipsConnectionEdge" } & {
+                        node?: Types.Maybe<
+                          { __typename?: "SchoolMembershipConnectionNode" } & {
+                            school?: Types.Maybe<{ __typename?: "SchoolConnectionNode" } & Pick<Types.SchoolConnectionNode, "id" | "name">>;
+                          }
+                        >;
+                      }
+                    >
+                  >
+                >;
+              }
+            >;
+          }
+      >;
     }
   >;
 };
 
 export type ClassesConnectionQueryVariables = Types.Exact<{
-  organization_id: Types.Scalars["UUID"];
+  classFilter?: Types.Maybe<Types.ClassFilter>;
+  teacherFilter?: Types.Maybe<Types.UserFilter>;
 }>;
 
 export type ClassesConnectionQuery = { __typename?: "Query" } & {
@@ -2668,6 +2689,16 @@ export const GetMyIdDocument = gql`
         id
         familyName
         givenName
+        schoolMembershipsConnection(direction: FORWARD) {
+          edges {
+            node {
+              school {
+                id
+                name
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -2700,11 +2731,8 @@ export type GetMyIdQueryHookResult = ReturnType<typeof useGetMyIdQuery>;
 export type GetMyIdLazyQueryHookResult = ReturnType<typeof useGetMyIdLazyQuery>;
 export type GetMyIdQueryResult = Apollo.QueryResult<GetMyIdQuery, GetMyIdQueryVariables>;
 export const ClassesConnectionDocument = gql`
-  query classesConnection($organization_id: UUID!) {
-    classesConnection(
-      direction: FORWARD
-      filter: { AND: [{ organizationId: { operator: eq, value: $organization_id } }, { status: { operator: eq, value: "active" } }] }
-    ) {
+  query classesConnection($classFilter: ClassFilter, $teacherFilter: UserFilter) {
+    classesConnection(direction: FORWARD, filter: $classFilter) {
       totalCount
       edges {
         node {
@@ -2716,10 +2744,7 @@ export const ClassesConnectionDocument = gql`
             id
             name
           }
-          teachersConnection(
-            direction: FORWARD
-            filter: { userStatus: { operator: eq, value: "active" }, organizationUserStatus: { operator: eq, value: "active" } }
-          ) {
+          teachersConnection(direction: FORWARD, filter: $teacherFilter) {
             totalCount
             edges {
               node {
@@ -2754,11 +2779,12 @@ export const ClassesConnectionDocument = gql`
  * @example
  * const { data, loading, error } = useClassesConnectionQuery({
  *   variables: {
- *      organization_id: // value for 'organization_id'
+ *      classFilter: // value for 'classFilter'
+ *      teacherFilter: // value for 'teacherFilter'
  *   },
  * });
  */
-export function useClassesConnectionQuery(baseOptions: Apollo.QueryHookOptions<ClassesConnectionQuery, ClassesConnectionQueryVariables>) {
+export function useClassesConnectionQuery(baseOptions?: Apollo.QueryHookOptions<ClassesConnectionQuery, ClassesConnectionQueryVariables>) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ClassesConnectionQuery, ClassesConnectionQueryVariables>(ClassesConnectionDocument, options);
 }

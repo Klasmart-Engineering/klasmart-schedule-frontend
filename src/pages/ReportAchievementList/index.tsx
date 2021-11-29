@@ -3,7 +3,7 @@ import PermissionType from "@api/PermissionType";
 import { usePermission } from "@hooks/usePermission";
 import { Box, Button } from "@material-ui/core";
 import { RootState } from "@reducers/index";
-import { getAchievementList, getLessonPlan, reportOnload } from "@reducers/report";
+import { getAchievementList, getLessonPlan, Item, reportOnload } from "@reducers/report";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useEffect, useMemo } from "react";
@@ -44,9 +44,10 @@ export function ReportAchievementList() {
   const condition = useReportQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const totalData = useSelector<RootState, RootState["report"]>((state) => state.report);
-  const reportList = totalData.reportList ?? [];
-
+  const { reportMockOptions, student_name, reportList, classesConnection } = useSelector<RootState, RootState["report"]>(
+    (state) => state.report
+  );
+  const [classList, setClassList] = React.useState<Item[]>([]);
   const perm = usePermission([
     PermissionType.view_reports_610,
     PermissionType.view_my_reports_614,
@@ -55,8 +56,7 @@ export function ReportAchievementList() {
   ]);
   const hasPerm =
     perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organizations_reports_612 || perm.view_my_school_reports_611;
-  const student_name = totalData.student_name;
-  const reportMockOptions = totalData.reportMockOptions;
+
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
     computeFilter(tab, value);
   };
@@ -88,16 +88,14 @@ export function ReportAchievementList() {
         history.push({
           search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
         });
-        dispatch(
-          reportOnload({
-            teacher_id: value,
-            class_id: "",
-            lesson_plan_id: "",
-            status: condition.status,
-            sort_by: condition.sort_by,
-            metaLoading: true,
-          })
-        );
+        let classList: Item[] = [];
+        classesConnection?.classesConnection?.edges?.forEach((item) => {
+          if (!!item?.node?.teachersConnection?.edges?.find((teacherItem) => teacherItem?.node?.id === value)) {
+            classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
+          }
+        });
+        setClassList(classList);
+        getFirstLessonPlanId(value, classList[0].id);
       }
       if (tab === "class_id") {
         getFirstLessonPlanId(condition.teacher_id, value);
@@ -115,7 +113,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [dispatch, getFirstLessonPlanId, history, condition.teacher_id, condition.class_id, condition.status, condition.sort_by]
+    [history, classesConnection?.classesConnection?.edges, getFirstLessonPlanId, condition.teacher_id, condition.class_id, dispatch]
   );
   useEffect(() => {
     dispatch(
@@ -131,6 +129,21 @@ export function ReportAchievementList() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [condition.sort_by, condition.status, dispatch]);
+  useEffect(() => {
+    if (reportMockOptions.teacherList.length > 0) {
+      let initClassesList: Item[] = [];
+      classesConnection?.classesConnection?.edges?.forEach((item) => {
+        if (
+          !!item?.node?.teachersConnection?.edges?.find(
+            (teacherItem) => teacherItem?.node?.id === (condition.teacher_id || reportMockOptions.teacherList[0].id)
+          )
+        ) {
+          initClassesList = initClassesList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
+        }
+      });
+      setClassList(initClassesList);
+    }
+  }, [classesConnection?.classesConnection?.edges, condition.teacher_id, reportMockOptions.teacherList]);
 
   useEffect(() => {
     if (reportMockOptions) {
@@ -159,7 +172,7 @@ export function ReportAchievementList() {
       <FilterAchievementReport
         value={condition}
         onChange={handleChangeFilter}
-        reportMockOptions={reportMockOptions}
+        reportMockOptions={{ ...reportMockOptions, classList }}
         perm={perm}
       ></FilterAchievementReport>
       <BriefIntroduction value={condition} reportMockOptions={reportMockOptions} student_name={student_name} />

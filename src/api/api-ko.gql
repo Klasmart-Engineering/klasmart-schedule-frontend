@@ -629,30 +629,22 @@ query getMyId{
      id
      familyName
      givenName
+      schoolMembershipsConnection(direction: FORWARD){
+        edges{
+          node{
+          school{
+            id
+            name
+          }
+          }
+        }
+      }
     }
   }
 }
 
-query classesConnection($organization_id: UUID!) {
-   classesConnection(direction: FORWARD,
-    filter: 
-    {
-    AND: [
-      {
-        organizationId: {
-          operator: eq
-          value: $organization_id
-        }
-      }
-      {
-        status: {
-          operator: eq
-          value: "active"
-        }
-      }
-    ]
-    }
-    ){
+query classesConnection($classFilter:ClassFilter, $teacherFilter:UserFilter) {
+   classesConnection(direction: FORWARD, filter: $classFilter){
     totalCount
     edges{
       node{
@@ -664,10 +656,7 @@ query classesConnection($organization_id: UUID!) {
           id
           name
         }
-        teachersConnection(direction:FORWARD 
-          filter:
-          {userStatus:{operator:eq value:"active"},organizationUserStatus:{operator:eq value:"active"}}
-          ){
+        teachersConnection(direction:FORWARD  filter:$teacherFilter){
           totalCount
           edges{
             node{
@@ -689,7 +678,6 @@ query classesConnection($organization_id: UUID!) {
     }
   }
 }
-
 query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
 classesConnection(
     filter: $filter,

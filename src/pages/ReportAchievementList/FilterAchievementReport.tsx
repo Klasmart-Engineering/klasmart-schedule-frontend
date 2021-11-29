@@ -1,18 +1,16 @@
 import { Box, Hidden, makeStyles, Menu, MenuItem, TextField } from "@material-ui/core";
 import { ClassOutlined, LocalBarOutlined } from "@material-ui/icons";
-import FaceIcon from "@material-ui/icons/Face";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import PeopleOutlineOutlinedIcon from "@material-ui/icons/PeopleOutlineOutlined";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
+import { GetReportMockOptionsResponse } from "@reducers/report";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
-import { Class, User } from "../../api/api-ko-schema.auto";
 import { MockOptionsItem } from "../../api/extra";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { GetStuReportMockOptionsResponse } from "../../reducers/report";
 import { ICacheData } from "../../services/permissionCahceService";
-import { ALL_STUDENT, QueryCondition, ReportFilter, ReportOrderBy } from "./types";
+import { QueryCondition, ReportFilter, ReportOrderBy } from "./types";
 
 const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
   box: {
@@ -82,85 +80,14 @@ const GetMenuItem = forwardRef<React.RefObject<HTMLElement>, GetMenuItemProps>((
   );
 });
 
-interface GetTeacherItemProps {
-  list: Pick<User, "user_id" | "user_name">[];
-  value: QueryCondition;
-  onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
-  tab: keyof QueryCondition;
-}
-
-const GetTeacherItem = forwardRef<React.RefObject<HTMLElement>, GetTeacherItemProps>((props, ref) => {
-  const { list, value, onChangeMenu, tab } = props;
-  return (
-    <>
-      {" "}
-      {list &&
-        list.map((item) => (
-          <MenuItem key={item.user_id} selected={value[tab] === item.user_id} onClick={(e) => onChangeMenu(e, item.user_id as string, tab)}>
-            {item.user_name}
-          </MenuItem>
-        ))}
-    </>
-  );
-});
-
-interface GetClassItemProps {
-  list: Pick<Class, "class_id" | "class_name">[];
-  value: QueryCondition;
-  onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
-  tab: keyof QueryCondition;
-}
-
-const GetClassItem = forwardRef<React.RefObject<HTMLElement>, GetClassItemProps>((props, ref) => {
-  const { list, value, onChangeMenu, tab } = props;
-  return (
-    <>
-      {" "}
-      {list &&
-        list.map((item) => (
-          <MenuItem
-            key={item.class_id}
-            selected={value[tab] === item.class_id}
-            onClick={(e) => onChangeMenu(e, item.class_id as string, tab)}
-          >
-            {item.class_name}
-          </MenuItem>
-        ))}
-    </>
-  );
-});
-
-interface GetStudentItemProps {
-  list: Pick<User, "user_id" | "user_name">[];
-  value: QueryCondition;
-  onChangeMenu: (e: React.MouseEvent, value: string, tab: keyof QueryCondition) => any;
-  tab: keyof QueryCondition;
-}
-const GetStudentItem = forwardRef<React.RefObject<HTMLElement>, GetStudentItemProps>((props, ref) => {
-  const { list, value, onChangeMenu, tab } = props;
-  const all: Pick<User, "user_id" | "user_name">[] = [{ user_id: ALL_STUDENT, user_name: d("All").t("report_label_all") }];
-  const newStudentList = [...all, ...list];
-  return (
-    <>
-      {" "}
-      {newStudentList &&
-        newStudentList.map((item) => (
-          <MenuItem key={item.user_id} selected={value[tab] === item.user_id} onClick={(e) => onChangeMenu(e, item.user_id as string, tab)}>
-            {item.user_name}
-          </MenuItem>
-        ))}
-    </>
-  );
-});
 export interface FilterAchievementReportProps {
   value: QueryCondition;
   onChange: (value: string, tab: keyof QueryCondition) => any;
-  reportMockOptions: GetStuReportMockOptionsResponse;
-  isShowStudentList?: Boolean;
+  reportMockOptions: GetReportMockOptionsResponse;
   perm: ICacheData;
 }
 export function FilterAchievementReport(props: FilterAchievementReportProps) {
-  const { onChange, value, reportMockOptions, isShowStudentList, perm } = props;
+  const { onChange, value, reportMockOptions, perm } = props;
   const css = useStyles();
   const getOptions = (list: MockOptionsItem[]) =>
     list &&
@@ -170,16 +97,15 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       </MenuItem>
     ));
   const classs = reportMockOptions.classList || [];
+  console.log("class=", reportMockOptions);
   const teachers = reportMockOptions.teacherList || [];
   const planIsDisabled = classs.length <= 0 || reportMockOptions.lessonPlanList.length <= 0;
-  const students = reportMockOptions.studentList || [];
 
   const [anchorElOrderBy, setAnchorElOrderBy] = React.useState<null | HTMLElement>(null);
   const [anchorElStatus, setAnchorElStatus] = React.useState<null | HTMLElement>(null);
   const [anchorElTeacher, setAnchorElTeacher] = React.useState<null | HTMLElement>(null);
   const [anchorElClass, setAnchorElClass] = React.useState<null | HTMLElement>(null);
   const [anchorElPlan, setAnchorElPlan] = React.useState<null | HTMLElement>(null);
-  const [anchorElStudent, setAnchorElstudent] = React.useState<null | HTMLElement>(null);
 
   const showItem = (event: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id" && classs.length > 0) setAnchorElTeacher(event.currentTarget);
@@ -187,7 +113,6 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "lesson_plan_id" && classs.length > 0 && reportMockOptions.lessonPlanList.length > 0) setAnchorElPlan(event.currentTarget);
     if (tab === "status") setAnchorElStatus(event.currentTarget);
     if (tab === "sort_by") setAnchorElOrderBy(event.currentTarget);
-    if (tab === "student_id" && students.length > 0) setAnchorElstudent(event.currentTarget);
   };
   const handleClose = (e: any, tab: keyof QueryCondition) => {
     if (tab === "teacher_id") setAnchorElTeacher(null);
@@ -195,39 +120,12 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
     if (tab === "lesson_plan_id") setAnchorElPlan(null);
     if (tab === "status") setAnchorElStatus(null);
     if (tab === "sort_by") setAnchorElOrderBy(null);
-    if (tab === "student_id") setAnchorElstudent(null);
   };
   const handleChangeMenu = (e: React.MouseEvent, value: any, tab: keyof QueryCondition) => {
     handleClose(e, tab);
     onChange(value, tab);
   };
 
-  const getTeacherList = (teacherList: Pick<User, "user_id" | "user_name">[] | undefined | null) => {
-    if (teacherList === null || teacherList === undefined) return;
-    return teacherList.map((item) => (
-      <MenuItem key={item.user_id} value={item.user_id}>
-        {item.user_name}
-      </MenuItem>
-    ));
-  };
-  const getClassList = (list: Pick<Class, "class_id" | "class_name">[] | undefined | null) => {
-    if (list === null || list === undefined) return;
-    return list.map((item) => (
-      <MenuItem key={item.class_id} value={item.class_id}>
-        {item.class_name}
-      </MenuItem>
-    ));
-  };
-  const getStudentList = (studentList: Pick<User, "user_id" | "user_name">[] | undefined | null) => {
-    if (studentList === null || studentList === undefined) return;
-    const all: Pick<User, "user_id" | "user_name">[] = [{ user_id: ALL_STUDENT, user_name: d("All").t("report_label_all") }];
-    const newStudentList = [...all, ...studentList];
-    return newStudentList.map((item) => (
-      <MenuItem key={item.user_id} value={item.user_id}>
-        {item.user_name}
-      </MenuItem>
-    ));
-  };
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       {(perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
@@ -245,7 +143,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                   disabled={teachers.length <= 0}
                   SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
                 >
-                  {getTeacherList(reportMockOptions.teacherList)}
+                  {getOptions(reportMockOptions.teacherList)}
                 </TextField>
               )}
               <TextField
@@ -258,7 +156,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
                 disabled={classs.length <= 0}
               >
-                {getClassList(reportMockOptions.classList)}
+                {getOptions(reportMockOptions.classList)}
               </TextField>
               <TextField
                 size="small"
@@ -272,47 +170,31 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
               >
                 {getOptions(reportMockOptions.lessonPlanList)}
               </TextField>
-              {isShowStudentList && (
-                <TextField
-                  size="small"
-                  className={css.selectButton}
-                  onChange={(e) => onChange(e.target.value, "student_id")}
-                  label={d("Student").t("schedule_time_conflict_student")}
-                  value={value.student_id || ALL_STUDENT}
-                  select
-                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-                  disabled={students.length <= 0}
-                >
-                  {getStudentList(reportMockOptions.studentList)}
-                </TextField>
-              )}
             </Box>
-            {!isShowStudentList && (
-              <Box className={css.boxRight}>
-                <TextField
-                  size="small"
-                  className={css.selectButton}
-                  onChange={(e) => onChange(e.target.value, "status")}
-                  value={value.status}
-                  select
-                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-                >
-                  {getOptions(statusList())}
-                </TextField>
+            <Box className={css.boxRight}>
+              <TextField
+                size="small"
+                className={css.selectButton}
+                onChange={(e) => onChange(e.target.value, "status")}
+                value={value.status}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              >
+                {getOptions(statusList())}
+              </TextField>
 
-                <TextField
-                  size="small"
-                  className={clsx(css.selectButton, css.lastButton)}
-                  onChange={(e) => onChange(e.target.value, "sort_by")}
-                  label={d("Sort By Outcomes").t("report_label_sort_by")}
-                  value={value.sort_by}
-                  select
-                  SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-                >
-                  {getOptions(sortOptions())}
-                </TextField>
-              </Box>
-            )}
+              <TextField
+                size="small"
+                className={clsx(css.selectButton, css.lastButton)}
+                onChange={(e) => onChange(e.target.value, "sort_by")}
+                label={d("Sort By Outcomes").t("report_label_sort_by")}
+                value={value.sort_by}
+                select
+                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+              >
+                {getOptions(sortOptions())}
+              </TextField>
+            </Box>
           </Box>
         </Hidden>
       )}
@@ -328,12 +210,12 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                 />
               )}
               <Menu anchorEl={anchorElTeacher} keepMounted open={Boolean(anchorElTeacher)} onClose={(e) => handleClose(e, "teacher_id")}>
-                <GetTeacherItem
+                <GetMenuItem
                   list={reportMockOptions.teacherList}
                   value={value}
                   onChangeMenu={handleChangeMenu}
                   tab="teacher_id"
-                ></GetTeacherItem>
+                ></GetMenuItem>
               </Menu>
 
               <PeopleOutlineOutlinedIcon
@@ -342,12 +224,7 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                 onClick={(e) => showItem(e, "class_id")}
               />
               <Menu anchorEl={anchorElClass} keepMounted open={Boolean(anchorElClass)} onClose={(e) => handleClose(e, "class_id")}>
-                <GetClassItem
-                  list={reportMockOptions.classList}
-                  value={value}
-                  onChangeMenu={handleChangeMenu}
-                  tab="class_id"
-                ></GetClassItem>
+                <GetMenuItem list={reportMockOptions.classList} value={value} onChangeMenu={handleChangeMenu} tab="class_id"></GetMenuItem>
               </Menu>
               <ClassOutlined
                 fontSize="large"
@@ -362,38 +239,18 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
                   tab="lesson_plan_id"
                 ></GetMenuItem>
               </Menu>
-              <>
-                {isShowStudentList && (
-                  <FaceIcon
-                    fontSize="large"
-                    className={clsx(css.selectIcon, students.length <= 0 && css.selectIconDisabled)}
-                    onClick={(e) => showItem(e, "student_id")}
-                  />
-                )}
-                <Menu anchorEl={anchorElStudent} keepMounted open={Boolean(anchorElStudent)} onClose={(e) => handleClose(e, "student_id")}>
-                  <GetStudentItem
-                    list={reportMockOptions.studentList ?? []}
-                    value={value}
-                    onChangeMenu={handleChangeMenu}
-                    tab="student_id"
-                  ></GetStudentItem>
-                </Menu>
-              </>
             </Box>
+            <Box flex={2} display="flex" justifyContent="flex-end">
+              <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
+              <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
+                <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
+              </Menu>
 
-            {!isShowStudentList && (
-              <Box flex={2} display="flex" justifyContent="flex-end">
-                <LocalBarOutlined fontSize="large" className={css.selectIcon} onClick={(e) => showItem(e, "status")} />
-                <Menu anchorEl={anchorElStatus} keepMounted open={Boolean(anchorElStatus)} onClose={(e) => handleClose(e, "status")}>
-                  <GetMenuItem list={statusList()} value={value} onChangeMenu={handleChangeMenu} tab="status"></GetMenuItem>
-                </Menu>
-
-                <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
-                <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
-                  <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
-                </Menu>
-              </Box>
-            )}
+              <ImportExportIcon fontSize="large" onClick={(e) => showItem(e, "sort_by")} />
+              <Menu anchorEl={anchorElOrderBy} keepMounted open={Boolean(anchorElOrderBy)} onClose={(e) => handleClose(e, "sort_by")}>
+                <GetMenuItem list={sortOptions()} value={value} onChangeMenu={handleChangeMenu} tab="sort_by"></GetMenuItem>
+              </Menu>
+            </Box>
           </Box>
         </Hidden>
       )}
