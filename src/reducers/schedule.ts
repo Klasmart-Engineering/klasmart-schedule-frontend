@@ -50,6 +50,7 @@ import {
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
+  EntityLessonPlanForSchedule,
   EntityQueryContentItem,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
@@ -121,6 +122,7 @@ export interface ScheduleState {
   skills: LinkedMockOptionsItem[];
   schoolsConnection: GetSchoolsFilterListQuery;
   classesConnection: GetClassFilterListQuery;
+  lessonPlans: EntityLessonPlanForSchedule[];
 }
 
 interface Rootstate {
@@ -288,6 +290,7 @@ const initialState: ScheduleState = {
   skills: [],
   schoolsConnection: {},
   classesConnection: {},
+  lessonPlans: [],
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -383,6 +386,12 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
       organization_id,
     },
   });
+});
+
+type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] & LoadingMetaPayload;
+type lessonPlansByScheduleResult = ReturnType<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>;
+export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>("content/plans", () => {
+  return api.contentsLessonPlans.getLessonPlansCanSchedule();
 });
 
 /**
@@ -1028,6 +1037,9 @@ const { actions, reducer } = createSlice({
     },
     [getClassFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.classesConnection = payload.data;
+    },
+    [getLessonPlansBySchedule.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.lessonPlans = payload;
     },
   },
 });

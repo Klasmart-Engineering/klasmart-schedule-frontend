@@ -1,7 +1,7 @@
 import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
-import { contentLists, onLoadContentPreview } from "@reducers/content";
+import { onLoadContentPreview } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
@@ -29,7 +29,6 @@ import {
   getClassesByStudent,
   getClassesByTeacher,
   getClassFilterList,
-  getContentsAuthed,
   getLinkedMockOptions,
   getParticipantsData,
   getScheduleAnyTimeViewData,
@@ -44,7 +43,7 @@ import {
   getSubjectByProgramId,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
-  searchAuthContentLists,
+  getLessonPlansBySchedule,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -92,12 +91,12 @@ function ScheduleContent() {
     participantsIds,
     scheduleDetial,
     scheduleAnyTimeViewData,
-    mediaList,
     ScheduleViewInfo,
     filterOption,
     schoolByOrgOrUserData,
     schoolsConnection,
     classesConnection,
+    lessonPlans,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId } = useQuery();
@@ -313,9 +312,6 @@ function ScheduleContent() {
       // get content
       if (privilegedMembers("Student") !== undefined && !privilegedMembers("Student")) {
         dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
-        dispatch(getContentsAuthed({ content_type: "2", page_size: 0 }));
-        dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 0, order_by: "create_at" }));
-        dispatch(searchAuthContentLists({ metaLoading: true, program_group: "More Featured Content", page_size: 0, content_type: "2" }));
       }
       // get class by role
       if (privilegedMembers("Admin")) {
@@ -328,6 +324,7 @@ function ScheduleContent() {
         dispatch(getClassesByStudent());
       }
       // get materials
+      dispatch(getLessonPlansBySchedule({ metaLoading: true }));
       dispatch(getScheduleMockOptions({}));
       dispatch(getLinkedMockOptions({ metaLoading: true }));
       setStateFlag(false);
@@ -433,7 +430,6 @@ function ScheduleContent() {
               setSpecificStatus={setSpecificStatus}
               specificStatus={specificStatus}
               contentPreview={contentPreview}
-              mediaList={mediaList}
               LinkageLessonPlan={LinkageLessonPlan}
               participantsIds={participantsIds}
               classRosterIds={classRosterIds}
@@ -457,6 +453,7 @@ function ScheduleContent() {
               getSchoolsConnection={getSchoolsConnection}
               getClassesConnection={getClassesConnection}
               classesConnection={classesConnection}
+              lessonPlans={lessonPlans}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
