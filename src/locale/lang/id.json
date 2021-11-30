@@ -43,7 +43,7 @@
   "library_label_my_only": "Milik ku",
   "library_label_bulk_actions": "Aksi Besar",
   "library_label_remove": "Menghapus",
-  "library_msg_remove_content": "Apakah anda yakin ingin menghapus konten ini?",
+  "library_msg_remove_content": "Apakah Anda yakin ingin mengarsipkan konten ini?",
   "library_msg_bulk_remove_content": "Apakah anda yakin ingin menghapus konten ini?",
   "library_msg_remove_select_one": "Setidaknya satu konten harus dipilih",
   "library_label_sort_by": "Sortir Dengan",
@@ -981,7 +981,7 @@
   "report_msg_feedback": "% dari penilaian individu siswa yang sudah selesai dan diberikan umpan balik oleh guru. Besarnya didasarkan pada pemilihan filter.",
   "report_msg_assessments_pending": "Banyaknya penilaian yang menunggu diselesaikan oleh guru untuk setiap submisi dari siswa. Status menunggu berarti tanggal jatuh tempo sudah lewat tetapi penilaian belum selesai. Besarnya sesuai dengan pemilihan filter.",
   "report_msg_avg_days_pending": "Lama rata-rata penilaian berada di status menunggu. Status menunggu berarti tanggal jatuh tempo sudah lewat tetapi penilaian belum selesai. Besarnya sesuai dengan pemilihan filter.",
-  "schedule_search_school_name": "Search School Name",
+  "schedule_search_school_name": "Cari Nama Sekolah",
   "report_msg_lo_default": "{Name} masih melanjutkan pelajaran di KidsLoop minggu ini. Sejauh ini, {Name} sudah mendapat {AchievedLoCount} dari {LearntLoCount} hasil belajar.",
   "report_msg_lo_new": "{Name} mulai belajar di KidsLoop minggu ini. Sejauh ini, {Name} sudah mendapat {AchievedLoCount} dari {LearntLoCount} hasil belajar.",
   "report_msg_lo_increase_previous_w": "{Name} mendapatkan hasil belajar {LOCompareLastWeek} % lebih banyak dibandingkan minggu sebelumnya.",
@@ -1048,5 +1048,6 @@
   "report_label_overall_completion": "Penyelesaian Keseluruhan",
   "report_msg_participants_not_included": "Peserta tidak termasuk",
   "report_student_usage_incomplete_students": "Tidak Lengkap oleh Siswa",
-  "general_error_fail_get_permission": "Gagal mendapatkan izin, harap segarkan"
+  "general_error_fail_get_permission": "Gagal mendapatkan izin, harap segarkan",
+  "library_error_pdf_validation": "PDF validation failed, please try again."
 }
