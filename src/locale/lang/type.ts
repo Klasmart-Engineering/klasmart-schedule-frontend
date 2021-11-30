@@ -1615,6 +1615,11 @@ type LangRecord =
       id: "report_label_student_progress_report";
       description: "Student Progress Report";
       values: undefined;
+    }
+  | {
+      id: "library_error_pdf_validation";
+      description: " validate pdf timeout";
+      values: undefined;
     };
 
 export type LangRecordId = LangRecord["id"];

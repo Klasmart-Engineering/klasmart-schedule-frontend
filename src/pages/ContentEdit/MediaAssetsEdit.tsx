@@ -1,16 +1,18 @@
+import { apiValidatePDFGet, apiValidatePDFPost } from "@api/extra";
 import { useDroppable } from "@dnd-kit/core";
 import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
+import { actError } from "@reducers/notify";
+import { FileLike } from "@rpldy/shared";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
-import { apiValidatePDF } from "../../api/extra";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
-import { SingleUploader } from "../../components/SingleUploader";
+import { SingleUploader, useRequestPreSendReturnType } from "../../components/SingleUploader";
 import { AssetPreview, getSuffix } from "../../components/UIAssetPreview/AssetPreview";
 import { d, t } from "../../locale/LocaleManager";
 import { actAsyncConfirm } from "../../reducers/confirm";
@@ -95,32 +97,57 @@ function AssetEdit(props: AssetEditProps) {
   const uploadCss = useUploadBoxStyles(props);
   const { lesson } = useParams<ContentEditRouteParams>();
   const dispatch = useDispatch();
-  const { isAsset, contentDetail, disabled, value: dataSource, onChange: onChangeValue, onChangeInputSource, assetLibraryId } = props;
+  const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
-  const onChange = async (value?: string) => {
-    if (value && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(value)}`) >= 0) {
-      dispatch(actSetLoading(true));
-      apiValidatePDF(value)
-        .then((res) => {
-          dispatch(actSetLoading(false));
-          if (!res.valid) {
-            const content = t("library_msg_pdf_validation");
-            dispatch(actAsyncConfirm({ content, hideCancel: true }));
-          } else {
-            onChangeValue(value);
-          }
-        })
-        .catch(() => {
-          dispatch(actSetLoading(false));
-          onChangeValue("");
-        });
-    } else {
-      onChangeValue(value);
-    }
+  const VerifyExistingPDF = (value: string, onChange: AssetEditProps["onChange"]) => {
+    dispatch(actSetLoading(true));
+    apiValidatePDFGet(value)
+      .then((res) => {
+        dispatch(actSetLoading(false));
+        if (!res.valid) {
+          const content = t("library_msg_pdf_validation");
+          dispatch(actAsyncConfirm({ content, hideCancel: true }));
+        } else {
+          onChange(value);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(actSetLoading(false));
+        dispatch(actError(t("library_error_pdf_validation")));
+        onChange("");
+      });
+  };
+  const VerifyNotExistingPDF = (
+    file: FileLike,
+    fun: () => Promise<useRequestPreSendReturnType>
+  ): Promise<useRequestPreSendReturnType> | boolean => {
+    dispatch(actSetLoading(true));
+    return apiValidatePDFPost(file)
+      .then((res) => {
+        dispatch(actSetLoading(false));
+        if (!res.valid) {
+          const content = t("library_msg_pdf_validation");
+          dispatch(actAsyncConfirm({ content, hideCancel: true }));
+          return false;
+        } else {
+          return fun();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(actSetLoading(false));
+        dispatch(actError(t("library_error_pdf_validation")));
+        return false;
+      });
   };
   const setFile = (data: DragData) => {
     const source = JSON.parse(data.item.data).source;
-    onChange(source);
+    if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
+      VerifyExistingPDF(source, onChange);
+    } else {
+      onChange(source);
+    }
     onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromAssets);
   };
   const dropType = "LIBRARY_ITEM";
@@ -175,6 +202,7 @@ function AssetEdit(props: AssetEditProps) {
             accept={accept()}
             value={dataSource}
             onChange={onChange}
+            beforeUpload={lesson === "material" ? VerifyNotExistingPDF : undefined}
             render={({ item, btnRef, value, isUploading }) => (
               <>
                 {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
