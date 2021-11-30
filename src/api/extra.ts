@@ -66,7 +66,6 @@ export const apiValidatePDFGet = (resource_id: string) => {
       "Content-Type": "application/pdf",
       Accept: "application/pdf",
     },
-    credentials: "include",
   }).then((response) => {
     return response.json();
   });
