@@ -732,3 +732,32 @@ classesConnection(
     }
   }
 }
+
+query userWithoutClassAndSchool ($direction) {
+  usersConnection (
+    direction: FORWARD,
+    directionArgs: {
+      count: 5
+      cursor: ""
+    }
+    filter: {
+      organizationId: {operator: eq, value: "de6e850a-cf97-4e0b-aa96-c0fedcda71be"},
+      classId: {operator: isNull},
+      organizationUserStatus: {operator: eq, value: "active"}
+  	}
+  ) {
+    edges {
+      node {
+        id,
+        givenName,
+        familyName
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}

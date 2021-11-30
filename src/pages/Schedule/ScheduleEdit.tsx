@@ -31,7 +31,13 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { ConnectionDirection, Maybe, User } from "../../api/api-ko-schema.auto";
-import { GetClassFilterListQuery, GetProgramsQuery, GetSchoolsFilterListQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import {
+  GetClassFilterListQuery,
+  GetProgramsQuery,
+  GetSchoolsFilterListQuery,
+  GetUserQuery,
+  ParticipantsByClassQuery,
+} from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
   EntityLessonPlanForSchedule,
@@ -291,6 +297,10 @@ function SmallCalendar(props: CalendarStateProps) {
     getSchoolsConnection,
     getClassesConnection,
     classesConnection,
+    getUesrOfUndefined,
+    userInUndefined,
+    filterOtherClasses,
+    getClassesWithoutSchool,
   } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
@@ -328,6 +338,8 @@ function SmallCalendar(props: CalendarStateProps) {
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
         <ScheduleFilter
+          getClassesWithoutSchool={getClassesWithoutSchool}
+          filterOtherClasses={filterOtherClasses}
           handleChangeLoadScheduleView={handleChangeLoadScheduleView}
           mockOptions={mockOptions}
           scheduleMockOptions={scheduleMockOptions}
@@ -344,6 +356,8 @@ function SmallCalendar(props: CalendarStateProps) {
           getSchoolsConnection={getSchoolsConnection}
           getClassesConnection={getClassesConnection}
           classesConnection={classesConnection}
+          userInUndefined={userInUndefined}
+          getUesrOfUndefined={getUesrOfUndefined}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -2418,8 +2432,12 @@ interface CalendarStateProps {
     loading: boolean,
     direction: ConnectionDirection.Forward | ConnectionDirection.Backward
   ) => void;
+  getUesrOfUndefined: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
+  userInUndefined: GetUserQuery;
   classesConnection: GetClassFilterListQuery;
   lessonPlans: EntityLessonPlanForSchedule[];
+  filterOtherClasses: GetClassFilterListQuery;
+  getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2467,6 +2485,10 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     getClassesConnection,
     classesConnection,
     lessonPlans,
+    getUesrOfUndefined,
+    userInUndefined,
+    filterOtherClasses,
+    getClassesWithoutSchool,
   } = props;
 
   const template = (
@@ -2477,6 +2499,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
         }}
       >
         <SmallCalendar
+          getClassesWithoutSchool={getClassesWithoutSchool}
+          filterOtherClasses={filterOtherClasses}
           changeTimesTamp={changeTimesTamp}
           timesTamp={timesTamp}
           repeatData={repeatData}
@@ -2509,6 +2533,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getClassesConnection={getClassesConnection}
           classesConnection={classesConnection}
           lessonPlans={lessonPlans}
+          userInUndefined={userInUndefined}
+          getUesrOfUndefined={getUesrOfUndefined}
         />
       </Box>
       <Box
@@ -2517,6 +2543,10 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
         }}
       >
         <EditBox
+          getClassesWithoutSchool={getClassesWithoutSchool}
+          filterOtherClasses={filterOtherClasses}
+          userInUndefined={userInUndefined}
+          getUesrOfUndefined={getUesrOfUndefined}
           changeTimesTamp={changeTimesTamp}
           timesTamp={timesTamp}
           repeatData={repeatData}

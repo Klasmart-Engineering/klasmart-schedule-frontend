@@ -247,7 +247,7 @@ export interface filterOptionItem {
 
 export interface FilterClasses {
   class_id: string;
-  class_name: string;
+  name: string;
   showIcon: boolean;
 }
 

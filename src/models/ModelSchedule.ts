@@ -3,7 +3,7 @@ import { d } from "@locale/LocaleManager";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { getScheduleParticipantsMockOptionsResponse } from "@reducers/schedule";
 import { Status } from "../api/api-ko-schema.auto";
-import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, GetUserQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
 import {
   ClassOptionsItem,
@@ -225,11 +225,19 @@ export class modelSchedule {
   }
 
   static classDataConversion2(school_name: string, school_id: string, classesConnection?: GetClassFilterListQuery) {
-    const data: { class_id: string; class_name: string; showIcon: boolean }[] = [];
+    const data: { class_id: string; name: string; showIcon: boolean }[] = [];
     classesConnection?.classesConnection?.edges?.forEach((item) => {
-      data.push({ class_id: item?.node?.id!, class_name: item?.node?.name!, showIcon: false });
+      data.push({ class_id: item?.node?.id!, name: item?.node?.name!, showIcon: false });
     });
     return { school_name: school_name, school_id: school_id, classes: data, onlyMine: false };
+  }
+
+  static classDataConversion3(school_name: string, unserConnection?: GetUserQuery) {
+    const data: { class_id: string; name: string; showIcon: boolean }[] = [];
+    unserConnection?.usersConnection?.edges?.forEach((item) => {
+      data.push({ class_id: item?.node?.id!, name: `${item?.node?.givenName!} ${item?.node?.familyName!}`, showIcon: false });
+    });
+    return { school_name: school_name, school_id: "", classes: data, onlyMine: false };
   }
 
   static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {

@@ -40,10 +40,12 @@ import {
   getScheduleTimeViewDataByYear,
   getScheduleViewInfo,
   getSchoolsFilterList,
+  classesWithoutSchool,
   getSubjectByProgramId,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
   getLessonPlansBySchedule,
+  getUserInUndefined,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -96,7 +98,9 @@ function ScheduleContent() {
     schoolByOrgOrUserData,
     schoolsConnection,
     classesConnection,
+    userInUndefined,
     lessonPlans,
+    filterOtherClasses,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId } = useQuery();
@@ -294,6 +298,20 @@ function ScheduleContent() {
     );
   };
 
+  const getUesrOfUndefined = async (
+    cursor: string,
+    loading: boolean,
+    direction: ConnectionDirection.Forward | ConnectionDirection.Backward
+  ) => {
+    await dispatch(
+      getUserInUndefined({
+        direction: direction,
+        directionArgs: { count: 5, cursor: cursor ?? "" },
+        metaLoading: loading,
+      })
+    );
+  };
+
   const getSchoolsConnection = async (cursor: string, value: string, loading: boolean) => {
     let resultInfo: any;
     resultInfo = await dispatch(
@@ -305,6 +323,19 @@ function ScheduleContent() {
       })
     );
     return resultInfo.payload ? resultInfo.payload.data.schoolsConnection.edges : [];
+  };
+
+  const getClassesWithoutSchool = async (cursor: string, value: string, loading: boolean) => {
+    let resultInfo: any;
+    resultInfo = await dispatch(
+      classesWithoutSchool({
+        filter: { name: { operator: StringOperator.Contains, value: value } },
+        direction: ConnectionDirection.Forward,
+        directionArgs: { count: 5, cursor: cursor ?? "" },
+        metaLoading: loading,
+      })
+    );
+    return resultInfo.payload ? resultInfo.payload.data.classesConnection.edges : [];
   };
 
   React.useEffect(() => {
@@ -371,7 +402,12 @@ function ScheduleContent() {
         filter: { status: { operator: StringOperator.Eq, value: "active" } },
         direction: ConnectionDirection.Forward,
         directionArgs: { count: 5 },
-        metaLoading: true,
+      })
+    );
+    dispatch(
+      classesWithoutSchool({
+        direction: ConnectionDirection.Forward,
+        directionArgs: { count: 5 },
       })
     );
   }, [dispatch]);
@@ -413,6 +449,8 @@ function ScheduleContent() {
           </Grid>
           <Grid item xs={12} sm={12} md={4} lg={3}>
             <ScheduleEdit
+              getClassesWithoutSchool={getClassesWithoutSchool}
+              getUesrOfUndefined={getUesrOfUndefined}
               includePreview={includePreview}
               timesTamp={timesTamp}
               changeTimesTamp={changeTimesTamp}
@@ -450,9 +488,11 @@ function ScheduleContent() {
               schoolByOrgOrUserData={schoolByOrgOrUserData}
               viewSubjectPermission={viewSubjectPermission}
               schoolsConnection={schoolsConnection}
+              filterOtherClasses={filterOtherClasses}
               getSchoolsConnection={getSchoolsConnection}
               getClassesConnection={getClassesConnection}
               classesConnection={classesConnection}
+              userInUndefined={userInUndefined}
               lessonPlans={lessonPlans}
             />
           </Grid>

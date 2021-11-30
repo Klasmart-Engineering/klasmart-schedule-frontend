@@ -19,8 +19,8 @@ import clsx from "clsx";
 import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { ConnectionDirection } from "../../api/api-ko-schema.auto";
-import { GetClassFilterListQuery, GetSchoolsFilterListQuery } from "../../api/api-ko.auto";
-import { EntityScheduleFilterClass, EntityScheduleShortInfo } from "../../api/api.auto";
+import { GetClassFilterListQuery, GetSchoolsFilterListQuery, GetUserQuery } from "../../api/api-ko.auto";
+import { EntityScheduleShortInfo } from "../../api/api.auto";
 import { MockOptionsOptionsItem } from "../../api/extra";
 import FilterTree from "../../components/FilterTree";
 import { d, t } from "../../locale/LocaleManager";
@@ -163,6 +163,18 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingLeft: "5em",
       fontSize: "13px",
       cursor: "pointer",
+    },
+    filterLabel: {
+      padding: "9px",
+      width: "78%",
+      borderRadius: "16px",
+      cursor: "pointer",
+      marginLeft: "-8px",
+      "&:hover": {
+        backgroundColor: "#F5F5F5",
+      },
+      display: "flex",
+      justifyContent: "space-between",
     },
   })
 );
@@ -476,6 +488,209 @@ function SchoolTemplate(props: SchoolTemplateProps) {
   );
 }
 
+interface FilterLabelProps {
+  name: string;
+  id: string;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeClassId: (id: string, checked: boolean) => void;
+}
+
+function FilterLabel(props: FilterLabelProps) {
+  const { id, name, handleChangeShowAnyTime, handleChangeClassId } = props;
+  const template = <span style={{ marginLeft: "4px" }}>{name}</span>;
+  const primeElement = (
+    <Checkbox
+      color="primary"
+      inputProps={{ "aria-label": "secondary checkbox" }}
+      onClick={(e) => {
+        handleChangeClassId(id, (e.target as HTMLInputElement).checked);
+      }}
+    />
+  );
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
+  const oid = open ? "simple-popover" : undefined;
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const rgb = Math.floor(Math.random() * 256);
+  return (
+    <Box style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingLeft: "20px", marginBottom: "10px" }}>
+      {primeElement}
+      <div className={classes.filterLabel}>
+        {template}
+        <Popover
+          id={oid}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+        >
+          <Typography
+            className={classes.typography}
+            onClick={() => {
+              handleChangeShowAnyTime(true, name, id);
+              setAnchorEl(null);
+            }}
+          >
+            {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
+          </Typography>
+        </Popover>
+        <Typography variant="caption" color="inherit" style={{ display: "flex", alignItems: "center", transform: "scale(0.8)" }}>
+          <div
+            style={{
+              width: "12px",
+              height: "12px",
+              backgroundColor: `rgb(${rgb},${rgb},${rgb})`,
+              borderRadius: "20px",
+              display: "none",
+            }}
+          />{" "}
+          <MoreVertIcon
+            aria-describedby={id}
+            onClick={(e) => {
+              handleClick(e as any);
+            }}
+          />
+        </Typography>
+      </div>
+    </Box>
+  );
+}
+
+interface OtherTemplateProps {
+  schoolsConnection?: GetSchoolsFilterListQuery;
+  getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
+  getClassesConnection: (
+    cursor: string,
+    school_id: string,
+    loading: boolean,
+    direction: ConnectionDirection.Forward | ConnectionDirection.Backward
+  ) => void;
+  classesConnection?: GetClassFilterListQuery;
+  openClassMenuByOther?: (pageY: number) => void;
+  filterOtherClasses: GetClassFilterListQuery;
+  getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeOnlyMine: (data: string[]) => void;
+  stateOnlyMine: string[];
+}
+function OtherTemplate(props: OtherTemplateProps) {
+  const {
+    openClassMenuByOther,
+    filterOtherClasses,
+    getClassesWithoutSchool,
+    handleChangeShowAnyTime,
+    handleChangeOnlyMine,
+    stateOnlyMine,
+  } = props;
+  const [checked, setChecked] = React.useState(false);
+  const [edges, setEdges] = React.useState<any>([]);
+  const [searchValue, setSearchValue] = React.useState<string>("");
+  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
+  const handleChange = () => {
+    setChecked((prev) => !prev);
+  };
+  const css = useStyles();
+  const getSearcherResult = (value: string) => {
+    if (timer) clearTimeout(timer);
+    const timers = setTimeout(async () => {
+      setSearchValue(value);
+      await getClassesWithoutSchool("", value, false);
+      setEdges([]);
+    }, 500);
+    setTimer(timers);
+  };
+  const getLastCursor = async () => {
+    const classesConnectionItem = filterOtherClasses?.classesConnection?.edges!;
+    const edge = classesConnectionItem && classesConnectionItem[classesConnectionItem?.length - 1];
+    const cursor = edge?.cursor ?? "";
+    const edgesResult = await getClassesWithoutSchool(cursor, searchValue, true);
+    edges.length ? setEdges([...edges, ...edgesResult]) : setEdges([...classesConnectionItem, ...edges, ...edgesResult]);
+  };
+  const handleChangeClassId = (id: string, checked: boolean) => {
+    let data: string[] = [];
+    if (checked) {
+      const classId = `class+${id}`;
+      data = [...stateOnlyMine, classId];
+    } else {
+      const classId = `class+${id}`;
+      data = stateOnlyMine.filter((val) => {
+        return classId !== val;
+      });
+    }
+    handleChangeOnlyMine(data);
+  };
+  return (
+    <Box>
+      <div onClick={handleChange} className={css.schoolTemplateStyleTitle} style={{ marginBlockStart: "1em" }}>
+        <span>
+          {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
+          {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
+        </span>
+        <div className={clsx(css.changeColor, css.subsets)} style={{ width: "83%", paddingLeft: "1em" }}>
+          {d("Others").t("schedule_filter_others")}
+        </div>
+      </div>
+      <Collapse in={checked}>
+        {((filterOtherClasses?.classesConnection?.totalCount ?? 0) > 5 || searchValue) && (
+          <div style={{ textAlign: "center", marginBlockStart: "1em" }}>
+            <TextField
+              id="filled-size-small"
+              size="small"
+              placeholder="Search Class Name"
+              onChange={(e) => {
+                getSearcherResult(e.target.value);
+              }}
+            />
+          </div>
+        )}
+        <div>
+          <div className={css.schoolTemplateStyleLabel} style={{ marginBlockStart: "1em", marginBlockEnd: "1em" }}>
+            <Checkbox color="primary" inputProps={{ "aria-label": "primary checkbox" }} style={{ visibility: "hidden" }} />
+            <div
+              className={clsx(css.changeColor, css.label)}
+              style={{ width: "78%", paddingLeft: "1em" }}
+              onClick={async (e) => {
+                openClassMenuByOther && openClassMenuByOther(e.pageY);
+              }}
+            >
+              {d("Undefined").t("schedule_filter_undefined")}
+            </div>
+          </div>
+          {(edges.length ? edges : filterOtherClasses?.classesConnection?.edges)?.map((item: any) => {
+            return (
+              <FilterLabel
+                id={item?.node?.id}
+                name={item?.node?.name}
+                handleChangeShowAnyTime={handleChangeShowAnyTime}
+                handleChangeClassId={handleChangeClassId}
+              />
+            );
+          })}
+        </div>
+        {filterOtherClasses?.classesConnection?.pageInfo?.hasNextPage && (
+          <p onClick={getLastCursor} className={css.schoolTemplateStyleMore}>
+            {d("See More").t("schedule_detail_see_more")} <ArrowDropDownIcon />
+          </p>
+        )}
+      </Collapse>
+    </Box>
+  );
+}
+
 function FilterTemplate(props: FilterProps) {
   const css = useStyles();
   const dispatch = useDispatch();
@@ -484,6 +699,8 @@ function FilterTemplate(props: FilterProps) {
   const [showClassMenu, setShowClassMenu] = React.useState<boolean>(false);
   const [checkSchoolItem, setCheckSchoolItem] = React.useState<{ id: string; name: string }>({ id: "", name: "" });
   const [pageY, setPageY] = React.useState<number>(0);
+  const [showUserMenu, setShowUserMenu] = React.useState<boolean>(false);
+  const [userPageY, setUserPageY] = React.useState<number>(0);
   const {
     handleChangeShowAnyTime,
     stateOnlyMine,
@@ -495,6 +712,10 @@ function FilterTemplate(props: FilterProps) {
     getSchoolsConnection,
     getClassesConnection,
     classesConnection,
+    getUesrOfUndefined,
+    userInUndefined,
+    filterOtherClasses,
+    getClassesWithoutSchool,
   } = props;
   const [stateOnlySelectMineExistData, setStateOnlySelectMineExistData] = React.useState<any>({});
 
@@ -615,6 +836,10 @@ function FilterTemplate(props: FilterProps) {
     return modelSchedule.classDataConversion2(checkSchoolItem.name, checkSchoolItem.id, classesConnection);
   }, [checkSchoolItem, classesConnection]);
 
+  const getUserDataByUndefined = useMemo(() => {
+    return modelSchedule.classDataConversion3(d("Undefined").t("schedule_filter_undefined"), userInUndefined);
+  }, [userInUndefined]);
+
   const getClassTypeByFilter = () => {
     return filterOption.classType.map((val: EntityScheduleShortInfo) => {
       return subDataStructures(val.id, t(val.name as classTypeLabel), "classType");
@@ -644,36 +869,6 @@ function FilterTemplate(props: FilterProps) {
     return program;
   };
 
-  const getOthersByFilter = () => {
-    const existData: string[] = [];
-    let filterOptionOthers: FilterDataItemsProps[] = [];
-    filterOptionOthers = filterOption.others.map((classItem: EntityScheduleFilterClass) => {
-      existData.push(`other+${classItem.id}`);
-      return subDataStructures(classItem.id, classItem.name, "other", classItem?.operator_role_type === "Student");
-    });
-    if (filterOptionOthers.length > 1)
-      filterOptionOthers.unshift(subDataStructures(`All+Others`, d("All").t("assess_filter_all"), "class", false, existData));
-    return filterOptionOthers;
-  };
-
-  const getOthersExistData = (): string[] => {
-    const data: string[] = [];
-    filterOption.others.forEach((classItem: EntityScheduleFilterClass) => {
-      data.push(`other+${classItem.id}`);
-    });
-    if (data.length > 1) data.push("class+All+Others");
-    return data;
-  };
-
-  const getOnLyMineData = (): string[] => {
-    const data: string[] = [];
-    filterOption.others.forEach((classItem: EntityScheduleFilterClass) => {
-      if (!(privilegedMembers("Teacher") || privilegedMembers("Student")) && classItem?.operator_role_type !== "Unknown")
-        data.push(`other+${classItem.id}`);
-    });
-    return data;
-  };
-
   const openClassMenu = async (pageY: number, schoolItem: { id: string; name: string }) => {
     setShowClassMenu(false);
     if (schoolItem.id === "All_My_Schools") return;
@@ -683,21 +878,22 @@ function FilterTemplate(props: FilterProps) {
     setCheckSchoolItem(schoolItem);
   };
 
+  const openClassMenuByOther = async (pageY: number) => {
+    setShowUserMenu(false);
+    await getUesrOfUndefined("", true, ConnectionDirection.Forward);
+    setUserPageY(pageY);
+    setShowUserMenu(true);
+  };
+
   const hideClassMenu = () => {
     setShowClassMenu(false);
   };
 
+  const hideUserClassMenu = () => {
+    setShowUserMenu(false);
+  };
+
   const filterData: FilterDataItemsProps[] = [
-    {
-      id: "Others+1",
-      name: d("Others").t("schedule_filter_others"),
-      isCheck: false,
-      child: getOthersByFilter(),
-      isOnlyMine: getOnLyMineData().length > 0,
-      existData: getOthersExistData(),
-      isHide: getOthersByFilter().length < 1,
-      onLyMineData: getOnLyMineData(),
-    },
     {
       id: "Programs+1",
       name: d("Programs").t("schedule_filter_programs"),
@@ -763,6 +959,17 @@ function FilterTemplate(props: FilterProps) {
         getSchoolsConnection={getSchoolsConnection}
         getClassesConnection={getClassesConnection}
       />
+      <OtherTemplate
+        openClassMenuByOther={openClassMenuByOther}
+        schoolsConnection={schoolsConnection}
+        getSchoolsConnection={getSchoolsConnection}
+        getClassesConnection={getClassesConnection}
+        stateOnlyMine={stateOnlyMine}
+        handleChangeOnlyMine={handleChangeOnlyMine}
+        filterOtherClasses={filterOtherClasses}
+        getClassesWithoutSchool={getClassesWithoutSchool}
+        handleChangeShowAnyTime={handleChangeShowAnyTime}
+      />
       <TreeView
         className={css.containerRoot}
         defaultCollapseIcon={<KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
@@ -774,6 +981,7 @@ function FilterTemplate(props: FilterProps) {
       </TreeView>
       {showClassMenu && (
         <FilterTree
+          type="class"
           stateOnlyMine={stateOnlyMine}
           handleChangeOnlyMine={handleChangeOnlyMine}
           hideClassMenu={hideClassMenu}
@@ -783,6 +991,20 @@ function FilterTemplate(props: FilterProps) {
           total={classesConnection?.classesConnection?.totalCount!}
           getClassesConnection={getClassesConnection}
           pageInfo={classesConnection?.classesConnection?.pageInfo}
+        />
+      )}
+      {showUserMenu && (
+        <FilterTree
+          type="user"
+          stateOnlyMine={stateOnlyMine}
+          handleChangeOnlyMine={handleChangeOnlyMine}
+          hideClassMenu={hideUserClassMenu}
+          pageY={userPageY}
+          classDataBySchool={getUserDataByUndefined}
+          handleChangeShowAnyTime={handleChangeShowAnyTime}
+          total={userInUndefined?.usersConnection?.totalCount!}
+          pageInfo={userInUndefined?.usersConnection?.pageInfo}
+          getUesrOfUndefined={getUesrOfUndefined}
         />
       )}
     </>
@@ -802,6 +1024,10 @@ interface FilterProps extends SchoolTemplateProps {
   filterOption: filterOptionItem;
   schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
+  getUesrOfUndefined: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
+  userInUndefined: GetUserQuery;
+  filterOtherClasses: GetClassFilterListQuery;
+  getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
 }
 
 export default function ScheduleFilter(props: FilterProps) {
@@ -822,9 +1048,17 @@ export default function ScheduleFilter(props: FilterProps) {
     getSchoolsConnection,
     getClassesConnection,
     classesConnection,
+    getUesrOfUndefined,
+    userInUndefined,
+    filterOtherClasses,
+    getClassesWithoutSchool,
   } = props;
   return (
     <FilterTemplate
+      getClassesWithoutSchool={getClassesWithoutSchool}
+      filterOtherClasses={filterOtherClasses}
+      userInUndefined={userInUndefined}
+      getUesrOfUndefined={getUesrOfUndefined}
       handleChangeLoadScheduleView={handleChangeLoadScheduleView}
       mockOptions={mockOptions}
       scheduleMockOptions={scheduleMockOptions}

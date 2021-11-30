@@ -143,8 +143,8 @@ function FilterOnlyMineBox() {
 }
 
 interface FilterLabelProps {
-  class_name: string;
-  class_id: string;
+  name: string;
+  id: string;
   showIcon: boolean;
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
   hideActive: boolean;
@@ -154,16 +154,15 @@ interface FilterLabelProps {
 }
 
 function FilterLabel(props: FilterLabelProps) {
-  const { class_name, class_id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check, disabled } = props;
-  const css = useStyles();
-  const name = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{class_name}</span>;
+  const { name, id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check, disabled } = props;
+  const template = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{name}</span>;
   const primeElement = (
     <Checkbox
       disabled={disabled && !check}
       checked={check}
       color="primary"
       onClick={(e) => {
-        handleChangeClassId(class_id, (e.target as HTMLInputElement).checked);
+        handleChangeClassId(id, (e.target as HTMLInputElement).checked);
       }}
       inputProps={{ "aria-label": "secondary checkbox" }}
     />
@@ -171,7 +170,7 @@ function FilterLabel(props: FilterLabelProps) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const oid = open ? "simple-popover" : undefined;
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -184,11 +183,11 @@ function FilterLabel(props: FilterLabelProps) {
     <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <AccessibilityNewIcon style={{ visibility: showIcon ? "visible" : "hidden" }} />
       {primeElement}
-      <div className={css.filterLabel}>
-        {name}
+      <div className={classes.filterLabel}>
+        {template}
         {FilterOnlyMineBox}
         <Popover
-          id={id}
+          id={oid}
           open={open}
           anchorEl={anchorEl}
           onClose={handleClose}
@@ -204,7 +203,7 @@ function FilterLabel(props: FilterLabelProps) {
           <Typography
             className={classes.typography}
             onClick={() => {
-              handleChangeShowAnyTime(true, class_name, class_id);
+              handleChangeShowAnyTime(true, name, id);
               setAnchorEl(null);
             }}
           >
@@ -246,13 +245,19 @@ function FilterOverall(props: FilterTreeProps) {
     total,
     pageInfo,
     getClassesConnection,
+    getUesrOfUndefined,
+    type,
   } = props;
   // const total = classDataBySchool.classes.length;
   const pageSize = 5;
   const [page, setPage] = React.useState(1);
   const [checkMine, setCheckMine] = React.useState(false);
   const handleChange = async (cursor: string, direction: ConnectionDirection.Forward | ConnectionDirection.Backward, page: number) => {
-    await getClassesConnection(cursor, classDataBySchool.school_id, true, direction);
+    if (type === "user") {
+      getUesrOfUndefined && (await getUesrOfUndefined(cursor, true, direction));
+    } else {
+      getClassesConnection && (await getClassesConnection(cursor, classDataBySchool.school_id, true, direction));
+    }
     setPage(page);
   };
   const reBytesStr = (str: string, len: number) => {
@@ -326,8 +331,8 @@ function FilterOverall(props: FilterTreeProps) {
           return (
             <FilterLabel
               hideActive={true}
-              class_name={item.class_name}
-              class_id={item.class_id}
+              name={item.name}
+              id={item.class_id}
               showIcon={item.showIcon}
               handleChangeShowAnyTime={handleChangeShowAnyTime}
               handleChangeClassId={handleChangeClassId}
@@ -448,12 +453,14 @@ interface FilterTreeProps {
   handleChangeOnlyMine: (data: string[]) => void;
   stateOnlyMine: string[];
   total?: number;
-  getClassesConnection: (
+  type?: "user" | "class";
+  getClassesConnection?: (
     cursor: string,
     school_id: string,
     loading: boolean,
     direction: ConnectionDirection.Forward | ConnectionDirection.Backward
   ) => void;
+  getUesrOfUndefined?: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
   pageInfo?: Types.Maybe<
     { __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor">
   >;
@@ -469,7 +476,9 @@ export default function FilterTree(props: FilterTreeProps) {
     stateOnlyMine,
     total,
     getClassesConnection,
+    type,
     pageInfo,
+    getUesrOfUndefined,
   } = props;
   return (
     <FilterOverall
@@ -482,6 +491,8 @@ export default function FilterTree(props: FilterTreeProps) {
       total={total}
       getClassesConnection={getClassesConnection}
       pageInfo={pageInfo}
+      type={type}
+      getUesrOfUndefined={getUesrOfUndefined}
     />
   );
 }
