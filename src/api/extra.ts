@@ -66,6 +66,7 @@ export const apiValidatePDFGet = (resource_id: string) => {
       "Content-Type": "application/pdf",
       Accept: "application/pdf",
     },
+    credentials: "include",
   }).then((response) => {
     return response.json();
   });
@@ -80,6 +81,7 @@ export const apiValidatePDFPost = (file: FileLike) => {
       "Content-Type": "application/pdf",
       Accept: "application/pdf",
     },
+    credentials: "include",
     body: formData,
   }).then((response) => {
     return response.json();
