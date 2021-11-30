@@ -3,6 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
+import { actError } from "@reducers/notify";
 import { FileLike } from "@rpldy/shared";
 import clsx from "clsx";
 import React, { useCallback } from "react";
@@ -110,8 +111,10 @@ function AssetEdit(props: AssetEditProps) {
           onChange(value);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         dispatch(actSetLoading(false));
+        dispatch(actError(t("library_error_pdf_validation")));
         onChange("");
       });
   };
@@ -131,8 +134,10 @@ function AssetEdit(props: AssetEditProps) {
           return fun();
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         dispatch(actSetLoading(false));
+        dispatch(actError(t("library_error_pdf_validation")));
         return false;
       });
   };

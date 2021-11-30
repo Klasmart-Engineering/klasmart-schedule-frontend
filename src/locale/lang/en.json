@@ -1048,5 +1048,6 @@
   "report_label_overall_completion": "Overall Completion",
   "report_msg_participants_not_included": "Participants are not included",
   "report_student_usage_incomplete_students": "Incomplete by Students",
-  "general_error_fail_get_permission": "Failed to get permission, please refresh"
+  "general_error_fail_get_permission": "Failed to get permission, please refresh",
+  "library_error_pdf_validation": " validate pdf timeout"
 }
