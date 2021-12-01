@@ -205,7 +205,7 @@ function ScheduleContent() {
   /**
    * calendar model view change
    */
-  const [modelView, setModelView] = React.useState<modeViewType>("month");
+  const [modelView, setModelView] = React.useState<modeViewType>(document.getElementById("root")?.offsetWidth! < 960 ? "day" : "month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (event.target.value === "year") {
       setModelYear(true);
