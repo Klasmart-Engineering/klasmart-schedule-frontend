@@ -89,7 +89,7 @@ export function ReportAchievementList() {
           search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
         });
         let classList: Item[] = [];
-        classesConnection?.classesConnection?.edges?.forEach((item) => {
+        classesConnection?.edges?.forEach((item) => {
           if (!!item?.node?.teachersConnection?.edges?.find((teacherItem) => teacherItem?.node?.id === value)) {
             classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
           }
@@ -113,7 +113,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [history, classesConnection?.classesConnection?.edges, getFirstLessonPlanId, condition.teacher_id, condition.class_id, dispatch]
+    [history, classesConnection?.edges, getFirstLessonPlanId, condition.teacher_id, condition.class_id, dispatch]
   );
   useEffect(() => {
     dispatch(
@@ -132,7 +132,7 @@ export function ReportAchievementList() {
   useEffect(() => {
     if (reportMockOptions.teacherList.length > 0) {
       let initClassesList: Item[] = [];
-      classesConnection?.classesConnection?.edges?.forEach((item) => {
+      classesConnection?.edges?.forEach((item) => {
         if (
           !!item?.node?.teachersConnection?.edges?.find(
             (teacherItem) => teacherItem?.node?.id === (condition.teacher_id || reportMockOptions.teacherList[0].id)
@@ -143,7 +143,7 @@ export function ReportAchievementList() {
       });
       setClassList(initClassesList);
     }
-  }, [classesConnection?.classesConnection?.edges, condition.teacher_id, reportMockOptions.teacherList]);
+  }, [classesConnection?.edges, condition.teacher_id, reportMockOptions.teacherList]);
 
   useEffect(() => {
     if (reportMockOptions) {

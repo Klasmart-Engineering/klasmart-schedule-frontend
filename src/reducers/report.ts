@@ -1,4 +1,16 @@
-import { Class, ClassFilter, Program, School, Status, Subject, User, UserFilter, UuidFilter, UuidOperator } from "@api/api-ko-schema.auto";
+import {
+  Class,
+  ClassesConnectionResponse,
+  ClassFilter,
+  Program,
+  School,
+  Status,
+  Subject,
+  User,
+  UserFilter,
+  UuidFilter,
+  UuidOperator,
+} from "@api/api-ko-schema.auto";
 import api, { gqlapi } from "@api/index";
 import { ApolloQueryResult } from "@apollo/client";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -101,7 +113,7 @@ interface IreportState {
   student_name: string | undefined;
   reportMockOptions: GetReportMockOptionsResponse;
   categories: EntityTeacherReportCategory[];
-  classesConnection: ClassesConnectionQuery;
+  classesConnection: ClassesConnectionQuery["classesConnection"];
   teacherList: Item[];
   stuReportList?: EntityStudentPerformanceReportItem[];
   stuReportDetail?: EntityStudentPerformanceReportItem[];
@@ -618,7 +630,7 @@ export const reportOnload = createAsyncThunk<
   //   >[]);
   finalTearchId = teacher_id || (teacherList && teacherList[0]?.id) || "";
   let classList: Item[] = [];
-  classesConnection?.classesConnection?.edges?.forEach((item) => {
+  classesConnection?.edges?.forEach((item) => {
     if (!!item?.node?.teachersConnection?.edges?.find((teacherItem) => teacherItem?.node?.id === teacherList[0].id)) {
       classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
     }
@@ -665,7 +677,7 @@ export interface Item {
 }
 export interface getTeachersAndClassesReturnType {
   teacherList: Item[];
-  classesConnection: ClassesConnectionQuery;
+  classesConnection: ClassesConnectionQuery["classesConnection"];
 }
 export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesReturnType, LoadingMetaPayload>(
   "report/getTeachersAndClasses",
@@ -688,7 +700,7 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
     let teacherList: Item[] = [];
     const organizationId: UuidFilter = { operator: UuidOperator.Eq, value: organization_id };
     const classFilter: ClassFilter = { organizationId };
-    let classesData: ClassesConnectionQuery = { classesConnection: { edges: [] } };
+    let classesData: ClassesConnectionQuery["classesConnection"] = { edges: [] };
     let end = false;
     let classCursor = "";
     while (!end) {
@@ -698,8 +710,8 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
         query: ClassesConnectionDocument,
         variables: { classFilter, classCursor },
       });
-      const edges = classesData.classesConnection?.edges?.concat(classesConnection?.edges || []);
-      classesData = { classesConnection: { edges } };
+      const edges = classesData?.edges?.concat(classesConnection?.edges || []) as ClassesConnectionResponse["edges"];
+      classesData = { edges };
       if (!classesConnection?.pageInfo?.hasNextPage) {
         end = true;
       } else {
@@ -709,7 +721,7 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
 
     if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
       if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
-        classesData.classesConnection?.edges?.forEach((item) => {
+        classesData?.edges?.forEach((item) => {
           teacherList = teacherList.concat(
             item?.node?.teachersConnection?.edges?.map((teacherItem) => ({
               id: teacherItem?.node?.id || "",
@@ -719,7 +731,7 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
         });
       }
       if ((!perm.view_my_organizations_reports_612 && perm.view_my_school_reports_611) || perm.view_reports_610) {
-        classesData.classesConnection?.edges
+        classesData?.edges
           ?.filter((item) => {
             return mySchoolIDs.find((mySchoolId) => item?.node?.schools?.find((schoolItem) => schoolItem.id === mySchoolId));
           })
