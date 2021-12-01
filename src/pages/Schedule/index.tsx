@@ -153,14 +153,6 @@ function ScheduleContent() {
     dispatch(changeParticipants({ type: type, data: data }));
   };
 
-  window.addEventListener("resize", () => {
-    if (document.getElementById("root")?.offsetWidth! < 960) {
-      setModelView("day");
-    } else {
-      setModelView("month");
-    }
-  });
-
   const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string) => {
     if (class_id)
       await dispatch(
@@ -205,7 +197,7 @@ function ScheduleContent() {
   /**
    * calendar model view change
    */
-  const [modelView, setModelView] = React.useState<modeViewType>(document.getElementById("root")?.offsetWidth! < 960 ? "day" : "month");
+  const [modelView, setModelView] = React.useState<modeViewType>(document.body.clientWidth < 600 ? "day" : "month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (event.target.value === "year") {
       setModelYear(true);
@@ -214,6 +206,14 @@ function ScheduleContent() {
       setModelView(event.target.value as modeViewType);
     }
   };
+
+  window.addEventListener("resize", () => {
+    if (document.body.clientWidth < 600) {
+      setModelView("day");
+    } else {
+      setModelView("month");
+    }
+  });
 
   /**
    * get participants
