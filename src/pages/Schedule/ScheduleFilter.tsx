@@ -686,6 +686,7 @@ function OtherTemplate(props: OtherTemplateProps) {
           {(edges.length ? edges : filterOtherClasses?.classesConnection?.edges)?.map((item: any) => {
             return (
               <FilterLabel
+                key={item?.node?.id}
                 id={item?.node?.id}
                 name={item?.node?.name}
                 handleChangeShowAnyTime={handleChangeShowAnyTime}

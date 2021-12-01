@@ -331,6 +331,7 @@ function FilterOverall(props: FilterTreeProps) {
         {classDataBySchool.classes.map((item) => {
           return (
             <FilterLabel
+              key={item.class_id}
               hideActive={true}
               name={item.name}
               id={item.class_id}

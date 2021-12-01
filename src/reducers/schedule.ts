@@ -430,6 +430,7 @@ export const getUserInUndefined = createAsyncThunk<GetUserQuery, GetUserQueryVar
           organizationId: { operator: UuidOperator.Eq, value: organization_id },
           organizationUserStatus: { operator: StringOperator.Eq, value: "active" },
           classId: { operator: UuidExclusiveOperator.IsNull },
+          schoolId: { operator: UuidExclusiveOperator.IsNull },
         },
         direction: direction,
         directionArgs: directionArgs,
