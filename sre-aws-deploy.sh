@@ -144,12 +144,14 @@ docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target
 msg "----------------------"
 msg "npm build for ${env} in region ${region}"
 docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target=/app -w /app node:14 npm run build
+msg "${GREEN}adding version file${NOFORMAT}"
+Version="$(git describe --tags)" Tag="$(git rev-parse HEAD | cut -c1-7)"; jq --arg version "$Version" --arg tag "$Tag" "{\"Version\":\"$Version\",\"Commit\":\"$Tag\"}" --raw-output --null-input > build/version.txt
 msg "----------------------"
 msg "${GREEN}syncing current latest to backup${NOFORMAT}"
 aws s3 sync ${S3_ENDPOINT}/latest ${S3_ENDPOINT}/$(date "+%Y%m%d")
 msg "----------------------"
 msg "${GREEN}syncing build to s3${NOFORMAT}"
-#aws s3 sync build ${S3_ENDPOINT}/latest --delete
+aws s3 sync build ${S3_ENDPOINT}/latest --delete
 msg "${GREEN}creating cloudfront invalidation${NOFORMAT}"
 aws cloudfront create-invalidation --paths "/*" --distribution-id ${CLOUDFRONT_ID}
 
