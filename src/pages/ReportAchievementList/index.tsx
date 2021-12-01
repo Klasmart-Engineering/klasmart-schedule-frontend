@@ -143,7 +143,8 @@ export function ReportAchievementList() {
       });
       setClassList(initClassesList);
     }
-  }, [classesConnection?.edges, condition.teacher_id, reportMockOptions.teacherList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classesConnection?.edges, reportMockOptions.teacherList]);
 
   useEffect(() => {
     if (reportMockOptions) {
