@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface SearchListProps {
   timesTamp: timestampType;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   scheduleAnyTimeViewData: EntityScheduleListView[];
   privilegedMembers: (member: memberType) => boolean;
   toLive: (schedule_id?: string, token?: string) => void;

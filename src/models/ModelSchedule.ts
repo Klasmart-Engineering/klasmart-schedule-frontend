@@ -16,7 +16,7 @@ import {
   RolesData,
 } from "../types/scheduleTypes";
 
-type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
+type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other" | "user";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
 
 interface AssociationStructureProps {
@@ -40,6 +40,7 @@ export class modelSchedule {
     program: "program_ids",
     class: "class_ids",
     other: "class_ids",
+    user: "user_ids",
   };
 
   /**
@@ -118,7 +119,7 @@ export class modelSchedule {
    * @constructor
    */
   static AssemblyFilterParameter(stateOnlyMine: string[]) {
-    const filterQuery: FilterQueryTypeProps = { class_types: [], class_ids: [], subject_ids: [], program_ids: [] };
+    const filterQuery: FilterQueryTypeProps = { class_types: [], class_ids: [], subject_ids: [], program_ids: [], user_ids: [] };
     stateOnlyMine.forEach((value: string) => {
       const [label, id] = value.split("+");
       const matchValue = this.FILTER_PARAMETER_MATCH[label as filterParameterMatchType];

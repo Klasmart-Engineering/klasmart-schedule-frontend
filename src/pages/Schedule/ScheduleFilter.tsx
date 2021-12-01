@@ -185,7 +185,7 @@ type StyledTreeItemProps = TreeItemProps & {
   labelIcon?: React.ElementType<SvgIconProps>;
   labelInfo?: string;
   labelText?: string;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id: string, user_id?: string) => void;
   isShowIcon?: boolean;
   isOnlyMine?: boolean;
   item: FilterDataItemsProps;
@@ -491,7 +491,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
 interface FilterLabelProps {
   name: string;
   id: string;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   handleChangeClassId: (id: string, checked: boolean) => void;
 }
 
@@ -583,7 +583,7 @@ interface OtherTemplateProps {
   openClassMenuByOther?: (pageY: number) => void;
   filterOtherClasses: GetClassFilterListQuery;
   getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   handleChangeOnlyMine: (data: string[]) => void;
   stateOnlyMine: string[];
 }
@@ -635,7 +635,7 @@ function OtherTemplate(props: OtherTemplateProps) {
   };
   return (
     <Box>
-      <div onClick={handleChange} className={css.schoolTemplateStyleTitle} style={{ marginBlockStart: "1em" }}>
+      <div onClick={handleChange} className={css.schoolTemplateStyleTitle} style={{ margin: "8px 0px 8px 0px" }}>
         <span>
           {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
           {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
@@ -1015,7 +1015,7 @@ interface FilterProps extends SchoolTemplateProps {
   handleChangeLoadScheduleView: (filterQuery: FilterQueryTypeProps | []) => void;
   mockOptions: MockOptionsOptionsItem[] | undefined;
   scheduleMockOptions: getScheduleMockOptionsResponse;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   stateOnlyMine: string[];
   handleChangeOnlyMine: (data: string[]) => void;
   timesTamp: timestampType;

@@ -2415,7 +2415,7 @@ interface CalendarStateProps {
   isHidden: boolean;
   scheduleDetial: EntityScheduleDetailsView;
   privilegedMembers: (member: memberType) => boolean;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   stateOnlyMine: string[];
   handleChangeOnlyMine: (data: string[]) => void;
   isShowAnyTime: boolean;

@@ -107,6 +107,7 @@ export interface FilterQueryTypeProps {
   class_ids: string[];
   subject_ids: string[];
   program_ids: string[];
+  user_ids: string[];
 }
 
 export interface ClassOptionsItem {

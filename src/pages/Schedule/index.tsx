@@ -156,18 +156,20 @@ function ScheduleContent() {
     dispatch(changeParticipants({ type: type, data: data }));
   };
 
-  const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string) => {
-    if (class_id)
+  const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string, user_id?: string) => {
+    if (class_id || user_id)
       await dispatch(
         getScheduleAnyTimeViewData({
           view_type: "full_view",
           filter_option: "any_time",
           class_ids: class_id,
+          user_ids: user_id,
           order_by: "-create_at",
           metaLoading: true,
         })
       );
     if (class_id) setStateCurrentCid(class_id);
+    if (user_id) setStateCurrentCid(user_id);
     setIsShowAnyTime(is_show);
     setAnyTimeName(name);
   };

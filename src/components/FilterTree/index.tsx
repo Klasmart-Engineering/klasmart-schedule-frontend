@@ -146,15 +146,16 @@ interface FilterLabelProps {
   name: string;
   id: string;
   showIcon: boolean;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   hideActive: boolean;
   handleChangeClassId: (id: string, checked: boolean) => void;
   check: boolean;
   disabled: boolean;
+  type?: "user" | "class";
 }
 
 function FilterLabel(props: FilterLabelProps) {
-  const { name, id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check, disabled } = props;
+  const { name, id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check, disabled, type } = props;
   const template = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{name}</span>;
   const primeElement = (
     <Checkbox
@@ -203,7 +204,7 @@ function FilterLabel(props: FilterLabelProps) {
           <Typography
             className={classes.typography}
             onClick={() => {
-              handleChangeShowAnyTime(true, name, id);
+              handleChangeShowAnyTime(true, name, type === "class" ? id : "", type === "user" ? id : "");
               setAnchorEl(null);
             }}
           >
@@ -276,19 +277,19 @@ function FilterOverall(props: FilterTreeProps) {
     return value ? reBytesStr(value, CharacterCount) : "";
   };
 
-  const getCLassData = (type: string) => {
+  const getCLassData = (t: string) => {
     let data: string[] = [];
-    if (type === "Mine") {
+    if (t === "Mine") {
       const filterMine = classDataBySchool.classes.filter((item) => {
         return item.showIcon;
       });
       data = filterMine.map((item) => {
-        return `class+${item.class_id}+${classDataBySchool.school_id}`;
+        return `${type}+${item.class_id}+${classDataBySchool.school_id}`;
       });
     }
-    if (type === "All") {
+    if (t === "All") {
       data = classDataBySchool.classes.map((item) => {
-        return `class+${item.class_id}+${classDataBySchool.school_id}`;
+        return `${type}+${item.class_id}+${classDataBySchool.school_id}`;
       });
     }
     return data;
@@ -299,7 +300,7 @@ function FilterOverall(props: FilterTreeProps) {
       if (["Mine", "All"].includes(id)) {
         data = getCLassData(id);
       } else {
-        const classId = `class+${id}+${classDataBySchool.school_id}`;
+        const classId = `${type}+${id}+${classDataBySchool.school_id}`;
         data = [...stateOnlyMine, classId];
       }
     } else {
@@ -308,7 +309,7 @@ function FilterOverall(props: FilterTreeProps) {
           return getCLassData(id).indexOf(val) === -1;
         });
       } else {
-        const classId = `class+${id}+${classDataBySchool.school_id}`;
+        const classId = `${type}+${id}+${classDataBySchool.school_id}`;
         data = stateOnlyMine.filter((val) => {
           return classId !== val;
         });
@@ -318,7 +319,7 @@ function FilterOverall(props: FilterTreeProps) {
   };
 
   const stateOnlyMineCheck = (id: string) => {
-    const cid = `class+${id}+${classDataBySchool.school_id}`;
+    const cid = `${type}+${id}+${classDataBySchool.school_id}`;
     return stateOnlyMine.includes(cid);
   };
 
@@ -338,6 +339,7 @@ function FilterOverall(props: FilterTreeProps) {
               handleChangeClassId={handleChangeClassId}
               check={stateOnlyMineCheck(item.class_id)}
               disabled={checkMine}
+              type={type}
             />
           );
         })}
@@ -447,7 +449,7 @@ function FilterOverall(props: FilterTreeProps) {
 
 interface FilterTreeProps {
   classDataBySchool: FilterSchoolInfo;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   pageY: number;
   hideClassMenu: () => void;
   handleChangeOnlyMine: (data: string[]) => void;
