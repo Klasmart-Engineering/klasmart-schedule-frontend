@@ -688,18 +688,28 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
     let teacherList: Item[] = [];
     const organizationId: UuidFilter = { operator: UuidOperator.Eq, value: organization_id };
     const classFilter: ClassFilter = { organizationId };
-    const { data } = await gqlapi.query<ClassesConnectionQuery, ClassesConnectionQueryVariables>({
-      query: ClassesConnectionDocument,
-      variables: { classFilter },
-    });
+    let classesData: ClassesConnectionQuery = { classesConnection: { edges: [] } };
+    let end = false;
+    let classCursor = "";
+    while (!end) {
+      const {
+        data: { classesConnection },
+      } = await gqlapi.query<ClassesConnectionQuery, ClassesConnectionQueryVariables>({
+        query: ClassesConnectionDocument,
+        variables: { classFilter, classCursor },
+      });
+      const edges = classesData.classesConnection?.edges?.concat(classesConnection?.edges || []);
+      classesData = { classesConnection: { edges } };
+      if (!classesConnection?.pageInfo?.hasNextPage) {
+        end = true;
+      } else {
+        classCursor = classesConnection?.pageInfo?.endCursor as string;
+      }
+    }
 
-    // const {data:users } = await gqlapi.query<GetOrgUserQuery, GetOrgUserQueryVariables>({
-    //   query: GetOrgUserDocument,
-    //   variables: {userFilter: {organizationId}}
-    // })
     if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
       if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
-        data.classesConnection?.edges?.forEach((item) => {
+        classesData.classesConnection?.edges?.forEach((item) => {
           teacherList = teacherList.concat(
             item?.node?.teachersConnection?.edges?.map((teacherItem) => ({
               id: teacherItem?.node?.id || "",
@@ -709,7 +719,7 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
         });
       }
       if ((!perm.view_my_organizations_reports_612 && perm.view_my_school_reports_611) || perm.view_reports_610) {
-        data.classesConnection?.edges
+        classesData.classesConnection?.edges
           ?.filter((item) => {
             return mySchoolIDs.find((mySchoolId) => item?.node?.schools?.find((schoolItem) => schoolItem.id === mySchoolId));
           })
@@ -726,7 +736,20 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
       teacherList = [{ id: my_id, name: myUser?.node?.givenName + " " + myUser?.node?.familyName || "" }];
     }
     teacherList = uniqBy(teacherList, "id");
-    return { teacherList, classesConnection: data };
+    return { teacherList, classesConnection: classesData };
+  }
+);
+
+export const categoryReportOnLoad = createAsyncThunk<EntityTeacherReportCategory[], getSkillCoverageReportPayload, { state: RootState }>(
+  "report/categoryReportOnload",
+  async ({ teacher_id, metaLoading }, { dispatch, getState }) => {
+    await dispatch(getTeachersAndClasses({}));
+    const {
+      report: { teacherList },
+    } = getState();
+    if (!teacher_id && !teacherList.length) return [];
+    const { categories } = await api.reports.getTeacherReport(teacher_id || teacherList[0].id);
+    return categories || [];
   }
 );
 interface getSkillCoverageReportPayload extends LoadingMetaPayload {
@@ -1498,6 +1521,12 @@ const { actions, reducer } = createSlice({
       state.categories = payload;
     },
     [getSkillCoverageReport.pending.type]: (state) => {
+      state.categories = cloneDeep(initialState.categories);
+    },
+    [categoryReportOnLoad.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof categoryReportOnLoad>>) => {
+      state.categories = payload;
+    },
+    [categoryReportOnLoad.pending.type]: (state) => {
       state.categories = cloneDeep(initialState.categories);
     },
     [getTeachingLoadList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachingLoadList>>) => {

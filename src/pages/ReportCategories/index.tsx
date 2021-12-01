@@ -7,7 +7,7 @@ import { usePermission } from "../../hooks/usePermission";
 import { t } from "../../locale/LocaleManager";
 import { toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { getSkillCoverageReport, getTeachersAndClasses } from "../../reducers/report";
+import { categoryReportOnLoad, getSkillCoverageReport } from "../../reducers/report";
 import { useReportQuery } from "../ReportAchievementList";
 import { ReportTitle } from "../ReportDashboard";
 import { CategoriesChart } from "./CategoriesChart";
@@ -31,14 +31,9 @@ export function ReportCategories() {
   };
   const chart = <CategoriesChart data={categories} />;
   useEffect(() => {
-    dispatch(getTeachersAndClasses({}));
-  }, [dispatch]);
-  useEffect(() => {
-    if (!teacherList.length) return;
-    dispatch(getSkillCoverageReport({ teacher_id: teacherList[0].id, metaLoading: true }));
-    history.replace({ search: toQueryString({ teacher_id: teacherList[0].id }) });
+    dispatch(categoryReportOnLoad({ teacher_id: condition.teacher_id, metaLoading: true }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, teacherList.length]);
+  }, [dispatch]);
   return (
     <>
       <ReportTitle title={t("report_label_lo_in_categories")}></ReportTitle>

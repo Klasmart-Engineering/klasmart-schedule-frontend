@@ -860,7 +860,9 @@ export type GetMyIdQuery = { __typename?: "Query" } & {
 
 export type ClassesConnectionQueryVariables = Types.Exact<{
   classFilter?: Types.Maybe<Types.ClassFilter>;
+  classCursor?: Types.Maybe<Types.Scalars["String"]>;
   teacherFilter?: Types.Maybe<Types.UserFilter>;
+  teacherCursor?: Types.Maybe<Types.Scalars["String"]>;
 }>;
 
 export type ClassesConnectionQuery = { __typename?: "Query" } & {
@@ -903,6 +905,12 @@ export type ClassesConnectionQuery = { __typename?: "Query" } & {
                 >;
               }
             >
+          >
+        >;
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
           >
         >;
       }
@@ -2731,8 +2739,8 @@ export type GetMyIdQueryHookResult = ReturnType<typeof useGetMyIdQuery>;
 export type GetMyIdLazyQueryHookResult = ReturnType<typeof useGetMyIdLazyQuery>;
 export type GetMyIdQueryResult = Apollo.QueryResult<GetMyIdQuery, GetMyIdQueryVariables>;
 export const ClassesConnectionDocument = gql`
-  query classesConnection($classFilter: ClassFilter, $teacherFilter: UserFilter) {
-    classesConnection(direction: FORWARD, filter: $classFilter) {
+  query classesConnection($classFilter: ClassFilter, $classCursor: String, $teacherFilter: UserFilter, $teacherCursor: String) {
+    classesConnection(direction: FORWARD, filter: $classFilter, directionArgs: { cursor: $classCursor }) {
       totalCount
       edges {
         node {
@@ -2744,7 +2752,7 @@ export const ClassesConnectionDocument = gql`
             id
             name
           }
-          teachersConnection(direction: FORWARD, filter: $teacherFilter) {
+          teachersConnection(direction: FORWARD, filter: $teacherFilter, cursor: $teacherCursor) {
             totalCount
             edges {
               node {
@@ -2763,6 +2771,12 @@ export const ClassesConnectionDocument = gql`
           }
         }
       }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
     }
   }
 `;
@@ -2780,7 +2794,9 @@ export const ClassesConnectionDocument = gql`
  * const { data, loading, error } = useClassesConnectionQuery({
  *   variables: {
  *      classFilter: // value for 'classFilter'
+ *      classCursor: // value for 'classCursor'
  *      teacherFilter: // value for 'teacherFilter'
+ *      teacherCursor: // value for 'teacherCursor'
  *   },
  * });
  */

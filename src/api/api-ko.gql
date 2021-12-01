@@ -643,8 +643,9 @@ query getMyId{
   }
 }
 
-query classesConnection($classFilter:ClassFilter, $teacherFilter:UserFilter) {
-   classesConnection(direction: FORWARD, filter: $classFilter){
+query classesConnection($classFilter:ClassFilter, $classCursor: String, $teacherFilter:UserFilter, $teacherCursor:String) {
+   classesConnection(direction: FORWARD, filter: $classFilter directionArgs: { cursor: $classCursor}
+    ){
     totalCount
     edges{
       node{
@@ -656,7 +657,7 @@ query classesConnection($classFilter:ClassFilter, $teacherFilter:UserFilter) {
           id
           name
         }
-        teachersConnection(direction:FORWARD  filter:$teacherFilter){
+        teachersConnection(direction:FORWARD, filter:$teacherFilter, cursor:$teacherCursor){
           totalCount
           edges{
             node{
@@ -674,7 +675,12 @@ query classesConnection($classFilter:ClassFilter, $teacherFilter:UserFilter) {
           }
         }
       }
-      
+    }
+     pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
     }
   }
 }

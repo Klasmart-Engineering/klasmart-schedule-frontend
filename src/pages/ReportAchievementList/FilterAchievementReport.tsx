@@ -97,7 +97,6 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
       </MenuItem>
     ));
   const classs = reportMockOptions.classList || [];
-  console.log("class=", reportMockOptions);
   const teachers = reportMockOptions.teacherList || [];
   const planIsDisabled = classs.length <= 0 || reportMockOptions.lessonPlanList.length <= 0;
 

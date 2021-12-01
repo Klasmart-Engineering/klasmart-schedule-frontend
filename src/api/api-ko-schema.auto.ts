@@ -177,6 +177,7 @@ export type CategoriesMutationResult = {
 
 export type Category = {
   __typename?: "Category";
+  /** @deprecated Sunset Date: 24/02/2022 Details: https://calmisland.atlassian.net/l/c/mTni58mA */
   delete?: Maybe<Scalars["Boolean"]>;
   /** @deprecated Sunset Date: 22/02/2022 Details: https://calmisland.atlassian.net/l/c/U107XwHS */
   editSubcategories?: Maybe<Array<Maybe<Subcategory>>>;
@@ -460,6 +461,10 @@ export type DateFilter = {
   value: Scalars["String"];
 };
 
+export type DeleteCategoryInput = {
+  id: Scalars["ID"];
+};
+
 export type DeleteSubcategoryInput = {
   id: Scalars["ID"];
 };
@@ -565,6 +570,7 @@ export type Mutation = {
   addSubcategoriesToCategories?: Maybe<CategoriesMutationResult>;
   addUsersToOrganizations?: Maybe<OrganizationsMutationResult>;
   age_range?: Maybe<AgeRange>;
+  /** @deprecated Sunset Date: 24/02/2022 Details: [https://calmisland.atlassian.net/l/c/RKcPTt1p, https://calmisland.atlassian.net/l/c/mTni58mA] */
   category?: Maybe<Category>;
   class?: Maybe<Class>;
   classes?: Maybe<Array<Maybe<Class>>>;
@@ -573,6 +579,7 @@ export type Mutation = {
   createUsers?: Maybe<UsersMutationResult>;
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
+  deleteCategories?: Maybe<CategoriesMutationResult>;
   deleteSubcategories?: Maybe<SubcategoriesMutationResult>;
   grade?: Maybe<Grade>;
   me?: Maybe<User>;
@@ -654,6 +661,10 @@ export type MutationDeleteBrandingColorArgs = {
 export type MutationDeleteBrandingImageArgs = {
   organizationId: Scalars["ID"];
   type: BrandingImageTag;
+};
+
+export type MutationDeleteCategoriesArgs = {
+  input: Array<DeleteCategoryInput>;
 };
 
 export type MutationDeleteSubcategoriesArgs = {
@@ -2295,8 +2306,10 @@ export type UserConnectionNode = {
   organizationMembershipsConnection?: Maybe<OrganizationMembershipsConnectionResponse>;
   /** @deprecated Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw */
   organizations?: Maybe<Array<OrganizationSummaryNode>>;
+  /** @deprecated Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw */
   roles?: Maybe<Array<RoleSummaryNode>>;
   schoolMembershipsConnection?: Maybe<SchoolMembershipsConnectionResponse>;
+  /** @deprecated Sunset Date: 31/01/22 Details: https://calmisland.atlassian.net/l/c/7Ry00nhw */
   schools?: Maybe<Array<SchoolSummaryNode>>;
   status: Status;
 };
