@@ -58,7 +58,8 @@ export const apiResourcePathById = (resource_id?: string) => {
 };
 export const apiValidatePDF = (resource_id: string) => {
   const rid = resource_id.split("-")[1];
-  return fetch(`${process.env.REACT_APP_KO_VALIDATE_PDF_API}/pdf/${rid}/validate`, {
+  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${rid}/validate`.replace("/user/", "");
+  return fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/pdf",

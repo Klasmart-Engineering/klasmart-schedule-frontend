@@ -1,7 +1,7 @@
-import * as Apollo from "@apollo/client";
-import { gql } from "@apollo/client";
 import * as Types from "./api-ko-schema.auto";
 
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 const defaultOptions = {};
 export type RoleBasedUsersByOrgnizationQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["ID"];
@@ -774,7 +774,7 @@ export type StudentsByOrganizationQuery = { __typename?: "Query" } & {
 export type GetProgramsAndSubjectsQueryVariables = Types.Exact<{
   count: Types.Scalars["PageSize"];
   cursor: Types.Scalars["String"];
-  filter?: Types.Maybe<Types.ProgramFilter>;
+  filter: Types.ProgramFilter;
 }>;
 
 export type GetProgramsAndSubjectsQuery = { __typename?: "Query" } & {
@@ -865,25 +865,32 @@ export type GetClassFilterListQuery = { __typename?: "Query" } & {
 export type GetUserQueryVariables = Types.Exact<{
   filter?: Types.Maybe<Types.UserFilter>;
   direction: Types.ConnectionDirection;
+  directionArgs?: Types.Maybe<Types.ConnectionsDirectionArgs>;
 }>;
 
 export type GetUserQuery = { __typename?: "Query" } & {
   usersConnection?: Types.Maybe<
-    { __typename?: "UsersConnectionResponse" } & {
-      edges?: Types.Maybe<
-        Array<
-          Types.Maybe<
-            { __typename?: "UsersConnectionEdge" } & {
-              node?: Types.Maybe<
-                { __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "givenName" | "familyName" | "status"> & {
-                    roles?: Types.Maybe<Array<{ __typename?: "RoleSummaryNode" } & Pick<Types.RoleSummaryNode, "id" | "name">>>;
-                  }
-              >;
-            }
+    { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "UsersConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "givenName" | "familyName" | "status"> & {
+                      roles?: Types.Maybe<Array<{ __typename?: "RoleSummaryNode" } & Pick<Types.RoleSummaryNode, "id" | "name">>>;
+                    }
+                >;
+              }
+            >
           >
-        >
-      >;
-    }
+        >;
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
+      }
   >;
 };
 
@@ -2558,7 +2565,7 @@ export type StudentsByOrganizationQueryHookResult = ReturnType<typeof useStudent
 export type StudentsByOrganizationLazyQueryHookResult = ReturnType<typeof useStudentsByOrganizationLazyQuery>;
 export type StudentsByOrganizationQueryResult = Apollo.QueryResult<StudentsByOrganizationQuery, StudentsByOrganizationQueryVariables>;
 export const GetProgramsAndSubjectsDocument = gql`
-  query getProgramsAndSubjects($count: PageSize!, $cursor: String!, $filter: ProgramFilter) {
+  query getProgramsAndSubjects($count: PageSize!, $cursor: String!, $filter: ProgramFilter!) {
     programsConnection(filter: $filter, directionArgs: { count: $count, cursor: $cursor }, direction: FORWARD) {
       totalCount
       pageInfo {
@@ -2607,10 +2614,9 @@ export const GetProgramsAndSubjectsDocument = gql`
  * @example
  * const { data, loading, error } = useGetProgramsAndSubjectsQuery({
  *   variables: {
- *      organization_id: // value for 'organization_id'
  *      count: // value for 'count'
  *      cursor: // value for 'cursor'
- *      status: // value for 'status'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
@@ -2735,8 +2741,9 @@ export type GetClassFilterListQueryHookResult = ReturnType<typeof useGetClassFil
 export type GetClassFilterListLazyQueryHookResult = ReturnType<typeof useGetClassFilterListLazyQuery>;
 export type GetClassFilterListQueryResult = Apollo.QueryResult<GetClassFilterListQuery, GetClassFilterListQueryVariables>;
 export const GetUserDocument = gql`
-  query getUser($filter: UserFilter, $direction: ConnectionDirection!) {
-    usersConnection(direction: $direction, filter: $filter) {
+  query getUser($filter: UserFilter, $direction: ConnectionDirection!, $directionArgs: ConnectionsDirectionArgs) {
+    usersConnection(direction: $direction, filter: $filter, directionArgs: $directionArgs) {
+      totalCount
       edges {
         node {
           id
@@ -2748,6 +2755,12 @@ export const GetUserDocument = gql`
             name
           }
         }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
       }
     }
   }
@@ -2767,6 +2780,7 @@ export const GetUserDocument = gql`
  *   variables: {
  *      filter: // value for 'filter'
  *      direction: // value for 'direction'
+ *      directionArgs: // value for 'directionArgs'
  *   },
  * });
  */
