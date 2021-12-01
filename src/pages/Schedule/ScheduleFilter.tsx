@@ -409,14 +409,17 @@ interface SchoolTemplateProps {
   ) => void;
   classesConnection?: GetClassFilterListQuery;
   openClassMenu?: (pageY: number, schoolItem: { id: string; name: string }) => void;
+  closeClassMenu?: (type: "class" | "user") => void;
+  setUserPageYFun?: () => void;
 }
 function SchoolTemplate(props: SchoolTemplateProps) {
-  const { schoolsConnection, getSchoolsConnection, openClassMenu } = props;
+  const { schoolsConnection, getSchoolsConnection, openClassMenu, closeClassMenu, setUserPageYFun } = props;
   const [checked, setChecked] = React.useState(false);
   const [edges, setEdges] = React.useState<any>([]);
   const [searchValue, setSearchValue] = React.useState<string>("");
   const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const handleChange = () => {
+    closeClassMenu && closeClassMenu("class");
     setChecked((prev) => !prev);
   };
   const css = useStyles();
@@ -435,6 +438,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
     const cursor = edge?.cursor ?? "";
     const edgesResult = await getSchoolsConnection(cursor, searchValue, true);
     edges.length ? setEdges([...edges, ...edgesResult]) : setEdges([...schoolsConnectionItem, ...edges, ...edgesResult]);
+    setUserPageYFun && setUserPageYFun();
   };
   return (
     <Box>
@@ -586,6 +590,8 @@ interface OtherTemplateProps {
   handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   handleChangeOnlyMine: (data: string[]) => void;
   stateOnlyMine: string[];
+  closeClassMenu?: (type: "class" | "user") => void;
+  setUndefinedLabelDom: (dom: HTMLDivElement | null) => void;
 }
 function OtherTemplate(props: OtherTemplateProps) {
   const {
@@ -595,14 +601,18 @@ function OtherTemplate(props: OtherTemplateProps) {
     handleChangeShowAnyTime,
     handleChangeOnlyMine,
     stateOnlyMine,
+    closeClassMenu,
+    setUndefinedLabelDom,
   } = props;
   const [checked, setChecked] = React.useState(false);
   const [edges, setEdges] = React.useState<any>([]);
   const [searchValue, setSearchValue] = React.useState<string>("");
   const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const handleChange = () => {
+    closeClassMenu && closeClassMenu("user");
     setChecked((prev) => !prev);
   };
+
   const css = useStyles();
   const getSearcherResult = (value: string) => {
     if (timer) clearTimeout(timer);
@@ -666,6 +676,9 @@ function OtherTemplate(props: OtherTemplateProps) {
               onClick={async (e) => {
                 openClassMenuByOther && openClassMenuByOther(e.pageY);
               }}
+              ref={(dom) => {
+                setUndefinedLabelDom(dom);
+              }}
             >
               {d("Undefined").t("schedule_filter_undefined")}
             </div>
@@ -701,6 +714,7 @@ function FilterTemplate(props: FilterProps) {
   const [pageY, setPageY] = React.useState<number>(0);
   const [showUserMenu, setShowUserMenu] = React.useState<boolean>(false);
   const [userPageY, setUserPageY] = React.useState<number>(0);
+  const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
   const {
     handleChangeShowAnyTime,
     stateOnlyMine,
@@ -747,6 +761,10 @@ function FilterTemplate(props: FilterProps) {
       stateOnlySelectMine.splice(stateOnlySelectMine.indexOf(mine), 1);
     }
     setStateOnlySelectMine([...stateOnlySelectMine]);
+  };
+
+  const setUndefinedLabelDom = (dom: HTMLDivElement | null) => {
+    setDom(dom);
   };
 
   const handleChangeExits = async (data: string[], checked: boolean, node: FilterItemInfo, existData: string[]) => {
@@ -878,10 +896,24 @@ function FilterTemplate(props: FilterProps) {
     setCheckSchoolItem(schoolItem);
   };
 
+  const setUserPageYFun = () => {
+    setTimeout(() => {
+      setUserPageY(dom?.offsetTop ? dom?.offsetTop + 20 : 0);
+    }, 300);
+  };
+
+  const closeClassMenu = (type: "class" | "user") => {
+    if (type === "user") setShowUserMenu(false);
+    if (type === "class") {
+      setUserPageYFun();
+      setShowClassMenu(false);
+    }
+  };
+
   const openClassMenuByOther = async (pageY: number) => {
     setShowUserMenu(false);
     await getUesrOfUndefined("", true, ConnectionDirection.Forward);
-    setUserPageY(pageY);
+    setUserPageYFun();
     setShowUserMenu(true);
   };
 
@@ -958,6 +990,8 @@ function FilterTemplate(props: FilterProps) {
         schoolsConnection={schoolsConnection}
         getSchoolsConnection={getSchoolsConnection}
         getClassesConnection={getClassesConnection}
+        closeClassMenu={closeClassMenu}
+        setUserPageYFun={setUserPageYFun}
       />
       <OtherTemplate
         openClassMenuByOther={openClassMenuByOther}
@@ -969,6 +1003,8 @@ function FilterTemplate(props: FilterProps) {
         filterOtherClasses={filterOtherClasses}
         getClassesWithoutSchool={getClassesWithoutSchool}
         handleChangeShowAnyTime={handleChangeShowAnyTime}
+        closeClassMenu={closeClassMenu}
+        setUndefinedLabelDom={setUndefinedLabelDom}
       />
       <TreeView
         className={css.containerRoot}
