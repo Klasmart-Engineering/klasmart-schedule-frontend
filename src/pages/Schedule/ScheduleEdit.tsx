@@ -31,10 +31,16 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { ConnectionDirection, Maybe, User } from "../../api/api-ko-schema.auto";
-import { GetClassFilterListQuery, GetProgramsQuery, GetSchoolsFilterListQuery, ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import {
+  GetClassFilterListQuery,
+  GetProgramsQuery,
+  GetSchoolsFilterListQuery,
+  GetUserQuery,
+  ParticipantsByClassQuery,
+} from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
-  EntityQueryContentItem,
+  EntityLessonPlanForSchedule,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
   EntityScheduleShortInfo,
@@ -291,6 +297,10 @@ function SmallCalendar(props: CalendarStateProps) {
     getSchoolsConnection,
     getClassesConnection,
     classesConnection,
+    getUesrOfUndefined,
+    userInUndefined,
+    filterOtherClasses,
+    getClassesWithoutSchool,
   } = props;
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
@@ -328,6 +338,8 @@ function SmallCalendar(props: CalendarStateProps) {
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
         </Grid>
         <ScheduleFilter
+          getClassesWithoutSchool={getClassesWithoutSchool}
+          filterOtherClasses={filterOtherClasses}
           handleChangeLoadScheduleView={handleChangeLoadScheduleView}
           mockOptions={mockOptions}
           scheduleMockOptions={scheduleMockOptions}
@@ -344,6 +356,8 @@ function SmallCalendar(props: CalendarStateProps) {
           getSchoolsConnection={getSchoolsConnection}
           getClassesConnection={getClassesConnection}
           classesConnection={classesConnection}
+          userInUndefined={userInUndefined}
+          getUesrOfUndefined={getUesrOfUndefined}
         />
       </MuiPickersUtilsProvider>
     </Box>
@@ -388,15 +402,14 @@ function EditBox(props: CalendarStateProps) {
     handleChangeHidden,
     scheduleDetial,
     privilegedMembers,
-    mediaList,
     handleChangeShowAnyTime,
     isShowAnyTime,
     stateCurrentCid,
     stateMaterialArr,
     viewSubjectPermission,
+    lessonPlans,
   } = props;
-  const { contentsAuthList, classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { contentsList } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
@@ -1244,6 +1257,12 @@ function EditBox(props: CalendarStateProps) {
     }
   };
 
+  const [name, setName] = React.useState("");
+
+  const setSearchName = (v: string) => {
+    setName(v);
+  };
+
   const addParticipants = async () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
     if (!ParticipantsData?.total && getParticipantsData) await getParticipantsData(true, "", "");
@@ -1262,6 +1281,8 @@ function EditBox(props: CalendarStateProps) {
           getParticipantsData={getParticipantsData}
           participantsIds={participantsIds as ParticipantsShortInfo}
           participantList={participantMockOptions.participantList}
+          nameUpperLevel={name}
+          setSearchName={setSearchName}
         />
       ),
     });
@@ -1601,33 +1622,6 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
     toLive();
-  };
-
-  const options = (): EntityLessonPlanShortInfo[] => {
-    const newContentsData: EntityLessonPlanShortInfo[] = [];
-    contentsList.forEach((item: EntityLessonPlanShortInfo) => {
-      newContentsData.push({
-        title: "Organization Content",
-        id: item.id,
-        name: item.name,
-      });
-    });
-    const differenceSet = contentsAuthList.filter((ea) => mediaList.every((eb) => eb.id !== ea.id));
-    differenceSet.forEach((item: EntityLessonPlanShortInfo) => {
-      newContentsData.push({
-        title: "Badanamu Content",
-        id: item.id,
-        name: item.name,
-      });
-    });
-    mediaList.forEach((item: EntityLessonPlanShortInfo) => {
-      newContentsData.push({
-        title: "More Featured Content",
-        id: item.id,
-        name: item.name,
-      });
-    });
-    return newContentsData;
   };
 
   const arrEmpty = (item: ClassOptionsItem[] | undefined): boolean => {
@@ -2176,8 +2170,8 @@ function EditBox(props: CalendarStateProps) {
           <Autocomplete
             id="combo-box-demo"
             freeSolo
-            options={options()}
-            groupBy={(option) => option.title as string}
+            options={lessonPlans}
+            groupBy={(option) => option.group_name as string}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, newValue) => {
               autocompleteChange(newValue, "lesson_plan_id");
@@ -2421,8 +2415,7 @@ interface CalendarStateProps {
   isHidden: boolean;
   scheduleDetial: EntityScheduleDetailsView;
   privilegedMembers: (member: memberType) => boolean;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
-  mediaList: EntityQueryContentItem[];
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   stateOnlyMine: string[];
   handleChangeOnlyMine: (data: string[]) => void;
   isShowAnyTime: boolean;
@@ -2439,7 +2432,12 @@ interface CalendarStateProps {
     loading: boolean,
     direction: ConnectionDirection.Forward | ConnectionDirection.Backward
   ) => void;
+  getUesrOfUndefined: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
+  userInUndefined: GetUserQuery;
   classesConnection: GetClassFilterListQuery;
+  lessonPlans: EntityLessonPlanForSchedule[];
+  filterOtherClasses: GetClassFilterListQuery;
+  getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
 }
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
@@ -2474,7 +2472,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     scheduleDetial,
     privilegedMembers,
     handleChangeShowAnyTime,
-    mediaList,
     stateOnlyMine,
     handleChangeOnlyMine,
     isShowAnyTime,
@@ -2487,6 +2484,11 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     getSchoolsConnection,
     getClassesConnection,
     classesConnection,
+    lessonPlans,
+    getUesrOfUndefined,
+    userInUndefined,
+    filterOtherClasses,
+    getClassesWithoutSchool,
   } = props;
 
   const template = (
@@ -2497,6 +2499,8 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
         }}
       >
         <SmallCalendar
+          getClassesWithoutSchool={getClassesWithoutSchool}
+          filterOtherClasses={filterOtherClasses}
           changeTimesTamp={changeTimesTamp}
           timesTamp={timesTamp}
           repeatData={repeatData}
@@ -2516,7 +2520,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleDetial={scheduleDetial}
           privilegedMembers={privilegedMembers}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
-          mediaList={mediaList}
           stateOnlyMine={stateOnlyMine}
           handleChangeOnlyMine={handleChangeOnlyMine}
           isShowAnyTime={isShowAnyTime}
@@ -2529,6 +2532,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getSchoolsConnection={getSchoolsConnection}
           getClassesConnection={getClassesConnection}
           classesConnection={classesConnection}
+          lessonPlans={lessonPlans}
+          userInUndefined={userInUndefined}
+          getUesrOfUndefined={getUesrOfUndefined}
         />
       </Box>
       <Box
@@ -2537,6 +2543,10 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
         }}
       >
         <EditBox
+          getClassesWithoutSchool={getClassesWithoutSchool}
+          filterOtherClasses={filterOtherClasses}
+          userInUndefined={userInUndefined}
+          getUesrOfUndefined={getUesrOfUndefined}
           changeTimesTamp={changeTimesTamp}
           timesTamp={timesTamp}
           repeatData={repeatData}
@@ -2563,7 +2573,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           scheduleDetial={scheduleDetial}
           privilegedMembers={privilegedMembers}
           handleChangeShowAnyTime={handleChangeShowAnyTime}
-          mediaList={mediaList}
           stateOnlyMine={stateOnlyMine}
           handleChangeOnlyMine={handleChangeOnlyMine}
           isShowAnyTime={isShowAnyTime}
@@ -2576,6 +2585,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getSchoolsConnection={getSchoolsConnection}
           getClassesConnection={getClassesConnection}
           classesConnection={classesConnection}
+          lessonPlans={lessonPlans}
         />
       </Box>
     </>

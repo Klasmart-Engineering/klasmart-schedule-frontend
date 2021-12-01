@@ -50,6 +50,7 @@ import {
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
+  EntityLessonPlanForSchedule,
   EntityQueryContentItem,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
@@ -121,6 +122,9 @@ export interface ScheduleState {
   skills: LinkedMockOptionsItem[];
   schoolsConnection: GetSchoolsFilterListQuery;
   classesConnection: GetClassFilterListQuery;
+  filterOtherClasses: GetClassFilterListQuery;
+  lessonPlans: EntityLessonPlanForSchedule[];
+  userInUndefined: GetUserQuery;
 }
 
 interface Rootstate {
@@ -288,6 +292,9 @@ const initialState: ScheduleState = {
   skills: [],
   schoolsConnection: {},
   classesConnection: {},
+  lessonPlans: [],
+  userInUndefined: {},
+  filterOtherClasses: {},
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -385,6 +392,12 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
   });
 });
 
+type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] & LoadingMetaPayload;
+type lessonPlansByScheduleResult = ReturnType<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>;
+export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>("content/plans", () => {
+  return api.contentsLessonPlans.getLessonPlansCanSchedule();
+});
+
 /**
  *  get class by student
  */
@@ -404,6 +417,47 @@ export const getClassesByStudent = createAsyncThunk("getClassesByStudent", async
     },
   });
 });
+
+export const getUserInUndefined = createAsyncThunk<GetUserQuery, GetUserQueryVariables & LoadingMetaPayload>(
+  "getUserInUndefined",
+  // @ts-ignore
+  async ({ direction, directionArgs }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+    return await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
+      query: GetUserDocument,
+      variables: {
+        filter: {
+          organizationId: { operator: UuidOperator.Eq, value: organization_id },
+          organizationUserStatus: { operator: StringOperator.Eq, value: "active" },
+          classId: { operator: UuidExclusiveOperator.IsNull },
+        },
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
+
+export const classesWithoutSchool = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
+  "classesWithoutSchool",
+  // @ts-ignore
+  async ({ filter, direction, directionArgs }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+    return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
+      query: GetClassFilterListDocument,
+      variables: {
+        filter: {
+          schoolId: { operator: UuidExclusiveOperator.IsNull },
+          organizationId: { operator: UuidOperator.Eq, value: organization_id },
+          status: { operator: StringOperator.Eq, value: "active" },
+          ...filter,
+        },
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
 
 /**
  *  get class by org
@@ -1028,6 +1082,15 @@ const { actions, reducer } = createSlice({
     },
     [getClassFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.classesConnection = payload.data;
+    },
+    [classesWithoutSchool.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.filterOtherClasses = payload.data;
+    },
+    [getLessonPlansBySchedule.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.lessonPlans = payload;
+    },
+    [getUserInUndefined.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.userInUndefined = payload.data;
     },
   },
 });

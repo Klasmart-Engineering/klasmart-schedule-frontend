@@ -4355,6 +4355,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         school_ids?: string;
         teacher_ids?: string;
         class_ids?: string;
+        user_ids?: string;
         subject_ids?: string;
         program_ids?: string;
         class_types?: string;
