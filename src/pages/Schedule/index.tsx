@@ -153,6 +153,14 @@ function ScheduleContent() {
     dispatch(changeParticipants({ type: type, data: data }));
   };
 
+  window.addEventListener("resize", () => {
+    if (document.getElementById("root")?.offsetWidth! < 960) {
+      setModelView("day");
+    } else {
+      setModelView("month");
+    }
+  });
+
   const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string) => {
     if (class_id)
       await dispatch(
