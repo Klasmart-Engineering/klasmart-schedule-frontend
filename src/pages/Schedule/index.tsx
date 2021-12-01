@@ -202,7 +202,7 @@ function ScheduleContent() {
   /**
    * calendar model view change
    */
-  const [modelView, setModelView] = React.useState<modeViewType>("month");
+  const [modelView, setModelView] = React.useState<modeViewType>(document.body.clientWidth < 600 ? "day" : "month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (event.target.value === "year") {
       setModelYear(true);
@@ -211,6 +211,14 @@ function ScheduleContent() {
       setModelView(event.target.value as modeViewType);
     }
   };
+
+  window.addEventListener("resize", () => {
+    if (document.body.clientWidth < 600) {
+      setModelView("day");
+    } else {
+      setModelView("month");
+    }
+  });
 
   /**
    * get participants
