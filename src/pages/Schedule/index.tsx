@@ -442,7 +442,7 @@ function ScheduleContent() {
 
   return (
     <>
-      <LayoutBox holderMin={40} holderBase={80} mainBase={1920}>
+      <LayoutBox holderMin={10} holderBase={80} mainBase={1920}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <ScheduleTool
