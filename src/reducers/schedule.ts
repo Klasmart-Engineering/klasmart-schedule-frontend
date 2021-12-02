@@ -737,14 +737,6 @@ export const getSubjectByProgramId = createAsyncThunk<SubjectResourseResult, { p
   }
 );
 
-type ClassResourseResult = ReturnType<typeof api.schedulesFilter.getScheduleFilterClasses>;
-export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { school_id: string } & LoadingMetaPayload>(
-  "getClass",
-  async (school_id) => {
-    return api.schedulesFilter.getScheduleFilterClasses(school_id);
-  }
-);
-
 /**
  * get participant
  */
@@ -1053,9 +1045,6 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleAnyTimeViewData = payload;
-    },
-    [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
-      state.filterOption.others = payload;
     },
     [getSchoolByUser.fulfilled.type]: (state, { payload }: any) => {
       state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
