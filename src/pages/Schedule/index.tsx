@@ -32,7 +32,6 @@ import {
   getLinkedMockOptions,
   getParticipantsData,
   getScheduleAnyTimeViewData,
-  getScheduleFilterClasses,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
@@ -406,7 +405,6 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     dispatch(ScheduleFilterPrograms());
-    dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(
       getSchoolsFilterList({
         filter: { status: { operator: StringOperator.Eq, value: "active" } },
