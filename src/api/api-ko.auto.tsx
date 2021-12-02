@@ -335,6 +335,7 @@ export type TeacherByOrgIdQuery = { __typename?: "Query" } & {
                   >
                 >
               >;
+              schools?: Types.Maybe<Array<Types.Maybe<{ __typename?: "School" } & Pick<Types.School, "school_id">>>>;
             } & ClassIdNameStatusFragment
           >
         >
@@ -1768,6 +1769,9 @@ export const TeacherByOrgIdDocument = gql`
           school_memberships {
             school_id
           }
+        }
+        schools {
+          school_id
         }
       }
     }

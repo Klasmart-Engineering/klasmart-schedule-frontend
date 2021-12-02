@@ -236,6 +236,7 @@ export type Class = {
   age_ranges?: Maybe<Array<AgeRange>>;
   class_id: Scalars["ID"];
   class_name?: Maybe<Scalars["String"]>;
+  /** @deprecated Use deleteClasses() method */
   delete?: Maybe<Scalars["Boolean"]>;
   editAgeRanges?: Maybe<Array<Maybe<AgeRange>>>;
   editGrades?: Maybe<Array<Maybe<Grade>>>;
@@ -404,6 +405,11 @@ export type ClassesConnectionResponse = IConnectionResponse & {
   totalCount?: Maybe<Scalars["Int"]>;
 };
 
+export type ClassesMutationResult = {
+  __typename?: "ClassesMutationResult";
+  classes: Array<ClassConnectionNode>;
+};
+
 export enum ConnectionDirection {
   Backward = "BACKWARD",
   Forward = "FORWARD",
@@ -462,6 +468,10 @@ export type DateFilter = {
 };
 
 export type DeleteCategoryInput = {
+  id: Scalars["ID"];
+};
+
+export type DeleteClassInput = {
   id: Scalars["ID"];
 };
 
@@ -580,6 +590,7 @@ export type Mutation = {
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
   deleteCategories?: Maybe<CategoriesMutationResult>;
+  deleteClasses?: Maybe<ClassesMutationResult>;
   deleteSubcategories?: Maybe<SubcategoriesMutationResult>;
   grade?: Maybe<Grade>;
   me?: Maybe<User>;
@@ -665,6 +676,10 @@ export type MutationDeleteBrandingImageArgs = {
 
 export type MutationDeleteCategoriesArgs = {
   input: Array<DeleteCategoryInput>;
+};
+
+export type MutationDeleteClassesArgs = {
+  input: Array<DeleteClassInput>;
 };
 
 export type MutationDeleteSubcategoriesArgs = {

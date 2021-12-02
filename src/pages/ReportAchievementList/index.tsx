@@ -44,9 +44,7 @@ export function ReportAchievementList() {
   const condition = useReportQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { reportMockOptions, student_name, reportList, classesConnection } = useSelector<RootState, RootState["report"]>(
-    (state) => state.report
-  );
+  const { reportMockOptions, student_name, reportList, classes } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const [classList, setClassList] = React.useState<Item[]>([]);
   const perm = usePermission([
     PermissionType.view_reports_610,
@@ -89,12 +87,17 @@ export function ReportAchievementList() {
           search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
         });
         let classList: Item[] = [];
-        classesConnection?.edges?.forEach((item) => {
-          if (!!item?.node?.teachersConnection?.edges?.find((teacherItem) => teacherItem?.node?.id === value)) {
-            classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
+        // classesConnection?.edges?.forEach((item) => {
+        //   if (!!item?.node?.teachersConnection?.edges?.find((teacherItem) => teacherItem?.node?.id === value)) {
+        //     classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
+        //   }
+        // });
+        classes?.classes?.forEach((item) => {
+          if (!!item?.teachers?.find((teacherItem) => teacherItem?.user_id === value)) {
+            classList = classList.concat([{ id: item.class_id, name: item.class_name || "" }]);
           }
         });
-        setClassList(classList);
+        // setClassList(classList);
         getFirstLessonPlanId(value, classList[0].id);
       }
       if (tab === "class_id") {
@@ -113,7 +116,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [history, classesConnection?.edges, getFirstLessonPlanId, condition.teacher_id, condition.class_id, dispatch]
+    [history, classes?.classes, getFirstLessonPlanId, condition.teacher_id, condition.class_id, dispatch]
   );
   useEffect(() => {
     dispatch(
@@ -132,19 +135,25 @@ export function ReportAchievementList() {
   useEffect(() => {
     if (reportMockOptions.teacherList.length > 0) {
       let initClassesList: Item[] = [];
-      classesConnection?.edges?.forEach((item) => {
+      // classesConnection?.edges?.forEach((item) => {
+      //   if (
+      //     !!item?.node?.teachersConnection?.edges?.find(
+      //       (teacherItem) => teacherItem?.node?.id === (condition.teacher_id || reportMockOptions.teacherList[0].id)
+      //     )
+      //   ) {
+      //     initClassesList = initClassesList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
+      //   }
+      // });
+      classes?.classes?.forEach((item) => {
         if (
-          !!item?.node?.teachersConnection?.edges?.find(
-            (teacherItem) => teacherItem?.node?.id === (condition.teacher_id || reportMockOptions.teacherList[0].id)
-          )
+          !!item?.teachers?.find((teacherItem) => teacherItem?.user_id === (condition.teacher_id || reportMockOptions.teacherList[0].id))
         ) {
-          initClassesList = initClassesList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
+          initClassesList = initClassesList.concat([{ id: item.class_id, name: item.class_name || "" }]);
         }
       });
       setClassList(initClassesList);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classesConnection?.edges, reportMockOptions.teacherList]);
+  }, [classes?.classes, condition.teacher_id, reportMockOptions.teacherList]);
 
   useEffect(() => {
     if (reportMockOptions) {

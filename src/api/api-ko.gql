@@ -219,6 +219,9 @@ query teacherByOrgId($organization_id: ID!) {
           school_id
         }
       }
+      schools{
+        school_id
+      }
     }
   }
 }
