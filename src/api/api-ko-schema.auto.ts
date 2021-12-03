@@ -236,6 +236,7 @@ export type Class = {
   age_ranges?: Maybe<Array<AgeRange>>;
   class_id: Scalars["ID"];
   class_name?: Maybe<Scalars["String"]>;
+  /** @deprecated Use deleteClasses() method */
   delete?: Maybe<Scalars["Boolean"]>;
   editAgeRanges?: Maybe<Array<Maybe<AgeRange>>>;
   editGrades?: Maybe<Array<Maybe<Grade>>>;
@@ -404,6 +405,11 @@ export type ClassesConnectionResponse = IConnectionResponse & {
   totalCount?: Maybe<Scalars["Int"]>;
 };
 
+export type ClassesMutationResult = {
+  __typename?: "ClassesMutationResult";
+  classes: Array<ClassConnectionNode>;
+};
+
 export enum ConnectionDirection {
   Backward = "BACKWARD",
   Forward = "FORWARD",
@@ -462,6 +468,10 @@ export type DateFilter = {
 };
 
 export type DeleteCategoryInput = {
+  id: Scalars["ID"];
+};
+
+export type DeleteClassInput = {
   id: Scalars["ID"];
 };
 
@@ -580,6 +590,7 @@ export type Mutation = {
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
   deleteCategories?: Maybe<CategoriesMutationResult>;
+  deleteClasses?: Maybe<ClassesMutationResult>;
   deleteSubcategories?: Maybe<SubcategoriesMutationResult>;
   grade?: Maybe<Grade>;
   me?: Maybe<User>;
@@ -588,6 +599,7 @@ export type Mutation = {
   organization?: Maybe<Organization>;
   program?: Maybe<Program>;
   removeOrganizationRolesFromUsers?: Maybe<UsersMutationResult>;
+  removeSubcategoriesFromCategories?: Maybe<CategoriesMutationResult>;
   renameDuplicateGrades?: Maybe<Scalars["Boolean"]>;
   renameDuplicateOrganizations?: Maybe<Scalars["Boolean"]>;
   renameDuplicateSubjects?: Maybe<Scalars["Boolean"]>;
@@ -667,6 +679,10 @@ export type MutationDeleteCategoriesArgs = {
   input: Array<DeleteCategoryInput>;
 };
 
+export type MutationDeleteClassesArgs = {
+  input: Array<DeleteClassInput>;
+};
+
 export type MutationDeleteSubcategoriesArgs = {
   input: Array<DeleteSubcategoryInput>;
 };
@@ -701,6 +717,10 @@ export type MutationProgramArgs = {
 
 export type MutationRemoveOrganizationRolesFromUsersArgs = {
   input: Array<RemoveOrganizationRolesFromUserInput>;
+};
+
+export type MutationRemoveSubcategoriesFromCategoriesArgs = {
+  input: Array<RemoveSubcategoriesFromCategoryInput>;
 };
 
 export type MutationReplaceRoleArgs = {
@@ -1681,6 +1701,11 @@ export type RemoveOrganizationRolesFromUserInput = {
   organizationId: Scalars["ID"];
   roleIds: Array<Scalars["ID"]>;
   userId: Scalars["ID"];
+};
+
+export type RemoveSubcategoriesFromCategoryInput = {
+  categoryId: Scalars["ID"];
+  subcategoryIds: Array<Scalars["ID"]>;
 };
 
 export type Role = {

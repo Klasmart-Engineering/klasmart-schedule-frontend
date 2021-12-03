@@ -7,7 +7,7 @@ import { usePermission } from "../../hooks/usePermission";
 import { t } from "../../locale/LocaleManager";
 import { toQueryString } from "../../models/ModelContentDetailForm";
 import { RootState } from "../../reducers";
-import { getSkillCoverageReport, reportCategoriesOnload } from "../../reducers/report";
+import { categoryReportOnLoad, getSkillCoverageReport } from "../../reducers/report";
 import { useReportQuery } from "../ReportAchievementList";
 import { ReportTitle } from "../ReportDashboard";
 import { CategoriesChart } from "./CategoriesChart";
@@ -17,7 +17,7 @@ export function ReportCategories() {
   const condition = useReportQuery();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { teacherList, categories } = useSelector<RootState, RootState["report"]["categoriesPage"]>((state) => state.report.categoriesPage);
+  const { teacherList, categories } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const perm = usePermission([
     PermissionType.view_reports_610,
     PermissionType.view_my_reports_614,
@@ -31,14 +31,9 @@ export function ReportCategories() {
   };
   const chart = <CategoriesChart data={categories} />;
   useEffect(() => {
-    dispatch(reportCategoriesOnload({}));
-  }, [dispatch]);
-  useEffect(() => {
-    if (!teacherList.length) return;
-    dispatch(getSkillCoverageReport({ teacher_id: teacherList[0].user_id, metaLoading: true }));
-    history.replace({ search: toQueryString({ teacher_id: teacherList[0].user_id }) });
+    dispatch(categoryReportOnLoad({ teacher_id: condition.teacher_id, metaLoading: true }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, teacherList.length]);
+  }, [dispatch]);
   return (
     <>
       <ReportTitle title={t("report_label_lo_in_categories")}></ReportTitle>

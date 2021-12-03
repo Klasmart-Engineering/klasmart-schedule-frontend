@@ -1,8 +1,8 @@
 import { Divider, Hidden, makeStyles, Menu, MenuItem, TextField } from "@material-ui/core";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
+import { Item } from "@reducers/report";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
-import { User } from "../../api/api-ko-schema.auto";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { ICacheData } from "../../services/permissionCahceService";
@@ -62,8 +62,8 @@ const GetTeacherItem = forwardRef<React.RefObject<HTMLElement>, GetTeacherItemPr
       {" "}
       {list &&
         list.map((item) => (
-          <MenuItem key={item.user_id} selected={value[tab] === item.user_id} onClick={(e) => onChangeMenu(e, item.user_id as string, tab)}>
-            {item.user_name}
+          <MenuItem key={item.id} selected={value[tab] === item.id} onClick={(e) => onChangeMenu(e, item.id as string, tab)}>
+            {item.name}
           </MenuItem>
         ))}
     </>
@@ -73,7 +73,7 @@ const GetTeacherItem = forwardRef<React.RefObject<HTMLElement>, GetTeacherItemPr
 export interface SecondSearchHeaderProps {
   value: QueryCondition;
   onChange: (value: string, tab: keyof QueryCondition) => any;
-  teacherList: Pick<User, "user_id" | "user_name">[];
+  teacherList: Item[];
   perm: ICacheData;
 }
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
@@ -100,14 +100,14 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
               className={css.selectButton}
               onChange={(e) => onChange(e.target.value, "teacher_id")}
               label={d("Teacher").t("report_label_teacher")}
-              value={value.teacher_id || teacherList[0]?.user_id || ""}
+              value={value.teacher_id || teacherList[0]?.id || ""}
               select
               disabled={teacherList.length < 2}
               SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
             >
               {teacherList.map((item) => (
-                <MenuItem key={item.user_id} value={item.user_id}>
-                  {item.user_name}
+                <MenuItem key={item.id} value={item.id}>
+                  {item.name}
                 </MenuItem>
               ))}
             </TextField>

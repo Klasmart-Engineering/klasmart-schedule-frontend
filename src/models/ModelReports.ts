@@ -10,37 +10,11 @@ import { HorizontalBarStackDataItem } from "../components/Chart/HorizontalBarSta
 import { d, t } from "../locale/LocaleManager";
 import { UserType } from "../pages/ReportLearningSummary/types";
 import { teacherLoadDescription } from "../pages/ReportTeachingLoad/components/TeacherLoadChart";
-import { Iitem } from "../reducers/report";
 
 interface formatTeachingLoadListResponse {
   formatedData: HorizontalBarStackDataItem[];
   xLabels?: string[][];
 }
-
-export const ModelReport = {
-  teacherListSetDiff(teacherList: Pick<User, "user_id" | "user_name">[]): Pick<User, "user_id" | "user_name">[] {
-    let hash: Record<string, boolean> = {};
-    teacherList = teacherList.reduce((preVal: Pick<User, "user_id" | "user_name">[], curVal) => {
-      if (!hash[curVal.user_id]) {
-        hash[curVal.user_id] = true;
-        preVal.push(curVal);
-      }
-      return preVal;
-    }, []);
-    return teacherList;
-  },
-  ListSetDiff(list: Iitem[]): Iitem[] {
-    let hash: Record<string, boolean> = {};
-    list = list.reduce((preVal: Iitem[], curVal) => {
-      if (curVal?.value && !hash[curVal?.value]) {
-        hash[curVal?.value] = true;
-        preVal.push(curVal);
-      }
-      return preVal;
-    }, []);
-    return list;
-  },
-};
 
 export function formatTime(seconds: number | undefined) {
   if (!seconds) return "";
