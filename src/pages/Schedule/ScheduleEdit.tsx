@@ -753,6 +753,8 @@ function EditBox(props: CalendarStateProps) {
         } as ParticipantsShortInfo);
         setRosterSaveStatus(false);
         setIsForce(false);
+      } else {
+        handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
       }
       setClassItem(value);
     }
