@@ -551,89 +551,6 @@ export const reportOnload = createAsyncThunk<
   const {
     report: { teacherList, classes },
   } = getState();
-  // 拉取我的user_id
-  // const {
-  //   data: { myUser },
-  // } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-  //   query: GetMyIdDocument,
-  // });
-  // const myTearchId = myUser?.node?.id || "";
-
-  // const perm = await permissionCache.usePermission([
-  //   PermissionType.view_my_reports_614,
-  //   PermissionType.view_reports_610,
-  //   PermissionType.view_my_organizations_reports_612,
-  //   PermissionType.view_my_school_reports_611,
-  // ]);
-
-  //根据权限调接口
-  // 1 如果只有看自己的report的权限 finalTeachId => 我自己的user_id
-  // if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
-  //   teacherList = [];
-  //   finalTearchId = myTearchId;
-  // } else {
-  // 2 如果有查看自己组织的report的权限或者查看所有report的权限
-  //    teacherList => 通过组织id获取所有classes =>所有的teacherid(可能有重复)
-  // if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
-  //   const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
-  //     query: TeacherByOrgIdDocument,
-  //     variables: {
-  //       organization_id,
-  //     },
-  //   });
-  //   data.organization?.classes
-  //     ?.filter((item) => item?.status === Status.Active)
-  //     ?.forEach((classItem) => {
-  //       teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]);
-  //     });
-  // }
-  // 2 如果有查看自己学校的report的权限或者查看所有report的权限
-  //    teacherList => 通过我的user_id 获取我所在的所有学校 => 过滤出当前组织的学校 => 遍历出所有的teacher
-  // if (perm.view_my_school_reports_611 || perm.view_reports_610) {
-  //   const { data } = await gqlapi.query<GetSchoolTeacherQuery, GetSchoolTeacherQueryVariables>({
-  //     query: GetSchoolTeacherDocument,
-  //     variables: {
-  //       user_id: myTearchId,
-  //     },
-  //   });
-  //   data.user?.school_memberships
-  //     ?.filter((schoolItem) => schoolItem?.school?.organization?.organization_id === organization_id)
-  //     .map((schoolItem) =>
-  //       schoolItem?.school?.classes?.forEach(
-  //         (classItem) => (teacherList = teacherList?.concat(classItem?.teachers as Pick<User, "user_id" | "user_name">[]))
-  //       )
-  //     );
-  // }
-  //   // 3 去重
-  //   teacherList = uniqBy(teacherList, "user_id");
-
-  //   finalTearchId = teacher_id || (teacherList && teacherList[0]?.user_id) || "";
-  //   if (!teacherList || !teacherList[0])
-  //     return {
-  //       teacherList: [],
-  //       classList: [],
-  //       lessonPlanList: [],
-  //       teacher_id: "",
-  //       class_id: "",
-  //       lesson_plan_id: "",
-  //     };
-  // }
-
-  // const { data: result } = await gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
-  //   query: ClassesTeachingQueryDocument,
-  //   variables: {
-  //     user_id: finalTearchId,
-  //     organization_id,
-  //   },
-  // });
-
-  // const classList =
-  //   result.user &&
-  //   (result.user.membership?.classesTeaching?.filter((item) => item?.status === Status.Active) as Pick<
-  //     Class,
-  //     "class_id" | "class_name"
-  //   >[]);
-
   if (!teacherList.length) {
     return {
       teacherList: [],
@@ -1288,11 +1205,8 @@ const { actions, reducer } = createSlice({
     [getAchievementList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAchievementList>>) => {
       state.reportList = payload.items || [];
     },
-    [getAchievementList.rejected.type]: (state, { error }: any) => {
-      // alert(JSON.stringify(error));
-    },
+    [getAchievementList.rejected.type]: (state, { error }: any) => {},
     [getAchievementList.pending.type]: (state, { payload }: PayloadAction<any>) => {
-      // alert("success");
       state.reportList = initialState.reportList;
     },
     [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentsByOrg>>) => {
