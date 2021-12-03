@@ -1,3 +1,4 @@
+import { orderByASC } from "@utilities/dataUtilities";
 import { ReactNode } from "react";
 import { Class, School, Status, User } from "../api/api-ko-schema.auto";
 import {
@@ -238,7 +239,7 @@ export function getAllUsers(
     ...freedomClass,
   ];
   // 所有学校
-  const allSchools = schools.map((item) => ({
+  let allSchools = schools.map((item) => ({
     id: item.school_id!,
     name: item.school_name!,
     classes:
@@ -270,11 +271,14 @@ export function getAllUsers(
   // 给每个学校的班级添加all选项
   allSchools.forEach((item) => {
     let curAllStudent: UserType["classes"][0]["students"] = [];
+    item.classes = orderByASC(item.classes, "name");
     item.classes.forEach((item) => {
       curAllStudent = [...curAllStudent, ...item.students];
     });
     item.classes.unshift({ id: "all", name: d("All").t("report_label_all"), students: [...curAllStudent], status: Status.Active });
   });
+
+  allSchools = orderByASC(allSchools, "name");
   allSchools.unshift({ id: "all", name: d("All").t("report_label_all"), classes: [...allClasses] });
   if (!isSchool) {
     allSchools.push({ id: "none", name: d("None").t("report_label_none"), classes: freedomClass });

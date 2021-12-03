@@ -490,37 +490,12 @@ query studentsByOrganization($organization_id: ID!) {
 }
 
 
-query getProgramsAndSubjects($organization_id: UUID! , $count: PageSize!,  $cursor: String!) {
-  programsConnection(filter:{
-    AND: [
-      {
-            OR : [
-            {
-              organizationId: {
-                operator: eq
-                value: $organization_id
-              }
-            }     
-            {
-              system: {
-                operator: eq
-                value: true
-              },
-            }
-          ]
-      }
-      {
-        status: {
-          operator: eq
-          value: "active"
-        }
-      }
-    ]
-  }
+query getProgramsAndSubjects($count: PageSize!,  $cursor: String!, $filter: ProgramFilter!) {
+  programsConnection(filter:$filter
   directionArgs: {
     count:  $count
     cursor: $cursor
-  }  
+  }
   direction: FORWARD
 ){
     totalCount
@@ -592,11 +567,13 @@ query getClassFilterList($filter: ClassFilter, $direction: ConnectionDirection!,
   }
 }
 
-query getUser($filter: UserFilter, $direction: ConnectionDirection!) {
+query getUser($filter: UserFilter, $direction: ConnectionDirection!, $directionArgs: ConnectionsDirectionArgs) {
   usersConnection(
     direction: $direction,
-    filter: $filter
+    filter: $filter,
+    directionArgs: $directionArgs
   ) {
+  totalCount
     edges {
       node {
         id
@@ -608,7 +585,13 @@ query getUser($filter: UserFilter, $direction: ConnectionDirection!) {
           name
         }
       }
-    }
+    },
+         pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
   }
 }
 
@@ -688,6 +671,15 @@ query classesConnection($classFilter:ClassFilter, $classCursor: String, $teacher
   }
 }
 query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
+query getClassByInfo(
+  $filter: ClassFilter,
+  $direction: ConnectionDirection!,
+  $studentFilter: UserFilter,
+  $teacherFilter: UserFilter,
+  $studentCursor: String,
+  $studentDirection: ConnectionDirection,
+  $teacherCursor: String,
+  $teacherDirection: ConnectionDirection) {
 classesConnection(
     filter: $filter,
     direction: $direction
@@ -697,7 +689,7 @@ classesConnection(
       node {
         id
         name
-        studentsConnection(cursor: $studentCursor, direction: $studentDirection) {
+        studentsConnection(filter: $studentFilter, cursor: $studentCursor, direction: $studentDirection) {
           totalCount
           edges {
             node {
@@ -714,7 +706,7 @@ classesConnection(
             endCursor
           }
         },
-        teachersConnection(cursor: $teacherCursor, direction: $teacherDirection) {
+        teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: $teacherDirection) {
           totalCount
           edges {
             node {
@@ -732,6 +724,35 @@ classesConnection(
           }
         },
       }
+    }
+  }
+}
+
+query userWithoutClassAndSchool ($direction) {
+  usersConnection (
+    direction: FORWARD,
+    directionArgs: {
+      count: 5
+      cursor: ""
+    }
+    filter: {
+      organizationId: {operator: eq, value: "de6e850a-cf97-4e0b-aa96-c0fedcda71be"},
+      classId: {operator: isNull},
+      organizationUserStatus: {operator: eq, value: "active"}
+  	}
+  ) {
+    edges {
+      node {
+        id,
+        givenName,
+        familyName
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
     }
   }
 }

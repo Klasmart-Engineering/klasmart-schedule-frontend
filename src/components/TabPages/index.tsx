@@ -19,7 +19,7 @@ const AntTab = withStyles((theme) => ({
     textTransform: "none",
     minWidth: 72,
     marginTop: 10,
-    fontWeight: theme.typography.fontWeightBold,
+    fontWeight: "bold",
     marginRight: theme.spacing(4),
     fontSize: 16,
     "&:hover": {

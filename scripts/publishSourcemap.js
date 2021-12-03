@@ -18,7 +18,8 @@ const sourceMapDir = path.resolve(__dirname, "../build/static/js/");
 const optionConfig = {
   applicationId: YOUR_NEW_RELIC_APP_ID,
   apiKey: YOUR_NEW_RELIC_USER_API_KEY,
-  sourcemapUploadHost: SOURCE_MAP_UPLOAD_HOST
+  sourcemapUploadHost: SOURCE_MAP_UPLOAD_HOST,
+  releaseId: commit
 };
 
 const splits = (i) => i.split(".");

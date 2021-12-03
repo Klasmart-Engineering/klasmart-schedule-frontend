@@ -17,6 +17,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { Pagination } from "@material-ui/lab";
+import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import clsx from "clsx";
 import { cloneDeep } from "lodash";
 import React, { useCallback, useMemo } from "react";
@@ -28,7 +29,6 @@ import { resultsTip } from "../../components/TipImages";
 import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { getOutcomeList } from "../../models/ModelContentDetailForm";
-import { LinkedMockOptions, LinkedMockOptionsItem } from "../../reducers/content";
 import { ISearchOutcomeForm, OutcomesProps } from "./Outcomes";
 import { OutcomesSearch } from "./OutcomesSearch";
 

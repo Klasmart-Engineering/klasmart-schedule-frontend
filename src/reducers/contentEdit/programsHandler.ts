@@ -1,20 +1,68 @@
-import { ConnectionPageInfo, Program, Subject } from "@api/api-ko-schema.auto";
+import {
+  AgeRange,
+  BooleanFilter,
+  BooleanOperator,
+  ConnectionPageInfo,
+  Grade,
+  Program,
+  ProgramFilter,
+  StringFilter,
+  StringOperator,
+  Subject,
+  UuidFilter,
+  UuidOperator,
+} from "@api/api-ko-schema.auto";
 import { GetProgramsAndSubjectsDocument, GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables } from "@api/api-ko.auto";
+import { ExternalCategory, ExternalSubCategory } from "@api/api.auto";
 import { apiWaitForOrganizationOfPage } from "@api/extra";
-import { gqlapi } from "@api/index";
+import api, { gqlapi } from "@api/index";
+import { LoadingMetaPayload } from "@reducers/middleware/loadingMiddleware";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { grepActiveQueryResult, orderByASC } from "@utilities/dataUtilities";
+import get from "lodash/get";
 
 type ProgramItem = Pick<Program, "id" | "name" | "subjects" | "grades" | "age_ranges"> & { ageRanges: Program["age_ranges"] };
 type SubjectItem = Pick<Subject, "id" | "name">;
+type GradeItem = Pick<Grade, "id" | "name">;
+type AgeRangeItem = Pick<AgeRange, "id" | "name">;
+
+export interface LinkedMockOptionsItem {
+  id?: string;
+  name?: string;
+  group?: string;
+}
+export interface LinkedMockOptions {
+  program?: LinkedMockOptionsItem[];
+  subject?: LinkedMockOptionsItem[];
+  developmental?: LinkedMockOptionsItem[];
+  age?: LinkedMockOptionsItem[];
+  grade?: LinkedMockOptionsItem[];
+  skills?: LinkedMockOptionsItem[];
+  program_id?: string;
+  developmental_id?: string;
+}
+
+interface LinkedMockOptionsPayload extends LoadingMetaPayload {
+  default_program_id?: string;
+  default_subject_ids?: string;
+  default_developmental_id?: string;
+}
 
 async function _getPrograms(
-  cursor: string
+  cursor: string,
+  noFilterActive?: boolean
 ): Promise<[Pick<ConnectionPageInfo, "hasNextPage" | "endCursor"> | undefined | null, ProgramItem[]]> {
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const status: StringFilter = { operator: StringOperator.Eq, value: "active" };
+  const organizationId: UuidFilter = { operator: UuidOperator.Eq, value: organization_id };
+  const system: BooleanFilter = { operator: BooleanOperator.Eq, value: true };
+  const filter: ProgramFilter = noFilterActive
+    ? { OR: [{ organizationId }, { system }] }
+    : { AND: [{ OR: [{ organizationId }, { system }] }, { status }] };
   const resp = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
     query: GetProgramsAndSubjectsDocument,
     variables: {
-      organization_id,
+      filter,
       count: 50,
       cursor,
     },
@@ -31,12 +79,12 @@ async function _getPrograms(
   return [pageInfo, programs];
 }
 
-async function getAllPrograms() {
+async function getAllPrograms(noFilterActive?: boolean) {
   let result: ProgramItem[] = [];
   let end = false;
   let cursor = "";
   while (!end) {
-    const [pageInfo, programs] = await _getPrograms(cursor);
+    const [pageInfo, programs] = await _getPrograms(cursor, noFilterActive);
     result = result.concat(programs);
     if (!pageInfo || !pageInfo.hasNextPage) {
       end = true;
@@ -47,19 +95,25 @@ async function getAllPrograms() {
   return orderByASC(result, "name");
 }
 
-export default (function () {
+const programsHandler = (function () {
   let instance: Promise<ProgramItem[]>;
-  function getPrograms() {
-    if (!instance) {
-      instance = getAllPrograms();
+  let noFilterActiveInstance: Promise<ProgramItem[]>;
+  function getPrograms(noFilterActive: boolean) {
+    if (!noFilterActive) {
+      if (!instance) {
+        instance = getAllPrograms();
+      }
+      return instance;
+    } else {
+      return !noFilterActiveInstance ? getAllPrograms(true) : noFilterActiveInstance;
     }
-    return instance;
   }
   return {
     async getProgramsOptions(
-      includeSubject = false
+      includeSubject = false,
+      noFilterActive = false
     ): Promise<Pick<ProgramItem, "id" | "name" | "subjects">[] | Pick<ProgramItem, "id" | "name">[]> {
-      const programs = await getPrograms();
+      const programs = await getPrograms(noFilterActive);
       if (includeSubject) {
         return programs
           .filter((item) => (item?.subjects || []).length > 0)
@@ -84,12 +138,20 @@ export default (function () {
       }
     },
     async getProgramById(id: string): Promise<ProgramItem | undefined> {
-      const programs = await getPrograms();
+      const programs = await getPrograms(false);
       return programs.find((item) => item.id === id);
     },
 
-    async getAllSubjects(includeProgramName = false): Promise<SubjectItem[]> {
-      const programs = await getPrograms();
+    async getSubjectAgeGradeByProgramId(id: string): Promise<[SubjectItem[], AgeRangeItem[], GradeItem[]]> {
+      const programItem = await this.getProgramById(id);
+      const subjects = get(programItem, "subjects", []) as SubjectItem[];
+      const ageRanges = get(programItem, "ageRanges", []) as AgeRangeItem[];
+      const grades = get(programItem, "grades", []) as GradeItem[];
+      return [subjects, ageRanges, grades];
+    },
+
+    async getAllSubjects(includeProgramName = false, noFilterActive = false): Promise<SubjectItem[]> {
+      const programs = await getPrograms(noFilterActive);
 
       const subjects = programs.reduce((acc, item) => {
         return acc.concat(
@@ -103,3 +165,43 @@ export default (function () {
     },
   };
 })();
+
+const _getLinkedMockOptions = (key: string) =>
+  createAsyncThunk<LinkedMockOptions, LinkedMockOptionsPayload>(
+    key,
+    async function ({ default_program_id, default_subject_ids, default_developmental_id }: LinkedMockOptionsPayload) {
+      const program = await programsHandler.getProgramsOptions();
+
+      const program_id = default_program_id ? default_program_id : program[0].id;
+
+      if (program_id) {
+        const [subject, age, grade] = await programsHandler.getSubjectAgeGradeByProgramId(program_id);
+        const subject_ids = default_subject_ids ? default_subject_ids : subject.length > 0 ? subject[0].id : undefined;
+        if (!subject_ids) {
+          return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
+        }
+        const [developmental, skills, developmental_id] = await getDevelopmentalAndSkills(
+          program_id,
+          subject_ids,
+          default_developmental_id
+        );
+        return { program, subject, developmental, age, grade, skills, program_id, developmental_id };
+      } else {
+        return { program, subject: [], developmental: [], age: [], grade: [], skills: [], program_id: "", developmental_id: "" };
+      }
+    }
+  );
+
+const getDevelopmentalAndSkills = async (
+  programId: string,
+  subjectIds: string,
+  defaultDevelopmentalId?: string
+): Promise<[ExternalCategory[], ExternalSubCategory[], string | undefined]> => {
+  const developmental = await api.developmentals.getDevelopmental({ program_id: programId, subject_ids: subjectIds });
+  const developmentalId = defaultDevelopmentalId || developmental[0].id;
+  const skills = developmentalId ? await api.skills.getSkill({ program_id: programId, developmental_id: developmentalId }) : [];
+  return [developmental, skills, developmentalId];
+};
+
+export default programsHandler;
+export { _getLinkedMockOptions, getDevelopmentalAndSkills };

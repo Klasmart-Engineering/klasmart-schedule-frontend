@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
+import { orderByASC } from "@utilities/dataUtilities";
 import clsx from "clsx";
-import { orderBy } from "lodash";
 import React from "react";
 import { useSelector } from "react-redux";
-import { Status } from "../../../api/api-ko-schema.auto";
+import { Maybe, User } from "../../../api/api-ko-schema.auto";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import useTranslation from "../hooks/useTranslation";
@@ -55,12 +55,13 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
     subjectId: allValue,
   });
   const getAllSchoolList = (): MutiSelect.ISelect[] => {
-    return schoolList
+    const list = schoolList
       .map((item) => ({
         value: item.school_id!,
         label: item.school_name!,
       }))
       .concat(noneSchoolClassList.length > 0 ? selectNoneSchoolOption : []);
+    return orderByASC(list, "label");
   };
 
   const getAllClassList = (): MutiSelect.ISelect[] => {
@@ -77,7 +78,7 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
         });
       });
     }
-    data = orderBy(data, [(cls) => cls.class_name?.toLowerCase()], "asc");
+    data = orderByASC(data, "class_name");
     return data.map((item) => ({
       value: item.class_id!,
       label: item.class_name!,
@@ -88,7 +89,7 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
     let data = [] as typeof classList;
     data = data.concat(classList, noneSchoolClassList);
     let students = data.find((item) => item.class_id === state.classId)?.students;
-    students = orderBy(students, [(stu) => stu?.full_name?.toLowerCase()], "asc");
+    students = orderByASC(students as { [key: string]: any }[], "full_name") as Maybe<User>[];
     return (students || []).map((item) => ({
       value: item!.user_id!,
       label: item!.full_name!,
@@ -98,16 +99,14 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
   const getAllSubjectList = (): MutiSelect.ISelect[] => {
     let data = [] as MutiSelect.ISelect[];
     programs.forEach((program) => {
-      (program.subjects || [])
-        ?.filter((item) => item?.status === Status.Active)
-        .forEach((subject) => {
-          data.push({
-            value: subject.id,
-            label: `${program.name} - ${subject.name}`,
-          });
+      (program.subjects || []).forEach((subject) => {
+        data.push({
+          value: subject.id,
+          label: `${program.name} - ${subject.name}`,
         });
+      });
     });
-    return orderBy(data, [(item) => item.label.toLowerCase()], ["asc"]);
+    return orderByASC(data, "label");
   };
 
   const schoolOptions = React.useMemo<MutiSelect.ISelect[]>(getAllSchoolList, [schoolList]);

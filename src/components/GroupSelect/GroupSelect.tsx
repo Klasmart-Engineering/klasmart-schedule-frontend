@@ -1,9 +1,9 @@
 import { FormControl, InputLabel, makeStyles, MenuItem, Paper, Typography } from "@material-ui/core";
 import { ArrowDropDown, ArrowRight } from "@material-ui/icons";
+import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import clsx from "clsx";
 import React, { forwardRef } from "react";
 import { getNameByIds } from "../../pages/ContentEdit/OutcomesRelated";
-import { LinkedMockOptionsItem } from "../../reducers/milestone";
 const useStyles = makeStyles(({ shadows, palette }) => ({
   paper: {
     position: "relative",

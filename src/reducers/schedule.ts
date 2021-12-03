@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
+import { ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -49,6 +50,7 @@ import {
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
+  EntityLessonPlanForSchedule,
   EntityQueryContentItem,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
@@ -71,7 +73,7 @@ import {
   ParticipantsShortInfo,
   RolesData,
 } from "../types/scheduleTypes";
-import { LinkedMockOptionsItem } from "./content";
+import programsHandler, { LinkedMockOptionsItem } from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./type";
 
@@ -120,6 +122,9 @@ export interface ScheduleState {
   skills: LinkedMockOptionsItem[];
   schoolsConnection: GetSchoolsFilterListQuery;
   classesConnection: GetClassFilterListQuery;
+  filterOtherClasses: GetClassFilterListQuery;
+  lessonPlans: EntityLessonPlanForSchedule[];
+  userInUndefined: GetUserQuery;
 }
 
 interface Rootstate {
@@ -238,6 +243,9 @@ const initialState: ScheduleState = {
       students: [],
       teachers: [],
     },
+    total: 0,
+    hash: "",
+    next: false,
   },
   participantsIds: { student: [], teacher: [] },
   classRosterIds: { student: [], teacher: [] },
@@ -284,6 +292,9 @@ const initialState: ScheduleState = {
   skills: [],
   schoolsConnection: {},
   classesConnection: {},
+  lessonPlans: [],
+  userInUndefined: {},
+  filterOtherClasses: {},
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -381,6 +392,12 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
   });
 });
 
+type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] & LoadingMetaPayload;
+type lessonPlansByScheduleResult = ReturnType<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>;
+export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>("content/plans", () => {
+  return api.contentsLessonPlans.getLessonPlansCanSchedule();
+});
+
 /**
  *  get class by student
  */
@@ -400,6 +417,48 @@ export const getClassesByStudent = createAsyncThunk("getClassesByStudent", async
     },
   });
 });
+
+export const getUserInUndefined = createAsyncThunk<GetUserQuery, GetUserQueryVariables & LoadingMetaPayload>(
+  "getUserInUndefined",
+  // @ts-ignore
+  async ({ direction, directionArgs }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+    return await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
+      query: GetUserDocument,
+      variables: {
+        filter: {
+          organizationId: { operator: UuidOperator.Eq, value: organization_id },
+          organizationUserStatus: { operator: StringOperator.Eq, value: "active" },
+          classId: { operator: UuidExclusiveOperator.IsNull },
+          schoolId: { operator: UuidExclusiveOperator.IsNull },
+        },
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
+
+export const classesWithoutSchool = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
+  "classesWithoutSchool",
+  // @ts-ignore
+  async ({ filter, direction, directionArgs }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+    return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
+      query: GetClassFilterListDocument,
+      variables: {
+        filter: {
+          schoolId: { operator: UuidExclusiveOperator.IsNull },
+          organizationId: { operator: UuidOperator.Eq, value: organization_id },
+          status: { operator: StringOperator.Eq, value: "active" },
+          ...filter,
+        },
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
 
 /**
  *  get class by org
@@ -428,10 +487,16 @@ export const getProgramChild = createAsyncThunk<getProgramsChildResponse, getPro
   }
 );
 
-export const getParticipantsData = createAsyncThunk(
+interface participantsDataInterface extends LoadingMetaPayload {
+  is_org: boolean;
+  hash: string;
+  name: string;
+}
+
+export const getParticipantsData = createAsyncThunk<ParticipantsData, participantsDataInterface>(
   "getParticipantsData",
   // @ts-ignore
-  async (is_org: boolean) => {
+  async ({ is_org, hash, name }) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     let filterQuery = {};
     if (is_org) {
@@ -449,11 +514,25 @@ export const getParticipantsData = createAsyncThunk(
         return { classes: [{ students: [], teachers: [] }] };
       }
     }
+    if (name) {
+      filterQuery = {
+        AND: [
+          {
+            OR: [
+              { givenName: { operator: "contains", value: name, caseInsensitive: true } },
+              { familyName: { operator: "contains", value: name, caseInsensitive: true } },
+            ],
+          },
+        ],
+        ...filterQuery,
+      };
+    }
     const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
       query: GetUserDocument,
       variables: {
-        filter: filterQuery,
+        filter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" }, ...filterQuery },
         direction: ConnectionDirection.Forward,
+        directionArgs: { count: 50, cursor: hash },
       },
     });
     const participantListOrigin = data;
@@ -461,14 +540,19 @@ export const getParticipantsData = createAsyncThunk(
     const teachers: { user_id: string | undefined; user_name: string | null | undefined }[] = [];
     participantListOrigin.usersConnection?.edges?.forEach((item) => {
       if (item?.node?.status !== "active") return;
-      (item?.node?.roles || []).forEach((role) => {
+      item?.node?.roles?.forEach((role) => {
         if (role.name === "Teacher")
           teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
         if (role.name === "Student")
           students.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
       });
     });
-    return { classes: [{ students: students, teachers: teachers }] };
+    return {
+      classes: [{ students: students, teachers: teachers }],
+      total: participantListOrigin.usersConnection?.totalCount,
+      hash: participantListOrigin.usersConnection?.pageInfo?.endCursor,
+      next: participantListOrigin.usersConnection?.pageInfo?.hasNextPage,
+    };
   }
 );
 
@@ -619,8 +703,8 @@ interface GetScheduleMockOptionsPayLoad {
 
 export interface getScheduleMockOptionsAllSettledResponse {
   teacherList: TeachersByOrgnizationQuery;
-  subjectList: PromiseSettledResult<LinkedMockOptionsItem[]>;
-  programList: PromiseSettledResult<LinkedMockOptionsItem[]>;
+  subjectList: LinkedMockOptionsItem[];
+  programList: LinkedMockOptionsItem[];
 }
 
 /**
@@ -639,8 +723,9 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsAll
     const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
     const teacherList = MOCK ? mockResult : data;
 
-    const [subjectList, programList] = await Promise.allSettled([api.subjects.getSubject(), api.programs.getProgram()]);
-    return { subjectList, programList, teacherList };
+    const programList = await programsHandler.getProgramsOptions();
+    const _subjectList = await programsHandler.getAllSubjects();
+    return { subjectList: uniqBy(_subjectList, "id"), programList, teacherList };
   }
 );
 
@@ -649,14 +734,6 @@ export const getSubjectByProgramId = createAsyncThunk<SubjectResourseResult, { p
   "getSubject",
   async (program_id) => {
     return api.subjects.getSubject(program_id);
-  }
-);
-
-type ClassResourseResult = ReturnType<typeof api.schedulesFilter.getScheduleFilterClasses>;
-export const getScheduleFilterClasses = createAsyncThunk<ClassResourseResult, { school_id: string } & LoadingMetaPayload>(
-  "getClass",
-  async (school_id) => {
-    return api.schedulesFilter.getScheduleFilterClasses(school_id);
   }
 );
 
@@ -671,6 +748,8 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
       variables: {
         filter: { id: { operator: UuidOperator.Eq, value: class_id } },
         direction: ConnectionDirection.Forward,
+        studentFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
+        teacherFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
       },
     });
     const participantList: {
@@ -816,7 +895,7 @@ export const actOutcomeListLoading = createAsyncThunk<IQueryOutcomeListResult, I
   }
 );
 
-export interface LinkedMockOptions {
+interface LinkedMockOptions {
   developmental?: LinkedMockOptionsItem[];
   skills?: LinkedMockOptionsItem[];
 }
@@ -850,6 +929,17 @@ const { actions, reducer } = createSlice({
     },
     resetActOutcomeList: (state, { payload }: PayloadAction<any>) => {
       state.outcomeList = payload;
+    },
+    resetParticipantsData: (state) => {
+      state.ParticipantsData = {
+        classes: {
+          students: [],
+          teachers: [],
+        },
+        total: 0,
+        hash: "",
+        next: false,
+      };
     },
   },
   extraReducers: {
@@ -900,8 +990,8 @@ const { actions, reducer } = createSlice({
       state.mockOptions = payload;
     },
     [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
-      state.scheduleMockOptions.subjectList = payload.subjectList.status === "fulfilled" ? payload.subjectList.value : [];
-      state.scheduleMockOptions.programList = payload.programList.status === "fulfilled" ? payload.programList.value : [];
+      state.scheduleMockOptions.subjectList = payload.subjectList;
+      state.scheduleMockOptions.programList = payload.programList;
       state.scheduleMockOptions.teacherList = payload.teacherList;
     },
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
@@ -936,13 +1026,13 @@ const { actions, reducer } = createSlice({
       state.classOptions.classListSchool = { school: { classes: result } };
     },
     [getParticipantsData.fulfilled.type]: (state, { payload }: any) => {
-      let teachers: RolesData[] = [];
-      let students: RolesData[] = [];
+      let teachers: RolesData[] = [...state.ParticipantsData.classes.teachers];
+      let students: RolesData[] = [...state.ParticipantsData.classes.students];
       payload?.classes.forEach((item: ClassesData) => {
         teachers = teachers.concat(item.teachers);
         students = students.concat(item.students);
       });
-      state.ParticipantsData = { classes: { students, teachers } };
+      state.ParticipantsData = { classes: { students, teachers }, total: payload?.total, next: payload?.next, hash: payload?.hash };
     },
     [getScheduleNewetFeedback.fulfilled.type]: (state, { payload }: any) => {
       state.feedbackData = payload;
@@ -955,9 +1045,6 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleAnyTimeViewData = payload;
-    },
-    [getScheduleFilterClasses.fulfilled.type]: (state, { payload }: any) => {
-      state.filterOption.others = payload;
     },
     [getSchoolByUser.fulfilled.type]: (state, { payload }: any) => {
       state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
@@ -986,7 +1073,23 @@ const { actions, reducer } = createSlice({
     [getClassFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.classesConnection = payload.data;
     },
+    [classesWithoutSchool.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.filterOtherClasses = payload.data;
+    },
+    [getLessonPlansBySchedule.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.lessonPlans = payload;
+    },
+    [getUserInUndefined.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.userInUndefined = payload.data;
+    },
   },
 });
-export const { resetScheduleDetial, resetParticipantList, changeParticipants, resetScheduleTimeViewData, resetActOutcomeList } = actions;
+export const {
+  resetScheduleDetial,
+  resetParticipantList,
+  changeParticipants,
+  resetScheduleTimeViewData,
+  resetActOutcomeList,
+  resetParticipantsData,
+} = actions;
 export default reducer;

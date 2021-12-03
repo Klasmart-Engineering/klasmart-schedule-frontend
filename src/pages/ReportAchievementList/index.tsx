@@ -6,6 +6,8 @@ import { RootState } from "@reducers/index";
 import { getAchievementList, getLessonPlan, Item, reportOnload } from "@reducers/report";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { orderByASC } from "@utilities/dataUtilities";
+import { uniqBy } from "lodash";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -69,7 +71,8 @@ export function ReportAchievementList() {
         AsyncTrunkReturned<typeof getLessonPlan>
       >;
       if (data) {
-        const lesson_plan_id = (data[0] && data[0].id) || "";
+        const lessonPlanList = orderByASC(data, "name");
+        const lesson_plan_id = lessonPlanList[0]?.id || "";
         history.push({ search: setQuery(history.location.search, { teacher_id, class_id, lesson_plan_id }) });
         lesson_plan_id && dispatch(getAchievementList({ metaLoading: true, teacher_id, class_id, lesson_plan_id }));
       } else {
@@ -97,6 +100,7 @@ export function ReportAchievementList() {
             classList = classList.concat([{ id: item.class_id, name: item.class_name || "" }]);
           }
         });
+        classList = orderByASC(uniqBy(classList, "id"), "name");
         // setClassList(classList);
         getFirstLessonPlanId(value, classList[0].id);
       }
@@ -151,6 +155,7 @@ export function ReportAchievementList() {
           initClassesList = initClassesList.concat([{ id: item.class_id, name: item.class_name || "" }]);
         }
       });
+      initClassesList = orderByASC(uniqBy(initClassesList, "id"), "name");
       setClassList(initClassesList);
     }
   }, [classes?.classes, condition.teacher_id, reportMockOptions.teacherList]);

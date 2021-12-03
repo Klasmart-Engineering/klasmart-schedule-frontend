@@ -1,15 +1,15 @@
+import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "@api/api-ko.auto";
+import { ApiPullOutcomeSetResponse } from "@api/api.auto";
+import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "@api/extra";
+import api, { gqlapi } from "@api/index";
+import { GetOutcomeDetail, GetOutcomeList, GetOutcomeListResult, OutcomePublishStatus } from "@api/type";
+import { LangRecordId } from "@locale/lang/type";
+import { d } from "@locale/LocaleManager";
+import { isUnpublish } from "@pages/OutcomeList/ThirdSearchHeader";
+import { OutcomeQueryCondition } from "@pages/OutcomeList/types";
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
-import api, { gqlapi } from "../api";
-import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
-import { ApiPullOutcomeSetResponse } from "../api/api.auto";
-import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
-import { GetOutcomeDetail, GetOutcomeList, GetOutcomeListResult, OutcomePublishStatus } from "../api/type";
-import { LangRecordId } from "../locale/lang/type";
-import { d } from "../locale/LocaleManager";
-import { isUnpublish } from "../pages/OutcomeList/ThirdSearchHeader";
-import { OutcomeQueryCondition } from "../pages/OutcomeList/types";
 import { actAsyncConfirm, ConfirmDialogType } from "./confirm";
-import { LinkedMockOptionsItem } from "./content";
+import programsHandler, { getDevelopmentalAndSkills, LinkedMockOptionsItem } from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actSuccess, actWarning } from "./notify";
 import { AsyncReturnType, AsyncTrunkReturned, IPermissionState } from "./type";
@@ -50,16 +50,16 @@ export const initialState: IOutcomeState = {
     skills: [],
     age: [],
     grade: [],
-    estimated_time: 1,
+    // estimated_time: 1,
     reject_reason: "",
     keywords: [],
-    source_id: "",
+    // source_id: "",
     locked_by: "",
     author_id: "",
     author_name: "",
-    organization_id: "",
+    // organization_id: "",
     organization_name: "",
-    publish_scope: "",
+    // publish_scope: "",
     publish_status: "draft",
     created_at: 0,
     description: "",
@@ -135,25 +135,14 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
         organization_id,
       },
     });
-    const program = await api.programs.getProgram();
+    const program = await programsHandler.getProgramsOptions();
+
     const programId = program_id ? program_id : program[0].id;
-    const subject = await api.subjects.getSubject({ program_id: programId });
+    const [subject, age, grade] = await programsHandler.getSubjectAgeGradeByProgramId(programId);
     if (!subject.length) return { program, subject: [], developmental: [], skills: [], age: [], grade: [], user_id: meInfo.me?.user_id };
-    const subject_ids = default_subject_ids ? default_subject_ids : subject[0].id;
-    const [developmental, age, grade] = await Promise.all([
-      api.developmentals.getDevelopmental({ program_id: programId, subject_ids }),
-      api.ages.getAge({ program_id: programId }),
-      api.grades.getGrade({ program_id: programId }),
-    ]);
-    if (developmental[0] && developmental[0].id) {
-      const firstDevelopment_id = developmental[0].id;
-      const skills = await api.skills.getSkill({
-        developmental_id: development_id ? development_id : firstDevelopment_id,
-        program_id: programId,
-      });
-      return { program, subject, developmental, skills, age, grade, user_id: meInfo.me?.user_id };
-    }
-    return { program, subject, developmental: [], skills: [], age, grade, user_id: meInfo.me?.user_id };
+    const subjectIds = default_subject_ids ? default_subject_ids : subject[0].id;
+    const [developmental, skills] = await getDevelopmentalAndSkills(programId, subjectIds);
+    return { program, subject, developmental, skills, age, grade, user_id: meInfo.me?.user_id };
   }
 );
 

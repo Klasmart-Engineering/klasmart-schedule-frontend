@@ -41,7 +41,12 @@ import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
 import { actAsyncConfirm, ConfirmDialogType, unwrapConfirm } from "./confirm";
-import programsHandler from "./contentEdit/programsHandler";
+import programsHandler, {
+  getDevelopmentalAndSkills,
+  LinkedMockOptions,
+  LinkedMockOptionsItem,
+  _getLinkedMockOptions,
+} from "./contentEdit/programsHandler";
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { actWarning } from "./notify";
 import { AsyncReturnType, AsyncTrunkReturned } from "./type";
@@ -268,20 +273,6 @@ export const publishWidthAssets = createAsyncThunk<
   return api.contents.publishContentWithAssets(id, { scope: publish_scope });
 });
 
-export interface LinkedMockOptionsItem {
-  id?: string;
-  name?: string;
-  group?: string;
-}
-
-export interface LinkedMockOptions {
-  program?: LinkedMockOptionsItem[];
-  subject?: LinkedMockOptionsItem[];
-  developmental?: LinkedMockOptionsItem[];
-  age?: LinkedMockOptionsItem[];
-  grade?: LinkedMockOptionsItem[];
-  skills?: LinkedMockOptionsItem[];
-}
 export enum ILinkedMockOptionsType {
   contents = "contents",
   LearningOutcomes = "learningOutcomes",
@@ -293,43 +284,8 @@ export interface LinkedMockOptionsPayload extends LoadingMetaPayload {
   default_developmental_id?: string;
 }
 
-export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LinkedMockOptionsPayload>(
-  "content/getLinkedMockOptions",
-  async ({ default_program_id, default_subject_ids, default_developmental_id }) => {
-    //const program = await api.programs.getProgram();
+export const getLinkedMockOptions = _getLinkedMockOptions("content/getLinkedMockOptions");
 
-    const program = await programsHandler.getProgramsOptions();
-
-    const program_id = default_program_id ? default_program_id : program[0].id;
-
-    if (program_id) {
-      const programItem = await programsHandler.getProgramById(program_id);
-
-      console.log(programItem);
-
-      //const subject = await api.subjects.getSubject({ program_id });
-
-      const subject = programItem ? programItem.subjects || [] : [];
-
-      const subject_ids = default_subject_ids ? default_subject_ids : subject.length ? subject[0].id : undefined;
-      if (!subject_ids) return { program, subject: [], developmental: [], age: [], grade: [], skills: [] };
-
-      const developmental = await api.developmentals.getDevelopmental({ program_id, subject_ids });
-      const age = programItem ? programItem.ageRanges || [] : [];
-      const grade = programItem ? programItem.grades || [] : [];
-
-      const developmental_id = default_developmental_id ? default_developmental_id : developmental[0].id;
-      if (developmental_id) {
-        const skills = await api.skills.getSkill({ program_id, developmental_id });
-        return { program, subject, developmental, age, grade, skills };
-      } else {
-        return { program, subject, developmental, age, grade, skills: [] };
-      }
-    } else {
-      return { program, subject: [], developmental: [], age: [], grade: [], skills: [] };
-    }
-  }
-);
 export const getLinkedMockOptionsSkills = createAsyncThunk<LinkedMockOptions["skills"], LinkedMockOptionsPayload>(
   "content/getLinkedMockOptionsSkills",
   async ({ metaLoading, default_program_id: program_id, default_developmental_id: developmental_id }) => {
@@ -344,22 +300,11 @@ export interface IQueryOutcomesOptions extends LoadingMetaPayload {
 export const getOutcomesOptions = createAsyncThunk<LinkedMockOptions, IQueryOutcomesOptions>(
   "content/getOutcomesOptions",
   async ({ metaLoading, program_id, subject_ids, developmental_id }) => {
-    let subject: LinkedMockOptionsItem[] = [];
-    let skills: LinkedMockOptionsItem[] = [];
-    if (program_id) {
-      subject = await api.subjects.getSubject({ program_id });
-    }
-    const [developmental, age, grade] = await Promise.all([
-      api.developmentals.getDevelopmental({ program_id, subject_ids: subject.length === 1 ? subject[0].id : subject_ids }),
-      api.ages.getAge({ program_id }),
-      api.grades.getGrade({ program_id }),
-    ]);
-    if (developmental_id) {
-      skills = await api.skills.getSkill({
-        program_id,
-        developmental_id: developmental.length === 1 ? developmental[0].id : developmental_id,
-      });
-    }
+    console.log(program_id, subject_ids, developmental_id);
+    const [subject = [], age, grade] = program_id ? await programsHandler.getSubjectAgeGradeByProgramId(program_id) : [[], [], []];
+    const subjectIds = subject.length === 1 ? subject[0].id : subject_ids;
+    const [developmental, skills = []] = program_id && subjectIds ? await getDevelopmentalAndSkills(program_id, subjectIds) : [[], []];
+
     return {
       subject,
       developmental,

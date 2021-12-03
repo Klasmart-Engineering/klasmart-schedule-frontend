@@ -43,7 +43,7 @@
   "library_label_my_only": "Chỉ Của Tôi",
   "library_label_bulk_actions": "Thao Tác Hàng Loạt",
   "library_label_remove": "Bỏ",
-  "library_msg_remove_content": "Bạn có muốn bỏ nội dung này không?",
+  "library_msg_remove_content": "Bạn có muốn lưu trữ nội dung này không?",
   "library_msg_bulk_remove_content": "Bạn có chắc chắn muốn bỏ các nội dung này không?",
   "library_msg_remove_select_one": "Bạn phải chọn ít nhất một nội dung",
   "library_label_sort_by": "Sắp xếp dựa trên",
@@ -1048,5 +1048,6 @@
   "report_label_overall_completion": "Hoàn thành tổng thể",
   "report_msg_participants_not_included": "Không bao gồm người tham gia",
   "report_student_usage_incomplete_students": "Học sinh chưa hoàn thành",
-  "general_error_fail_get_permission": "Không xin được quyền, vui lòng làm mới"
+  "general_error_fail_get_permission": "Không xin được quyền, vui lòng làm mới",
+  "library_error_pdf_validation": "PDF validation failed, please try again."
 }

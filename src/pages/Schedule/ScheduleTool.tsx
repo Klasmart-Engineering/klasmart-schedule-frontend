@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
@@ -17,7 +17,7 @@ import { modeViewType, timestampType } from "../../types/scheduleTypes";
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
     input: {
-      width: "190px",
+      width: "100%",
       borderRadius: 6,
       position: "relative",
       backgroundColor: theme.palette.background.paper,
@@ -51,11 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     btnRadio: {
       borderRadius: "20px",
-      width: "160px",
       height: "46px",
-    },
-    modelSelect: {
-      textAlign: "right",
     },
     searchBtn: {
       marginLeft: "12px",
@@ -88,6 +84,9 @@ function Tool(props: ToolProps) {
   const [teacherName, setTeacherName] = React.useState(useQuery());
   const history = useHistory();
   const { includeList, changeTimesTamp, changeModelView, modelView, scheduleId, modelYear } = props;
+
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
 
   const selectToday = (): void => {
     changeTimesTamp({
@@ -129,6 +128,7 @@ function Tool(props: ToolProps) {
                         variant="contained"
                         color="primary"
                         className={css.btnRadio}
+                        style={{ width: mobile ? "100%" : "160px" }}
                         onClick={() => {
                           toolRouter("create");
                         }}
@@ -140,7 +140,14 @@ function Tool(props: ToolProps) {
                 />
               )}
             </Grid>
-            <Grid item xs={12} sm={8} md={4} lg={4} style={{ display: "flex", alignItems: "center" }}>
+            <Grid
+              item
+              xs={12}
+              sm={8}
+              md={4}
+              lg={4}
+              style={{ display: "flex", alignItems: "center", justifyContent: mobile ? "center" : "flex-start" }}
+            >
               <Permission
                 value={PermissionType.schedule_search_582}
                 render={(value) =>
@@ -154,7 +161,7 @@ function Tool(props: ToolProps) {
                           }}
                         />
                       )}
-                      <FormControl>
+                      <FormControl style={{ width: mobile ? "68%" : "230px" }}>
                         <BootstrapInput
                           id="demo-customized-textbox"
                           value={teacherName}
@@ -180,9 +187,9 @@ function Tool(props: ToolProps) {
               />
             </Grid>
 
-            <Grid item xs={12} sm={12} md={5} lg={5} className={css.modelSelect}>
+            <Grid item xs={12} sm={12} md={5} lg={5} style={{ textAlign: mobile ? "center" : "right" }}>
               {!includeList && (
-                <FormControl className={css.selectControl}>
+                <FormControl className={css.selectControl} style={{ width: mobile ? "68%" : "230px" }}>
                   <NativeSelect
                     id="demo-customized-select-native"
                     value={modelYear ? "year" : modelView}
@@ -198,7 +205,13 @@ function Tool(props: ToolProps) {
                 </FormControl>
               )}
               {!includeList && (
-                <Button size="large" variant="outlined" color="primary" style={{ margin: "0 12px 0 16px" }} onClick={selectToday}>
+                <Button
+                  size="large"
+                  variant="outlined"
+                  color="primary"
+                  style={{ margin: "0 0 0 14px", width: "85px" }}
+                  onClick={selectToday}
+                >
                   {d("Today").t("schedule_button_today")}
                 </Button>
               )}

@@ -599,6 +599,7 @@ export type Mutation = {
   organization?: Maybe<Organization>;
   program?: Maybe<Program>;
   removeOrganizationRolesFromUsers?: Maybe<UsersMutationResult>;
+  removeSubcategoriesFromCategories?: Maybe<CategoriesMutationResult>;
   renameDuplicateGrades?: Maybe<Scalars["Boolean"]>;
   renameDuplicateOrganizations?: Maybe<Scalars["Boolean"]>;
   renameDuplicateSubjects?: Maybe<Scalars["Boolean"]>;
@@ -716,6 +717,10 @@ export type MutationProgramArgs = {
 
 export type MutationRemoveOrganizationRolesFromUsersArgs = {
   input: Array<RemoveOrganizationRolesFromUserInput>;
+};
+
+export type MutationRemoveSubcategoriesFromCategoriesArgs = {
+  input: Array<RemoveSubcategoriesFromCategoryInput>;
 };
 
 export type MutationReplaceRoleArgs = {
@@ -1696,6 +1701,11 @@ export type RemoveOrganizationRolesFromUserInput = {
   organizationId: Scalars["ID"];
   roleIds: Array<Scalars["ID"]>;
   userId: Scalars["ID"];
+};
+
+export type RemoveSubcategoriesFromCategoryInput = {
+  categoryId: Scalars["ID"];
+  subcategoryIds: Array<Scalars["ID"]>;
 };
 
 export type Role = {

@@ -1,10 +1,10 @@
 /* eslint-disable array-callback-return */
+import { d } from "@locale/LocaleManager";
+import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
+import { getScheduleParticipantsMockOptionsResponse } from "@reducers/schedule";
 import { Status } from "../api/api-ko-schema.auto";
-import { GetClassFilterListQuery, GetProgramsQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, GetUserQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
-import { d } from "../locale/LocaleManager";
-import { LinkedMockOptionsItem } from "../reducers/content";
-import { getScheduleParticipantsMockOptionsResponse } from "../reducers/schedule";
 import {
   ClassOptionsItem,
   EntityScheduleSchoolInfo,
@@ -16,7 +16,7 @@ import {
   RolesData,
 } from "../types/scheduleTypes";
 
-type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other";
+type filterParameterMatchType = "classType" | "subjectSub" | "program" | "class" | "other" | "user";
 type filterValueMatchType = "class_types" | "subject_ids" | "program_ids" | "class_ids";
 
 interface AssociationStructureProps {
@@ -40,6 +40,7 @@ export class modelSchedule {
     program: "program_ids",
     class: "class_ids",
     other: "class_ids",
+    user: "user_ids",
   };
 
   /**
@@ -118,7 +119,7 @@ export class modelSchedule {
    * @constructor
    */
   static AssemblyFilterParameter(stateOnlyMine: string[]) {
-    const filterQuery: FilterQueryTypeProps = { class_types: [], class_ids: [], subject_ids: [], program_ids: [] };
+    const filterQuery: FilterQueryTypeProps = { class_types: [], class_ids: [], subject_ids: [], program_ids: [], user_ids: [] };
     stateOnlyMine.forEach((value: string) => {
       const [label, id] = value.split("+");
       const matchValue = this.FILTER_PARAMETER_MATCH[label as filterParameterMatchType];
@@ -225,11 +226,19 @@ export class modelSchedule {
   }
 
   static classDataConversion2(school_name: string, school_id: string, classesConnection?: GetClassFilterListQuery) {
-    const data: { class_id: string; class_name: string; showIcon: boolean }[] = [];
+    const data: { class_id: string; name: string; showIcon: boolean }[] = [];
     classesConnection?.classesConnection?.edges?.forEach((item) => {
-      data.push({ class_id: item?.node?.id!, class_name: item?.node?.name!, showIcon: false });
+      data.push({ class_id: item?.node?.id!, name: item?.node?.name!, showIcon: false });
     });
     return { school_name: school_name, school_id: school_id, classes: data, onlyMine: false };
+  }
+
+  static classDataConversion3(school_name: string, unserConnection?: GetUserQuery) {
+    const data: { class_id: string; name: string; showIcon: boolean }[] = [];
+    unserConnection?.usersConnection?.edges?.forEach((item) => {
+      data.push({ class_id: item?.node?.id!, name: `${item?.node?.givenName!} ${item?.node?.familyName!}`, showIcon: false });
+    });
+    return { school_name: school_name, school_id: "", classes: data, onlyMine: false };
   }
 
   static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {
