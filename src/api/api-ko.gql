@@ -522,33 +522,8 @@ query studentsByOrganization($organization_id: ID!) {
 }
 
 
-query getProgramsAndSubjects($organization_id: UUID! , $count: PageSize!,  $cursor: String!) {
-  programsConnection(filter:{
-    AND: [
-      {
-            OR : [
-            {
-              organizationId: {
-                operator: eq
-                value: $organization_id
-              }
-            }
-            {
-              system: {
-                operator: eq
-                value: true
-              },
-            }
-          ]
-      }
-      {
-        status: {
-          operator: eq
-          value: "active"
-        }
-      }
-    ]
-  }
+query getProgramsAndSubjects($count: PageSize!,  $cursor: String!, $filter: ProgramFilter!) {
+  programsConnection(filter:$filter
   directionArgs: {
     count:  $count
     cursor: $cursor

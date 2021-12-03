@@ -402,7 +402,7 @@ export default function MyContentList() {
   useEffect(() => {
     const getUserSettingPageSize = async () => {
       const { payload } = (await dispatch(getUserSetting())) as unknown as PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>;
-      setCmsPageSize(payload.cms_page_size);
+      setCmsPageSize(payload.cms_page_size || 0);
     };
     getUserSettingPageSize();
   }, [dispatch]);

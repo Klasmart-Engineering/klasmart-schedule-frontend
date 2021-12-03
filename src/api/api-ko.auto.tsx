@@ -772,9 +772,9 @@ export type StudentsByOrganizationQuery = { __typename?: "Query" } & {
 };
 
 export type GetProgramsAndSubjectsQueryVariables = Types.Exact<{
-  organization_id: Types.Scalars["UUID"];
   count: Types.Scalars["PageSize"];
   cursor: Types.Scalars["String"];
+  filter: Types.ProgramFilter;
 }>;
 
 export type GetProgramsAndSubjectsQuery = { __typename?: "Query" } & {
@@ -2565,17 +2565,8 @@ export type StudentsByOrganizationQueryHookResult = ReturnType<typeof useStudent
 export type StudentsByOrganizationLazyQueryHookResult = ReturnType<typeof useStudentsByOrganizationLazyQuery>;
 export type StudentsByOrganizationQueryResult = Apollo.QueryResult<StudentsByOrganizationQuery, StudentsByOrganizationQueryVariables>;
 export const GetProgramsAndSubjectsDocument = gql`
-  query getProgramsAndSubjects($organization_id: UUID!, $count: PageSize!, $cursor: String!) {
-    programsConnection(
-      filter: {
-        AND: [
-          { OR: [{ organizationId: { operator: eq, value: $organization_id } }, { system: { operator: eq, value: true } }] }
-          { status: { operator: eq, value: "active" } }
-        ]
-      }
-      directionArgs: { count: $count, cursor: $cursor }
-      direction: FORWARD
-    ) {
+  query getProgramsAndSubjects($count: PageSize!, $cursor: String!, $filter: ProgramFilter!) {
+    programsConnection(filter: $filter, directionArgs: { count: $count, cursor: $cursor }, direction: FORWARD) {
       totalCount
       pageInfo {
         hasNextPage
@@ -2623,9 +2614,9 @@ export const GetProgramsAndSubjectsDocument = gql`
  * @example
  * const { data, loading, error } = useGetProgramsAndSubjectsQuery({
  *   variables: {
- *      organization_id: // value for 'organization_id'
  *      count: // value for 'count'
  *      cursor: // value for 'cursor'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
