@@ -92,7 +92,7 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
             setFile(file);
             return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
           };
-          if (beforeUpload && extension === "pdf") {
+          if (beforeUpload && extension.toLowerCase() === "pdf") {
             return beforeUpload(file, getPathAndId) ?? false;
           } else {
             return getPathAndId();
