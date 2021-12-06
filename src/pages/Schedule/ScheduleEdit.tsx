@@ -754,6 +754,7 @@ function EditBox(props: CalendarStateProps) {
         setRosterSaveStatus(false);
         setIsForce(false);
       } else {
+        dispatch(resetParticipantList());
         handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
       }
       setClassItem(value);
@@ -1282,9 +1283,9 @@ function EditBox(props: CalendarStateProps) {
           handleChangeParticipants={handleChangeParticipants}
           getParticipantsData={getParticipantsData}
           participantsIds={participantsIds as ParticipantsShortInfo}
+          participantList={participantMockOptions.participantList}
           nameUpperLevel={name}
           setSearchName={setSearchName}
-          classRosterIds={classRosterIds}
         />
       ),
     });

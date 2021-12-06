@@ -16,6 +16,7 @@ import React, { useMemo } from "react";
 import { d } from "../../locale/LocaleManager";
 import { ClassOptionsItem, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
 import InputBase from "@material-ui/core/InputBase/InputBase";
+import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import { resetParticipantsData } from "../../reducers/schedule";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { useDispatch, useSelector } from "react-redux";
@@ -118,14 +119,14 @@ interface InfoProps {
   handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
   getParticipantsData?: (metaLoading: boolean, search: string, hash: string) => void;
   participantsIds: ParticipantsShortInfo;
+  participantList: ParticipantsByClassQuery;
   nameUpperLevel: string;
   setSearchName: (value: string) => void;
-  classRosterIds?: ParticipantsShortInfo;
 }
 
 export default function AddParticipantsTemplate(props: InfoProps) {
   const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { handleClose, handleChangeParticipants, participantsIds, getParticipantsData, nameUpperLevel, setSearchName, classRosterIds } =
+  const { handleClose, handleChangeParticipants, participantsIds, getParticipantsData, participantList, nameUpperLevel, setSearchName } =
     props;
   const css = useStyles();
   const [defaultFilter, setDefaultFilter] = React.useState("students");
@@ -143,12 +144,12 @@ export default function AddParticipantsTemplate(props: InfoProps) {
   };
 
   const suggestParticipants = useMemo(() => {
-    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, classRosterIds);
+    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantList);
     const filterData: RolesData[] = (
       defaultFilter === "students" ? participantsFilterData?.classes.students : participantsFilterData?.classes.teachers
     ) as RolesData[];
     return { filterData: filterData, next: ParticipantsData.next, hash: ParticipantsData.hash };
-  }, [ParticipantsData, defaultFilter, classRosterIds]);
+  }, [ParticipantsData, participantList, defaultFilter]);
 
   const [part, setPart] = React.useState<ParticipantsShortInfo>(participantsIds);
 
