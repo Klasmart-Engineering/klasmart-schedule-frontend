@@ -307,11 +307,10 @@ export default function CreateOutcomings() {
       const subject_id = outcomeDetail.subject && outcomeDetail.subject.map((item) => item.subject_id).join(",");
       const development_id =
         outcomeDetail.developmental && outcomeDetail.developmental[0] && outcomeDetail.developmental[0].developmental_id;
-      if (!showEdit && program_id && development_id && subject_id && outcome_id === outcomeDetail.outcome_id) {
+      if (program_id && development_id && subject_id && outcome_id === outcomeDetail.outcome_id) {
         dispatch(getNewOptions({ program_id, development_id, default_subject_ids: subject_id, metaLoading: true }));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcomeDetail.outcome_id, outcome_id, outcomeDetail.subject]);
 
   React.useEffect(() => {
