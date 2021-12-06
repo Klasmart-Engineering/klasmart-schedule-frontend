@@ -1282,9 +1282,9 @@ function EditBox(props: CalendarStateProps) {
           handleChangeParticipants={handleChangeParticipants}
           getParticipantsData={getParticipantsData}
           participantsIds={participantsIds as ParticipantsShortInfo}
-          participantList={participantMockOptions.participantList}
           nameUpperLevel={name}
           setSearchName={setSearchName}
+          classRosterIds={classRosterIds}
         />
       ),
     });
