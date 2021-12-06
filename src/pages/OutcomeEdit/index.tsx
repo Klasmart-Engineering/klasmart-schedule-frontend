@@ -65,7 +65,7 @@ export default function CreateOutcomings() {
   const { outcomeDetail, newOptions, outcomeSetList, defaultSelectOutcomeset, shortCode } = useSelector<RootState, RootState["outcome"]>(
     (state) => state.outcome
   );
-  const [showEdit, setShowEdit] = React.useState(false);
+  const [showEdit, setShowEdit] = React.useState(true);
   const [isAssumed, setIsAssumed] = React.useState(true);
   const [condition, setCondition] = React.useState("default");
   const [isSelf, setIsSelf] = React.useState(false);
@@ -155,7 +155,7 @@ export default function CreateOutcomings() {
           >;
           if (payload === "ok") {
             dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
-            // await dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+            await dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
             reset(value);
             setCondition("default");
           }
@@ -307,15 +307,17 @@ export default function CreateOutcomings() {
       const subject_id = outcomeDetail.subject && outcomeDetail.subject.map((item) => item.subject_id).join(",");
       const development_id =
         outcomeDetail.developmental && outcomeDetail.developmental[0] && outcomeDetail.developmental[0].developmental_id;
-      if (program_id && development_id && subject_id && outcome_id === outcomeDetail.outcome_id) {
+      if (!showEdit && program_id && development_id && subject_id && outcome_id === outcomeDetail.outcome_id) {
         dispatch(getNewOptions({ program_id, development_id, default_subject_ids: subject_id, metaLoading: true }));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, outcomeDetail.developmental, outcomeDetail.program, outcomeDetail.outcome_id, outcome_id, outcomeDetail.subject]);
 
   React.useEffect(() => {
     dispatch(resetShortCode(""));
     if (!outcome_id) {
+      setShowEdit(false);
       dispatch(generateShortcode({ kind: "outcomes" }));
       dispatch(getNewOptions({ metaLoading: true }));
     }
