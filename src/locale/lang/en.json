@@ -1049,5 +1049,6 @@
   "report_msg_participants_not_included": "Participants are not included",
   "report_student_usage_incomplete_students": "Incomplete by Students",
   "general_error_fail_get_permission": "Failed to get permission, please refresh",
-  "library_error_pdf_validation": "PDF validation failed, please try again."
+  "library_error_pdf_validation": "PDF validation failed, please try again.",
+  "schedule_search_class_name": "Search Class Name"
 }

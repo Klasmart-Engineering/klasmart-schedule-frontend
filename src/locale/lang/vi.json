@@ -981,7 +981,7 @@
   "report_msg_feedback": "% các bài đánh giá cá nhân của học sinh đã được hoàn thành mà giáo viên đã cung cấp phản hồi. Giá trị dựa trên lựa chọn bộ lọc.",
   "report_msg_assessments_pending": "Số lượng đánh giá đang chờ giáo viên hoàn thành cho mỗi bài nộp của học sinh. Trạng thái đang chờ xử lý có nghĩa là ngày quá hạn đã qua nhưng việc đánh giá vẫn chưa được hoàn thành. Giá trị dựa trên lựa chọn bộ lọc.",
   "report_msg_avg_days_pending": "Số ngày trung bình các bài đánh giá ở trạng thái chờ xử lý. Trạng thái đang chờ xử lý có nghĩa là ngày đáo hạn đã qua nhưng việc đánh giá vẫn chưa được hoàn thành. Giá trị dựa trên lựa chọn bộ lọc.",
-  "schedule_search_school_name": "Tìm kiếm tên trường",
+  "schedule_search_school_name": "Tìm kiếm tên Trường",
   "report_msg_lo_default": "{Name} đang tiếp tục học với KidsLoop. Trong tuần này, {Name} đã đạt được {AchievedLoCount} kết quả học tập trong số {LearntLoCount}.",
   "report_msg_lo_new": "{Name} bắt đầu học với KidsLoop trong tuần này. Cho đến nay, {Name} đã đạt được {AchievedLoCount} kết quả học tập trong số  {LearntLoCount}.",
   "report_msg_lo_increase_previous_w": "{Name} đã đạt được kết quả học tập cao hơn {LOCompareLastWeek} % so với tuần trước.",
@@ -1049,5 +1049,6 @@
   "report_msg_participants_not_included": "Không bao gồm người tham gia",
   "report_student_usage_incomplete_students": "Học sinh chưa hoàn thành",
   "general_error_fail_get_permission": "Không xin được quyền, vui lòng làm mới",
-  "library_error_pdf_validation": "PDF validation failed, please try again."
+  "library_error_pdf_validation": "Xác thực PDF không thành công, vui lòng thử lại.",
+  "schedule_search_class_name": "Tìm kiếm tên Lớp"
 }
