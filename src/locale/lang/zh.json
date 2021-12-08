@@ -1048,5 +1048,7 @@
   "report_label_overall_completion": "总体完成情况",
   "report_msg_participants_not_included": "不包括参与者",
   "report_student_usage_incomplete_students": "未完成学生",
-  "general_error_fail_get_permission": "获取权限失败，请刷新"
+  "general_error_fail_get_permission": "获取权限失败，请刷新",
+  "library_error_pdf_validation": "PDF 验证失败，请重试。",
+  "schedule_search_class_name": "搜索班级"
 }

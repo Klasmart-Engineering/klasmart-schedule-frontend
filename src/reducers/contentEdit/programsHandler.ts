@@ -1,4 +1,17 @@
-import { AgeRange, ConnectionPageInfo, Grade, Program, Subject } from "@api/api-ko-schema.auto";
+import {
+  AgeRange,
+  BooleanFilter,
+  BooleanOperator,
+  ConnectionPageInfo,
+  Grade,
+  Program,
+  ProgramFilter,
+  StringFilter,
+  StringOperator,
+  Subject,
+  UuidFilter,
+  UuidOperator,
+} from "@api/api-ko-schema.auto";
 import { GetProgramsAndSubjectsDocument, GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables } from "@api/api-ko.auto";
 import { ExternalCategory, ExternalSubCategory } from "@api/api.auto";
 import { apiWaitForOrganizationOfPage } from "@api/extra";
@@ -36,13 +49,20 @@ interface LinkedMockOptionsPayload extends LoadingMetaPayload {
 }
 
 async function _getPrograms(
-  cursor: string
+  cursor: string,
+  noFilterActive?: boolean
 ): Promise<[Pick<ConnectionPageInfo, "hasNextPage" | "endCursor"> | undefined | null, ProgramItem[]]> {
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const status: StringFilter = { operator: StringOperator.Eq, value: "active" };
+  const organizationId: UuidFilter = { operator: UuidOperator.Eq, value: organization_id };
+  const system: BooleanFilter = { operator: BooleanOperator.Eq, value: true };
+  const filter: ProgramFilter = noFilterActive
+    ? { OR: [{ organizationId }, { system }] }
+    : { AND: [{ OR: [{ organizationId }, { system }] }, { status }] };
   const resp = await gqlapi.query<GetProgramsAndSubjectsQuery, GetProgramsAndSubjectsQueryVariables>({
     query: GetProgramsAndSubjectsDocument,
     variables: {
-      organization_id,
+      filter,
       count: 50,
       cursor,
     },
@@ -59,12 +79,12 @@ async function _getPrograms(
   return [pageInfo, programs];
 }
 
-async function getAllPrograms() {
+async function getAllPrograms(noFilterActive?: boolean) {
   let result: ProgramItem[] = [];
   let end = false;
   let cursor = "";
   while (!end) {
-    const [pageInfo, programs] = await _getPrograms(cursor);
+    const [pageInfo, programs] = await _getPrograms(cursor, noFilterActive);
     result = result.concat(programs);
     if (!pageInfo || !pageInfo.hasNextPage) {
       end = true;
@@ -77,17 +97,23 @@ async function getAllPrograms() {
 
 const programsHandler = (function () {
   let instance: Promise<ProgramItem[]>;
-  function getPrograms() {
-    if (!instance) {
-      instance = getAllPrograms();
+  let noFilterActiveInstance: Promise<ProgramItem[]>;
+  function getPrograms(noFilterActive: boolean) {
+    if (!noFilterActive) {
+      if (!instance) {
+        instance = getAllPrograms();
+      }
+      return instance;
+    } else {
+      return !noFilterActiveInstance ? getAllPrograms(true) : noFilterActiveInstance;
     }
-    return instance;
   }
   return {
     async getProgramsOptions(
-      includeSubject = false
+      includeSubject = false,
+      noFilterActive = false
     ): Promise<Pick<ProgramItem, "id" | "name" | "subjects">[] | Pick<ProgramItem, "id" | "name">[]> {
-      const programs = await getPrograms();
+      const programs = await getPrograms(noFilterActive);
       if (includeSubject) {
         return programs
           .filter((item) => (item?.subjects || []).length > 0)
@@ -112,7 +138,7 @@ const programsHandler = (function () {
       }
     },
     async getProgramById(id: string): Promise<ProgramItem | undefined> {
-      const programs = await getPrograms();
+      const programs = await getPrograms(false);
       return programs.find((item) => item.id === id);
     },
 
@@ -124,8 +150,8 @@ const programsHandler = (function () {
       return [subjects, ageRanges, grades];
     },
 
-    async getAllSubjects(includeProgramName = false): Promise<SubjectItem[]> {
-      const programs = await getPrograms();
+    async getAllSubjects(includeProgramName = false, noFilterActive = false): Promise<SubjectItem[]> {
+      const programs = await getPrograms(noFilterActive);
 
       const subjects = programs.reduce((acc, item) => {
         return acc.concat(

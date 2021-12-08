@@ -1,7 +1,7 @@
 import { Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
-import { contentLists, onLoadContentPreview } from "@reducers/content";
+import { onLoadContentPreview } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
@@ -29,11 +29,9 @@ import {
   getClassesByStudent,
   getClassesByTeacher,
   getClassFilterList,
-  getContentsAuthed,
   getLinkedMockOptions,
   getParticipantsData,
   getScheduleAnyTimeViewData,
-  getScheduleFilterClasses,
   getScheduleInfo,
   getScheduleMockOptions,
   getScheduleParticipant,
@@ -41,10 +39,12 @@ import {
   getScheduleTimeViewDataByYear,
   getScheduleViewInfo,
   getSchoolsFilterList,
+  classesWithoutSchool,
   getSubjectByProgramId,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
-  searchAuthContentLists,
+  getLessonPlansBySchedule,
+  getUserInUndefined,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -92,12 +92,14 @@ function ScheduleContent() {
     participantsIds,
     scheduleDetial,
     scheduleAnyTimeViewData,
-    mediaList,
     ScheduleViewInfo,
     filterOption,
     schoolByOrgOrUserData,
     schoolsConnection,
     classesConnection,
+    userInUndefined,
+    lessonPlans,
+    filterOtherClasses,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId } = useQuery();
@@ -153,18 +155,20 @@ function ScheduleContent() {
     dispatch(changeParticipants({ type: type, data: data }));
   };
 
-  const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string) => {
-    if (class_id)
+  const handleChangeShowAnyTime = async (is_show: boolean, name: string, class_id?: string, user_id?: string) => {
+    if (class_id || user_id)
       await dispatch(
         getScheduleAnyTimeViewData({
           view_type: "full_view",
           filter_option: "any_time",
           class_ids: class_id,
+          user_ids: user_id,
           order_by: "-create_at",
           metaLoading: true,
         })
       );
     if (class_id) setStateCurrentCid(class_id);
+    if (user_id) setStateCurrentCid(user_id);
     setIsShowAnyTime(is_show);
     setAnyTimeName(name);
   };
@@ -303,6 +307,20 @@ function ScheduleContent() {
     );
   };
 
+  const getUesrOfUndefined = async (
+    cursor: string,
+    loading: boolean,
+    direction: ConnectionDirection.Forward | ConnectionDirection.Backward
+  ) => {
+    await dispatch(
+      getUserInUndefined({
+        direction: direction,
+        directionArgs: { count: 5, cursor: cursor ?? "" },
+        metaLoading: loading,
+      })
+    );
+  };
+
   const getSchoolsConnection = async (cursor: string, value: string, loading: boolean) => {
     let resultInfo: any;
     resultInfo = await dispatch(
@@ -316,14 +334,24 @@ function ScheduleContent() {
     return resultInfo.payload ? resultInfo.payload.data.schoolsConnection.edges : [];
   };
 
+  const getClassesWithoutSchool = async (cursor: string, value: string, loading: boolean) => {
+    let resultInfo: any;
+    resultInfo = await dispatch(
+      classesWithoutSchool({
+        filter: { name: { operator: StringOperator.Contains, value: value } },
+        direction: ConnectionDirection.Forward,
+        directionArgs: { count: 5, cursor: cursor ?? "" },
+        metaLoading: loading,
+      })
+    );
+    return resultInfo.payload ? resultInfo.payload.data.classesConnection.edges : [];
+  };
+
   React.useEffect(() => {
     if (includeEdit && stateFlag) {
       // get content
       if (privilegedMembers("Student") !== undefined && !privilegedMembers("Student")) {
         dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
-        dispatch(getContentsAuthed({ content_type: "2", page_size: 0 }));
-        dispatch(contentLists({ publish_status: "published", content_type: "2", page_size: 0, order_by: "create_at" }));
-        dispatch(searchAuthContentLists({ metaLoading: true, program_group: "More Featured Content", page_size: 0, content_type: "2" }));
       }
       // get class by role
       if (privilegedMembers("Admin")) {
@@ -336,6 +364,7 @@ function ScheduleContent() {
         dispatch(getClassesByStudent());
       }
       // get materials
+      dispatch(getLessonPlansBySchedule({ metaLoading: true }));
       dispatch(getScheduleMockOptions({}));
       dispatch(getLinkedMockOptions({ metaLoading: true }));
       setStateFlag(false);
@@ -376,13 +405,17 @@ function ScheduleContent() {
 
   React.useEffect(() => {
     dispatch(ScheduleFilterPrograms());
-    dispatch(getScheduleFilterClasses({ school_id: "-1" }));
     dispatch(
       getSchoolsFilterList({
         filter: { status: { operator: StringOperator.Eq, value: "active" } },
         direction: ConnectionDirection.Forward,
         directionArgs: { count: 5 },
-        metaLoading: true,
+      })
+    );
+    dispatch(
+      classesWithoutSchool({
+        direction: ConnectionDirection.Forward,
+        directionArgs: { count: 5 },
       })
     );
   }, [dispatch]);
@@ -409,7 +442,7 @@ function ScheduleContent() {
 
   return (
     <>
-      <LayoutBox holderMin={40} holderBase={80} mainBase={1920}>
+      <LayoutBox holderMin={10} holderBase={80} mainBase={1920}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <ScheduleTool
@@ -424,6 +457,8 @@ function ScheduleContent() {
           </Grid>
           <Grid item xs={12} sm={12} md={4} lg={3}>
             <ScheduleEdit
+              getClassesWithoutSchool={getClassesWithoutSchool}
+              getUesrOfUndefined={getUesrOfUndefined}
               includePreview={includePreview}
               timesTamp={timesTamp}
               changeTimesTamp={changeTimesTamp}
@@ -441,7 +476,6 @@ function ScheduleContent() {
               setSpecificStatus={setSpecificStatus}
               specificStatus={specificStatus}
               contentPreview={contentPreview}
-              mediaList={mediaList}
               LinkageLessonPlan={LinkageLessonPlan}
               participantsIds={participantsIds}
               classRosterIds={classRosterIds}
@@ -462,9 +496,12 @@ function ScheduleContent() {
               schoolByOrgOrUserData={schoolByOrgOrUserData}
               viewSubjectPermission={viewSubjectPermission}
               schoolsConnection={schoolsConnection}
+              filterOtherClasses={filterOtherClasses}
               getSchoolsConnection={getSchoolsConnection}
               getClassesConnection={getClassesConnection}
               classesConnection={classesConnection}
+              userInUndefined={userInUndefined}
+              lessonPlans={lessonPlans}
             />
           </Grid>
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>

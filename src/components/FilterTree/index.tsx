@@ -143,27 +143,27 @@ function FilterOnlyMineBox() {
 }
 
 interface FilterLabelProps {
-  class_name: string;
-  class_id: string;
+  name: string;
+  id: string;
   showIcon: boolean;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   hideActive: boolean;
   handleChangeClassId: (id: string, checked: boolean) => void;
   check: boolean;
   disabled: boolean;
+  type?: "user" | "class";
 }
 
 function FilterLabel(props: FilterLabelProps) {
-  const { class_name, class_id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check, disabled } = props;
-  const css = useStyles();
-  const name = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{class_name}</span>;
+  const { name, id, showIcon, handleChangeShowAnyTime, hideActive, handleChangeClassId, check, disabled, type } = props;
+  const template = <span style={{ fontWeight: 500, fontSize: "15px", marginLeft: "4px" }}>{name}</span>;
   const primeElement = (
     <Checkbox
       disabled={disabled && !check}
       checked={check}
       color="primary"
       onClick={(e) => {
-        handleChangeClassId(class_id, (e.target as HTMLInputElement).checked);
+        handleChangeClassId(id, (e.target as HTMLInputElement).checked);
       }}
       inputProps={{ "aria-label": "secondary checkbox" }}
     />
@@ -171,7 +171,7 @@ function FilterLabel(props: FilterLabelProps) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const oid = open ? "simple-popover" : undefined;
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -184,11 +184,11 @@ function FilterLabel(props: FilterLabelProps) {
     <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <AccessibilityNewIcon style={{ visibility: showIcon ? "visible" : "hidden" }} />
       {primeElement}
-      <div className={css.filterLabel}>
-        {name}
+      <div className={classes.filterLabel}>
+        {template}
         {FilterOnlyMineBox}
         <Popover
-          id={id}
+          id={oid}
           open={open}
           anchorEl={anchorEl}
           onClose={handleClose}
@@ -204,7 +204,7 @@ function FilterLabel(props: FilterLabelProps) {
           <Typography
             className={classes.typography}
             onClick={() => {
-              handleChangeShowAnyTime(true, class_name, class_id);
+              handleChangeShowAnyTime(true, name, type === "class" ? id : "", type === "user" ? id : "");
               setAnchorEl(null);
             }}
           >
@@ -246,13 +246,19 @@ function FilterOverall(props: FilterTreeProps) {
     total,
     pageInfo,
     getClassesConnection,
+    getUesrOfUndefined,
+    type,
   } = props;
   // const total = classDataBySchool.classes.length;
   const pageSize = 5;
   const [page, setPage] = React.useState(1);
   const [checkMine, setCheckMine] = React.useState(false);
   const handleChange = async (cursor: string, direction: ConnectionDirection.Forward | ConnectionDirection.Backward, page: number) => {
-    await getClassesConnection(cursor, classDataBySchool.school_id, true, direction);
+    if (type === "user") {
+      getUesrOfUndefined && (await getUesrOfUndefined(cursor, true, direction));
+    } else {
+      getClassesConnection && (await getClassesConnection(cursor, classDataBySchool.school_id, true, direction));
+    }
     setPage(page);
   };
   const reBytesStr = (str: string, len: number) => {
@@ -271,19 +277,19 @@ function FilterOverall(props: FilterTreeProps) {
     return value ? reBytesStr(value, CharacterCount) : "";
   };
 
-  const getCLassData = (type: string) => {
+  const getCLassData = (t: string) => {
     let data: string[] = [];
-    if (type === "Mine") {
+    if (t === "Mine") {
       const filterMine = classDataBySchool.classes.filter((item) => {
         return item.showIcon;
       });
       data = filterMine.map((item) => {
-        return `class+${item.class_id}+${classDataBySchool.school_id}`;
+        return `${type}+${item.class_id}+${classDataBySchool.school_id}`;
       });
     }
-    if (type === "All") {
+    if (t === "All") {
       data = classDataBySchool.classes.map((item) => {
-        return `class+${item.class_id}+${classDataBySchool.school_id}`;
+        return `${type}+${item.class_id}+${classDataBySchool.school_id}`;
       });
     }
     return data;
@@ -294,7 +300,7 @@ function FilterOverall(props: FilterTreeProps) {
       if (["Mine", "All"].includes(id)) {
         data = getCLassData(id);
       } else {
-        const classId = `class+${id}+${classDataBySchool.school_id}`;
+        const classId = `${type}+${id}+${classDataBySchool.school_id}`;
         data = [...stateOnlyMine, classId];
       }
     } else {
@@ -303,7 +309,7 @@ function FilterOverall(props: FilterTreeProps) {
           return getCLassData(id).indexOf(val) === -1;
         });
       } else {
-        const classId = `class+${id}+${classDataBySchool.school_id}`;
+        const classId = `${type}+${id}+${classDataBySchool.school_id}`;
         data = stateOnlyMine.filter((val) => {
           return classId !== val;
         });
@@ -313,7 +319,7 @@ function FilterOverall(props: FilterTreeProps) {
   };
 
   const stateOnlyMineCheck = (id: string) => {
-    const cid = `class+${id}+${classDataBySchool.school_id}`;
+    const cid = `${type}+${id}+${classDataBySchool.school_id}`;
     return stateOnlyMine.includes(cid);
   };
 
@@ -325,14 +331,16 @@ function FilterOverall(props: FilterTreeProps) {
         {classDataBySchool.classes.map((item) => {
           return (
             <FilterLabel
+              key={item.class_id}
               hideActive={true}
-              class_name={item.class_name}
-              class_id={item.class_id}
+              name={item.name}
+              id={item.class_id}
               showIcon={item.showIcon}
               handleChangeShowAnyTime={handleChangeShowAnyTime}
               handleChangeClassId={handleChangeClassId}
               check={stateOnlyMineCheck(item.class_id)}
               disabled={checkMine}
+              type={type}
             />
           );
         })}
@@ -442,18 +450,20 @@ function FilterOverall(props: FilterTreeProps) {
 
 interface FilterTreeProps {
   classDataBySchool: FilterSchoolInfo;
-  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string) => void;
+  handleChangeShowAnyTime: (is_show: boolean, name: string, class_id?: string, user_id?: string) => void;
   pageY: number;
   hideClassMenu: () => void;
   handleChangeOnlyMine: (data: string[]) => void;
   stateOnlyMine: string[];
   total?: number;
-  getClassesConnection: (
+  type?: "user" | "class";
+  getClassesConnection?: (
     cursor: string,
     school_id: string,
     loading: boolean,
     direction: ConnectionDirection.Forward | ConnectionDirection.Backward
   ) => void;
+  getUesrOfUndefined?: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
   pageInfo?: Types.Maybe<
     { __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor">
   >;
@@ -469,7 +479,9 @@ export default function FilterTree(props: FilterTreeProps) {
     stateOnlyMine,
     total,
     getClassesConnection,
+    type,
     pageInfo,
+    getUesrOfUndefined,
   } = props;
   return (
     <FilterOverall
@@ -482,6 +494,8 @@ export default function FilterTree(props: FilterTreeProps) {
       total={total}
       getClassesConnection={getClassesConnection}
       pageInfo={pageInfo}
+      type={type}
+      getUesrOfUndefined={getUesrOfUndefined}
     />
   );
 }

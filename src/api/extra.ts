@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
+import { FileLike } from "@rpldy/shared";
 import Cookies from "js-cookie";
 import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
@@ -56,15 +57,31 @@ export const apiResourcePathById = (resource_id?: string) => {
   if (!resource_id) return;
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
-export const apiValidatePDF = (resource_id: string) => {
+export const apiValidatePDFGet = (resource_id: string) => {
   const rid = resource_id.split("-")[1];
-  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${rid}/validate`.replace("/user/", "");
+  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${rid}/validate`;
   return fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/pdf",
       Accept: "application/pdf",
     },
+  }).then((response) => {
+    return response.json();
+  });
+};
+export const apiValidatePDFPost = (file: FileLike) => {
+  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/validate`;
+  const formData = new FormData();
+  formData.append("file", file as unknown as Blob);
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/pdf",
+      Accept: "application/pdf",
+    },
+    credentials: "include",
+    body: formData,
   }).then((response) => {
     return response.json();
   });

@@ -61,7 +61,7 @@ export default new Api({
 });
 
 export const gqlapi = new ApolloClient({
-  uri: process.env.REACT_APP_KO_BASE_API,
+  uri: `${process.env.REACT_APP_KO_BASE_API}/user/`,
   cache: new InMemoryCache(),
   credentials: "include",
 });

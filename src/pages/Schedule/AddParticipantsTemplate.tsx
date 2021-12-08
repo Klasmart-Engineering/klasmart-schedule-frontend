@@ -120,11 +120,14 @@ interface InfoProps {
   getParticipantsData?: (metaLoading: boolean, search: string, hash: string) => void;
   participantsIds: ParticipantsShortInfo;
   participantList: ParticipantsByClassQuery;
+  nameUpperLevel: string;
+  setSearchName: (value: string) => void;
 }
 
 export default function AddParticipantsTemplate(props: InfoProps) {
   const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { handleClose, handleChangeParticipants, participantsIds, getParticipantsData, participantList } = props;
+  const { handleClose, handleChangeParticipants, participantsIds, getParticipantsData, participantList, nameUpperLevel, setSearchName } =
+    props;
   const css = useStyles();
   const [defaultFilter, setDefaultFilter] = React.useState("students");
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
@@ -182,7 +185,7 @@ export default function AddParticipantsTemplate(props: InfoProps) {
     handleClose();
   };
 
-  const [name, setName] = React.useState("");
+  const [name, setName] = React.useState(nameUpperLevel);
 
   const handleSearch = async () => {
     if (getParticipantsData && !loading) {
@@ -192,6 +195,7 @@ export default function AddParticipantsTemplate(props: InfoProps) {
       setsScrollTop(0);
       await getParticipantsData(false, name, "");
       setLoading(false);
+      setSearchName(name);
     }
   };
 

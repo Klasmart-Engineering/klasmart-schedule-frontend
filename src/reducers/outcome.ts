@@ -136,12 +136,11 @@ export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewO
       },
     });
     const program = await programsHandler.getProgramsOptions();
-
     const programId = program_id ? program_id : program[0].id;
     const [subject, age, grade] = await programsHandler.getSubjectAgeGradeByProgramId(programId);
     if (!subject.length) return { program, subject: [], developmental: [], skills: [], age: [], grade: [], user_id: meInfo.me?.user_id };
     const subjectIds = default_subject_ids ? default_subject_ids : subject[0].id;
-    const [developmental, skills] = await getDevelopmentalAndSkills(programId, subjectIds);
+    const [developmental, skills] = await getDevelopmentalAndSkills(programId, subjectIds, development_id);
     return { program, subject, developmental, skills, age, grade, user_id: meInfo.me?.user_id };
   }
 );

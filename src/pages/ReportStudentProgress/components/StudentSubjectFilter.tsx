@@ -4,7 +4,7 @@ import { orderByASC } from "@utilities/dataUtilities";
 import clsx from "clsx";
 import React from "react";
 import { useSelector } from "react-redux";
-import { Maybe, Status, User } from "../../../api/api-ko-schema.auto";
+import { Maybe, User } from "../../../api/api-ko-schema.auto";
 import { t } from "../../../locale/LocaleManager";
 import { RootState } from "../../../reducers";
 import useTranslation from "../hooks/useTranslation";
@@ -99,14 +99,12 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
   const getAllSubjectList = (): MutiSelect.ISelect[] => {
     let data = [] as MutiSelect.ISelect[];
     programs.forEach((program) => {
-      (program.subjects || [])
-        ?.filter((item) => item?.status === Status.Active)
-        .forEach((subject) => {
-          data.push({
-            value: subject.id,
-            label: `${program.name} - ${subject.name}`,
-          });
+      (program.subjects || []).forEach((subject) => {
+        data.push({
+          value: subject.id,
+          label: `${program.name} - ${subject.name}`,
         });
+      });
     });
     return orderByASC(data, "label");
   };

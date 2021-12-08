@@ -1048,5 +1048,7 @@
   "report_label_overall_completion": "Finalización general",
   "report_msg_participants_not_included": "Los participantes no están incluidos",
   "report_student_usage_incomplete_students": "Incompleto por estudiantes",
-  "general_error_fail_get_permission": "No se pudo obtener el permiso, actualice"
+  "general_error_fail_get_permission": "No se pudo obtener el permiso, actualice",
+  "library_error_pdf_validation": "Error en la validación del PDF, inténtelo de nuevo.",
+  "schedule_search_class_name": "Buscar el nombre de la clase"
 }

@@ -65,7 +65,7 @@ export default function CreateOutcomings() {
   const { outcomeDetail, newOptions, outcomeSetList, defaultSelectOutcomeset, shortCode } = useSelector<RootState, RootState["outcome"]>(
     (state) => state.outcome
   );
-  const [showEdit, setShowEdit] = React.useState(false);
+  const [showEdit, setShowEdit] = React.useState(true);
   const [isAssumed, setIsAssumed] = React.useState(true);
   const [condition, setCondition] = React.useState("default");
   const [isSelf, setIsSelf] = React.useState(false);
@@ -155,7 +155,7 @@ export default function CreateOutcomings() {
           >;
           if (payload === "ok") {
             dispatch(actSuccess(d("Updated Successfully").t("assess_msg_updated_successfully")));
-            // await dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
+            await dispatch(getOutcomeDetail({ id: outcome_id, metaLoading: true }));
             reset(value);
             setCondition("default");
           }
@@ -231,20 +231,22 @@ export default function CreateOutcomings() {
     setEnableCustomization(true);
   };
 
-  const handlePublish: OutcomeHeaderProps["handlePublish"] = async () => {
-    // if (outcomeDetail.publish_status === "draft") {
-    const { payload } = (await dispatch(publishOutcome(outcomeDetail.outcome_id as string))) as unknown as PayloadAction<
-      AsyncTrunkReturned<typeof publishOutcome>
-    >;
-    if (payload === "ok") {
-      if (perm_439) {
-        history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-updated_at");
-      } else {
-        history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-updated_at&is_unpub=UNPUB");
-      }
-    }
-    // }
-  };
+  const handlePublish = React.useMemo(
+    () =>
+      handleSubmit(async () => {
+        const { payload } = (await dispatch(publishOutcome(outcomeDetail.outcome_id as string))) as unknown as PayloadAction<
+          AsyncTrunkReturned<typeof publishOutcome>
+        >;
+        if (payload === "ok") {
+          if (perm_439) {
+            history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-updated_at");
+          } else {
+            history.push("/assessments/outcome-list?publish_status=pending&page=1&order_by=-updated_at&is_unpub=UNPUB");
+          }
+        }
+      }),
+    [dispatch, handleSubmit, history, outcomeDetail, perm_439]
+  );
 
   const handleApprove: OutcomeHeaderProps["handleApprove"] = async () => {
     if (outcome_id && outcomeDetail.publish_status === "pending") {
@@ -316,6 +318,7 @@ export default function CreateOutcomings() {
   React.useEffect(() => {
     dispatch(resetShortCode(""));
     if (!outcome_id) {
+      setShowEdit(false);
       dispatch(generateShortcode({ kind: "outcomes" }));
       dispatch(getNewOptions({ metaLoading: true }));
     }
@@ -350,7 +353,17 @@ export default function CreateOutcomings() {
       }
       if (condition === "default") {
         const detail = shortCode ? { ...outcomeDetail, shortcode: shortCode } : outcomeDetail;
-        reset(modelOutcomeDetail(detail));
+        const { program, subject, developmental } = outcomeDetail;
+        const _program = program?.filter((pItem) => newOptions.program.find((item) => item.id === pItem.program_id));
+        const _subject = subject ? subject?.filter((sItem) => newOptions.subject.find((item) => item.id === sItem.subject_id)) : [];
+        const _developmental = developmental?.filter((dItem) =>
+          newOptions.developmental.find((item) => dItem.developmental_id === item.id)
+        );
+        setValue("program", _program, { shouldDirty: true });
+        setValue("subject", _subject);
+        setValue("developmental", _developmental);
+        const _detail = { ...detail, program: _program, subject: _subject, developmental: _developmental };
+        reset(modelOutcomeDetail(_detail));
       }
       return;
     }

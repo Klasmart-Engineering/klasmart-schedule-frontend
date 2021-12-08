@@ -705,6 +705,8 @@ type LangRecord =
   | { id: "schedule_attachment_size_each"; description: "each"; values: undefined }
   | { id: "schedule_assignment_no_class"; description: "No Class"; values: undefined }
   | { id: "schedule_filter_all_my_schools"; description: "All My Schools"; values: undefined }
+  | { id: "schedule_search_class_name"; description: "Search Class Name"; values: undefined }
+  | { id: "schedule_search_school_name"; description: "Search School Name"; values: undefined }
   | { id: "schedule_filter_others"; description: "Others"; values: undefined }
   | { id: "schedule_filter_undefined"; description: "Undefined"; values: undefined }
   | { id: "schedule_filter_class_types"; description: "Class Types"; values: undefined }
@@ -1614,6 +1616,11 @@ type LangRecord =
   | {
       id: "report_label_student_progress_report";
       description: "Student Progress Report";
+      values: undefined;
+    }
+  | {
+      id: "library_error_pdf_validation";
+      description: " validate pdf timeout";
       values: undefined;
     };
 

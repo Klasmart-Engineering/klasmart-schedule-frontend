@@ -43,7 +43,7 @@
   "library_label_my_only": "Show My Content",
   "library_label_bulk_actions": "Bulk Actions",
   "library_label_remove": "Remove",
-  "library_msg_remove_content": "Are you sure you want to remove this content?",
+  "library_msg_remove_content": "Are you sure you want to archive this content?",
   "library_msg_bulk_remove_content": "Are you sure you want to remove these contents?",
   "library_msg_remove_select_one": "At least one content should be selected.",
   "library_label_sort_by": "Sort By",
@@ -1048,5 +1048,7 @@
   "report_label_overall_completion": "Overall Completion",
   "report_msg_participants_not_included": "Participants are not included",
   "report_student_usage_incomplete_students": "Incomplete by Students",
-  "general_error_fail_get_permission": "Failed to get permission, please refresh"
+  "general_error_fail_get_permission": "Failed to get permission, please refresh",
+  "library_error_pdf_validation": "PDF validation failed, please try again.",
+  "schedule_search_class_name": "Search Class Name"
 }

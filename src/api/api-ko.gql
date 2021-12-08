@@ -219,6 +219,9 @@ query teacherByOrgId($organization_id: ID!) {
           school_id
         }
       }
+      schools{
+        school_id
+      }
     }
   }
 }
@@ -403,42 +406,7 @@ query schoolByOrgQuery($organization_id: ID!) {
     }
   }
 }
-query teacherListBySchoolId($school_id: ID!) {
-  school(school_id: $school_id) {
-    classes {
-      status
-      class_id
-      teachers {
-        user_id
-        user_name
-      }
-    }
-  }
-}
-query notParticipantsByOrganization($organization_id: ID!) {
-  organization(organization_id: $organization_id) {
-    classes {
-      status
-      schools {
-        school_id
-        school_name
-      }
-      teachers {
-        user_id
-        user_name
-        school_memberships {
-          school_id
-          school {
-            school_name
-            organization {
-              organization_id
-            }
-          }
-        }
-      }
-    }
-  }
-}
+
 
 query schoolAndTeacherByOrg($organization_id: ID!) {
   organization(organization_id: $organization_id) {
@@ -522,33 +490,8 @@ query studentsByOrganization($organization_id: ID!) {
 }
 
 
-query getProgramsAndSubjects($organization_id: UUID! , $count: PageSize!,  $cursor: String!) {
-  programsConnection(filter:{
-    AND: [
-      {
-            OR : [
-            {
-              organizationId: {
-                operator: eq
-                value: $organization_id
-              }
-            }
-            {
-              system: {
-                operator: eq
-                value: true
-              },
-            }
-          ]
-      }
-      {
-        status: {
-          operator: eq
-          value: "active"
-        }
-      }
-    ]
-  }
+query getProgramsAndSubjects($count: PageSize!,  $cursor: String!, $filter: ProgramFilter!) {
+  programsConnection(filter:$filter
   directionArgs: {
     count:  $count
     cursor: $cursor
@@ -672,10 +615,62 @@ query getMyId{
      id
      familyName
      givenName
+      schoolMembershipsConnection(direction: FORWARD){
+        edges{
+          node{
+          school{
+            id
+            name
+          }
+          }
+        }
+      }
     }
   }
 }
 
+query classesConnection($classFilter:ClassFilter, $classCursor: String, $teacherFilter:UserFilter, $teacherCursor:String) {
+   classesConnection(direction: FORWARD, filter: $classFilter directionArgs: { cursor: $classCursor}
+    ){
+    totalCount
+    edges{
+      node{
+        id
+        name
+        status
+        schools{
+          userStatus
+          id
+          name
+        }
+        teachersConnection(direction:FORWARD, filter:$teacherFilter, cursor:$teacherCursor){
+          totalCount
+          edges{
+            node{
+              id
+              givenName
+              familyName
+              status
+            }
+          }
+          pageInfo{
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        }
+      }
+    }
+     pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
+query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
 query getClassByInfo(
   $filter: ClassFilter,
   $direction: ConnectionDirection!,
@@ -729,6 +724,35 @@ classesConnection(
           }
         },
       }
+    }
+  }
+}
+
+query userWithoutClassAndSchool ($direction) {
+  usersConnection (
+    direction: FORWARD,
+    directionArgs: {
+      count: 5
+      cursor: ""
+    }
+    filter: {
+      organizationId: {operator: eq, value: "de6e850a-cf97-4e0b-aa96-c0fedcda71be"},
+      classId: {operator: isNull},
+      organizationUserStatus: {operator: eq, value: "active"}
+  	}
+  ) {
+    edges {
+      node {
+        id,
+        givenName,
+        familyName
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
     }
   }
 }

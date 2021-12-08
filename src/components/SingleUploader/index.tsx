@@ -60,6 +60,7 @@ const parseExtension = (filename: string) => {
 interface FileLikeWithId extends FileLike {
   id?: string;
 }
+export type useRequestPreSendReturnType = boolean | ReturnType<Parameters<typeof useRequestPreSend>[0]>;
 
 export interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   partition: NonNullable<Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0]>["partition"];
@@ -67,26 +68,35 @@ export interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   transformFile?: (file: FileLike) => Promise<FileLike>;
   onChange?: (value?: string) => any;
   onChangeFile?: (file?: FileLikeWithId) => any;
+  beforeUpload?: (file: FileLike, fun: () => Promise<useRequestPreSendReturnType>) => ReturnType<typeof fun> | boolean;
 }
 export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((props, ref) => {
-  const { value, onChange, render, partition, transformFile, onChangeFile, ...uploadyProps } = props;
+  const { value, onChange, render, partition, transformFile, onChangeFile, beforeUpload, ...uploadyProps } = props;
   const dispatch = useDispatch();
   const [rid, setRid] = useState<string>();
   const [file, setFile] = useState<FileLike>();
   const listeners = useMemo(
     () => ({
-      async [UPLOADER_EVENTS.REQUEST_PRE_SEND](props: PreSendData): Promise<boolean | ReturnType<Parameters<typeof useRequestPreSend>[0]>> {
+      async [UPLOADER_EVENTS.REQUEST_PRE_SEND](props: PreSendData): Promise<useRequestPreSendReturnType> {
         const { items } = props;
         try {
           const file = transformFile ? await transformFile(items[0].file) : items[0].file;
           const extension = parseExtension(file.name);
-          const { payload } = (await dispatch(getContentResourceUploadPath({ partition, extension }))) as unknown as PayloadAction<
-            AsyncTrunkReturned<typeof getContentResourceUploadPath>
-          >;
-          const { path, resource_id } = payload;
-          setRid(resource_id);
-          setFile(file);
-          return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
+
+          const getPathAndId: () => Promise<useRequestPreSendReturnType> = async () => {
+            const { payload } = (await dispatch(getContentResourceUploadPath({ partition, extension }))) as unknown as PayloadAction<
+              AsyncTrunkReturned<typeof getContentResourceUploadPath>
+            >;
+            const { path, resource_id } = payload;
+            setRid(resource_id);
+            setFile(file);
+            return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
+          };
+          if (beforeUpload && extension.toLowerCase() === "pdf") {
+            return beforeUpload(file, getPathAndId) ?? false;
+          } else {
+            return getPathAndId();
+          }
         } catch (err) {
           return false;
         }
@@ -96,7 +106,7 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
         if (onChangeFile) onChangeFile(Object.assign(file, { id: rid }));
       },
     }),
-    [transformFile, dispatch, partition, onChange, rid, onChangeFile, file]
+    [transformFile, beforeUpload, dispatch, partition, onChange, rid, onChangeFile, file]
   );
   return (
     <div ref={ref}>
