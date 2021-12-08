@@ -1,3 +1,5 @@
+import { SortOrder } from "@api/api-ko-schema.auto";
+import CursorPagination from "@components/CursorPagination/CursorPagination";
 import {
   Button,
   Checkbox,
@@ -15,16 +17,19 @@ import {
   withStyles,
 } from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
+import { getOrgList, Region } from "@reducers/content";
+import { RootState } from "@reducers/index";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { EntityFolderContentData, EntityOrganizationProperty } from "../../api/api.auto";
+import { useDispatch, useSelector } from "react-redux";
+import { EntityFolderContentData } from "../../api/api.auto";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { LButton, LButtonProps } from "../../components/LButton";
 import { d } from "../../locale/LocaleManager";
 
 export interface OrgInfoProps {
   organization_id: string;
-  organization_name: string;
+  organization_name?: string;
 }
 
 const LightTooltip = withStyles((theme: Theme) => ({
@@ -42,7 +47,7 @@ const useStyles = makeStyles(() =>
       marginLeft: "40px !important",
     },
     dialogContent: {
-      maxHeight: 280,
+      maxHeight: 400,
     },
     tooltipIcon: {
       color: "#666",
@@ -62,15 +67,19 @@ export interface OrganizationListProps {
   onClose: () => any;
   onShareFolder: (ids: string[]) => ReturnType<LButtonProps["onClick"]>; //ReturnType<LButtonProps["onClick"]>
   selectedOrg: string[];
-  orgProperty: EntityOrganizationProperty;
+  // orgProperty: EntityOrganizationProperty;
+  // orgListPageInfo:ConnectionPageInfo;
 }
 
 export function OrganizationList(props: OrganizationListProps) {
   const css = useStyles();
-  const { open, orgList, onClose, onShareFolder, selectedOrg } = props;
+  const { open, orgList, selectedOrg, onClose, onShareFolder } = props;
+  const { orgListPageInfo, orgListTotal, orgProperty } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { control, watch } = useForm();
+  const dispatch = useDispatch();
   const values = watch()[SELECTED_ORG];
-  const allValue = useMemo(() => orgList.map((org) => org.organization_id), [orgList]);
+  const allValue = useMemo(() => orgList?.map((org) => org.organization_id), [orgList]);
+  console.log("allValue=", allValue, values);
   const [radioValue, setRadioValue] = useState(
     selectedOrg && selectedOrg.length > 0 ? (selectedOrg[0] === ShareScope.share_all ? ShareScope.share_all : ShareScope.share_to_org) : ""
   );
@@ -93,7 +102,7 @@ export function OrganizationList(props: OrganizationListProps) {
     setNewSelectedOrgIds(false);
   };
   return (
-    <Dialog open={open}>
+    <Dialog open={open} maxWidth="md" fullWidth>
       <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
@@ -121,48 +130,59 @@ export function OrganizationList(props: OrganizationListProps) {
           />
         </RadioGroup>
         {radioValue && radioValue !== ShareScope.share_all && (
-          <Controller
-            name={SELECTED_ORG}
-            control={control}
-            defaultValue={newSelectedOrgIds ? selectedOrg : []}
-            rules={{ required: true }}
-            render={({ ref, ...props }) => (
-              <CheckboxGroup
-                allValue={allValue}
-                {...props}
-                render={(selectedContentGroupContext) => (
-                  <div {...{ ref }} style={{ marginLeft: 30 }}>
-                    <FormControlLabel
-                      style={{ display: "block" }}
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={selectedContentGroupContext.isAllvalue}
-                          onChange={selectedContentGroupContext.registerAllChange}
-                        />
-                      }
-                      label={d("All").t("library_label_all_organizations")}
-                    />
-                    {orgList?.map((item) => (
+          <>
+            <Controller
+              name={SELECTED_ORG}
+              control={control}
+              defaultValue={newSelectedOrgIds ? selectedOrg : []}
+              rules={{ required: true }}
+              render={({ ref, ...props }) => (
+                <CheckboxGroup
+                  allValue={allValue}
+                  {...props}
+                  render={(selectedContentGroupContext) => (
+                    <div {...{ ref }} style={{ marginLeft: 30 }}>
                       <FormControlLabel
                         style={{ display: "block" }}
                         control={
                           <Checkbox
                             color="primary"
-                            value={item.organization_id}
-                            checked={selectedContentGroupContext.hashValue[item.organization_id] || false}
-                            onChange={selectedContentGroupContext.registerChange}
+                            checked={selectedContentGroupContext.isAllvalue}
+                            onChange={selectedContentGroupContext.registerAllChange}
                           />
                         }
-                        label={item.organization_name}
-                        key={item.organization_id}
+                        label={d("All").t("library_label_all_organizations")}
                       />
-                    ))}
-                  </div>
-                )}
+                      {orgList?.map((item) => (
+                        <FormControlLabel
+                          style={{ display: "block" }}
+                          control={
+                            <Checkbox
+                              color="primary"
+                              value={item.organization_id}
+                              checked={selectedContentGroupContext.hashValue[item.organization_id] || false}
+                              onChange={selectedContentGroupContext.registerChange}
+                            />
+                          }
+                          label={item.organization_name}
+                          key={item.organization_id}
+                        />
+                      ))}
+                    </div>
+                  )}
+                />
+              )}
+            />
+            {orgProperty.region === Region.global && (
+              <CursorPagination
+                total={orgListTotal}
+                pageInfo={orgListPageInfo}
+                onChange={({ direction, cursor }) =>
+                  dispatch(getOrgList({ metaLoading: true, cursor, direction, order: SortOrder.Asc, search: "", count: 10 }))
+                }
               />
             )}
-          />
+          </>
         )}
       </DialogContent>
       <DialogActions>

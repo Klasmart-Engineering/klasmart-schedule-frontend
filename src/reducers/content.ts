@@ -1,3 +1,5 @@
+import { ConnectionDirection, ConnectionPageInfo, SortOrder } from "@api/api-ko-schema.auto";
+import { OrgInfoProps } from "@pages/MyContentList/OrganizationList";
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import cloneDeep from "lodash/cloneDeep";
 import uniqBy from "lodash/uniqBy";
@@ -8,9 +10,9 @@ import {
   GetMyIdDocument,
   GetMyIdQuery,
   GetMyIdQueryVariables,
-  OrganizationsDocument,
-  OrganizationsQuery,
-  OrganizationsQueryVariables,
+  GetOrganizationsDocument,
+  GetOrganizationsQuery,
+  GetOrganizationsQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiContentBulkOperateRequest,
@@ -36,7 +38,6 @@ import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStat
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
-import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
@@ -72,6 +73,8 @@ interface IContentState {
   parentFolderInfo: EntityFolderItemInfo;
   orgProperty: EntityOrganizationProperty;
   orgList: OrgInfoProps[];
+  orgListPageInfo: ConnectionPageInfo;
+  orgListTotal: number;
   selectedOrg: EntityOrganizationInfo[];
   myOrgId: string;
   user_id: string;
@@ -218,6 +221,8 @@ const initialState: IContentState = {
   parentFolderInfo: {},
   orgProperty: {},
   orgList: [],
+  orgListPageInfo: {},
+  orgListTotal: 0,
   selectedOrg: [],
   myOrgId: "",
   user_id: "",
@@ -909,28 +914,48 @@ export enum Region {
   vn = "vn",
   global = "global",
 }
+
 type IQueryGetOrgListResult = AsyncReturnType<typeof api.organizationsRegion.getOrganizationByHeadquarterForDetails>["orgs"];
+interface IGetOrgListResponse {
+  orgs: IQueryGetOrgListResult;
+  orgListPageInfo: ConnectionPageInfo;
+  orgListTotal: number;
+}
 export const getOrgList = createAsyncThunk<
-  IQueryGetOrgListResult,
-  IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload,
-  { state: RootState }
->("content/getOrgList", async (folder_ids, { getState, dispatch }) => {
-  const {
-    content: { orgProperty },
-  } = getState();
-  let orgs: IQueryGetOrgListResult = [];
-  if (orgProperty.region && orgProperty.region === Region.vn) {
-    const data = await api.organizationsRegion.getOrganizationByHeadquarterForDetails();
-    orgs = data.orgs;
-  } else {
-    const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
-      query: OrganizationsDocument,
-    });
-    orgs = data.organizations as IQueryGetOrgListResult;
-  }
-  await dispatch(getFoldersSharedRecords(folder_ids));
+  IGetOrgListResponse,
+  GetOrganizationsQueryVariables & IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload
+>("content/getOrgList", async ({ metaLoading, ...restorganizationQueryVariables }) => {
+  const { data } = await gqlapi.query<GetOrganizationsQuery, GetOrganizationsQueryVariables>({
+    query: GetOrganizationsDocument,
+    variables: restorganizationQueryVariables,
+  });
+  const orgs = data.organizationsConnection?.edges?.map((item) => ({
+    organization_id: item?.node?.id,
+    organization_name: item?.node?.name,
+  })) as IQueryGetOrgListResult;
+  const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
+  const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);
+  return { orgs, orgListPageInfo, orgListTotal };
+});
+
+export const getVnOrgList = createAsyncThunk<IQueryGetOrgListResult, LoadingMetaPayload>("content/getVnOrgList", async () => {
+  const { orgs } = await api.organizationsRegion.getOrganizationByHeadquarterForDetails();
   return orgs;
 });
+export const onloadShareOrgList = createAsyncThunk<void, IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload, { state: RootState }>(
+  "content/onloadShareOrgList",
+  async ({ folder_ids }, { getState, dispatch }) => {
+    const {
+      content: { orgProperty },
+    } = getState();
+    if (orgProperty.region && orgProperty.region === Region.vn) {
+      await dispatch(getVnOrgList({}));
+    } else {
+      await dispatch(getOrgList({ order: SortOrder.Asc, search: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
+    }
+    await dispatch(getFoldersSharedRecords({ folder_ids }));
+  }
+);
 
 type IQueryShareFoldersParams = {
   shareFolder: EntityFolderContentData | undefined;
@@ -1182,10 +1207,10 @@ const { actions, reducer } = createSlice({
       state.token = payload.token;
     },
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size || initialState.page_size;
+      state.page_size = payload?.cms_page_size || initialState.page_size;
     },
     [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size;
+      state.page_size = payload?.cms_page_size;
     },
     [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchOrgFolderItems>>) => {
       state.folderTree = payload;
@@ -1224,13 +1249,19 @@ const { actions, reducer } = createSlice({
         state.contentsList = payload.badaContent.list || [];
       }
     },
-    [getOrgProperty.fulfilled.type]: (state, { payload }: any) => {
+    [getOrgProperty.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOrgProperty>>) => {
       state.orgProperty = payload;
     },
-    [getOrgList.fulfilled.type]: (state, { payload }: any) => {
-      state.orgList = payload;
+    [getOrgList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOrgList>>) => {
+      state.orgList = (payload.orgs as OrgInfoProps[]) || [];
+      state.orgListPageInfo = payload.orgListPageInfo;
+      state.orgListTotal = payload.orgListTotal;
     },
-    [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: any) => {
+
+    [getVnOrgList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>) => {
+      state.orgList = (payload as OrgInfoProps[]) || [];
+    },
+    [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getFoldersSharedRecords>>) => {
       if (payload.data) {
         state.selectedOrg = payload.data[0].orgs || [];
       } else {

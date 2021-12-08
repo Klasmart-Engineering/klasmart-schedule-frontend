@@ -1717,6 +1717,7 @@ export type Role = {
   memberships?: Maybe<Array<Maybe<OrganizationMembership>>>;
   organization?: Maybe<Organization>;
   permission?: Maybe<Permission>;
+  /** @deprecated Sunset Date: 26/02/2022 Details: https://calmisland.atlassian.net/l/c/1nEk2YHE */
   permissions?: Maybe<Array<Maybe<Permission>>>;
   revoke?: Maybe<Scalars["Boolean"]>;
   role_description: Scalars["String"];
@@ -1762,8 +1763,17 @@ export type RoleConnectionNode = {
   description: Scalars["String"];
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
+  permissionsConnection?: Maybe<PermissionsConnectionResponse>;
   status: Status;
   system: Scalars["Boolean"];
+};
+
+export type RoleConnectionNodePermissionsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction: ConnectionDirection;
+  filter?: Maybe<PermissionFilter>;
+  sort?: Maybe<PermissionSortInput>;
 };
 
 export type RoleFilter = {

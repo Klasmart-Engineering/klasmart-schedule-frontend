@@ -187,6 +187,43 @@ query organizations {
     organization_name
   }
 }
+query getOrganizations( $direction: ConnectionDirection!,$cursor:String, $count: PageSize, $search: String!, $order:SortOrder!){
+  organizationsConnection(direction:$direction
+    filter:{
+      status:{
+        operator: eq
+        value:"active"
+      }
+      name:{
+        operator:contains
+        value: $search
+        caseInsensitive: true
+      }
+    }
+    directionArgs:{
+      count: $count
+      cursor: $cursor
+    }
+    sort:{
+      field:name
+      order: $order
+    }
+  ) {
+    totalCount
+    edges{
+      node{
+        id
+        name
+      }
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
 
 query getSchoolTeacher($user_id: ID!) {
   user(user_id: $user_id) {
