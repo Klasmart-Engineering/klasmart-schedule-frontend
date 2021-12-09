@@ -1373,7 +1373,7 @@ const { actions, reducer } = createSlice({
       }
       state.schoolClassesTeachers = {
         classList: orderByASC(classList, "class_name"),
-        schoolList,
+        schoolList: orderByASC(schoolList, "school_name"),
         classTeacherList: teacherList,
         hasNoneSchoolClasses,
         canSelectTeacher,
