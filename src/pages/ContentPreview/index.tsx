@@ -2,7 +2,15 @@
 import { apiLivePath } from "@api/extra";
 import { ContentType } from "@api/type";
 import { Box } from "@material-ui/core";
-import { approveContent, deleteContent, lockContent, onLoadContentPreview, publishContent, rejectContent } from "@reducers/content";
+import {
+  approveContent,
+  deleteContent,
+  getLiveToken,
+  lockContent,
+  onLoadContentPreview,
+  publishContent,
+  rejectContent,
+} from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { actSuccess } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
@@ -37,7 +45,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
   const { id, search, sid, author, class_id, program_group } = useQuery();
-  const { contentPreview, token } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams<RouteParams>();
   const content_type = contentPreview.content_type;
@@ -90,7 +98,10 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
 
   const handleGoLive = async () => {
-    window.open(apiLivePath(token));
+    const { payload } = (await dispatch(getLiveToken({ content_id: id, schedule_id: sid }))) as unknown as PayloadAction<
+      AsyncTrunkReturned<typeof getLiveToken>
+    >;
+    window.open(apiLivePath(payload));
   };
   const leftside = (
     <Box style={{ padding: 12 }}>
