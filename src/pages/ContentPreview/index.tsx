@@ -98,10 +98,11 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
 
   const handleGoLive = async () => {
+    let winOpen = window.open("", "_blanck");
     const { payload } = (await dispatch(getLiveToken({ content_id: id, schedule_id: sid }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getLiveToken>
     >;
-    window.open(apiLivePath(payload));
+    winOpen && (winOpen.location = apiLivePath(payload));
   };
   const leftside = (
     <Box style={{ padding: 12 }}>
