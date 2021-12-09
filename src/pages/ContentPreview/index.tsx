@@ -37,14 +37,13 @@ const useQuery = () => {
   const id = query.get("id") as string;
   const sid = query.get("sid") as string;
   const author = query.get("author");
-  const class_id = query.get("class_id") as string;
   const program_group = query.get("program_group") as string | "";
-  return { id, search, sid, author, class_id, program_group };
+  return { id, search, sid, author, program_group };
 };
 export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const dispatch = useDispatch();
   const { routeBasePath } = ContentPreview;
-  const { id, search, sid, author, class_id, program_group } = useQuery();
+  const { id, search, sid, author, program_group } = useQuery();
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams<RouteParams>();
@@ -102,7 +101,11 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     const { payload } = (await dispatch(getLiveToken({ content_id: id, schedule_id: sid }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getLiveToken>
     >;
-    winOpen && (winOpen.location = apiLivePath(payload));
+    if (payload) {
+      winOpen && (winOpen.location = apiLivePath(payload));
+    } else {
+      winOpen?.close();
+    }
   };
   const leftside = (
     <Box style={{ padding: 12 }}>
@@ -156,8 +159,8 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     </Fragment>
   );
   useEffect(() => {
-    dispatch(onLoadContentPreview({ metaLoading: true, content_id: id, schedule_id: sid }));
-  }, [class_id, dispatch, id, sid]);
+    dispatch(onLoadContentPreview({ metaLoading: true, content_id: id }));
+  }, [dispatch, id]);
   return (
     <Fragment>
       <LayoutPair
