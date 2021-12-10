@@ -50,6 +50,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const { contentPreview } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { scheduleDetial } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const { tab } = useParams<RouteParams>();
+  const [isCanClick, setIsCanClick] = React.useState(true);
   const content_type = contentPreview.content_type;
   const history = useHistory();
   const perm = usePermission([PermissionType.attend_live_class_as_a_teacher_186]);
@@ -101,6 +102,8 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
 
   const handleGoLive = async () => {
+    if (!isCanClick) return;
+    setIsCanClick(false);
     if (!perm.attend_live_class_as_a_teacher_186) {
       dispatch(actError(t("general_error_no_permission")));
     } else {
@@ -117,6 +120,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
         payload && window.open(apiLivePath(payload));
       }
     }
+    setTimeout(() => setIsCanClick(true), 2000);
   };
   const leftside = (
     <Box style={{ padding: 12 }}>
