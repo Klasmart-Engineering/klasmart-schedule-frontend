@@ -24,11 +24,13 @@ import { modelSchedule } from "../../models/ModelSchedule";
 import {
   actOutcomeListLoading,
   changeParticipants,
+  classesWithoutSchool,
   getClassesByOrg,
   getClassesBySchool,
   getClassesByStudent,
   getClassesByTeacher,
   getClassFilterList,
+  getLessonPlansBySchedule,
   getLinkedMockOptions,
   getParticipantsData,
   getScheduleAnyTimeViewData,
@@ -39,12 +41,10 @@ import {
   getScheduleTimeViewDataByYear,
   getScheduleViewInfo,
   getSchoolsFilterList,
-  classesWithoutSchool,
   getSubjectByProgramId,
+  getUserInUndefined,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
-  getLessonPlansBySchedule,
-  getUserInUndefined,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -133,9 +133,9 @@ function ScheduleContent() {
 
   const LinkageLessonPlan = async (content_id: string) => {
     let resultInfo: any;
-    resultInfo = (await dispatch(
-      onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    resultInfo = (await dispatch(onLoadContentPreview({ metaLoading: true, content_id }))) as unknown as PayloadAction<
+      AsyncTrunkReturned<typeof onLoadContentPreview>
+    >;
     const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
     const materialArr = ModelLessonPlan.toArray(segment);
     const newMaterialArr: (EntityContentInfoWithDetails | undefined)[] = [];
