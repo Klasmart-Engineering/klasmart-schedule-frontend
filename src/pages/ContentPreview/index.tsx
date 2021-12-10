@@ -18,6 +18,7 @@ import { RootState } from "@reducers/index";
 import { actError, actSuccess } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { throttle } from "lodash";
 import React, { Fragment, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router-dom";
@@ -164,7 +165,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
           content_type={contentPreview.content_type}
           classType={scheduleDetial.class_type}
           h5pArray={planRes()}
-          onGoLive={handleGoLive}
+          onGoLive={throttle(handleGoLive, 2000, { trailing: false })}
         ></H5pPreview>
       )}
     </Fragment>
