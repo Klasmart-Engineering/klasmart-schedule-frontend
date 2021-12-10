@@ -1,6 +1,9 @@
 // import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
 import { apiLivePath } from "@api/extra";
+import PermissionType from "@api/PermissionType";
 import { ContentType } from "@api/type";
+import { usePermission } from "@hooks/usePermission";
+import { t } from "@locale/LocaleManager";
 import { Box } from "@material-ui/core";
 import {
   approveContent,
@@ -12,7 +15,7 @@ import {
   rejectContent,
 } from "@reducers/content";
 import { RootState } from "@reducers/index";
-import { actSuccess } from "@reducers/notify";
+import { actError, actSuccess } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { Fragment, useEffect, useMemo } from "react";
@@ -49,6 +52,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const { tab } = useParams<RouteParams>();
   const content_type = contentPreview.content_type;
   const history = useHistory();
+  const perm = usePermission([PermissionType.attend_live_class_as_a_teacher_186]);
   const handleDelete = async () => {
     await dispatch(deleteContent({ id, type: "delete" }));
     history.go(-1);
@@ -97,14 +101,21 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   );
 
   const handleGoLive = async () => {
-    let winOpen = window.open("", "_blanck");
-    const { payload } = (await dispatch(getLiveToken({ content_id: id, schedule_id: sid }))) as unknown as PayloadAction<
-      AsyncTrunkReturned<typeof getLiveToken>
-    >;
-    if (payload) {
-      winOpen && (winOpen.location = apiLivePath(payload));
+    if (!perm.attend_live_class_as_a_teacher_186) {
+      dispatch(actError(t("general_error_no_permission")));
     } else {
-      winOpen?.close();
+      if (navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0) {
+        let winOpen = window.open("", "_blanck");
+        const { payload } = (await dispatch(
+          getLiveToken({ metaLoading: true, content_id: id, schedule_id: sid })
+        )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getLiveToken>>;
+        payload ? winOpen && (winOpen.location = apiLivePath(payload)) : winOpen?.close();
+      } else {
+        const { payload } = (await dispatch(
+          getLiveToken({ metaLoading: true, content_id: id, schedule_id: sid })
+        )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getLiveToken>>;
+        payload && window.open(apiLivePath(payload));
+      }
     }
   };
   const leftside = (
