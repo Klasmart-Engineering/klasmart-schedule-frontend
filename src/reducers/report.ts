@@ -1371,6 +1371,11 @@ const { actions, reducer } = createSlice({
           }).length > 0;
         canSelectTeacher = false;
       }
+      schoolList = schoolList.filter((item) => {
+        return classList.some((classe) => {
+          return classe.schools?.find((school) => school?.school_id === item.school_id);
+        });
+      });
       state.schoolClassesTeachers = {
         classList: orderByASC(classList, "class_name"),
         schoolList: orderByASC(schoolList, "school_name"),
