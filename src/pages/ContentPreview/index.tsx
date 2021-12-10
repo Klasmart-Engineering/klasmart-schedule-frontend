@@ -104,7 +104,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     if (!perm.attend_live_class_as_a_teacher_186) {
       dispatch(actError(t("general_error_no_permission")));
     } else {
-      if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
+      if (navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0) {
         let winOpen = window.open("", "_blanck");
         const { payload } = (await dispatch(
           getLiveToken({ metaLoading: true, content_id: id, schedule_id: sid })
