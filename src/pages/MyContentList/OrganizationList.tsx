@@ -1,5 +1,8 @@
-import { SortOrder } from "@api/api-ko-schema.auto";
+import { ConnectionDirection, SortOrder } from "@api/api-ko-schema.auto";
+import { GetOrganizationsQueryVariables } from "@api/api-ko.auto";
 import CursorPagination from "@components/CursorPagination/CursorPagination";
+import { FormattedTextField, frontTrim } from "@components/FormattedTextField";
+import { resultsTip } from "@components/TipImages";
 import {
   Button,
   Checkbox,
@@ -12,6 +15,7 @@ import {
   makeStyles,
   Radio,
   RadioGroup,
+  TextFieldProps,
   Theme,
   Tooltip,
   withStyles,
@@ -47,12 +51,15 @@ const useStyles = makeStyles(() =>
       marginLeft: "40px !important",
     },
     dialogContent: {
-      maxHeight: 400,
+      // maxHeight: 500,
     },
     tooltipIcon: {
       color: "#666",
       verticalAlign: "middle",
       marginLeft: "5px",
+    },
+    SearchButon: {
+      marginLeft: 10,
     },
   })
 );
@@ -78,6 +85,7 @@ export function OrganizationList(props: OrganizationListProps) {
   const { control, watch } = useForm();
   const dispatch = useDispatch();
   const values = watch()[SELECTED_ORG];
+  const searchValue = watch()["searchValue"] || "";
   const allValue = useMemo(() => orgList?.map((org) => org.organization_id), [orgList]);
   console.log("allValue=", allValue, values);
   const [radioValue, setRadioValue] = useState(
@@ -100,6 +108,12 @@ export function OrganizationList(props: OrganizationListProps) {
   const handleChange = (value: string) => {
     setRadioValue(value);
     setNewSelectedOrgIds(false);
+  };
+  const searchOrgList = ({ direction, cursor = "" }: Pick<GetOrganizationsQueryVariables, "direction" | "cursor">) => {
+    dispatch(getOrgList({ metaLoading: true, cursor, direction, order: SortOrder.Asc, searchValue, count: 10 }));
+  };
+  const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
+    if (event.key === "Enter") searchOrgList({ direction: ConnectionDirection.Forward });
   };
   return (
     <Dialog open={open} maxWidth="md" fullWidth>
@@ -130,7 +144,7 @@ export function OrganizationList(props: OrganizationListProps) {
           />
         </RadioGroup>
         {radioValue && radioValue !== ShareScope.share_all && (
-          <>
+          <div style={{ marginLeft: 30 }}>
             <Controller
               name={SELECTED_ORG}
               control={control}
@@ -141,9 +155,9 @@ export function OrganizationList(props: OrganizationListProps) {
                   allValue={allValue}
                   {...props}
                   render={(selectedContentGroupContext) => (
-                    <div {...{ ref }} style={{ marginLeft: 30 }}>
+                    <div {...{ ref }}>
                       <FormControlLabel
-                        style={{ display: "block" }}
+                        // style={{ display: "block" }}
                         control={
                           <Checkbox
                             color="primary"
@@ -153,36 +167,53 @@ export function OrganizationList(props: OrganizationListProps) {
                         }
                         label={d("All").t("library_label_all_organizations")}
                       />
-                      {orgList?.map((item) => (
-                        <FormControlLabel
-                          style={{ display: "block" }}
-                          control={
-                            <Checkbox
-                              color="primary"
-                              value={item.organization_id}
-                              checked={selectedContentGroupContext.hashValue[item.organization_id] || false}
-                              onChange={selectedContentGroupContext.registerChange}
-                            />
-                          }
-                          label={item.organization_name}
-                          key={item.organization_id}
-                        />
-                      ))}
+                      <Controller
+                        as={FormattedTextField}
+                        control={control}
+                        name="searchValue"
+                        size="small"
+                        encode={frontTrim}
+                        decode={frontTrim}
+                        defaultValue={""}
+                        onKeyPress={handleKeyPress}
+                        placeholder={d("Search").t("library_label_search")}
+                      />
+                      <Button
+                        className={css.SearchButon}
+                        variant="contained"
+                        color="primary"
+                        onClick={() => searchOrgList({ direction: ConnectionDirection.Forward })}
+                      >
+                        {d("Search").t("library_label_search")}{" "}
+                      </Button>
+                      <div style={{ height: "100%" }}>
+                        {orgList?.length > 0
+                          ? orgList?.map((item) => (
+                              <FormControlLabel
+                                style={{ display: "block" }}
+                                control={
+                                  <Checkbox
+                                    color="primary"
+                                    value={item.organization_id}
+                                    checked={selectedContentGroupContext.hashValue[item.organization_id] || false}
+                                    onChange={selectedContentGroupContext.registerChange}
+                                  />
+                                }
+                                label={item.organization_name}
+                                key={item.organization_id}
+                              />
+                            ))
+                          : resultsTip}
+                      </div>
                     </div>
                   )}
                 />
               )}
             />
             {orgProperty.region === Region.global && (
-              <CursorPagination
-                total={orgListTotal}
-                pageInfo={orgListPageInfo}
-                onChange={({ direction, cursor }) =>
-                  dispatch(getOrgList({ metaLoading: true, cursor, direction, order: SortOrder.Asc, search: "", count: 10 }))
-                }
-              />
+              <CursorPagination total={orgListTotal} pageInfo={orgListPageInfo} onChange={searchOrgList} />
             )}
-          </>
+          </div>
         )}
       </DialogContent>
       <DialogActions>

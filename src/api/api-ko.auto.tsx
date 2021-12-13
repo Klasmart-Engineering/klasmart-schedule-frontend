@@ -869,7 +869,7 @@ export type GetMyIdQuery = { __typename?: "Query" } & {
 export type GetOrganizationsQueryVariables = Types.Exact<{
   cursor?: Types.Maybe<Types.Scalars["String"]>;
   count?: Types.Maybe<Types.Scalars["PageSize"]>;
-  search: Types.Scalars["String"];
+  searchValue: Types.Scalars["String"];
   order: Types.SortOrder;
   direction: Types.ConnectionDirection;
 }>;
@@ -2855,10 +2855,10 @@ export type ClassesConnectionQueryHookResult = ReturnType<typeof useClassesConne
 export type ClassesConnectionLazyQueryHookResult = ReturnType<typeof useClassesConnectionLazyQuery>;
 export type ClassesConnectionQueryResult = Apollo.QueryResult<ClassesConnectionQuery, ClassesConnectionQueryVariables>;
 export const GetOrganizationsDocument = gql`
-  query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count: PageSize, $search: String!, $order: SortOrder!) {
+  query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count: PageSize, $searchValue: String!, $order: SortOrder!) {
     organizationsConnection(
       direction: $direction
-      filter: { status: { operator: eq, value: "active" }, name: { operator: contains, value: $search, caseInsensitive: true } }
+      filter: { status: { operator: eq, value: "active" }, name: { operator: contains, value: $searchValue, caseInsensitive: true } }
       directionArgs: { count: $count, cursor: $cursor }
       sort: { field: name, order: $order }
     ) {

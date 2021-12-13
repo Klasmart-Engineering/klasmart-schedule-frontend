@@ -951,7 +951,7 @@ export const onloadShareOrgList = createAsyncThunk<void, IQueryGetFoldersSharedR
     if (orgProperty.region && orgProperty.region === Region.vn) {
       await dispatch(getVnOrgList({}));
     } else {
-      await dispatch(getOrgList({ order: SortOrder.Asc, search: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
+      await dispatch(getOrgList({ order: SortOrder.Asc, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
     }
     await dispatch(getFoldersSharedRecords({ folder_ids }));
   }
