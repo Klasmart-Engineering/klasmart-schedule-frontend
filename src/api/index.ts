@@ -1,9 +1,10 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
+import { RetryLink } from "@apollo/client/link/retry";
 import fetchIntercept from "fetch-intercept";
 import { LangRecordId } from "../locale/lang/type";
 import { Api as AutoApi, RequestParams } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
-import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
+import { apiOrganizationOfPage, ORG_ID_KEY, redirectToCMS, refreshToken } from "./extra";
 export * from "./emitter";
 
 export type ExtendedRequestParams = RequestParams & Pick<ApiErrorEventData, "onError">;
@@ -30,6 +31,7 @@ fetchIntercept.register({
       .catch(async (e) => {
         const errorLabel: LangRecordId = "general_error_unknown";
         console.log("e", response.body);
+        if (response.status === 401 || response.status === 400) throw response;
         apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: errorLabel });
       });
     return response;
@@ -44,7 +46,15 @@ class Api extends AutoApi {
       const [, , params] = args;
       const onError = (params as ExtendedRequestParams | undefined)?.onError;
       return originRequest(...args).catch((err) => {
-        if (err.label && !err.name) {
+        if (err.label === "general_error_unauthorized") {
+          // 401时 刷新token 重新调接口
+          try {
+            refreshToken();
+            return this.request(...args);
+          } catch (err) {
+            redirectToCMS();
+          }
+        } else if (err.label && !err.name) {
           const { msg, label, data } = err;
           err.name = err.label;
           err.message = err.data;
@@ -60,8 +70,28 @@ export default new Api({
   baseUrl: process.env.REACT_APP_BASE_API,
 });
 
+const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
+  if (count > 1) return false;
+  const isAuthError = error.statusCode === 401 || error.statusCode === 400;
+  if (!isAuthError) return false;
+  try {
+    refreshToken();
+    return true;
+  } catch (err) {
+    redirectToCMS();
+    return false;
+  }
+};
+
+const retryLink = new RetryLink({
+  attempts: (count, operation, error) => {
+    return retry(count, operation, error);
+  },
+});
+const httpLink = new HttpLink({ uri: `${process.env.REACT_APP_KO_BASE_API}/user/` });
 export const gqlapi = new ApolloClient({
   uri: `${process.env.REACT_APP_KO_BASE_API}/user/`,
+  link: ApolloLink.from([retryLink, httpLink]),
   cache: new InMemoryCache(),
   credentials: "include",
 });
