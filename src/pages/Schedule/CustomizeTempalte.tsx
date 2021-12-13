@@ -1,7 +1,7 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Tooltip from "@material-ui/core/Tooltip";
-import { DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
+import { DeleteOutlined, EditOutlined, VisibilityOff, CloseOutlined } from "@material-ui/icons";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +16,10 @@ import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import { classTypeLabel, EntityScheduleShortInfo, memberType, ScheduleEditExtend, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import ScheduleButton from "./ScheduleButton";
+import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
 const useStyles = makeStyles({
   previewContainer: {
@@ -121,6 +125,33 @@ const useStyles = makeStyles({
     paddingLeft: document.body.clientWidth < 650 ? "38px" : "6%",
     fontSize: document.body.clientWidth < 650 ? "0.8rem" : "1rem",
   },
+  previewContainerMb: {
+    position: "fixed",
+    backgroundColor: "white",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    left: 0,
+  },
+  eventIcon: {
+    fontSize: "38px",
+  },
+  previewDetailMb: {
+    marginTop: "20px",
+    overflow: "auto",
+    marginBottom: "18px",
+    paddingRight: "3%",
+  },
+  previewDetailSubMb: {
+    marginBottom: "18px",
+    "& span:last-child": {
+      display: "block",
+      marginTop: "6px",
+    },
+    "& span:first-child": {
+      color: "#A9A9A9",
+    },
+  },
 });
 
 interface InfoProps {
@@ -135,6 +166,166 @@ interface InfoProps {
   refreshView: (template: string) => void;
   ScheduleViewInfo: EntityScheduleViewDetail;
   privilegedMembers: (member: memberType) => boolean;
+}
+
+interface InfoMbProps extends InfoProps {
+  handleEditSchedule: (scheduleInfo: EntityScheduleViewDetail) => void;
+  handleHide: () => void;
+  disableDelete: () => void;
+  deleteHandle: () => void;
+  showDelete: () => void;
+  textEllipsis: (characterCount: number, values?: string) => string;
+  timestampToTime: (timestamp: number) => string;
+  multiStructure: (item?: EntityScheduleShortInfo[]) => string[] | undefined;
+  handleGoLive: (scheduleInfos: ScheduleEditExtend) => void;
+}
+
+function CustomizeTempalteMb(props: InfoMbProps) {
+  const classes = useStyles();
+  const {
+    handleClose,
+    ScheduleViewInfo,
+    privilegedMembers,
+    handleEditSchedule,
+    handleHide,
+    disableDelete,
+    showDelete,
+    deleteHandle,
+    textEllipsis,
+    timestampToTime,
+    multiStructure,
+    handleGoLive,
+  } = props;
+  const eventColor = [
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon className={classes.eventIcon} />, title: "LIVE" },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon className={classes.eventIcon} />, title: "Class" },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon className={classes.eventIcon} />, title: "Study" },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={classes.eventIcon} />, title: "Task" },
+  ];
+  const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
+  const { breakpoints } = useTheme();
+  const mobile500 = useMediaQuery(breakpoints.down(500));
+  const mobile400 = useMediaQuery(breakpoints.down(400));
+  const mobile325 = useMediaQuery(breakpoints.down(325));
+  const previewDetailMbHeight = () => {
+    if (mobile325) return "50vh";
+    if (mobile400) return "56vh";
+    if (mobile500) return "59vh";
+    return "62vh";
+  };
+
+  return (
+    <Box className={classes.previewContainerMb}>
+      <div className={classes.iconPart} style={{ textAlign: "end", padding: "4.6%" }}>
+        <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
+        {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
+          <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
+        )}
+        {!ScheduleViewInfo.is_hidden && disableDelete() && <DeleteOutlined className={classes.disableLastIcon} />}
+        {!ScheduleViewInfo.is_hidden && showDelete() && (
+          <Permission
+            value={PermissionType.delete_event_540}
+            render={(value) =>
+              value && (
+                <DeleteOutlined
+                  className={classes.lastIcon}
+                  onClick={() => {
+                    deleteHandle();
+                  }}
+                />
+              )
+            }
+          />
+        )}
+        <CloseOutlined className={classes.lastIcon} style={{ color: "#000000" }} onClick={handleClose} />
+      </div>
+      <div style={{ paddingLeft: "8%", paddingRight: "2%" }}>
+        <div style={{ color: eventTemplate[0].color, display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+          {eventTemplate[0].icon}
+          <span style={{ display: "block", marginLeft: "18px", fontWeight: "bold", fontSize: "18px" }}>{eventTemplate[0].title}</span>
+        </div>
+        <div>
+          <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
+            <h2 style={{ margin: "16px 0 3px 0px" }}>{textEllipsis(20, ScheduleViewInfo.title)}</h2>
+          </Tooltip>
+          <span
+            style={{
+              display: "block",
+              marginTop: "6px",
+              color: "gray",
+              visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
+            }}
+          >
+            {timestampToTime(ScheduleViewInfo.start_at as number)}
+          </span>
+          <span
+            style={{
+              display: "block",
+              marginTop: "6px",
+              color: "gray",
+              visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
+            }}
+          >
+            {timestampToTime(ScheduleViewInfo.end_at as number)}
+          </span>
+        </div>
+        <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
+          <div className={classes.previewDetailSubMb}>
+            <span>DESCRIPTION</span>
+            <span>{!ScheduleViewInfo.description ? "N/A" : ScheduleViewInfo.description}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>CLASS NAME</span>
+            <span>{ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : "N/A"}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>TEACHER</span>
+            <span>{multiStructure(ScheduleViewInfo.teachers)}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>STUDENTS</span>
+            <span>{multiStructure(ScheduleViewInfo.students)}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>LESSON PLAN</span>
+            <span>
+              <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
+              {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
+                return <div style={{ marginTop: "10px" }}>{material.name}</div>;
+              })}
+            </span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>ROOM ID</span>
+            <span>{ScheduleViewInfo.room_id}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>ATTACHMENT</span>
+            <span style={{ display: "flex", alignItems: "center" }}>
+              {ScheduleViewInfo.attachment?.id ? (
+                <>
+                  {ScheduleViewInfo.attachment?.name}{" "}
+                  <GetAppIcon
+                    onClick={() => {
+                      window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
+                    }}
+                    style={{ color: "#0E78D5", cursor: "pointer", fontSize: "20px", marginLeft: "10px" }}
+                  />
+                </>
+              ) : (
+                "N/A"
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+      {ScheduleViewInfo.class_type_label?.id !== "Task" && !ScheduleViewInfo.is_home_fun && (
+        <div style={{ display: "flex", justifyContent: "space-around", paddingRight: "20px" }}>
+          <ScheduleButton scheduleInfo={ScheduleViewInfo} templateType="schedulePopup" handleGoLive={handleGoLive} />
+        </div>
+      )}
+    </Box>
+  );
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
@@ -370,16 +561,41 @@ export default function CustomizeTempalte(props: InfoProps) {
     return bytesNum > len ? `${afterCutting} ....` : afterCutting;
   };
 
-  const textEllipsis = (value?: string) => {
-    const CharacterCount = 10;
-    return value ? reBytesStr(value, CharacterCount) : "";
+  const textEllipsis = (characterCount: number, value?: string) => {
+    return value ? reBytesStr(value, characterCount) : "";
   };
 
-  return (
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  return mobile ? (
+    <CustomizeTempalteMb
+      handleEditSchedule={handleEditSchedule}
+      handleHide={handleHide}
+      disableDelete={disableDelete}
+      deleteHandle={deleteHandle}
+      showDelete={showDelete}
+      ScheduleViewInfo={ScheduleViewInfo}
+      changeModalDate={changeModalDate}
+      checkLessonPlan={checkLessonPlan}
+      handleChangeHidden={handleChangeHidden}
+      handleClose={handleClose}
+      handleDelete={handleDelete}
+      isHidden={isHidden}
+      privilegedMembers={privilegedMembers}
+      refreshView={refreshView}
+      scheduleInfo={scheduleInfo}
+      textEllipsis={textEllipsis}
+      multiStructure={multiStructure}
+      timestampToTime={timestampToTime}
+      handleGoLive={handleGoLive}
+      toLive={toLive}
+    />
+  ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
         <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
-          <span>{textEllipsis(ScheduleViewInfo.title)}</span>
+          <span>{textEllipsis(10, ScheduleViewInfo.title)}</span>
         </Tooltip>
         <div className={classes.iconPart}>
           <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
