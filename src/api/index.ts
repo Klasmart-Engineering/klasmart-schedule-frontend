@@ -1,10 +1,11 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchIntercept from "fetch-intercept";
+import { GraphQLError } from "graphql";
 import { LangRecordId } from "../locale/lang/type";
 import { Api as AutoApi, RequestParams } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
-import { apiOrganizationOfPage, ORG_ID_KEY, redirectToAuth, refreshToken } from "./extra";
+import { apiOrganizationOfPage, ORG_ID_KEY, refreshToken } from "./extra";
 export * from "./emitter";
 
 export type ExtendedRequestParams = RequestParams & Pick<ApiErrorEventData, "onError">;
@@ -51,8 +52,8 @@ class Api extends AutoApi {
           try {
             await refreshToken();
             return originRequest(...args);
-          } catch (err) {
-            redirectToAuth();
+          } catch (e) {
+            console.log("e", e);
           }
         } else if (err.label && !err.name) {
           const { msg, label, data } = err;
@@ -72,13 +73,13 @@ export default new Api({
 
 const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
   if (count > 1) return false;
-  const isAuthError = error.statusCode === 401 || error.statusCode === 400;
+  const isAuthError = error.result?.errors.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
   if (!isAuthError) return false;
   try {
     await refreshToken();
     return true;
   } catch (err) {
-    redirectToAuth();
+    console.log("e", err);
     return false;
   }
 };
@@ -88,10 +89,8 @@ const retryLink = new RetryLink({
     return retry(count, operation, error);
   },
 });
-const httpLink = new HttpLink({ uri: `${process.env.REACT_APP_KO_BASE_API}/user/` });
+const httpLink = new HttpLink({ uri: `${process.env.REACT_APP_KO_BASE_API}/user/`, credentials: "include" });
 export const gqlapi = new ApolloClient({
-  uri: `${process.env.REACT_APP_KO_BASE_API}/user/`,
   link: ApolloLink.from([retryLink, httpLink]),
   cache: new InMemoryCache(),
-  credentials: "include",
 });
