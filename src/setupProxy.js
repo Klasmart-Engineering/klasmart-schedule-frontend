@@ -24,9 +24,9 @@ const proxy = {
   },
   [`/${process.env.REACT_APP_AUTH_API}`]: {
     changeOrigin: true,
-    traget: decodeURIComponent(process.env.REACT_APP_AUTH_API),
+    target: decodeURIComponent(process.env.REACT_APP_AUTH_API),
     pathRewrite: {
-      [`/${process.env.REACT_APP_AUTH_API}`]: "",
+      [`^/${process.env.REACT_APP_AUTH_API}`]: "",
     },
   },
 };

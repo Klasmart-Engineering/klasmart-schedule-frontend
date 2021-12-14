@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { FileLike } from "@rpldy/shared";
 import Cookies from "js-cookie";
-import queryString from "querystring";
 import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
@@ -318,12 +317,6 @@ export async function getUserIdAndOrgId() {
   return organizationId;
 }
 
-export const redirectToAuth = () => {
-  const stringifiedQuery = queryString.stringify({
-    continue: window.location.href,
-  });
-  window.location.href = `${process.env.REACT_APP_AUTH_API}?${stringifiedQuery}#/`;
-};
 export const refreshToken = async () => {
   const resp = await fetch(`${process.env.REACT_APP_AUTH_API}/refresh`, { credentials: "include" })
     .then((resp) => resp.json())
