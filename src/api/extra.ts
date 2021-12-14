@@ -318,7 +318,7 @@ export async function getUserIdAndOrgId() {
   return organizationId;
 }
 
-export const redirectToCMS = () => {
+export const redirectToAuth = () => {
   const stringifiedQuery = queryString.stringify({
     continue: window.location.href,
   });

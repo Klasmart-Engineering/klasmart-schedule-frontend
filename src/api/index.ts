@@ -4,7 +4,7 @@ import fetchIntercept from "fetch-intercept";
 import { LangRecordId } from "../locale/lang/type";
 import { Api as AutoApi, RequestParams } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
-import { apiOrganizationOfPage, ORG_ID_KEY, redirectToCMS, refreshToken } from "./extra";
+import { apiOrganizationOfPage, ORG_ID_KEY, redirectToAuth, refreshToken } from "./extra";
 export * from "./emitter";
 
 export type ExtendedRequestParams = RequestParams & Pick<ApiErrorEventData, "onError">;
@@ -52,7 +52,7 @@ class Api extends AutoApi {
             await refreshToken();
             return originRequest(...args);
           } catch (err) {
-            redirectToCMS();
+            redirectToAuth();
           }
         } else if (err.label && !err.name) {
           const { msg, label, data } = err;
@@ -78,7 +78,7 @@ const retry = async (count: number, operation: Operation, error: ServerError): P
     await refreshToken();
     return true;
   } catch (err) {
-    redirectToCMS();
+    redirectToAuth();
     return false;
   }
 };
