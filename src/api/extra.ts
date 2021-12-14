@@ -325,7 +325,7 @@ export const redirectToCMS = () => {
   window.location.href = `${process.env.REACT_APP_AUTH_API}?${stringifiedQuery}#/`;
 };
 export const refreshToken = async () => {
-  const resp = await fetch(`https://auth.alpha.kidsloop.net/refresh`, { credentials: "include" })
+  const resp = await fetch(`${process.env.REACT_APP_AUTH_API}/refresh`, { credentials: "include" })
     .then((resp) => resp.json())
     .then((data) => data);
   return resp;
