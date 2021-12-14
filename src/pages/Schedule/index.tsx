@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
 import { onLoadContentPreview } from "@reducers/content";
@@ -172,6 +172,17 @@ function ScheduleContent() {
     setIsShowAnyTime(is_show);
     setAnyTimeName(name);
   };
+
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  React.useEffect(() => {
+    if (isShowAnyTime && mobile) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "auto";
+    }
+  }, [isShowAnyTime, mobile]);
 
   const initModalDate: AlertDialogProps = {
     handleChange: function (p1: number) {},
