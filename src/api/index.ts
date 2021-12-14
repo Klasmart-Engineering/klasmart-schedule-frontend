@@ -45,12 +45,12 @@ class Api extends AutoApi {
     this.request = (...args) => {
       const [, , params] = args;
       const onError = (params as ExtendedRequestParams | undefined)?.onError;
-      return originRequest(...args).catch((err) => {
+      return originRequest(...args).catch(async (err) => {
         if (err.label === "general_error_unauthorized") {
           // 401时 刷新token 重新调接口
           try {
-            refreshToken();
-            return this.request(...args);
+            await refreshToken();
+            return originRequest(...args);
           } catch (err) {
             redirectToCMS();
           }
@@ -75,7 +75,7 @@ const retry = async (count: number, operation: Operation, error: ServerError): P
   const isAuthError = error.statusCode === 401 || error.statusCode === 400;
   if (!isAuthError) return false;
   try {
-    refreshToken();
+    await refreshToken();
     return true;
   } catch (err) {
     redirectToCMS();
