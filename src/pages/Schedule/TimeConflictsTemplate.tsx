@@ -1,5 +1,5 @@
-import { Button, FormControlLabel, Grid, IconButton, makeStyles, Radio, RadioGroup, useMediaQuery, useTheme } from "@material-ui/core";
-import { PersonOutline } from "@material-ui/icons";
+import { Box, Button, FormControlLabel, Grid, IconButton, makeStyles, Radio, RadioGroup, useMediaQuery, useTheme } from "@material-ui/core";
+import { CloseOutlined, PersonOutline } from "@material-ui/icons";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
 import { ClassOptionsItem, ConflictsData, ParticipantsShortInfo } from "../../types/scheduleTypes";
@@ -24,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       // flexDirection: 'initial',
       flexWrap: "wrap",
+    },
+    "& .MuiFormControlLabel-label": {
+      [theme.breakpoints.down("sm")]: {
+        fontSize: "14px",
+        marginLeft: "8px",
+      },
     },
   },
   itemContainer: {
@@ -77,6 +83,37 @@ const useStyles = makeStyles((theme) => ({
     top: "50%",
     transform: "translateY(-50%)",
   },
+  lastIcon: {
+    color: "red",
+    marginLeft: "25px",
+    cursor: "pointer",
+  },
+  templateMbBox: {
+    width: "80vmin",
+    height: "75vh",
+  },
+  closeMb: {
+    textAlign: "end",
+    paddingRight: "15px",
+  },
+  contentMb: {
+    height: "66vh",
+    overflow: "auto",
+    paddingLeft: "20px",
+  },
+  titleMb: {
+    fontSize: "25px",
+    fontWeight: "bold",
+  },
+  groupTitle: {
+    fontWeight: "bold",
+    fontSize: "14px",
+    margin: "8px 0px 8px 0px",
+    display: "block",
+  },
+  desTitle: {
+    color: "#666666",
+  },
 }));
 
 interface InnerItem {
@@ -100,6 +137,64 @@ interface TimeConflictsTemplateProps {
   handleDestroyOperations: (value?: boolean) => void;
   participantsIds?: ParticipantsShortInfo;
   classRosterIds?: ParticipantsShortInfo;
+}
+
+interface TimeConflictsTemplateMbProps extends TimeConflictsTemplateProps {
+  conflicts: Conflicts;
+  checkPartMb: (
+    item: any,
+    type: string,
+    signal: "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
+  ) => JSX.Element;
+  handleConfirm: () => void;
+  personalExist: (type: string) => boolean;
+}
+
+function TimeConflictsTemplateMb(props: TimeConflictsTemplateMbProps) {
+  const { handleClose, conflicts, checkPartMb, handleConfirm, personalExist } = props;
+  const classes = useStyles();
+  return (
+    <Box className={classes.templateMbBox}>
+      <div className={classes.closeMb}>
+        <CloseOutlined className={classes.lastIcon} onClick={handleClose} style={{ color: "#000000" }} />
+      </div>
+      <div className={classes.contentMb}>
+        <div className={classes.titleMb}>Schedule Conflict</div>
+        <span className={classes.desTitle}>Please select a further action.</span>
+        <div style={{ marginTop: "20px" }}>
+          {personalExist("roster") && <span className={classes.groupTitle}>{d("Class Roster").t("schedule_detail_class_roster")}</span>}
+          {conflicts.class_roster_student_ids &&
+            conflicts.class_roster_student_ids.map((item) => {
+              return checkPartMb(item, "student", "class_roster_student_ids");
+            })}
+          {conflicts.class_roster_teacher_ids &&
+            conflicts.class_roster_teacher_ids.map((item) => {
+              return checkPartMb(item, "teacher", "class_roster_teacher_ids");
+            })}
+          {personalExist("participants") && (
+            <span className={classes.groupTitle}>{d("Participants").t("schedule_time_conflict_checking")}</span>
+          )}
+          {conflicts.participants_student_ids &&
+            conflicts.participants_student_ids.map((item) => {
+              return checkPartMb(item, "student", "participants_student_ids");
+            })}
+          {conflicts.participants_teacher_ids &&
+            conflicts.participants_teacher_ids.map((item) => {
+              return checkPartMb(item, "teacher", "participants_teacher_ids");
+            })}
+        </div>
+      </div>
+      <Button
+        variant="contained"
+        color="primary"
+        style={{ width: "200px", marginLeft: "20%", borderRadius: "10px" }}
+        onClick={handleConfirm}
+        className={classes.lastButton}
+      >
+        {d("OK").t("assess_label_ok")}
+      </Button>
+    </Box>
+  );
 }
 
 export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps) {
@@ -160,7 +255,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
     handleClose();
   };
 
-  const chechkPart = (
+  const checkPart = (
     item: any,
     type: string,
     signal: "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
@@ -199,18 +294,81 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
     </>
   );
 
-  return (
+  const checkPartMb = (
+    item: any,
+    type: string,
+    signal: "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
+  ) => (
+    <div>
+      <div style={{ display: "flex" }}>
+        <span className={css.desTitle} style={{ marginRight: "10px" }}>
+          Tester 02 Stress
+        </span>{" "}
+        {type === "teacher" && <PersonOutline />}
+      </div>
+      <RadioGroup
+        aria-label="gender"
+        name="gender1"
+        className={css.radioBox}
+        style={{ marginLeft: "10px" }}
+        value={item.selected}
+        onChange={(event) => handleChange(event, item.id, signal)}
+      >
+        <FormControlLabel
+          value="not_schedule"
+          control={<Radio />}
+          label={d("Not schedule").t("schedule_time_conflict_option_1")}
+          className={css.radioItem}
+        />
+        <FormControlLabel
+          value="schedule"
+          control={<Radio />}
+          label={d("Schedule anyway").t("schedule_time_conflict_option_2")}
+          className={css.radioItem}
+        />
+      </RadioGroup>
+    </div>
+  );
+
+  const personalExist = (type: string) => {
+    if (type === "participants") {
+      return (
+        (conflicts.participants_student_ids && conflicts.participants_student_ids.length > 0) ||
+        (conflicts.participants_teacher_ids && conflicts.participants_teacher_ids.length > 0)
+      );
+    } else {
+      return (
+        (conflicts.class_roster_student_ids && conflicts.class_roster_student_ids.length > 0) ||
+        (conflicts.class_roster_teacher_ids && conflicts.class_roster_teacher_ids.length > 0)
+      );
+    }
+  };
+
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  return mobile ? (
+    <TimeConflictsTemplateMb
+      conflictsData={conflictsData}
+      handleChangeParticipants={handleChangeParticipants}
+      handleClose={handleClose}
+      handleDestroyOperations={handleDestroyOperations}
+      checkPartMb={checkPartMb}
+      conflicts={conflicts}
+      handleConfirm={handleConfirm}
+      personalExist={personalExist}
+    />
+  ) : (
     <div>
       <div className={css.title}>{d("Time conflicts occured, please specify").t("schedule_time_conflict_msg")}</div>
       <div className={css.content}>
         <div className={css.classRoster}>
-          <p>{d("Class Roster").t("schedule_detail_class_roster")}</p>
+          {personalExist("roster") && <p>{d("Class Roster").t("schedule_detail_class_roster")}</p>}
           <div className={css.scrollPart}>
             {conflicts.class_roster_student_ids &&
               conflicts.class_roster_student_ids.map((item) => {
                 return (
                   <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                    {chechkPart(item, "student", "class_roster_student_ids")}
+                    {checkPart(item, "student", "class_roster_student_ids")}
                   </Grid>
                 );
               })}
@@ -218,20 +376,20 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
               conflicts.class_roster_teacher_ids.map((item) => {
                 return (
                   <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                    {chechkPart(item, "teacher", "class_roster_teacher_ids")}
+                    {checkPart(item, "teacher", "class_roster_teacher_ids")}
                   </Grid>
                 );
               })}
           </div>
         </div>
         <div className={css.classRoster}>
-          <p>{d("Participants").t("schedule_time_conflict_checking")}</p>
+          {personalExist("participants") && <p>{d("Participants").t("schedule_time_conflict_checking")}</p>}
           <div className={css.scrollPart}>
             {conflicts.participants_student_ids &&
               conflicts.participants_student_ids.map((item) => {
                 return (
                   <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                    {chechkPart(item, "student", "participants_student_ids")}
+                    {checkPart(item, "student", "participants_student_ids")}
                   </Grid>
                 );
               })}
@@ -239,7 +397,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
               conflicts.participants_teacher_ids.map((item) => {
                 return (
                   <Grid container key={item.id} alignItems={sm ? "flex-start" : "center"} className={css.itemContainer}>
-                    {chechkPart(item, "teacher", "participants_teacher_ids")}
+                    {checkPart(item, "teacher", "participants_teacher_ids")}
                   </Grid>
                 );
               })}
