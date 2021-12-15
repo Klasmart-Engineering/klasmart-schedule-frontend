@@ -91,13 +91,14 @@ const useStyles = makeStyles((theme) => ({
   templateMbBox: {
     width: "80vmin",
     height: "75vh",
+    paddingTop: "12px",
+    paddingBottom: "12px",
   },
   closeMb: {
     textAlign: "end",
     paddingRight: "15px",
   },
   contentMb: {
-    height: "66vh",
     overflow: "auto",
     paddingLeft: "20px",
   },
@@ -153,12 +154,18 @@ interface TimeConflictsTemplateMbProps extends TimeConflictsTemplateProps {
 function TimeConflictsTemplateMb(props: TimeConflictsTemplateMbProps) {
   const { handleClose, conflicts, checkPartMb, handleConfirm, personalExist } = props;
   const classes = useStyles();
+  const { breakpoints } = useTheme();
+  const mobile325 = useMediaQuery(breakpoints.down(325));
+  const previewDetailMbHeight = () => {
+    if (mobile325) return "60vh";
+    return "63vh";
+  };
   return (
     <Box className={classes.templateMbBox}>
       <div className={classes.closeMb}>
         <CloseOutlined className={classes.lastIcon} onClick={handleClose} style={{ color: "#000000" }} />
       </div>
-      <div className={classes.contentMb}>
+      <div className={classes.contentMb} style={{ height: previewDetailMbHeight() }}>
         <div className={classes.titleMb}>Schedule Conflict</div>
         <span className={classes.desTitle}>Please select a further action.</span>
         <div style={{ marginTop: "20px" }}>
@@ -184,15 +191,17 @@ function TimeConflictsTemplateMb(props: TimeConflictsTemplateMbProps) {
             })}
         </div>
       </div>
-      <Button
-        variant="contained"
-        color="primary"
-        style={{ width: "200px", marginLeft: "20%", borderRadius: "10px" }}
-        onClick={handleConfirm}
-        className={classes.lastButton}
-      >
-        {d("OK").t("assess_label_ok")}
-      </Button>
+      <div style={{ textAlign: "center" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ width: "200px", borderRadius: "10px", marginLeft: 0, marginTop: "3vh" }}
+          onClick={handleConfirm}
+          className={classes.lastButton}
+        >
+          {d("OK").t("assess_label_ok")}
+        </Button>
+      </div>
     </Box>
   );
 }
