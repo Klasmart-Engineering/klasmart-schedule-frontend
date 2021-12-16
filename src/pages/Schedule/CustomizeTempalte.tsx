@@ -203,15 +203,8 @@ function CustomizeTempalteMb(props: InfoMbProps) {
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={classes.eventIcon} />, title: "Task" },
   ];
   const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
-  const { breakpoints } = useTheme();
-  const mobile500 = useMediaQuery(breakpoints.down(500));
-  const mobile400 = useMediaQuery(breakpoints.down(400));
-  const mobile325 = useMediaQuery(breakpoints.down(325));
   const previewDetailMbHeight = () => {
-    if (mobile325) return "50vh";
-    if (mobile400) return "56vh";
-    if (mobile500) return "59vh";
-    return "62vh";
+    return window.innerHeight - 290 + "px";
   };
 
   return (
