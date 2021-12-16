@@ -702,36 +702,10 @@ function ScheduleAnyTimeMb(props: InfoMbProps) {
               </div>
             );
           })}
-          {anyTimeData.study.map((view: EntityScheduleListView) => {
-            return (
-              <div key={view.id}>
-                <div className={classes.anyTimeItem}>
-                  <span style={{ fontSize: "18px", color: "#666666" }}>{view.title} </span>
-                  {buttonGroupMb(view, true)}
-                </div>
-                <div style={{ display: "flex" }}>
-                  <ScheduleButton scheduleInfo={view} templateType="scheduleAnyTime" handleGoLive={handleGoLive} />
-                </div>
-              </div>
-            );
-          })}{" "}
           <div className={classes.anyTimeTitleMb}>
             <LocalLibraryOutlinedIcon className={classes.eventIcon} /> {d("Anytime Study").t("schedule_any_anytime_study")}-{" "}
             {d("Home Fun").t("schedule_checkbox_home_fun")}
           </div>
-          {anyTimeData.study.map((view: EntityScheduleListView) => {
-            return (
-              <div key={view.id}>
-                <div className={classes.anyTimeItem}>
-                  <span style={{ fontSize: "18px", color: "#666666" }}>{view.title} </span>
-                  {buttonGroupMb(view, true)}
-                </div>
-                <div style={{ display: "flex" }}>
-                  <ScheduleButton scheduleInfo={view} templateType="scheduleAnyTime" handleGoLive={handleGoLive} />
-                </div>
-              </div>
-            );
-          })}{" "}
           {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
             return (
               <div key={view.id}>
