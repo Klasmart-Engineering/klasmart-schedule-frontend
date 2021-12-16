@@ -176,14 +176,6 @@ function ScheduleContent() {
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
 
-  React.useEffect(() => {
-    if (isShowAnyTime && mobile) {
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.documentElement.style.overflow = "auto";
-    }
-  }, [isShowAnyTime, mobile]);
-
   const initModalDate: AlertDialogProps = {
     handleChange: function (p1: number) {},
     radioValue: 0,
@@ -201,6 +193,14 @@ function ScheduleContent() {
   };
 
   const [modalDate, setModalDate] = React.useState<AlertDialogProps>(initModalDate);
+
+  React.useEffect(() => {
+    if ((isShowAnyTime || modalDate.openStatus) && mobile) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "auto";
+    }
+  }, [isShowAnyTime, mobile, modalDate]);
 
   const changeModalDate = useCallback(
     (data: object) => {
