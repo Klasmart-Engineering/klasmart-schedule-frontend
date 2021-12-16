@@ -660,6 +660,9 @@ interface InfoMbProps extends SearchListProps {
 function ScheduleAnyTimeMb(props: InfoMbProps) {
   const classes = useStyles();
   const { handleChangeShowAnyTime, anyTimeName, handleGoLive, anyTimeData, buttonGroupMb } = props;
+  const previewDetailMbHeight = () => {
+    return window.innerHeight - 110 + "px";
+  };
 
   return (
     <Box className={classes.previewContainerMb}>
@@ -674,7 +677,7 @@ function ScheduleAnyTimeMb(props: InfoMbProps) {
       </div>
       <div style={{ paddingLeft: "8%", paddingRight: "1%" }}>
         <h2 style={{ margin: 0 }}>{anyTimeName}</h2>
-        <div className={classes.previewDetailMb} style={{ height: "85vh" }}>
+        <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
           <div className={classes.anyTimeTitleMb}>
             <LocalLibraryOutlinedIcon className={classes.eventIcon} /> {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
           </div>
