@@ -34,16 +34,22 @@ import { d } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { EntityScheduleShortInfo, LearningComesFilterQuery, LearningContentList, LearningContentListForm } from "../../types/scheduleTypes";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
-    width: document.body.clientWidth < 650 ? "99%" : "760px",
+    width: "760px",
+    [breakpoints.down(650)]: {
+      paddingLeft: "99%",
+    },
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
     padding: "26px 20px 10px 20px",
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: document.body.clientWidth < 650 ? "60vh" : "48vh",
+    maxHeight: "48vh",
+    [breakpoints.down(650)]: {
+      maxHeight: "60vh",
+    },
     overflow: "auto",
     "&::-webkit-scrollbar": {
       width: "3px",
@@ -61,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   button: {
-    margin: theme.spacing(1),
+    margin: spacing(1),
   },
   exectSearchInput: {
     width: 90,
@@ -88,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
   },
   table: {},
   margin: {
-    margin: theme.spacing(1),
+    margin: spacing(1),
   },
   flexBox: {
     display: "flex",

@@ -21,11 +21,14 @@ import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ breakpoints }) => ({
   previewContainer: {
-    width: document.body.clientWidth < 650 ? "99%" : "600px",
+    width: "600px",
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
+    [breakpoints.down(650)]: {
+      width: "99%",
+    },
   },
   title: {
     fontSize: "24px",
@@ -37,11 +40,6 @@ const useStyles = makeStyles({
   time: {
     fontSize: "18px",
     color: "black",
-  },
-  iconPart: {
-    /*    position: "absolute",
-    top: "15px",
-    right: "25px",*/
   },
   firstIcon: {
     color: "#0e78d5",
@@ -80,14 +78,20 @@ const useStyles = makeStyles({
     alignItems: "center",
     padding: "3%",
     "& span": {
-      fontSize: document.body.clientWidth < 650 ? "0.8rem" : "1.4rem",
+      fontSize: "1.4rem",
+      [breakpoints.down(650)]: {
+        fontSize: "0.8rem",
+      },
       fontWeight: "bold",
       width: "68%",
     },
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: document.body.clientWidth < 650 ? "65vh" : "56vh",
+    maxHeight: "56vh",
+    [breakpoints.down(650)]: {
+      fontSize: "65vh",
+    },
     overflow: "auto",
     "&::-webkit-scrollbar": {
       width: "3px",
@@ -113,17 +117,25 @@ const useStyles = makeStyles({
   },
   row: {
     fontWeight: "bold",
-    width: document.body.clientWidth < 650 ? "30%" : "18%",
+    width: "18%",
     textAlign: "left",
-    fontSize: document.body.clientWidth < 650 ? "0.9rem" : "1.1rem",
+    fontSize: "1.1rem",
     paddingLeft: "8%",
+    [breakpoints.down(650)]: {
+      fontSize: "0.9rem",
+      width: "30%",
+    },
   },
   row2: {
     width: "60%",
     wordBreak: "break-word",
     fontWeight: 500,
-    paddingLeft: document.body.clientWidth < 650 ? "38px" : "6%",
-    fontSize: document.body.clientWidth < 650 ? "0.8rem" : "1rem",
+    paddingLeft: "6%",
+    fontSize: "1rem",
+    [breakpoints.down(650)]: {
+      fontSize: "0.8rem",
+      paddingLeft: "38px",
+    },
   },
   previewContainerMb: {
     position: "fixed",
@@ -152,7 +164,15 @@ const useStyles = makeStyles({
       color: "#A9A9A9",
     },
   },
-});
+  lessonText: {
+    width: "60%",
+    wordBreak: "break-word",
+    paddingLeft: "6%",
+    [breakpoints.down(650)]: {
+      paddingLeft: "38px",
+    },
+  },
+}));
 
 interface InfoProps {
   handleDelete: (scheduleInfo: EntityScheduleViewDetail) => void;
@@ -209,7 +229,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
 
   return (
     <Box className={classes.previewContainerMb}>
-      <div className={classes.iconPart} style={{ textAlign: "end", padding: "4.6%" }}>
+      <div style={{ textAlign: "end", padding: "4.6%" }}>
         <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
           <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
@@ -590,7 +610,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
           <span>{textEllipsis(10, ScheduleViewInfo.title)}</span>
         </Tooltip>
-        <div className={classes.iconPart}>
+        <div>
           <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
@@ -662,7 +682,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         {ScheduleViewInfo.lesson_plan && (
           <p className={classes.contentRow}>
             <span className={classes.row}>{d("Lesson Plan").t("schedule_detail_lesson_plan")}</span>
-            <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: document.body.clientWidth < 650 ? "38px" : "6%" }}>
+            <span className={classes.lessonText}>
               <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
               {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
                 return <div style={{ marginTop: "10px" }}>{material.name}</div>;

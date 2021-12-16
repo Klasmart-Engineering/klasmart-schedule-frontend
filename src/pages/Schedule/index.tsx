@@ -451,9 +451,11 @@ function ScheduleContent() {
   }, [scheduleId, setModalDate, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
+  const sm = useMediaQuery(breakpoints.down(325));
+
   return (
     <>
-      <LayoutBox holderMin={10} holderBase={80} mainBase={1920}>
+      <LayoutBox holderMin={sm ? 0 : 10} holderBase={80} mainBase={1920}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <ScheduleTool
