@@ -311,7 +311,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
     <div>
       <div style={{ display: "flex" }}>
         <span className={css.desTitle} style={{ marginRight: "10px" }}>
-          Tester 02 Stress
+          {item.name}
         </span>{" "}
         {type === "teacher" && <PersonOutline />}
       </div>

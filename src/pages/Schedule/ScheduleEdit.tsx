@@ -1,5 +1,5 @@
 import DateFnsUtils from "@date-io/date-fns";
-import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
+import { Box, Button, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import Collapse from "@material-ui/core/Collapse";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -148,7 +148,6 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
   smallCalendarBox: {
     boxShadow: shadows[3],
-    width: "310px",
     margin: "0 auto",
   },
   participantBox: {
@@ -331,8 +330,11 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th };
 
+  const { breakpoints } = useTheme();
+  const sm = useMediaQuery(breakpoints.down(320));
+
   return (
-    <Box className={css.smallCalendarBox}>
+    <Box className={css.smallCalendarBox} style={{ width: sm ? "310px" : "310px" }}>
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
         <Grid container justifyContent="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />

@@ -105,7 +105,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: "100%",
       top: 0,
       left: 0,
-      zIndex: 1,
+      zIndex: 999,
     },
     lastIcon: {
       color: "red",
@@ -532,6 +532,9 @@ function AnyTimeSchedule(props: SearchListProps) {
     );
   };
 
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
   const buttonGroupMb = (scheduleInfo: EntityScheduleListView, showDeleteButto: boolean) => {
     const isScheduleExpiredMulti = (): boolean => {
       if (scheduleInfo.is_home_fun) {
@@ -543,7 +546,15 @@ function AnyTimeSchedule(props: SearchListProps) {
     return (
       <span>
         {showDeleteButto && !(!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment) && (
-          <EditOutlined style={{ marginRight: "20px" }} onClick={() => handleEditSchedule(scheduleInfo)} />
+          <EditOutlined
+            style={{ marginRight: "20px" }}
+            onClick={() => {
+              handleEditSchedule(scheduleInfo);
+              if (mobile) {
+                handleChangeShowAnyTime(false, "");
+              }
+            }}
+          />
         )}
         {!scheduleInfo.is_hidden && !isScheduleExpiredMulti() && (
           <Permission
@@ -563,9 +574,6 @@ function AnyTimeSchedule(props: SearchListProps) {
       </span>
     );
   };
-
-  const { breakpoints } = useTheme();
-  const mobile = useMediaQuery(breakpoints.down(600));
 
   return mobile ? (
     <ScheduleAnyTimeMb
