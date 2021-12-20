@@ -228,6 +228,30 @@ function CustomizeTempalteMb(props: InfoMbProps) {
     return `${window.innerHeight - (offset ? 408 : 290)}px`;
   };
 
+  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  const sameDay = (timestampStart: number, timestampEnd: number): string => {
+    const timestampDate = new Date(timestampStart * 1000);
+    const timestampDateEnd = new Date(timestampEnd * 1000);
+    const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+    const [Y, M, D, W, h, m] = [
+      (timestampDate as Date).getFullYear(),
+      (timestampDate as Date).getMonth(),
+      (timestampDate as Date).getDate(),
+      (timestampDate as Date).getDay(),
+      dateNumFun((timestampDate as Date).getHours()),
+      dateNumFun((timestampDate as Date).getMinutes()),
+    ];
+    if (new Date(timestampStart * 1000).toDateString() === new Date(timestampEnd * 1000).toDateString()) {
+      return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}  |  ${dateNumFun((timestampDateEnd as Date).getHours())}:${dateNumFun(
+        (timestampDateEnd as Date).getMinutes()
+      )}`;
+    } else {
+      return "";
+    }
+  };
+
   return (
     <Box className={classes.previewContainerMb}>
       <div style={{ textAlign: "end", padding: "4.6%" }}>
@@ -270,14 +294,19 @@ function CustomizeTempalteMb(props: InfoMbProps) {
               visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
             }}
           >
-            {timestampToTime(ScheduleViewInfo.start_at as number)}
+            {sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number) ??
+              timestampToTime(ScheduleViewInfo.start_at as number)}
           </span>
           <span
             style={{
               display: "block",
               marginTop: "6px",
               color: "gray",
-              visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
+              visibility:
+                ScheduleViewInfo.class_type_label?.id !== "Homework" &&
+                !sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number)
+                  ? "visible"
+                  : "hidden",
             }}
           >
             {timestampToTime(ScheduleViewInfo.end_at as number)}
