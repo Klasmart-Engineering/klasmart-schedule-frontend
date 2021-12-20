@@ -224,7 +224,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   ];
   const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
   const previewDetailMbHeight = () => {
-    return window.innerHeight - 290 + "px";
+    return window.screen.availHeight - 290 + "px";
   };
 
   return (

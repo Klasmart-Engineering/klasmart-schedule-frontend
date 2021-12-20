@@ -669,7 +669,7 @@ function ScheduleAnyTimeMb(props: InfoMbProps) {
   const classes = useStyles();
   const { handleChangeShowAnyTime, anyTimeName, handleGoLive, anyTimeData, buttonGroupMb } = props;
   const previewDetailMbHeight = () => {
-    return window.innerHeight - 110 + "px";
+    return window.screen.availHeight - 110 + "px";
   };
 
   return (
