@@ -141,7 +141,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     position: "fixed",
     backgroundColor: "white",
     width: "100%",
-    height: "100%",
     top: 0,
     left: 0,
   },
@@ -225,7 +224,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-    return `${offset ? window.innerHeight * 0.45 : window.innerHeight * 0.61}px`;
+    return `${offset ? window.innerHeight * 0.45 : window.innerHeight * 0.45}px`;
   };
 
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
@@ -253,7 +252,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   };
 
   return (
-    <Box className={classes.previewContainerMb}>
+    <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
       <div style={{ textAlign: "end", padding: "4.6%" }}>
         <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
