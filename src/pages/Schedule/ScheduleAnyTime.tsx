@@ -669,7 +669,8 @@ function ScheduleAnyTimeMb(props: InfoMbProps) {
   const classes = useStyles();
   const { handleChangeShowAnyTime, anyTimeName, handleGoLive, anyTimeData, buttonGroupMb } = props;
   const previewDetailMbHeight = () => {
-    return window.screen.availHeight - 110 + "px";
+    const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    return `${window.innerHeight - (offset ? 218 : 110)}px`;
   };
 
   return (
