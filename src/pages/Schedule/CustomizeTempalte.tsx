@@ -224,7 +224,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-    return `${offset ? window.innerHeight * 0.45 : window.innerHeight * 0.45}px`;
+    return `${offset ? window.innerHeight * 0.48 : window.innerHeight * 0.35}px`;
   };
 
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
