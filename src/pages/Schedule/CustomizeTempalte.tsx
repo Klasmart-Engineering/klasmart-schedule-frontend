@@ -225,7 +225,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-    return `${window.innerHeight - (offset ? 408 : 290)}px`;
+    return `${offset ? window.innerHeight * 0.45 : window.innerHeight * 0.61}px`;
   };
 
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
@@ -294,8 +294,9 @@ function CustomizeTempalteMb(props: InfoMbProps) {
               visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
             }}
           >
-            {sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number) ??
-              timestampToTime(ScheduleViewInfo.start_at as number)}
+            {sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number) !== ""
+              ? sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number)
+              : timestampToTime(ScheduleViewInfo.start_at as number)}
           </span>
           <span
             style={{
