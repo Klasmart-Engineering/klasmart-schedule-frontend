@@ -223,8 +223,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   ];
   const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
   const previewDetailMbHeight = () => {
-    const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-    return `${offset ? window.screen.height * 0.35 : window.screen.height * 0.35}px`;
+    return `${window.screen.height - 440}px`;
   };
 
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
@@ -252,7 +251,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   };
 
   return (
-    <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight * 0.88}px` }}>
+    <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
       <div style={{ textAlign: "end", padding: "4.6%" }}>
         <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
