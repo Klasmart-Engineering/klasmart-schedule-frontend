@@ -90,7 +90,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     width: "100%",
     maxHeight: "56vh",
     [breakpoints.down(650)]: {
-      fontSize: "65vh",
+      maxHeight: "65vh",
     },
     overflow: "auto",
     "&::-webkit-scrollbar": {
@@ -231,7 +231,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
         return `${window.screen.height - 480}px`;
       }
     }
-    return `${offset ? window.screen.height - 550 : window.screen.height - 445}px`;
+    return `${offset ? window.screen.height - 540 : window.screen.height - 445}px`;
   };
 
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
