@@ -1,6 +1,6 @@
-import { Box, Button, LinearProgress, TextField, Typography } from "@material-ui/core";
+import { Box, Button, LinearProgress, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { AccessTime, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import { AccessTime, CloseOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
 import CancelIcon from "@material-ui/icons/Cancel";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -80,6 +80,24 @@ const useStyles = makeStyles(({ shadows }) =>
       width: 32,
       margin: "0 10px",
     },
+    closeMb: {
+      textAlign: "end",
+      padding: "15px 15px 0px 15px",
+    },
+    lastIcon: {
+      color: "red",
+      marginLeft: "25px",
+      cursor: "pointer",
+    },
+    contentText: {
+      color: "#666666",
+      maxWidth: "220px",
+      margin: "auto",
+      paddingTop: "30px",
+      display: "block",
+      fontSize: "17px",
+      fontWeight: 600,
+    },
   })
 );
 
@@ -149,10 +167,34 @@ interface SubmitProps {
   feedBackSubmit: () => void;
   due_time?: string;
 }
+
 function SubmitTemplate(props: SubmitProps) {
   const { teacher, className, handleClose, feedBackSubmit, due_time } = props;
   const css = useStyles();
-  return (
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+  const mobile325 = useMediaQuery(breakpoints.down(325));
+  const previewDetailMbHeight = () => {
+    if (mobile325) return "46vh";
+    return "38vh";
+  };
+
+  return mobile ? (
+    <Box style={{ width: "80vmin", height: previewDetailMbHeight(), textAlign: "center" }}>
+      <div className={css.closeMb}>
+        <CloseOutlined className={css.lastIcon} onClick={handleClose} style={{ color: "#000000" }} />
+      </div>
+      <span className={css.contentText}>Your assignment will be submitted for assessment. Do you want to continue?</span>
+      <Button
+        variant="contained"
+        color="primary"
+        style={{ width: "200px", marginTop: "40px", borderRadius: "10px" }}
+        onClick={feedBackSubmit}
+      >
+        {d("OK").t("assess_label_ok")}
+      </Button>
+    </Box>
+  ) : (
     <Box className={css.submitTemplate}>
       <p>{d("Your assignment will be submitted for assessment.").t("schedule_msg_submit")}</p>
       <p>

@@ -1,9 +1,11 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
+import { RetryLink } from "@apollo/client/link/retry";
 import fetchIntercept from "fetch-intercept";
+import { GraphQLError } from "graphql";
 import { LangRecordId } from "../locale/lang/type";
 import { Api as AutoApi, RequestParams } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
-import { apiOrganizationOfPage, ORG_ID_KEY } from "./extra";
+import { apiOrganizationOfPage, ORG_ID_KEY, refreshToken } from "./extra";
 export * from "./emitter";
 
 export type ExtendedRequestParams = RequestParams & Pick<ApiErrorEventData, "onError">;
@@ -30,6 +32,7 @@ fetchIntercept.register({
       .catch(async (e) => {
         const errorLabel: LangRecordId = "general_error_unknown";
         console.log("e", response.body);
+        if (response.status === 401 || response.status === 400) throw response;
         apiEmitter.emit<ApiErrorEventData>(ApiEvent.ResponseError, { label: errorLabel });
       });
     return response;
@@ -43,8 +46,16 @@ class Api extends AutoApi {
     this.request = (...args) => {
       const [, , params] = args;
       const onError = (params as ExtendedRequestParams | undefined)?.onError;
-      return originRequest(...args).catch((err) => {
-        if (err.label && !err.name) {
+      return originRequest(...args).catch(async (err) => {
+        if (err.label === "general_error_unauthorized") {
+          // 401时 刷新token 重新调接口
+          try {
+            await refreshToken();
+            return originRequest(...args);
+          } catch (e) {
+            console.log("e", e);
+          }
+        } else if (err.label && !err.name) {
           const { msg, label, data } = err;
           err.name = err.label;
           err.message = err.data;
@@ -60,8 +71,26 @@ export default new Api({
   baseUrl: process.env.REACT_APP_BASE_API,
 });
 
+const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
+  if (count > 1) return false;
+  const isAuthError = error.result?.errors.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
+  if (!isAuthError) return false;
+  try {
+    await refreshToken();
+    return true;
+  } catch (err) {
+    console.log("e", err);
+    return false;
+  }
+};
+
+const retryLink = new RetryLink({
+  attempts: (count, operation, error) => {
+    return retry(count, operation, error);
+  },
+});
+const httpLink = new HttpLink({ uri: `${process.env.REACT_APP_KO_BASE_API}/user/`, credentials: "include" });
 export const gqlapi = new ApolloClient({
-  uri: `${process.env.REACT_APP_KO_BASE_API}/user/`,
+  link: ApolloLink.from([retryLink, httpLink]),
   cache: new InMemoryCache(),
-  credentials: "include",
 });

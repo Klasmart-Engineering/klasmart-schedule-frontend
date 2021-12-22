@@ -59,6 +59,9 @@ function RouterButton(props: ButtonProps) {
               ? "none"
               : "block",
         }}
+        onClick={() => {
+          document.documentElement.style.overflow = "auto";
+        }}
         href={`#${ContentPreview.routeRedirectDefault}?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
       >
         {d("Preview").t("schedule_button_preview")}
