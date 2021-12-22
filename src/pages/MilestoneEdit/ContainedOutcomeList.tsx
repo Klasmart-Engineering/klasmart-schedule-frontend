@@ -46,10 +46,12 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
     justifyContent: "center",
   },
 }));
-const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
-  e.stopPropagation();
-  if (handler) return handler(e);
-};
+const stopPropagation =
+  <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) =>
+  (e: T) => {
+    e.stopPropagation();
+    if (handler) return handler(e);
+  };
 export interface ContainedOutcomeListProps {
   outcomeList: GetOutcomeList;
   value: GetOutcomeList;
@@ -79,7 +81,7 @@ export default function ContainedOutcomeList(props: ContainedOutcomeListProps) {
     onePageList &&
     onePageList[0] &&
     onePageList.map((item) => (
-      <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
+      <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.outcome_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
         <TableCell className={css.tableCell}>{item.program && item.program[0] ? item.program[0].program_name : ""}</TableCell>
