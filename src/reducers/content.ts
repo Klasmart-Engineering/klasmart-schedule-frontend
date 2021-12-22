@@ -1,4 +1,4 @@
-import { ConnectionDirection, ConnectionPageInfo, SortOrder } from "@api/api-ko-schema.auto";
+import { ConnectionDirection, ConnectionPageInfo, OrganizationSortBy, OrganizationSortInput, SortOrder } from "@api/api-ko-schema.auto";
 import { OrgInfoProps } from "@pages/MyContentList/OrganizationList";
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import cloneDeep from "lodash/cloneDeep";
@@ -932,6 +932,7 @@ export const getOrgList = createAsyncThunk<
   const orgs = data.organizationsConnection?.edges?.map((item) => ({
     organization_id: item?.node?.id,
     organization_name: item?.node?.name,
+    email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
   })) as IQueryGetOrgListResult;
   const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
   const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);
@@ -951,7 +952,11 @@ export const onloadShareOrgList = createAsyncThunk<void, IQueryGetFoldersSharedR
     if (orgProperty.region && orgProperty.region === Region.vn) {
       await dispatch(getVnOrgList({}));
     } else {
-      await dispatch(getOrgList({ order: SortOrder.Asc, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
+      const sort: OrganizationSortInput = {
+        field: [OrganizationSortBy.Name],
+        order: SortOrder.Asc,
+      };
+      await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
     }
     await dispatch(getFoldersSharedRecords({ folder_ids }));
   }

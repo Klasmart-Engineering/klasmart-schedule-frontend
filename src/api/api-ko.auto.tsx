@@ -870,7 +870,7 @@ export type GetOrganizationsQueryVariables = Types.Exact<{
   cursor?: Types.Maybe<Types.Scalars["String"]>;
   count?: Types.Maybe<Types.Scalars["PageSize"]>;
   searchValue: Types.Scalars["String"];
-  order: Types.SortOrder;
+  sort: Types.OrganizationSortInput;
   direction: Types.ConnectionDirection;
 }>;
 export type GetOrganizationsQuery = { __typename?: "Query" } & {
@@ -880,7 +880,9 @@ export type GetOrganizationsQuery = { __typename?: "Query" } & {
           Array<
             Types.Maybe<
               { __typename?: "OrganizationsConnectionEdge" } & {
-                node?: Types.Maybe<{ __typename?: "OrganizationConnectionNode " } & Pick<Types.OrganizationConnectionNode, "id" | "name">>;
+                node?: Types.Maybe<
+                  { __typename?: "OrganizationConnectionNode " } & Pick<Types.OrganizationConnectionNode, "id" | "name" | "owners">
+                >;
               }
             >
           >
@@ -2855,18 +2857,37 @@ export type ClassesConnectionQueryHookResult = ReturnType<typeof useClassesConne
 export type ClassesConnectionLazyQueryHookResult = ReturnType<typeof useClassesConnectionLazyQuery>;
 export type ClassesConnectionQueryResult = Apollo.QueryResult<ClassesConnectionQuery, ClassesConnectionQueryVariables>;
 export const GetOrganizationsDocument = gql`
-  query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count: PageSize, $searchValue: String!, $order: SortOrder!) {
+  query getOrganizations(
+    $direction: ConnectionDirection!
+    $cursor: String
+    $count: PageSize
+    $searchValue: String!
+    $sort: OrganizationSortInput!
+  ) {
     organizationsConnection(
       direction: $direction
-      filter: { status: { operator: eq, value: "active" }, name: { operator: contains, value: $searchValue, caseInsensitive: true } }
+      filter: {
+        AND: [
+          { status: { operator: eq, value: "active" } }
+          {
+            OR: [
+              { ownerUserEmail: { operator: contains, value: $searchValue, caseInsensitive: true } }
+              { name: { operator: contains, value: $searchValue, caseInsensitive: true } }
+            ]
+          }
+        ]
+      }
       directionArgs: { count: $count, cursor: $cursor }
-      sort: { field: name, order: $order }
+      sort: $sort
     ) {
       totalCount
       edges {
         node {
           id
           name
+          owners {
+            email
+          }
         }
       }
       pageInfo {
