@@ -563,30 +563,15 @@ export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQu
 
 interface IQueryOnLoadContentPreviewParams extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentById>[0];
-  schedule_id: string;
-  tokenToCall?: boolean;
+  schedule_id?: string;
 }
 interface IQyeryOnLoadCotnentPreviewResult {
   contentDetail: AsyncReturnType<typeof api.contents.getContentById>;
   user_id?: string;
-  token: string;
 }
 export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewResult, IQueryOnLoadContentPreviewParams>(
   "content/onLoadContentPreview",
-  async ({ content_id, schedule_id, tokenToCall = true }) => {
-    let token: string = "";
-    if (tokenToCall) {
-      if (schedule_id) {
-        const data = await api.schedules
-          .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
-          .catch((err) => Promise.reject(err.label));
-        await api.schedules.getScheduleById(schedule_id);
-        token = data.token as string;
-      } else {
-        const data = await api.contents.getContentLiveToken(content_id);
-        token = data.token as string;
-      }
-    }
+  async ({ content_id }) => {
     const contentDetail = await api.contents.getContentById(content_id);
     const {
       data: { myUser },
@@ -594,7 +579,24 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
       query: GetMyIdDocument,
     });
     const user_id = myUser?.node?.id || "";
-    return { contentDetail, user_id, token };
+    return { contentDetail, user_id };
+  }
+);
+export const getLiveToken = createAsyncThunk<string, IQueryOnLoadContentPreviewParams>(
+  "content/getLiveToken",
+  async ({ schedule_id, content_id }) => {
+    let token: string = "";
+    if (schedule_id) {
+      const data = await api.schedules
+        .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
+        .catch((err) => Promise.reject(err.label));
+      await api.schedules.getScheduleById(schedule_id);
+      token = data.token as string;
+    } else {
+      const data = await api.contents.getContentLiveToken(content_id);
+      token = data.token as string;
+    }
+    return token;
   }
 );
 
@@ -1111,16 +1113,15 @@ const { actions, reducer } = createSlice({
     [contentLists.rejected.type]: (state, { error }: any) => {},
 
     [onLoadContentPreview.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
-      // alert("success");
       state.contentPreview = initialState.contentPreview;
       state.user_id = initialState.user_id;
-      state.token = initialState.token;
     },
     [onLoadContentPreview.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
-      // alert("success");
       state.contentPreview = payload.contentDetail;
       state.user_id = payload.user_id || "";
-      state.token = payload.token;
+    },
+    [getLiveToken.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveToken>>) => {
+      state.token = payload;
     },
     [onLoadContentPreview.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1182,10 +1183,10 @@ const { actions, reducer } = createSlice({
       state.token = payload.token;
     },
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size || initialState.page_size;
+      state.page_size = payload?.cms_page_size || initialState.page_size;
     },
     [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size;
+      state.page_size = payload?.cms_page_size;
     },
     [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchOrgFolderItems>>) => {
       state.folderTree = payload;

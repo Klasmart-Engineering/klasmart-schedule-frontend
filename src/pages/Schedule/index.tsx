@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
 import { onLoadContentPreview } from "@reducers/content";
@@ -24,11 +24,13 @@ import { modelSchedule } from "../../models/ModelSchedule";
 import {
   actOutcomeListLoading,
   changeParticipants,
+  classesWithoutSchool,
   getClassesByOrg,
   getClassesBySchool,
   getClassesByStudent,
   getClassesByTeacher,
   getClassFilterList,
+  getLessonPlansBySchedule,
   getLinkedMockOptions,
   getParticipantsData,
   getScheduleAnyTimeViewData,
@@ -39,12 +41,10 @@ import {
   getScheduleTimeViewDataByYear,
   getScheduleViewInfo,
   getSchoolsFilterList,
-  classesWithoutSchool,
   getSubjectByProgramId,
+  getUserInUndefined,
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
-  getLessonPlansBySchedule,
-  getUserInUndefined,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -133,9 +133,9 @@ function ScheduleContent() {
 
   const LinkageLessonPlan = async (content_id: string) => {
     let resultInfo: any;
-    resultInfo = (await dispatch(
-      onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    resultInfo = (await dispatch(onLoadContentPreview({ metaLoading: true, content_id }))) as unknown as PayloadAction<
+      AsyncTrunkReturned<typeof onLoadContentPreview>
+    >;
     const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
     const materialArr = ModelLessonPlan.toArray(segment);
     const newMaterialArr: (EntityContentInfoWithDetails | undefined)[] = [];
@@ -173,6 +173,9 @@ function ScheduleContent() {
     setAnyTimeName(name);
   };
 
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
   const initModalDate: AlertDialogProps = {
     handleChange: function (p1: number) {},
     radioValue: 0,
@@ -190,6 +193,14 @@ function ScheduleContent() {
   };
 
   const [modalDate, setModalDate] = React.useState<AlertDialogProps>(initModalDate);
+
+  React.useEffect(() => {
+    if ((isShowAnyTime || modalDate.openStatus) && mobile) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "auto";
+    }
+  }, [isShowAnyTime, mobile, modalDate]);
 
   const changeModalDate = useCallback(
     (data: object) => {
@@ -440,9 +451,11 @@ function ScheduleContent() {
   }, [scheduleId, setModalDate, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
+  const sm = useMediaQuery(breakpoints.down(325));
+
   return (
     <>
-      <LayoutBox holderMin={10} holderBase={80} mainBase={1920}>
+      <LayoutBox holderMin={sm ? 0 : 10} holderBase={80} mainBase={1920}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <ScheduleTool

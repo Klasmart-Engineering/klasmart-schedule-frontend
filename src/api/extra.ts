@@ -316,3 +316,10 @@ export async function getUserIdAndOrgId() {
 
   return organizationId;
 }
+
+export const refreshToken = async () => {
+  const resp = await fetch(`${process.env.REACT_APP_AUTH_API}/refresh`, { credentials: "include" })
+    .then((resp) => resp.json())
+    .then((data) => data);
+  return resp;
+};

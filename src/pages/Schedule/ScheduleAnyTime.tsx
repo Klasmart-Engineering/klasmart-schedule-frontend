@@ -1,5 +1,5 @@
-import { Box, Button, createStyles, makeStyles, Theme } from "@material-ui/core";
-import { VisibilityOff } from "@material-ui/icons";
+import { Box, Button, createStyles, makeStyles, Theme, useMediaQuery, useTheme } from "@material-ui/core";
+import { CloseOutlined, DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -16,6 +16,7 @@ import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, schedule
 import { memberType, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleButton from "./ScheduleButton";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -96,6 +97,43 @@ const useStyles = makeStyles((theme: Theme) =>
     editButton: {
       border: "1px solid #009688",
       color: "#009688",
+    },
+    previewContainerMb: {
+      position: "fixed",
+      backgroundColor: "white",
+      width: "100%",
+      height: "100%",
+      top: 0,
+      left: 0,
+      zIndex: 999,
+    },
+    lastIcon: {
+      color: "red",
+      marginLeft: "25px",
+      cursor: "pointer",
+    },
+    previewDetailMb: {
+      overflow: "auto",
+      marginBottom: "18px",
+      paddingRight: "5%",
+    },
+    eventIcon: {
+      fontSize: "25px",
+      marginRight: "16px",
+    },
+    anyTimeTitleMb: {
+      display: "flex",
+      alignItems: "center",
+      color: "#4DA7A8",
+      marginTop: "40px",
+      fontSize: "14px",
+      fontWeight: "bold",
+    },
+    anyTimeItem: {
+      display: "flex",
+      alignItems: "center",
+      padding: "12px 0 16px 0px",
+      justifyContent: "space-between",
     },
   })
 );
@@ -189,10 +227,16 @@ function AnyTimeSchedule(props: SearchListProps) {
   const deleteScheduleByid = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: EntityScheduleListView) => {
       await dispatch(
-        removeSchedule({ schedule_id: scheduleInfo.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
+        removeSchedule({
+          schedule_id: scheduleInfo.id as string,
+          repeat_edit_options: { repeat_edit_options: repeat_edit_options },
+        })
       );
       const { payload } = (await dispatch(
-        removeSchedule({ schedule_id: scheduleInfo.id as string, repeat_edit_options: { repeat_edit_options: repeat_edit_options } })
+        removeSchedule({
+          schedule_id: scheduleInfo.id as string,
+          repeat_edit_options: { repeat_edit_options: repeat_edit_options },
+        })
       )) as unknown as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
       if (await payload) {
@@ -444,6 +488,7 @@ function AnyTimeSchedule(props: SearchListProps) {
         return scheduleInfo.id ? privilegedMembers("Student") : false;
       }
     };
+
     return (
       <span>
         {type === "study" && (
@@ -487,67 +532,193 @@ function AnyTimeSchedule(props: SearchListProps) {
     );
   };
 
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  const buttonGroupMb = (scheduleInfo: EntityScheduleListView, showDeleteButto: boolean) => {
+    const isScheduleExpiredMulti = (): boolean => {
+      if (scheduleInfo.is_home_fun) {
+        return scheduleInfo.id ? scheduleInfo.status !== "NotStart" || privilegedMembers("Student") : false;
+      } else {
+        return scheduleInfo.id ? privilegedMembers("Student") : false;
+      }
+    };
+    return (
+      <span>
+        {showDeleteButto && !(!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment) && (
+          <EditOutlined
+            style={{ marginRight: "20px" }}
+            onClick={() => {
+              handleEditSchedule(scheduleInfo);
+              if (mobile) {
+                handleChangeShowAnyTime(false, "");
+              }
+            }}
+          />
+        )}
+        {!scheduleInfo.is_hidden && !isScheduleExpiredMulti() && (
+          <Permission
+            value={PermissionType.delete_event_540}
+            render={(value) =>
+              value &&
+              !(!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment) && (
+                <DeleteOutlined
+                  onClick={() => {
+                    deleteHandle(scheduleInfo);
+                  }}
+                />
+              )
+            }
+          />
+        )}
+      </span>
+    );
+  };
+
+  return mobile ? (
+    <ScheduleAnyTimeMb
+      timesTamp={timesTamp}
+      handleChangeShowAnyTime={handleChangeShowAnyTime}
+      scheduleAnyTimeViewData={scheduleAnyTimeViewData}
+      privilegedMembers={privilegedMembers}
+      changeModalDate={changeModalDate}
+      toLive={toLive}
+      handleChangeHidden={handleChangeHidden}
+      modelView={modelView}
+      anyTimeName={anyTimeName}
+      anyTimeData={anyTimeData}
+      stateCurrentCid={stateCurrentCid}
+      handleGoLive={handleGoLive}
+      buttonGroupMb={buttonGroupMb}
+    />
+  ) : (
+    <>
+      <Box className={classes.listContainer} />
+      <Box className={classes.anyTimeBox}>
+        <p className={classes.anyTimeTitle}>
+          <span>
+            {d("View Anytime Study").t("schedule_filter_view_any_time_study")} - {anyTimeName}
+          </span>
+          <CloseIcon
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              handleChangeShowAnyTime(false, "");
+            }}
+          />
+        </p>
+        {anyTimeData.study.length < 1 && anyTimeData.homeFun.length < 1 && (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+            <img src={AnyTimeNoData} style={{ width: "20%", marginTop: "20%" }} alt="" />
+            <span>{d("No anytime study is available").t("schedule_msg_no_available")}</span>
+          </div>
+        )}
+        {anyTimeData.study.length > 0 && (
+          <div className={classes.itemBox}>
+            <p>{d("Anytime Study").t("schedule_any_anytime_study")}</p>
+            <Box className={classes.scrollBox}>
+              {anyTimeData.study.map((view: EntityScheduleListView) => {
+                return (
+                  <div key={view.id}>
+                    <span>{view.title} </span>
+                    {buttonGroup("study", view, !privilegedMembers("Student"))}
+                  </div>
+                );
+              })}
+            </Box>
+          </div>
+        )}
+        {anyTimeData.homeFun.length > 0 && (
+          <div className={classes.itemBox}>
+            <p>
+              {d("Anytime Study").t("schedule_any_anytime_study")}- {d("Home Fun").t("schedule_checkbox_home_fun")}
+            </p>
+            <Box className={classes.scrollBox}>
+              {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
+                return (
+                  <div key={view.id}>
+                    <span>
+                      {view.title}{" "}
+                      {view.exist_feedback && view.is_hidden && (
+                        <VisibilityOff
+                          style={{ color: "#000000", marginLeft: "10px", cursor: "pointer" }}
+                          onClick={() => {
+                            handleHide(view);
+                          }}
+                        />
+                      )}
+                    </span>
+                    {buttonGroup("home_fun", view, true)}
+                  </div>
+                );
+              })}
+            </Box>
+          </div>
+        )}
+      </Box>
+    </>
+  );
+}
+
+interface InfoMbProps extends SearchListProps {
+  handleGoLive: (scheduleDetial: EntityScheduleListView) => void;
+  anyTimeData: AnyTimeData;
+  buttonGroupMb: (scheduleInfo: EntityScheduleListView, showDeleteButto: boolean) => JSX.Element;
+}
+
+function ScheduleAnyTimeMb(props: InfoMbProps) {
+  const classes = useStyles();
+  const { handleChangeShowAnyTime, anyTimeName, handleGoLive, anyTimeData, buttonGroupMb } = props;
+  const previewDetailMbHeight = () => {
+    const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    return `${window.innerHeight - (offset ? 218 : 110)}px`;
+  };
+
   return (
-    <Box className={classes.anyTimeBox}>
-      <p className={classes.anyTimeTitle}>
-        <span>
-          {d("View Anytime Study").t("schedule_filter_view_any_time_study")} - {anyTimeName}
-        </span>
-        <CloseIcon
-          style={{ cursor: "pointer" }}
+    <Box className={classes.previewContainerMb}>
+      <div style={{ textAlign: "end", padding: "4.6%" }}>
+        <CloseOutlined
+          className={classes.lastIcon}
+          style={{ color: "#000000" }}
           onClick={() => {
             handleChangeShowAnyTime(false, "");
           }}
         />
-      </p>
-      {anyTimeData.study.length < 1 && anyTimeData.homeFun.length < 1 && (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-          <img src={AnyTimeNoData} style={{ width: "20%", marginTop: "20%" }} alt="" />
-          <span>{d("No anytime study is available").t("schedule_msg_no_available")}</span>
-        </div>
-      )}
-      {anyTimeData.study.length > 0 && (
-        <div className={classes.itemBox}>
-          <p>{d("Anytime Study").t("schedule_any_anytime_study")}</p>
-          <Box className={classes.scrollBox}>
-            {anyTimeData.study.map((view: EntityScheduleListView) => {
-              return (
-                <div key={view.id}>
-                  <span>{view.title} </span>
-                  {buttonGroup("study", view, !privilegedMembers("Student"))}
+      </div>
+      <div style={{ paddingLeft: "8%", paddingRight: "1%" }}>
+        <h2 style={{ margin: 0 }}>{anyTimeName}</h2>
+        <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
+          <div className={classes.anyTimeTitleMb}>
+            <LocalLibraryOutlinedIcon className={classes.eventIcon} /> {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
+          </div>
+          {anyTimeData.study.map((view: EntityScheduleListView) => {
+            return (
+              <div key={view.id}>
+                <div className={classes.anyTimeItem}>
+                  <span style={{ fontSize: "18px", color: "#666666" }}>{view.title} </span>
+                  {buttonGroupMb(view, true)}
                 </div>
-              );
-            })}
-          </Box>
-        </div>
-      )}
-      {anyTimeData.homeFun.length > 0 && (
-        <div className={classes.itemBox}>
-          <p>
-            {d("Anytime Study").t("schedule_any_anytime_study")}- {d("Home Fun").t("schedule_checkbox_home_fun")}
-          </p>
-          <Box className={classes.scrollBox}>
-            {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
-              return (
-                <div key={view.id}>
-                  <span>
-                    {view.title}{" "}
-                    {view.exist_feedback && view.is_hidden && (
-                      <VisibilityOff
-                        style={{ color: "#000000", marginLeft: "10px", cursor: "pointer" }}
-                        onClick={() => {
-                          handleHide(view);
-                        }}
-                      />
-                    )}
-                  </span>
-                  {buttonGroup("home_fun", view, true)}
+                <div style={{ display: "flex" }}>
+                  <ScheduleButton scheduleInfo={view} templateType="scheduleAnyTime" handleGoLive={handleGoLive} />
                 </div>
-              );
-            })}
-          </Box>
+              </div>
+            );
+          })}
+          <div className={classes.anyTimeTitleMb}>
+            <LocalLibraryOutlinedIcon className={classes.eventIcon} /> {d("Anytime Study").t("schedule_any_anytime_study")}-{" "}
+            {d("Home Fun").t("schedule_checkbox_home_fun")}
+          </div>
+          {anyTimeData.homeFun.map((view: EntityScheduleListView) => {
+            return (
+              <div key={view.id}>
+                <div className={classes.anyTimeItem}>
+                  <span style={{ fontSize: "18px", color: "#666666" }}>{view.title} </span>
+                  {buttonGroupMb(view, true)}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
     </Box>
   );
 }
@@ -565,22 +736,19 @@ export default function ScheduleAnyTime(props: SearchListProps) {
     anyTimeName,
     stateCurrentCid,
   } = props;
-  const classes = useStyles();
+
   return (
-    <>
-      <Box className={classes.listContainer} />
-      <AnyTimeSchedule
-        timesTamp={timesTamp}
-        handleChangeShowAnyTime={handleChangeShowAnyTime}
-        scheduleAnyTimeViewData={scheduleAnyTimeViewData}
-        privilegedMembers={privilegedMembers}
-        changeModalDate={changeModalDate}
-        toLive={toLive}
-        handleChangeHidden={handleChangeHidden}
-        modelView={modelView}
-        anyTimeName={anyTimeName}
-        stateCurrentCid={stateCurrentCid}
-      />
-    </>
+    <AnyTimeSchedule
+      timesTamp={timesTamp}
+      handleChangeShowAnyTime={handleChangeShowAnyTime}
+      scheduleAnyTimeViewData={scheduleAnyTimeViewData}
+      privilegedMembers={privilegedMembers}
+      changeModalDate={changeModalDate}
+      toLive={toLive}
+      handleChangeHidden={handleChangeHidden}
+      modelView={modelView}
+      anyTimeName={anyTimeName}
+      stateCurrentCid={stateCurrentCid}
+    />
   );
 }
