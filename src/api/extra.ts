@@ -60,11 +60,11 @@ export interface ValidationStatus {
   pagesValidated?: number; // undefined when totalPages is undefined
 }
 
-function getApiDomain() {
+function getWebsocketApi() {
   if (!process.env.REACT_APP_KO_BASE_API) return "";
   const url = decodeURIComponent(process.env.REACT_APP_KO_BASE_API);
-  if (!url.includes("//")) return "";
-  return url.split("//").pop() || "";
+  if (!url.includes("https")) return "";
+  return url.replace("https", "wss");
 }
 
 export const apiResourcePathById = (resource_id?: string) => {
@@ -101,11 +101,11 @@ export const apiValidatePDFPost = (file: FileLike) => {
 };
 export const apiWebSocketValidatePDF = (file: FileLike, onChangePercentage?: (percentage: number) => any) => {
   return new Promise((resolve: (data: ValidationStatus) => any, reject: () => any) => {
-    const domain = getApiDomain();
+    const domain = getWebsocketApi();
     if (!domain) {
       reject();
     }
-    const ws = new WebSocket(`wss://${domain}/pdf/v2/validate`);
+    const ws = new WebSocket(`${domain}/pdf/v2/validate`);
     ws.binaryType = "arraybuffer";
     ws.addEventListener("open", async () => {
       const files = file as unknown as Blob;
@@ -118,6 +118,7 @@ export const apiWebSocketValidatePDF = (file: FileLike, onChangePercentage?: (pe
       onChangePercentage?.(percentage);
       if (data.validationComplete) {
         resolve(data);
+        ws.close();
       }
     });
     ws.addEventListener("error", reject);
