@@ -120,7 +120,7 @@ export const apiWebSocketValidatePDF = (file: FileLike, onChangePercentage?: (pe
         resolve(data);
       }
     });
-    ws.addEventListener("error", reject());
+    ws.addEventListener("error", reject);
   });
 };
 
