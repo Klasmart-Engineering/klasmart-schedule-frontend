@@ -131,20 +131,24 @@ function MilestoneEditForm() {
       }),
     [dispatch, handleSubmit, history, id, reset]
   );
-  const handlePublish: MilestoneHeaderProps["onPublish"] = async () => {
-    const { payload } = (await dispatch(bulkPublishMilestone([milestoneDetail.milestone_id as string]))) as unknown as PayloadAction<
-      AsyncTrunkReturned<typeof bulkPublishMilestone>
-    >;
-    if (payload === "ok") {
-      if (perm.view_pending_milestone_486) {
-        history.push(`/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}`);
-      } else {
-        history.push(
-          `/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}&is_unpub=UNPUB`
-        );
-      }
-    }
-  };
+  const handlePublish: MilestoneHeaderProps["onPublish"] = useMemo(
+    () =>
+      handleSubmit(async () => {
+        const { payload } = (await dispatch(bulkPublishMilestone([milestoneDetail.milestone_id as string]))) as unknown as PayloadAction<
+          AsyncTrunkReturned<typeof bulkPublishMilestone>
+        >;
+        if (payload === "ok") {
+          if (perm.view_pending_milestone_486) {
+            history.push(`/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}`);
+          } else {
+            history.push(
+              `/milestone/milestone-list?status=${MilestoneStatus.pending}&page=1&order_by=${MilestoneOrderBy._created_at}&is_unpub=UNPUB`
+            );
+          }
+        }
+      }),
+    [dispatch, handleSubmit, history, milestoneDetail.milestone_id, perm.view_pending_milestone_486]
+  );
   const handleEdit = async () => {
     if (milestoneDetail.status === MilestoneStatus.published) {
       const result: any = await dispatch(occupyMilestone({ id: milestoneDetail.milestone_id as string, metaLoading: true }));
