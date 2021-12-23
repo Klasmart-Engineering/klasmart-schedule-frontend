@@ -71,8 +71,8 @@ export const apiResourcePathById = (resource_id?: string) => {
   if (!resource_id) return;
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
-export const apiValidatePDFGet = (resource_id: string) => {
-  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${resource_id}/validate`;
+export const apiValidatePDFGet = (resourceId: string) => {
+  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${resourceId}/validate`;
   return fetch(url, {
     method: "GET",
     headers: {

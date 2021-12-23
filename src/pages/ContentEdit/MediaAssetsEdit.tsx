@@ -99,16 +99,16 @@ function AssetEdit(props: AssetEditProps) {
   const dispatch = useDispatch();
   const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const isPreview = !!dataSource;
-  const VerifyExistingPDF = (value: string, onChange: AssetEditProps["onChange"]) => {
+  const VerifyExistingPDF = (resourceId: string, onChange: AssetEditProps["onChange"]) => {
     dispatch(actSetLoading(true));
-    apiValidatePDFGet(value)
+    apiValidatePDFGet(resourceId)
       .then((res) => {
         dispatch(actSetLoading(false));
         if (!res.valid) {
           const content = t("library_msg_pdf_validation");
           dispatch(actAsyncConfirm({ content, hideCancel: true }));
         } else {
-          onChange(value);
+          onChange(resourceId);
         }
       })
       .catch((err) => {
@@ -144,8 +144,8 @@ function AssetEdit(props: AssetEditProps) {
     const source: string = JSON.parse(data.item.data).source;
     if (!source.includes("-")) return;
     if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
-      const resource_id = source.split("-").pop() || "";
-      VerifyExistingPDF(resource_id, onChange);
+      const resourceId = source.split("-").pop() || "";
+      VerifyExistingPDF(resourceId, onChange);
     } else {
       onChange(source);
     }
