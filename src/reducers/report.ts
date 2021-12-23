@@ -23,7 +23,9 @@ import {
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
   ClassesSchoolsByOrganizationQueryVariables,
+  ClassesTeachersByOrganizationDocument,
   ClassesTeachersByOrganizationQuery,
+  ClassesTeachersByOrganizationQueryVariables,
   ClassStudentsByOrganizationQuery,
   GetMyIdDocument,
   GetMyIdQuery,
@@ -151,6 +153,10 @@ interface IreportState {
       res: ApolloQueryResult<SchoolsIdNameByOrganizationQuery> | undefined;
       organization_id: string;
     };
+    getClassesTeachersByOrganizationDocument: {
+      res: ApolloQueryResult<ClassesTeachersByOrganizationQuery> | undefined;
+      organization_id: string;
+    };
   };
   schoolClassesTeachers: {
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
@@ -244,6 +250,10 @@ const initialState: IreportState = {
       organization_id: "",
     },
     getSchoolsIdNameByOrganizationDocument: {
+      res: undefined,
+      organization_id: "",
+    },
+    getClassesTeachersByOrganizationDocument: {
       res: undefined,
       organization_id: "",
     },
@@ -413,7 +423,7 @@ export const getMyPermissionClassAndTeaching = createAsyncThunk<
     optionalData.getMyPermissionClassAndTeaching.res
   ) {
     return {
-      res: optionalData.getMyPermissionClassAndTeaching.res,
+      res: cloneDeep(optionalData.getMyPermissionClassAndTeaching.res),
       organization_id: optionalData.getMyPermissionClassAndTeaching.organization_id,
     };
   }
@@ -440,7 +450,7 @@ export const getStudentOrganizationDocument = createAsyncThunk<
   } = getState();
   if (optionalData.getStudentOrganizationDocument.organization_id === organization_id && optionalData.getStudentOrganizationDocument.res) {
     return {
-      res: optionalData.getStudentOrganizationDocument.res,
+      res: cloneDeep(optionalData.getStudentOrganizationDocument.res),
       organization_id: optionalData.getStudentOrganizationDocument.organization_id,
     };
   }
@@ -470,7 +480,7 @@ export const getClassesSchoolsByOrganization = createAsyncThunk<
     optionalData.getClassesSchoolsByOrganization.res
   ) {
     return {
-      res: optionalData.getClassesSchoolsByOrganization.res,
+      res: cloneDeep(optionalData.getClassesSchoolsByOrganization.res),
       organization_id: optionalData.getClassesSchoolsByOrganization.organization_id,
     };
   }
@@ -500,12 +510,42 @@ export const getSchoolsIdNameByOrganizationDocument = createAsyncThunk<
     optionalData.getSchoolsIdNameByOrganizationDocument.res
   ) {
     return {
-      res: optionalData.getSchoolsIdNameByOrganizationDocument.res,
+      res: cloneDeep(optionalData.getSchoolsIdNameByOrganizationDocument.res),
       organization_id: optionalData.getSchoolsIdNameByOrganizationDocument.organization_id,
     };
   }
   const res = await gqlapi.query<SchoolsIdNameByOrganizationQuery, SchoolsIdNameByOrganizationQueryVariables>({
     query: SchoolsIdNameByOrganizationDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return {
+    organization_id,
+    res,
+  };
+});
+
+export const getClassesTeachersByOrganizationDocument = createAsyncThunk<
+  { res: ApolloQueryResult<ClassesTeachersByOrganizationQuery>; organization_id: string },
+  {} | undefined,
+  { state: RootState }
+>("getClassesTeachersByOrganizationDocument", async (p, { getState }) => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const {
+    report: { optionalData },
+  } = getState();
+  if (
+    optionalData.getClassesTeachersByOrganizationDocument.organization_id === organization_id &&
+    optionalData.getClassesTeachersByOrganizationDocument.res
+  ) {
+    return {
+      res: cloneDeep(optionalData.getClassesTeachersByOrganizationDocument.res),
+      organization_id: optionalData.getClassesTeachersByOrganizationDocument.organization_id,
+    };
+  }
+  const res = await gqlapi.query<ClassesTeachersByOrganizationQuery, ClassesTeachersByOrganizationQueryVariables>({
+    query: ClassesTeachersByOrganizationDocument,
     variables: {
       organization_id,
     },
@@ -547,7 +587,7 @@ export const getTeachersByOrg = createAsyncThunk<
     dispatch(getSchoolsIdNameByOrganizationDocument())
       .unwrap()
       .then((res) => res.res),
-    dispatch(getStudentOrganizationDocument())
+    dispatch(getClassesTeachersByOrganizationDocument())
       .unwrap()
       .then((res) => res.res),
   ]);
@@ -1354,6 +1394,15 @@ const { actions, reducer } = createSlice({
     ) => {
       state.optionalData.getSchoolsIdNameByOrganizationDocument = {
         res: payload.res as WritableDraft<ApolloQueryResult<ClassesSchoolsByOrganizationQuery>>,
+        organization_id: payload.organization_id,
+      };
+    },
+    [getClassesTeachersByOrganizationDocument.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesTeachersByOrganizationDocument>>
+    ) => {
+      state.optionalData.getClassesTeachersByOrganizationDocument = {
+        res: payload.res as WritableDraft<ApolloQueryResult<ClassesTeachersByOrganizationQuery>>,
         organization_id: payload.organization_id,
       };
     },
