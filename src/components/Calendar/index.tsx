@@ -1,6 +1,6 @@
 import PermissionType from "@api/PermissionType";
 import { usePermission } from "@hooks/usePermission";
-import { Box } from "@material-ui/core";
+import { Box, Collapse } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
@@ -32,6 +32,9 @@ import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
 import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, scheduleInfoViewProps, timestampType } from "../../types/scheduleTypes";
 import YearCalendar from "./YearView";
+import { Data } from "@dnd-kit/core/dist/store";
+import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
+import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -72,7 +75,126 @@ const useStyles = makeStyles(({ shadows }) => ({
     justifyContent: "center",
     alignItems: "center",
   },
+  scheduleListBox: {
+    marginBottom: 12,
+    "& p": {
+      padding: "16px 10px 10px 20px",
+      boxShadow: "3px 3px 3px #888888",
+      margin: 0,
+    },
+  },
+  scheduleListItem: {
+    color: "white",
+    height: 36,
+    width: "90%",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: 8,
+    marginBottom: 8,
+    marginLeft: "5%",
+  },
+  filterArrow: {
+    float: "left",
+    marginRight: 12,
+    cursor: "pointer",
+    fontSize: 23,
+  },
 }));
+
+interface ScheduleListProps {
+  scheduleTimeViewData: EntityScheduleTimeView[];
+  timesTamp: timestampType;
+  scheduleSelected: (event: scheduleInfoViewProps) => void;
+}
+
+function ScheduleList(props: ScheduleListProps) {
+  const css = useStyles();
+  const { scheduleTimeViewData, timesTamp, scheduleSelected } = props;
+  const [checked, setChecked] = React.useState(false);
+  const eventColor = [
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "16%" }} /> },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon style={{ width: "16%" }} /> },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "16%" }} /> },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "16%" }} /> },
+  ];
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 17;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
+  const isSameDay = () => {
+    return scheduleTimeViewData.filter((schedule) => {
+      return schedule.start_at! < timesTamp.start && timesTamp.start < schedule.end_at! && schedule.end_at! - schedule.start_at! > 86398;
+    });
+  };
+  const eventTemplate = (schedule: EntityScheduleTimeView) => eventColor.filter((item) => item.id === schedule.class_type);
+  const getScheduleInfo = (schedule: EntityScheduleTimeView) => {
+    const fullDay =
+      schedule.end_at! - schedule.start_at! > 86400
+        ? `(DAY ${GetDateDiff(timesTamp.start as number, schedule.start_at as number)}/${GetDateDiff(
+            schedule.end_at as number,
+            schedule.start_at as number
+          )})`
+        : "";
+    return `${textEllipsis(schedule.title)}  ${fullDay}`;
+  };
+  const formatDate = (now: Data) => {
+    return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  };
+  const GetDateDiff = (timestampStart: number, timestampEnd: number) => {
+    const startDate = formatDate(new Date(timestampStart * 1000));
+    const endDate = formatDate(new Date(timestampEnd * 1000));
+    const startTime = new Date(Date.parse(startDate.replace(/-/g, "/"))).getTime();
+    const endTime = new Date(Date.parse(endDate.replace(/-/g, "/"))).getTime();
+    const dates = Math.floor(startTime - endTime) / (1000 * 60 * 60 * 24);
+    return dates + 1;
+  };
+  const scheduleViewInfo = (info: EntityScheduleTimeView) => {
+    scheduleSelected({ ...info, start: new Date(info.start_at! * 1000), end: new Date(info.end_at! * 1000) } as scheduleInfoViewProps);
+  };
+  return (
+    <Box className={css.scheduleListBox}>
+      <Collapse in={checked} collapsedSize={isSameDay().length * 44}>
+        {isSameDay().map((schedule) => {
+          return (
+            <div
+              className={css.scheduleListItem}
+              style={{ backgroundColor: eventTemplate(schedule)[0].color }}
+              onClick={() => {
+                scheduleViewInfo(schedule);
+              }}
+            >
+              {eventTemplate(schedule)[0].icon} {getScheduleInfo(schedule)}
+            </div>
+          );
+        })}
+      </Collapse>
+      {isSameDay().length > 5 && (
+        <p
+          onClick={() => {
+            setChecked(!checked);
+          }}
+        >
+          <span>
+            {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
+            {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
+          </span>
+          {d("See More").t("schedule_detail_see_more")}
+        </p>
+      )}
+    </Box>
+  );
+}
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
@@ -456,49 +578,54 @@ function MyCalendar(props: CalendarProps) {
   };
 
   return (
-    <Box className={css.calendarBox}>
-      <Box className={css.calendarNav}>
-        <ChevronLeftOutlinedIcon
-          className={css.chevron}
-          onClick={() => {
-            switchData("preve");
-          }}
-        />
-        <ChevronRightOutlinedIcon
-          className={css.chevron}
-          onClick={() => {
-            switchData("next");
-          }}
-        />
-        <span style={{ color: "#666666", fontSize: "16px" }}>{getPeriod(timesTamp)}</span>
-      </Box>
-      {modelYear && <YearCalendar timesTamp={timesTamp} scheduleTimeViewYearData={scheduleTimeViewYearData} />}
-      {!modelYear && (
-        <Calendar
-          date={new Date(timesTamp.start * 1000)}
-          onView={() => {}}
-          onNavigate={() => {}}
-          view={modelView}
-          views={views}
-          popup={true}
-          selectable={true}
-          localizer={localizer}
-          events={scheduleTimeViewDataFormat(scheduleTimeViewData)}
-          startAccessor="start"
-          endAccessor="end"
-          toolbar={false}
-          onSelectEvent={scheduleSelected}
-          onSelectSlot={(e) => {
-            creteSchedule(e);
-          }}
-          style={{ height: "100vh" }}
-          eventPropGetter={eventStyleGetter}
-          components={{
-            event: modelView === "month" ? CustomEvent : undefined,
-          }}
-        />
+    <>
+      {modelView === "day" && (
+        <ScheduleList scheduleTimeViewData={scheduleTimeViewData} timesTamp={timesTamp} scheduleSelected={scheduleSelected} />
       )}
-    </Box>
+      <Box className={css.calendarBox}>
+        <Box className={css.calendarNav}>
+          <ChevronLeftOutlinedIcon
+            className={css.chevron}
+            onClick={() => {
+              switchData("preve");
+            }}
+          />
+          <ChevronRightOutlinedIcon
+            className={css.chevron}
+            onClick={() => {
+              switchData("next");
+            }}
+          />
+          <span style={{ color: "#666666", fontSize: "16px" }}>{getPeriod(timesTamp)}</span>
+        </Box>
+        {modelYear && <YearCalendar timesTamp={timesTamp} scheduleTimeViewYearData={scheduleTimeViewYearData} />}
+        {!modelYear && (
+          <Calendar
+            date={new Date(timesTamp.start * 1000)}
+            onView={() => {}}
+            onNavigate={() => {}}
+            view={modelView}
+            views={views}
+            popup={true}
+            selectable={true}
+            localizer={localizer}
+            events={scheduleTimeViewDataFormat(scheduleTimeViewData)}
+            startAccessor="start"
+            endAccessor="end"
+            toolbar={false}
+            onSelectEvent={scheduleSelected}
+            onSelectSlot={(e) => {
+              creteSchedule(e);
+            }}
+            style={{ height: "100vh" }}
+            eventPropGetter={eventStyleGetter}
+            components={{
+              event: modelView === "month" ? CustomEvent : undefined,
+            }}
+          />
+        )}
+      </Box>
+    </>
   );
 }
 
