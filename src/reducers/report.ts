@@ -14,6 +14,7 @@ import api, { gqlapi } from "@api/index";
 import { ApolloQueryResult } from "@apollo/client";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { orderByASC } from "@utilities/dataUtilities";
+import { WritableDraft } from "immer/dist/types/types-external";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
   ClassesConnectionDocument,
@@ -22,12 +23,8 @@ import {
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
   ClassesSchoolsByOrganizationQueryVariables,
-  ClassesTeachersByOrganizationDocument,
   ClassesTeachersByOrganizationQuery,
-  ClassesTeachersByOrganizationQueryVariables,
-  ClassStudentsByOrganizationDocument,
   ClassStudentsByOrganizationQuery,
-  ClassStudentsByOrganizationQueryVariables,
   GetMyIdDocument,
   GetMyIdQuery,
   GetMyIdQueryVariables,
@@ -37,9 +34,7 @@ import {
   MyPermissionsAndClassesTeachingQueryDocument,
   MyPermissionsAndClassesTeachingQueryQuery,
   MyPermissionsAndClassesTeachingQueryQueryVariables,
-  SchoolsByOrganizationDocument,
   SchoolsByOrganizationQuery,
-  SchoolsByOrganizationQueryVariables,
   SchoolsIdNameByOrganizationDocument,
   SchoolsIdNameByOrganizationQuery,
   SchoolsIdNameByOrganizationQueryVariables,
@@ -139,6 +134,24 @@ interface IreportState {
     }[];
   };
 
+  optionalData: {
+    getMyPermissionClassAndTeaching: {
+      res: ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery> | undefined;
+      organization_id: string;
+    };
+    getStudentOrganizationDocument: {
+      res: ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery> | undefined;
+      organization_id: string;
+    };
+    getClassesSchoolsByOrganization: {
+      res: ApolloQueryResult<ClassesSchoolsByOrganizationQuery> | undefined;
+      organization_id: string;
+    };
+    getSchoolsIdNameByOrganizationDocument: {
+      res: ApolloQueryResult<SchoolsIdNameByOrganizationQuery> | undefined;
+      organization_id: string;
+    };
+  };
   schoolClassesTeachers: {
     schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
     classList: Pick<Class, "class_id" | "class_name" | "schools">[];
@@ -216,6 +229,24 @@ const initialState: IreportState = {
   teacherLoadLesson: {
     list: [],
     statistic: {},
+  },
+  optionalData: {
+    getMyPermissionClassAndTeaching: {
+      res: undefined,
+      organization_id: "",
+    },
+    getStudentOrganizationDocument: {
+      res: undefined,
+      organization_id: "",
+    },
+    getClassesSchoolsByOrganization: {
+      res: undefined,
+      organization_id: "",
+    },
+    getSchoolsIdNameByOrganizationDocument: {
+      res: undefined,
+      organization_id: "",
+    },
   },
   studentUsageReport: [{ class_usage_list: [] }, { content_usage_list: [] }],
   // h5pReportList: [],
@@ -328,9 +359,9 @@ export const getLessonPlan = createAsyncThunk<
 
 export const getSchoolsByOrg = createAsyncThunk<
   [ICacheData, ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<SchoolsByOrganizationQuery>],
-  LoadingMetaPayload
->("getSchoolsByOrg", async ({ metaLoading }) => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  LoadingMetaPayload,
+  { state: RootState }
+>("getSchoolsByOrg", async ({ metaLoading }, { dispatch }) => {
   return await Promise.all([
     permissionCache.usePermission([
       PermissionType.student_usage_report_657,
@@ -338,26 +369,20 @@ export const getSchoolsByOrg = createAsyncThunk<
       PermissionType.report_school_student_usage_655,
       PermissionType.report_teacher_student_usage_656,
     ]),
-    gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
-      query: MyPermissionsAndClassesTeachingQueryDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<SchoolsByOrganizationQuery, SchoolsByOrganizationQueryVariables>({
-      query: SchoolsByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
+    dispatch(getMyPermissionClassAndTeaching())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getStudentOrganizationDocument())
+      .unwrap()
+      .then((res) => res.res),
   ]);
 });
 
 export const getStudentsByOrg = createAsyncThunk<
   [ICacheData, ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>, ApolloQueryResult<StudentsByOrganizationQuery>],
-  LoadingMetaPayload
->("getStudentsByOrg", async ({ metaLoading }) => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  LoadingMetaPayload,
+  { state: RootState }
+>("getStudentsByOrg", async ({ metaLoading }, { dispatch }) => {
   return await Promise.all([
     permissionCache.usePermission([
       PermissionType.report_learning_summary_org_652,
@@ -365,19 +390,130 @@ export const getStudentsByOrg = createAsyncThunk<
       PermissionType.report_learning_summary_teacher_650,
       PermissionType.report_learning_summary_student_649,
     ]),
-    gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
-      query: MyPermissionsAndClassesTeachingQueryDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<StudentsByOrganizationQuery, StudentsByOrganizationQueryVariables>({
-      query: StudentsByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
+    dispatch(getMyPermissionClassAndTeaching())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getStudentOrganizationDocument())
+      .unwrap()
+      .then((res) => res.res),
   ]);
+});
+
+export const getMyPermissionClassAndTeaching = createAsyncThunk<
+  { res: ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>; organization_id: string },
+  {} | undefined,
+  { state: RootState }
+>("getMyPermissionClassAndTeaching", async (p, { getState }) => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const {
+    report: { optionalData },
+  } = getState();
+  if (
+    optionalData.getMyPermissionClassAndTeaching.organization_id === organization_id &&
+    optionalData.getMyPermissionClassAndTeaching.res
+  ) {
+    return {
+      res: optionalData.getMyPermissionClassAndTeaching.res,
+      organization_id: optionalData.getMyPermissionClassAndTeaching.organization_id,
+    };
+  }
+  const res = await gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
+    query: MyPermissionsAndClassesTeachingQueryDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return {
+    organization_id,
+    res,
+  };
+});
+
+export const getStudentOrganizationDocument = createAsyncThunk<
+  { res: ApolloQueryResult<StudentsByOrganizationQuery>; organization_id: string },
+  {} | undefined,
+  { state: RootState }
+>("getStudentOrganizationDocument", async (p, { getState }) => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const {
+    report: { optionalData },
+  } = getState();
+  if (optionalData.getStudentOrganizationDocument.organization_id === organization_id && optionalData.getStudentOrganizationDocument.res) {
+    return {
+      res: optionalData.getStudentOrganizationDocument.res,
+      organization_id: optionalData.getStudentOrganizationDocument.organization_id,
+    };
+  }
+  const res = await gqlapi.query<StudentsByOrganizationQuery, StudentsByOrganizationQueryVariables>({
+    query: StudentsByOrganizationDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return {
+    organization_id,
+    res,
+  };
+});
+
+export const getClassesSchoolsByOrganization = createAsyncThunk<
+  { res: ApolloQueryResult<ClassesSchoolsByOrganizationQuery>; organization_id: string },
+  {} | undefined,
+  { state: RootState }
+>("getClassesSchoolsByOrganization", async (p, { getState }) => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const {
+    report: { optionalData },
+  } = getState();
+  if (
+    optionalData.getClassesSchoolsByOrganization.organization_id === organization_id &&
+    optionalData.getClassesSchoolsByOrganization.res
+  ) {
+    return {
+      res: optionalData.getClassesSchoolsByOrganization.res,
+      organization_id: optionalData.getClassesSchoolsByOrganization.organization_id,
+    };
+  }
+  const res = await gqlapi.query<ClassesSchoolsByOrganizationQuery, ClassesSchoolsByOrganizationQueryVariables>({
+    query: ClassesSchoolsByOrganizationDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return {
+    organization_id,
+    res,
+  };
+});
+
+export const getSchoolsIdNameByOrganizationDocument = createAsyncThunk<
+  { res: ApolloQueryResult<SchoolsIdNameByOrganizationQuery>; organization_id: string },
+  {} | undefined,
+  { state: RootState }
+>("getSchoolsIdNameByOrganizationDocument", async (p, { getState }) => {
+  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  const {
+    report: { optionalData },
+  } = getState();
+  if (
+    optionalData.getSchoolsIdNameByOrganizationDocument.organization_id === organization_id &&
+    optionalData.getSchoolsIdNameByOrganizationDocument.res
+  ) {
+    return {
+      res: optionalData.getSchoolsIdNameByOrganizationDocument.res,
+      organization_id: optionalData.getSchoolsIdNameByOrganizationDocument.organization_id,
+    };
+  }
+  const res = await gqlapi.query<SchoolsIdNameByOrganizationQuery, SchoolsIdNameByOrganizationQueryVariables>({
+    query: SchoolsIdNameByOrganizationDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  return {
+    organization_id,
+    res,
+  };
 });
 /**
  *
@@ -393,39 +529,27 @@ export const getTeachersByOrg = createAsyncThunk<
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
     ApolloQueryResult<ClassesTeachersByOrganizationQuery>
   ],
-  LoadingMetaPayload
->("getTeachersByOrg", async ({ metaLoading }) => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  LoadingMetaPayload,
+  { state: RootState }
+>("getTeachersByOrg", async ({ metaLoading }, { dispatch }) => {
   return await Promise.all([
     permissionCache.usePermission([
       PermissionType.report_organization_teaching_load_617,
       PermissionType.report_school_teaching_load_618,
       PermissionType.report_my_teaching_load_619,
     ]),
-    gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
-      query: MyPermissionsAndClassesTeachingQueryDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<ClassesSchoolsByOrganizationQuery, ClassesSchoolsByOrganizationQueryVariables>({
-      query: ClassesSchoolsByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<SchoolsIdNameByOrganizationQuery, SchoolsIdNameByOrganizationQueryVariables>({
-      query: SchoolsIdNameByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<ClassesTeachersByOrganizationQuery, ClassesTeachersByOrganizationQueryVariables>({
-      query: ClassesTeachersByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
+    dispatch(getMyPermissionClassAndTeaching())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getClassesSchoolsByOrganization())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getSchoolsIdNameByOrganizationDocument())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getStudentOrganizationDocument())
+      .unwrap()
+      .then((res) => res.res),
   ]);
 });
 
@@ -444,9 +568,9 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
     ApolloQueryResult<ClassStudentsByOrganizationQuery>,
     Pick<Program, "id" | "name" | "subjects">[] | Pick<Program, "id" | "name">[]
   ],
-  LoadingMetaPayload
->("getStudentSubjectsByOrg", async ({ metaLoading }) => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  LoadingMetaPayload,
+  { state: RootState }
+>("getStudentSubjectsByOrg", async ({ metaLoading }, { dispatch }) => {
   return await Promise.all([
     permissionCache.usePermission([
       PermissionType.report_student_progress_organization_658,
@@ -454,30 +578,18 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
       PermissionType.report_student_progress_teacher_660,
       PermissionType.report_student_progress_student_661,
     ]),
-    gqlapi.query<MyPermissionsAndClassesTeachingQueryQuery, MyPermissionsAndClassesTeachingQueryQueryVariables>({
-      query: MyPermissionsAndClassesTeachingQueryDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<ClassesSchoolsByOrganizationQuery, ClassesSchoolsByOrganizationQueryVariables>({
-      query: ClassesSchoolsByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<SchoolsIdNameByOrganizationQuery, SchoolsIdNameByOrganizationQueryVariables>({
-      query: SchoolsIdNameByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
-    gqlapi.query<ClassStudentsByOrganizationQuery, ClassStudentsByOrganizationQueryVariables>({
-      query: ClassStudentsByOrganizationDocument,
-      variables: {
-        organization_id,
-      },
-    }),
+    dispatch(getMyPermissionClassAndTeaching())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getClassesSchoolsByOrganization())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getSchoolsIdNameByOrganizationDocument())
+      .unwrap()
+      .then((res) => res.res),
+    dispatch(getStudentOrganizationDocument())
+      .unwrap()
+      .then((res) => res.res),
     programsHandler.getProgramsOptions(true, true),
   ]);
 });
@@ -1209,6 +1321,42 @@ const { actions, reducer } = createSlice({
     [getAchievementList.pending.type]: (state, { payload }: PayloadAction<any>) => {
       state.reportList = initialState.reportList;
     },
+    [getMyPermissionClassAndTeaching.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getMyPermissionClassAndTeaching>>
+    ) => {
+      state.optionalData.getMyPermissionClassAndTeaching = {
+        res: payload.res as WritableDraft<ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>>,
+        organization_id: payload.organization_id,
+      };
+    },
+    [getStudentOrganizationDocument.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getMyPermissionClassAndTeaching>>
+    ) => {
+      state.optionalData.getStudentOrganizationDocument = {
+        res: payload.res as WritableDraft<ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>>,
+        organization_id: payload.organization_id,
+      };
+    },
+    [getClassesSchoolsByOrganization.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getClassesSchoolsByOrganization>>
+    ) => {
+      state.optionalData.getClassesSchoolsByOrganization = {
+        res: payload.res as WritableDraft<ApolloQueryResult<ClassesSchoolsByOrganizationQuery>>,
+        organization_id: payload.organization_id,
+      };
+    },
+    [getSchoolsIdNameByOrganizationDocument.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsIdNameByOrganizationDocument>>
+    ) => {
+      state.optionalData.getSchoolsIdNameByOrganizationDocument = {
+        res: payload.res as WritableDraft<ApolloQueryResult<ClassesSchoolsByOrganizationQuery>>,
+        organization_id: payload.organization_id,
+      };
+    },
     [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentsByOrg>>) => {
       const classes = payload[2].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
       const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
@@ -1371,6 +1519,11 @@ const { actions, reducer } = createSlice({
           }).length > 0;
         canSelectTeacher = false;
       }
+      schoolList = schoolList.filter((item) => {
+        return classList.some((classe) => {
+          return classe.schools?.find((school) => school?.school_id === item.school_id);
+        });
+      });
       state.schoolClassesTeachers = {
         classList: orderByASC(classList, "class_name"),
         schoolList: orderByASC(schoolList, "school_name"),
