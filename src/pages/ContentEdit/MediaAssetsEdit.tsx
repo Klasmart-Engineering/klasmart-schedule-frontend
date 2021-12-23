@@ -1,4 +1,4 @@
-import { apiValidatePDFGet, apiValidatePDFPost } from "@api/extra";
+import { apiValidatePDFGet, apiWebSocketValidatePDF } from "@api/extra";
 import { useDroppable } from "@dnd-kit/core";
 import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -123,10 +123,10 @@ function AssetEdit(props: AssetEditProps) {
     fun: () => Promise<useRequestPreSendReturnType>
   ): Promise<useRequestPreSendReturnType> | boolean => {
     dispatch(actSetLoading(true));
-    return apiValidatePDFPost(file)
-      .then((res) => {
+    return apiWebSocketValidatePDF(file)
+      .then((data) => {
         dispatch(actSetLoading(false));
-        if (!res.valid) {
+        if (!data.valid) {
           const content = t("library_msg_pdf_validation");
           dispatch(actAsyncConfirm({ content, hideCancel: true }));
           return false;
@@ -134,17 +134,18 @@ function AssetEdit(props: AssetEditProps) {
           return fun();
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         dispatch(actSetLoading(false));
         dispatch(actError(t("library_error_pdf_validation")));
         return false;
       });
   };
   const setFile = (data: DragData) => {
-    const source = JSON.parse(data.item.data).source;
+    const source: string = JSON.parse(data.item.data).source;
+    if (!source.includes("-")) return;
     if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
-      VerifyExistingPDF(source, onChange);
+      const resource_id = source.split("-").pop() || "";
+      VerifyExistingPDF(resource_id, onChange);
     } else {
       onChange(source);
     }

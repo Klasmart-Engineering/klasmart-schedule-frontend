@@ -29,17 +29,20 @@ export default function ReportPagination(props: IPagination) {
       <span style={{ marginRight: 6, fontSize: 14, color: "rgba(0, 0, 0, 0.54)" }}>
         {t("report_student_usage_of", { total: count, value: `${(page - 1) * rowsPerPage + 1}-${lastPage}` })}
       </span>
-      <IconButton disabled={page === 1}>
-        <FirstPage onClick={() => onChangePage(1)} />
+      <IconButton onClick={() => onChangePage(1)} disabled={page === 1}>
+        <FirstPage />
       </IconButton>
-      <IconButton disabled={page === 1}>
-        <ChevronLeft onClick={() => onChangePage(page - 1)} />
+      <IconButton onClick={() => onChangePage(page - 1)} disabled={page === 1}>
+        <ChevronLeft />
       </IconButton>
-      <IconButton disabled={page === Math.ceil(count / rowsPerPage) || count === 0}>
-        <ChevronRight onClick={() => onChangePage(page + 1)} />
+      <IconButton onClick={() => onChangePage(page + 1)} disabled={page === Math.ceil(count / rowsPerPage) || count === 0}>
+        <ChevronRight />
       </IconButton>
-      <IconButton disabled={page === Math.ceil(count / rowsPerPage) || count === 0}>
-        <LastPage onClick={() => onChangePage(Math.ceil(count / rowsPerPage))} />
+      <IconButton
+        onClick={() => onChangePage(Math.ceil(count / rowsPerPage))}
+        disabled={page === Math.ceil(count / rowsPerPage) || count === 0}
+      >
+        <LastPage />
       </IconButton>
     </div>
   );
