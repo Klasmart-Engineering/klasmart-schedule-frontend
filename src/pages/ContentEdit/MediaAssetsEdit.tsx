@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
-import { SingleUploader, useRequestPreSendReturnType } from "../../components/SingleUploader";
+import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview, getSuffix } from "../../components/UIAssetPreview/AssetPreview";
 import { d, t } from "../../locale/LocaleManager";
 import { actAsyncConfirm } from "../../reducers/confirm";
@@ -62,9 +62,8 @@ const useStyles = makeStyles(({ palette }) => ({
   uploadInfo: {
     border: "1px dashed #979797",
     padding: "10px 20px",
-    margin: "0 auto",
     width: "65%",
-    marginTop: 20,
+    margin: "20px auto",
   },
 }));
 
@@ -98,6 +97,7 @@ function AssetEdit(props: AssetEditProps) {
   const { lesson } = useParams<ContentEditRouteParams>();
   const dispatch = useDispatch();
   const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
+  const [percentage, setPercentage] = React.useState(-1);
   const isPreview = !!dataSource;
   const VerifyExistingPDF = (resourceId: string, onChange: AssetEditProps["onChange"]) => {
     dispatch(actSetLoading(true));
@@ -118,24 +118,21 @@ function AssetEdit(props: AssetEditProps) {
         onChange("");
       });
   };
-  const VerifyNotExistingPDF = (
-    file: FileLike,
-    fun: () => Promise<useRequestPreSendReturnType>
-  ): Promise<useRequestPreSendReturnType> | boolean => {
-    dispatch(actSetLoading(true));
-    return apiWebSocketValidatePDF(file)
+  const VerifyNotExistingPDF = (file: FileLike): Promise<boolean> => {
+    setPercentage(0);
+    return apiWebSocketValidatePDF(file, setPercentage)
       .then((data) => {
-        dispatch(actSetLoading(false));
+        setPercentage(-1);
         if (!data.valid) {
           const content = t("library_msg_pdf_validation");
           dispatch(actAsyncConfirm({ content, hideCancel: true }));
           return false;
         } else {
-          return fun();
+          return true;
         }
       })
       .catch(() => {
-        dispatch(actSetLoading(false));
+        setPercentage(-1);
         dispatch(actError(t("library_error_pdf_validation")));
         return false;
       });
@@ -206,14 +203,14 @@ function AssetEdit(props: AssetEditProps) {
             beforeUpload={lesson === "material" ? VerifyNotExistingPDF : undefined}
             render={({ item, btnRef, value, isUploading }) => (
               <>
-                {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
+                {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && percentage < 0 && (
                   <>
                     <p>{d("Drag from Assets Library").t("library_msg_drag_asset")}</p>
                     <p>or</p>
                   </>
                 )}
                 {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
-                {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
+                {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && percentage < 0 && (
                   <>
                     <Button variant="contained" color="primary" ref={btnRef} disabled={disabled}>
                       {d("Upload from Device").t("library_label_upload_from_device")}
@@ -231,6 +228,7 @@ function AssetEdit(props: AssetEditProps) {
                   </>
                 )}
                 {isUploading && <ProgressWithText value={item?.completed} />}
+                {percentage > -1 && <ProgressWithText value={percentage} />}
               </>
             )}
           />
