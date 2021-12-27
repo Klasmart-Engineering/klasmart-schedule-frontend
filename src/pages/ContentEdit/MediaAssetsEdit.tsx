@@ -1,4 +1,4 @@
-import { apiValidatePDFGet, apiValidatePDFPost } from "@api/extra";
+import { apiValidatePDFGet, apiWebSocketValidatePDF } from "@api/extra";
 import { useDroppable } from "@dnd-kit/core";
 import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import { ContentEditRouteParams } from ".";
 import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentFileType, ContentInputSourceType } from "../../api/type";
-import { SingleUploader, useRequestPreSendReturnType } from "../../components/SingleUploader";
+import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview, getSuffix } from "../../components/UIAssetPreview/AssetPreview";
 import { d, t } from "../../locale/LocaleManager";
 import { actAsyncConfirm } from "../../reducers/confirm";
@@ -62,9 +62,8 @@ const useStyles = makeStyles(({ palette }) => ({
   uploadInfo: {
     border: "1px dashed #979797",
     padding: "10px 20px",
-    margin: "0 auto",
     width: "65%",
-    marginTop: 20,
+    margin: "20px auto",
   },
 }));
 
@@ -98,17 +97,18 @@ function AssetEdit(props: AssetEditProps) {
   const { lesson } = useParams<ContentEditRouteParams>();
   const dispatch = useDispatch();
   const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
+  const [percentage, setPercentage] = React.useState(-1);
   const isPreview = !!dataSource;
-  const VerifyExistingPDF = (value: string, onChange: AssetEditProps["onChange"]) => {
+  const VerifyExistingPDF = (resourceId: string, onChange: AssetEditProps["onChange"]) => {
     dispatch(actSetLoading(true));
-    apiValidatePDFGet(value)
+    apiValidatePDFGet(resourceId)
       .then((res) => {
         dispatch(actSetLoading(false));
         if (!res.valid) {
           const content = t("library_msg_pdf_validation");
           dispatch(actAsyncConfirm({ content, hideCancel: true }));
         } else {
-          onChange(value);
+          onChange(resourceId);
         }
       })
       .catch((err) => {
@@ -118,33 +118,31 @@ function AssetEdit(props: AssetEditProps) {
         onChange("");
       });
   };
-  const VerifyNotExistingPDF = (
-    file: FileLike,
-    fun: () => Promise<useRequestPreSendReturnType>
-  ): Promise<useRequestPreSendReturnType> | boolean => {
-    dispatch(actSetLoading(true));
-    return apiValidatePDFPost(file)
-      .then((res) => {
-        dispatch(actSetLoading(false));
-        if (!res.valid) {
+  const VerifyNotExistingPDF = (file: FileLike): Promise<boolean> => {
+    setPercentage(0);
+    return apiWebSocketValidatePDF(file, setPercentage)
+      .then((data) => {
+        setPercentage(-1);
+        if (!data.valid) {
           const content = t("library_msg_pdf_validation");
           dispatch(actAsyncConfirm({ content, hideCancel: true }));
           return false;
         } else {
-          return fun();
+          return true;
         }
       })
-      .catch((err) => {
-        console.log(err);
-        dispatch(actSetLoading(false));
+      .catch(() => {
+        setPercentage(-1);
         dispatch(actError(t("library_error_pdf_validation")));
         return false;
       });
   };
   const setFile = (data: DragData) => {
-    const source = JSON.parse(data.item.data).source;
+    const source: string = JSON.parse(data.item.data).source;
+    if (!source.includes("-")) return;
     if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
-      VerifyExistingPDF(source, onChange);
+      const resourceId = source.split("-").pop() || "";
+      VerifyExistingPDF(resourceId, onChange);
     } else {
       onChange(source);
     }
@@ -205,14 +203,14 @@ function AssetEdit(props: AssetEditProps) {
             beforeUpload={lesson === "material" ? VerifyNotExistingPDF : undefined}
             render={({ item, btnRef, value, isUploading }) => (
               <>
-                {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && (
+                {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && percentage < 0 && (
                   <>
                     <p>{d("Drag from Assets Library").t("library_msg_drag_asset")}</p>
                     <p>or</p>
                   </>
                 )}
                 {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
-                {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && (
+                {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && percentage < 0 && (
                   <>
                     <Button variant="contained" color="primary" ref={btnRef} disabled={disabled}>
                       {d("Upload from Device").t("library_label_upload_from_device")}
@@ -230,6 +228,7 @@ function AssetEdit(props: AssetEditProps) {
                   </>
                 )}
                 {isUploading && <ProgressWithText value={item?.completed} />}
+                {percentage > -1 && <ProgressWithText value={percentage} />}
               </>
             )}
           />
