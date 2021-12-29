@@ -1,6 +1,6 @@
 import PermissionType from "@api/PermissionType";
 import { usePermission } from "@hooks/usePermission";
-import { Box, Collapse } from "@material-ui/core";
+import { Box, Collapse, useMediaQuery, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
@@ -20,7 +20,7 @@ import "moment/locale/ko";
 import "moment/locale/th";
 import "moment/locale/vi";
 import "moment/locale/zh-cn";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -99,6 +99,25 @@ const useStyles = makeStyles(({ shadows }) => ({
     cursor: "pointer",
     fontSize: 23,
   },
+  classTypeMb: {
+    width: "18px",
+    height: "21px",
+  },
+  customerEventMb: {
+    display: "flex",
+    height: "100%",
+    width: "100%",
+    position: "absolute",
+    left: 0,
+    paddingLeft: "8px",
+    top: 0,
+    "& div": {
+      marginRight: "6px",
+    },
+    "& span": {
+      marginTop: "2px",
+    },
+  },
 }));
 
 interface ScheduleListProps {
@@ -164,7 +183,7 @@ function ScheduleList(props: ScheduleListProps) {
   };
   return (
     <Box className={css.scheduleListBox}>
-      <Collapse in={checked} collapsedSize={isSameDay().length * 44}>
+      <Collapse in={checked} collapsedSize={isSameDay().length > 5 ? 5 * 44 : isSameDay().length * 44}>
         {isSameDay().map((schedule) => {
           return (
             <div
@@ -282,11 +301,15 @@ function MyCalendar(props: CalendarProps) {
   ]);
   const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
-  const scheduleTimeViewDataFormat = (data: EntityScheduleTimeView[]): scheduleInfoViewProps[] => {
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  const scheduleTimeViewDataFormat = useMemo(() => {
     const newViewData: any = [];
-    if (data.length > 0) {
-      data.forEach((item: EntityScheduleTimeView) => {
+    if (scheduleTimeViewData.length > 0) {
+      scheduleTimeViewData.forEach((item: EntityScheduleTimeView) => {
         if (!item) return;
+        if (item.end_at! - item.start_at! > 86398 && mobile) return;
         newViewData.push({
           ...item,
           end: new Date(Number(item.end_at) * 1000),
@@ -295,7 +318,7 @@ function MyCalendar(props: CalendarProps) {
       });
     }
     return newViewData;
-  };
+  }, [scheduleTimeViewData, mobile]);
 
   /**
    * rander data
@@ -315,6 +338,21 @@ function MyCalendar(props: CalendarProps) {
     ];
     switch (modelView) {
       case "day":
+        if (document.getElementsByClassName("rbc-current-time-indicator").length > 0) {
+          const indicator: any = document.getElementsByClassName("rbc-current-time-indicator")[0];
+          indicator.style.backgroundColor = "black";
+          indicator.style.height = "2px";
+          console.log(indicator.firstChild);
+          if (!indicator.firstChild) {
+            const blackBall = document.createElement("DIV");
+            blackBall.style.backgroundColor = "black";
+            blackBall.style.width = "10px";
+            blackBall.style.height = "10px";
+            blackBall.style.borderRadius = "10px";
+            blackBall.style.margin = "-4px";
+            indicator.appendChild(blackBall);
+          }
+        }
         return `${monthArr[M]} ${D}, ${Y}`;
       case "month":
         return `${Y} ${monthArr[M]}`;
@@ -567,7 +605,14 @@ function MyCalendar(props: CalendarProps) {
     };
   };
 
-  const CustomEvent = (event: any) => {
+  const eventColorMb = [
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon className={css.classTypeMb} /> },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon className={css.classTypeMb} /> },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon className={css.classTypeMb} /> },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={css.classTypeMb} /> },
+  ];
+
+  const CustomEventMonth = (event: any) => {
     const eventTemplate = eventColor.filter((item) => item.id === event.event.class_type);
     return (
       <div className={css.eventTemplateCalendar} style={{ backgroundColor: eventTemplate[0].color }}>
@@ -577,9 +622,20 @@ function MyCalendar(props: CalendarProps) {
     );
   };
 
+  const CustomEventDay = (event: any) => {
+    const padding = event.event.end_at - event.event.start_at > 3600;
+    const eventTemplate = eventColorMb.filter((item) => item.id === event.event.class_type);
+    return (
+      <div className={css.customerEventMb} style={{ backgroundColor: eventTemplate[0].color, paddingTop: padding ? "8px" : "0px" }}>
+        <div>{eventTemplate[0].icon}</div>
+        <span>{event.event.title}</span>
+      </div>
+    );
+  };
+
   return (
     <>
-      {modelView === "day" && (
+      {modelView === "day" && mobile && (
         <ScheduleList scheduleTimeViewData={scheduleTimeViewData} timesTamp={timesTamp} scheduleSelected={scheduleSelected} />
       )}
       <Box className={css.calendarBox}>
@@ -609,7 +665,7 @@ function MyCalendar(props: CalendarProps) {
             popup={true}
             selectable={true}
             localizer={localizer}
-            events={scheduleTimeViewDataFormat(scheduleTimeViewData)}
+            events={scheduleTimeViewDataFormat}
             startAccessor="start"
             endAccessor="end"
             toolbar={false}
@@ -620,7 +676,7 @@ function MyCalendar(props: CalendarProps) {
             style={{ height: "100vh" }}
             eventPropGetter={eventStyleGetter}
             components={{
-              event: modelView === "month" ? CustomEvent : undefined,
+              event: modelView === "month" ? CustomEventMonth : modelView === "day" ? CustomEventDay : undefined,
             }}
           />
         )}
