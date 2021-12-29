@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
   },
   templateMbBox: {
     width: "80vmin",
-    height: "75vh",
+    height: "70vh",
     paddingTop: "12px",
     paddingBottom: "12px",
   },
@@ -157,8 +157,8 @@ function TimeConflictsTemplateMb(props: TimeConflictsTemplateMbProps) {
   const { breakpoints } = useTheme();
   const mobile325 = useMediaQuery(breakpoints.down(325));
   const previewDetailMbHeight = () => {
-    if (mobile325) return "60vh";
-    return "63vh";
+    if (mobile325) return "56vh";
+    return "60vh";
   };
   return (
     <Box className={classes.templateMbBox}>
@@ -288,13 +288,13 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
         >
           <FormControlLabel
             value="not_schedule"
-            control={<Radio />}
+            control={<Radio color="primary" />}
             label={d("Not schedule").t("schedule_time_conflict_option_1")}
             className={css.radioItem}
           />
           <FormControlLabel
             value="schedule"
-            control={<Radio />}
+            control={<Radio color="primary" />}
             label={d("Schedule anyway").t("schedule_time_conflict_option_2")}
             className={css.radioItem}
           />
@@ -325,13 +325,13 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       >
         <FormControlLabel
           value="not_schedule"
-          control={<Radio />}
+          control={<Radio color="primary" />}
           label={d("Not schedule").t("schedule_time_conflict_option_1")}
           className={css.radioItem}
         />
         <FormControlLabel
           value="schedule"
-          control={<Radio />}
+          control={<Radio color="primary" />}
           label={d("Schedule anyway").t("schedule_time_conflict_option_2")}
           className={css.radioItem}
         />
