@@ -58,6 +58,10 @@ function RouterButton(props: ButtonProps) {
             (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "OfflineClass")
               ? "none"
               : "block",
+          backgroundColor: "#E4F1FF",
+          color: "#0E78D5",
+          border: "1px solid #ADC5E0",
+          boxShadow: "none",
         }}
         onClick={() => {
           document.documentElement.style.overflow = "auto";

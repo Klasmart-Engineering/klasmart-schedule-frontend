@@ -126,7 +126,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       color: "#4DA7A8",
       marginTop: "40px",
-      fontSize: "14px",
+      fontSize: "15px",
       fontWeight: "bold",
     },
     anyTimeItem: {
@@ -688,13 +688,13 @@ function ScheduleAnyTimeMb(props: InfoMbProps) {
         <h2 style={{ margin: 0 }}>{anyTimeName}</h2>
         <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
           <div className={classes.anyTimeTitleMb}>
-            <LocalLibraryOutlinedIcon className={classes.eventIcon} /> {d("View Anytime Study").t("schedule_filter_view_any_time_study")}
+            <LocalLibraryOutlinedIcon className={classes.eventIcon} /> {d("Anytime Study").t("schedule_any_anytime_study")}
           </div>
           {anyTimeData.study.map((view: EntityScheduleListView) => {
             return (
-              <div key={view.id}>
+              <div key={view.id} style={{ marginBottom: "18px" }}>
                 <div className={classes.anyTimeItem}>
-                  <span style={{ fontSize: "18px", color: "#666666" }}>{view.title} </span>
+                  <span style={{ fontSize: "17px", color: "#666666", fontWeight: 600 }}>{view.title} </span>
                   {buttonGroupMb(view, true)}
                 </div>
                 <div style={{ display: "flex" }}>
@@ -711,7 +711,7 @@ function ScheduleAnyTimeMb(props: InfoMbProps) {
             return (
               <div key={view.id}>
                 <div className={classes.anyTimeItem}>
-                  <span style={{ fontSize: "18px", color: "#666666" }}>{view.title} </span>
+                  <span style={{ fontSize: "17px", color: "#666666", fontWeight: 600 }}>{view.title} </span>
                   {buttonGroupMb(view, true)}
                 </div>
               </div>

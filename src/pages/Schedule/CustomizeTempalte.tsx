@@ -158,8 +158,11 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     "& span:last-child": {
       display: "block",
       marginTop: "6px",
+      fontSize: "15px",
     },
     "& span:first-child": {
+      fontSize: "13px",
+      fontWeight: 600,
       color: "#A9A9A9",
     },
   },
@@ -170,6 +173,19 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     [breakpoints.down(650)]: {
       paddingLeft: "38px",
     },
+  },
+  timeMb: {
+    fontWeight: 600,
+    display: "block",
+    marginTop: "6px",
+    color: "#5E5F61",
+  },
+  titleMb: {
+    display: "block",
+    marginLeft: "18px",
+    fontWeight: "bold",
+    fontSize: "18px",
+    marginTop: "8px",
   },
 }));
 
@@ -286,17 +302,15 @@ function CustomizeTempalteMb(props: InfoMbProps) {
       <div style={{ paddingLeft: "8%", paddingRight: "2%" }}>
         <div style={{ color: eventTemplate[0].color, display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
           {eventTemplate[0].icon}
-          <span style={{ display: "block", marginLeft: "18px", fontWeight: "bold", fontSize: "18px" }}>{eventTemplate[0].title}</span>
+          <span className={classes.titleMb}>{eventTemplate[0].title}</span>
         </div>
         <div>
           <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
             <h2 style={{ margin: "16px 0 3px 0px" }}>{textEllipsis(20, ScheduleViewInfo.title)}</h2>
           </Tooltip>
           <span
+            className={classes.timeMb}
             style={{
-              display: "block",
-              marginTop: "6px",
-              color: "gray",
               visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
             }}
           >
@@ -305,10 +319,8 @@ function CustomizeTempalteMb(props: InfoMbProps) {
               : timestampToTime(ScheduleViewInfo.start_at as number)}
           </span>
           <span
+            className={classes.timeMb}
             style={{
-              display: "block",
-              marginTop: "6px",
-              color: "gray",
               visibility:
                 ScheduleViewInfo.class_type_label?.id !== "Homework" &&
                 !sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number)
