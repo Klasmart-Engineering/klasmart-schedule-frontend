@@ -44,6 +44,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   firstIcon: {
     color: "#0e78d5",
     cursor: "pointer",
+    marginLeft: "25px",
   },
   lastIcon: {
     color: "red",
@@ -145,7 +146,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     left: 0,
   },
   eventIcon: {
-    fontSize: "38px",
+    fontSize: "34px",
   },
   previewDetailMb: {
     marginTop: "20px",
@@ -277,7 +278,6 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
       <div style={{ textAlign: "end", padding: "4.6%" }}>
-        <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
           <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
         )}
@@ -297,6 +297,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
             }
           />
         )}
+        <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         <CloseOutlined className={classes.lastIcon} style={{ color: "#000000" }} onClick={handleClose} />
       </div>
       <div style={{ paddingLeft: "8%", paddingRight: "2%" }}>
@@ -660,7 +661,6 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span>{textEllipsis(10, ScheduleViewInfo.title)}</span>
         </Tooltip>
         <div>
-          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
@@ -680,6 +680,7 @@ export default function CustomizeTempalte(props: InfoProps) {
               }
             />
           )}
+          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         </div>
       </div>
       {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
