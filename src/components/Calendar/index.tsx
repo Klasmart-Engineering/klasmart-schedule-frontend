@@ -151,9 +151,21 @@ function ScheduleList(props: ScheduleListProps) {
     const CharacterCount = 17;
     return value ? reBytesStr(value, CharacterCount) : "";
   };
+
+  const dateFormat = (timesTamp: number) => {
+    const date = new Date(timesTamp * 1000);
+    return new Date(`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`).getTime() / 1000;
+  };
+
   const isSameDay = () => {
     return scheduleTimeViewData.filter((schedule) => {
-      return schedule.start_at! < timesTamp.start && timesTamp.start < schedule.end_at! && schedule.end_at! - schedule.start_at! > 86398;
+      console.log(dateFormat(timesTamp.start));
+      // dateFormat(schedule.start_at as number) !== dateFormat(schedule.end_at as number)
+      return (
+        schedule.start_at! < dateFormat(timesTamp.start) + 86399 &&
+        dateFormat(timesTamp.start) < schedule.end_at! &&
+        schedule.end_at! - schedule.start_at! > 86398
+      );
     });
   };
   const eventTemplate = (schedule: EntityScheduleTimeView) => eventColor.filter((item) => item.id === schedule.class_type);
@@ -183,7 +195,7 @@ function ScheduleList(props: ScheduleListProps) {
   };
   return (
     <Box className={css.scheduleListBox}>
-      <Collapse in={checked} collapsedSize={isSameDay().length > 5 ? 5 * 44 : isSameDay().length * 44}>
+      <Collapse in={checked} collapsedSize={isSameDay().length > 3 ? 3 * 44 : isSameDay().length * 44}>
         {isSameDay().map((schedule) => {
           return (
             <div
@@ -198,7 +210,7 @@ function ScheduleList(props: ScheduleListProps) {
           );
         })}
       </Collapse>
-      {isSameDay().length > 5 && (
+      {isSameDay().length > 3 && (
         <p
           onClick={() => {
             setChecked(!checked);

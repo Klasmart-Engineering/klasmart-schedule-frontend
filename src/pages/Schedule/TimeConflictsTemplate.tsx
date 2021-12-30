@@ -1,5 +1,5 @@
 import { Box, Button, FormControlLabel, Grid, IconButton, makeStyles, Radio, RadioGroup, useMediaQuery, useTheme } from "@material-ui/core";
-import { CloseOutlined, PersonOutline } from "@material-ui/icons";
+import { CloseOutlined, School } from "@material-ui/icons";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
 import { ClassOptionsItem, ConflictsData, ParticipantsShortInfo } from "../../types/scheduleTypes";
@@ -114,6 +114,8 @@ const useStyles = makeStyles((theme) => ({
   },
   desTitle: {
     color: "#666666",
+    fontWeight: 600,
+    fontSize: "15px",
   },
 }));
 
@@ -273,7 +275,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
       <Grid item xs={5} sm={4} md={4} lg={4} xl={4} className={css.IconBox}>
         {type === "teacher" && (
           <IconButton className={css.itemIcon}>
-            <PersonOutline />
+            <School style={{ fontSize: "20px" }} />
           </IconButton>
         )}
         <h4 className={css.itemName}>{item.name}</h4>
@@ -308,12 +310,12 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
     type: string,
     signal: "class_roster_student_ids" | "class_roster_teacher_ids" | "participants_student_ids" | "participants_teacher_ids"
   ) => (
-    <div>
+    <div style={{ marginTop: "18px" }}>
       <div style={{ display: "flex" }}>
         <span className={css.desTitle} style={{ marginRight: "10px" }}>
           {item.name}
         </span>{" "}
-        {type === "teacher" && <PersonOutline />}
+        {type === "teacher" && <School style={{ fontSize: "20px" }} />}
       </div>
       <RadioGroup
         aria-label="gender"
