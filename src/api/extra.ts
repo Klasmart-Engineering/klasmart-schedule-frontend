@@ -66,6 +66,7 @@ function getWebsocketApi() {
   if (!url.includes("https")) return "";
   return url.replace("https", "wss");
 }
+const DOMAIN = getWebsocketApi();
 
 export const apiResourcePathById = (resource_id?: string) => {
   if (!resource_id) return;
@@ -99,13 +100,33 @@ export const apiValidatePDFPost = (file: FileLike) => {
     return response.json();
   });
 };
-export const apiWebSocketValidatePDF = (file: FileLike, onChangePercentage?: (percentage: number) => any) => {
+export const apiWebSocketValidatePDFById = (resourceId: string, onChangePercentage?: (percentage: number) => any) => {
   return new Promise((resolve: (data: ValidationStatus) => any, reject: () => any) => {
-    const domain = getWebsocketApi();
-    if (!domain) {
+    if (!DOMAIN) {
       reject();
     }
-    const ws = new WebSocket(`${domain}/pdf/v2/validate`);
+    const ws = new WebSocket(`${DOMAIN}/pdf/v2/${resourceId}/validate`);
+    ws.addEventListener("open", async () => {
+      ws.send(resourceId);
+    });
+    ws.addEventListener("message", (messageEvent) => {
+      const data = JSON.parse(messageEvent.data);
+      const percentage = Math.floor((data.pagesValidated / data.totalPages) * 100);
+      onChangePercentage?.(percentage);
+      if (data.validationComplete) {
+        resolve(data);
+        ws.close();
+      }
+    });
+    ws.addEventListener("error", reject);
+  });
+};
+export const apiWebSocketValidatePDF = (file: FileLike, onChangePercentage?: (percentage: number) => any) => {
+  return new Promise((resolve: (data: ValidationStatus) => any, reject: () => any) => {
+    if (!DOMAIN) {
+      reject();
+    }
+    const ws = new WebSocket(`${DOMAIN}/pdf/v2/validate`);
     ws.binaryType = "arraybuffer";
     ws.addEventListener("open", async () => {
       const files = file as unknown as Blob;

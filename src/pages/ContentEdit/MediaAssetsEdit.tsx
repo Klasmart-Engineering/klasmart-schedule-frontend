@@ -1,4 +1,4 @@
-import { apiValidatePDFGet, apiWebSocketValidatePDF } from "@api/extra";
+import { apiWebSocketValidatePDF, apiWebSocketValidatePDFById } from "@api/extra";
 import { useDroppable } from "@dnd-kit/core";
 import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -16,7 +16,6 @@ import { SingleUploader } from "../../components/SingleUploader";
 import { AssetPreview, getSuffix } from "../../components/UIAssetPreview/AssetPreview";
 import { d, t } from "../../locale/LocaleManager";
 import { actAsyncConfirm } from "../../reducers/confirm";
-import { actSetLoading } from "../../reducers/loading";
 import { ProgressWithText } from "./Details";
 import { DragData } from "./PlanComposeGraphic";
 
@@ -99,23 +98,22 @@ function AssetEdit(props: AssetEditProps) {
   const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const [percentage, setPercentage] = React.useState(-1);
   const isPreview = !!dataSource;
-  const VerifyExistingPDF = (resourceId: string, onChange: AssetEditProps["onChange"]) => {
-    dispatch(actSetLoading(true));
-    apiValidatePDFGet(resourceId)
-      .then((res) => {
-        dispatch(actSetLoading(false));
-        if (!res.valid) {
+  const VerifyExistingPDF = (source: string, onChange: AssetEditProps["onChange"]) => {
+    const resourceId = source.split("-").pop() || "";
+    setPercentage(0);
+    apiWebSocketValidatePDFById(resourceId, setPercentage)
+      .then((data) => {
+        setPercentage(-1);
+        if (!data.valid) {
           const content = t("library_msg_pdf_validation");
           dispatch(actAsyncConfirm({ content, hideCancel: true }));
         } else {
-          onChange(resourceId);
+          onChange(source);
         }
       })
-      .catch((err) => {
-        console.log(err);
-        dispatch(actSetLoading(false));
+      .catch(() => {
+        setPercentage(-1);
         dispatch(actError(t("library_error_pdf_validation")));
-        onChange("");
       });
   };
   const VerifyNotExistingPDF = (file: FileLike): Promise<boolean> => {
@@ -141,8 +139,7 @@ function AssetEdit(props: AssetEditProps) {
     const source: string = JSON.parse(data.item.data).source;
     if (!source.includes("-")) return;
     if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
-      const resourceId = source.split("-").pop() || "";
-      VerifyExistingPDF(resourceId, onChange);
+      VerifyExistingPDF(source, onChange);
     } else {
       onChange(source);
     }
