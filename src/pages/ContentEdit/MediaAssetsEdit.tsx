@@ -136,6 +136,7 @@ function AssetEdit(props: AssetEditProps) {
       });
   };
   const setFile = (data: DragData) => {
+    if (percentage >= 0) return;
     const source: string = JSON.parse(data.item.data).source;
     if (!source.includes("-")) return;
     if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
