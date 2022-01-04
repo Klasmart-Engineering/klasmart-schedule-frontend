@@ -97,6 +97,7 @@ function AssetEdit(props: AssetEditProps) {
   const dispatch = useDispatch();
   const { isAsset, contentDetail, disabled, value: dataSource, onChange, onChangeInputSource, assetLibraryId } = props;
   const [percentage, setPercentage] = React.useState(-1);
+  const [isUploading, setIsUploading] = React.useState(false);
   const isPreview = !!dataSource;
   const VerifyExistingPDF = (source: string, onChange: AssetEditProps["onChange"]) => {
     const resourceId = source.split("-").pop() || "";
@@ -136,7 +137,7 @@ function AssetEdit(props: AssetEditProps) {
       });
   };
   const setFile = (data: DragData) => {
-    if (percentage >= 0) return;
+    if (percentage >= 0 || isUploading) return;
     const source: string = JSON.parse(data.item.data).source;
     if (!source.includes("-")) return;
     if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
@@ -148,7 +149,7 @@ function AssetEdit(props: AssetEditProps) {
   };
   const dropType = "LIBRARY_ITEM";
   const { isOver, active, setNodeRef: fileRef } = useDroppable({ id: "MEDIA_ASSETS_EDIT_ID", data: { accept: [dropType], drop: setFile } });
-  const canDropfile = percentage < 0 && isOver && active?.data.current?.type === dropType;
+  const canDropfile = percentage < 0 && !isUploading && isOver && active?.data.current?.type === dropType;
   const handleChangeFileType = useCallback(() => {
     onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromFile);
   }, [onChangeInputSource]);
@@ -199,36 +200,39 @@ function AssetEdit(props: AssetEditProps) {
             value={dataSource}
             onChange={onChange}
             beforeUpload={lesson === "material" ? VerifyNotExistingPDF : undefined}
-            render={({ item, btnRef, value, isUploading }) => (
-              <>
-                {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && percentage < 0 && (
-                  <>
-                    <p>{d("Drag from Assets Library").t("library_msg_drag_asset")}</p>
-                    <p>or</p>
-                  </>
-                )}
-                {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
-                {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && percentage < 0 && (
-                  <>
-                    <Button variant="contained" color="primary" ref={btnRef} disabled={disabled}>
-                      {d("Upload from Device").t("library_label_upload_from_device")}
-                    </Button>
-                    <div className={css.uploadInfo}>
-                      <Typography style={{ color: "rgba(0,0,0,0.87)" }}>
-                        {d("Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MP4, MP3, WAV").t("library_label_uploadInfo1")}
-                      </Typography>
-                      <Typography variant="body1" style={{ color: "#999999", fontSize: "14px" }}>
-                        {d("(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)").t(
-                          "library_label_uploadInfo2"
-                        )}
-                      </Typography>
-                    </div>
-                  </>
-                )}
-                {isUploading && <ProgressWithText value={item?.completed} />}
-                {percentage > -1 && <ProgressWithText value={percentage} />}
-              </>
-            )}
+            render={({ item, btnRef, value, isUploading }) => {
+              setIsUploading(isUploading || false);
+              return (
+                <>
+                  {(JSON.stringify(value) === "{}" || !value) && !isUploading && !isAsset && percentage < 0 && (
+                    <>
+                      <p>{d("Drag from Assets Library").t("library_msg_drag_asset")}</p>
+                      <p>or</p>
+                    </>
+                  )}
+                  {!(JSON.stringify(value) === "{}" || !value) && <AssetPreview className={css.assetPreviewBox} resourceId={value} />}
+                  {(isAsset ? !isUploading && !contentDetail.id : !isUploading) && percentage < 0 && (
+                    <>
+                      <Button variant="contained" color="primary" ref={btnRef} disabled={disabled}>
+                        {d("Upload from Device").t("library_label_upload_from_device")}
+                      </Button>
+                      <div className={css.uploadInfo}>
+                        <Typography style={{ color: "rgba(0,0,0,0.87)" }}>
+                          {d("Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MP4, MP3, WAV").t("library_label_uploadInfo1")}
+                        </Typography>
+                        <Typography variant="body1" style={{ color: "#999999", fontSize: "14px" }}>
+                          {d(
+                            "(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)"
+                          ).t("library_label_uploadInfo2")}
+                        </Typography>
+                      </div>
+                    </>
+                  )}
+                  {isUploading && <ProgressWithText value={item?.completed} />}
+                  {percentage > -1 && <ProgressWithText value={percentage} />}
+                </>
+              );
+            }}
           />
         </div>
       </div>
