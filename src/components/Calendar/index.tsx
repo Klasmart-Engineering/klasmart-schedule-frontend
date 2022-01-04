@@ -159,8 +159,6 @@ function ScheduleList(props: ScheduleListProps) {
 
   const isSameDay = () => {
     return scheduleTimeViewData.filter((schedule) => {
-      console.log(dateFormat(timesTamp.start));
-      // dateFormat(schedule.start_at as number) !== dateFormat(schedule.end_at as number)
       return (
         schedule.start_at! < dateFormat(timesTamp.start) + 86399 &&
         dateFormat(timesTamp.start) < schedule.end_at! &&
@@ -193,9 +191,16 @@ function ScheduleList(props: ScheduleListProps) {
   const scheduleViewInfo = (info: EntityScheduleTimeView) => {
     scheduleSelected({ ...info, start: new Date(info.start_at! * 1000), end: new Date(info.end_at! * 1000) } as scheduleInfoViewProps);
   };
+
+  React.useEffect(() => {
+    setChecked(false);
+  }, [timesTamp]);
+
+  const height = isSameDay().length > 3 ? 3 * 43 : isSameDay().length * 43;
+
   return (
     <Box className={css.scheduleListBox}>
-      <Collapse in={checked} collapsedSize={isSameDay().length > 3 ? 3 * 44 : isSameDay().length * 44}>
+      <Collapse in={checked} style={{ height: height + "px" }} collapsedSize={height}>
         {isSameDay().map((schedule) => {
           return (
             <div
