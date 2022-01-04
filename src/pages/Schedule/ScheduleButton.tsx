@@ -40,6 +40,14 @@ function RouterButton(props: ButtonProps) {
     schedulePopup: classes.popupButton,
     scheduleAnyTime: classes.anyTimeButton,
   };
+  const disabled = () => {
+    return (
+      (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
+      (scheduleInfo.role_type === "Student" && scheduleInfo.complete_assessment) ||
+      !scheduleInfo.lesson_plan_id ||
+      scheduleInfo.lesson_plan?.is_auth === false
+    );
+  };
   return (
     <>
       <Button
@@ -76,18 +84,15 @@ function RouterButton(props: ButtonProps) {
         autoFocus
         className={buttonClass[templateType]}
         style={{
+          backgroundColor: disabled() ? "" : "#0E78D5",
+          color: disabled() ? "" : "#E5E5E5",
           display:
             (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type_label?.id === "Homework") ||
             (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "OfflineClass")
               ? "none"
               : "block",
         }}
-        disabled={
-          (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
-          (scheduleInfo.role_type === "Student" && scheduleInfo.complete_assessment) ||
-          !scheduleInfo.lesson_plan_id ||
-          scheduleInfo.lesson_plan?.is_auth === false
-        }
+        disabled={disabled()}
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
         {scheduleInfo.class_type_label?.id === "Homework" && d("Go Study").t("schedule_button_go_study")}
