@@ -136,6 +136,7 @@ function AssetEdit(props: AssetEditProps) {
       });
   };
   const setFile = (data: DragData) => {
+    if (percentage >= 0) return;
     const source: string = JSON.parse(data.item.data).source;
     if (!source.includes("-")) return;
     if (source && lesson === "material" && fileFormat.pdf.indexOf(`.${getSuffix(source)}`) >= 0) {
@@ -147,7 +148,7 @@ function AssetEdit(props: AssetEditProps) {
   };
   const dropType = "LIBRARY_ITEM";
   const { isOver, active, setNodeRef: fileRef } = useDroppable({ id: "MEDIA_ASSETS_EDIT_ID", data: { accept: [dropType], drop: setFile } });
-  const canDropfile = isOver && active?.data.current?.type === dropType;
+  const canDropfile = percentage < 0 && isOver && active?.data.current?.type === dropType;
   const handleChangeFileType = useCallback(() => {
     onChangeInputSource && onChangeInputSource(ContentInputSourceType.fromFile);
   }, [onChangeInputSource]);
