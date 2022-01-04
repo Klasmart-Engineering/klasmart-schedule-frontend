@@ -160,12 +160,12 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       display: "block",
       marginTop: "6px",
       fontSize: "15px",
+      wordBreak: "break-word",
     },
     "& span:first-child": {
       fontSize: "13px",
       fontWeight: 600,
       color: "#A9A9A9",
-      wordBreak: "break-all",
     },
   },
   lessonText: {
