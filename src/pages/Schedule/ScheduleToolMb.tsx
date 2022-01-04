@@ -113,9 +113,10 @@ function Tool(props: ToolProps) {
                         style={{ width: "50%" }}
                         onClick={() => {
                           toolRouter("create");
+                          document.body.scrollTop = document.documentElement.scrollTop = 0;
                         }}
                       >
-                        <span style={{ fontSize: "23px", marginRight: "12px" }}>+</span>{" "}
+                        <span style={{ fontSize: "1.2rem", marginRight: "1rem" }}>+</span>{" "}
                         {d("Schedule Class").t("schedue_button_schedule_class")}
                       </Button>
                     )
