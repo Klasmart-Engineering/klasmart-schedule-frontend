@@ -112,7 +112,7 @@ export default function AssignmentCompletion() {
         studentProgressReportTitle={d("Assignments Completion Rate").t("report_label_assignments_completion_rate")}
       />
       <div className={css.chart}>
-        <StudentProgressBarChart itemUnit={"%"} data={chartData} label={label} />
+        <StudentProgressBarChart itemUnit={"%"} data={chartData} label={label} durationTime={durationTime} />
       </div>
       <div>
         <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} isLearningOutcomeAchieved={false} />

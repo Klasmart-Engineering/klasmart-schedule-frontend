@@ -188,7 +188,7 @@ function SubmitTemplate(props: SubmitProps) {
       <Button
         variant="contained"
         color="primary"
-        style={{ width: "200px", marginTop: "40px", borderRadius: "10px" }}
+        style={{ width: "200px", marginTop: "40px", borderRadius: "10px", fontWeight: "bold" }}
         onClick={feedBackSubmit}
       >
         {d("OK").t("assess_label_ok")}

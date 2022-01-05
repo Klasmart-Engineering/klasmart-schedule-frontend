@@ -44,6 +44,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   firstIcon: {
     color: "#0e78d5",
     cursor: "pointer",
+    marginLeft: "25px",
   },
   lastIcon: {
     color: "red",
@@ -145,7 +146,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     left: 0,
   },
   eventIcon: {
-    fontSize: "38px",
+    fontSize: "34px",
   },
   previewDetailMb: {
     marginTop: "20px",
@@ -158,8 +159,12 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     "& span:last-child": {
       display: "block",
       marginTop: "6px",
+      fontSize: "15px",
+      wordBreak: "break-word",
     },
     "& span:first-child": {
+      fontSize: "13px",
+      fontWeight: 600,
       color: "#A9A9A9",
     },
   },
@@ -170,6 +175,19 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     [breakpoints.down(650)]: {
       paddingLeft: "38px",
     },
+  },
+  timeMb: {
+    fontWeight: 600,
+    display: "block",
+    marginTop: "6px",
+    color: "#5E5F61",
+  },
+  titleMb: {
+    display: "block",
+    marginLeft: "18px",
+    fontWeight: "bold",
+    fontSize: "18px",
+    marginTop: "8px",
   },
 }));
 
@@ -261,7 +279,6 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
       <div style={{ textAlign: "end", padding: "4.6%" }}>
-        <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
           <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
         )}
@@ -281,22 +298,27 @@ function CustomizeTempalteMb(props: InfoMbProps) {
             }
           />
         )}
+        <EditOutlined
+          className={classes.firstIcon}
+          onClick={() => {
+            handleEditSchedule(ScheduleViewInfo);
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
+          }}
+        />
         <CloseOutlined className={classes.lastIcon} style={{ color: "#000000" }} onClick={handleClose} />
       </div>
       <div style={{ paddingLeft: "8%", paddingRight: "2%" }}>
         <div style={{ color: eventTemplate[0].color, display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
           {eventTemplate[0].icon}
-          <span style={{ display: "block", marginLeft: "18px", fontWeight: "bold", fontSize: "18px" }}>{eventTemplate[0].title}</span>
+          <span className={classes.titleMb}>{eventTemplate[0].title}</span>
         </div>
         <div>
           <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
             <h2 style={{ margin: "16px 0 3px 0px" }}>{textEllipsis(20, ScheduleViewInfo.title)}</h2>
           </Tooltip>
           <span
+            className={classes.timeMb}
             style={{
-              display: "block",
-              marginTop: "6px",
-              color: "gray",
               visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
             }}
           >
@@ -305,10 +327,8 @@ function CustomizeTempalteMb(props: InfoMbProps) {
               : timestampToTime(ScheduleViewInfo.start_at as number)}
           </span>
           <span
+            className={classes.timeMb}
             style={{
-              display: "block",
-              marginTop: "6px",
-              color: "gray",
               visibility:
                 ScheduleViewInfo.class_type_label?.id !== "Homework" &&
                 !sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number)
@@ -648,7 +668,6 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span>{textEllipsis(10, ScheduleViewInfo.title)}</span>
         </Tooltip>
         <div>
-          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
@@ -668,6 +687,7 @@ export default function CustomizeTempalte(props: InfoProps) {
               }
             />
           )}
+          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         </div>
       </div>
       {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&

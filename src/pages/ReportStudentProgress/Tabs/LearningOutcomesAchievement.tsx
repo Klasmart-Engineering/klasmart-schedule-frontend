@@ -116,7 +116,7 @@ export default function LearningOutcomesAchievement() {
         studentProgressReportTitle={d("Learning Outcomes Achieved %").t("report_label_learning_outcomes_achieved")}
       />
       <div className={style.chart}>
-        <StudentProgressBarChart data={data} label={label} itemUnit={"%"} />
+        <StudentProgressBarChart data={data} label={label} itemUnit={"%"} durationTime={durationTime} />
       </div>
       <div>
         <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} isLearningOutcomeAchieved={true} />

@@ -21,6 +21,7 @@ export type BarGroupProps = {
   }[];
   label: { v1: string | string[]; v2: string; v3: string };
   itemUnit?: string;
+  durationTime?: number;
 };
 
 const useStyle = makeStyles((theme) =>
@@ -99,7 +100,6 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
         <Group top={margin.top} left={margin.left}>
           <BarGroup
             data={props.data.map((item) => {
-              console.log(item);
               return {
                 ...item,
                 v1: item.v1 instanceof Array ? item.v1.reduce((count, item) => item + count) * 100 : item.v1,
@@ -210,7 +210,10 @@ export default function StudentProgressBarChart(props: Omit<BarGroupProps, "heig
   return (
     <ParentSize>
       {(info) => {
-        return <Chart height={info.height} width={info.width} {...props} />;
+        if ((props.durationTime === 4 && props.data.length === 4) || (props.durationTime === 6 && props.data.length === 6)) {
+          return <Chart height={info.height} width={info.width} {...props} />;
+        }
+        return <></>;
       }}
     </ParentSize>
   );

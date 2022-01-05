@@ -52,6 +52,7 @@ import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+import ScheduleToolMb from "@pages/Schedule/ScheduleToolMb";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -100,6 +101,7 @@ function ScheduleContent() {
     userInUndefined,
     lessonPlans,
     filterOtherClasses,
+    scheduleTimeViewData,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId } = useQuery();
@@ -212,7 +214,7 @@ function ScheduleContent() {
   /**
    * calendar model view change
    */
-  const [modelView, setModelView] = React.useState<modeViewType>(document.body.clientWidth < 600 ? "day" : "month");
+  const [modelView, setModelView] = React.useState<modeViewType>(mobile ? "day" : "month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (event.target.value === "year") {
       setModelYear(true);
@@ -222,13 +224,13 @@ function ScheduleContent() {
     }
   };
 
-  window.addEventListener("resize", () => {
-    if (document.body.clientWidth < 600) {
+  React.useEffect(() => {
+    if (mobile) {
       setModelView("day");
     } else {
       setModelView("month");
     }
-  });
+  }, [mobile, setModelView]);
 
   /**
    * get participants
@@ -517,6 +519,20 @@ function ScheduleContent() {
               lessonPlans={lessonPlans}
             />
           </Grid>
+          {mobile && (
+            <Grid item xs={12}>
+              <ScheduleToolMb
+                includeList={includeList}
+                changeModelView={changeModelView}
+                modelView={modelView}
+                changeTimesTamp={changeTimesTamp}
+                timesTamp={timesTamp}
+                scheduleId={scheduleId}
+                modelYear={modelYear}
+                scheduleTimeViewData={scheduleTimeViewData}
+              />
+            </Grid>
+          )}
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
             <Zoom in={isShowAnyTime}>
               <Paper elevation={4}>

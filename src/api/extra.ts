@@ -52,14 +52,28 @@ export interface MockOptions {
   users: MockOptionsItem[];
   teacher_class_relationship: MockOptionsItemTeacherAndClass[];
 }
+export interface ValidationStatus {
+  key: string;
+  validationComplete: boolean;
+  valid?: boolean; // undefined when still validating
+  totalPages?: number; // undefined when the PDF document is completely invalid or corrupted and no page data is available
+  pagesValidated?: number; // undefined when totalPages is undefined
+}
+
+function getWebsocketApi() {
+  if (!process.env.REACT_APP_KO_BASE_API) return "";
+  const url = decodeURIComponent(process.env.REACT_APP_KO_BASE_API);
+  if (!url.includes("https")) return "";
+  return url.replace("https", "wss");
+}
+const DOMAIN = getWebsocketApi();
 
 export const apiResourcePathById = (resource_id?: string) => {
   if (!resource_id) return;
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
-export const apiValidatePDFGet = (resource_id: string) => {
-  const rid = resource_id.split("-")[1];
-  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${rid}/validate`;
+export const apiValidatePDFGet = (resourceId: string) => {
+  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${resourceId}/validate`;
   return fetch(url, {
     method: "GET",
     headers: {
@@ -84,6 +98,51 @@ export const apiValidatePDFPost = (file: FileLike) => {
     body: formData,
   }).then((response) => {
     return response.json();
+  });
+};
+export const apiWebSocketValidatePDFById = (resourceId: string, onChangePercentage?: (percentage: number) => any) => {
+  return new Promise((resolve: (data: ValidationStatus) => any, reject: () => any) => {
+    if (!DOMAIN) {
+      reject();
+    }
+    const ws = new WebSocket(`${DOMAIN}/pdf/v2/${resourceId}/validate`);
+    ws.addEventListener("open", async () => {
+      ws.send(resourceId);
+    });
+    ws.addEventListener("message", (messageEvent) => {
+      const data = JSON.parse(messageEvent.data);
+      const percentage = Math.floor((data.pagesValidated / data.totalPages) * 100);
+      onChangePercentage?.(percentage);
+      if (data.validationComplete) {
+        resolve(data);
+        ws.close();
+      }
+    });
+    ws.addEventListener("error", reject);
+  });
+};
+export const apiWebSocketValidatePDF = (file: FileLike, onChangePercentage?: (percentage: number) => any) => {
+  return new Promise((resolve: (data: ValidationStatus) => any, reject: () => any) => {
+    if (!DOMAIN) {
+      reject();
+    }
+    const ws = new WebSocket(`${DOMAIN}/pdf/v2/validate`);
+    ws.binaryType = "arraybuffer";
+    ws.addEventListener("open", async () => {
+      const files = file as unknown as Blob;
+      const data = files.arrayBuffer();
+      ws.send(await data);
+    });
+    ws.addEventListener("message", (messageEvent) => {
+      const data = JSON.parse(messageEvent.data);
+      const percentage = Math.floor((data.pagesValidated / data.totalPages) * 100);
+      onChangePercentage?.(percentage);
+      if (data.validationComplete) {
+        resolve(data);
+        ws.close();
+      }
+    });
+    ws.addEventListener("error", reject);
   });
 };
 

@@ -499,7 +499,13 @@ function EditBox(props: CalendarStateProps) {
   const rosterIsExist = (item: Maybe<{ __typename?: "User" | undefined } & Pick<User, "user_id" | "user_name">>, type: string) => {
     const rosterItem = [{ id: item?.user_id, name: item?.user_name }];
     const searchData = type === "students" ? classRosterIds?.student : classRosterIds?.teacher;
-    return searchData?.some((item) => JSON.stringify({ id: item.id, name: item.name }) === JSON.stringify(rosterItem[0])) as boolean;
+    return searchData?.some(
+      (item) =>
+        JSON.stringify({
+          id: item.id,
+          name: item.name,
+        }) === JSON.stringify(rosterItem[0])
+    ) as boolean;
   };
 
   React.useEffect(() => {
@@ -1011,7 +1017,11 @@ function EditBox(props: CalendarStateProps) {
 
     let resultInfo: any;
     resultInfo = (await dispatch(
-      saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
+      saveScheduleData({
+        payload: { ...scheduleList, ...addData },
+        is_new_schedule: is_new_schedule,
+        metaLoading: true,
+      })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
@@ -1351,7 +1361,10 @@ function EditBox(props: CalendarStateProps) {
 
   const handleHide = async () => {
     await dispatch(
-      scheduleShowOption({ schedule_id: scheduleId as string, show_option: { show_option: isHidden ? "visible" : "hidden" } })
+      scheduleShowOption({
+        schedule_id: scheduleId as string,
+        show_option: { show_option: isHidden ? "visible" : "hidden" },
+      })
     );
     handleChangeHidden(!isHidden);
     dispatch(
@@ -1526,8 +1539,36 @@ function EditBox(props: CalendarStateProps) {
     });
   };
 
+  const permsClassType = usePermission([
+    PermissionType.create_live_calendar_events_524,
+    PermissionType.create_class_calendar_events_525,
+    PermissionType.create_study_calendar_events_526,
+    PermissionType.create_home_fun_calendar_events_527,
+  ]);
+
   const menuItemListClassType = (list: MockOptionsItem[]) => {
-    const classType = list.map((item) => t(item.name as classTypeLabel)).sort();
+    const permsArr = [
+      {
+        id: "OfflineClass",
+        perms: permsClassType.create_class_calendar_events_525,
+      },
+      {
+        id: "OnlineClass",
+        perms: permsClassType.create_live_calendar_events_524,
+      },
+      {
+        id: "Homework",
+        perms: permsClassType.create_study_calendar_events_526,
+      },
+      {
+        id: "Task",
+        perms: permsClassType.create_home_fun_calendar_events_527,
+      },
+    ];
+    const classType = list
+      .filter((item) => permsArr.filter((perm) => perm.id === item.id)[0].perms)
+      .map((item) => t(item.name as classTypeLabel))
+      .sort();
     const getKey = (name: string) => {
       const key = list.filter((item) => t(item.name as classTypeLabel) === name);
       return key.length ? key[0].id : "";
@@ -2041,7 +2082,11 @@ function EditBox(props: CalendarStateProps) {
                       setIsForce(false);
                     }
                   }}
-                  style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+                  style={{
+                    float: "right",
+                    marginLeft: "8px",
+                    cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop",
+                  }}
                 />
               )}
               <br />
@@ -2141,7 +2186,11 @@ function EditBox(props: CalendarStateProps) {
                       setParticipantSaveStatus(false);
                     }
                   }}
-                  style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+                  style={{
+                    float: "right",
+                    marginLeft: "8px",
+                    cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop",
+                  }}
                 />
               )}
               <br />
@@ -2444,9 +2493,11 @@ interface CalendarStateProps {
   filterOtherClasses: GetClassFilterListQuery;
   getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
 }
+
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
 }
+
 export default function ScheduleEdit(props: ScheduleEditProps) {
   const {
     includePreview,
