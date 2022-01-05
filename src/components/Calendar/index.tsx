@@ -158,18 +158,18 @@ function ScheduleList(props: ScheduleListProps) {
   };
 
   const isSameDay = () => {
-    return scheduleTimeViewData.filter((schedule) => {
-      return (
-        schedule.start_at! < dateFormat(timesTamp.start) + 86399 &&
-        dateFormat(timesTamp.start) < schedule.end_at! &&
-        schedule.end_at! - schedule.start_at! > 86398
-      );
-    });
+    return [...scheduleTimeViewData]
+      ?.sort((timesTampA: EntityScheduleTimeView, timesTampB: EntityScheduleTimeView) => {
+        return timesTampA.start_at! - timesTampB.start_at!;
+      })
+      .filter((schedule) => {
+        return dateFormat(schedule.end_at!) !== dateFormat(schedule.start_at!);
+      });
   };
   const eventTemplate = (schedule: EntityScheduleTimeView) => eventColor.filter((item) => item.id === schedule.class_type);
   const getScheduleInfo = (schedule: EntityScheduleTimeView) => {
     const fullDay =
-      schedule.end_at! - schedule.start_at! > 86400
+      dateFormat(schedule.end_at!) !== dateFormat(schedule.start_at!)
         ? `(DAY ${GetDateDiff(timesTamp.start as number, schedule.start_at as number)}/${GetDateDiff(
             schedule.end_at as number,
             schedule.start_at as number
@@ -321,12 +321,17 @@ function MyCalendar(props: CalendarProps) {
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
 
+  const dateFormat = (timesTamp: number) => {
+    const date = new Date(timesTamp * 1000);
+    return new Date(`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`).getTime() / 1000;
+  };
+
   const scheduleTimeViewDataFormat = useMemo(() => {
     const newViewData: any = [];
     if (scheduleTimeViewData.length > 0) {
       scheduleTimeViewData.forEach((item: EntityScheduleTimeView) => {
         if (!item) return;
-        if (item.end_at! - item.start_at! > 86398 && mobile) return;
+        if (dateFormat(item.end_at!) !== dateFormat(item.start_at!) && mobile) return;
         newViewData.push({
           ...item,
           end: new Date(Number(item.end_at) * 1000),
