@@ -1,5 +1,17 @@
 import { OrganizationSortBy } from "@api/api-ko-schema.auto";
-import { Box, Checkbox, makeStyles, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import {
+  Box,
+  Checkbox,
+  makeStyles,
+  SvgIcon,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@material-ui/core";
 import React from "react";
 import { ReactComponent as SortSvg } from "../../assets/icons/Slice 1.svg";
 import { CheckboxGroupContext } from "../../components/CheckboxGroup";
@@ -11,6 +23,7 @@ const useOrgStyles = makeStyles(() => ({
   },
   tableCell: {
     padding: 0,
+    paddingLeft: 4,
   },
 }));
 interface OrgsTableProps {
@@ -37,13 +50,17 @@ export function OrgsTable(props: OrgsTableProps) {
           />
         }
       </TableCell>
-      <TableCell>{item.organization_name}</TableCell>
-      <TableCell>{item.email}</TableCell>
+      <TableCell style={{ borderRight: "1px solid rgba(0, 0, 0, .12)" }}>{item.organization_name}</TableCell>
+      <TableCell align="center" style={{ maxWidth: 330 }}>
+        <Typography style={{ fontSize: 14 }} noWrap>
+          {item.email}
+        </Typography>
+      </TableCell>
     </TableRow>
   ));
 
   return (
-    <TableContainer>
+    <TableContainer style={{ maxHeight: 597, overflow: "auto" }}>
       <Table stickyHeader>
         <TableHead className={css.tableHead}>
           <TableRow>
@@ -55,7 +72,7 @@ export function OrgsTable(props: OrgsTableProps) {
               </Box>
             </TableCell>
             <TableCell align="center">
-              <Box display="flex">
+              <Box display="flex" style={{ justifyContent: "center" }}>
                 {"Org Owner Email"}
                 <SvgIcon component={SortSvg} onClick={() => sortOrgList(OrganizationSortBy.OwnerEmail)} cursor="pointer" />
               </Box>

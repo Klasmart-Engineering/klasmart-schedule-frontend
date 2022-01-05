@@ -25,11 +25,11 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import { getOrgList, Region } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { AsyncTrunkReturned } from "@reducers/type";
+import { PayloadAction } from "@reduxjs/toolkit";
 import { cloneDeep, uniq } from "lodash";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { PayloadAction } from "_@reduxjs_toolkit@1.6.2@@reduxjs/toolkit";
 import { EntityFolderContentData } from "../../api/api.auto";
 import { CheckboxGroup } from "../../components/CheckboxGroup";
 import { LButton, LButtonProps } from "../../components/LButton";
@@ -57,15 +57,24 @@ const useStyles = makeStyles(() =>
       marginLeft: "40px !important",
     },
     dialogContent: {
-      // maxHeight: 500,
+      padding: 0,
+      paddingLeft: 30,
     },
     tooltipIcon: {
       color: "#666",
       verticalAlign: "middle",
       marginLeft: "5px",
     },
-    SearchButon: {
+    searchButon: {
       marginLeft: 10,
+    },
+    searchBar: {
+      display: "flex",
+      margin: " 0px 16px 10px",
+    },
+    content: {
+      borderLeft: "1px solid rgb(0,0,0,.12)",
+      paddingTop: 10,
     },
   })
 );
@@ -195,7 +204,7 @@ export function OrganizationList(props: OrganizationListProps) {
       <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <div style={{ display: "flex" }}>
-          <RadioGroup style={{ minWidth: 250 }} value={radioValue} onChange={(e) => handleChange(e.target.value)}>
+          <RadioGroup style={{ minWidth: 250, marginTop: 30 }} value={radioValue} onChange={(e) => handleChange(e.target.value)}>
             <FormControlLabel
               value={ShareScope.share_all}
               control={<Radio />}
@@ -236,8 +245,8 @@ export function OrganizationList(props: OrganizationListProps) {
                     allValue={allValue}
                     {...props}
                     render={(selectedContentGroupContext) => (
-                      <div {...{ ref }}>
-                        <div style={{ display: "flex", marginBottom: 16 }}>
+                      <div {...{ ref }} className={css.content}>
+                        <div className={css.searchBar}>
                           <Controller
                             as={FormattedTextField}
                             control={control}
@@ -251,7 +260,7 @@ export function OrganizationList(props: OrganizationListProps) {
                             placeholder={d("Search").t("library_label_search")}
                           />
                           <Button
-                            className={css.SearchButon}
+                            className={css.searchButon}
                             variant="contained"
                             color="primary"
                             onClick={() => searchOrgList({ direction: ConnectionDirection.Forward })}
@@ -260,7 +269,7 @@ export function OrganizationList(props: OrganizationListProps) {
                           </Button>
                         </div>
 
-                        <div style={{ minHeight: 587 }}>
+                        <div style={{ minHeight: 597 }}>
                           {orgList?.length > 0 ? (
                             <OrgsTable
                               sortOrgList={sortOrgList}
@@ -285,7 +294,7 @@ export function OrganizationList(props: OrganizationListProps) {
                                 }}
                               />
                             }
-                            style={{ marginLeft: 0 }}
+                            style={{ marginLeft: 4 }}
                             label={d("All").t("library_label_all_organizations")}
                           />
                           {orgProperty.region === Region.global && (
