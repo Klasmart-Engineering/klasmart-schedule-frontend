@@ -225,7 +225,7 @@ function ScheduleList(props: ScheduleListProps) {
             {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
             {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
           </span>
-          {d("See More").t("schedule_detail_see_more")}
+          {checked ? d("See Less").t("assess_detail_see_less") : d("See More").t("schedule_detail_see_more")}
         </p>
       )}
     </Box>
