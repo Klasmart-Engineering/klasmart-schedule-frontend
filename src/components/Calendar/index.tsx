@@ -163,7 +163,7 @@ function ScheduleList(props: ScheduleListProps) {
         return timesTampA.start_at! - timesTampB.start_at!;
       })
       .filter((schedule) => {
-        return dateFormat(schedule.end_at!) !== dateFormat(schedule.start_at!);
+        return dateFormat(schedule.end_at!) !== dateFormat(schedule.start_at!) || schedule.end_at! - schedule.start_at! > 86398;
       });
   };
   const eventTemplate = (schedule: EntityScheduleTimeView) => eventColor.filter((item) => item.id === schedule.class_type);
@@ -331,7 +331,7 @@ function MyCalendar(props: CalendarProps) {
     if (scheduleTimeViewData.length > 0) {
       scheduleTimeViewData.forEach((item: EntityScheduleTimeView) => {
         if (!item) return;
-        if (dateFormat(item.end_at!) !== dateFormat(item.start_at!) && mobile) return;
+        if ((dateFormat(item.end_at!) !== dateFormat(item.start_at!) || item.end_at! - item.start_at! > 86398) && mobile) return;
         newViewData.push({
           ...item,
           end: new Date(Number(item.end_at) * 1000),
