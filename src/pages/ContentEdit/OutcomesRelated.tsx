@@ -185,9 +185,9 @@ export const OutcomesTable = (props: OutcomesTableProps) => {
         {item.outcome_name}
       </TableCell>
       <TableCell align="center">{item.shortcode}</TableCell>
-      <TableCell align="center">{getNameByIds(outcomesFullOptions?.developmental, item?.developmental?.split(","))}</TableCell>
+      <TableCell align="center">{getNameByIds(outcomesFullOptions?.developmental, item?.categories)}</TableCell>
       <TableCell align="center" className={css.tabelCell}>
-        {getNameByIds(outcomesFullOptions?.skills, item?.skills?.split(","))}
+        {getNameByIds(outcomesFullOptions?.skills, item?.subcategories)}
       </TableCell>
     </TableRow>
   ));

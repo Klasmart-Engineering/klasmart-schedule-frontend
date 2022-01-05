@@ -952,7 +952,6 @@ export interface EntityOrganizationProperty {
 }
 
 export interface EntityOutcome {
-  age?: string;
   ages?: string[];
   ancestor_id?: string;
   assumed?: boolean;
@@ -962,11 +961,7 @@ export interface EntityOutcome {
   created_at?: number;
   deleted_at?: number;
   description?: string;
-
-  /** Category */
-  developmental?: string;
   extra?: number;
-  grade?: string;
   grades?: string[];
   keywords?: string;
   latest_id?: string;
@@ -975,19 +970,15 @@ export interface EntityOutcome {
   organization_id?: string;
   outcome_id?: string;
   outcome_name?: string;
-  program?: string;
   programs?: string[];
   publish_scope?: string;
   publish_status?: string;
   reject_reason?: string;
   sets?: EntitySet[];
   shortcode?: string;
-
-  /** SubCategory */
-  skills?: string;
+  shortcode_cum?: number;
   source_id?: string;
   subcategories?: string[];
-  subject?: string;
   subjects?: string[];
   updated_at?: number;
   version?: number;

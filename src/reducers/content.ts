@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { uniq } from "lodash";
 import cloneDeep from "lodash/cloneDeep";
 import uniqBy from "lodash/uniqBy";
 import { UseFormMethods } from "react-hook-form";
@@ -362,6 +363,18 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
   "content/onLoadContentEdit",
   async ({ id, type, searchMedia, isShare }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
+    let developmentals: string[] = [];
+    contentDetail.outcome_entities
+      ?.filter((item) => item && item.categories && item.categories.length)
+      .forEach((item) => {
+        developmentals = developmentals.concat(item.categories || []);
+      });
+    let sckillIds: string[] = [];
+    contentDetail.outcome_entities
+      ?.filter((item) => item && item.subcategories && item.subcategories.length)
+      .forEach((item) => {
+        sckillIds = sckillIds.concat(item.subcategories || []);
+      });
     const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
       type === "material" || type === "plan"
@@ -387,12 +400,11 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
-      // dispatch(getOutcomesFullOptions({})),
     ]);
     dispatch(
       getOutcomesResourceOptions({
-        developmentals: contentDetail.outcome_entities?.filter((item) => item.developmental).map((item) => item.developmental || "") ?? [],
-        skillIds: contentDetail.outcome_entities?.filter((item) => item.skills).map((item) => item.skills || "") ?? [],
+        developmentals: uniq(developmentals),
+        skillIds: uniq(sckillIds),
       })
     );
 
