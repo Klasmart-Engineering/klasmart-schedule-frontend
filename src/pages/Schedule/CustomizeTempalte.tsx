@@ -298,7 +298,13 @@ function CustomizeTempalteMb(props: InfoMbProps) {
             }
           />
         )}
-        <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
+        <EditOutlined
+          className={classes.firstIcon}
+          onClick={() => {
+            handleEditSchedule(ScheduleViewInfo);
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
+          }}
+        />
         <CloseOutlined className={classes.lastIcon} style={{ color: "#000000" }} onClick={handleClose} />
       </div>
       <div style={{ paddingLeft: "8%", paddingRight: "2%" }}>
