@@ -1,7 +1,7 @@
+import * as Apollo from "@apollo/client";
+import { gql } from "@apollo/client";
 import * as Types from "./api-ko-schema.auto";
 
-import { gql } from "@apollo/client";
-import * as Apollo from "@apollo/client";
 const defaultOptions = {};
 export type RoleBasedUsersByOrgnizationQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["ID"];
@@ -863,6 +863,37 @@ export type GetMyIdQuery = { __typename?: "Query" } & {
           }
       >;
     }
+  >;
+};
+
+export type GetOrganizationsQueryVariables = Types.Exact<{
+  cursor?: Types.Maybe<Types.Scalars["String"]>;
+  count?: Types.Maybe<Types.Scalars["PageSize"]>;
+  searchValue: Types.Scalars["String"];
+  sort: Types.OrganizationSortInput;
+  direction: Types.ConnectionDirection;
+}>;
+export type GetOrganizationsQuery = { __typename?: "Query" } & {
+  organizationsConnection?: Types.Maybe<
+    { __typename?: "OrganizationsConnectionResponse" } & Pick<Types.OrganizationsConnectionResponse, "totalCount"> & {
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "OrganizationsConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "OrganizationConnectionNode " } & Pick<Types.OrganizationConnectionNode, "id" | "name" | "owners">
+                >;
+              }
+            >
+          >
+        >;
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
+      }
   >;
 };
 
@@ -2825,6 +2856,49 @@ export function useClassesConnectionLazyQuery(
 export type ClassesConnectionQueryHookResult = ReturnType<typeof useClassesConnectionQuery>;
 export type ClassesConnectionLazyQueryHookResult = ReturnType<typeof useClassesConnectionLazyQuery>;
 export type ClassesConnectionQueryResult = Apollo.QueryResult<ClassesConnectionQuery, ClassesConnectionQueryVariables>;
+export const GetOrganizationsDocument = gql`
+  query getOrganizations(
+    $direction: ConnectionDirection!
+    $cursor: String
+    $count: PageSize
+    $searchValue: String!
+    $sort: OrganizationSortInput!
+  ) {
+    organizationsConnection(
+      direction: $direction
+      filter: {
+        AND: [
+          { status: { operator: eq, value: "active" } }
+          {
+            OR: [
+              { ownerUserEmail: { operator: contains, value: $searchValue, caseInsensitive: true } }
+              { name: { operator: contains, value: $searchValue, caseInsensitive: true } }
+            ]
+          }
+        ]
+      }
+      directionArgs: { count: $count, cursor: $cursor }
+      sort: $sort
+    ) {
+      totalCount
+      edges {
+        node {
+          id
+          name
+          owners {
+            email
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
 export const GetClassByInfoDocument = gql`
   query getClassByInfo(
     $filter: ClassFilter

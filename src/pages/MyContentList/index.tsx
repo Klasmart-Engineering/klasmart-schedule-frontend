@@ -9,10 +9,10 @@ import {
   bulkReject,
   deleteContent,
   deleteFolder,
-  getOrgList,
   getOrgProperty,
   getUserSetting,
   onLoadContentList,
+  onloadShareOrgList,
   publishContent,
   rejectContent,
   renameFolder1,
@@ -342,7 +342,7 @@ export default function MyContentList() {
   };
   const handleClickShareBtn: ContentCardListProps["onClickShareBtn"] = async (content) => {
     setShareFolder(content);
-    await dispatch(getOrgList({ folder_ids: content.id, metaLoading: true }));
+    await dispatch(onloadShareOrgList({ folder_ids: content.id, metaLoading: true }));
     openOrganizationList();
   };
   const handleShareFolder: OrganizationListProps["onShareFolder"] = async (org_ids) => {
@@ -573,7 +573,8 @@ export default function MyContentList() {
           open={organizationListActive}
           onShareFolder={handleShareFolder}
           key={organizationListShowIndex}
-          orgProperty={orgProperty}
+          // orgProperty={orgProperty}
+          // orgListPageInfo={orgListPageInfo}
         />
         <FolderForm
           onClose={closeFolderForm}
