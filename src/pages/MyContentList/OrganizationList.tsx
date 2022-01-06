@@ -114,7 +114,7 @@ export function OrganizationList(props: OrganizationListProps) {
   );
   const [newSelectedOrgIds, setNewSelectedOrgIds] = useState(true);
 
-  const [beValues, setBeValues] = useState(selectedOrg);
+  const [beValues, setBeValues] = useState(selectedOrg.length > 0 && selectedOrg[0] === ShareScope.share_all ? [] : selectedOrg);
   const [pageDesc, setPageDesc] = useState(`1-${orgListTotal > PAGESIZE ? PAGESIZE : orgListTotal}`);
   const [nameOrder, setNameOrder] = useState(false);
   const [emailOrder, setEmailOrder] = useState(false);
@@ -200,7 +200,7 @@ export function OrganizationList(props: OrganizationListProps) {
     }
   };
   return (
-    <Dialog open={open} maxWidth="md" fullWidth>
+    <Dialog open={open} maxWidth={radioValue === ShareScope.share_to_org ? "md" : "sm"} fullWidth>
       <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <div style={{ display: "flex" }}>
@@ -269,7 +269,7 @@ export function OrganizationList(props: OrganizationListProps) {
                           </Button>
                         </div>
 
-                        <div style={{ minHeight: 597 }}>
+                        <div style={{ minHeight: 520 }}>
                           {orgList?.length > 0 ? (
                             <OrgsTable
                               sortOrgList={sortOrgList}
