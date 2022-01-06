@@ -25,6 +25,14 @@ const useOrgStyles = makeStyles(() => ({
     padding: 0,
     paddingLeft: 4,
   },
+  tableName: {
+    padding: 12,
+    borderRight: "1px solid rgba(0, 0, 0, .12)",
+  },
+  tableEmail: {
+    padding: 12,
+    maxWidth: 330,
+  },
 }));
 interface OrgsTableProps {
   list: OrgInfoProps[];
@@ -50,8 +58,8 @@ export function OrgsTable(props: OrgsTableProps) {
           />
         }
       </TableCell>
-      <TableCell style={{ borderRight: "1px solid rgba(0, 0, 0, .12)" }}>{item.organization_name}</TableCell>
-      <TableCell align="center" style={{ maxWidth: 330 }}>
+      <TableCell className={css.tableName}>{item.organization_name}</TableCell>
+      <TableCell align="center" className={css.tableEmail}>
         <Typography style={{ fontSize: 14 }} noWrap>
           {item.email}
         </Typography>
@@ -60,7 +68,7 @@ export function OrgsTable(props: OrgsTableProps) {
   ));
 
   return (
-    <TableContainer style={{ maxHeight: 597, overflow: "auto" }}>
+    <TableContainer style={{ maxHeight: 520, overflow: "auto" }}>
       <Table stickyHeader>
         <TableHead className={css.tableHead}>
           <TableRow>
