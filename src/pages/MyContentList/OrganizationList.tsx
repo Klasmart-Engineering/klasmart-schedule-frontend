@@ -106,7 +106,7 @@ const PAGESIZE = 10;
 export function OrganizationList(props: OrganizationListProps) {
   const css = useStyles();
   const { open, orgList, selectedOrg, onClose, onShareFolder } = props;
-  const { orgListPageInfo, orgListTotal, orgProperty } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { orgListPageInfo, vnOrgList, orgListTotal, orgProperty } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { control, watch, getValues, reset } = useForm();
   const dispatch = useDispatch();
   const allValue = useMemo(() => orgList?.map((org) => org.organization_id), [orgList]);
@@ -145,7 +145,15 @@ export function OrganizationList(props: OrganizationListProps) {
       order: SortOrder.Asc,
     };
     const { payload } = (await dispatch(
-      getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
+      getOrgList({
+        metaLoading: true,
+        cursor,
+        direction,
+        sort: sort || initSort,
+        searchValue,
+        count: 10,
+        orgs: orgProperty.region === Region.global ? [] : vnOrgList,
+      })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
     if (!payload) return;
     setPageDesc(getPageDesc(curentPageCursor, payload.orgListTotal, pageDesc));
@@ -303,14 +311,12 @@ export function OrganizationList(props: OrganizationListProps) {
                                 style={{ marginLeft: 4 }}
                                 label={d("All").t("library_label_all_organizations")}
                               />
-                              {orgProperty.region === Region.global && (
-                                <CursorPagination
-                                  pageDesc={pageDesc}
-                                  total={orgListTotal}
-                                  pageInfo={orgListPageInfo}
-                                  onChange={handleChangePage}
-                                />
-                              )}
+                              <CursorPagination
+                                pageDesc={pageDesc}
+                                total={orgListTotal}
+                                pageInfo={orgListPageInfo}
+                                onChange={handleChangePage}
+                              />
                             </div>
                           </>
                         )}
