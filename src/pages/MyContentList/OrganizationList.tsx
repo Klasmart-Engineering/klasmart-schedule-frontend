@@ -75,6 +75,7 @@ const useStyles = makeStyles(() =>
     content: {
       borderLeft: "1px solid rgb(0,0,0,.12)",
       paddingTop: 10,
+      height: 620,
     },
   })
 );
@@ -105,7 +106,7 @@ const PAGESIZE = 10;
 export function OrganizationList(props: OrganizationListProps) {
   const css = useStyles();
   const { open, orgList, selectedOrg, onClose, onShareFolder } = props;
-  const { orgListPageInfo, orgListTotal, orgProperty } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { orgListPageInfo, vnOrgList, orgListTotal, orgProperty } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { control, watch, getValues, reset } = useForm();
   const dispatch = useDispatch();
   const allValue = useMemo(() => orgList?.map((org) => org.organization_id), [orgList]);
@@ -144,16 +145,26 @@ export function OrganizationList(props: OrganizationListProps) {
       order: SortOrder.Asc,
     };
     const { payload } = (await dispatch(
-      getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
+      getOrgList({
+        metaLoading: true,
+        cursor,
+        direction,
+        sort: sort || initSort,
+        searchValue,
+        count: 10,
+        orgs: orgProperty.region === Region.global ? [] : vnOrgList,
+      })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
     if (!payload) return;
     setPageDesc(getPageDesc(curentPageCursor, payload.orgListTotal, pageDesc));
     reset({ ...getValues(), SELECTED_ORG: getDefaultValue(payload.orgs as OrgInfoProps[], beValues) });
   };
+
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
     if (event.key === "Enter") searchOrgList({ direction: ConnectionDirection.Forward });
   };
-  const sortOrgList = (type: OrganizationSortBy) => {
+
+  const handleSortOrgList = (type: OrganizationSortBy) => {
     const sort: OrganizationSortInput = {
       field: [type],
       order: type === OrganizationSortBy.Name ? (nameOrder ? SortOrder.Asc : SortOrder.Desc) : emailOrder ? SortOrder.Asc : SortOrder.Desc,
@@ -162,6 +173,7 @@ export function OrganizationList(props: OrganizationListProps) {
     setSortType(type);
     type === OrganizationSortBy.Name ? setNameOrder(!nameOrder) : setEmailOrder(!emailOrder);
   };
+
   const handleChangePage = (props: CursorListProps) => {
     const sort: OrganizationSortInput = {
       field: [sortType],
@@ -170,6 +182,7 @@ export function OrganizationList(props: OrganizationListProps) {
     };
     searchOrgList({ ...props, sort });
   };
+
   const handleChangeBeValues = (id: string, checked: boolean) => {
     if (checked) {
       if (id && beValues) {
@@ -199,7 +212,7 @@ export function OrganizationList(props: OrganizationListProps) {
     }
   };
   return (
-    <Dialog open={open} maxWidth={radioValue === ShareScope.share_to_org ? "md" : "sm"} fullWidth>
+    <Dialog open={open} maxWidth="md" fullWidth>
       <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <div style={{ display: "flex" }}>
@@ -232,7 +245,7 @@ export function OrganizationList(props: OrganizationListProps) {
               }
             />
           </RadioGroup>
-          {radioValue && radioValue !== ShareScope.share_all && (
+          {
             <div style={{ flex: 1 }}>
               <Controller
                 name={SELECTED_ORG}
@@ -257,61 +270,63 @@ export function OrganizationList(props: OrganizationListProps) {
                             fullWidth
                             onKeyPress={handleKeyPress}
                             placeholder={d("Search").t("library_label_search")}
+                            disabled={radioValue !== ShareScope.share_to_org}
                           />
                           <Button
                             className={css.searchButon}
                             variant="contained"
                             color="primary"
+                            disabled={radioValue !== ShareScope.share_to_org}
                             onClick={() => searchOrgList({ direction: ConnectionDirection.Forward })}
                           >
                             {d("Search").t("library_label_search")}{" "}
                           </Button>
                         </div>
-
-                        <div style={{ minHeight: 520 }}>
-                          {orgList?.length > 0 ? (
-                            <OrgsTable
-                              sortOrgList={sortOrgList}
-                              handleChangeBeValues={handleChangeBeValues}
-                              list={orgList}
-                              selectedContentGroupContext={selectedContentGroupContext}
-                            />
-                          ) : (
-                            resultsTip
-                          )}
-                        </div>
-
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                color="primary"
-                                checked={selectedContentGroupContext.isAllvalue}
-                                onChange={(e, checked) => {
-                                  selectedContentGroupContext.registerAllChange(e);
-                                  handleChangeAllBeValues(checked);
-                                }}
+                        {radioValue === ShareScope.share_to_org && (
+                          <>
+                            <div style={{ minHeight: 520 }}>
+                              {orgList?.length > 0 ? (
+                                <OrgsTable
+                                  onSortOrgList={handleSortOrgList}
+                                  handleChangeBeValues={handleChangeBeValues}
+                                  list={orgList}
+                                  selectedContentGroupContext={selectedContentGroupContext}
+                                />
+                              ) : (
+                                resultsTip
+                              )}
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    color="primary"
+                                    checked={selectedContentGroupContext.isAllvalue}
+                                    onChange={(e, checked) => {
+                                      selectedContentGroupContext.registerAllChange(e);
+                                      handleChangeAllBeValues(checked);
+                                    }}
+                                  />
+                                }
+                                style={{ marginLeft: 4 }}
+                                label={d("All").t("library_label_all_organizations")}
                               />
-                            }
-                            style={{ marginLeft: 4 }}
-                            label={d("All").t("library_label_all_organizations")}
-                          />
-                          {orgProperty.region === Region.global && (
-                            <CursorPagination
-                              pageDesc={pageDesc}
-                              total={orgListTotal}
-                              pageInfo={orgListPageInfo}
-                              onChange={handleChangePage}
-                            />
-                          )}
-                        </div>
+                              <CursorPagination
+                                pageDesc={pageDesc}
+                                total={orgListTotal}
+                                pageInfo={orgListPageInfo}
+                                onChange={handleChangePage}
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   />
                 )}
               />
             </div>
-          )}
+          }
         </div>
       </DialogContent>
       <DialogActions>

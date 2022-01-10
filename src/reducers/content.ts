@@ -1,4 +1,13 @@
-import { ConnectionDirection, ConnectionPageInfo, OrganizationSortBy, OrganizationSortInput, SortOrder } from "@api/api-ko-schema.auto";
+import {
+  ConnectionDirection,
+  ConnectionPageInfo,
+  OrganizationFilter,
+  OrganizationSortBy,
+  OrganizationSortInput,
+  SortOrder,
+  StringOperator,
+  UuidOperator,
+} from "@api/api-ko-schema.auto";
 import { OrgInfoProps } from "@pages/MyContentList/OrganizationList";
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { uniq } from "lodash";
@@ -25,6 +34,7 @@ import {
   EntityOrganizationProperty,
   EntityOutcomeCondition,
   EntityQueryContentItem,
+  EntityRegionOrganizationInfo,
   ModelPublishedOutcomeView,
   ModelSearchPublishedOutcomeResponse,
 } from "../api/api.auto";
@@ -76,6 +86,7 @@ interface IContentState {
   orgList: OrgInfoProps[];
   orgListPageInfo: ConnectionPageInfo;
   orgListTotal: number;
+  vnOrgList: EntityRegionOrganizationInfo[];
   selectedOrg: EntityOrganizationInfo[];
   myOrgId: string;
   user_id: string;
@@ -224,6 +235,7 @@ const initialState: IContentState = {
   orgList: [],
   orgListPageInfo: {},
   orgListTotal: 0,
+  vnOrgList: [],
   selectedOrg: [],
   myOrgId: "",
   user_id: "",
@@ -930,28 +942,54 @@ export enum Region {
 }
 
 type IQueryGetOrgListResult = AsyncReturnType<typeof api.organizationsRegion.getOrganizationByHeadquarterForDetails>["orgs"];
+export function getOrgsFilter(searchValue: string, orgs: EntityRegionOrganizationInfo[] = []) {
+  let filter: OrganizationFilter = {
+    AND: [
+      { status: { operator: StringOperator.Eq, value: "active" } },
+      {
+        OR: [
+          { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
+          { name: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
+        ],
+      },
+    ],
+  };
+  if (orgs.length) {
+    const idFilter: OrganizationFilter = { OR: orgs.map((item) => ({ id: { operator: UuidOperator.Eq, value: item.organization_id } })) };
+    filter = { AND: filter.AND?.concat([idFilter]) };
+  }
+  return filter;
+}
 interface IGetOrgListResponse {
   orgs: IQueryGetOrgListResult;
   orgListPageInfo: ConnectionPageInfo;
   orgListTotal: number;
 }
-export const getOrgList = createAsyncThunk<
-  IGetOrgListResponse,
-  GetOrganizationsQueryVariables & IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload
->("content/getOrgList", async ({ metaLoading, ...restorganizationQueryVariables }) => {
-  const { data } = await gqlapi.query<GetOrganizationsQuery, GetOrganizationsQueryVariables>({
-    query: GetOrganizationsDocument,
-    variables: restorganizationQueryVariables,
-  });
-  const orgs = data.organizationsConnection?.edges?.map((item) => ({
-    organization_id: item?.node?.id,
-    organization_name: item?.node?.name,
-    email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
-  })) as IQueryGetOrgListResult;
-  const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
-  const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);
-  return { orgs, orgListPageInfo, orgListTotal };
-});
+type IGetOrgListParams = Omit<GetOrganizationsQueryVariables, "filter"> &
+  IQueryGetFoldersSharedRecordsParams &
+  LoadingMetaPayload & {
+    searchValue: string;
+    orgs?: EntityRegionOrganizationInfo[];
+  };
+
+export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParams>(
+  "content/getOrgList",
+  async ({ metaLoading, searchValue, orgs, ...restorganizationQueryVariables }) => {
+    const filter = getOrgsFilter(searchValue, orgs);
+    const { data } = await gqlapi.query<GetOrganizationsQuery, GetOrganizationsQueryVariables>({
+      query: GetOrganizationsDocument,
+      variables: { ...restorganizationQueryVariables, filter },
+    });
+    const orgList = data.organizationsConnection?.edges?.map((item) => ({
+      organization_id: item?.node?.id,
+      organization_name: item?.node?.name,
+      email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
+    })) as IQueryGetOrgListResult;
+    const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
+    const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);
+    return { orgs: orgList, orgListPageInfo, orgListTotal };
+  }
+);
 
 export const getVnOrgList = createAsyncThunk<IQueryGetOrgListResult, LoadingMetaPayload>("content/getVnOrgList", async () => {
   const { orgs } = await api.organizationsRegion.getOrganizationByHeadquarterForDetails();
@@ -963,13 +1001,14 @@ export const onloadShareOrgList = createAsyncThunk<void, IQueryGetFoldersSharedR
     const {
       content: { orgProperty },
     } = getState();
+    const sort: OrganizationSortInput = {
+      field: [OrganizationSortBy.Name],
+      order: SortOrder.Asc,
+    };
     if (orgProperty.region && orgProperty.region === Region.vn) {
-      await dispatch(getVnOrgList({}));
+      const { payload } = (await dispatch(getVnOrgList({}))) as PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>;
+      await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "", orgs: payload }));
     } else {
-      const sort: OrganizationSortInput = {
-        field: [OrganizationSortBy.Name],
-        order: SortOrder.Asc,
-      };
       await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
     }
     await dispatch(getFoldersSharedRecords({ folder_ids }));
@@ -1277,7 +1316,7 @@ const { actions, reducer } = createSlice({
     },
 
     [getVnOrgList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>) => {
-      state.orgList = (payload as OrgInfoProps[]) || [];
+      state.vnOrgList = (payload as OrgInfoProps[]) || [];
     },
     [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getFoldersSharedRecords>>) => {
       if (payload.data) {

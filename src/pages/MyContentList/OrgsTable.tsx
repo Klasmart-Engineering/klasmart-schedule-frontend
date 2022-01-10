@@ -37,11 +37,11 @@ const useOrgStyles = makeStyles(() => ({
 interface OrgsTableProps {
   list: OrgInfoProps[];
   selectedContentGroupContext: CheckboxGroupContext;
-  sortOrgList: (type: OrganizationSortBy) => any;
+  onSortOrgList: (type: OrganizationSortBy) => any;
   handleChangeBeValues: (id: string, checked: boolean) => any;
 }
 export function OrgsTable(props: OrgsTableProps) {
-  const { list, selectedContentGroupContext, sortOrgList, handleChangeBeValues } = props;
+  const { list, selectedContentGroupContext, onSortOrgList, handleChangeBeValues } = props;
   const css = useOrgStyles();
   const rows = list?.map((item, idx) => (
     <TableRow key={item.organization_id}>
@@ -76,13 +76,13 @@ export function OrgsTable(props: OrgsTableProps) {
             <TableCell align="center">
               <Box display="flex">
                 {"Organization"}
-                <SvgIcon component={SortSvg} onClick={() => sortOrgList(OrganizationSortBy.Name)} cursor="pointer" />
+                <SvgIcon component={SortSvg} onClick={() => onSortOrgList(OrganizationSortBy.Name)} cursor="pointer" />
               </Box>
             </TableCell>
             <TableCell align="center">
               <Box display="flex" style={{ justifyContent: "center" }}>
                 {"Org Owner Email"}
-                <SvgIcon component={SortSvg} onClick={() => sortOrgList(OrganizationSortBy.OwnerEmail)} cursor="pointer" />
+                <SvgIcon component={SortSvg} onClick={() => onSortOrgList(OrganizationSortBy.OwnerEmail)} cursor="pointer" />
               </Box>
             </TableCell>
           </TableRow>
