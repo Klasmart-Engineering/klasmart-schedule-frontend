@@ -14,6 +14,7 @@ import {
   onLoadContentList,
   onloadShareOrgList,
   publishContent,
+  Region,
   rejectContent,
   renameFolder1,
   searchOrgFolderItems,
@@ -57,6 +58,7 @@ import {
   SecondSearchHeaderMb,
   SecondSearchHeaderProps,
 } from "./SecondSearchHeader";
+import { SpecialOrgList } from "./SpecialOrgList";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -566,16 +568,25 @@ export default function MyContentList() {
           onAddFolder={handleAddFolder}
           key={folderTreeShowIndex}
         />
-        <OrganizationList
-          orgList={filterOrgList}
-          selectedOrg={selctedOrgIds}
-          onClose={closeOrganizationList}
-          open={organizationListActive}
-          onShareFolder={handleShareFolder}
-          key={organizationListShowIndex}
-          // orgProperty={orgProperty}
-          // orgListPageInfo={orgListPageInfo}
-        />
+        {orgProperty.region === Region.vn ? (
+          <SpecialOrgList
+            orgList={filterOrgList}
+            selectedOrg={selctedOrgIds}
+            onClose={closeOrganizationList}
+            open={organizationListActive}
+            onShareFolder={handleShareFolder}
+            key={organizationListShowIndex}
+          />
+        ) : (
+          <OrganizationList
+            orgList={filterOrgList}
+            selectedOrg={selctedOrgIds}
+            onClose={closeOrganizationList}
+            open={organizationListActive}
+            onShareFolder={handleShareFolder}
+            key={organizationListShowIndex}
+          />
+        )}
         <FolderForm
           onClose={closeFolderForm}
           open={folderFormActive}

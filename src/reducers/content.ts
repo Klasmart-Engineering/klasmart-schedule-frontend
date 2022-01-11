@@ -1006,8 +1006,9 @@ export const onloadShareOrgList = createAsyncThunk<void, IQueryGetFoldersSharedR
       order: SortOrder.Asc,
     };
     if (orgProperty.region && orgProperty.region === Region.vn) {
-      const { payload } = (await dispatch(getVnOrgList({}))) as PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>;
-      await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "", orgs: payload }));
+      await dispatch(getVnOrgList({}));
+      // const { payload } = (await dispatch(getVnOrgList({}))) as PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>;
+      // await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "", orgs: payload }));
     } else {
       await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
     }
@@ -1316,7 +1317,7 @@ const { actions, reducer } = createSlice({
     },
 
     [getVnOrgList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>) => {
-      state.vnOrgList = (payload as OrgInfoProps[]) || [];
+      state.orgList = (payload as OrgInfoProps[]) || [];
     },
     [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getFoldersSharedRecords>>) => {
       if (payload.data) {

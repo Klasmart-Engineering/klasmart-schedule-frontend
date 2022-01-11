@@ -22,7 +22,7 @@ import {
 } from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import { getOrgList, Region } from "@reducers/content";
+import { getOrgList } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -106,7 +106,7 @@ const PAGESIZE = 10;
 export function OrganizationList(props: OrganizationListProps) {
   const css = useStyles();
   const { open, orgList, selectedOrg, onClose, onShareFolder } = props;
-  const { orgListPageInfo, vnOrgList, orgListTotal, orgProperty } = useSelector<RootState, RootState["content"]>((state) => state.content);
+  const { orgListPageInfo, orgListTotal } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { control, watch, getValues, reset } = useForm();
   const dispatch = useDispatch();
   const allValue = useMemo(() => orgList?.map((org) => org.organization_id), [orgList]);
@@ -152,7 +152,7 @@ export function OrganizationList(props: OrganizationListProps) {
         sort: sort || initSort,
         searchValue,
         count: 10,
-        orgs: orgProperty.region === Region.global ? [] : vnOrgList,
+        // orgs: orgProperty.region === Region.global ? [] : vnOrgList,
       })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
     if (!payload) return;
