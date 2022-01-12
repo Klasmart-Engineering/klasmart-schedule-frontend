@@ -1,89 +1,88 @@
-import { Button, Grid, Hidden, makeStyles, SvgIcon, Tooltip, Typography } from "@material-ui/core";
+import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
-import {
-  AccessTime,
-  AssignmentTurnedInOutlined,
-  CategoryOutlined,
-  ChevronRight,
-  InfoOutlined,
-  KeyboardBackspace,
-  ShortText,
-  ShowChart,
-} from "@material-ui/icons";
-import React, { cloneElement, useCallback, useMemo } from "react";
+import { InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
+import clsx from "clsx";
+import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
+import { Link as RouterLink } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
-import { ReactComponent as SaIconUrl } from "../../assets/icons/student_archievement-24px.svg";
 import LayoutBox from "../../components/LayoutBox";
 import { permissionTip } from "../../components/TipImages";
 import { usePermission } from "../../hooks/usePermission";
-import { LangRecordId } from "../../locale/lang/type";
 import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
-import { ReportCategories } from "../ReportCategories";
-import { ReportLearningSummary } from "../ReportLearningSummary";
-import ReportStudentProgress from "../ReportStudentProgress";
-import ReportStudentUsage from "../ReportStudentUsage";
-import ReportTeachingLoad from "../ReportTeachingLoad";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
-  reportTitle: {
-    height: 129,
-    paddingTop: 30,
-    boxSizing: "border-box",
-    alignItems: "center",
+  layoutBoxWrapper: {
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
   },
-  reportList: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3,1fr)",
-    gridTemplateRows: "repeat(2,180px)",
-    gridAutoRows: "33%",
-    gridColumnGap: 80,
-    gridRowGap: 32,
+  layoutBoxMain: {
+    background: "#F2F3F8",
+    flexGrow: 1,
+    height: "100%",
+    paddingTop: 24,
   },
 
-  reportItem: {
-    minWidth: 160,
-    cursor: "pointer",
-    borderRadius: 8,
-    boxShadow: shadows[3],
-    padding: "32px 28px",
-    flex: 1,
-    flexWrap: "wrap",
-  },
-  reportItemMb: {
-    textAlign: "center",
-    cursor: "pointer",
-    boxShadow: shadows[3],
-    borderRadius: 8,
+  reportTitle: {
+    paddingTop: 32,
+    paddingBottom: 32,
     boxSizing: "border-box",
-    padding: "32px 28px",
-    minWidth: 140,
-  },
-  gridCon: {
-    // "&:nth-child(n+4)": {
-    //   visibility: "hidden",
-    // },
-  },
-  iconBox: {
-    backgroundColor: "#89c4f9",
-    borderRadius: 8,
-    color: "#fff",
-    width: 64,
-    height: 64,
-    marginBottom: 24,
-    display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-    [breakpoints.down("sm")]: {
-      height: 40,
-      width: 40,
-      marginBottom: 20,
+  },
+
+  gridItem: {
+    borderRadius: 12,
+  },
+
+  gridItemWithBg: {
+    background: "#FFFFFF",
+  },
+
+  navContainer: {
+    "& > ul": {
+      margin: 0,
+      padding: 0,
+      "& > li": {
+        listStyle: "none",
+        paddingBottom: 14,
+        "& > a": {
+          width: "calc(100% -48px)",
+          padding: 24,
+          lineHeight: 1,
+          display: "block",
+          background: "#6C99D0",
+          borderRadius: 12,
+          color: "#FFFFFF",
+          fontSize: 18,
+          fontWeight: 600,
+          textDecoration: "none",
+          position: "relative",
+          "&::after": {
+            content: "''",
+            display: "block",
+            position: "absolute",
+            right: 30,
+            top: "50%",
+            width: 0,
+            height: 0,
+            borderStyle: "solid",
+            borderWidth: "7.5px 0 7.5px 10px",
+            borderColor: "transparent transparent transparent #FFFFFF",
+            transform: "translateY(-50%)",
+          },
+          "&:hover": {
+            background: "#4A7ABE",
+          },
+        },
+      },
     },
   },
+
   reportItemTitleBox: {
     display: "flex",
     justifyContent: "space-between",
@@ -112,6 +111,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     },
   },
 }));
+/*
 interface ReportItem {
   title: LangRecordId;
   url: string;
@@ -119,6 +119,7 @@ interface ReportItem {
   bgColor: string;
   hasPerm: boolean;
 }
+*/
 
 const DiyTooltip = withStyles((theme: Theme) => ({
   tooltip: {
@@ -133,7 +134,7 @@ const DiyTooltip = withStyles((theme: Theme) => ({
 
 export function ReportDashboard() {
   const css = useStyles();
-  const history = useHistory();
+  //const history = useHistory();
   const dispatch = useDispatch();
   const perm = usePermission([
     PermissionType.view_reports_610,
@@ -165,7 +166,7 @@ export function ReportDashboard() {
       dispatch(actSetLoading(false));
     }
   }, [dispatch, perm]);
-
+  /*
   const reportList: ReportItem[] = [
     {
       title: "report_label_student_achievement",
@@ -210,21 +211,66 @@ export function ReportDashboard() {
       hasPerm: hasStudentProgressPermission,
     },
   ];
+
   const handleClick = useMemo(
     () => (value: string) => {
       history.push(value);
     },
     [history]
   );
+    */
   return (
-    <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-      <div className={css.reportTitle}>
-        <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
-      </div>
-      {isPending ? (
-        ""
-      ) : hasPerm || hasSummaryPerm ? (
-        <>
+    <Box className={css.layoutBoxWrapper}>
+      <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
+        <div className={css.reportTitle}>
+          <Typography className={css.reportItemTitleTop}>{t("report_label_report_list")}</Typography>
+        </div>
+      </LayoutBox>
+      <LayoutBox holderMin={40} holderBase={202} mainBase={1517} className={css.layoutBoxMain}>
+        <Grid container spacing={7}>
+          <Grid item xs={4}>
+            <Box className={clsx(css.gridItem, css.gridItemWithBg)}>1</Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box className={clsx(css.gridItem, css.gridItemWithBg)}>2</Box>
+          </Grid>
+          <>
+            {(hasPerm || hasSummaryPerm || hasStudentUsagePermission || hasStudentProgressPermission) && (
+              <Grid item xs={4}>
+                <Box className={clsx(css.gridItem, css.navContainer)}>
+                  <ul>
+                    <li>
+                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                        Learner Monthly Report
+                      </Link>
+                    </li>
+                    <li>
+                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                        Learner Weekly Report
+                      </Link>
+                    </li>
+                    <li>
+                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                        Learning Outcome Report
+                      </Link>
+                    </li>
+                    <li>
+                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                        Teacher Usage Report
+                      </Link>
+                    </li>
+                  </ul>
+                </Box>
+              </Grid>
+            )}
+          </>
+        </Grid>
+
+        {isPending ? (
+          ""
+        ) : hasPerm || hasSummaryPerm ? (
+          <>
+            {/*
           <Hidden smDown>
             <div className={css.reportList}>
               {reportList.map(
@@ -244,6 +290,10 @@ export function ReportDashboard() {
             </div>
           </Hidden>
           <Hidden mdUp>
+
+
+
+
             <Grid container spacing={4}>
               {reportList.map(
                 (item) =>
@@ -265,11 +315,13 @@ export function ReportDashboard() {
               )}
             </Grid>
           </Hidden>
-        </>
-      ) : (
-        permissionTip
-      )}
-    </LayoutBox>
+                  */}
+          </>
+        ) : (
+          permissionTip
+        )}
+      </LayoutBox>
+    </Box>
   );
 }
 
