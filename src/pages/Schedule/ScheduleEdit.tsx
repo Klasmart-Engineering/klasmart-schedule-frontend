@@ -99,6 +99,7 @@ import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import ScheduleLessonPlan from "@pages/Schedule/ScheduleLessonPlan";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -1758,6 +1759,60 @@ function EditBox(props: CalendarStateProps) {
     ages: condition.age_ids ?? [],
     grades: condition.grade_ids ?? [],
   };
+
+  const handleLessonPlan = async () => {
+    console.log(filterGropuDatas);
+    let resultInfo: any;
+    if (scheduleList.program_id) {
+      if (viewSubjectPermission) {
+        resultInfo = (await dispatch(
+          getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
+        )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+      } else {
+        dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
+      }
+    }
+    await getLearingOuctomeData(
+      {
+        ...condition,
+        program_ids: filterGropuDatas.programs.length ? filterGropuDatas.programs : null,
+        subject_ids: filterGropuDatas.subjects.length ? filterGropuDatas.subjects : null,
+      },
+      false
+    );
+    changeModalDate({
+      enableCustomization: true,
+      customizeTemplate: (
+        <ScheduleLessonPlan
+          viewSubjectPermission={viewSubjectPermission}
+          autocompleteChange={autocompleteChange}
+          handleClose={() => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          }}
+          filterGropuData={filterGropuDatas}
+          searchOutcomesList={searchOutcomesList}
+          programs={modelSchedule.Deduplication(
+            modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
+          )}
+          handelSetProgramChildInfo={handelSetProgramChildInfo}
+          programChildInfoParent={
+            (programChildInfo
+              ? programChildInfo?.concat(resultInfo && resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
+              : resultInfo && resultInfo.payload
+              ? [resultInfo.payload.programChildInfo]
+              : []) as GetProgramsQuery[]
+          }
+          lessonPlans={lessonPlans}
+        />
+      ),
+      openStatus: true,
+      handleClose: () => {
+        changeModalDate({ openStatus: false });
+      },
+      showScheduleInfo: true,
+    });
+  };
+
   const handeLearingOutcome = async () => {
     let resultInfo: any;
     if (scheduleList.program_id) {
@@ -2220,6 +2275,14 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Box>
         )}
+        <button
+          style={{ display: "none" }}
+          onClick={() => {
+            handleLessonPlan();
+          }}
+        >
+          lesson plan
+        </button>
         {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
           <Autocomplete
             id="combo-box-demo"
