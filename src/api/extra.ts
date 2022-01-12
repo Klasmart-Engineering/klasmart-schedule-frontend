@@ -72,42 +72,16 @@ export const apiResourcePathById = (resource_id?: string) => {
   if (!resource_id) return;
   return `${process.env.REACT_APP_BASE_API}/contents_resources/${resource_id}`;
 };
-export const apiValidatePDFGet = (resourceId: string) => {
-  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/${resourceId}/validate`;
-  return fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/pdf",
-      Accept: "application/pdf",
-    },
-  }).then((response) => {
-    return response.json();
-  });
-};
-export const apiValidatePDFPost = (file: FileLike) => {
-  const url = `${process.env.REACT_APP_KO_BASE_API}/pdf/validate`;
-  const formData = new FormData();
-  formData.append("file", file as unknown as Blob);
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/pdf",
-      Accept: "application/pdf",
-    },
-    credentials: "include",
-    body: formData,
-  }).then((response) => {
-    return response.json();
-  });
-};
-export const apiWebSocketValidatePDFById = (resourceId: string, onChangePercentage?: (percentage: number) => any) => {
+
+export const apiWebSocketValidatePDFById = (source: string, onChangePercentage?: (percentage: number) => any) => {
   return new Promise((resolve: (data: ValidationStatus) => any, reject: () => any) => {
     if (!DOMAIN) {
       reject();
     }
-    const ws = new WebSocket(`${DOMAIN}/pdf/v2/${resourceId}/validate`);
+    const [prefix, id] = source.split("-");
+    const ws = new WebSocket(`${DOMAIN}/pdf/v2/${prefix}/${id}/validate`);
     ws.addEventListener("open", async () => {
-      ws.send(resourceId);
+      ws.send(id);
     });
     ws.addEventListener("message", (messageEvent) => {
       const data = JSON.parse(messageEvent.data);
