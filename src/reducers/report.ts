@@ -706,9 +706,9 @@ export const reportOnload = createAsyncThunk<
     PermissionType.view_my_school_reports_611,
   ]);
   const perm: MyPermissonReport = {
-    isHasOrganizationPerm: reportPermission.view_my_organizations_reports_612,
-    isHasSchoolPerm: reportPermission.view_my_school_reports_611,
-    isHasMyPerm: reportPermission.view_my_reports_614,
+    hasOrganizationPerm: reportPermission.view_my_organizations_reports_612,
+    hasSchoolPerm: reportPermission.view_my_school_reports_611,
+    hasMyPerm: reportPermission.view_my_reports_614,
   };
   await dispatch(getTeacherAndClassOld({ perm }));
   const {
@@ -858,9 +858,9 @@ interface GetTeacherAndClassOld {
   classes: TeacherByOrgIdQuery["organization"];
 }
 interface MyPermissonReport {
-  isHasOrganizationPerm?: boolean;
-  isHasSchoolPerm?: boolean;
-  isHasMyPerm?: boolean;
+  hasOrganizationPerm?: boolean;
+  hasSchoolPerm?: boolean;
+  hasMyPerm?: boolean;
 }
 export const getTeacherAndClassOld = createAsyncThunk<
   GetTeacherAndClassOld,
@@ -868,7 +868,7 @@ export const getTeacherAndClassOld = createAsyncThunk<
 >("report/getTeacherAndClassOld", async ({ perm, teacher_id, metaLoading }) => {
   let teacherList: Item[] = [];
   let classes: TeacherByOrgIdQuery["organization"];
-  if (!perm.isHasMyPerm && !perm.isHasSchoolPerm && !perm.isHasOrganizationPerm) return { teacherList, classes };
+  if (!perm.hasMyPerm && !perm.hasSchoolPerm && !perm.hasOrganizationPerm) return { teacherList, classes };
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
   const {
     data: { myUser },
@@ -884,10 +884,10 @@ export const getTeacherAndClassOld = createAsyncThunk<
     },
   });
   classes = data.organization;
-  if (perm.isHasMyPerm && !perm.isHasSchoolPerm && !perm.isHasOrganizationPerm) {
+  if (perm.hasMyPerm && !perm.hasSchoolPerm && !perm.hasOrganizationPerm) {
     teacherList = [{ id: myUser?.node?.id || "", name: myUser?.node?.givenName + " " + myUser?.node?.familyName || "" }];
   } else {
-    if (perm.isHasOrganizationPerm) {
+    if (perm.hasOrganizationPerm) {
       data.organization?.classes?.forEach((classItem) => {
         teacherList = teacherList?.concat(
           classItem?.teachers?.map((teacherItem) => ({
@@ -897,7 +897,7 @@ export const getTeacherAndClassOld = createAsyncThunk<
         );
       });
     }
-    if (perm.isHasSchoolPerm) {
+    if (perm.hasSchoolPerm) {
       data.organization?.classes
         ?.filter((item) => {
           return mySchoolIDs.find((mySchoolId) => item?.schools?.find((schoolItem) => schoolItem?.school_id === mySchoolId));
@@ -918,7 +918,7 @@ export const getTeacherAndClassOld = createAsyncThunk<
         });
     }
   }
-  if (perm.isHasSchoolPerm && !perm.isHasOrganizationPerm) {
+  if (perm.hasSchoolPerm && !perm.hasOrganizationPerm) {
     classes = {
       classes: data.organization?.classes?.filter((item) => {
         return mySchoolIDs.find((mySchoolId) => item?.schools?.find((schoolItem) => schoolItem?.school_id === mySchoolId));
@@ -939,9 +939,9 @@ export const categoryReportOnLoad = createAsyncThunk<EntityTeacherReportCategory
       PermissionType.report_my_skills_taught_642,
     ]);
     const perm: MyPermissonReport = {
-      isHasOrganizationPerm: skillsPermission.report_organizations_skills_taught_640,
-      isHasSchoolPerm: skillsPermission.report_schools_skills_taught_641,
-      isHasMyPerm: skillsPermission.report_my_skills_taught_642,
+      hasOrganizationPerm: skillsPermission.report_organizations_skills_taught_640,
+      hasSchoolPerm: skillsPermission.report_schools_skills_taught_641,
+      hasMyPerm: skillsPermission.report_my_skills_taught_642,
     };
 
     await dispatch(getTeacherAndClassOld({ perm }));
