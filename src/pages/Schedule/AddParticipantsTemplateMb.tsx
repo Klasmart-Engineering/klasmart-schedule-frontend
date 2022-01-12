@@ -19,7 +19,7 @@ import {
   Tabs,
   TextField,
 } from "@material-ui/core";
-import { Close, Search, Clear } from "@material-ui/icons";
+import { Close, Search } from "@material-ui/icons";
 import { resetParticipantsData } from "@reducers/schedule";
 import { cloneDeep } from "lodash";
 import { ChangeEvent, useMemo, useState } from "react";
@@ -90,8 +90,8 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
   const [dom, setDom] = useState<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [part, setPart] = useState<ParticipantsShortInfo>(participantsIds);
-  const disableOkBtn = !part.student.length && !part.teacher.length; 
-  
+  const disableOkBtn = !part.student.length && !part.teacher.length;
+
   const handleChangeParticipantValue = async (value: ParticipantValue) => {
     setTabValue(value);
     if (value === ParticipantValue.student && ParticipantsData.classes.students.length) return;
@@ -177,7 +177,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
       await getParticipantsData(false, "", "", tabValue);
       setLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog fullScreen open={open}>
@@ -201,9 +201,9 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
             ),
             endAdornment: (
               <InputAdornment position="end">
-                {name && <Close fontSize="small" style={{ color: "rgba(0, 0, 0, 0.54)" }} onClick={handleClearName}/>}
+                {name && <Close fontSize="small" style={{ color: "rgba(0, 0, 0, 0.54)" }} onClick={handleClearName} />}
               </InputAdornment>
-            )
+            ),
           }}
           value={name}
           onChange={handleChangeName}
