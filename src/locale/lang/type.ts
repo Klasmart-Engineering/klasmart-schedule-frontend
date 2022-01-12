@@ -1609,6 +1609,56 @@ type LangRecord =
       values: undefined;
     }
   | {
+      id: "report_student_usage_report";
+      description: "Learner Usage Report";
+      values: undefined;
+    }
+  | {
+      id: "report_label_learner_usage";
+      description: "Learner Usage";
+      values: undefined;
+    }
+  | {
+      id: "report_label_learner_usage_info";
+      description: "icon displays the following information";
+      values: undefined;
+    }
+  | {
+      id: "report_label_past_7_days";
+      description: "last 7 days";
+      values: undefined;
+    }
+  | {
+      id: "report_label_content_used";
+      description: "Content Used";
+      values: undefined;
+    }
+  | {
+      id: "report_label_5_types";
+      description: "5 types";
+      values: undefined;
+    }
+  | {
+      id: "report_label_class_scheduled";
+      description: "class scheduled";
+      values: undefined;
+    }
+  | {
+      id: "report_label_live_class";
+      description: "live class";
+      values: undefined;
+    }
+  | {
+      id: "report_label_assignment_scheduled";
+      description: "assignment scheduled";
+      values: undefined;
+    }
+  | {
+      id: "report_label_study_and_home_fun";
+      description: "study & home_fun";
+      values: undefined;
+    }
+  | {
       id: "schedule_msg_one_assignment";
       description: "Please upload at least one assignment.";
       values: undefined;

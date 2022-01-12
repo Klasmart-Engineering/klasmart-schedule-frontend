@@ -51,3 +51,7 @@ export function getLastedMonths(index: number) {
   );
   return res.reverse();
 }
+
+export function getAWeek() {
+  return moment().subtract(6, "days").startOf("day").unix() + "-" + moment().unix();
+}

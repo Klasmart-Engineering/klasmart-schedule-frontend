@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
-import { InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
+import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -14,6 +14,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import { ReportAchievementList } from "../ReportAchievementList";
+import LearnerUsageReport from "./components/LearnerUsageReport";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   layoutBoxWrapper: {
@@ -109,6 +110,32 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     "& ul": {
       paddingLeft: 10,
     },
+  },
+  arrow: {
+    color: "#fff",
+    "&::before": {
+      content: "' '",
+      border: "0.7px solid #B7B7B7",
+      width: "100%",
+      height: "100%",
+      margin: "auto",
+      display: "block",
+      transform: "rotate(45deg)",
+      backgroundColor: "currentColor",
+    },
+  },
+  tooltip: {
+    backgroundColor: "#fff",
+    maxWidth: 196,
+    padding: 10,
+    textAlign: "center",
+    color: "#333333",
+    border: "0.7px solid #B7B7B7",
+  },
+  reportTop: {
+    color: "#6D8199",
+    fontSize: "16px",
+    marginBottom: "3px",
   },
 }));
 /*
@@ -231,15 +258,40 @@ export function ReportDashboard() {
           <Grid item xs={4}>
             <Box className={clsx(css.gridItem, css.gridItemWithBg)}>1</Box>
           </Grid>
-          <Grid item xs={4}>
-            <Box className={clsx(css.gridItem, css.gridItemWithBg)}>2</Box>
-          </Grid>
+          {hasStudentUsagePermission && (
+            <Grid item xs={4}>
+              <div className={css.reportTop}>
+                {t("report_label_learner_usage")}
+                <Tooltip
+                  arrow
+                  placement="bottom"
+                  title={t("report_label_learner_usage_info")}
+                  classes={css}
+                  aria-label="info"
+                  style={{
+                    position: "relative",
+                    left: "5px",
+                    top: "3px",
+                    fontSize: "19px",
+                    color: "#6D8199",
+                    width: "15px",
+                    height: "15px",
+                  }}
+                >
+                  <Info></Info>
+                </Tooltip>
+              </div>
+              <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                <LearnerUsageReport />
+              </Box>
+            </Grid>
+          )}
           <>
             {(hasPerm || hasSummaryPerm || hasStudentUsagePermission || hasStudentProgressPermission) && (
               <Grid item xs={4}>
                 <Box className={clsx(css.gridItem, css.navContainer)}>
                   <ul>
-                    <li>
+                    <li style={{ marginTop: "30px" }}>
                       <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
                         Learner Monthly Report
                       </Link>
