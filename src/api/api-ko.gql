@@ -670,7 +670,7 @@ query classesConnection($classFilter:ClassFilter, $classCursor: String, $teacher
     }
   }
 }
-query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
+# query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
 query getClassByInfo(
   $filter: ClassFilter,
   $direction: ConnectionDirection!,
@@ -728,7 +728,7 @@ classesConnection(
   }
 }
 
-query userWithoutClassAndSchool ($direction) {
+query userWithoutClassAndSchool ($direction: ConnectionDirection) {
   usersConnection (
     direction: FORWARD,
     directionArgs: {
@@ -753,6 +753,33 @@ query userWithoutClassAndSchool ($direction) {
       hasPreviousPage
       startCursor
       endCursor
+    }
+  }
+}
+query getRolesId (
+  $filter: RoleFilter,
+  $direction: ConnectionDirection!,
+  $directionArgs: ConnectionsDirectionArgs
+) {
+  rolesConnection(
+    filter: $filter
+    direction: $direction,
+    directionArgs: $directionArgs
+  ) {
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        id
+        name
+        status
+        system
+      }
     }
   }
 }

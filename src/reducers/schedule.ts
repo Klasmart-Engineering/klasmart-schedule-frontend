@@ -1,7 +1,8 @@
+import { ParticipantRoleId, ParticipantString, ParticipantValue } from "@api/type";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
+import { BooleanOperator, ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -25,6 +26,9 @@ import {
   GetProgramsDocument,
   GetProgramsQuery,
   GetProgramsQueryVariables,
+  GetRolesIdDocument,
+  GetRolesIdQuery,
+  GetRolesIdQueryVariables,
   GetSchoolsFilterListDocument,
   GetSchoolsFilterListQuery,
   GetSchoolsFilterListQueryVariables,
@@ -244,8 +248,14 @@ const initialState: ScheduleState = {
       teachers: [],
     },
     total: 0,
-    hash: "",
-    next: false,
+    hash: {
+      teacher: "",
+      student: "",
+    },
+    next: {
+      teacher: false,
+      student: false,
+    },
   },
   participantsIds: { student: [], teacher: [] },
   classRosterIds: { student: [], teacher: [] },
@@ -491,12 +501,16 @@ interface participantsDataInterface extends LoadingMetaPayload {
   is_org: boolean;
   hash: string;
   name: string;
+  roleName: ParticipantString["key"]; //student / teacher
 }
 
-export const getParticipantsData = createAsyncThunk<ParticipantsData, participantsDataInterface>(
+export const getParticipantsData = createAsyncThunk<ParticipantsData, participantsDataInterface, { state: Rootstate }>(
   "getParticipantsData",
   // @ts-ignore
-  async ({ is_org, hash, name }) => {
+  async ({ is_org, hash, name, roleName }, { getState }) => {
+    const {
+      schedule: { ParticipantsData },
+    } = getState();
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     let filterQuery = {};
     if (is_org) {
@@ -527,12 +541,33 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
         ...filterQuery,
       };
     }
+    const { data: roleData } = await gqlapi.query<GetRolesIdQuery, GetRolesIdQueryVariables>({
+      query: GetRolesIdDocument,
+      variables: {
+        direction: ConnectionDirection.Forward,
+        directionArgs: { count: 10 },
+        filter: { system: { operator: BooleanOperator.Eq, value: true } },
+      },
+    });
+    const StudentAndTeacherRoleId: ParticipantRoleId = {};
+    roleData.rolesConnection?.edges?.forEach((item) => {
+      if (item?.node?.name === ParticipantValue.student) {
+        StudentAndTeacherRoleId.Student = item.node.id;
+      }
+      if (item?.node?.name === ParticipantValue.teacher) {
+        StudentAndTeacherRoleId.Teacher = item.node.id;
+      }
+    });
     const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
       query: GetUserDocument,
       variables: {
-        filter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" }, ...filterQuery },
+        filter: {
+          organizationUserStatus: { operator: StringOperator.Eq, value: "active" },
+          roleId: { operator: UuidOperator.Eq, value: StudentAndTeacherRoleId[roleName] },
+          ...filterQuery,
+        },
         direction: ConnectionDirection.Forward,
-        directionArgs: { count: 50, cursor: hash },
+        directionArgs: { count: 10, cursor: hash },
       },
     });
     const participantListOrigin = data;
@@ -541,17 +576,25 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
     participantListOrigin.usersConnection?.edges?.forEach((item) => {
       if (item?.node?.status !== "active") return;
       item?.node?.roles?.forEach((role) => {
-        if (role.name === "Teacher")
+        if (roleName === ParticipantValue.teacher && role.name === ParticipantValue.teacher)
           teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
-        if (role.name === "Student")
+        if (roleName === ParticipantValue.student && role.name === ParticipantValue.student)
           students.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
       });
     });
+    const studentHash =
+      roleName === ParticipantValue.student ? participantListOrigin.usersConnection?.pageInfo?.endCursor : ParticipantsData.hash.student;
+    const teacherHash =
+      roleName === ParticipantValue.teacher ? participantListOrigin.usersConnection?.pageInfo?.endCursor : ParticipantsData.hash.teacher;
+    const studentNext =
+      roleName === ParticipantValue.student ? participantListOrigin.usersConnection?.pageInfo?.hasNextPage : ParticipantsData.next.student;
+    const teacherNext =
+      roleName === ParticipantValue.teacher ? participantListOrigin.usersConnection?.pageInfo?.hasNextPage : ParticipantsData.next.teacher;
     return {
       classes: [{ students: students, teachers: teachers }],
       total: participantListOrigin.usersConnection?.totalCount,
-      hash: participantListOrigin.usersConnection?.pageInfo?.endCursor,
-      next: participantListOrigin.usersConnection?.pageInfo?.hasNextPage,
+      next: { teacher: teacherNext, student: studentNext },
+      hash: { teacher: teacherHash, student: studentHash },
     };
   }
 );
@@ -937,8 +980,14 @@ const { actions, reducer } = createSlice({
           teachers: [],
         },
         total: 0,
-        hash: "",
-        next: false,
+        hash: {
+          teacher: "",
+          student: "",
+        },
+        next: {
+          teacher: false,
+          student: false,
+        },
       };
     },
   },

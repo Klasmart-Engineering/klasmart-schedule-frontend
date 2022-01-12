@@ -1,4 +1,3 @@
-import { MockOptionsItem } from "../api/extra";
 import {
   EntityScheduleDetailsView,
   EntityScheduleFilterClass,
@@ -7,6 +6,7 @@ import {
   EntityScheduleViewDetail,
   ModelOutcomeSetCreateView,
 } from "../api/api.auto";
+import { MockOptionsItem } from "../api/extra";
 
 export type timestampType = {
   start: number;
@@ -141,8 +141,14 @@ export interface ClassesData {
 export interface ParticipantsData {
   classes: ClassesData;
   total?: number;
-  hash?: string;
-  next?: boolean;
+  hash: {
+    teacher?: string;
+    student?: string;
+  };
+  next: {
+    teacher?: boolean;
+    student?: boolean;
+  };
 }
 
 export interface EntityScheduleShortInfo {
