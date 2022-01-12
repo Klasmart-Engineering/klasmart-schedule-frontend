@@ -19,7 +19,7 @@ import {
   Tabs,
   TextField,
 } from "@material-ui/core";
-import { Close, Search } from "@material-ui/icons";
+import { Close, Search, Clear } from "@material-ui/icons";
 import { resetParticipantsData } from "@reducers/schedule";
 import { cloneDeep } from "lodash";
 import { ChangeEvent, useMemo, useState } from "react";
@@ -90,7 +90,8 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
   const [dom, setDom] = useState<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [part, setPart] = useState<ParticipantsShortInfo>(participantsIds);
-
+  const disableOkBtn = !part.student.length && !part.teacher.length; 
+  
   const handleChangeParticipantValue = async (value: ParticipantValue) => {
     setTabValue(value);
     if (value === ParticipantValue.student && ParticipantsData.classes.students.length) return;
@@ -168,6 +169,16 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
     onClose();
   };
 
+  const handleClearName = async () => {
+    setName("");
+    if (!loading && getParticipantsData) {
+      setLoading(true);
+      dispatch(resetParticipantsData());
+      await getParticipantsData(false, "", "", tabValue);
+      setLoading(false);
+    }
+  }
+
   return (
     <Dialog fullScreen open={open}>
       <DialogTitle>
@@ -188,6 +199,11 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                 <Search style={{ color: "rgba(0, 0, 0, 0.54)" }} />
               </InputAdornment>
             ),
+            endAdornment: (
+              <InputAdornment position="end">
+                {name && <Close fontSize="small" style={{ color: "rgba(0, 0, 0, 0.54)" }} onClick={handleClearName}/>}
+              </InputAdornment>
+            )
           }}
           value={name}
           onChange={handleChangeName}
@@ -258,7 +274,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
         </FormGroup>
       </DialogContent>
       <DialogActions classes={{ root: css.dialogActionRoot }}>
-        <Button className={css.okBtn} color="primary" variant="contained" onClick={handleConfirm}>
+        <Button className={css.okBtn} color="primary" variant="contained" disabled={disableOkBtn} onClick={handleConfirm}>
           {d("OK").t("schedule_button_ok")}
         </Button>
       </DialogActions>
