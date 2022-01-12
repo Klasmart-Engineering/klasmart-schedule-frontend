@@ -1,6 +1,8 @@
 import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
+import { ReportLearningSummary } from "@pages/ReportLearningSummary";
+import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -270,7 +272,7 @@ export function ReportDashboard() {
                   aria-label="info"
                   style={{
                     position: "relative",
-                    left: "5px",
+                    left: "7px",
                     top: "3px",
                     fontSize: "19px",
                     color: "#6D8199",
@@ -302,12 +304,12 @@ export function ReportDashboard() {
                       </Link>
                     </li>
                     <li>
-                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                      <Link component={RouterLink} to={ReportLearningSummary.routeRedirectDefault}>
                         Learning Outcome Report
                       </Link>
                     </li>
                     <li>
-                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                      <Link component={RouterLink} to={ReportTeachingLoad.routeBasePath}>
                         Teacher Usage Report
                       </Link>
                     </li>

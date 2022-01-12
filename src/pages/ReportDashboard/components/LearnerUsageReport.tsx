@@ -2,9 +2,8 @@ import { t } from "@locale/LocaleManager";
 import { makeStyles } from "@material-ui/core";
 import { ArrowRight } from "@material-ui/icons";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
-import { getAWeek } from "@utilities/dateUtilities";
+// import { getAWeek } from "@utilities/dateUtilities";
 import React, { useMemo } from "react";
-import { useDispatch } from "react-redux";
 // import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 // import { RootState } from "../../../reducers";
@@ -91,7 +90,7 @@ const useStyles = makeStyles(() => ({
 
 export default function LearnerUsageReport() {
   const css = useStyles();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const history = useHistory();
   // const {
   //   ContentsUsed,
@@ -132,10 +131,6 @@ export default function LearnerUsageReport() {
   //     ContentTypeList: ["Content Used", "Class Scheduled", "Assignment Scheduled"]
   //   }))
   // }, [dispatch])
-
-  React.useEffect(() => {
-    console.log("getAWeek", getAWeek());
-  }, [dispatch]);
 
   return (
     <div className={css.reportContainer}>
