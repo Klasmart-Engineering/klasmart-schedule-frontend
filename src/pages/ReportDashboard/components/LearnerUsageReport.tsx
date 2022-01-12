@@ -85,6 +85,7 @@ const useStyles = makeStyles(() => ({
     color: "#fff",
     fontSize: "13px",
     boxSizing: "border-box",
+    cursor: "pointer",
   },
 }));
 
