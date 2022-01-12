@@ -567,7 +567,7 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
           ...filterQuery,
         },
         direction: ConnectionDirection.Forward,
-        directionArgs: { count: 10, cursor: hash },
+        directionArgs: { count: 20, cursor: hash },
       },
     });
     const participantListOrigin = data;
