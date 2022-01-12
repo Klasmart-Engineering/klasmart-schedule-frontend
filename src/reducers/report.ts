@@ -699,7 +699,18 @@ export const reportOnload = createAsyncThunk<
   let lessonPlanList: EntityScheduleShortInfo[] = [];
   let finalTearchId: string = "";
   // await dispatch(getTeachersAndClasses({}));
-  await dispatch(getTeacherAndClassOld({}));
+
+  const reportPermission = await permissionCache.usePermission([
+    PermissionType.view_my_reports_614,
+    PermissionType.view_my_organizations_reports_612,
+    PermissionType.view_my_school_reports_611,
+  ]);
+  const perm: MyPermissonReport = {
+    isHasOrganizationPerm: reportPermission.view_my_organizations_reports_612,
+    isHasSchoolPerm: reportPermission.view_my_school_reports_611,
+    isHasMyPerm: reportPermission.view_my_reports_614,
+  };
+  await dispatch(getTeacherAndClassOld({ perm }));
   const {
     report: { teacherList, classes },
   } = getState();
@@ -846,82 +857,94 @@ interface GetTeacherAndClassOld {
   teacherList: Item[];
   classes: TeacherByOrgIdQuery["organization"];
 }
-export const getTeacherAndClassOld = createAsyncThunk<GetTeacherAndClassOld, LoadingMetaPayload & { teacher_id?: string }>(
-  "report/getTeacherAndClassOld",
-  async ({ teacher_id, metaLoading }) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const {
-      data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
-    });
-    const mySchoolIDs =
-      myUser?.node?.schoolMembershipsConnection?.edges?.map((item) => item?.node?.school?.id || "").filter((item) => !!item) || [];
-    let teacherList: Item[] = [];
-    const perm = await permissionCache.usePermission([
-      PermissionType.view_my_reports_614,
-      PermissionType.view_reports_610,
-      PermissionType.view_my_organizations_reports_612,
-      PermissionType.view_my_school_reports_611,
-    ]);
-    const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
-      query: TeacherByOrgIdDocument,
-      variables: {
-        organization_id,
-      },
-    });
-    let classes: TeacherByOrgIdQuery["organization"] = data.organization;
-    if (perm.view_my_reports_614 && !perm.view_reports_610 && !perm.view_my_school_reports_611 && !perm.view_my_organizations_reports_612) {
-      teacherList = [{ id: myUser?.node?.id || "", name: myUser?.node?.givenName + " " + myUser?.node?.familyName || "" }];
-    } else {
-      if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
-        data.organization?.classes?.forEach((classItem) => {
+interface MyPermissonReport {
+  isHasOrganizationPerm?: boolean;
+  isHasSchoolPerm?: boolean;
+  isHasMyPerm?: boolean;
+}
+export const getTeacherAndClassOld = createAsyncThunk<
+  GetTeacherAndClassOld,
+  LoadingMetaPayload & { perm: MyPermissonReport; teacher_id?: string }
+>("report/getTeacherAndClassOld", async ({ perm, teacher_id, metaLoading }) => {
+  let teacherList: Item[] = [];
+  let classes: TeacherByOrgIdQuery["organization"];
+  if (!perm.isHasMyPerm && !perm.isHasSchoolPerm && !perm.isHasOrganizationPerm) return { teacherList, classes };
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const {
+    data: { myUser },
+  } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
+    query: GetMyIdDocument,
+  });
+  const mySchoolIDs =
+    myUser?.node?.schoolMembershipsConnection?.edges?.map((item) => item?.node?.school?.id || "").filter((item) => !!item) || [];
+  const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
+    query: TeacherByOrgIdDocument,
+    variables: {
+      organization_id,
+    },
+  });
+  classes = data.organization;
+  if (perm.isHasMyPerm && !perm.isHasSchoolPerm && !perm.isHasOrganizationPerm) {
+    teacherList = [{ id: myUser?.node?.id || "", name: myUser?.node?.givenName + " " + myUser?.node?.familyName || "" }];
+  } else {
+    if (perm.isHasOrganizationPerm) {
+      data.organization?.classes?.forEach((classItem) => {
+        teacherList = teacherList?.concat(
+          classItem?.teachers?.map((teacherItem) => ({
+            id: teacherItem?.user_id || "",
+            name: teacherItem?.user_name || "",
+          })) || []
+        );
+      });
+    }
+    if (perm.isHasSchoolPerm) {
+      data.organization?.classes
+        ?.filter((item) => {
+          return mySchoolIDs.find((mySchoolId) => item?.schools?.find((schoolItem) => schoolItem?.school_id === mySchoolId));
+        })
+        ?.forEach((classItem) => {
           teacherList = teacherList?.concat(
-            classItem?.teachers?.map((teacherItem) => ({
-              id: teacherItem?.user_id || "",
-              name: teacherItem?.user_name || "",
-            })) || []
+            classItem?.teachers
+              ?.filter((item) => {
+                return mySchoolIDs.find((mySchoolId) =>
+                  item?.school_memberships?.find((schoolItem) => schoolItem?.school_id === mySchoolId)
+                );
+              })
+              ?.map((teacherItem) => ({
+                id: teacherItem?.user_id || "",
+                name: teacherItem?.user_name || "",
+              })) || []
           );
         });
-      }
-      if (perm.view_my_school_reports_611) {
-        data.organization?.classes
-          ?.filter((item) => {
-            return mySchoolIDs.find((mySchoolId) => item?.schools?.find((schoolItem) => schoolItem?.school_id === mySchoolId));
-          })
-          ?.forEach((classItem) => {
-            teacherList = teacherList?.concat(
-              classItem?.teachers
-                ?.filter((item) => {
-                  return mySchoolIDs.find((mySchoolId) =>
-                    item?.school_memberships?.find((schoolItem) => schoolItem?.school_id === mySchoolId)
-                  );
-                })
-                ?.map((teacherItem) => ({
-                  id: teacherItem?.user_id || "",
-                  name: teacherItem?.user_name || "",
-                })) || []
-            );
-          });
-      }
     }
-    if (perm.view_my_school_reports_611 && !perm.view_reports_610 && !perm.view_my_organizations_reports_612) {
-      classes = {
-        classes: data.organization?.classes?.filter((item) => {
-          return mySchoolIDs.find((mySchoolId) => item?.schools?.find((schoolItem) => schoolItem?.school_id === mySchoolId));
-        }),
-      };
-    }
-    teacherList = orderByASC(uniqBy(teacherList, "id"), "name");
-    return { teacherList, classes };
   }
-);
+  if (perm.isHasSchoolPerm && !perm.isHasOrganizationPerm) {
+    classes = {
+      classes: data.organization?.classes?.filter((item) => {
+        return mySchoolIDs.find((mySchoolId) => item?.schools?.find((schoolItem) => schoolItem?.school_id === mySchoolId));
+      }),
+    };
+  }
+  teacherList = orderByASC(uniqBy(teacherList, "id"), "name");
+  return { teacherList, classes };
+});
 
 export const categoryReportOnLoad = createAsyncThunk<EntityTeacherReportCategory[], getSkillCoverageReportPayload, { state: RootState }>(
   "report/categoryReportOnload",
   async ({ teacher_id, metaLoading }, { dispatch, getState }) => {
     // await dispatch(getTeachersAndClasses({}));
-    await dispatch(getTeacherAndClassOld({}));
+    const skillsPermission = await permissionCache.usePermission([
+      PermissionType.report_organizations_skills_taught_640,
+      PermissionType.report_schools_skills_taught_641,
+      PermissionType.report_my_skills_taught_642,
+    ]);
+    const perm: MyPermissonReport = {
+      isHasOrganizationPerm: skillsPermission.report_organizations_skills_taught_640,
+      isHasSchoolPerm: skillsPermission.report_schools_skills_taught_641,
+      isHasMyPerm: skillsPermission.report_my_skills_taught_642,
+    };
+
+    await dispatch(getTeacherAndClassOld({ perm }));
     const {
       report: { teacherList },
     } = getState();
