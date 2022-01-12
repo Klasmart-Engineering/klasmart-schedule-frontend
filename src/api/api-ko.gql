@@ -187,32 +187,10 @@ query organizations {
     organization_name
   }
 }
-query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count: PageSize, $searchValue: String!, $sort: OrganizationSortInput!) {
+query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count: PageSize,$sort: OrganizationSortInput!,$filter:OrganizationFilter!) {
     organizationsConnection(
       direction: $direction
-      filter: {
-      AND:[
-        {status:{
-          operator: eq
-          value:"active"
-         }}
-        {OR:[
-         { ownerUserEmail:{
-            operator:contains
-            value: $searchValue
-            caseInsensitive: true
-          }
-         }
-          {name:{
-            operator:contains
-            value: $searchValue
-            caseInsensitive: true
-            }
-          }
-         ]
-        }
-      ]
-    }
+      filter: $filter
       directionArgs: { count: $count, cursor: $cursor }
       sort: $sort
     ) {
@@ -717,7 +695,6 @@ query classesConnection($classFilter:ClassFilter, $classCursor: String, $teacher
     }
   }
 }
-query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
 query getClassByInfo(
   $filter: ClassFilter,
   $direction: ConnectionDirection!,
@@ -775,7 +752,7 @@ classesConnection(
   }
 }
 
-query userWithoutClassAndSchool ($direction) {
+query userWithoutClassAndSchool {
   usersConnection (
     direction: FORWARD,
     directionArgs: {
