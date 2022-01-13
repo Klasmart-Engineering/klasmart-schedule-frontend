@@ -1,9 +1,14 @@
 import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Tooltip from "@material-ui/core/Tooltip";
-import { DeleteOutlined, EditOutlined, VisibilityOff, CloseOutlined } from "@material-ui/icons";
+import { CloseOutlined, DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import GetAppIcon from "@material-ui/icons/GetApp";
-import React from "react";
+import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import { actError } from "@reducers/notify";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
@@ -16,10 +21,6 @@ import { RootState } from "../../reducers";
 import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import { classTypeLabel, EntityScheduleShortInfo, memberType, ScheduleEditExtend, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import ScheduleButton from "./ScheduleButton";
-import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
-import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
-import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
-import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   previewContainer: {
@@ -219,6 +220,7 @@ interface InfoMbProps extends InfoProps {
 
 function CustomizeTempalteMb(props: InfoMbProps) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const {
     handleClose,
     ScheduleViewInfo,
@@ -275,6 +277,18 @@ function CustomizeTempalteMb(props: InfoMbProps) {
       return "";
     }
   };
+
+  useEffect(() => {
+    if (
+      (!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
+      ScheduleViewInfo.class_type_label?.id !== "Task" &&
+      !ScheduleViewInfo.is_home_fun
+    ) {
+      dispatch(
+        actError(d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan"))
+      );
+    }
+  }, [ScheduleViewInfo.class_type_label?.id, ScheduleViewInfo.is_home_fun, ScheduleViewInfo.lesson_plan, dispatch]);
 
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
