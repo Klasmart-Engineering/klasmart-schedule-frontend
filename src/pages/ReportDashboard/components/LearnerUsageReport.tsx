@@ -1,13 +1,10 @@
 import { t } from "@locale/LocaleManager";
 import { makeStyles } from "@material-ui/core";
 import { ArrowRight } from "@material-ui/icons";
-import ReportStudentUsage from "@pages/ReportStudentUsage";
-import { getLearnerUsageOverview } from "@reducers/report";
-import { getAWeek } from "@utilities/dateUtilities";
-import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { RootState } from "../../../reducers";
+import ReportStudentUsage from "@pages/ReportStudentUsage";
+import React, { useMemo } from "react";
+import { EntityLearnerUsageResponse } from "@api/api.auto";
 
 const useStyles = makeStyles(() => ({
   reportContainer: {
@@ -90,11 +87,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function LearnerUsageReport() {
+interface ILearnerUsageReportProps {
+  learnerUsageOverview: EntityLearnerUsageResponse;
+}
+
+export default function LearnerUsageReport({ learnerUsageOverview }: ILearnerUsageReportProps) {
   const css = useStyles();
-  const dispatch = useDispatch();
   const history = useHistory();
-  const { learnerUsageOverview } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const { assignment_scheduled, class_scheduled, contents_used } = learnerUsageOverview;
 
   const reportList = [
@@ -121,16 +120,6 @@ export default function LearnerUsageReport() {
     },
     [history]
   );
-
-  React.useEffect(() => {
-    dispatch(
-      getLearnerUsageOverview({
-        metaLoading: true,
-        durations: getAWeek(),
-        content_type_list: ["h5p", "image", "video", "audio", "document", "live", "study", "home_fun"],
-      })
-    );
-  }, [dispatch]);
 
   return (
     <div className={css.reportContainer}>

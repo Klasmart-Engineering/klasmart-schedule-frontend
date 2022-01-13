@@ -8,8 +8,6 @@ import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import clsx from "clsx";
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router";
 import { Link as RouterLink } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
@@ -19,6 +17,11 @@ import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import LearnerUsageReport from "./components/LearnerUsageReport";
 import SkillCoverageTab from "./components/SkillCoverageTab";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
+import { getLearnerUsageOverview } from "@reducers/report";
+import { getAWeek } from "@utilities/dateUtilities";
+import { RootState } from "@reducers/index";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   layoutBoxWrapper: {
@@ -176,6 +179,8 @@ export function ReportDashboard() {
   const css = useStyles();
   //const history = useHistory();
   const dispatch = useDispatch();
+  const { learnerUsageOverview } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { assignment_scheduled, class_scheduled, contents_used } = learnerUsageOverview;
   const perm = usePermission([
     // Skills Coverage
     PermissionType.report_learning_outcomes_in_categories_616,
@@ -196,12 +201,27 @@ export function ReportDashboard() {
   ]);
 
   React.useEffect(() => {
-    if (Object.keys(perm).length === 0) {
+    if (
+      Object.keys(perm).length === 0 &&
+      assignment_scheduled === undefined &&
+      class_scheduled === undefined &&
+      contents_used === undefined
+    ) {
       dispatch(actSetLoading(true));
     } else {
       dispatch(actSetLoading(false));
     }
-  }, [dispatch, perm]);
+  }, [dispatch, perm, assignment_scheduled, class_scheduled, contents_used]);
+
+  React.useEffect(() => {
+    dispatch(
+      getLearnerUsageOverview({
+        metaLoading: true,
+        durations: getAWeek(),
+        content_type_list: ["h5p", "image", "video", "audio", "document", "live", "study", "home_fun"],
+      })
+    );
+  }, [dispatch]);
 
   const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending] = React.useMemo(() => {
     const hasSkillCoveragePerm = !!perm.report_learning_outcomes_in_categories_616;
@@ -282,7 +302,7 @@ export function ReportDashboard() {
               <Grid item xs={12} md={4}>
                 {reportTip(t("report_label_learner_usage"), t("report_label_learner_usage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
-                  <LearnerUsageReport />
+                  <LearnerUsageReport learnerUsageOverview={learnerUsageOverview} />
                 </Box>
               </Grid>
             )}
