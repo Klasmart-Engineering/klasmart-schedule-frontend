@@ -102,19 +102,16 @@ export default function LearnerUsageReport() {
   const reportList = [
     {
       content: t("report_label_content_used"),
-      // value: 32 || 0,
       value: Math.floor(contents_used || 0),
       category: t("report_label_5_types"),
     },
     {
       content: t("report_label_class_scheduled"),
-      // value: 12 || 0,
       value: Math.floor(class_scheduled || 0),
       category: t("report_label_live_class"),
     },
     {
       content: t("report_label_assignment_scheduled"),
-      // value: 8 || 0,
       value: Math.floor(assignment_scheduled || 0),
       category: t("report_label_study_and_home_fun"),
     },
