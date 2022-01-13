@@ -63,7 +63,7 @@ const useStyles = makeStyles(() => ({
   category: {
     maxWidth: "55px",
     fontSize: "12px",
-    color: "#000",
+    color: "#6D8199",
     textAlign: "left",
     marginLeft: "18px",
     wordBreak: "normal",
