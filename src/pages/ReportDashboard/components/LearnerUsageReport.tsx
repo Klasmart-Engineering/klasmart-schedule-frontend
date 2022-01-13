@@ -60,11 +60,11 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "right",
-    fontSize: "29px",
+    fontSize: "30px",
     color: "#1896EA",
   },
   category: {
-    maxWidth: "50px",
+    maxWidth: "55px",
     fontSize: "12px",
     color: "#000",
     textAlign: "left",
