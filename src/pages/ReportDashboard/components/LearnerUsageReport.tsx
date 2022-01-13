@@ -95,8 +95,6 @@ export default function LearnerUsageReport() {
   const dispatch = useDispatch();
   const history = useHistory();
   const { learnerUsageOverview } = useSelector<RootState, RootState["report"]>((state) => state.report);
-  console.log("learnerUsageOverview", learnerUsageOverview);
-
   const { assignment_scheduled, class_scheduled, contents_used } = learnerUsageOverview;
 
   const reportList = [
@@ -125,7 +123,6 @@ export default function LearnerUsageReport() {
   );
 
   React.useEffect(() => {
-    console.log("调用了");
     dispatch(
       getLearnerUsageOverview({
         metaLoading: true,
