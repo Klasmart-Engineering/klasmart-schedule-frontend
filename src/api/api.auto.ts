@@ -1521,6 +1521,16 @@ export interface EntityStudentAchievementReportResponse {
   categories?: EntityStudentAchievementReportCategoryItem[];
   student_name?: string;
 }
+export interface EntityLearnerUsageRequest {
+  content_type_list?: string[];
+  durations?: string[];
+}
+
+export interface EntityLearnerUsageResponse {
+  assignment_scheduled?: number;
+  class_scheduled?: number;
+  contents_used?: number;
+}
 
 export interface EntityStudentAssessment {
   complete_at?: number;
@@ -3775,6 +3785,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       >(`/published_learning_outcomes`, "POST", params, order_by),
   };
   reports = {
+    /**
+     * @tags reports/learnerUsage
+     * @name getLearnerUsageOverview
+     * @summary get learner usage Report
+     * @request GET:/reports/learner_usage/overview
+     * @description get learner usage Report
+     */
+    getLearnerUsageOverview: (classes_assignments: EntityLearnerUsageRequest, params?: RequestParams) =>
+      this.request<EntityLearnerUsageResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learner_usage/overview`,
+        "POST",
+        params,
+        classes_assignments
+      ),
     /**
      * @tags reports/learningSummary
      * @name queryAssignmentsSummary
