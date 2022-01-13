@@ -1042,7 +1042,9 @@ export type GetClassByInfoQuery = { __typename?: "Query" } & {
   >;
 };
 
-export type UserWithoutClassAndSchoolQueryVariables = Types.Exact<{ [key: string]: never }>;
+export type UserWithoutClassAndSchoolQueryVariables = Types.Exact<{
+  direction?: Types.Maybe<Types.ConnectionDirection>;
+}>;
 
 export type UserWithoutClassAndSchoolQuery = { __typename?: "Query" } & {
   usersConnection?: Types.Maybe<
@@ -1063,6 +1065,36 @@ export type UserWithoutClassAndSchoolQuery = { __typename?: "Query" } & {
         >
       >;
     }
+  >;
+};
+
+export type GetRolesIdQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.RoleFilter>;
+  direction: Types.ConnectionDirection;
+  directionArgs?: Types.Maybe<Types.ConnectionsDirectionArgs>;
+}>;
+
+export type GetRolesIdQuery = { __typename?: "Query" } & {
+  rolesConnection?: Types.Maybe<
+    { __typename?: "RolesConnectionResponse" } & Pick<Types.RolesConnectionResponse, "totalCount"> & {
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "RolesConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "RoleConnectionNode" } & Pick<Types.RoleConnectionNode, "id" | "name" | "status" | "system">
+                >;
+              }
+            >
+          >
+        >;
+      }
   >;
 };
 
@@ -3042,7 +3074,7 @@ export type GetClassByInfoQueryHookResult = ReturnType<typeof useGetClassByInfoQ
 export type GetClassByInfoLazyQueryHookResult = ReturnType<typeof useGetClassByInfoLazyQuery>;
 export type GetClassByInfoQueryResult = Apollo.QueryResult<GetClassByInfoQuery, GetClassByInfoQueryVariables>;
 export const UserWithoutClassAndSchoolDocument = gql`
-  query userWithoutClassAndSchool {
+  query userWithoutClassAndSchool($direction: ConnectionDirection) {
     usersConnection(
       direction: FORWARD
       directionArgs: { count: 5, cursor: "" }
@@ -3081,6 +3113,7 @@ export const UserWithoutClassAndSchoolDocument = gql`
  * @example
  * const { data, loading, error } = useUserWithoutClassAndSchoolQuery({
  *   variables: {
+ *      direction: // value for 'direction'
  *   },
  * });
  */
@@ -3108,3 +3141,54 @@ export type UserWithoutClassAndSchoolQueryResult = Apollo.QueryResult<
   UserWithoutClassAndSchoolQuery,
   UserWithoutClassAndSchoolQueryVariables
 >;
+export const GetRolesIdDocument = gql`
+  query getRolesId($filter: RoleFilter, $direction: ConnectionDirection!, $directionArgs: ConnectionsDirectionArgs) {
+    rolesConnection(filter: $filter, direction: $direction, directionArgs: $directionArgs) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      edges {
+        node {
+          id
+          name
+          status
+          system
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetRolesIdQuery__
+ *
+ * To run a query within a React component, call `useGetRolesIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRolesIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRolesIdQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      direction: // value for 'direction'
+ *      directionArgs: // value for 'directionArgs'
+ *   },
+ * });
+ */
+export function useGetRolesIdQuery(baseOptions: Apollo.QueryHookOptions<GetRolesIdQuery, GetRolesIdQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetRolesIdQuery, GetRolesIdQueryVariables>(GetRolesIdDocument, options);
+}
+export function useGetRolesIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRolesIdQuery, GetRolesIdQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetRolesIdQuery, GetRolesIdQueryVariables>(GetRolesIdDocument, options);
+}
+export type GetRolesIdQueryHookResult = ReturnType<typeof useGetRolesIdQuery>;
+export type GetRolesIdLazyQueryHookResult = ReturnType<typeof useGetRolesIdLazyQuery>;
+export type GetRolesIdQueryResult = Apollo.QueryResult<GetRolesIdQuery, GetRolesIdQueryVariables>;
