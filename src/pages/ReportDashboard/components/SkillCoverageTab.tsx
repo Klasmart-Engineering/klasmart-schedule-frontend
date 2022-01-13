@@ -122,8 +122,8 @@ export default function SkillCoverageTab() {
                     <StatisticPieCharts
                       width={info.width}
                       height={info.height}
-                      value={handleData.map((item) => item.count || 0)}
-                      colors={COLORS}
+                      value={_.sum(handleData) === 0 ? Array(3).fill(100 / 3) : handleData.map((item) => item.count || 0)}
+                      colors={_.sum(handleData) === 0 ? Array<string>(3).fill("#eee") : COLORS}
                     />
                   </Box>
                 );
