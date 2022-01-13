@@ -1772,8 +1772,18 @@ function EditBox(props: CalendarStateProps) {
     grades: condition.grade_ids ?? [],
   };
 
+  const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({ group_names: "", page: 1, pages: 10, lesson_plan_name: "" });
+
+  const searcLessonPlanList = async (filterQueryAssembly: object) => {
+    console.log(lessonPlanCondition, filterQueryAssembly);
+    const query = {
+      ...lessonPlanCondition,
+      ...filterQueryAssembly,
+    };
+    setLessonPlanCondition({ ...query });
+  };
+
   const handleLessonPlan = async () => {
-    console.log(filterGropuDatas);
     let resultInfo: any;
     if (scheduleList.program_id) {
       if (viewSubjectPermission) {
@@ -1798,11 +1808,12 @@ function EditBox(props: CalendarStateProps) {
         <ScheduleLessonPlan
           viewSubjectPermission={viewSubjectPermission}
           autocompleteChange={autocompleteChange}
+          lessonPlanCondition={lessonPlanCondition}
           handleClose={() => {
             changeModalDate({ openStatus: false, enableCustomization: false });
           }}
           filterGropuData={filterGropuDatas}
-          searchOutcomesList={searchOutcomesList}
+          searchOutcomesList={searcLessonPlanList}
           programs={modelSchedule.Deduplication(
             modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
           )}
