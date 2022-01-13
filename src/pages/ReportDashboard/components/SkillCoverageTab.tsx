@@ -72,10 +72,11 @@ function handleListData(data: EntityTeacherReportCategory[]) {
         ? _.sortBy([handleData[1], handleData[2]], "name")[0]
         : _.sortBy([handleData[1], handleData[2]], "count")[1];
     handleData = [
-      { name: handleData[0].name, count: ((handleData[0].count || 0) / amount) * 100 },
-      { name: secondNum.name, count: ((secondNum.count || 0) / amount) * 100 },
+      { name: handleData[0].name, count: Math.floor(((handleData[0].count || 0) / amount) * 100) },
+      { name: secondNum.name, count: Math.floor(((secondNum.count || 0) / amount) * 100) },
       { name: t("library_label_other"), count: 100 - (((handleData[0].count || 0) + (secondNum.count || 0)) / amount) * 100 },
     ];
+    handleData[2].count = 100 - handleData[0].count - handleData[1].count;
     return handleData;
   }
   return [];
@@ -104,7 +105,7 @@ export default function SkillCoverageTab() {
           {name}
         </div>
         <span style={{ color }} className={css.scoreValue}>
-          {Math.floor(number)}%
+          {number}%
         </span>
       </Grid>
     );
