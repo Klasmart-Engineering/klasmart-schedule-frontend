@@ -1,3 +1,4 @@
+import { noReportTip } from "@components/TipImages";
 import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
@@ -212,7 +213,7 @@ export function ReportDashboard() {
     const reportList: ReportItem[] = [
       {
         hasPerm: !!perm.student_progress_report_662,
-        label: t("report_label_learner_usage_info"),
+        label: t("report_label_student_progress_report"),
         url: ReportStudentProgress.routeBasePath,
       },
       {
@@ -246,16 +247,16 @@ export function ReportDashboard() {
         </div>
       </LayoutBox>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517} className={css.layoutBoxMain}>
-        {!isPending && !hasPerm && null}
+        {!isPending && !hasPerm && noReportTip}
         {!isPending && hasPerm && (
           <Grid container spacing={7}>
             {hasSkillCoveragePerm && (
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>1</Box>
               </Grid>
             )}
             {hasLearnerUsagePerm && (
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <div className={css.reportTop}>
                   {t("report_label_learner_usage")}
                   <Tooltip
@@ -284,7 +285,7 @@ export function ReportDashboard() {
             )}
             <>
               {hasReportListPerm && (
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <Box className={clsx(css.gridItem, css.navContainer)}>
                     <ul>
                       {reportList.map((item, index) => {
