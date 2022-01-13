@@ -6,8 +6,13 @@ import { ReportAchievementList } from "@pages/ReportAchievementList";
 import { ReportLearningSummary } from "@pages/ReportLearningSummary";
 import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
+import { RootState } from "@reducers/index";
+import { getLearnerUsageOverview } from "@reducers/report";
+import { getAWeek } from "@utilities/dateUtilities";
 import clsx from "clsx";
 import React, { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { Link as RouterLink } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
@@ -17,11 +22,6 @@ import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import LearnerUsageReport from "./components/LearnerUsageReport";
 import SkillCoverageTab from "./components/SkillCoverageTab";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
-import { getLearnerUsageOverview } from "@reducers/report";
-import { getAWeek } from "@utilities/dateUtilities";
-import { RootState } from "@reducers/index";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   layoutBoxWrapper: {
@@ -218,7 +218,7 @@ export function ReportDashboard() {
       getLearnerUsageOverview({
         metaLoading: true,
         durations: getAWeek(),
-        content_type_list: ["h5p", "image", "video", "audio", "document", "live", "study", "home_fun"],
+        content_type_list: ["h5p", "image", "video", "audio", "document"],
       })
     );
   }, [dispatch]);
