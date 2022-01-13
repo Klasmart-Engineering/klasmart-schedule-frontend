@@ -16,7 +16,7 @@ import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
-import { ReportAchievementList } from "../ReportAchievementList";
+// import { ReportAchievementList } from "../ReportAchievementList";
 import LearnerUsageReport from "./components/LearnerUsageReport";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -273,7 +273,7 @@ export function ReportDashboard() {
                   aria-label="info"
                   style={{
                     position: "relative",
-                    left: "5px",
+                    left: "7px",
                     top: "3px",
                     fontSize: "19px",
                     color: "#6D8199",
@@ -305,7 +305,7 @@ export function ReportDashboard() {
                       </Link>
                     </li>
                     <li>
-                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                      <Link component={RouterLink} to={ReportLearningSummary.routeRedirectDefault}>
                         Learning Outcome Report
                       </Link>
                     </li>

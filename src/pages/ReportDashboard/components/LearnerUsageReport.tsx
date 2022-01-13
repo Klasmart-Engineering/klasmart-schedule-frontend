@@ -4,7 +4,6 @@ import { ArrowRight } from "@material-ui/icons";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
 // import { getAWeek } from "@utilities/dateUtilities";
 import React, { useMemo } from "react";
-// import { useDispatch } from "react-redux";
 // import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 // import { RootState } from "../../../reducers";
