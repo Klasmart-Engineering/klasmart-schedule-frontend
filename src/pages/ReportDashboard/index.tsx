@@ -131,10 +131,10 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     },
   },
   tooltip: {
+    width: "308px",
     backgroundColor: "#fff",
-    maxWidth: 196,
-    padding: 10,
-    textAlign: "center",
+    padding: "30 24 25",
+    lineHeight: "20px",
     color: "#333333",
     border: "0.7px solid #B7B7B7",
   },
