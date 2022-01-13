@@ -196,6 +196,7 @@ export function ReportDashboard() {
       dispatch(actSetLoading(false));
     }
   }, [dispatch, perm]);
+
   /*
   const reportList: ReportItem[] = [
     {

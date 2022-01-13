@@ -2,11 +2,12 @@ import { t } from "@locale/LocaleManager";
 import { makeStyles } from "@material-ui/core";
 import { ArrowRight } from "@material-ui/icons";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
-// import { getAWeek } from "@utilities/dateUtilities";
+import { getLearnerUsageOverview } from "@reducers/report";
+import { getAWeek } from "@utilities/dateUtilities";
 import React, { useMemo } from "react";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-// import { RootState } from "../../../reducers";
+import { RootState } from "../../../reducers";
 
 const useStyles = makeStyles(() => ({
   reportContainer: {
@@ -91,30 +92,30 @@ const useStyles = makeStyles(() => ({
 
 export default function LearnerUsageReport() {
   const css = useStyles();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const history = useHistory();
-  // const {
-  //   ContentsUsed,
-  //   ClassScheduled,
-  //   AssignmentScheduled
-  // } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { learnerUsageOverview } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  console.log("learnerUsageOverview", learnerUsageOverview);
+
+  const { assignment_scheduled, class_scheduled, contents_used } = learnerUsageOverview;
+
   const reportList = [
     {
       content: t("report_label_content_used"),
-      value: 32 || 0,
-      // value: Math.floor(ContentsUsed || 0),
+      // value: 32 || 0,
+      value: Math.floor(contents_used || 0),
       category: t("report_label_5_types"),
     },
     {
       content: t("report_label_class_scheduled"),
-      value: 12 || 0,
-      // value: Math.floor(ClassScheduled || 0),
+      // value: 12 || 0,
+      value: Math.floor(class_scheduled || 0),
       category: t("report_label_live_class"),
     },
     {
       content: t("report_label_assignment_scheduled"),
-      value: 8 || 0,
-      // value: Math.floor(AssignmentScheduled || 0),
+      // value: 8 || 0,
+      value: Math.floor(assignment_scheduled || 0),
       category: t("report_label_study_and_home_fun"),
     },
   ];
@@ -126,12 +127,16 @@ export default function LearnerUsageReport() {
     [history]
   );
 
-  // React.useEffect(() => {
-  //   dispatch(LearnerUsageRequest({
-  //     durations: getAWeek(),
-  //     content_type_list: ["h5p", "image", "video", "audio", "document", "live", "study", "home_fun"]
-  //   }))
-  // }, [dispatch])
+  React.useEffect(() => {
+    console.log("调用了");
+    dispatch(
+      getLearnerUsageOverview({
+        metaLoading: true,
+        durations: getAWeek(),
+        content_type_list: ["h5p", "image", "video", "audio", "document", "live", "study", "home_fun"],
+      })
+    );
+  }, [dispatch]);
 
   return (
     <div className={css.reportContainer}>
