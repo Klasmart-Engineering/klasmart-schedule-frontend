@@ -176,11 +176,6 @@ export function ReportDashboard() {
   //const history = useHistory();
   const dispatch = useDispatch();
   const perm = usePermission([
-    PermissionType.view_reports_610,
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_organizations_reports_612,
-    PermissionType.view_my_school_reports_611,
-    PermissionType.learning_summary_report_653,
     // Skills Coverage
     PermissionType.report_learning_outcomes_in_categories_616,
     PermissionType.report_organizations_skills_taught_640,
