@@ -63,8 +63,6 @@ const useStyles = makeStyles((theme) =>
       overflow: "hidden",
     },
     emptyCon: {
-      width: "100%",
-      heigth: "100%",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",

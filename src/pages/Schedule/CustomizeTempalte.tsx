@@ -7,7 +7,8 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
-import React from "react";
+import { actError } from "@reducers/notify";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { safariCompatible } from ".";
@@ -220,6 +221,7 @@ interface InfoMbProps extends InfoProps {
 
 function CustomizeTempalteMb(props: InfoMbProps) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const {
     handleClose,
     ScheduleViewInfo,
@@ -276,6 +278,18 @@ function CustomizeTempalteMb(props: InfoMbProps) {
       return "";
     }
   };
+
+  useEffect(() => {
+    if (
+      (!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
+      ScheduleViewInfo.class_type_label?.id !== "Task" &&
+      !ScheduleViewInfo.is_home_fun
+    ) {
+      dispatch(
+        actError(d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan"))
+      );
+    }
+  }, [ScheduleViewInfo.class_type_label?.id, ScheduleViewInfo.is_home_fun, ScheduleViewInfo.lesson_plan, dispatch]);
 
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>

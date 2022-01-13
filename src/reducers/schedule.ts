@@ -404,9 +404,16 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
 
 type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] & LoadingMetaPayload;
 type lessonPlansByScheduleResult = ReturnType<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>;
-export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>("content/plans", () => {
-  return api.contentsLessonPlans.getLessonPlansCanSchedule();
-});
+export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
+  "content/plans",
+  async () => {
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(
+      { group_names: ["Organization Content", "Badanamu Content", "More Featured Content"] },
+      { page_size: 10, page: 1 }
+    );
+    return { data, total };
+  }
+);
 
 /**
  *  get class by student
@@ -1126,7 +1133,7 @@ const { actions, reducer } = createSlice({
       state.filterOtherClasses = payload.data;
     },
     [getLessonPlansBySchedule.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.lessonPlans = payload;
+      state.lessonPlans = payload.data;
     },
     [getUserInUndefined.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.userInUndefined = payload.data;

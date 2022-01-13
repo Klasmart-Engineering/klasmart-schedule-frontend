@@ -63,7 +63,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   fieldset: {
     width: "230px",
     "& .MuiInputBase-root": {
-      borderRadius: "50px",
+      borderRadius: "10px",
     },
   },
   margin: {
@@ -120,6 +120,7 @@ interface LessonPlanProps {
   handleClose: () => void;
   lessonPlans: EntityLessonPlanForSchedule[];
   autocompleteChange: (value: any | null, name: string) => void;
+  lessonPlanCondition: any;
 }
 
 interface filterGropProps {
@@ -132,6 +133,8 @@ interface filterGropProps {
   setFilterQuery?: (data: LearningComesFilterQuery) => void;
   getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
   viewSubjectPermission?: boolean;
+  lessonQuery: any;
+  setLessonQuery: (data: any) => void;
 }
 
 function SelectGroup(props: filterGropProps) {
@@ -144,10 +147,23 @@ function SelectGroup(props: filterGropProps) {
     filterQuery,
     setFilterQuery,
     viewSubjectPermission,
+    lessonQuery,
   } = props;
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
+  const [lessonPlanName, setLessonPlanName] = React.useState<string>("");
 
   const dispatch = useDispatch();
+
+  const autocompleteLessonChange = (value: any | null) => {
+    const ids = value?.map((item: any) => {
+      return item.id;
+    });
+    const filterQueryAssembly = {
+      ...lessonQuery,
+      group_name: ids,
+    };
+    searchOutcomesList(filterQueryAssembly);
+  };
 
   const autocompleteChange = async (value: any | null, name: "subjects" | "categorys" | "subs" | "ages" | "grades" | "programs") => {
     const ids = value?.map((item: any) => {
@@ -218,6 +234,7 @@ function SelectGroup(props: filterGropProps) {
       sub_category_ids: values(filterResult.subs),
       age_ids: values(filterResult.ages),
       grade_ids: values(filterResult.grades),
+      lesson_plan_name: lessonPlanName,
     };
     searchOutcomesList(filterQueryAssembly);
   };
@@ -253,45 +270,42 @@ function SelectGroup(props: filterGropProps) {
     { name: d("Grade").t("assess_label_grade"), data: deduplication(filteredList.grades), enum: "grades" },
   ];
   return (
-    <div className={classes.root}>
-      <div className={classes.groupBox}>
-        <FilterListIcon />
-        <Autocomplete
-          id="combo-box-demo"
-          options={groupLabel}
-          getOptionLabel={(option: any) => option.name}
-          multiple
-          limitTags={1}
-          onChange={(e: any, newValue) => {
-            autocompleteChange(newValue, "programs");
+    <>
+      <div className={classes.searchValue}>
+        <TextField
+          id="outlined-start-adornment"
+          placeholder="Search for lesson plan"
+          InputProps={{
+            startAdornment: <SearchIcon />,
           }}
-          disableCloseOnSelect
-          renderOption={(option: any, { selected }) => (
-            <React.Fragment>
-              <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-              {option.name}
-            </React.Fragment>
-          )}
-          style={{ transform: "scale(0.9)" }}
-          renderInput={(params) => <TextField {...params} size={"small"} className={classes.fieldset} label="Group" variant="outlined" />}
+          onChange={(e) => {
+            setLessonPlanName(e.target.value);
+          }}
+          size="small"
+          style={{ width: "90%" }}
         />
+        <Button
+          onClick={() => {
+            searchOutcomesList({ lesson_plan_name: lessonPlanName });
+          }}
+          variant="contained"
+          style={{ background: "#0E78D5", color: "white", marginLeft: 10, width: "100px" }}
+        >
+          Search
+        </Button>
       </div>
-      <div className={classes.filterBox}>
-        {selectGroup.map((item, index) => (
+      <div className={classes.root}>
+        <div className={classes.groupBox}>
+          <FilterListIcon />
           <Autocomplete
             id="combo-box-demo"
-            options={item.data}
+            options={groupLabel}
             getOptionLabel={(option: any) => option.name}
             multiple
             limitTags={1}
             onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades");
+              autocompleteLessonChange(newValue);
             }}
-            value={
-              item.enum === "programs"
-                ? programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))
-                : defaultValues(item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades")
-            }
             disableCloseOnSelect
             renderOption={(option: any, { selected }) => (
               <React.Fragment>
@@ -300,20 +314,48 @@ function SelectGroup(props: filterGropProps) {
               </React.Fragment>
             )}
             style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                style={{ marginTop: index > 2 ? 16 : 0 }}
-                size={"small"}
-                className={classes.fieldset}
-                label={item.name}
-                variant="outlined"
-              />
-            )}
+            renderInput={(params) => <TextField {...params} size={"small"} className={classes.fieldset} label="Group" variant="outlined" />}
           />
-        ))}
+        </div>
+        <div className={classes.filterBox}>
+          {selectGroup.map((item, index) => (
+            <Autocomplete
+              id="combo-box-demo"
+              options={item.data}
+              getOptionLabel={(option: any) => option.name}
+              multiple
+              limitTags={1}
+              onChange={(e: any, newValue) => {
+                autocompleteChange(newValue, item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades");
+              }}
+              value={
+                item.enum === "programs"
+                  ? programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))
+                  : defaultValues(item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades")
+              }
+              disableCloseOnSelect
+              renderOption={(option: any, { selected }) => (
+                <React.Fragment>
+                  <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                  {option.name}
+                </React.Fragment>
+              )}
+              style={{ transform: "scale(0.9)" }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  style={{ marginTop: index > 2 ? 16 : 0 }}
+                  size={"small"}
+                  className={classes.fieldset}
+                  label={item.name}
+                  variant="outlined"
+                />
+              )}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -329,9 +371,12 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     getFilterQueryAssembly,
     lessonPlans,
     autocompleteChange,
+    lessonPlanCondition,
   } = props;
   const [filterQuery, setFilterQuery] = React.useState<LearningComesFilterQuery>(filterGropuData);
+  const [lessonQuery, setLessonQuery] = React.useState<any>(lessonPlanCondition);
   const [selectedValue, setSelectedValue] = React.useState("a");
+  const [lessonPlanName, setLessonPlanName] = React.useState<string>("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value);
   };
@@ -351,32 +396,35 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
+          onChange={(e) => {
+            setLessonPlanName(e.target.value);
+          }}
           size="small"
           style={{ width: "90%" }}
         />
-        <Button variant="contained" style={{ background: "#0E78D5", color: "white", marginLeft: 10, width: "100px" }}>
+        <Button
+          onClick={() => {
+            searchOutcomesList({ lesson_plan_name: lessonPlanName });
+          }}
+          variant="contained"
+          style={{ background: "#0E78D5", color: "white", marginLeft: 10, width: "100px" }}
+        >
           Search
         </Button>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <SelectGroup
-          programChildInfoParent={programChildInfoParent}
-          handelSetProgramChildInfo={handelSetProgramChildInfo}
-          programs={programs}
-          filterGropuData={filterGropuData}
-          searchOutcomesList={searchOutcomesList}
-          filterQuery={filterQuery}
-          setFilterQuery={setFilterQuery}
-          getFilterQueryAssembly={getFilterQueryAssembly}
-          viewSubjectPermission={viewSubjectPermission}
-        />
-      </div>
+      <SelectGroup
+        programChildInfoParent={programChildInfoParent}
+        handelSetProgramChildInfo={handelSetProgramChildInfo}
+        programs={programs}
+        filterGropuData={filterGropuData}
+        searchOutcomesList={searchOutcomesList}
+        filterQuery={filterQuery}
+        setFilterQuery={setFilterQuery}
+        getFilterQueryAssembly={getFilterQueryAssembly}
+        viewSubjectPermission={viewSubjectPermission}
+        lessonQuery={lessonQuery}
+        setLessonQuery={setLessonQuery}
+      />
       <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>152 results</span>
       <div style={{ margin: "20px 0 20px 0" }} className={classes.customizeContentBox}>
         <TableContainer component={Paper}>
