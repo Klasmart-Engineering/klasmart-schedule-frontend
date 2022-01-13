@@ -37,27 +37,8 @@ import {
   getParticipantsData,
   getScheduleAnyTimeViewData,
   getScheduleInfo,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  getScheduleLiveToken, getScheduleMockOptions,
+  getScheduleLiveToken,
+  getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
   getScheduleTimeViewDataByYear,
@@ -66,7 +47,7 @@ import {
   getSubjectByProgramId,
   getUserInUndefined,
   ScheduleFilterPrograms,
-  scheduleUpdateStatus
+  scheduleUpdateStatus,
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -79,11 +60,11 @@ export const safariCompatible = (token?: string) => {
   if (token) {
     const url = apiLivePath(token);
     const winOpen = window.open("", "_blank");
-    if(winOpen) {
+    if (winOpen) {
       winOpen.location = url as unknown as Location;
     }
   }
-}
+};
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -117,7 +98,7 @@ function ScheduleContent() {
     mockOptions,
     scheduleMockOptions,
     participantMockOptions,
-    liveToken,
+    // liveToken,
     scheduleTimeViewYearData,
     ParticipantsData,
     classRosterIds,

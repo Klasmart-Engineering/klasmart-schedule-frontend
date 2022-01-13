@@ -316,7 +316,7 @@ function MyCalendar(props: CalendarProps) {
     PermissionType.view_my_calendar_510,
     PermissionType.create_schedule_page_501,
   ]);
-  const permissionShowLive = perm.attend_live_class_as_a_student_187;
+  // const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
