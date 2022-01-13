@@ -1050,5 +1050,20 @@
   "report_student_usage_incomplete_students": "未完成学生",
   "general_error_fail_get_permission": "获取权限失败，请刷新",
   "library_error_pdf_validation": "PDF 验证失败，请重试。",
-  "schedule_search_class_name": "搜索班级"
+  "schedule_search_class_name": "搜索班级",
+  "schedule_conflict_popup": "时间冲突",
+  "schedule_further_action": "请选择进一步的操作",
+  "schedule_msg_assignment_sumbit": "您的作业将会被提交并批改。",
+  "report_label_skill_coverage": "Skill Coverage",
+  "report_label_skill_coverage_info": "A breakdown of the learning outcomes by skill category as defined by your organization.",
+  "report_label_learner_usage": "Learner Usage",
+  "report_label_learner_usage_info": "Understand the level of usage of the learners over the last 7 days:\n-Material consumption metrics\n-Class attendance\n-Missed assignments details",
+  "report_label_content_used": "Content Used",
+  "report_label_5_types": "5 types",
+  "report_label_class_scheduled": "Class Scheduled",
+  "report_label_live_class": "Live class",
+  "report_label_assignment_scheduled": "Assignment Scheduled",
+  "report_label_study_and_home_fun": "Study & Home Fun",
+  "schedule_msg_no_matching_result": "无搜索结果",
+  "report_label_no_report": "No report available"
 }
