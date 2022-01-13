@@ -17,7 +17,6 @@ import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
-// import { ReportAchievementList } from "../ReportAchievementList";
 import LearnerUsageReport from "./components/LearnerUsageReport";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -297,22 +296,22 @@ export function ReportDashboard() {
                   <ul>
                     <li style={{ marginTop: "30px" }}>
                       <Link component={RouterLink} to={ReportStudentProgress.routeBasePath}>
-                        Learner Monthly Report
+                        {t("report_label_student_progress_report")}
                       </Link>
                     </li>
                     <li>
                       <Link component={RouterLink} to={ReportLearningSummary.routeRedirectDefault}>
-                        Learner Weekly Report
+                        {t("report_learning_summary_report")}
                       </Link>
                     </li>
                     <li>
                       <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
-                        Learning Outcome Report
+                        {t("report_label_student_achievement")}
                       </Link>
                     </li>
                     <li>
                       <Link component={RouterLink} to={ReportTeachingLoad.routeBasePath}>
-                        Teacher Usage Report
+                        {t("report_label_teaching_load")}
                       </Link>
                     </li>
                   </ul>
