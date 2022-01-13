@@ -636,13 +636,13 @@ function EditBox(props: CalendarStateProps) {
         setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
       }
       // getParticipantOptions("");
-      const currentTime = Math.floor(new Date().getTime());
-      if (
-        (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
-        newData.start_at! * 1000 - currentTime < 15 * 60 * 1000
-      ) {
-        dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
-      }
+      // const currentTime = Math.floor(new Date().getTime());
+      // if (
+      //   (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
+      //   newData.start_at! * 1000 - currentTime < 15 * 60 * 1000
+      // ) {
+      //   dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
+      // }
       if (scheduleDetial.class) dispatch(getScheduleParticipant({ class_id: newData.class_id as string }));
 
       if (scheduleDetial.class_roster_students || scheduleDetial.class_roster_teachers) setRosterSaveStatus(true);

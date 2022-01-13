@@ -1,3 +1,4 @@
+import { apiLivePath } from "@api/extra";
 import { ParticipantString } from "@api/type";
 import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
@@ -13,7 +14,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { ConnectionDirection, StringOperator, UuidExclusiveOperator } from "../../api/api-ko-schema.auto";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
-import { apiLivePath } from "../../api/extra";
 import PermissionType from "../../api/PermissionType";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
@@ -37,7 +37,27 @@ import {
   getParticipantsData,
   getScheduleAnyTimeViewData,
   getScheduleInfo,
-  getScheduleMockOptions,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  getScheduleLiveToken, getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
   getScheduleTimeViewDataByYear,
@@ -46,7 +66,7 @@ import {
   getSubjectByProgramId,
   getUserInUndefined,
   ScheduleFilterPrograms,
-  scheduleUpdateStatus,
+  scheduleUpdateStatus
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -54,6 +74,16 @@ import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
+
+export const safariCompatible = (token?: string) => {
+  if (token) {
+    const url = apiLivePath(token);
+    const winOpen = window.open("", "_blank");
+    if(winOpen) {
+      winOpen.location = url as unknown as Location;
+    }
+  }
+}
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -293,9 +323,13 @@ function ScheduleContent() {
     [isAdmin, isSchool, isTeacher, isStudent]
   );
 
-  const toLive = (schedule_id?: string, token?: string) => {
-    dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
-    if (liveToken || token) window.open(apiLivePath(token ?? liveToken));
+  const toLive = async (schedule_id?: string, token?: string) => {
+    await dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
+    let resultInfo: any;
+    resultInfo = await dispatch(
+      getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
+    );
+    safariCompatible(resultInfo.payload.token);
   };
 
   const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {

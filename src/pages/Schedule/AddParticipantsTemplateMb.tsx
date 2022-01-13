@@ -17,12 +17,12 @@ import {
   makeStyles,
   Tab,
   Tabs,
-  TextField,
+  TextField
 } from "@material-ui/core";
 import { Close, Search } from "@material-ui/icons";
 import { resetParticipantsData } from "@reducers/schedule";
 import { cloneDeep } from "lodash";
-import { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ParticipantsData, ParticipantsShortInfo, RolesData } from "src/types/scheduleTypes";
 import { RootState } from "../../reducers";
