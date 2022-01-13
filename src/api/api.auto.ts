@@ -4152,6 +4152,19 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports
+     * @name getTeachersReport
+     * @summary get teachers report
+     * @request GET:/reports/teachers
+     * @description get teacher sreport
+     */
+    getTeachersReport: (params?: RequestParams) =>
+      this.request<
+        EntityTeacherReport,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/reports/teachers`, "GET", params),
+
+    /**
+     * @tags reports
      * @name getTeacherReport
      * @summary get teacher report
      * @request GET:/reports/teachers/{id}

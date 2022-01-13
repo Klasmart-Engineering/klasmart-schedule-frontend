@@ -18,6 +18,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import LearnerUsageReport from "./components/LearnerUsageReport";
+import SkillCoverageTab from "./components/SkillCoverageTab";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   layoutBoxWrapper: {
@@ -234,6 +235,30 @@ export function ReportDashboard() {
 
   const hasPerm = hasSkillCoveragePerm || hasLearnerUsagePerm || hasReportListPerm;
 
+  const reportTip = (title: string, tip: string) => (
+    <div className={css.reportTop}>
+      {title}
+      <Tooltip
+        arrow
+        placement="bottom"
+        title={tip}
+        classes={css}
+        aria-label="info"
+        style={{
+          position: "relative",
+          left: "5px",
+          top: "3px",
+          fontSize: "19px",
+          color: "#6D8199",
+          width: "15px",
+          height: "15px",
+        }}
+      >
+        <Info></Info>
+      </Tooltip>
+    </div>
+  );
+
   return (
     <Box className={css.layoutBoxWrapper}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -247,32 +272,15 @@ export function ReportDashboard() {
           <Grid container spacing={7}>
             {hasSkillCoveragePerm && (
               <Grid item xs={12} md={4}>
-                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>1</Box>
+                {reportTip(t("report_label_skill_coverage"), t("report_label_skill_coverage_info"))}
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <SkillCoverageTab />
+                </Box>
               </Grid>
             )}
             {hasLearnerUsagePerm && (
               <Grid item xs={12} md={4}>
-                <div className={css.reportTop}>
-                  {t("report_label_learner_usage")}
-                  <Tooltip
-                    arrow
-                    placement="bottom"
-                    title={t("report_label_learner_usage_info")}
-                    classes={css}
-                    aria-label="info"
-                    style={{
-                      position: "relative",
-                      left: "7px",
-                      top: "3px",
-                      fontSize: "19px",
-                      color: "#6D8199",
-                      width: "15px",
-                      height: "15px",
-                    }}
-                  >
-                    <Info></Info>
-                  </Tooltip>
-                </div>
+                {reportTip(t("report_label_learner_usage"), t("report_label_learner_usage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearnerUsageReport />
                 </Box>

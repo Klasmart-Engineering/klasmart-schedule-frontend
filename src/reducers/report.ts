@@ -114,6 +114,7 @@ interface IreportState {
   student_name: string | undefined;
   reportMockOptions: GetReportMockOptionsResponse;
   categories: EntityTeacherReportCategory[];
+  categoriesAll: EntityTeacherReportCategory[];
   classesConnection: ClassesConnectionQuery["classesConnection"];
   classes: TeacherByOrgIdQuery["organization"];
   teacherList: Item[];
@@ -231,6 +232,7 @@ const initialState: IreportState = {
     lesson_plan_id: "",
   },
   categories: [],
+  categoriesAll: [],
   classesConnection: {},
   classes: {},
   teacherList: [],
@@ -963,6 +965,14 @@ export const getSkillCoverageReport = createAsyncThunk<EntityTeacherReportCatego
   "report/getSkillCoverageReport",
   async ({ teacher_id }) => {
     const { categories } = await api.reports.getTeacherReport(teacher_id);
+    return categories || [];
+  }
+);
+
+export const getSkillCoverageReportAll = createAsyncThunk<EntityTeacherReportCategory[], LoadingMetaPayload>(
+  "report/getSkillCoverageReportAll",
+  async () => {
+    const { categories } = await api.reports.getTeachersReport();
     return categories || [];
   }
 );
@@ -1750,6 +1760,12 @@ const { actions, reducer } = createSlice({
     },
     [getSkillCoverageReport.pending.type]: (state) => {
       state.categories = cloneDeep(initialState.categories);
+    },
+    [getSkillCoverageReportAll.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getSkillCoverageReportAll>>
+    ) => {
+      state.categoriesAll = payload;
     },
     [categoryReportOnLoad.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof categoryReportOnLoad>>) => {
       state.categories = payload;
