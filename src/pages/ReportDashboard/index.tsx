@@ -216,7 +216,6 @@ export function ReportDashboard() {
   React.useEffect(() => {
     dispatch(
       getLearnerUsageOverview({
-        metaLoading: true,
         durations: getAWeek(),
         content_type_list: ["h5p", "image", "video", "audio", "document"],
       })
