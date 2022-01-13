@@ -23,6 +23,7 @@ import {
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import ScheduleLessonPlan from "@pages/Schedule/ScheduleLessonPlan";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
@@ -102,7 +103,6 @@ import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import ScheduleLessonPlan from "@pages/Schedule/ScheduleLessonPlan";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -1292,8 +1292,12 @@ function EditBox(props: CalendarStateProps) {
     }
     //
     if (mobile) {
+      document.body.style.height = "100vh";
+      document.body.style["overflowY"] = "hidden";
       openAddParticipant();
     } else {
+      document.body.style.height = "unset";
+      document.body.style["overflowY"] = "auto";
       changeModalDate({
         openStatus: true,
         enableCustomization: true,
