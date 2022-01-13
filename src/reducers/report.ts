@@ -1879,16 +1879,10 @@ const { actions, reducer } = createSlice({
       state.listTeacherMissedLessons = payload;
     },
     [getLearnerUsageOverview.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerUsageOverview>>) => {
-      console.log("payload", payload);
       state.learnerUsageOverview = payload;
     },
     [getLearnerUsageOverview.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerUsageOverview>>) => {
       state.learnerUsageOverview = cloneDeep(initialState.learnerUsageOverview);
-      debugger;
-    },
-    [getLearnerUsageOverview.rejected.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerUsageOverview>>) => {
-      state.learnerUsageOverview = cloneDeep(initialState.learnerUsageOverview);
-      debugger;
     },
     [getAssignmentsCompletion.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentsCompletion>>) => {
       state.assignmentsCompletion = payload;

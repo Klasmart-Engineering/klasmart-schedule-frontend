@@ -3742,7 +3742,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getLearnerUsageOverview: (classes_assignments: EntityLearnerUsageRequest, params?: RequestParams) =>
       this.request<EntityLearnerUsageResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learner_usage/overview`,
-        "GET",
+        "POST",
         params,
         classes_assignments
       ),
