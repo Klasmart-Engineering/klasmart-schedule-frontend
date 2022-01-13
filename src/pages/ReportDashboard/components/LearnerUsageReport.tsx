@@ -23,6 +23,7 @@ const useStyles = makeStyles(() => ({
     height: "47px",
     lineHeight: "47px",
     fontSize: "12px",
+    color: "#6D8199",
     "&:before": {
       display: "inline-block",
       content: "''",
@@ -82,7 +83,7 @@ const useStyles = makeStyles(() => ({
     padding: "0 14px",
     borderRadius: "10px",
     color: "#fff",
-    fontSize: "13px",
+    fontSize: "14px",
     boxSizing: "border-box",
     cursor: "pointer",
   },
@@ -101,19 +102,19 @@ export default function LearnerUsageReport() {
     {
       content: t("report_label_content_used"),
       value: 32 || 0,
-      // value: ContentsUsed || 0,
+      // value: Math.floor(ContentsUsed || 0),
       category: t("report_label_5_types"),
     },
     {
       content: t("report_label_class_scheduled"),
       value: 12 || 0,
-      // value: ClassScheduled || 0,
+      // value: Math.floor(ClassScheduled || 0),
       category: t("report_label_live_class"),
     },
     {
       content: t("report_label_assignment_scheduled"),
       value: 8 || 0,
-      // value: AssignmentScheduled || 0,
+      // value: Math.floor(AssignmentScheduled || 0),
       category: t("report_label_study_and_home_fun"),
     },
   ];
@@ -127,8 +128,8 @@ export default function LearnerUsageReport() {
 
   // React.useEffect(() => {
   //   dispatch(LearnerUsageRequest({
-  //     Durations: getAWeek(),
-  //     ContentTypeList: ["Content Used", "Class Scheduled", "Assignment Scheduled"]
+  //     durations: getAWeek(),
+  //     content_type_list: ["h5p", "image", "video", "audio", "document", "live", "study", "home_fun"]
   //   }))
   // }, [dispatch])
 

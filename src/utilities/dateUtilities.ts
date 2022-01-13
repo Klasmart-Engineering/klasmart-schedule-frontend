@@ -53,5 +53,5 @@ export function getLastedMonths(index: number) {
 }
 
 export function getAWeek() {
-  return moment().subtract(6, "days").startOf("day").unix() + "-" + moment().unix();
+  return [moment().subtract(6, "days").startOf("day").unix() + "-" + moment().unix()];
 }
