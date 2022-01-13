@@ -1,6 +1,7 @@
 import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
+import { ReportAchievementList } from "@pages/ReportAchievementList";
 import { ReportLearningSummary } from "@pages/ReportLearningSummary";
 import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
@@ -305,7 +306,7 @@ export function ReportDashboard() {
                       </Link>
                     </li>
                     <li>
-                      <Link component={RouterLink} to={ReportLearningSummary.routeRedirectDefault}>
+                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
                         Learning Outcome Report
                       </Link>
                     </li>
