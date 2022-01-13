@@ -17,7 +17,7 @@ import {
   makeStyles,
   Tab,
   Tabs,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import { Close, Search } from "@material-ui/icons";
 import { resetParticipantsData } from "@reducers/schedule";
@@ -54,6 +54,7 @@ const useStyles = makeStyles((theme) =>
     },
     dialogActionRoot: {
       justifyContent: "center",
+      marginBottom: 150,
     },
     okBtn: {
       width: 160,
@@ -67,6 +68,15 @@ const useStyles = makeStyles((theme) =>
       alignItems: "center",
       justifyContent: "center",
       marginTop: 140,
+    },
+    tabLabel: {
+      fontWeight: 600,
+      color: "#000",
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 600,
+      color: "#000",
     },
   })
 );
@@ -180,7 +190,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
   return (
     <Dialog fullScreen open={open}>
       <DialogTitle>
-        {d("Add Participants").t("schedule_detail_participants")}
+        <div className={css.title}>{d("Add Participants").t("schedule_detail_participants")}</div>
         <IconButton onClick={onClose} className={css.closeBtn}>
           <Close />
         </IconButton>
@@ -215,8 +225,8 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
           textColor="primary"
           onChange={(e, value) => handleChangeParticipantValue(value)}
         >
-          <Tab label={d("Student").t("schedule_time_conflict_student")} value={ParticipantValue.student} />
-          <Tab label={d("Teacher").t("schedule_detail_teacher")} value={ParticipantValue.teacher} />
+          <Tab className={css.tabLabel} label={d("Student").t("schedule_time_conflict_student")} value={ParticipantValue.student} />
+          <Tab className={css.tabLabel} label={d("Teacher").t("schedule_detail_teacher")} value={ParticipantValue.teacher} />
         </Tabs>
         <FormGroup
           className={css.checkboxContainer}
@@ -234,6 +244,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                     <Checkbox
                       name="checkedB"
                       color="primary"
+                      style={{ marginRight: 20 }}
                       checked={part.student.some((s) => s.id === student.user_id)}
                       onChange={(e) => handleChange(e, student)}
                     />
@@ -251,6 +262,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                     <Checkbox
                       name="checkedB"
                       color="primary"
+                      style={{ marginRight: 20 }}
                       checked={part.teacher.some((t) => t.id === teacher.user_id)}
                       onChange={(e) => handleChange(e, teacher)}
                     />
