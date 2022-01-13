@@ -9,7 +9,7 @@ import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
 import { actError } from "@reducers/notify";
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { safariCompatible } from ".";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
@@ -18,7 +18,6 @@ import PermissionType from "../../api/PermissionType";
 import { Permission } from "../../components/Permission";
 import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
-import { RootState } from "../../reducers";
 import { getScheduleLiveToken, scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import { classTypeLabel, EntityScheduleShortInfo, memberType, ScheduleEditExtend, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import ScheduleButton from "./ScheduleButton";
@@ -432,7 +431,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  // const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const perm = usePermission([PermissionType.attend_live_class_as_a_student_187]);
   const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
@@ -483,9 +482,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   const handleGoLive = async (scheduleInfos: ScheduleEditExtend) => {
     const currentTime = Math.floor(new Date().getTime());
     let resultInfo: any;
-    resultInfo = await dispatch(
-      getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true })
-    );
+    resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
     if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
