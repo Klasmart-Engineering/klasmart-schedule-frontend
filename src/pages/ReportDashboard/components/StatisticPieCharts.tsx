@@ -4,7 +4,7 @@ interface Props {
   width: number;
   height: number;
   colors: string[];
-  value: number[]; // The sum of items in the value variable must equal 100;
+  value: number[]; // The sum of items in the value variable need equal 100;
 }
 
 export default function StatisticPieCharts(props: Props) {
@@ -15,7 +15,7 @@ export default function StatisticPieCharts(props: Props) {
     const context = ref.current?.getContext("2d") as CanvasRenderingContext2D;
     const MIN = Math.min(props.width, props.height);
     let endDeg,
-      beginDeg = 2;
+      beginDeg = -Math.PI / 2; // set render origin located in circle top
     if (context) {
       context.clearRect(0, 0, props.width, props.height);
       const radius = MIN / 2 - 12 < 0 ? 0 : MIN / 2 - 12;
