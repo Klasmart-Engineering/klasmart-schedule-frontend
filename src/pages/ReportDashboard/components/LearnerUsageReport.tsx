@@ -83,7 +83,7 @@ const useStyles = makeStyles(() => ({
     padding: "0 14px",
     borderRadius: "10px",
     color: "#fff",
-    fontSize: "13px",
+    fontSize: "14px",
     boxSizing: "border-box",
     cursor: "pointer",
   },
@@ -128,8 +128,8 @@ export default function LearnerUsageReport() {
 
   // React.useEffect(() => {
   //   dispatch(LearnerUsageRequest({
-  //     Durations: getAWeek(),
-  //     ContentTypeList: ["content Used", "live", "study", "home_fun"]
+  //     durations: getAWeek(),
+  //     content_type_list: ["h5p", "image", "video", "audio", "document", "live", "study", "home_fun"]
   //   }))
   // }, [dispatch])
 
