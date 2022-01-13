@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogContainer1: {
     "& .MuiDialog-paperWidthSm": {
-      maxWidth: "800px",
+      maxWidth: "1000px",
     },
   },
   header: {

@@ -1,6 +1,8 @@
+import { ParticipantString } from "@api/type";
 import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
+import ScheduleToolMb from "@pages/Schedule/ScheduleToolMb";
 import { onLoadContentPreview } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
@@ -52,7 +54,6 @@ import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import ScheduleToolMb from "@pages/Schedule/ScheduleToolMb";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -297,8 +298,8 @@ function ScheduleContent() {
     if (liveToken || token) window.open(apiLivePath(token ?? liveToken));
   };
 
-  const getParticipants = async (metaLoading: boolean = true, search: string, hash: string) => {
-    await dispatch(getParticipantsData({ is_org: isAdmin as boolean, hash: hash, name: search, metaLoading: metaLoading }));
+  const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {
+    await dispatch(getParticipantsData({ is_org: isAdmin as boolean, hash: hash, name: search, roleName, metaLoading: metaLoading }));
   };
 
   const getClassesConnection = async (
@@ -359,7 +360,6 @@ function ScheduleContent() {
     );
     return resultInfo.payload ? resultInfo.payload.data.classesConnection.edges : [];
   };
-
   React.useEffect(() => {
     if (includeEdit && stateFlag) {
       // get content
@@ -517,6 +517,7 @@ function ScheduleContent() {
               classesConnection={classesConnection}
               userInUndefined={userInUndefined}
               lessonPlans={lessonPlans}
+              mobile={mobile}
             />
           </Grid>
           {mobile && (

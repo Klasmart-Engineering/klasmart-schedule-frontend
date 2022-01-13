@@ -431,6 +431,35 @@ export interface EntityAuthedContentRecordInfoResponse {
   total?: number;
 }
 
+export interface EntityContentConditionRequest {
+  age_ids?: string[];
+  authed_org_ids?: EntityNullStrings;
+  author?: string;
+  category_ids?: string[];
+  content_ids?: EntityNullStrings;
+  content_name?: string;
+  content_type?: number[];
+  data_source_id?: string;
+  dir_path?: string;
+  grade_ids?: string[];
+  group_names?: string[];
+  join_user_id_list?: string[];
+  lesson_plan_name?: string;
+  name?: string;
+  order_by?: string;
+  org?: string;
+  pager?: UtilsPager;
+  parents_path?: EntityNullStrings;
+  program?: string[];
+  program_ids?: string[];
+  publish_status?: string[];
+  published_query_mode?: string;
+  source_type?: string;
+  sub_category_ids?: string[];
+  subject_ids?: string[];
+  visibility_settings?: string[];
+}
+
 export interface EntityAuthedOrgList {
   orgs?: EntityOrganizationInfo[];
   total?: number;
@@ -646,6 +675,11 @@ export interface EntityCreateContentRequest {
   thumbnail?: string;
 }
 
+export interface EntityGetLessonPlansCanScheduleResponse {
+  data?: EntityLessonPlanForSchedule[];
+  total?: number;
+}
+
 export interface EntityCreateFolderRequest {
   description?: string;
   keywords?: string[];
@@ -848,6 +882,11 @@ export interface EntityListHomeFunStudiesResultItem {
   student_name?: string;
   teacher_names?: string[];
   title?: string;
+}
+
+export interface EntityNullStrings {
+  strings?: string[];
+  valid?: boolean;
 }
 
 export interface EntityListStudentsPerformanceReportResponse {
@@ -2007,6 +2046,11 @@ export interface ModelOutcomeRejectReq {
   reject_reason?: string;
 }
 
+export interface UtilsPager {
+  pageIndex?: number;
+  pageSize?: number;
+}
+
 export interface ModelOutcomeSetCreateView {
   set_id?: string;
   set_name?: string;
@@ -2805,11 +2849,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags content
      * @name getLessonPlansCanSchedule
      * @summary getLessonPlansCanSchedule
-     * @request GET:/contents_lesson_plans
+     * @request POST:/contents_lesson_plans
      * @description get lesson plans for schedule
      */
-    getLessonPlansCanSchedule: (params?: RequestParams) =>
-      this.request<EntityLessonPlanForSchedule[], ApiInternalServerErrorResponse>(`/contents_lesson_plans`, "GET", params),
+    getLessonPlansCanSchedule: (
+      request: EntityContentConditionRequest,
+      query?: { page_size?: number; page?: number },
+      params?: RequestParams
+    ) =>
+      this.request<EntityGetLessonPlansCanScheduleResponse, ApiInternalServerErrorResponse>(
+        `/contents_lesson_plans${this.addQueryParams(query)}`,
+        "POST",
+        params,
+        request
+      ),
   };
   contentsPending = {
     /**

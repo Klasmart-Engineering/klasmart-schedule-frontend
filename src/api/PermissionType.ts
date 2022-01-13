@@ -466,6 +466,7 @@ enum PermissionType {
   publish_free_content_for_all_hub_89000 = "publish_free_content_for_all_hub_89000",
   publish_free_content_for_specific_orgs_89001 = "publish_free_content_for_specific_orgs_89001",
   publish_free_content_for_all_orgs_89002 = "publish_free_content_for_all_orgs_89002",
+  report_organizational_student_usage_654 = "report_organizational_student_usage_654",
 }
 
 export default PermissionType;

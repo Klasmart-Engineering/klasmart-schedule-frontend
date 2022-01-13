@@ -1,3 +1,4 @@
+import { noReportTip } from "@components/TipImages";
 import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
@@ -12,7 +13,6 @@ import { useHistory } from "react-router";
 import { Link as RouterLink } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
-import { permissionTip } from "../../components/TipImages";
 import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
@@ -51,11 +51,12 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     "& > ul": {
       margin: 0,
       padding: 0,
+      paddingTop: 30,
       "& > li": {
         listStyle: "none",
         paddingBottom: 14,
         "& > a": {
-          width: "calc(100% -48px)",
+          width: "calc(100% - 48px)",
           padding: 24,
           lineHeight: 1,
           display: "block",
@@ -66,6 +67,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
           fontWeight: 600,
           textDecoration: "none",
           position: "relative",
+
           "&::after": {
             content: "''",
             display: "block",
@@ -81,6 +83,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
           },
           "&:hover": {
             background: "#4A7ABE",
+            textDecorationLine: "none",
           },
         },
       },
@@ -151,6 +154,12 @@ interface ReportItem {
 }
 */
 
+interface ReportItem {
+  hasPerm: boolean;
+  label: string;
+  url: string;
+}
+
 const DiyTooltip = withStyles((theme: Theme) => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,
@@ -167,27 +176,23 @@ export function ReportDashboard() {
   //const history = useHistory();
   const dispatch = useDispatch();
   const perm = usePermission([
-    PermissionType.view_reports_610,
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_organizations_reports_612,
-    PermissionType.view_my_school_reports_611,
-    PermissionType.learning_summary_report_653,
+    // Skills Coverage
+    PermissionType.report_learning_outcomes_in_categories_616,
+    PermissionType.report_organizations_skills_taught_640,
+    PermissionType.report_schools_skills_taught_641,
+    PermissionType.report_my_skills_taught_642,
+    PermissionType.report_my_skills_taught_642,
+    // Learner Usage
     PermissionType.student_usage_report_657,
+    PermissionType.report_organizational_student_usage_654,
+    PermissionType.report_school_student_usage_655,
+    PermissionType.report_teacher_student_usage_656,
+    // list
     PermissionType.student_progress_report_662,
+    PermissionType.learning_summary_report_653,
+    PermissionType.organization_class_achievements_report_626,
+    PermissionType.teachers_classes_teaching_time_report_620,
   ]);
-
-  const [hasPerm, hasSummaryPerm, hasStudentUsagePermission, hasStudentProgressPermission, isPending] = React.useMemo(() => {
-    const hasPerm =
-      perm.view_reports_610 ||
-      perm.view_my_reports_614 ||
-      perm.view_my_organizations_reports_612 ||
-      (perm.view_my_school_reports_611 as boolean);
-    const hasSummaryPerm = perm.learning_summary_report_653 as boolean;
-    const hasStudentUsagePermission = perm.student_usage_report_657 as boolean;
-    const hasStudentProgressPermission = perm.student_progress_report_662 as boolean;
-    const isPending = perm.view_reports_610 === undefined;
-    return [hasPerm, hasSummaryPerm, hasStudentUsagePermission, hasStudentProgressPermission, isPending];
-  }, [perm]);
 
   React.useEffect(() => {
     if (Object.keys(perm).length === 0) {
@@ -197,59 +202,38 @@ export function ReportDashboard() {
     }
   }, [dispatch, perm]);
 
-  /*
-  const reportList: ReportItem[] = [
-    {
-      title: "report_label_student_achievement",
-      url: ReportAchievementList.routeBasePath,
-      icon: <SvgIcon component={SaIconUrl}></SvgIcon>,
-      bgColor: "#89c4f9",
-      hasPerm: hasPerm,
-    },
-    {
-      title: "report_label_lo_in_categories",
-      url: ReportCategories.routeBasePath,
-      icon: <CategoryOutlined />,
-      bgColor: "#77dcb7",
-      hasPerm: hasPerm,
-    },
-    {
-      title: "report_label_teaching_load",
-      url: ReportTeachingLoad.routeBasePath,
-      icon: <AccessTime />,
-      bgColor: "#ffa966",
-      hasPerm: hasPerm,
-    },
-    {
-      title: "report_learning_summary_report",
-      url: ReportLearningSummary.routeRedirectDefault,
-      icon: <AssignmentTurnedInOutlined />,
-      bgColor: "#FE9494",
-      hasPerm: hasSummaryPerm,
-    },
-    {
-      title: "report_student_usage_report",
-      url: ReportStudentUsage.routeBasePath,
-      icon: <ShowChart />,
-      bgColor: "#DCCDFF",
-      hasPerm: hasStudentUsagePermission,
-    },
-    {
-      title: "report_label_student_progress_report",
-      url: ReportStudentProgress.routeBasePath,
-      icon: <ShortText />,
-      bgColor: "#607d8b",
-      hasPerm: hasStudentProgressPermission,
-    },
-  ];
+  const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending] = React.useMemo(() => {
+    const hasSkillCoveragePerm = !!perm.report_learning_outcomes_in_categories_616;
+    const hasLearnerUsagePerm = !!perm.student_usage_report_657;
+    const reportList: ReportItem[] = [
+      {
+        hasPerm: !!perm.student_progress_report_662,
+        label: t("report_label_student_progress_report"),
+        url: ReportStudentProgress.routeBasePath,
+      },
+      {
+        hasPerm: !!perm.learning_summary_report_653,
+        label: t("report_learning_summary_report"),
+        url: ReportLearningSummary.routeRedirectDefault,
+      },
+      {
+        hasPerm: !!perm.organization_class_achievements_report_626,
+        label: t("report_label_student_achievement"),
+        url: ReportAchievementList.routeBasePath,
+      },
+      {
+        hasPerm: !!perm.teachers_classes_teaching_time_report_620,
+        label: t("report_label_student_achievement"),
+        url: ReportTeachingLoad.routeBasePath,
+      },
+    ].filter((item) => item.hasPerm);
+    const hasReportListPerm = reportList.length > 0;
+    const isPending = perm.report_learning_outcomes_in_categories_616 === undefined;
+    return [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending];
+  }, [perm]);
 
-  const handleClick = useMemo(
-    () => (value: string) => {
-      history.push(value);
-    },
-    [history]
-  );
-    */
+  const hasPerm = hasSkillCoveragePerm || hasLearnerUsagePerm || hasReportListPerm;
+
   return (
     <Box className={css.layoutBoxWrapper}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -258,123 +242,62 @@ export function ReportDashboard() {
         </div>
       </LayoutBox>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517} className={css.layoutBoxMain}>
-        <Grid container spacing={7}>
-          <Grid item xs={4}>
-            <Box className={clsx(css.gridItem, css.gridItemWithBg)}>1</Box>
-          </Grid>
-          {hasStudentUsagePermission && (
-            <Grid item xs={4}>
-              <div className={css.reportTop}>
-                {t("report_label_learner_usage")}
-                <Tooltip
-                  arrow
-                  placement="bottom"
-                  title={t("report_label_learner_usage_info")}
-                  classes={css}
-                  aria-label="info"
-                  style={{
-                    position: "relative",
-                    left: "7px",
-                    top: "3px",
-                    fontSize: "19px",
-                    color: "#6D8199",
-                    width: "15px",
-                    height: "15px",
-                  }}
-                >
-                  <Info></Info>
-                </Tooltip>
-              </div>
-              <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
-                <LearnerUsageReport />
-              </Box>
-            </Grid>
-          )}
-          <>
-            {(hasPerm || hasSummaryPerm || hasStudentUsagePermission || hasStudentProgressPermission) && (
-              <Grid item xs={4}>
-                <Box className={clsx(css.gridItem, css.navContainer)}>
-                  <ul>
-                    <li style={{ marginTop: "30px" }}>
-                      <Link component={RouterLink} to={ReportStudentProgress.routeBasePath}>
-                        {t("report_label_student_progress_report")}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link component={RouterLink} to={ReportLearningSummary.routeRedirectDefault}>
-                        {t("report_learning_summary_report")}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
-                        {t("report_label_student_achievement")}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link component={RouterLink} to={ReportTeachingLoad.routeBasePath}>
-                        {t("report_label_teaching_load")}
-                      </Link>
-                    </li>
-                  </ul>
+        {!isPending && !hasPerm && noReportTip}
+        {!isPending && hasPerm && (
+          <Grid container spacing={7}>
+            {hasSkillCoveragePerm && (
+              <Grid item xs={12} md={4}>
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>1</Box>
+              </Grid>
+            )}
+            {hasLearnerUsagePerm && (
+              <Grid item xs={12} md={4}>
+                <div className={css.reportTop}>
+                  {t("report_label_learner_usage")}
+                  <Tooltip
+                    arrow
+                    placement="bottom"
+                    title={t("report_label_learner_usage_info")}
+                    classes={css}
+                    aria-label="info"
+                    style={{
+                      position: "relative",
+                      left: "7px",
+                      top: "3px",
+                      fontSize: "19px",
+                      color: "#6D8199",
+                      width: "15px",
+                      height: "15px",
+                    }}
+                  >
+                    <Info></Info>
+                  </Tooltip>
+                </div>
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <LearnerUsageReport />
                 </Box>
               </Grid>
             )}
-          </>
-        </Grid>
-
-        {isPending ? (
-          ""
-        ) : hasPerm || hasSummaryPerm ? (
-          <>
-            {/*
-          <Hidden smDown>
-            <div className={css.reportList}>
-              {reportList.map(
-                (item) =>
-                  item.hasPerm && (
-                    <div key={item.title} className={css.reportItem} onClick={() => handleClick(item.url)}>
-                      <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                        {cloneElement(item.icon, { style: { fontSize: 42 } })}{" "}
-                      </div>
-                      <div className={css.reportItemTitleBox}>
-                        <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
-                        <ChevronRight style={{ opacity: 0.54 }} />
-                      </div>
-                    </div>
-                  )
+            <>
+              {hasReportListPerm && (
+                <Grid item xs={12} md={4}>
+                  <Box className={clsx(css.gridItem, css.navContainer)}>
+                    <ul>
+                      {reportList.map((item, index) => {
+                        return (
+                          <li key={index}>
+                            <Link component={RouterLink} to={item.url}>
+                              {item.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </Box>
+                </Grid>
               )}
-            </div>
-          </Hidden>
-          <Hidden mdUp>
-
-
-
-
-            <Grid container spacing={4}>
-              {reportList.map(
-                (item) =>
-                  item.hasPerm && (
-                    <Grid key={item.title} item xs={6} className={css.gridCon}>
-                      <div className={css.reportItemMb} onClick={() => handleClick(item.url)}>
-                        <div style={{ display: "flex", justifyContent: "center" }}>
-                          <div className={css.iconBox} style={{ backgroundColor: item.bgColor }}>
-                            {cloneElement(item.icon, { style: { fontSize: 22 } })}{" "}
-                          </div>
-                        </div>
-                        <div className={css.reportItemTitleBox}>
-                          <Typography className={css.reportItemTitle}>{t(item.title)}</Typography>
-                          <ChevronRight style={{ opacity: 0.54, marginTop: 7 }} />
-                        </div>
-                      </div>
-                    </Grid>
-                  )
-              )}
-            </Grid>
-          </Hidden>
-                  */}
-          </>
-        ) : (
-          permissionTip
+            </>
+          </Grid>
         )}
       </LayoutBox>
     </Box>

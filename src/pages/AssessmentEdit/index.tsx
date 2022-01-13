@@ -198,7 +198,6 @@ export function AssessmentsEdit() {
     },
     []
   );
-
   const changeAutocompleteDimensionValue = (label: number) => {
     setChangeAutocompleteLabel(label);
   };
