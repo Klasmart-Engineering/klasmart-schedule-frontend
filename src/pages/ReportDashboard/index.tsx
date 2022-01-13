@@ -1,6 +1,9 @@
 import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
+import { ReportLearningSummary } from "@pages/ReportLearningSummary";
+import ReportStudentProgress from "@pages/ReportStudentProgress";
+import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -292,12 +295,12 @@ export function ReportDashboard() {
                 <Box className={clsx(css.gridItem, css.navContainer)}>
                   <ul>
                     <li style={{ marginTop: "30px" }}>
-                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                      <Link component={RouterLink} to={ReportStudentProgress.routeBasePath}>
                         Learner Monthly Report
                       </Link>
                     </li>
                     <li>
-                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                      <Link component={RouterLink} to={ReportLearningSummary.routeRedirectDefault}>
                         Learner Weekly Report
                       </Link>
                     </li>
@@ -307,7 +310,7 @@ export function ReportDashboard() {
                       </Link>
                     </li>
                     <li>
-                      <Link component={RouterLink} to={ReportAchievementList.routeBasePath}>
+                      <Link component={RouterLink} to={ReportTeachingLoad.routeBasePath}>
                         Teacher Usage Report
                       </Link>
                     </li>

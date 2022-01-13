@@ -2,9 +2,9 @@ import { t } from "@locale/LocaleManager";
 import { makeStyles } from "@material-ui/core";
 import { ArrowRight } from "@material-ui/icons";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
-import { getAWeek } from "@utilities/dateUtilities";
+// import { getAWeek } from "@utilities/dateUtilities";
 import React, { useMemo } from "react";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 // import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 // import { RootState } from "../../../reducers";
@@ -24,6 +24,7 @@ const useStyles = makeStyles(() => ({
     height: "47px",
     lineHeight: "47px",
     fontSize: "12px",
+    color: "#6D8199",
     "&:before": {
       display: "inline-block",
       content: "''",
@@ -91,7 +92,7 @@ const useStyles = makeStyles(() => ({
 
 export default function LearnerUsageReport() {
   const css = useStyles();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const history = useHistory();
   // const {
   //   ContentsUsed,
@@ -102,19 +103,19 @@ export default function LearnerUsageReport() {
     {
       content: t("report_label_content_used"),
       value: 32 || 0,
-      // value: ContentsUsed || 0,
+      // value: Math.floor(ContentsUsed || 0),
       category: t("report_label_5_types"),
     },
     {
       content: t("report_label_class_scheduled"),
       value: 12 || 0,
-      // value: ClassScheduled || 0,
+      // value: Math.floor(ClassScheduled || 0),
       category: t("report_label_live_class"),
     },
     {
       content: t("report_label_assignment_scheduled"),
       value: 8 || 0,
-      // value: AssignmentScheduled || 0,
+      // value: Math.floor(AssignmentScheduled || 0),
       category: t("report_label_study_and_home_fun"),
     },
   ];
@@ -129,13 +130,9 @@ export default function LearnerUsageReport() {
   // React.useEffect(() => {
   //   dispatch(LearnerUsageRequest({
   //     Durations: getAWeek(),
-  //     ContentTypeList: ["Content Used", "Class Scheduled", "Assignment Scheduled"]
+  //     ContentTypeList: ["content Used", "live", "study", "home_fun"]
   //   }))
   // }, [dispatch])
-
-  React.useEffect(() => {
-    console.log("getAWeek", getAWeek());
-  }, [dispatch]);
 
   return (
     <div className={css.reportContainer}>
