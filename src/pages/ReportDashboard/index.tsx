@@ -1,5 +1,6 @@
+import rightArrow from "@assets/icons/rightArrow.svg";
 import { noReportTip } from "@components/TipImages";
-import { Box, Button, Grid, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
+import { Box, Button, Grid, Icon, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
 import { ReportAchievementList } from "@pages/ReportAchievementList";
@@ -55,36 +56,25 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     "& > ul": {
       margin: 0,
       padding: 0,
-      paddingTop: 30,
+      paddingTop: 20,
       "& > li": {
         listStyle: "none",
         paddingBottom: 14,
         "& > a": {
           width: "calc(100% - 48px)",
           padding: 24,
-          lineHeight: 1,
-          display: "block",
+
           background: "#6C99D0",
           borderRadius: 12,
           color: "#FFFFFF",
           fontSize: 18,
+          lineHeight: 1,
           fontWeight: 600,
           textDecoration: "none",
           position: "relative",
-
-          "&::after": {
-            content: "''",
-            display: "block",
-            position: "absolute",
-            right: 30,
-            top: "50%",
-            width: 0,
-            height: 0,
-            borderStyle: "solid",
-            borderWidth: "7.5px 0 7.5px 10px",
-            borderColor: "transparent transparent transparent #FFFFFF",
-            transform: "translateY(-50%)",
-          },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           "&:hover": {
             background: "#4A7ABE",
             textDecorationLine: "none",
@@ -147,17 +137,12 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     fontSize: "16px",
     marginBottom: "3px",
   },
+  rightIcon: {
+    width: 10,
+    height: 22,
+  },
+  rightIconImg: {},
 }));
-/*
-interface ReportItem {
-  title: LangRecordId;
-  url: string;
-  icon: JSX.Element;
-  bgColor: string;
-  hasPerm: boolean;
-}
-*/
-
 interface ReportItem {
   hasPerm: boolean;
   label: string;
@@ -288,7 +273,7 @@ export function ReportDashboard() {
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517} className={css.layoutBoxMain}>
         {!isPending && !hasPerm && noReportTip}
         {!isPending && hasPerm && (
-          <Grid container spacing={7}>
+          <Grid container spacing={2}>
             {hasSkillCoveragePerm && (
               <Grid item xs={12} md={4}>
                 {reportTip(t("report_label_skill_coverage"), t("report_label_skill_coverage_info"))}
@@ -315,6 +300,9 @@ export function ReportDashboard() {
                           <li key={index}>
                             <Link component={RouterLink} to={item.url}>
                               {item.label}
+                              <Icon classes={{ root: css.rightIcon }}>
+                                <img alt="" className={css.rightIconImg} src={rightArrow} />
+                              </Icon>
                             </Link>
                           </li>
                         );
