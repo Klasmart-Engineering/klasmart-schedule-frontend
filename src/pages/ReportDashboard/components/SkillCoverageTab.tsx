@@ -62,13 +62,13 @@ const COLORS = ["#61AAFF", "#64D1BE", "#F6A97D"];
 
 function handleListData(data: EntityTeacherReportCategory[]) {
   const amount = data.reduce((preValue, item) => preValue + (item.items?.length || 0), 0);
-  if (data.length) {
+  if (data.length && data.length >= 3) {
     let handleData = _.sortBy(
       data.map((item) => ({ ...item, count: item.items?.length || 0 })),
       ["count", "name"]
     );
     const secondNum =
-      handleData[1].items?.length === handleData[2].items?.length
+      handleData[1]?.items?.length === handleData[2]?.items?.length
         ? _.sortBy([handleData[1], handleData[2]], "name")[0]
         : _.sortBy([handleData[1], handleData[2]], "count")[1];
     handleData = [
@@ -78,6 +78,13 @@ function handleListData(data: EntityTeacherReportCategory[]) {
     ];
     handleData[2].count = 100 - handleData[0].count - handleData[1].count;
     return handleData;
+  } else if (data.length === 1) {
+    return [{ name: data[0].name, count: Math.floor(((data[0].items?.length || 0) / amount) * 100) }];
+  } else if (data.length === 2) {
+    return [
+      { name: data[0].name, count: Math.floor(((data[0].items?.length || 0) / amount) * 100) },
+      { name: data[1].name, count: Math.floor(((data[1].items?.length || 0) / amount) * 100) },
+    ];
   }
   return [];
 }
