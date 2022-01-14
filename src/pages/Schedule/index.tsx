@@ -56,18 +56,6 @@ import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
 
-export const safariCompatible = (token?: string) => {
-  setTimeout(() => {
-    const winOpen = window.open("", "_blank");
-    if (token) {
-      const url = apiLivePath(token);
-      if (winOpen) {
-        winOpen.location = url as unknown as Location;
-      }
-    }
-  }, 100);
-};
-
 const useQuery = () => {
   const { search } = useLocation();
   const query = new URLSearchParams(search);
@@ -308,14 +296,12 @@ function ScheduleContent() {
 
   const toLive = async (schedule_id?: string, token?: string) => {
     let winRef: Window | null = window;
-    console.log("1", winRef.document.title);
     let url: string = "";
     setTimeout(() => {
       if (winRef) {
         winRef = winRef.open(url, "_blank") as Window;
-        console.log("2", winRef.document.title);
       }
-    }, 900);
+    }, 500);
     await dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
     let resultInfo: any;
     resultInfo = await dispatch(
