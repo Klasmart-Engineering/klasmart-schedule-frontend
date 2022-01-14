@@ -115,35 +115,8 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     color: "#6D8199",
     fontSize: "16px",
     marginBottom: "3px",
-  },
-}));
-
-const useStyles2 = makeStyles(() => ({
-  arrow: {
-    color: "#fff",
-    "&::before": {
-      content: "' '",
-      border: "0.7px solid #B7B7B7",
-      width: "100%",
-      height: "100%",
-      margin: "auto",
-      display: "block",
-      transform: "rotate(45deg)",
-      backgroundColor: "currentColor",
-    },
-  },
-  tooltip: {
-    width: "308px",
-    backgroundColor: "#fff",
-    padding: "30 24 25",
-    lineHeight: "20px",
-    color: "#333333",
-    border: "0.7px solid #B7B7B7",
-  },
-  reportTop: {
-    color: "#6D8199",
-    fontSize: "16px",
-    marginBottom: "3px",
+    display: "flex",
+    alignItems: "center",
   },
   rightIcon: {
     width: 10,
@@ -170,8 +143,6 @@ const DiyTooltip = withStyles((theme: Theme) => ({
 
 export function ReportDashboard() {
   const css = useStyles();
-  const style = useStyles2();
-  //const history = useHistory();
   const dispatch = useDispatch();
   const { learnerUsageOverview } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const { assignment_scheduled, class_scheduled, contents_used } = learnerUsageOverview;
@@ -251,24 +222,14 @@ export function ReportDashboard() {
   const reportTip = (title: string, tip: string) => (
     <div className={css.reportTop}>
       {title}
-      <Tooltip
-        arrow
-        placement="bottom"
-        title={tip}
-        classes={style}
-        aria-label="info"
-        style={{
-          position: "relative",
-          left: "5px",
-          top: "3px",
-          fontSize: "19px",
-          color: "#6D8199",
-          width: "15px",
-          height: "15px",
-        }}
-      >
-        <Info></Info>
-      </Tooltip>
+      <DiyTooltip title={<div className={css.infoul} dangerouslySetInnerHTML={{ __html: tip }}></div>}>
+        <Info
+          style={{
+            fontSize: 15,
+            marginLeft: 6,
+          }}
+        ></Info>
+      </DiyTooltip>
     </div>
   );
 
