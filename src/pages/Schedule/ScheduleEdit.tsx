@@ -73,6 +73,7 @@ import {
   saveScheduleData,
   ScheduleFilterPrograms,
   scheduleShowOption,
+  getLessonPlansBySchedule,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -1772,15 +1773,29 @@ function EditBox(props: CalendarStateProps) {
     grades: condition.grade_ids ?? [],
   };
 
-  const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({ group_names: "", page: 1, pages: 10, lesson_plan_name: "" });
+  const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({
+    page: 1,
+    page_size: 10,
+    group_names: ["Organization Content", "Badanamu Content", "More Featured Content"],
+  });
+
+  const filterLessonGropuDatas: LearningComesFilterQuery = {
+    programs: Array.from(new Set((lessonPlanCondition.program_ids ?? []).concat(scheduleList.program_id ? [scheduleList.program_id] : []))),
+    subjects: Array.from(new Set((lessonPlanCondition.subject_ids ?? []).concat(subjectIds))),
+    categorys: lessonPlanCondition.category_ids ?? [],
+    subs: lessonPlanCondition.sub_category_ids ?? [],
+    ages: lessonPlanCondition.age_ids ?? [],
+    grades: lessonPlanCondition.grade_ids ?? [],
+  };
 
   const searcLessonPlanList = async (filterQueryAssembly: object) => {
-    console.log(lessonPlanCondition, filterQueryAssembly);
     const query = {
       ...lessonPlanCondition,
       ...filterQueryAssembly,
     };
+
     setLessonPlanCondition({ ...query });
+    await dispatch(getLessonPlansBySchedule({ metaLoading: true, ...query }));
   };
 
   const handleLessonPlan = async () => {
@@ -1794,14 +1809,6 @@ function EditBox(props: CalendarStateProps) {
         dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
       }
     }
-    await getLearingOuctomeData(
-      {
-        ...condition,
-        program_ids: filterGropuDatas.programs.length ? filterGropuDatas.programs : null,
-        subject_ids: filterGropuDatas.subjects.length ? filterGropuDatas.subjects : null,
-      },
-      false
-    );
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -1812,11 +1819,12 @@ function EditBox(props: CalendarStateProps) {
           handleClose={() => {
             changeModalDate({ openStatus: false, enableCustomization: false });
           }}
-          filterGropuData={filterGropuDatas}
+          filterGropuData={filterLessonGropuDatas}
           searchOutcomesList={searcLessonPlanList}
           programs={modelSchedule.Deduplication(
             modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
           )}
+          lessonPlanId={scheduleList.lesson_plan_id}
           handelSetProgramChildInfo={handelSetProgramChildInfo}
           programChildInfoParent={
             (programChildInfo
@@ -2299,7 +2307,6 @@ function EditBox(props: CalendarStateProps) {
           </Box>
         )}
         <button
-          style={{ display: "none" }}
           onClick={() => {
             handleLessonPlan();
           }}
