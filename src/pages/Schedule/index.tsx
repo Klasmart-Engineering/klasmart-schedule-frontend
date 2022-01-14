@@ -47,7 +47,7 @@ import {
   getSubjectByProgramId,
   getUserInUndefined,
   ScheduleFilterPrograms,
-  scheduleUpdateStatus,
+  scheduleUpdateStatus
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -307,12 +307,25 @@ function ScheduleContent() {
   );
 
   const toLive = async (schedule_id?: string, token?: string) => {
+    let winRef: Window | null = window;
+    console.log("1", winRef.document.title);
+    let url: string = "";
+    setTimeout(() => {
+      if (winRef) {
+        winRef = winRef.open(url, "_blank") as Window;
+        console.log("2", winRef.document.title);
+      }
+    }, 900);
     await dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
     let resultInfo: any;
     resultInfo = await dispatch(
       getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
     );
-    safariCompatible(resultInfo.payload.token);
+    if (!winRef.document.title) {
+      winRef.location.href = apiLivePath(resultInfo.payload.token);
+    } else {
+      url = apiLivePath(resultInfo.payload.token);
+    }
   };
 
   const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {
