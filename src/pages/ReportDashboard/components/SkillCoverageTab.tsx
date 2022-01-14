@@ -98,9 +98,9 @@ export default function SkillCoverageTab() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderScore = (name: string, number: number, color: string) => {
+  const renderScore = (name: string, number: number, color: string, i: number) => {
     return (
-      <Grid container direction="column" className={css.scoreItem}>
+      <Grid container direction="column" className={css.scoreItem} key={i}>
         <div title={name} className={css.scoreName}>
           {name}
         </div>
@@ -112,7 +112,7 @@ export default function SkillCoverageTab() {
   };
 
   return (
-    <Grid direction="column">
+    <Grid container direction="column">
       <Grid wrap="nowrap" container direction="column" className={css.container}>
         <Box flex={1} display={"flex"}>
           <Box flex={1} display={"flex"} position={"relative"}>
@@ -132,7 +132,7 @@ export default function SkillCoverageTab() {
             </ParentSize>
           </Box>
           <Grid container direction="column" justifyContent="center" className={css.scoreContainer}>
-            {handleData.map((item, i) => renderScore(item.name || "", item.count || 0, COLORS[i]))}
+            {handleData.map((item, i) => renderScore(item.name || "", item.count || 0, COLORS[i], i))}
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">

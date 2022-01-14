@@ -1,10 +1,10 @@
+import { EntityLearnerUsageResponse } from "@api/api.auto";
 import { t } from "@locale/LocaleManager";
 import { makeStyles } from "@material-ui/core";
 import { ArrowRight } from "@material-ui/icons";
-import { useHistory } from "react-router";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
 import React, { useMemo } from "react";
-import { EntityLearnerUsageResponse } from "@api/api.auto";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles(() => ({
   reportContainer: {
@@ -55,13 +55,15 @@ const useStyles = makeStyles(() => ({
   reportRight: {
     display: "flex",
     alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "right",
     fontSize: "30px",
     color: "#1896EA",
   },
+  value: {
+    flex: 1,
+    textAlign: "right",
+  },
   category: {
-    maxWidth: "55px",
+    width: "55px",
     fontSize: "12px",
     color: "#6D8199",
     textAlign: "left",
@@ -77,7 +79,7 @@ const useStyles = makeStyles(() => ({
     width: "65%",
     height: "33px",
     margin: "0 auto",
-    marginTop: "10px",
+    marginTop: "15px",
     padding: "0 14px",
     borderRadius: "10px",
     color: "#fff",
@@ -130,7 +132,7 @@ export default function LearnerUsageReport({ learnerUsageOverview }: ILearnerUsa
             <div className={css.reportList} key={idx}>
               <div className={css.reportLeft}>{item.content}</div>
               <div className={css.reportRight}>
-                <div>{item.value}</div>
+                <div className={css.value}>{item.value}</div>
                 <div className={css.category}>{item.category}</div>
               </div>
             </div>

@@ -111,6 +111,14 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
       paddingLeft: 10,
     },
   },
+  reportTop: {
+    color: "#6D8199",
+    fontSize: "16px",
+    marginBottom: "3px",
+  },
+}));
+
+const useStyles2 = makeStyles(() => ({
   arrow: {
     color: "#fff",
     "&::before": {
@@ -162,6 +170,7 @@ const DiyTooltip = withStyles((theme: Theme) => ({
 
 export function ReportDashboard() {
   const css = useStyles();
+  const style = useStyles2();
   //const history = useHistory();
   const dispatch = useDispatch();
   const { learnerUsageOverview } = useSelector<RootState, RootState["report"]>((state) => state.report);
@@ -246,7 +255,7 @@ export function ReportDashboard() {
         arrow
         placement="bottom"
         title={tip}
-        classes={css}
+        classes={style}
         aria-label="info"
         style={{
           position: "relative",
