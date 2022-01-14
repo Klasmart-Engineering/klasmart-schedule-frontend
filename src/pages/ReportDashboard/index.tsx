@@ -115,6 +115,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     color: "#6D8199",
     fontSize: "16px",
     marginBottom: "3px",
+    fontWeight: 600,
     display: "flex",
     alignItems: "center",
   },
@@ -208,7 +209,7 @@ export function ReportDashboard() {
       },
       {
         hasPerm: !!perm.teachers_classes_teaching_time_report_620,
-        label: t("report_label_student_achievement"),
+        label: t("report_label_teaching_load"),
         url: ReportTeachingLoad.routeBasePath,
       },
     ].filter((item) => item.hasPerm);
