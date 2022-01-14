@@ -143,7 +143,9 @@ export function OrganizationList(props: OrganizationListProps) {
     const initSort: OrganizationSortInput = {
       field: [sortType],
       order:
-        sortType === OrganizationSortBy.Name ? (!nameOrder ? SortOrder.Asc : SortOrder.Desc) : !emailOrder ? SortOrder.Asc : SortOrder.Desc,
+        (sortType === OrganizationSortBy.Name && !nameOrder) || (sortType === OrganizationSortBy.OwnerEmail && !emailOrder)
+          ? SortOrder.Asc
+          : SortOrder.Desc,
     };
     const { payload } = (await dispatch(
       getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
