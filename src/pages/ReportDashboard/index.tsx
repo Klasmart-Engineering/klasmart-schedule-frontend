@@ -26,14 +26,14 @@ import SkillCoverageTab from "./components/SkillCoverageTab";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   layoutBoxWrapper: {
-    height: "100vh",
+    minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
   },
   layoutBoxMain: {
     background: "#F2F3F8",
     flexGrow: 1,
-    height: "100%",
+    minHeight: "100%",
     paddingTop: 24,
   },
 
