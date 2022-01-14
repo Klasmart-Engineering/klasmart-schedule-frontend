@@ -128,7 +128,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   },
 }));
 
-const useStyles2 = makeStyles(({ shadows, breakpoints }) => ({
+const useStyles2 = makeStyles(() => ({
   arrow: {
     color: "#fff",
     "&::before": {
