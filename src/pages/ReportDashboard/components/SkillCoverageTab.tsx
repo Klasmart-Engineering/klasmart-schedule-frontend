@@ -67,7 +67,7 @@ function handleListData(data: EntityTeacherReportCategory[]) {
   let handleData = Array.from(mergedData.entries()).map((item) => ({ name: item[0], count: item[1] }));
   handleData = _.orderBy(handleData, "count", "desc");
 
-  if (data.length && data.length >= 3) {
+  if (handleData.length && handleData.length >= 3) {
     const secondNum =
       handleData[1]?.count === handleData[2]?.count
         ? _.orderBy([handleData[1], handleData[2]], "name")[0]
@@ -79,9 +79,9 @@ function handleListData(data: EntityTeacherReportCategory[]) {
     ];
     handleData[2].count = 100 - handleData[0].count - handleData[1].count;
     return handleData;
-  } else if (data.length === 1) {
+  } else if (handleData.length === 1) {
     return [{ name: handleData[0].name, count: Math.floor(((handleData[0].count || 0) / amount) * 100) }];
-  } else if (data.length === 2) {
+  } else if (handleData.length === 2) {
     return [
       { name: handleData[0].name, count: Math.floor(((handleData[0].count || 0) / amount) * 100) },
       { name: handleData[1].name, count: Math.floor(((handleData[1].count || 0) / amount) * 100) },
