@@ -144,6 +144,7 @@ const useStyles2 = makeStyles(() => ({
     color: "#6D8199",
     fontSize: "16px",
     marginBottom: "3px",
+    fontWeight: 600,
   },
   rightIcon: {
     width: 10,
