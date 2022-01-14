@@ -486,9 +486,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
-      setTimeout(() => {
-        safariCompatible(resultInfo.payload.token);
-      }, 200);
+      safariCompatible(resultInfo.payload.token);
       return;
     }
     if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
@@ -540,9 +538,7 @@ export default function CustomizeTempalte(props: InfoProps) {
 
     handleClose();
     dispatch(scheduleUpdateStatus({ schedule_id: ScheduleViewInfo.id as string, status: { status: "Started" } }));
-    setTimeout(() => {
-      safariCompatible(resultInfo.payload.token);
-    }, 200);
+    safariCompatible(resultInfo.payload.token);
   };
 
   const deleteHandle = () => {
