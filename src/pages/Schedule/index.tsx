@@ -312,7 +312,7 @@ function ScheduleContent() {
     );
     setTimeout(() => {
       safariCompatible(resultInfo.payload.token);
-    }, 200);
+    }, 1000);
   };
 
   const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {
