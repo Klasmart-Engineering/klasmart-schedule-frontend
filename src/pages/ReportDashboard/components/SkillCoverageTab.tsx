@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
   },
   score: {},
   scoreName: {
-    lineHeight: "18px",
+    lineHeight: "22px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -65,7 +65,7 @@ function handleListData(data: EntityTeacherReportCategory[]) {
   const mergedData = new Map<string, number>();
   data.forEach((item) => mergedData.set(item.name || "", (item.items?.length || 0) + (mergedData.get(item.name || "") || 0)));
   let handleData = Array.from(mergedData.entries()).map((item) => ({ name: item[0], count: item[1] }));
-  handleData = _.orderBy(handleData, "count", "desc");
+  handleData = _.orderBy(_.orderBy(handleData, "name", "asc"), "count", "desc");
 
   if (handleData.length && handleData.length >= 3) {
     const secondNum =
