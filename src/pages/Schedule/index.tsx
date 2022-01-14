@@ -65,7 +65,7 @@ export const safariCompatible = (token?: string) => {
         winOpen.location = url as unknown as Location;
       }
     }
-  }, 1000);
+  }, 100);
 };
 
 const useQuery = () => {
