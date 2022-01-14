@@ -57,13 +57,15 @@ import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
 
 export const safariCompatible = (token?: string) => {
-  if (token) {
-    const url = apiLivePath(token);
+  setTimeout(() => {
     const winOpen = window.open("", "_blank");
-    if (winOpen) {
-      winOpen.location = url as unknown as Location;
+    if (token) {
+      const url = apiLivePath(token);
+      if (winOpen) {
+        winOpen.location = url as unknown as Location;
+      }
     }
-  }
+  }, 1000);
 };
 
 const useQuery = () => {
