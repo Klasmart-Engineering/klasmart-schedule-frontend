@@ -141,19 +141,12 @@ export function OrganizationList(props: OrganizationListProps) {
 
   const searchOrgList = async ({ direction, cursor = "", curentPageCursor = CursorType.start, sort }: CursorListProps) => {
     const initSort: OrganizationSortInput = {
-      field: [OrganizationSortBy.Name],
-      order: SortOrder.Asc,
+      field: [sortType],
+      order:
+        sortType === OrganizationSortBy.Name ? (!nameOrder ? SortOrder.Asc : SortOrder.Desc) : !emailOrder ? SortOrder.Asc : SortOrder.Desc,
     };
     const { payload } = (await dispatch(
-      getOrgList({
-        metaLoading: true,
-        cursor,
-        direction,
-        sort: sort || initSort,
-        searchValue,
-        count: 10,
-        // orgs: orgProperty.region === Region.global ? [] : vnOrgList,
-      })
+      getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
     if (!payload) return;
     setPageDesc(getPageDesc(curentPageCursor, payload.orgListTotal, pageDesc));
@@ -172,15 +165,6 @@ export function OrganizationList(props: OrganizationListProps) {
     searchOrgList({ direction: ConnectionDirection.Forward, sort });
     setSortType(type);
     type === OrganizationSortBy.Name ? setNameOrder(!nameOrder) : setEmailOrder(!emailOrder);
-  };
-
-  const handleChangePage = (props: CursorListProps) => {
-    const sort: OrganizationSortInput = {
-      field: [sortType],
-      order:
-        sortType === OrganizationSortBy.Name ? (!nameOrder ? SortOrder.Asc : SortOrder.Desc) : !emailOrder ? SortOrder.Asc : SortOrder.Desc,
-    };
-    searchOrgList({ ...props, sort });
   };
 
   const handleChangeBeValues = (id: string, checked: boolean) => {
@@ -315,7 +299,7 @@ export function OrganizationList(props: OrganizationListProps) {
                                 pageDesc={pageDesc}
                                 total={orgListTotal}
                                 pageInfo={orgListPageInfo}
-                                onChange={handleChangePage}
+                                onChange={searchOrgList}
                               />
                             </div>
                           </>
