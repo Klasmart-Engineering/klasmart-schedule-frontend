@@ -1,6 +1,9 @@
-import { Grid } from "@material-ui/core";
+import { apiLivePath } from "@api/extra";
+import { ParticipantString } from "@api/type";
+import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
+import ScheduleToolMb from "@pages/Schedule/ScheduleToolMb";
 import { onLoadContentPreview } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
@@ -11,7 +14,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { ConnectionDirection, StringOperator, UuidExclusiveOperator } from "../../api/api-ko-schema.auto";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
-import { apiLivePath } from "../../api/extra";
 import PermissionType from "../../api/PermissionType";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
@@ -24,27 +26,28 @@ import { modelSchedule } from "../../models/ModelSchedule";
 import {
   actOutcomeListLoading,
   changeParticipants,
+  classesWithoutSchool,
   getClassesByOrg,
   getClassesBySchool,
   getClassesByStudent,
   getClassesByTeacher,
   getClassFilterList,
+  getLessonPlansBySchedule,
   getLinkedMockOptions,
   getParticipantsData,
   getScheduleAnyTimeViewData,
   getScheduleInfo,
+  getScheduleLiveToken,
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
   getScheduleTimeViewDataByYear,
   getScheduleViewInfo,
   getSchoolsFilterList,
-  classesWithoutSchool,
   getSubjectByProgramId,
-  ScheduleFilterPrograms,
-  scheduleUpdateStatus,
-  getLessonPlansBySchedule,
   getUserInUndefined,
+  ScheduleFilterPrograms,
+  scheduleUpdateStatus
 } from "../../reducers/schedule";
 import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
@@ -85,7 +88,7 @@ function ScheduleContent() {
     mockOptions,
     scheduleMockOptions,
     participantMockOptions,
-    liveToken,
+    // liveToken,
     scheduleTimeViewYearData,
     ParticipantsData,
     classRosterIds,
@@ -100,6 +103,7 @@ function ScheduleContent() {
     userInUndefined,
     lessonPlans,
     filterOtherClasses,
+    scheduleTimeViewData,
   } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const dispatch = useDispatch();
   const { scheduleId } = useQuery();
@@ -133,9 +137,9 @@ function ScheduleContent() {
 
   const LinkageLessonPlan = async (content_id: string) => {
     let resultInfo: any;
-    resultInfo = (await dispatch(
-      onLoadContentPreview({ metaLoading: true, content_id: content_id, schedule_id: "", tokenToCall: false })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>;
+    resultInfo = (await dispatch(onLoadContentPreview({ metaLoading: true, content_id }))) as unknown as PayloadAction<
+      AsyncTrunkReturned<typeof onLoadContentPreview>
+    >;
     const segment: Segment = JSON.parse(resultInfo.payload.contentDetail.data || "{}");
     const materialArr = ModelLessonPlan.toArray(segment);
     const newMaterialArr: (EntityContentInfoWithDetails | undefined)[] = [];
@@ -173,6 +177,9 @@ function ScheduleContent() {
     setAnyTimeName(name);
   };
 
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
   const initModalDate: AlertDialogProps = {
     handleChange: function (p1: number) {},
     radioValue: 0,
@@ -191,6 +198,14 @@ function ScheduleContent() {
 
   const [modalDate, setModalDate] = React.useState<AlertDialogProps>(initModalDate);
 
+  React.useEffect(() => {
+    if ((isShowAnyTime || modalDate.openStatus) && mobile) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "auto";
+    }
+  }, [isShowAnyTime, mobile, modalDate]);
+
   const changeModalDate = useCallback(
     (data: object) => {
       setModalDate({ ...modalDate, ...data });
@@ -201,7 +216,7 @@ function ScheduleContent() {
   /**
    * calendar model view change
    */
-  const [modelView, setModelView] = React.useState<modeViewType>(document.body.clientWidth < 600 ? "day" : "month");
+  const [modelView, setModelView] = React.useState<modeViewType>(mobile ? "day" : "month");
   const changeModelView = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (event.target.value === "year") {
       setModelYear(true);
@@ -211,13 +226,13 @@ function ScheduleContent() {
     }
   };
 
-  window.addEventListener("resize", () => {
-    if (document.body.clientWidth < 600) {
+  React.useEffect(() => {
+    if (mobile) {
       setModelView("day");
     } else {
       setModelView("month");
     }
-  });
+  }, [mobile, setModelView]);
 
   /**
    * get participants
@@ -279,13 +294,28 @@ function ScheduleContent() {
     [isAdmin, isSchool, isTeacher, isStudent]
   );
 
-  const toLive = (schedule_id?: string, token?: string) => {
-    dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
-    if (liveToken || token) window.open(apiLivePath(token ?? liveToken));
+  const toLive = async (schedule_id?: string, token?: string) => {
+    let winRef: Window | null = window;
+    let url: string = "";
+    setTimeout(() => {
+      if (winRef) {
+        winRef = winRef.open(url, "_blank") as Window;
+      }
+    }, 500);
+    await dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
+    let resultInfo: any;
+    resultInfo = await dispatch(
+      getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
+    );
+    if (!winRef.document.title) {
+      winRef.location.href = apiLivePath(resultInfo.payload.token);
+    } else {
+      url = apiLivePath(resultInfo.payload.token);
+    }
   };
 
-  const getParticipants = async (metaLoading: boolean = true, search: string, hash: string) => {
-    await dispatch(getParticipantsData({ is_org: isAdmin as boolean, hash: hash, name: search, metaLoading: metaLoading }));
+  const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {
+    await dispatch(getParticipantsData({ is_org: isAdmin as boolean, hash: hash, name: search, roleName, metaLoading: metaLoading }));
   };
 
   const getClassesConnection = async (
@@ -346,7 +376,6 @@ function ScheduleContent() {
     );
     return resultInfo.payload ? resultInfo.payload.data.classesConnection.edges : [];
   };
-
   React.useEffect(() => {
     if (includeEdit && stateFlag) {
       // get content
@@ -440,9 +469,11 @@ function ScheduleContent() {
   }, [scheduleId, setModalDate, dispatch]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
+  const sm = useMediaQuery(breakpoints.down(325));
+
   return (
     <>
-      <LayoutBox holderMin={10} holderBase={80} mainBase={1920}>
+      <LayoutBox holderMin={sm ? 0 : 10} holderBase={80} mainBase={1920}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <ScheduleTool
@@ -502,8 +533,23 @@ function ScheduleContent() {
               classesConnection={classesConnection}
               userInUndefined={userInUndefined}
               lessonPlans={lessonPlans}
+              mobile={mobile}
             />
           </Grid>
+          {mobile && (
+            <Grid item xs={12}>
+              <ScheduleToolMb
+                includeList={includeList}
+                changeModelView={changeModelView}
+                modelView={modelView}
+                changeTimesTamp={changeTimesTamp}
+                timesTamp={timesTamp}
+                scheduleId={scheduleId}
+                modelYear={modelYear}
+                scheduleTimeViewData={scheduleTimeViewData}
+              />
+            </Grid>
+          )}
           <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
             <Zoom in={isShowAnyTime}>
               <Paper elevation={4}>

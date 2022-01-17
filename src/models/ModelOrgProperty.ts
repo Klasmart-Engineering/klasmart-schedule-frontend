@@ -1,6 +1,6 @@
 import { cloneDeep } from "@apollo/client/utilities";
+import { OrgInfoProps } from "@pages/MyContentList/OrganizationList";
 import { EntityOrganizationInfo } from "../api/api.auto";
-import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 
 export function orgs2id(orgs: EntityOrganizationInfo[]): string[] {
   return orgs.map((item) => item.id || "");

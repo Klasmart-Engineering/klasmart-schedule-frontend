@@ -341,7 +341,7 @@ export function SelectPublishType(props: SelectPublishTypeProps) {
           />
         }
         label={
-          <Typography style={{ fontSize: xs ? "0.875rem" : "1.25rem", lineHeight: xs ? "20px" : "24px" }}>
+          <Typography style={{ fontSize: xs ? "0.875rem" : "1.25rem", lineHeight: xs ? "20px" : "24px", marginRight: 47 }}>
             {lesson === "material"
               ? d("Only publish a lesson material").t("library_msg_only_publish_lesson_material")
               : d("Only publish a Lesson plan").t("library_msg_only_publish_lesson_plan")}

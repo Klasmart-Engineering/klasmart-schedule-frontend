@@ -3,7 +3,7 @@ import { d } from "@locale/LocaleManager";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { getScheduleParticipantsMockOptionsResponse } from "@reducers/schedule";
 import { Status } from "../api/api-ko-schema.auto";
-import { GetClassFilterListQuery, GetProgramsQuery, GetUserQuery } from "../api/api-ko.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, GetUserQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
 import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
 import {
   ClassOptionsItem,
@@ -164,7 +164,7 @@ export class modelSchedule {
     });
   }
 
-  static FilterParticipants(ParticipantsDatas: ParticipantsData | undefined, ClassRoster?: ParticipantsShortInfo) {
+  static FilterParticipants(ParticipantsDatas: ParticipantsData | undefined, ClassRoster: ParticipantsByClassQuery) {
     const rosterIdSet = { students: [], teachers: [] };
     const deDuplication = (arr: any) => {
       const obj: any = [];
@@ -176,13 +176,14 @@ export class modelSchedule {
         return item;
       }, []);
     };
-    ClassRoster?.student?.forEach((item) => {
-      rosterIdSet.students.push(item?.id as never);
+    ClassRoster?.class?.students?.forEach((item) => {
+      rosterIdSet.students.push(item?.user_id as never);
     });
-    ClassRoster?.teacher?.forEach((item) => {
-      rosterIdSet.teachers.push(item?.id as never);
+    ClassRoster?.class?.teachers?.forEach((item) => {
+      rosterIdSet.teachers.push(item?.user_id as never);
     });
     return {
+      ...ParticipantsDatas,
       classes: {
         students: deDuplication(
           ParticipantsDatas?.classes.students.filter((item: RolesData) => !rosterIdSet.students.includes(item.user_id as never))

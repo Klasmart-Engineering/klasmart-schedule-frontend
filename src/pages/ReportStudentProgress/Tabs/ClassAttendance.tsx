@@ -120,7 +120,7 @@ export default function ClassAttendance() {
         studentProgressReportTitle={d("Class Attendance Rate (Live only)").t("report_label_class_attendance_rate")}
       />
       <div className={css.chart}>
-        <StudentProgressBarChart data={chartData} label={label} itemUnit={"%"} />
+        <StudentProgressBarChart data={chartData} label={label} itemUnit={"%"} durationTime={durationTime} />
       </div>
       <div>
         <LearningOutcomeAchievedTotalType totalType={totalType} colors={colors} isLearningOutcomeAchieved={false} />

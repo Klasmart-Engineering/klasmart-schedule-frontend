@@ -457,7 +457,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
             <TextField
               id="filled-size-small"
               size="small"
-              placeholder="Search School Name"
+              placeholder={d("Search School Name").t("schedule_search_school_name")}
               onChange={(e) => {
                 getSearcherResult(e.target.value);
               }}
@@ -660,7 +660,7 @@ function OtherTemplate(props: OtherTemplateProps) {
             <TextField
               id="filled-size-small"
               size="small"
-              placeholder="Search Class Name"
+              placeholder={d("Search Class Name").t("schedule_search_class_name")}
               onChange={(e) => {
                 getSearcherResult(e.target.value);
               }}
@@ -826,7 +826,7 @@ function FilterTemplate(props: FilterProps) {
     if (node.label === "program" && checked) {
       if (viewSubjectPermission) {
         let resultInfo: any;
-        resultInfo = (await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown as PayloadAction<
+        resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown) as PayloadAction<
           AsyncTrunkReturned<typeof ScheduleFilterSubject>
         >;
         if (resultInfo.payload.length > 0) {

@@ -9,11 +9,12 @@ import {
   bulkReject,
   deleteContent,
   deleteFolder,
-  getOrgList,
   getOrgProperty,
   getUserSetting,
   onLoadContentList,
+  onloadShareOrgList,
   publishContent,
+  Region,
   rejectContent,
   renameFolder1,
   searchOrgFolderItems,
@@ -57,6 +58,7 @@ import {
   SecondSearchHeaderMb,
   SecondSearchHeaderProps,
 } from "./SecondSearchHeader";
+import { SpecialOrgList } from "./SpecialOrgList";
 import { ThirdSearchHeader, ThirdSearchHeaderMb, ThirdSearchHeaderProps } from "./ThirdSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 
@@ -342,7 +344,7 @@ export default function MyContentList() {
   };
   const handleClickShareBtn: ContentCardListProps["onClickShareBtn"] = async (content) => {
     setShareFolder(content);
-    await dispatch(getOrgList({ folder_ids: content.id, metaLoading: true }));
+    await dispatch(onloadShareOrgList({ folder_ids: content.id, metaLoading: true }));
     openOrganizationList();
   };
   const handleShareFolder: OrganizationListProps["onShareFolder"] = async (org_ids) => {
@@ -402,7 +404,7 @@ export default function MyContentList() {
   useEffect(() => {
     const getUserSettingPageSize = async () => {
       const { payload } = (await dispatch(getUserSetting())) as unknown as PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>;
-      setCmsPageSize(payload.cms_page_size || 0);
+      setCmsPageSize(payload?.cms_page_size || 0);
     };
     getUserSettingPageSize();
   }, [dispatch]);
@@ -566,15 +568,25 @@ export default function MyContentList() {
           onAddFolder={handleAddFolder}
           key={folderTreeShowIndex}
         />
-        <OrganizationList
-          orgList={filterOrgList}
-          selectedOrg={selctedOrgIds}
-          onClose={closeOrganizationList}
-          open={organizationListActive}
-          onShareFolder={handleShareFolder}
-          key={organizationListShowIndex}
-          orgProperty={orgProperty}
-        />
+        {orgProperty.region === Region.vn ? (
+          <SpecialOrgList
+            orgList={filterOrgList}
+            selectedOrg={selctedOrgIds}
+            onClose={closeOrganizationList}
+            open={organizationListActive}
+            onShareFolder={handleShareFolder}
+            key={organizationListShowIndex}
+          />
+        ) : (
+          <OrganizationList
+            orgList={filterOrgList}
+            selectedOrg={selctedOrgIds}
+            onClose={closeOrganizationList}
+            open={organizationListActive}
+            onShareFolder={handleShareFolder}
+            key={organizationListShowIndex}
+          />
+        )}
         <FolderForm
           onClose={closeFolderForm}
           open={folderFormActive}

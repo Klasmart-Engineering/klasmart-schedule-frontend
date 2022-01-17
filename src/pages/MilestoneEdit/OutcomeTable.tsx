@@ -37,10 +37,12 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   },
 }));
 
-const stopPropagation = <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) => (e: T) => {
-  e.stopPropagation();
-  if (handler) return handler(e);
-};
+const stopPropagation =
+  <T extends React.MouseEvent, R = void>(handler?: (arg: T) => R) =>
+  (e: T) => {
+    e.stopPropagation();
+    if (handler) return handler(e);
+  };
 
 interface OutcomeTableProps {
   outcomeList: GetOutcomeList;
@@ -71,7 +73,7 @@ export default function OutcomeTable(props: OutcomeTableProps) {
   const rows =
     outcomeList &&
     outcomeList.map((item) => (
-      <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.ancestor_id)}>
+      <TableRow key={item.outcome_id} onClick={(e) => onClickOutcome(item.outcome_id)}>
         <TableCell className={css.tableCell}>{item.outcome_name}</TableCell>
         <TableCell className={css.tableCell}>{item.shortcode}</TableCell>
         <TableCell className={css.tableCell}>{item.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>

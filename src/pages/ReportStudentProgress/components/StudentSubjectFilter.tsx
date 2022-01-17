@@ -88,7 +88,10 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
   const getAllStudentList = (): MutiSelect.ISelect[] => {
     let data = [] as typeof classList;
     data = data.concat(classList, noneSchoolClassList);
-    let students = data.find((item) => item.class_id === state.classId)?.students;
+    let students = (data.find((item) => item.class_id === state.classId)?.students || []).map((item) => ({
+      ...item,
+      full_name: item?.full_name || item?.user_name,
+    })) as Maybe<User>[];
     students = orderByASC(students as { [key: string]: any }[], "full_name") as Maybe<User>[];
     return (students || []).map((item) => ({
       value: item!.user_id!,

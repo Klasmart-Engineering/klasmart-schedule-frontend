@@ -1,5 +1,6 @@
+import { ParticipantString, ParticipantValue } from "@api/type";
 import DateFnsUtils from "@date-io/date-fns";
-import { Box, Button, MenuItem, TextField, ThemeProvider } from "@material-ui/core";
+import { Box, Button, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import Collapse from "@material-ui/core/Collapse";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -22,6 +23,7 @@ import {
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import ScheduleLessonPlan from "@pages/Schedule/ScheduleLessonPlan";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
@@ -57,7 +59,7 @@ import {
   actOutcomeList,
   changeParticipants,
   getProgramChild,
-  getScheduleLiveToken,
+  // getScheduleLiveToken,
   getScheduleMockOptionsResponse,
   getScheduleParticipant,
   getScheduleParticipantsMockOptionsResponse,
@@ -67,6 +69,7 @@ import {
   removeSchedule,
   resetActOutcomeList,
   resetParticipantList,
+  resetParticipantsData,
   resetScheduleDetial,
   saveScheduleData,
   ScheduleFilterPrograms,
@@ -91,6 +94,7 @@ import {
   timestampType,
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
+import { AddParticipantsTemplateMb, useAddParticipant } from "./AddParticipantsTemplateMb";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import LearingOutcome from "./LearingOutcome";
 import RepeatSchedule from "./Repeat";
@@ -148,7 +152,6 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
   smallCalendarBox: {
     boxShadow: shadows[3],
-    width: "310px",
     margin: "0 auto",
   },
   participantBox: {
@@ -331,8 +334,11 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th };
 
+  const { breakpoints } = useTheme();
+  const sm = useMediaQuery(breakpoints.down(320));
+
   return (
-    <Box className={css.smallCalendarBox}>
+    <Box className={css.smallCalendarBox} style={{ width: sm ? "310px" : "310px" }}>
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
         <Grid container justifyContent="space-around">
           <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
@@ -393,7 +399,7 @@ function EditBox(props: CalendarStateProps) {
     specificStatus,
     participantsIds,
     classRosterIds,
-    ParticipantsData,
+    // ParticipantsData,
     handleChangeParticipants,
     getParticipantsData,
     LinkageLessonPlan,
@@ -408,6 +414,7 @@ function EditBox(props: CalendarStateProps) {
     stateMaterialArr,
     viewSubjectPermission,
     lessonPlans,
+    mobile,
   } = props;
   const { classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
@@ -497,7 +504,13 @@ function EditBox(props: CalendarStateProps) {
   const rosterIsExist = (item: Maybe<{ __typename?: "User" | undefined } & Pick<User, "user_id" | "user_name">>, type: string) => {
     const rosterItem = [{ id: item?.user_id, name: item?.user_name }];
     const searchData = type === "students" ? classRosterIds?.student : classRosterIds?.teacher;
-    return searchData?.some((item) => JSON.stringify({ id: item.id, name: item.name }) === JSON.stringify(rosterItem[0])) as boolean;
+    return searchData?.some(
+      (item) =>
+        JSON.stringify({
+          id: item.id,
+          name: item.name,
+        }) === JSON.stringify(rosterItem[0])
+    ) as boolean;
   };
 
   React.useEffect(() => {
@@ -623,13 +636,13 @@ function EditBox(props: CalendarStateProps) {
         setSelectedDate(new Date((scheduleDetial.due_at as number) * 1000));
       }
       // getParticipantOptions("");
-      const currentTime = Math.floor(new Date().getTime());
-      if (
-        (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
-        newData.start_at! * 1000 - currentTime < 15 * 60 * 1000
-      ) {
-        dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
-      }
+      // const currentTime = Math.floor(new Date().getTime());
+      // if (
+      //   (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
+      //   newData.start_at! * 1000 - currentTime < 15 * 60 * 1000
+      // ) {
+      //   dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
+      // }
       if (scheduleDetial.class) dispatch(getScheduleParticipant({ class_id: newData.class_id as string }));
 
       if (scheduleDetial.class_roster_students || scheduleDetial.class_roster_teachers) setRosterSaveStatus(true);
@@ -754,6 +767,7 @@ function EditBox(props: CalendarStateProps) {
         setRosterSaveStatus(false);
         setIsForce(false);
       } else {
+        dispatch(resetParticipantList());
         handleChangeParticipants("classRoster", { student: [], teacher: [] } as ParticipantsShortInfo);
       }
       setClassItem(value);
@@ -1008,7 +1022,11 @@ function EditBox(props: CalendarStateProps) {
 
     let resultInfo: any;
     resultInfo = (await dispatch(
-      saveScheduleData({ payload: { ...scheduleList, ...addData }, is_new_schedule: is_new_schedule, metaLoading: true })
+      saveScheduleData({
+        payload: { ...scheduleList, ...addData },
+        is_new_schedule: is_new_schedule,
+        metaLoading: true,
+      })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
 
     if (resultInfo.payload) {
@@ -1265,30 +1283,42 @@ function EditBox(props: CalendarStateProps) {
     setName(v);
   };
 
+  const { addParticipantShowIndex, participantActive, openAddParticipant, closeAddParticipant } = useAddParticipant();
   const addParticipants = async () => {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
-    if (!ParticipantsData?.total && getParticipantsData) await getParticipantsData(true, "", "");
-    // will class roster data remove in ParticipantsData
-    changeModalDate({
-      openStatus: true,
-      enableCustomization: true,
-      customizeTemplate: (
-        <AddParticipantsTemplate
-          handleClose={() => {
-            changeModalDate({
-              openStatus: false,
-            });
-          }}
-          handleChangeParticipants={handleChangeParticipants}
-          getParticipantsData={getParticipantsData}
-          participantsIds={participantsIds as ParticipantsShortInfo}
-          nameUpperLevel={name}
-          setSearchName={setSearchName}
-          classRosterIds={classRosterIds}
-        />
-      ),
-    });
-    setParticipantSaveStatus(false);
+    if (getParticipantsData) {
+      dispatch(resetParticipantsData());
+      await getParticipantsData(true, "", "", ParticipantValue.student);
+    }
+    //
+    if (mobile) {
+      document.body.style.height = "100vh";
+      document.body.style["overflowY"] = "hidden";
+      openAddParticipant();
+    } else {
+      document.body.style.height = "unset";
+      document.body.style["overflowY"] = "auto";
+      changeModalDate({
+        openStatus: true,
+        enableCustomization: true,
+        customizeTemplate: (
+          <AddParticipantsTemplate
+            handleClose={() => {
+              changeModalDate({
+                openStatus: false,
+              });
+            }}
+            handleChangeParticipants={handleChangeParticipants}
+            getParticipantsData={getParticipantsData}
+            participantsIds={participantsIds as ParticipantsShortInfo}
+            participantList={participantMockOptions.participantList}
+            nameUpperLevel={name}
+            setSearchName={setSearchName}
+          />
+        ),
+      });
+      setParticipantSaveStatus(false);
+    }
   };
 
   const [checkedStatus, setStatus] = React.useState({
@@ -1348,7 +1378,10 @@ function EditBox(props: CalendarStateProps) {
 
   const handleHide = async () => {
     await dispatch(
-      scheduleShowOption({ schedule_id: scheduleId as string, show_option: { show_option: isHidden ? "visible" : "hidden" } })
+      scheduleShowOption({
+        schedule_id: scheduleId as string,
+        show_option: { show_option: isHidden ? "visible" : "hidden" },
+      })
     );
     handleChangeHidden(!isHidden);
     dispatch(
@@ -1523,8 +1556,36 @@ function EditBox(props: CalendarStateProps) {
     });
   };
 
+  const permsClassType = usePermission([
+    PermissionType.create_live_calendar_events_524,
+    PermissionType.create_class_calendar_events_525,
+    PermissionType.create_study_calendar_events_526,
+    PermissionType.create_home_fun_calendar_events_527,
+  ]);
+
   const menuItemListClassType = (list: MockOptionsItem[]) => {
-    const classType = list.map((item) => t(item.name as classTypeLabel)).sort();
+    const permsArr = [
+      {
+        id: "OfflineClass",
+        perms: permsClassType.create_class_calendar_events_525,
+      },
+      {
+        id: "OnlineClass",
+        perms: permsClassType.create_live_calendar_events_524,
+      },
+      {
+        id: "Homework",
+        perms: permsClassType.create_study_calendar_events_526,
+      },
+      {
+        id: "Task",
+        perms: permsClassType.create_home_fun_calendar_events_527,
+      },
+    ];
+    const classType = list
+      .filter((item) => permsArr.filter((perm) => perm.id === item.id)[0].perms)
+      .map((item) => t(item.name as classTypeLabel))
+      .sort();
     const getKey = (name: string) => {
       const key = list.filter((item) => t(item.name as classTypeLabel) === name);
       return key.length ? key[0].id : "";
@@ -1714,6 +1775,71 @@ function EditBox(props: CalendarStateProps) {
     ages: condition.age_ids ?? [],
     grades: condition.grade_ids ?? [],
   };
+
+  const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({ group_names: "", page: 1, pages: 10, lesson_plan_name: "" });
+
+  const searcLessonPlanList = async (filterQueryAssembly: object) => {
+    // console.log(lessonPlanCondition, filterQueryAssembly);
+    const query = {
+      ...lessonPlanCondition,
+      ...filterQueryAssembly,
+    };
+    setLessonPlanCondition({ ...query });
+  };
+
+  const handleLessonPlan = async () => {
+    let resultInfo: any;
+    if (scheduleList.program_id) {
+      if (viewSubjectPermission) {
+        resultInfo = (await dispatch(
+          getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
+        )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
+      } else {
+        dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
+      }
+    }
+    await getLearingOuctomeData(
+      {
+        ...condition,
+        program_ids: filterGropuDatas.programs.length ? filterGropuDatas.programs : null,
+        subject_ids: filterGropuDatas.subjects.length ? filterGropuDatas.subjects : null,
+      },
+      false
+    );
+    changeModalDate({
+      enableCustomization: true,
+      customizeTemplate: (
+        <ScheduleLessonPlan
+          viewSubjectPermission={viewSubjectPermission}
+          autocompleteChange={autocompleteChange}
+          lessonPlanCondition={lessonPlanCondition}
+          handleClose={() => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          }}
+          filterGropuData={filterGropuDatas}
+          searchOutcomesList={searcLessonPlanList}
+          programs={modelSchedule.Deduplication(
+            modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
+          )}
+          handelSetProgramChildInfo={handelSetProgramChildInfo}
+          programChildInfoParent={
+            (programChildInfo
+              ? programChildInfo?.concat(resultInfo && resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
+              : resultInfo && resultInfo.payload
+              ? [resultInfo.payload.programChildInfo]
+              : []) as GetProgramsQuery[]
+          }
+          lessonPlans={lessonPlans}
+        />
+      ),
+      openStatus: true,
+      handleClose: () => {
+        changeModalDate({ openStatus: false });
+      },
+      showScheduleInfo: true,
+    });
+  };
+
   const handeLearingOutcome = async () => {
     let resultInfo: any;
     if (scheduleList.program_id) {
@@ -2038,7 +2164,11 @@ function EditBox(props: CalendarStateProps) {
                       setIsForce(false);
                     }
                   }}
-                  style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+                  style={{
+                    float: "right",
+                    marginLeft: "8px",
+                    cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop",
+                  }}
                 />
               )}
               <br />
@@ -2138,7 +2268,11 @@ function EditBox(props: CalendarStateProps) {
                       setParticipantSaveStatus(false);
                     }
                   }}
-                  style={{ float: "right", marginLeft: "8px", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+                  style={{
+                    float: "right",
+                    marginLeft: "8px",
+                    cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop",
+                  }}
                 />
               )}
               <br />
@@ -2168,6 +2302,14 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Box>
         )}
+        <button
+          style={{ display: "none" }}
+          onClick={() => {
+            handleLessonPlan();
+          }}
+        >
+          lesson plan
+        </button>
         {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
           <Autocomplete
             id="combo-box-demo"
@@ -2386,6 +2528,15 @@ function EditBox(props: CalendarStateProps) {
           </Box>
         )}
       </Box>
+      <AddParticipantsTemplateMb
+        key={addParticipantShowIndex}
+        open={participantActive}
+        onClose={closeAddParticipant}
+        handleChangeParticipants={handleChangeParticipants}
+        participantsIds={participantsIds as ParticipantsShortInfo}
+        getParticipantsData={getParticipantsData}
+        participantList={participantMockOptions.participantList}
+      />
     </ThemeProvider>
   );
 }
@@ -2410,7 +2561,7 @@ interface CalendarStateProps {
   classRosterIds?: ParticipantsShortInfo;
   handleChangeParticipants: (type: string, data: ParticipantsShortInfo) => void;
   ParticipantsData?: ParticipantsData;
-  getParticipantsData?: (metaLoading: boolean, search: string, hash: string) => void;
+  getParticipantsData?: (metaLoading: boolean, search: string, hash: string, roleName: ParticipantString["key"]) => void;
   LinkageLessonPlan: (content_id: string) => void;
   contentPreview: EntityContentInfoWithDetails;
   handleChangeHidden: (is_hidden: boolean) => void;
@@ -2440,10 +2591,13 @@ interface CalendarStateProps {
   lessonPlans: EntityLessonPlanForSchedule[];
   filterOtherClasses: GetClassFilterListQuery;
   getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
+  mobile?: boolean;
 }
+
 interface ScheduleEditProps extends CalendarStateProps {
   includePreview: boolean;
 }
+
 export default function ScheduleEdit(props: ScheduleEditProps) {
   const {
     includePreview,
@@ -2491,6 +2645,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     userInUndefined,
     filterOtherClasses,
     getClassesWithoutSchool,
+    mobile,
   } = props;
 
   const template = (
@@ -2537,6 +2692,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           lessonPlans={lessonPlans}
           userInUndefined={userInUndefined}
           getUesrOfUndefined={getUesrOfUndefined}
+          mobile={mobile}
         />
       </Box>
       <Box
@@ -2588,6 +2744,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getClassesConnection={getClassesConnection}
           classesConnection={classesConnection}
           lessonPlans={lessonPlans}
+          mobile={mobile}
         />
       </Box>
     </>

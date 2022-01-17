@@ -134,10 +134,10 @@ export const getOutcomeList = (list: ModelPublishedOutcomeView[]): EntityOutcome
       ({
         ...item,
         ages: age_ids,
-        developmental: category_ids?.join(","),
+        categories: category_ids,
         grades: grade_ids,
         programs: program_ids,
-        skills: sub_category_ids?.join(","),
+        subcategories: sub_category_ids,
         subjects: subject_ids,
       } as EntityOutcome)
   );

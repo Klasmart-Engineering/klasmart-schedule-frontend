@@ -59,6 +59,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     toolBox: {
       padding: "36px 0px 20px 0px",
+      [theme.breakpoints.down(600)]: {
+        padding: 0,
+      },
     },
     arrowLeft: {
       margin: "0px 20px 0px 20px",
@@ -119,7 +122,7 @@ function Tool(props: ToolProps) {
         <PermissionsWrapper value={[PermissionType.create_schedule_page_501, PermissionType.schedule_search_582]}>
           <>
             <Grid item xs={12} sm={12} md={3} lg={3}>
-              {!includeList && (
+              {!includeList && !mobile && (
                 <Permission
                   value={PermissionType.create_schedule_page_501}
                   render={(value) =>
@@ -133,6 +136,7 @@ function Tool(props: ToolProps) {
                           toolRouter("create");
                         }}
                       >
+                        <span style={{ fontSize: "23px", marginRight: "8px" }}>+</span>
                         {d("Schedule Class").t("schedue_button_schedule_class")}
                       </Button>
                     )
@@ -186,9 +190,8 @@ function Tool(props: ToolProps) {
                 }
               />
             </Grid>
-
-            <Grid item xs={12} sm={12} md={5} lg={5} style={{ textAlign: mobile ? "center" : "right" }}>
-              {!includeList && (
+            {!includeList && !mobile && (
+              <Grid item xs={12} sm={12} md={5} lg={5} style={{ textAlign: mobile ? "center" : "right" }}>
                 <FormControl className={css.selectControl} style={{ width: mobile ? "68%" : "230px" }}>
                   <NativeSelect
                     id="demo-customized-select-native"
@@ -203,8 +206,6 @@ function Tool(props: ToolProps) {
                     <option value="year">{d("Year").t("schedule_detail_year")}</option>
                   </NativeSelect>
                 </FormControl>
-              )}
-              {!includeList && (
                 <Button
                   size="large"
                   variant="outlined"
@@ -214,8 +215,8 @@ function Tool(props: ToolProps) {
                 >
                   {d("Today").t("schedule_button_today")}
                 </Button>
-              )}
-            </Grid>
+              </Grid>
+            )}
           </>
         </PermissionsWrapper>
       </Grid>

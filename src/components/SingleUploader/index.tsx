@@ -68,7 +68,7 @@ export interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
   transformFile?: (file: FileLike) => Promise<FileLike>;
   onChange?: (value?: string) => any;
   onChangeFile?: (file?: FileLikeWithId) => any;
-  beforeUpload?: (file: FileLike, fun: () => Promise<useRequestPreSendReturnType>) => ReturnType<typeof fun> | boolean;
+  beforeUpload?: (file: FileLike) => Promise<boolean>;
 }
 export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((props, ref) => {
   const { value, onChange, render, partition, transformFile, onChangeFile, beforeUpload, ...uploadyProps } = props;
@@ -93,7 +93,8 @@ export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((p
             return { options: { destination: { url: path } }, items: [{ ...items[0], file }] };
           };
           if (beforeUpload && extension.toLowerCase() === "pdf") {
-            return beforeUpload(file, getPathAndId) ?? false;
+            const isValidate = await beforeUpload(file);
+            return isValidate ? getPathAndId() : false;
           } else {
             return getPathAndId();
           }

@@ -1,10 +1,13 @@
 import PermissionType from "@api/PermissionType";
+import { Data } from "@dnd-kit/core/dist/store";
 import { usePermission } from "@hooks/usePermission";
-import { Box } from "@material-ui/core";
+import { Box, Collapse, useMediaQuery, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
 import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
+import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
+import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
@@ -20,7 +23,7 @@ import "moment/locale/ko";
 import "moment/locale/th";
 import "moment/locale/vi";
 import "moment/locale/zh-cn";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +32,7 @@ import { EntityScheduleTimeView, EntityScheduleViewDetail } from "../../api/api.
 import { d, localeManager } from "../../locale/LocaleManager";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
-import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
+import { getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, scheduleInfoViewProps, timestampType } from "../../types/scheduleTypes";
 import YearCalendar from "./YearView";
 
@@ -37,7 +40,6 @@ const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
     boxShadow: shadows[3],
     marginBottom: "10px",
-    // width: document.body.clientWidth < 450 ? document.body.clientWidth - 40 + "px" : "100%",
   },
   calendarNav: {
     height: "50px",
@@ -73,7 +75,162 @@ const useStyles = makeStyles(({ shadows }) => ({
     justifyContent: "center",
     alignItems: "center",
   },
+  scheduleListBox: {
+    marginBottom: 12,
+    "& p": {
+      padding: "16px 10px 10px 20px",
+      boxShadow: "3px 3px 3px #888888",
+      margin: 0,
+    },
+  },
+  scheduleListItem: {
+    color: "white",
+    height: 36,
+    width: "90%",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: 8,
+    marginBottom: 8,
+    marginLeft: "5%",
+  },
+  filterArrow: {
+    float: "left",
+    marginRight: 12,
+    cursor: "pointer",
+    fontSize: 23,
+  },
+  classTypeMb: {
+    width: "18px",
+    height: "21px",
+  },
+  customerEventMb: {
+    display: "flex",
+    height: "100%",
+    width: "100%",
+    position: "absolute",
+    left: 0,
+    paddingLeft: "8px",
+    top: 0,
+    "& div": {
+      marginRight: "6px",
+    },
+    "& span": {
+      marginTop: "2px",
+    },
+  },
 }));
+
+interface ScheduleListProps {
+  scheduleTimeViewData: EntityScheduleTimeView[];
+  timesTamp: timestampType;
+  scheduleSelected: (event: scheduleInfoViewProps) => void;
+}
+
+function ScheduleList(props: ScheduleListProps) {
+  const css = useStyles();
+  const { scheduleTimeViewData, timesTamp, scheduleSelected } = props;
+  const [checked, setChecked] = React.useState(false);
+  const eventColor = [
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "16%" }} /> },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon style={{ width: "16%" }} /> },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "16%" }} /> },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "16%" }} /> },
+  ];
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 17;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
+
+  const dateFormat = (timesTamp: number) => {
+    const date = new Date(timesTamp * 1000);
+    return new Date(`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`).getTime() / 1000;
+  };
+
+  const isSameDay = () => {
+    return [...scheduleTimeViewData]
+      ?.sort((timesTampA: EntityScheduleTimeView, timesTampB: EntityScheduleTimeView) => {
+        return timesTampA.start_at! - timesTampB.start_at!;
+      })
+      .filter((schedule) => {
+        return dateFormat(schedule.end_at!) !== dateFormat(schedule.start_at!) || schedule.end_at! - schedule.start_at! > 86398;
+      });
+  };
+  const eventTemplate = (schedule: EntityScheduleTimeView) => eventColor.filter((item) => item.id === schedule.class_type);
+  const getScheduleInfo = (schedule: EntityScheduleTimeView) => {
+    const fullDay =
+      dateFormat(schedule.end_at!) !== dateFormat(schedule.start_at!)
+        ? `(DAY ${GetDateDiff(timesTamp.start as number, schedule.start_at as number)}/${GetDateDiff(
+            schedule.end_at as number,
+            schedule.start_at as number
+          )})`
+        : "";
+    return `${textEllipsis(schedule.title)}  ${fullDay}`;
+  };
+  const formatDate = (now: Data) => {
+    return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  };
+  const GetDateDiff = (timestampStart: number, timestampEnd: number) => {
+    const startDate = formatDate(new Date(timestampStart * 1000));
+    const endDate = formatDate(new Date(timestampEnd * 1000));
+    const startTime = new Date(Date.parse(startDate.replace(/-/g, "/"))).getTime();
+    const endTime = new Date(Date.parse(endDate.replace(/-/g, "/"))).getTime();
+    const dates = Math.floor(startTime - endTime) / (1000 * 60 * 60 * 24);
+    return dates + 1;
+  };
+  const scheduleViewInfo = (info: EntityScheduleTimeView) => {
+    scheduleSelected({ ...info, start: new Date(info.start_at! * 1000), end: new Date(info.end_at! * 1000) } as scheduleInfoViewProps);
+  };
+
+  React.useEffect(() => {
+    setChecked(false);
+  }, [timesTamp]);
+
+  const height = isSameDay().length > 3 ? 3 * 43 : isSameDay().length * 43;
+
+  return (
+    <Box className={css.scheduleListBox}>
+      <Collapse in={checked} style={{ height: height + "px" }} collapsedSize={height}>
+        {isSameDay().map((schedule) => {
+          return (
+            <div
+              className={css.scheduleListItem}
+              style={{ backgroundColor: eventTemplate(schedule)[0].color }}
+              onClick={() => {
+                scheduleViewInfo(schedule);
+              }}
+            >
+              {eventTemplate(schedule)[0].icon} {getScheduleInfo(schedule)}
+            </div>
+          );
+        })}
+      </Collapse>
+      {isSameDay().length > 3 && (
+        <p
+          onClick={() => {
+            setChecked(!checked);
+          }}
+        >
+          <span>
+            {checked && <KeyboardArrowUpOutlinedIcon className={css.filterArrow} />}
+            {!checked && <KeyboardArrowDownOutlinedIcon className={css.filterArrow} />}
+          </span>
+          {checked ? d("See Less").t("assess_detail_see_less") : d("See More").t("schedule_detail_see_more")}
+        </p>
+      )}
+    </Box>
+  );
+}
 
 function MyCalendar(props: CalendarProps) {
   const css = useStyles();
@@ -159,13 +316,22 @@ function MyCalendar(props: CalendarProps) {
     PermissionType.view_my_calendar_510,
     PermissionType.create_schedule_page_501,
   ]);
-  const permissionShowLive = perm.attend_live_class_as_a_student_187;
+  // const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
-  const scheduleTimeViewDataFormat = (data: EntityScheduleTimeView[]): scheduleInfoViewProps[] => {
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  const dateFormat = (timesTamp: number) => {
+    const date = new Date(timesTamp * 1000);
+    return new Date(`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`).getTime() / 1000;
+  };
+
+  const scheduleTimeViewDataFormat = useMemo(() => {
     const newViewData: any = [];
-    if (data.length > 0) {
-      data.forEach((item: EntityScheduleTimeView) => {
+    if (scheduleTimeViewData.length > 0) {
+      scheduleTimeViewData.forEach((item: EntityScheduleTimeView) => {
         if (!item) return;
+        if ((dateFormat(item.end_at!) !== dateFormat(item.start_at!) || item.end_at! - item.start_at! > 86398) && mobile) return;
         newViewData.push({
           ...item,
           end: new Date(Number(item.end_at) * 1000),
@@ -174,7 +340,7 @@ function MyCalendar(props: CalendarProps) {
       });
     }
     return newViewData;
-  };
+  }, [scheduleTimeViewData, mobile]);
 
   /**
    * rander data
@@ -194,6 +360,21 @@ function MyCalendar(props: CalendarProps) {
     ];
     switch (modelView) {
       case "day":
+        if (document.getElementsByClassName("rbc-current-time-indicator").length > 0) {
+          const indicator: any = document.getElementsByClassName("rbc-current-time-indicator")[0];
+          indicator.style.backgroundColor = "black";
+          indicator.style.height = "2px";
+          console.log(indicator.firstChild);
+          if (!indicator.firstChild) {
+            const blackBall = document.createElement("DIV");
+            blackBall.style.backgroundColor = "black";
+            blackBall.style.width = "10px";
+            blackBall.style.height = "10px";
+            blackBall.style.borderRadius = "10px";
+            blackBall.style.margin = "-4px";
+            indicator.appendChild(blackBall);
+          }
+        }
         return `${monthArr[M]} ${D}, ${Y}`;
       case "month":
         return `${Y} ${monthArr[M]}`;
@@ -377,13 +558,13 @@ function MyCalendar(props: CalendarProps) {
    * @param event
    */
   const scheduleSelected = async (event: scheduleInfoViewProps) => {
-    const currentTime = Math.floor(new Date().getTime());
-    if (
-      ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
-      (permissionShowLive && event.class_type === "Homework")
-    ) {
-      await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
-    }
+    // const currentTime = Math.floor(new Date().getTime());
+    // if (
+    //   ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
+    //   (permissionShowLive && event.class_type === "Homework")
+    // ) {
+    //   await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
+    // }
     const scheduleInfoView = await getHandleScheduleViewInfo(event.id);
     if (!scheduleInfoView) return;
     changeModalDate({
@@ -446,7 +627,14 @@ function MyCalendar(props: CalendarProps) {
     };
   };
 
-  const CustomEvent = (event: any) => {
+  const eventColorMb = [
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon className={css.classTypeMb} /> },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon className={css.classTypeMb} /> },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon className={css.classTypeMb} /> },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={css.classTypeMb} /> },
+  ];
+
+  const CustomEventMonth = (event: any) => {
     const eventTemplate = eventColor.filter((item) => item.id === event.event.class_type);
     return (
       <div className={css.eventTemplateCalendar} style={{ backgroundColor: eventTemplate[0].color }}>
@@ -456,50 +644,66 @@ function MyCalendar(props: CalendarProps) {
     );
   };
 
+  const CustomEventDay = (event: any) => {
+    const padding = event.event.end_at - event.event.start_at > 3600;
+    const eventTemplate = eventColorMb.filter((item) => item.id === event.event.class_type);
+    return (
+      <div className={css.customerEventMb} style={{ backgroundColor: eventTemplate[0].color, paddingTop: padding ? "8px" : "0px" }}>
+        <div>{eventTemplate[0].icon}</div>
+        <span>{event.event.title}</span>
+      </div>
+    );
+  };
+
   return (
-    <Box className={css.calendarBox}>
-      <Box className={css.calendarNav}>
-        <ChevronLeftOutlinedIcon
-          className={css.chevron}
-          onClick={() => {
-            switchData("preve");
-          }}
-        />
-        <ChevronRightOutlinedIcon
-          className={css.chevron}
-          onClick={() => {
-            switchData("next");
-          }}
-        />
-        <span style={{ color: "#666666", fontSize: "16px" }}>{getPeriod(timesTamp)}</span>
-      </Box>
-      {modelYear && <YearCalendar timesTamp={timesTamp} scheduleTimeViewYearData={scheduleTimeViewYearData} />}
-      {!modelYear && (
-        <Calendar
-          date={new Date(timesTamp.start * 1000)}
-          onView={() => {}}
-          onNavigate={() => {}}
-          view={modelView}
-          views={views}
-          popup={true}
-          selectable={true}
-          localizer={localizer}
-          events={scheduleTimeViewDataFormat(scheduleTimeViewData)}
-          startAccessor="start"
-          endAccessor="end"
-          toolbar={false}
-          onSelectEvent={scheduleSelected}
-          onSelectSlot={(e) => {
-            creteSchedule(e);
-          }}
-          style={{ height: "100vh" }}
-          eventPropGetter={eventStyleGetter}
-          components={{
-            event: modelView === "month" ? CustomEvent : undefined,
-          }}
-        />
+    <>
+      {modelView === "day" && mobile && (
+        <ScheduleList scheduleTimeViewData={scheduleTimeViewData} timesTamp={timesTamp} scheduleSelected={scheduleSelected} />
       )}
-    </Box>
+      <Box className={css.calendarBox}>
+        <Box className={css.calendarNav}>
+          <ChevronLeftOutlinedIcon
+            className={css.chevron}
+            onClick={() => {
+              switchData("preve");
+            }}
+          />
+          <ChevronRightOutlinedIcon
+            className={css.chevron}
+            onClick={() => {
+              switchData("next");
+            }}
+          />
+          <span style={{ color: "#666666", fontSize: "16px" }}>{getPeriod(timesTamp)}</span>
+        </Box>
+        {modelYear && <YearCalendar timesTamp={timesTamp} scheduleTimeViewYearData={scheduleTimeViewYearData} />}
+        {!modelYear && (
+          <Calendar
+            date={new Date(timesTamp.start * 1000)}
+            onView={() => {}}
+            onNavigate={() => {}}
+            view={modelView}
+            views={views}
+            popup={true}
+            selectable={true}
+            localizer={localizer}
+            events={scheduleTimeViewDataFormat}
+            startAccessor="start"
+            endAccessor="end"
+            toolbar={false}
+            onSelectEvent={scheduleSelected}
+            onSelectSlot={(e) => {
+              creteSchedule(e);
+            }}
+            style={{ height: "100vh" }}
+            eventPropGetter={eventStyleGetter}
+            components={{
+              event: modelView === "month" ? CustomEventMonth : modelView === "day" ? CustomEventDay : undefined,
+            }}
+          />
+        )}
+      </Box>
+    </>
   );
 }
 

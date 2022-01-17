@@ -18,11 +18,14 @@ const useStyles = makeStyles((theme) => ({
       [theme.breakpoints.down("sm")]: {
         padding: "20px 0px 20px 10px",
       },
+      [theme.breakpoints.down(600)]: {
+        padding: "0px",
+      },
     },
   },
   dialogContainer1: {
     "& .MuiDialog-paperWidthSm": {
-      maxWidth: "800px",
+      maxWidth: "1000px",
     },
   },
   header: {

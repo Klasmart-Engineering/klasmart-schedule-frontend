@@ -1,4 +1,16 @@
+import {
+  ConnectionDirection,
+  ConnectionPageInfo,
+  OrganizationFilter,
+  OrganizationSortBy,
+  OrganizationSortInput,
+  SortOrder,
+  StringOperator,
+  UuidOperator,
+} from "@api/api-ko-schema.auto";
+import { OrgInfoProps } from "@pages/MyContentList/OrganizationList";
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { uniq } from "lodash";
 import cloneDeep from "lodash/cloneDeep";
 import uniqBy from "lodash/uniqBy";
 import { UseFormMethods } from "react-hook-form";
@@ -8,9 +20,9 @@ import {
   GetMyIdDocument,
   GetMyIdQuery,
   GetMyIdQueryVariables,
-  OrganizationsDocument,
-  OrganizationsQuery,
-  OrganizationsQueryVariables,
+  GetOrganizationsDocument,
+  GetOrganizationsQuery,
+  GetOrganizationsQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiContentBulkOperateRequest,
@@ -22,6 +34,7 @@ import {
   EntityOrganizationProperty,
   EntityOutcomeCondition,
   EntityQueryContentItem,
+  EntityRegionOrganizationInfo,
   ModelPublishedOutcomeView,
   ModelSearchPublishedOutcomeResponse,
 } from "../api/api.auto";
@@ -36,7 +49,6 @@ import { Author, ContentType, FolderPartition, OutcomePublishStatus, PublishStat
 import { LangRecordId } from "../locale/lang/type";
 import { d, t } from "../locale/LocaleManager";
 import { content2FileType } from "../models/ModelEntityFolderContent";
-import { OrgInfoProps } from "../pages/MyContentList/OrganizationList";
 import { ProgramGroup } from "../pages/MyContentList/ProgramSearchHeader";
 import { ExectSearch } from "../pages/MyContentList/SecondSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition, SubmenuType } from "../pages/MyContentList/types";
@@ -72,6 +84,9 @@ interface IContentState {
   parentFolderInfo: EntityFolderItemInfo;
   orgProperty: EntityOrganizationProperty;
   orgList: OrgInfoProps[];
+  orgListPageInfo: ConnectionPageInfo;
+  orgListTotal: number;
+  vnOrgList: EntityRegionOrganizationInfo[];
   selectedOrg: EntityOrganizationInfo[];
   myOrgId: string;
   user_id: string;
@@ -218,6 +233,9 @@ const initialState: IContentState = {
   parentFolderInfo: {},
   orgProperty: {},
   orgList: [],
+  orgListPageInfo: {},
+  orgListTotal: 0,
+  vnOrgList: [],
   selectedOrg: [],
   myOrgId: "",
   user_id: "",
@@ -362,6 +380,18 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
   "content/onLoadContentEdit",
   async ({ id, type, searchMedia, isShare }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
+    let developmentals: string[] = [];
+    contentDetail.outcome_entities
+      ?.filter((item) => item && item.categories && item.categories.length)
+      .forEach((item) => {
+        developmentals = developmentals.concat(item.categories || []);
+      });
+    let sckillIds: string[] = [];
+    contentDetail.outcome_entities
+      ?.filter((item) => item && item.subcategories && item.subcategories.length)
+      .forEach((item) => {
+        sckillIds = sckillIds.concat(item.subcategories || []);
+      });
     const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
       type === "material" || type === "plan"
@@ -387,12 +417,11 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
-      // dispatch(getOutcomesFullOptions({})),
     ]);
     dispatch(
       getOutcomesResourceOptions({
-        developmentals: contentDetail.outcome_entities?.filter((item) => item.developmental).map((item) => item.developmental || "") ?? [],
-        skillIds: contentDetail.outcome_entities?.filter((item) => item.skills).map((item) => item.skills || "") ?? [],
+        developmentals: uniq(developmentals),
+        skillIds: uniq(sckillIds),
       })
     );
 
@@ -563,30 +592,15 @@ export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQu
 
 interface IQueryOnLoadContentPreviewParams extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentById>[0];
-  schedule_id: string;
-  tokenToCall?: boolean;
+  schedule_id?: string;
 }
 interface IQyeryOnLoadCotnentPreviewResult {
   contentDetail: AsyncReturnType<typeof api.contents.getContentById>;
   user_id?: string;
-  token: string;
 }
 export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewResult, IQueryOnLoadContentPreviewParams>(
   "content/onLoadContentPreview",
-  async ({ content_id, schedule_id, tokenToCall = true }) => {
-    let token: string = "";
-    if (tokenToCall) {
-      if (schedule_id) {
-        const data = await api.schedules
-          .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
-          .catch((err) => Promise.reject(err.label));
-        await api.schedules.getScheduleById(schedule_id);
-        token = data.token as string;
-      } else {
-        const data = await api.contents.getContentLiveToken(content_id);
-        token = data.token as string;
-      }
-    }
+  async ({ content_id }) => {
     const contentDetail = await api.contents.getContentById(content_id);
     const {
       data: { myUser },
@@ -594,7 +608,24 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
       query: GetMyIdDocument,
     });
     const user_id = myUser?.node?.id || "";
-    return { contentDetail, user_id, token };
+    return { contentDetail, user_id };
+  }
+);
+export const getLiveToken = createAsyncThunk<string, IQueryOnLoadContentPreviewParams>(
+  "content/getLiveToken",
+  async ({ schedule_id, content_id }) => {
+    let token: string = "";
+    if (schedule_id) {
+      const data = await api.schedules
+        .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
+        .catch((err) => Promise.reject(err.label));
+      await api.schedules.getScheduleById(schedule_id);
+      token = data.token as string;
+    } else {
+      const data = await api.contents.getContentLiveToken(content_id);
+      token = data.token as string;
+    }
+    return token;
   }
 );
 
@@ -608,7 +639,7 @@ export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryD
   async ({ id, type }, { dispatch }) => {
     const content =
       type === Action.remove
-        ? d("Are you sure you want to remove this content?").t("library_msg_remove_content")
+        ? d("Are you sure you want to archive this content?").t("library_msg_remove_content")
         : d("Are you sure you want to delete this content?").t("library_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
@@ -909,28 +940,81 @@ export enum Region {
   vn = "vn",
   global = "global",
 }
+
 type IQueryGetOrgListResult = AsyncReturnType<typeof api.organizationsRegion.getOrganizationByHeadquarterForDetails>["orgs"];
-export const getOrgList = createAsyncThunk<
-  IQueryGetOrgListResult,
-  IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload,
-  { state: RootState }
->("content/getOrgList", async (folder_ids, { getState, dispatch }) => {
-  const {
-    content: { orgProperty },
-  } = getState();
-  let orgs: IQueryGetOrgListResult = [];
-  if (orgProperty.region && orgProperty.region === Region.vn) {
-    const data = await api.organizationsRegion.getOrganizationByHeadquarterForDetails();
-    orgs = data.orgs;
-  } else {
-    const { data } = await gqlapi.query<OrganizationsQuery, OrganizationsQueryVariables>({
-      query: OrganizationsDocument,
-    });
-    orgs = data.organizations as IQueryGetOrgListResult;
+export function getOrgsFilter(searchValue: string, orgs: EntityRegionOrganizationInfo[] = []) {
+  let filter: OrganizationFilter = {
+    AND: [
+      { status: { operator: StringOperator.Eq, value: "active" } },
+      {
+        OR: [
+          { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
+          { name: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
+        ],
+      },
+    ],
+  };
+  if (orgs.length) {
+    const idFilter: OrganizationFilter = { OR: orgs.map((item) => ({ id: { operator: UuidOperator.Eq, value: item.organization_id } })) };
+    filter = { AND: filter.AND?.concat([idFilter]) };
   }
-  await dispatch(getFoldersSharedRecords(folder_ids));
+  return filter;
+}
+interface IGetOrgListResponse {
+  orgs: IQueryGetOrgListResult;
+  orgListPageInfo: ConnectionPageInfo;
+  orgListTotal: number;
+}
+type IGetOrgListParams = Omit<GetOrganizationsQueryVariables, "filter"> &
+  IQueryGetFoldersSharedRecordsParams &
+  LoadingMetaPayload & {
+    searchValue: string;
+    orgs?: EntityRegionOrganizationInfo[];
+  };
+
+export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParams>(
+  "content/getOrgList",
+  async ({ metaLoading, searchValue, orgs, ...restorganizationQueryVariables }) => {
+    const filter = getOrgsFilter(searchValue, orgs);
+    const { data } = await gqlapi.query<GetOrganizationsQuery, GetOrganizationsQueryVariables>({
+      query: GetOrganizationsDocument,
+      variables: { ...restorganizationQueryVariables, filter },
+    });
+    const orgList = data.organizationsConnection?.edges?.map((item) => ({
+      organization_id: item?.node?.id,
+      organization_name: item?.node?.name,
+      email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
+    })) as IQueryGetOrgListResult;
+    const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
+    const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);
+    return { orgs: orgList, orgListPageInfo, orgListTotal };
+  }
+);
+
+export const getVnOrgList = createAsyncThunk<IQueryGetOrgListResult, LoadingMetaPayload>("content/getVnOrgList", async () => {
+  const { orgs } = await api.organizationsRegion.getOrganizationByHeadquarterForDetails();
   return orgs;
 });
+export const onloadShareOrgList = createAsyncThunk<void, IQueryGetFoldersSharedRecordsParams & LoadingMetaPayload, { state: RootState }>(
+  "content/onloadShareOrgList",
+  async ({ folder_ids }, { getState, dispatch }) => {
+    const {
+      content: { orgProperty },
+    } = getState();
+    const sort: OrganizationSortInput = {
+      field: [OrganizationSortBy.Name],
+      order: SortOrder.Asc,
+    };
+    if (orgProperty.region && orgProperty.region === Region.vn) {
+      await dispatch(getVnOrgList({}));
+      // const { payload } = (await dispatch(getVnOrgList({}))) as PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>;
+      // await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "", orgs: payload }));
+    } else {
+      await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
+    }
+    await dispatch(getFoldersSharedRecords({ folder_ids }));
+  }
+);
 
 type IQueryShareFoldersParams = {
   shareFolder: EntityFolderContentData | undefined;
@@ -1111,16 +1195,15 @@ const { actions, reducer } = createSlice({
     [contentLists.rejected.type]: (state, { error }: any) => {},
 
     [onLoadContentPreview.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
-      // alert("success");
       state.contentPreview = initialState.contentPreview;
       state.user_id = initialState.user_id;
-      state.token = initialState.token;
     },
     [onLoadContentPreview.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
-      // alert("success");
       state.contentPreview = payload.contentDetail;
       state.user_id = payload.user_id || "";
-      state.token = payload.token;
+    },
+    [getLiveToken.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveToken>>) => {
+      state.token = payload;
     },
     [onLoadContentPreview.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
@@ -1182,10 +1265,10 @@ const { actions, reducer } = createSlice({
       state.token = payload.token;
     },
     [getUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size || initialState.page_size;
+      state.page_size = payload?.cms_page_size || initialState.page_size;
     },
     [setUserSetting.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getUserSetting>>) => {
-      state.page_size = payload.cms_page_size;
+      state.page_size = payload?.cms_page_size;
     },
     [searchOrgFolderItems.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof searchOrgFolderItems>>) => {
       state.folderTree = payload;
@@ -1224,13 +1307,19 @@ const { actions, reducer } = createSlice({
         state.contentsList = payload.badaContent.list || [];
       }
     },
-    [getOrgProperty.fulfilled.type]: (state, { payload }: any) => {
+    [getOrgProperty.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOrgProperty>>) => {
       state.orgProperty = payload;
     },
-    [getOrgList.fulfilled.type]: (state, { payload }: any) => {
-      state.orgList = payload;
+    [getOrgList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getOrgList>>) => {
+      state.orgList = (payload.orgs as OrgInfoProps[]) || [];
+      state.orgListPageInfo = payload.orgListPageInfo;
+      state.orgListTotal = payload.orgListTotal;
     },
-    [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: any) => {
+
+    [getVnOrgList.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>) => {
+      state.orgList = (payload as OrgInfoProps[]) || [];
+    },
+    [getFoldersSharedRecords.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getFoldersSharedRecords>>) => {
       if (payload.data) {
         state.selectedOrg = payload.data[0].orgs || [];
       } else {

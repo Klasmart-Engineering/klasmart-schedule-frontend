@@ -1,10 +1,15 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Tooltip from "@material-ui/core/Tooltip";
-import { DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
+import { CloseOutlined, DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import GetAppIcon from "@material-ui/icons/GetApp";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import { actError } from "@reducers/notify";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
 import { apiLivePath, apiResourcePathById } from "../../api/extra";
@@ -12,16 +17,18 @@ import PermissionType from "../../api/PermissionType";
 import { Permission } from "../../components/Permission";
 import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
-import { RootState } from "../../reducers";
-import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
+import { getScheduleLiveToken, scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import { classTypeLabel, EntityScheduleShortInfo, memberType, ScheduleEditExtend, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import ScheduleButton from "./ScheduleButton";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ breakpoints }) => ({
   previewContainer: {
-    width: document.body.clientWidth < 650 ? "99%" : "600px",
+    width: "600px",
     borderRadius: "4px",
     boxShadow: "0px 11px 15px -7px rgba(0,0,0,0.2), 0px 9px 46px 8px rgba(0,0,0,0.12), 0px 24px 38px 3px rgba(0,0,0,0.14)",
+    [breakpoints.down(650)]: {
+      width: "99%",
+    },
   },
   title: {
     fontSize: "24px",
@@ -34,14 +41,10 @@ const useStyles = makeStyles({
     fontSize: "18px",
     color: "black",
   },
-  iconPart: {
-    /*    position: "absolute",
-    top: "15px",
-    right: "25px",*/
-  },
   firstIcon: {
     color: "#0e78d5",
     cursor: "pointer",
+    marginLeft: "25px",
   },
   lastIcon: {
     color: "red",
@@ -76,14 +79,20 @@ const useStyles = makeStyles({
     alignItems: "center",
     padding: "3%",
     "& span": {
-      fontSize: document.body.clientWidth < 650 ? "0.8rem" : "1.4rem",
+      fontSize: "1.4rem",
+      [breakpoints.down(650)]: {
+        fontSize: "0.8rem",
+      },
       fontWeight: "bold",
       width: "68%",
     },
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: document.body.clientWidth < 650 ? "65vh" : "56vh",
+    maxHeight: "56vh",
+    [breakpoints.down(650)]: {
+      maxHeight: "65vh",
+    },
     overflow: "auto",
     "&::-webkit-scrollbar": {
       width: "3px",
@@ -109,19 +118,78 @@ const useStyles = makeStyles({
   },
   row: {
     fontWeight: "bold",
-    width: document.body.clientWidth < 650 ? "30%" : "18%",
+    width: "18%",
     textAlign: "left",
-    fontSize: document.body.clientWidth < 650 ? "0.9rem" : "1.1rem",
+    fontSize: "1.1rem",
     paddingLeft: "8%",
+    [breakpoints.down(650)]: {
+      fontSize: "0.9rem",
+      width: "30%",
+    },
   },
   row2: {
     width: "60%",
     wordBreak: "break-word",
     fontWeight: 500,
-    paddingLeft: document.body.clientWidth < 650 ? "38px" : "6%",
-    fontSize: document.body.clientWidth < 650 ? "0.8rem" : "1rem",
+    paddingLeft: "6%",
+    fontSize: "1rem",
+    [breakpoints.down(650)]: {
+      fontSize: "0.8rem",
+      paddingLeft: "38px",
+    },
   },
-});
+  previewContainerMb: {
+    position: "fixed",
+    backgroundColor: "white",
+    width: "100%",
+    top: 0,
+    left: 0,
+  },
+  eventIcon: {
+    fontSize: "34px",
+  },
+  previewDetailMb: {
+    marginTop: "20px",
+    overflow: "auto",
+    marginBottom: "18px",
+    paddingRight: "3%",
+  },
+  previewDetailSubMb: {
+    marginBottom: "18px",
+    "& span:last-child": {
+      display: "block",
+      marginTop: "6px",
+      fontSize: "15px",
+      wordBreak: "break-word",
+    },
+    "& span:first-child": {
+      fontSize: "13px",
+      fontWeight: 600,
+      color: "#A9A9A9",
+    },
+  },
+  lessonText: {
+    width: "60%",
+    wordBreak: "break-word",
+    paddingLeft: "6%",
+    [breakpoints.down(650)]: {
+      paddingLeft: "38px",
+    },
+  },
+  timeMb: {
+    fontWeight: 600,
+    display: "block",
+    marginTop: "6px",
+    color: "#5E5F61",
+  },
+  titleMb: {
+    display: "block",
+    marginLeft: "18px",
+    fontWeight: "bold",
+    fontSize: "18px",
+    marginTop: "8px",
+  },
+}));
 
 interface InfoProps {
   handleDelete: (scheduleInfo: EntityScheduleViewDetail) => void;
@@ -135,6 +203,212 @@ interface InfoProps {
   refreshView: (template: string) => void;
   ScheduleViewInfo: EntityScheduleViewDetail;
   privilegedMembers: (member: memberType) => boolean;
+}
+
+interface InfoMbProps extends InfoProps {
+  handleEditSchedule: (scheduleInfo: EntityScheduleViewDetail) => void;
+  handleHide: () => void;
+  disableDelete: () => void;
+  deleteHandle: () => void;
+  showDelete: () => void;
+  textEllipsis: (characterCount: number, values?: string) => string;
+  timestampToTime: (timestamp: number) => string;
+  multiStructure: (item?: EntityScheduleShortInfo[]) => string[] | undefined;
+  handleGoLive: (scheduleInfos: ScheduleEditExtend) => void;
+}
+
+function CustomizeTempalteMb(props: InfoMbProps) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const {
+    handleClose,
+    ScheduleViewInfo,
+    privilegedMembers,
+    handleEditSchedule,
+    handleHide,
+    disableDelete,
+    showDelete,
+    deleteHandle,
+    textEllipsis,
+    timestampToTime,
+    multiStructure,
+    handleGoLive,
+  } = props;
+  const eventColor = [
+    { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon className={classes.eventIcon} />, title: "LIVE" },
+    { id: "OfflineClass", color: "#1BADE5", icon: <SchoolOutlinedIcon className={classes.eventIcon} />, title: "Class" },
+    { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon className={classes.eventIcon} />, title: "Study" },
+    { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={classes.eventIcon} />, title: "Task" },
+  ];
+  const eventTemplate = eventColor.filter((item) => item.id === ScheduleViewInfo.class_type_label?.id);
+  const previewDetailMbHeight = () => {
+    const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    if (offset) {
+      if (window.screen.height < 700) {
+        return `${window.screen.height - 450}px`;
+      } else if (window.screen.height < 750) {
+        return `${window.screen.height - 480}px`;
+      }
+    }
+    return `${offset ? window.screen.height - 540 : window.screen.height - 445}px`;
+  };
+
+  const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+  const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  const sameDay = (timestampStart: number, timestampEnd: number): string => {
+    const timestampDate = new Date(timestampStart * 1000);
+    const timestampDateEnd = new Date(timestampEnd * 1000);
+    const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
+    const [Y, M, D, W, h, m] = [
+      (timestampDate as Date).getFullYear(),
+      (timestampDate as Date).getMonth(),
+      (timestampDate as Date).getDate(),
+      (timestampDate as Date).getDay(),
+      dateNumFun((timestampDate as Date).getHours()),
+      dateNumFun((timestampDate as Date).getMinutes()),
+    ];
+    if (new Date(timestampStart * 1000).toDateString() === new Date(timestampEnd * 1000).toDateString()) {
+      return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}  |  ${dateNumFun((timestampDateEnd as Date).getHours())}:${dateNumFun(
+        (timestampDateEnd as Date).getMinutes()
+      )}`;
+    } else {
+      return "";
+    }
+  };
+
+  useEffect(() => {
+    if (
+      (!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
+      ScheduleViewInfo.class_type_label?.id !== "Task" &&
+      !ScheduleViewInfo.is_home_fun
+    ) {
+      dispatch(
+        actError(d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan"))
+      );
+    }
+  }, [ScheduleViewInfo.class_type_label?.id, ScheduleViewInfo.is_home_fun, ScheduleViewInfo.lesson_plan, dispatch]);
+
+  return (
+    <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
+      <div style={{ textAlign: "end", padding: "4.6%" }}>
+        {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
+          <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
+        )}
+        {!ScheduleViewInfo.is_hidden && disableDelete() && <DeleteOutlined className={classes.disableLastIcon} />}
+        {!ScheduleViewInfo.is_hidden && showDelete() && (
+          <Permission
+            value={PermissionType.delete_event_540}
+            render={(value) =>
+              value && (
+                <DeleteOutlined
+                  className={classes.lastIcon}
+                  onClick={() => {
+                    deleteHandle();
+                  }}
+                />
+              )
+            }
+          />
+        )}
+        <EditOutlined
+          className={classes.firstIcon}
+          onClick={() => {
+            handleEditSchedule(ScheduleViewInfo);
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
+          }}
+        />
+        <CloseOutlined className={classes.lastIcon} style={{ color: "#000000" }} onClick={handleClose} />
+      </div>
+      <div style={{ paddingLeft: "8%", paddingRight: "2%" }}>
+        <div style={{ color: eventTemplate[0].color, display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+          {eventTemplate[0].icon}
+          <span className={classes.titleMb}>{eventTemplate[0].title}</span>
+        </div>
+        <div>
+          <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
+            <h2 style={{ margin: "16px 0 3px 0px" }}>{textEllipsis(20, ScheduleViewInfo.title)}</h2>
+          </Tooltip>
+          <span
+            className={classes.timeMb}
+            style={{
+              visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
+            }}
+          >
+            {sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number) !== ""
+              ? sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number)
+              : timestampToTime(ScheduleViewInfo.start_at as number)}
+          </span>
+          <span
+            className={classes.timeMb}
+            style={{
+              visibility:
+                ScheduleViewInfo.class_type_label?.id !== "Homework" &&
+                !sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number)
+                  ? "visible"
+                  : "hidden",
+            }}
+          >
+            {timestampToTime(ScheduleViewInfo.end_at as number)}
+          </span>
+        </div>
+        <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
+          <div className={classes.previewDetailSubMb}>
+            <span>DESCRIPTION</span>
+            <span>{!ScheduleViewInfo.description ? "N/A" : ScheduleViewInfo.description}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>CLASS NAME</span>
+            <span>{ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : "N/A"}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>TEACHER</span>
+            <span>{multiStructure(ScheduleViewInfo.teachers)}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>STUDENTS</span>
+            <span>{multiStructure(ScheduleViewInfo.students)}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>LESSON PLAN</span>
+            <span>
+              <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
+              {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
+                return <div style={{ marginTop: "10px" }}>{material.name}</div>;
+              })}
+            </span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>ROOM ID</span>
+            <span>{ScheduleViewInfo.room_id}</span>
+          </div>
+          <div className={classes.previewDetailSubMb}>
+            <span>ATTACHMENT</span>
+            <span style={{ display: "flex", alignItems: "center" }}>
+              {ScheduleViewInfo.attachment?.id ? (
+                <>
+                  {ScheduleViewInfo.attachment?.name}{" "}
+                  <GetAppIcon
+                    onClick={() => {
+                      window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
+                    }}
+                    style={{ color: "#0E78D5", cursor: "pointer", fontSize: "20px", marginLeft: "10px" }}
+                  />
+                </>
+              ) : (
+                "N/A"
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+      {ScheduleViewInfo.class_type_label?.id !== "Task" && !ScheduleViewInfo.is_home_fun && (
+        <div style={{ display: "flex", justifyContent: "space-around", paddingRight: "20px" }}>
+          <ScheduleButton scheduleInfo={ScheduleViewInfo} templateType="schedulePopup" handleGoLive={handleGoLive} />
+        </div>
+      )}
+    </Box>
+  );
 }
 
 export default function CustomizeTempalte(props: InfoProps) {
@@ -156,7 +430,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  // const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const perm = usePermission([PermissionType.attend_live_class_as_a_student_187]);
   const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
@@ -204,12 +478,25 @@ export default function CustomizeTempalte(props: InfoProps) {
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${ScheduleViewInfo.id}`);
   };
 
-  const handleGoLive = (scheduleInfos: ScheduleEditExtend) => {
+  const handleGoLive = async (scheduleInfos: ScheduleEditExtend) => {
+    let winRef: Window | null = window;
+    let url: string = "";
+    setTimeout(() => {
+      if (winRef) {
+        winRef = winRef.open(url, "_blank") as Window;
+      }
+    }, 500);
     const currentTime = Math.floor(new Date().getTime());
+    let resultInfo: any;
+    resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
     if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
-      window.open(apiLivePath(liveToken));
+      if (!winRef.document.title) {
+        winRef.location.href = apiLivePath(resultInfo.payload.token);
+      } else {
+        url = apiLivePath(resultInfo.payload.token);
+      }
       return;
     }
     if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
@@ -261,7 +548,11 @@ export default function CustomizeTempalte(props: InfoProps) {
 
     handleClose();
     dispatch(scheduleUpdateStatus({ schedule_id: ScheduleViewInfo.id as string, status: { status: "Started" } }));
-    window.open(apiLivePath(liveToken));
+    if (!winRef.document.title) {
+      winRef.location.href = apiLivePath(resultInfo.payload.token);
+    } else {
+      url = apiLivePath(resultInfo.payload.token);
+    }
   };
 
   const deleteHandle = () => {
@@ -370,19 +661,43 @@ export default function CustomizeTempalte(props: InfoProps) {
     return bytesNum > len ? `${afterCutting} ....` : afterCutting;
   };
 
-  const textEllipsis = (value?: string) => {
-    const CharacterCount = 10;
-    return value ? reBytesStr(value, CharacterCount) : "";
+  const textEllipsis = (characterCount: number, value?: string) => {
+    return value ? reBytesStr(value, characterCount) : "";
   };
 
-  return (
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  return mobile ? (
+    <CustomizeTempalteMb
+      handleEditSchedule={handleEditSchedule}
+      handleHide={handleHide}
+      disableDelete={disableDelete}
+      deleteHandle={deleteHandle}
+      showDelete={showDelete}
+      ScheduleViewInfo={ScheduleViewInfo}
+      changeModalDate={changeModalDate}
+      checkLessonPlan={checkLessonPlan}
+      handleChangeHidden={handleChangeHidden}
+      handleClose={handleClose}
+      handleDelete={handleDelete}
+      isHidden={isHidden}
+      privilegedMembers={privilegedMembers}
+      refreshView={refreshView}
+      scheduleInfo={scheduleInfo}
+      textEllipsis={textEllipsis}
+      multiStructure={multiStructure}
+      timestampToTime={timestampToTime}
+      handleGoLive={handleGoLive}
+      toLive={toLive}
+    />
+  ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
         <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
-          <span>{textEllipsis(ScheduleViewInfo.title)}</span>
+          <span>{textEllipsis(10, ScheduleViewInfo.title)}</span>
         </Tooltip>
-        <div className={classes.iconPart}>
-          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
+        <div>
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
@@ -402,6 +717,7 @@ export default function CustomizeTempalte(props: InfoProps) {
               }
             />
           )}
+          <EditOutlined className={classes.firstIcon} onClick={() => handleEditSchedule(ScheduleViewInfo)} />
         </div>
       </div>
       {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
@@ -453,7 +769,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         {ScheduleViewInfo.lesson_plan && (
           <p className={classes.contentRow}>
             <span className={classes.row}>{d("Lesson Plan").t("schedule_detail_lesson_plan")}</span>
-            <span style={{ width: "60%", wordBreak: "break-word", paddingLeft: document.body.clientWidth < 650 ? "38px" : "6%" }}>
+            <span className={classes.lessonText}>
               <div style={{ fontWeight: 500 }}>{ScheduleViewInfo.lesson_plan?.name}</div>
               {ScheduleViewInfo.lesson_plan?.materials?.map((material: EntityScheduleShortInfo) => {
                 return <div style={{ marginTop: "10px" }}>{material.name}</div>;
