@@ -1,5 +1,4 @@
 import { apiLivePath } from "@api/extra";
-import { ParticipantString } from "@api/type";
 import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
@@ -47,9 +46,17 @@ import {
   getSubjectByProgramId,
   getUserInUndefined,
   ScheduleFilterPrograms,
-  scheduleUpdateStatus
+  scheduleUpdateStatus,
 } from "../../reducers/schedule";
-import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
+import {
+  AlertDialogProps,
+  memberType,
+  modeViewType,
+  ParticipantsShortInfo,
+  ParticipantString,
+  RouteParams,
+  timestampType,
+} from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";

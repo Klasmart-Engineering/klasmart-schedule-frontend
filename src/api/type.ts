@@ -229,15 +229,3 @@ export type IParamQueryRemainFilter = {
   student_id?: string;
 };
 // 添加的被删除的接口的类型-learningsummaryreport相关 e
-
-export enum ParticipantValue {
-  student = "Student",
-  teacher = "Teacher",
-}
-export type ParticipantString = {
-  key: "Student" | "Teacher";
-};
-export type ParticipantRoleId = {
-  Student?: string;
-  Teacher?: string;
-};

@@ -1,4 +1,3 @@
-import { ParticipantRoleId, ParticipantString, ParticipantValue } from "@api/type";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
@@ -73,8 +72,11 @@ import {
   ClassesData,
   EntityScheduleSchoolInfo,
   filterOptionItem,
+  ParticipantRoleId,
   ParticipantsData,
   ParticipantsShortInfo,
+  ParticipantString,
+  ParticipantValue,
   RolesData,
 } from "../types/scheduleTypes";
 import programsHandler, { LinkedMockOptionsItem } from "./contentEdit/programsHandler";
@@ -523,7 +525,7 @@ interface participantsDataInterface extends LoadingMetaPayload {
   is_org: boolean;
   hash: string;
   name: string;
-  roleName: ParticipantString["key"]; //student / teacher
+  roleName: ParticipantString["key"]; //"Student" | "Teacher";
 }
 
 export const getParticipantsData = createAsyncThunk<ParticipantsData, participantsDataInterface, { state: Rootstate }>(
