@@ -130,6 +130,7 @@ export interface ScheduleState {
   classesConnection: GetClassFilterListQuery;
   filterOtherClasses: GetClassFilterListQuery;
   lessonPlans: EntityLessonPlanForSchedule[];
+  lessonPlansTotal: number;
   userInUndefined: GetUserQuery;
 }
 
@@ -305,6 +306,7 @@ const initialState: ScheduleState = {
   schoolsConnection: {},
   classesConnection: {},
   lessonPlans: [],
+  lessonPlansTotal: 0,
   userInUndefined: {},
   filterOtherClasses: {},
 };
@@ -404,15 +406,28 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
   });
 });
 
-type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] & LoadingMetaPayload;
+type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] &
+  Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[1] &
+  LoadingMetaPayload;
 type lessonPlansByScheduleResult = ReturnType<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>;
 export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
   "content/plans",
-  async () => {
-    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(
-      { group_names: ["Organization Content", "Badanamu Content", "More Featured Content"] },
-      { page_size: 10, page: 1 }
-    );
+  async ({ metaLoading, ...query }) => {
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(query, {
+      page_size: query.page_size,
+      page: query.page,
+    });
+    return { data, total };
+  }
+);
+
+export const getLessonPlansByScheduleLoadingPage = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
+  "content/plansLoading",
+  async ({ metaLoading, ...query }) => {
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(query, {
+      page_size: query.page_size,
+      page: query.page,
+    });
     return { data, total };
   }
 );
@@ -1136,6 +1151,11 @@ const { actions, reducer } = createSlice({
     },
     [getLessonPlansBySchedule.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.lessonPlans = payload.data;
+      state.lessonPlansTotal = payload.total;
+    },
+    [getLessonPlansByScheduleLoadingPage.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.lessonPlans = [...state.lessonPlans, ...payload.data];
+      state.lessonPlansTotal = payload.total;
     },
     [getUserInUndefined.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.userInUndefined = payload.data;

@@ -400,7 +400,9 @@ function ScheduleContent() {
         dispatch(getClassesByStudent());
       }
       // get materials
-      dispatch(getLessonPlansBySchedule({ metaLoading: true }));
+      dispatch(
+        getLessonPlansBySchedule({ metaLoading: true, group_names: ["Organization Content", "Badanamu Content", "More Featured Content"] })
+      );
       dispatch(getScheduleMockOptions({}));
       dispatch(getLinkedMockOptions({ metaLoading: true }));
       setStateFlag(false);

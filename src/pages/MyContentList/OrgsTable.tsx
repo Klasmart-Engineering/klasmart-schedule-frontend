@@ -109,7 +109,7 @@ export const getPageDesc = (cursor: CursorType, total: number, pageDesc: string)
     case CursorType.start:
       return `1-${total > PAGESIZE ? PAGESIZE : total}`;
     case CursorType.end:
-      return total % PAGESIZE > 0 ? `${total - (total % PAGESIZE) + 1} -${total}` : `${total - PAGESIZE}-${total}`;
+      return total % PAGESIZE > 0 ? `${total - (total % PAGESIZE) + 1} -${total}` : `${total - PAGESIZE + 1}-${total}`;
     case CursorType.prev:
       return `${Number(start) - PAGESIZE}-${Number(start) - 1}`;
     case CursorType.next:

@@ -55,6 +55,7 @@ import {
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
+  EntityLearnerUsageResponse,
   EntityLearnOutcomeAchievementRequest,
   EntityLearnOutcomeAchievementResponse,
   EntityQueryAssignmentsSummaryResult,
@@ -113,6 +114,7 @@ interface IreportState {
   student_name: string | undefined;
   reportMockOptions: GetReportMockOptionsResponse;
   categories: EntityTeacherReportCategory[];
+  categoriesAll: EntityTeacherReportCategory[];
   classesConnection: ClassesConnectionQuery["classesConnection"];
   classes: TeacherByOrgIdQuery["organization"];
   teacherList: Item[];
@@ -195,6 +197,7 @@ interface IreportState {
   fourWeekslearnOutcomeAchievementMassage: string;
   fourWeeksAssignmentsCompletionMassage: string;
   fourWeeksClassAttendanceMassage: string;
+  learnerUsageOverview: EntityLearnerUsageResponse;
 }
 
 interface IObj {
@@ -229,6 +232,7 @@ const initialState: IreportState = {
     lesson_plan_id: "",
   },
   categories: [],
+  categoriesAll: [],
   classesConnection: {},
   classes: {},
   teacherList: [],
@@ -332,6 +336,7 @@ const initialState: IreportState = {
   fourWeekslearnOutcomeAchievementMassage: "",
   fourWeeksAssignmentsCompletionMassage: "",
   fourWeeksClassAttendanceMassage: "",
+  learnerUsageOverview: {},
 };
 
 type OnloadReportPayload = Parameters<typeof api.reports.listStudentsAchievementReport>[0] & LoadingMetaPayload;
@@ -964,6 +969,14 @@ export const getSkillCoverageReport = createAsyncThunk<EntityTeacherReportCatego
   }
 );
 
+export const getSkillCoverageReportAll = createAsyncThunk<EntityTeacherReportCategory[], LoadingMetaPayload>(
+  "report/getSkillCoverageReportAll",
+  async () => {
+    const { categories } = await api.reports.getTeachersReport();
+    return categories || [];
+  }
+);
+
 export const getTeachingLoadList = createAsyncThunk<
   EntityReportListTeachingLoadResult,
   EntityReportListTeachingLoadArgs & LoadingMetaPayload
@@ -1035,6 +1048,14 @@ export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSumma
       subject_id: subject_id === "all" ? "" : subject_id,
     });
     return res;
+  }
+);
+
+export type IParamLearnerUsageOverview = Parameters<typeof api.reports.getLearnerUsageOverview>[0];
+export const getLearnerUsageOverview = createAsyncThunk<EntityLearnerUsageResponse, IParamLearnerUsageOverview & LoadingMetaPayload>(
+  "report/getLearnerUsageOverview",
+  async ({ metaLoading, ...query }) => {
+    return await api.reports.getLearnerUsageOverview(query);
   }
 );
 
@@ -1115,9 +1136,10 @@ export const onLoadLearningSummary = createAsyncThunk<
   const {
     report: { summaryReportOptions },
   } = getState();
+
   if (!summaryReportOptions.years.length) {
     const params = { time_offset: getTimeOffSecond(), summary_type };
-    await dispatch(getTimeFilter({ ...params, metaLoading: true }));
+    await dispatch(getTimeFilter({ ...params }));
     const {
       report: { learningSummary },
     } = getState();
@@ -1137,9 +1159,10 @@ export const onLoadLearningSummary = createAsyncThunk<
   _year = year ? year : years[0];
   const _week_start = week_start ? week_start : weeks[0].week_start;
   const _week_end = week_end ? week_end : weeks[0].week_end;
+
   if (isOrg || isSchool || isTeacher) {
     if (!summaryReportOptions.schools || !summaryReportOptions.schools.length) {
-      await dispatch(getStudentsByOrg({ metaLoading: true }));
+      await dispatch(getStudentsByOrg({}));
     }
     const {
       report: { learningSummary },
@@ -1183,8 +1206,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     subject_id: _subject_id,
   };
   if (_student_id && _subject_id && _student_id !== "none" && _year && _week_start && _week_end) {
-    dispatch(getLiveClassesSummary({ ...params, metaLoading }));
-    dispatch(getAssignmentSummary({ ...params, metaLoading }));
+    await dispatch(getLiveClassesSummary({ ...params }));
+    await dispatch(getAssignmentSummary({ ...params }));
   }
   return { years, weeks, schools, classes, teachers, students, subjects, summary_type, ...params };
 });
@@ -1257,8 +1280,8 @@ export const getAfterClassFilter = createAsyncThunk<
     subject_id: _subject_id,
   };
   if (_student_id && _subject_id && _student_id !== "none") {
-    dispatch(getLiveClassesSummary({ ...params }));
-    dispatch(getAssignmentSummary({ ...params }));
+    await dispatch(getLiveClassesSummary({ ...params }));
+    await dispatch(getAssignmentSummary({ ...params }));
   }
   if (filter_type === "class") {
     return {
@@ -1740,6 +1763,12 @@ const { actions, reducer } = createSlice({
     [getSkillCoverageReport.pending.type]: (state) => {
       state.categories = cloneDeep(initialState.categories);
     },
+    [getSkillCoverageReportAll.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getSkillCoverageReportAll>>
+    ) => {
+      state.categoriesAll = payload;
+    },
     [categoryReportOnLoad.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof categoryReportOnLoad>>) => {
       state.categories = payload;
     },
@@ -1889,6 +1918,12 @@ const { actions, reducer } = createSlice({
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getListTeacherMissedLessons>>
     ) => {
       state.listTeacherMissedLessons = payload;
+    },
+    [getLearnerUsageOverview.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerUsageOverview>>) => {
+      state.learnerUsageOverview = payload;
+    },
+    [getLearnerUsageOverview.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerUsageOverview>>) => {
+      state.learnerUsageOverview = cloneDeep(initialState.learnerUsageOverview);
     },
     [getAssignmentsCompletion.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentsCompletion>>) => {
       state.assignmentsCompletion = payload;
