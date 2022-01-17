@@ -378,7 +378,12 @@ function ScheduleContent() {
       }
       // get materials
       dispatch(
-        getLessonPlansBySchedule({ metaLoading: true, group_names: ["Organization Content", "Badanamu Content", "More Featured Content"] })
+        getLessonPlansBySchedule({
+          metaLoading: true,
+          group_names: ["Organization Content", "Badanamu Content", "More Featured Content"],
+          page: 1,
+          page_size: 10,
+        })
       );
       dispatch(getScheduleMockOptions({}));
       dispatch(getLinkedMockOptions({ metaLoading: true }));

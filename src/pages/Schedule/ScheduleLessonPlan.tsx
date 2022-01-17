@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
-import React, { useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import Box from "@material-ui/core/Box";
 import CloseIcon from "@material-ui/icons/Close";
 import { TextField, Button, Radio, LinearProgress, useTheme, useMediaQuery } from "@material-ui/core";
@@ -56,7 +56,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     "& span": {
       color: "#000000",
       fontWeight: 700,
-      fontSize: 14,
+      fontSize: 16,
       padding: "0 10px 0 10px",
     },
   },
@@ -71,6 +71,11 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     display: "flex",
     paddingBottom: "20px",
     marginBottom: "10px",
+    [breakpoints.down(600)]: {
+      paddingBottom: 0,
+      marginBottom: 0,
+      marginTop: 0,
+    },
   },
   fieldset: {
     width: "230px",
@@ -118,6 +123,10 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     justifyContent: "center",
     alignItems: "center",
     borderLeft: "2px solid #EEEEEE",
+    [breakpoints.down(600)]: {
+      borderRight: "2px solid #EEEEEE",
+      flexWrap: "unset",
+    },
   },
   previewContainerMb: {
     position: "fixed",
@@ -133,7 +142,6 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     },
   },
   previewDetailMb: {
-    marginTop: "20px",
     overflow: "auto",
     marginBottom: "18px",
     paddingRight: "3%",
@@ -166,6 +174,64 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     color: "#ACACAC",
     textAlign: "center",
     marginTop: "16vh",
+  },
+  scrollSelect: {
+    display: "flex",
+    alignItems: "center",
+    overflow: "auto",
+    borderTop: "1px solid #EFEFEF",
+    boxShadow: "0px 4px 4px rgb(0 0 0 / 25%)",
+    padding: "8px",
+    marginTop: "10px",
+  },
+  resetControl: {
+    fontFamily: "Helvetica",
+    fontSize: "14px",
+    fontWeight: 400,
+    marginLeft: 10,
+  },
+  resultText: {
+    lineHeight: "28px",
+    background: "#EFEFEF",
+    fontSize: "13px",
+    height: "28px",
+    paddingLeft: "18px",
+    color: "#626262",
+  },
+  lessonsItemMb: {
+    display: "flex",
+    alignItems: "center",
+    borderBottom: "1px solid #D8D8D8",
+    padding: "20px 0 16px 0",
+  },
+  saveMb: {
+    width: "297px",
+    height: "50px",
+    background: "#0E78D5",
+    borderRadius: "8px",
+    textAlign: "center",
+    marginTop: "6px",
+  },
+  lessonNameMb: {
+    fontFamily: "Helvetica",
+    fontSize: "16px",
+    fontWeight: 700,
+    display: "block",
+  },
+  lessonGroupMb: {
+    color: "#666666",
+    fontFamily: "Helvetica",
+    fontSize: "13px",
+    fontWeight: 400,
+    display: "block",
+    margin: "10px 0px 10px 0px",
+  },
+  selectBox: {
+    display: "flex",
+    alignItems: "center",
+    [breakpoints.down(600)]: {
+      marginTop: "0px",
+    },
   },
 }));
 
@@ -202,7 +268,7 @@ interface filterGropProps {
   groupSelect: string[];
   setGroupSelect: (data: any) => void;
   setLessonPlanName: (data: any) => void;
-  inquiryAssembly: (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, group?: string[]) => void;
+  inquiryAssembly: (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, lessonName?: string, group?: string[]) => void;
   setProgramChildInfo: (data: any) => void;
   programChildInfo: GetProgramsQuery[];
 }
@@ -220,6 +286,9 @@ function SelectGroup(props: filterGropProps) {
   } = props;
 
   const dispatch = useDispatch();
+
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
 
   const autocompleteChange = async (value: any | null, name: "subjects" | "categorys" | "subs" | "ages" | "grades" | "programs") => {
     const ids = value?.map((item: any) => {
@@ -337,7 +406,7 @@ function SelectGroup(props: filterGropProps) {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  style={{ marginTop: index > 2 ? 16 : 0 }}
+                  style={{ marginTop: index > 2 && !mobile ? 16 : 0 }}
                   size={"small"}
                   className={clsx(classes.fieldset, autocompleteValue(item.enum).length ? classes.activeSelect : "")}
                   placeholder={item.name}
@@ -354,18 +423,44 @@ function SelectGroup(props: filterGropProps) {
 
 interface ScheduleLessonPlanMbProps {
   assemblingLessonPlans: EntityLessonPlanForSchedule[];
+  handleClose: () => void;
+  lessonPlanName: string;
+  setLessonPlanName: (data: any) => void;
+  inquiryAssembly: (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, lessonName?: string, group?: string[]) => void;
+  filterQuery?: LearningComesFilterQuery;
+  selectedValue?: string;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  lessonPlansTotal: number;
+  page: number;
+  setPage: (data: any) => void;
+  resetDisabled: string | number | true | undefined;
+  reset: () => void;
+  save: () => void;
+  selectGroupTemplate: () => ReactNode;
 }
 
 function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
-  const { assemblingLessonPlans } = props;
+  const {
+    assemblingLessonPlans,
+    handleClose,
+    lessonPlanName,
+    setLessonPlanName,
+    inquiryAssembly,
+    filterQuery,
+    selectedValue,
+    handleChange,
+    lessonPlansTotal,
+    page,
+    setPage,
+    resetDisabled,
+    reset,
+    save,
+    selectGroupTemplate,
+  } = props;
   const classes = useStyles();
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
-  const groupLabel = [
-    { id: "Organization Content", name: "Organization Content" },
-    { id: "Badanamu Content", name: "Badanamu Content" },
-    { id: "More Featured Content", name: "More Featured Content" },
-  ];
+  const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
@@ -377,10 +472,35 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     }
     return `${offset ? window.screen.height - 540 : window.screen.height - 445}px`;
   };
+  const getSearcherResult = (value: string) => {
+    if (timer) clearTimeout(timer);
+    const timers = setTimeout(async () => {
+      setLessonPlanName(value);
+      await inquiryAssembly(filterQuery, false, value);
+    }, 500);
+    setTimer(timers);
+  };
+
+  const handleOnScroll = async () => {
+    if (dom) {
+      const contentScrollTop = dom.scrollTop; //滚动条距离顶部
+      const clientHeight = dom.clientHeight; //可视区域
+      const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
+      if (contentScrollTop + clientHeight >= scrollHeight) {
+        const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
+        if (page + 1 > maxPage) return;
+        setLoading(true);
+        await inquiryAssembly(filterQuery, true);
+        setLoading(false);
+        setPage(page + 1);
+      }
+    }
+  };
+
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
       <div className={classes.lessonTitleMb}>
-        <span>Lesson Plan Search</span> <CloseIcon />
+        <span>Lesson Plan Search</span> <CloseIcon onClick={handleClose} />
       </div>
       <div style={{ textAlign: "center" }}>
         <TextField
@@ -389,113 +509,60 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
+          value={lessonPlanName}
+          onChange={(e) => {
+            getSearcherResult(e.target.value);
+          }}
           size="small"
           className={classes.mobileSearch}
         />
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          overflow: "auto",
-          borderTop: "1px solid #EFEFEF",
-          boxShadow: "0px 4px 4px rgb(0 0 0 / 25%)",
-          padding: "8px",
-          marginTop: "10px",
-        }}
-      >
-        <FilterListIcon />
-        <Autocomplete
-          id="combo-box-demo"
-          options={groupLabel}
-          getOptionLabel={(option: any) => option.name}
-          multiple
-          limitTags={1}
-          disableCloseOnSelect
-          renderOption={(option: any, { selected }) => (
-            <React.Fragment>
-              <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-              {option.name}
-            </React.Fragment>
-          )}
-          style={{ transform: "scale(0.9)" }}
-          renderInput={(params) => <TextField {...params} size={"small"} className={classes.fieldset} label="Group" variant="outlined" />}
-        />
-        <Autocomplete
-          id="combo-box-demo"
-          options={groupLabel}
-          getOptionLabel={(option: any) => option.name}
-          multiple
-          limitTags={1}
-          disableCloseOnSelect
-          renderOption={(option: any, { selected }) => (
-            <React.Fragment>
-              <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-              {option.name}
-            </React.Fragment>
-          )}
-          style={{ transform: "scale(0.9)" }}
-          renderInput={(params) => <TextField {...params} size={"small"} className={classes.fieldset} label="Group" variant="outlined" />}
-        />
+      <div className={classes.scrollSelect}>
+        {selectGroupTemplate()}
+        <span
+          className={classes.resetControl}
+          style={{ color: resetDisabled ? "#0E78D5" : "#666666" }}
+          onClick={() => {
+            if (resetDisabled) reset();
+          }}
+        >
+          Reset
+        </span>
       </div>
+      <div className={classes.resultText}>{lessonPlansTotal} result</div>
       <div
-        style={{
-          lineHeight: "28px",
-          background: "#EFEFEF",
-          fontSize: "13px",
-          height: "28px",
-          paddingLeft: "18px",
-          color: "#626262",
+        ref={(dom) => {
+          setDom(dom);
         }}
+        onScrollCapture={(e) => handleOnScroll()}
+        className={classes.previewDetailMb}
+        style={{ height: previewDetailMbHeight() }}
       >
-        150 result
-      </div>
-      <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
         {assemblingLessonPlans.map((item, index) => (
-          <div
-            style={{ display: "flex", alignItems: "center", borderBottom: "1px solid #D8D8D8", marginBottom: "30px", paddingBottom: 10 }}
-          >
-            <Radio style={{ margin: "0px 6px 0px 6px", transform: "scale(0.8)" }} name="radio-button-demo" color="primary" />
+          <div className={classes.lessonsItemMb}>
+            <Radio
+              checked={selectedValue === item?.id}
+              onChange={handleChange}
+              value={item?.id}
+              style={{ margin: "0px 6px 0px 6px", transform: "scale(0.8)" }}
+              name="radio-button-demo"
+              color="primary"
+            />
             <div>
-              <span
-                style={{
-                  fontFamily: "Helvetica",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  display: "block",
-                }}
-              >
-                {item.name}
-              </span>
-              <span
-                style={{
-                  color: "#666666",
-                  fontFamily: "Helvetica",
-                  fontSize: "13px",
-                  fontWeight: 400,
-                  display: "block",
-                  margin: "10px 0px 10px 0px",
-                }}
-              >
-                {item.group_name}
-              </span>
+              <span className={classes.lessonNameMb}>{item.name}</span>
+              <span className={classes.lessonGroupMb}>{item.group_name}</span>
             </div>
           </div>
         ))}
+        {assemblingLessonPlans.length < 1 && (
+          <p className={classes.emptyLabel} style={{ fontSize: 16 }}>
+            {lessonPlanName ? "No matching results" : "No data available"}
+          </p>
+        )}
+        {loading && <LinearProgress />}
       </div>
       <div style={{ textAlign: "center" }}>
-        <Button
-          color="primary"
-          variant="contained"
-          style={{
-            width: "297px",
-            height: "50px",
-            background: "#0E78D5",
-            borderRadius: "8px",
-            textAlign: "center",
-            marginTop: "20px",
-          }}
-        >
+        <Button className={classes.saveMb} color="primary" variant="contained" disabled={!selectedValue} onClick={save}>
           {d("OK").t("general_button_OK")}
         </Button>
       </div>
@@ -537,7 +604,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       filterQuery.subs.length ||
       filterQuery.grades.length ||
       filterQuery.ages.length ||
-      groupSelect.length < 3 ||
+      groupSelect.length ||
       selectedValue
     );
   }, [filterQuery, groupSelect, selectedValue]);
@@ -569,102 +636,16 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
 
   const reset = () => {
     setFilterQuery({ ages: [], categorys: [], grades: [], programs: [], subjects: [], subs: [] });
-    setGroupSelect(["Organization Content", "Badanamu Content", "More Featured Content"]);
+    setGroupSelect([]);
     setLessonPlanName("");
     setSelectedValue("");
-    searchOutcomesList({ page: 1, page_size: 10, group_names: ["Organization Content", "Badanamu Content", "More Featured Content"] });
+    searchOutcomesList({ page: 1, page_size: 10, group_names: [] });
   };
 
-  const handleOnScroll = async () => {
-    if (dom) {
-      const contentScrollTop = dom.scrollTop; //滚动条距离顶部
-      const clientHeight = dom.clientHeight; //可视区域
-      const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
-      if (contentScrollTop + clientHeight >= scrollHeight) {
-        const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
-        if (page + 1 > maxPage) return;
-        setLoading(true);
-        await inquiryAssembly(filterQuery, true);
-        setLoading(false);
-        setPage(page + 1);
-      }
-    }
-  };
-
-  const inquiryAssembly = async (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, group?: string[]) => {
-    const filterResult = (
-      programChildInfo?.length
-        ? (modelSchedule.learningOutcomeFilerGroup(filterQueryData as LearningComesFilterQuery, programChildInfo)
-            .query as LearningComesFilterQuery)
-        : filterQueryData
-    ) as LearningComesFilterQuery;
-
-    setFilterQuery && setFilterQuery(filterResult);
-    const values = (item: string[]) => (item.length > 0 ? item : null);
-    const filterQueryAssembly = {
-      program_ids: values(filterResult.programs),
-      subject_ids: values(filterResult.subjects),
-      category_ids: values(filterResult.categorys),
-      sub_category_ids: values(filterResult.subs),
-      age_ids: values(filterResult.ages),
-      grade_ids: values(filterResult.grades),
-      group_names: group ?? groupSelect,
-      lesson_plan_name: lessonPlanName,
-      page_size: 10,
-      page: loadPages ? page + 1 : 1,
-    };
-    await searchOutcomesList(filterQueryAssembly);
-  };
-
-  const autocompleteLessonChange = (value: any | null) => {
-    const ids = value?.map((item: any) => {
-      return item.id;
-    });
-    setGroupSelect(ids);
-    inquiryAssembly(filterQuery, false, ids);
-  };
-
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-  const checkedIcon = <CheckBoxIcon fontSize="small" />;
-  const groupLabel = [
-    { id: "Organization Content", name: "Organization Content" },
-    { id: "Badanamu Content", name: "Badanamu Content" },
-    { id: "More Featured Content", name: "More Featured Content" },
-  ];
-
-  return mobile ? (
-    <ScheduleLessonPlanMb assemblingLessonPlans={assemblingLessonPlans} />
-  ) : (
-    <Box className={classes.previewContainer}>
-      <div className={classes.lessonTitle}>
-        <span>Lesson Plan Search</span> <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
-      </div>
-      <div className={classes.searchValue}>
-        <TextField
-          id="outlined-start-adornment"
-          placeholder="Search for lesson plan"
-          InputProps={{
-            startAdornment: <SearchIcon />,
-          }}
-          value={lessonPlanName}
-          onChange={(e) => {
-            setLessonPlanName(e.target.value);
-          }}
-          size="small"
-          style={{ width: "90%" }}
-        />
-        <Button
-          onClick={() => {
-            inquiryAssembly(filterQuery, false);
-          }}
-          variant="contained"
-          style={{ background: "#0E78D5", color: "white", marginLeft: 10, width: "100px" }}
-        >
-          {d("Search").t("schedule_button_search")}
-        </Button>
-      </div>
-      <div className={classes.groupBox}>
-        <div style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+  const selectGroupTemplate = () => {
+    return (
+      <>
+        <div className={classes.selectBox}>
           <FilterListIcon />
           <Autocomplete
             id="combo-box-demo"
@@ -715,7 +696,120 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           programChildInfo={programChildInfo}
           setProgramChildInfo={setProgramChildInfo}
         />
+      </>
+    );
+  };
+
+  const handleOnScroll = async () => {
+    if (dom) {
+      const contentScrollTop = dom.scrollTop; //滚动条距离顶部
+      const clientHeight = dom.clientHeight; //可视区域
+      const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
+      if (contentScrollTop + clientHeight >= scrollHeight) {
+        const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
+        if (page + 1 > maxPage) return;
+        setLoading(true);
+        await inquiryAssembly(filterQuery, true);
+        setLoading(false);
+        setPage(page + 1);
+      }
+    }
+  };
+
+  const inquiryAssembly = async (
+    filterQueryData?: LearningComesFilterQuery,
+    loadPages?: boolean,
+    lessonName?: string,
+    group?: string[]
+  ) => {
+    const filterResult = (
+      programChildInfo?.length
+        ? (modelSchedule.learningOutcomeFilerGroup(filterQueryData as LearningComesFilterQuery, programChildInfo)
+            .query as LearningComesFilterQuery)
+        : filterQueryData
+    ) as LearningComesFilterQuery;
+
+    setFilterQuery && setFilterQuery(filterResult);
+    const values = (item: string[]) => (item.length > 0 ? item : null);
+    const filterQueryAssembly = {
+      program_ids: values(filterResult.programs),
+      subject_ids: values(filterResult.subjects),
+      category_ids: values(filterResult.categorys),
+      sub_category_ids: values(filterResult.subs),
+      age_ids: values(filterResult.ages),
+      grade_ids: values(filterResult.grades),
+      group_names: group ?? groupSelect,
+      lesson_plan_name: lessonName ?? lessonPlanName,
+      page_size: 10,
+      page: loadPages ? page + 1 : 1,
+    };
+    await searchOutcomesList(filterQueryAssembly);
+  };
+
+  const autocompleteLessonChange = (value: any | null) => {
+    const ids = value?.map((item: any) => {
+      return item.id;
+    });
+    setGroupSelect(ids);
+    inquiryAssembly(filterQuery, false, "", ids);
+  };
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  const groupLabel = [
+    { id: "Organization Content", name: "Organization Content" },
+    { id: "Badanamu Content", name: "Badanamu Content" },
+    { id: "More Featured Content", name: "More Featured Content" },
+  ];
+
+  return mobile ? (
+    <ScheduleLessonPlanMb
+      assemblingLessonPlans={assemblingLessonPlans}
+      handleChange={handleChange}
+      handleClose={handleClose}
+      lessonPlanName={lessonPlanName}
+      lessonPlansTotal={lessonPlansTotal}
+      resetDisabled={resetDisabled}
+      setLessonPlanName={setLessonPlanName}
+      inquiryAssembly={inquiryAssembly}
+      filterQuery={filterQuery}
+      selectedValue={selectedValue}
+      selectGroupTemplate={selectGroupTemplate}
+      page={page}
+      setPage={setPage}
+      reset={reset}
+      save={save}
+    />
+  ) : (
+    <Box className={classes.previewContainer}>
+      <div className={classes.lessonTitle}>
+        <span>Lesson Plan Search</span> <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
       </div>
+      <div className={classes.searchValue}>
+        <TextField
+          id="outlined-start-adornment"
+          placeholder="Search for lesson plan"
+          InputProps={{
+            startAdornment: <SearchIcon />,
+          }}
+          value={lessonPlanName}
+          onChange={(e) => {
+            setLessonPlanName(e.target.value);
+          }}
+          size="small"
+          style={{ width: "90%" }}
+        />
+        <Button
+          onClick={() => {
+            inquiryAssembly(filterQuery, false);
+          }}
+          variant="contained"
+          style={{ background: "#0E78D5", color: "white", marginLeft: 10, width: "100px" }}
+        >
+          {d("Search").t("schedule_button_search")}
+        </Button>
+      </div>
+      <div className={classes.groupBox}>{selectGroupTemplate()}</div>
       <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>{lessonPlansTotal} results</span>
       <div
         ref={(dom) => {
@@ -752,7 +846,9 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
             </TableBody>
           </Table>
         </TableContainer>
-        {assemblingLessonPlans.length < 1 && <p className={classes.emptyLabel}>No data available</p>}
+        {assemblingLessonPlans.length < 1 && (
+          <p className={classes.emptyLabel}>{lessonPlanName ? "No matching results" : "No data available"}</p>
+        )}
         {loading && <LinearProgress />}
       </div>
       <div style={{ textAlign: "end" }}>
