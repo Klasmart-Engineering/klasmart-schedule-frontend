@@ -84,7 +84,7 @@ function handleListData(data: EntityTeacherReportCategory[]) {
   } else if (handleData.length === 2) {
     return [
       { name: handleData[0].name, count: Math.floor(((handleData[0].count || 0) / amount) * 100) },
-      { name: handleData[1].name, count: Math.floor(((handleData[1].count || 0) / amount) * 100) },
+      { name: handleData[1].name, count: 100 - Math.floor(((handleData[0].count || 0) / amount) * 100) },
     ];
   }
   return [];
