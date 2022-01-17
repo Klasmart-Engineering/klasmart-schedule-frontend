@@ -1,3 +1,4 @@
+import { ParticipantsByClassQuery } from "@api/api-ko.auto";
 import { ParticipantString, ParticipantValue } from "@api/type";
 import { d } from "@locale/LocaleManager";
 import {
@@ -20,6 +21,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import { Close, Search } from "@material-ui/icons";
+import { modelSchedule } from "@models/ModelSchedule";
 import { resetParticipantsData } from "@reducers/schedule";
 import { cloneDeep } from "lodash";
 import React, { ChangeEvent, useMemo, useState } from "react";
@@ -86,12 +88,13 @@ export interface AddParticipantsTemplateMbProps {
   ParticipantsData?: ParticipantsData;
   handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
   participantsIds: ParticipantsShortInfo;
+  participantList: ParticipantsByClassQuery;
   getParticipantsData?: (metaLoading: boolean, search: string, hash: string, roleName: ParticipantString["key"]) => void;
 }
 export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps) {
   const css = useStyles();
   const dispatch = useDispatch();
-  const { participantsIds, open, onClose, handleChangeParticipants, getParticipantsData } = props;
+  const { participantsIds, open, participantList, onClose, handleChangeParticipants, getParticipantsData } = props;
   const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [tabValue, setTabValue] = useState(ParticipantValue.student);
   const [name, setName] = useState("");
@@ -99,6 +102,10 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
   const [loading, setLoading] = useState(false);
   const [part, setPart] = useState<ParticipantsShortInfo>(participantsIds);
   const disableOkBtn = !part.student.length && !part.teacher.length;
+  const suggestParticipants = useMemo(() => {
+    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantList);
+    return { ...participantsFilterData };
+  }, [ParticipantsData, participantList]);
 
   const handleChangeParticipantValue = async (value: ParticipantValue) => {
     setTabValue(value);
@@ -236,7 +243,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
           onScrollCapture={(e) => handleOnScroll()}
         >
           {tabValue === ParticipantValue.student &&
-            ParticipantsData.classes.students.map((student) => {
+            suggestParticipants.classes.students.map((student) => {
               return (
                 <FormControlLabel
                   key={student.user_id}
@@ -254,7 +261,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
               );
             })}
           {tabValue === ParticipantValue.teacher &&
-            ParticipantsData.classes.teachers.map((teacher) => {
+            suggestParticipants.classes.teachers.map((teacher) => {
               return (
                 <FormControlLabel
                   key={teacher.user_id}
@@ -271,8 +278,8 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                 />
               );
             })}
-          {((tabValue === ParticipantValue.student && !ParticipantsData.classes.students.length) ||
-            (tabValue === ParticipantValue.teacher && !ParticipantsData.classes.teachers.length)) &&
+          {((tabValue === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
+            (tabValue === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
             !loading && (
               <div className={css.emptyCon}>{name ? "No matching result" : d("No Data Available").t("report_no_data_available")}</div>
             )}
