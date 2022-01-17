@@ -1,4 +1,3 @@
-import { ParticipantString, ParticipantValue } from "@api/type";
 import DateFnsUtils from "@date-io/date-fns";
 import { Box, Button, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -90,6 +89,8 @@ import {
   modeViewType,
   ParticipantsData,
   ParticipantsShortInfo,
+  ParticipantString,
+  ParticipantValue,
   repeatOptionsType,
   timestampType,
 } from "../../types/scheduleTypes";
@@ -1288,7 +1289,7 @@ function EditBox(props: CalendarStateProps) {
     if (perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) return;
     if (getParticipantsData) {
       dispatch(resetParticipantsData());
-      await getParticipantsData(true, "", "", ParticipantValue.student);
+      await getParticipantsData(true, name, "", ParticipantValue.student);
     }
     //
     if (mobile) {
@@ -2536,6 +2537,8 @@ function EditBox(props: CalendarStateProps) {
         participantsIds={participantsIds as ParticipantsShortInfo}
         getParticipantsData={getParticipantsData}
         participantList={participantMockOptions.participantList}
+        setSearchName={setSearchName}
+        searchName={name}
       />
     </ThemeProvider>
   );

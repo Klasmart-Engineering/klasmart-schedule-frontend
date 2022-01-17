@@ -1,4 +1,3 @@
-import { ParticipantString, ParticipantValue } from "@api/type";
 import {
   Box,
   Button,
@@ -24,7 +23,7 @@ import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { resetParticipantsData } from "../../reducers/schedule";
-import { ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
+import { ParticipantsShortInfo, ParticipantString, ParticipantValue, RolesData } from "../../types/scheduleTypes";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({

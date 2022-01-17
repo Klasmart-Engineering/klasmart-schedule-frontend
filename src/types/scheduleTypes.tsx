@@ -291,3 +291,15 @@ export interface LearningComesFilterQuery {
   ages: string[];
   grades: string[];
 }
+
+export enum ParticipantValue {
+  student = "Student",
+  teacher = "Teacher",
+}
+export type ParticipantString = {
+  key: "Student" | "Teacher";
+};
+export type ParticipantRoleId = {
+  Student?: string;
+  Teacher?: string;
+};
