@@ -1,7 +1,8 @@
+const union = require("lodash/union")
 const header = `
-import { IntlFormatters, MessageDescriptor } from "react-intl";
+import { MessageDescriptor } from "react-intl";
 
-type FormatMessageValue<T> = NonNullable<Parameters<IntlFormatters<T>["formatMessage"]>[1]> extends Record<any, infer V> ? V : never;
+
 export type LangName = "en" | "ko" | "zh" | "vi" | "id";
 
 export function assertLangName(name?: string): asserts name is LangName {
@@ -13,7 +14,7 @@ export function shouldBeLangName(name?: string): LangName {
   return name;
 }
 
-type LangRecord<T = string> =
+type LangRecord =
 `
 
 const footer = `
@@ -39,7 +40,7 @@ export interface LangMessageDescriptor extends Omit<MessageDescriptor, "id"> {
 function getValuesByDescription(description) {
   const result = description.match(/{.*?}/g);
   if (result == null) return;
-  return '{ ' + result.map(x => `${x.slice(1, -1)}: string | number`).join(', ') + ' }';
+  return '{ ' + union(result).map(x => `${x.slice(1, -1)}: string | number`).join(', ') + ' }';
 }
 
 function genLangTypeFileContent (enJson) {
@@ -53,7 +54,7 @@ function genLangTypeFileContent (enJson) {
 
 function genLangTypeFileContentSyncLocal (enData) {
   const body = enData
-    .map(({id, description}) => `| { id: "${id}"; description: "${description}"; values: ${getValuesByDescription(description)} }`)
+    .map(({id, description}) => `| { id: "${id}"; description: \`${description}\`; values: ${getValuesByDescription(description)} }`)
     .concat(';')
     .join('\n')
 

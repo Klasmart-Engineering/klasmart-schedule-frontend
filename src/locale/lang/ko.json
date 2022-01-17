@@ -1050,5 +1050,20 @@
   "report_student_usage_incomplete_students": "미완료한 학습자",
   "general_error_fail_get_permission": "권한을 얻지 못했습니다. 새로고침하세요.",
   "library_error_pdf_validation": "PDF 파일의 유효성 검사에 실패했습니다.다시 시도해 주세요.",
-  "schedule_search_class_name": "학급명 검색"
+  "schedule_search_class_name": "학급명 검색",
+  "schedule_conflict_popup": "Schedule Conflict",
+  "schedule_further_action": "Please select a further action",
+  "schedule_msg_assignment_sumbit": "Your assignment will be submitted for assessment. Do you want to continue?",
+  "report_label_skill_coverage": "학습 결과 카테고리",
+  "report_label_skill_coverage_info": "기관에서 미리 정해 둔 학습 결과의 카테고리 별로 달성 현황을 분석합니다.",
+  "report_label_learner_usage": "학습자 사용현황",
+  "report_label_learner_usage_info": "지난 7일 동안 학습자의 사용 현황을 제공합니다.\n- 소비된 학습 자료의 양\n- 등록된 수업\n- 등록된 과제",
+  "report_label_content_used": "사용된 콘텐츠",
+  "report_label_5_types": "5종",
+  "report_label_class_scheduled": "등록된 수업",
+  "report_label_live_class": "라이브 클래스",
+  "report_label_assignment_scheduled": "등록된 과제",
+  "report_label_study_and_home_fun": "스터디 및 홈펀스터디",
+  "schedule_msg_no_matching_result": "No matching result",
+  "report_label_no_report": "확인 가능한 리포트가 없습니다."
 }

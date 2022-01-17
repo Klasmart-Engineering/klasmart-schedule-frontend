@@ -1,3 +1,4 @@
+import { ParticipantsByClassQuery } from "@api/api-ko.auto";
 import { ParticipantString, ParticipantValue } from "@api/type";
 import { d } from "@locale/LocaleManager";
 import {
@@ -20,9 +21,10 @@ import {
   TextField,
 } from "@material-ui/core";
 import { Close, Search } from "@material-ui/icons";
+import { modelSchedule } from "@models/ModelSchedule";
 import { resetParticipantsData } from "@reducers/schedule";
 import { cloneDeep } from "lodash";
-import { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ParticipantsData, ParticipantsShortInfo, RolesData } from "src/types/scheduleTypes";
 import { RootState } from "../../reducers";
@@ -54,6 +56,7 @@ const useStyles = makeStyles((theme) =>
     },
     dialogActionRoot: {
       justifyContent: "center",
+      marginBottom: 120,
     },
     okBtn: {
       width: 160,
@@ -63,12 +66,19 @@ const useStyles = makeStyles((theme) =>
       overflow: "hidden",
     },
     emptyCon: {
-      width: "100%",
-      heigth: "100%",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       marginTop: 140,
+    },
+    tabLabel: {
+      fontWeight: 600,
+      color: "#000",
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 600,
+      color: "#000",
     },
   })
 );
@@ -78,18 +88,24 @@ export interface AddParticipantsTemplateMbProps {
   ParticipantsData?: ParticipantsData;
   handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
   participantsIds: ParticipantsShortInfo;
+  participantList: ParticipantsByClassQuery;
   getParticipantsData?: (metaLoading: boolean, search: string, hash: string, roleName: ParticipantString["key"]) => void;
 }
 export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps) {
   const css = useStyles();
   const dispatch = useDispatch();
-  const { participantsIds, open, onClose, handleChangeParticipants, getParticipantsData } = props;
+  const { participantsIds, open, participantList, onClose, handleChangeParticipants, getParticipantsData } = props;
   const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [tabValue, setTabValue] = useState(ParticipantValue.student);
   const [name, setName] = useState("");
   const [dom, setDom] = useState<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [part, setPart] = useState<ParticipantsShortInfo>(participantsIds);
+  const disableOkBtn = !part.student.length && !part.teacher.length;
+  const suggestParticipants = useMemo(() => {
+    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantList);
+    return { ...participantsFilterData };
+  }, [ParticipantsData, participantList]);
 
   const handleChangeParticipantValue = async (value: ParticipantValue) => {
     setTabValue(value);
@@ -168,10 +184,20 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
     onClose();
   };
 
+  const handleClearName = async () => {
+    setName("");
+    if (!loading && getParticipantsData) {
+      setLoading(true);
+      dispatch(resetParticipantsData());
+      await getParticipantsData(false, "", "", tabValue);
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog fullScreen open={open}>
       <DialogTitle>
-        {d("Add Participants").t("schedule_detail_participants")}
+        <div className={css.title}>{d("Add Participants").t("schedule_detail_participants")}</div>
         <IconButton onClick={onClose} className={css.closeBtn}>
           <Close />
         </IconButton>
@@ -188,6 +214,11 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                 <Search style={{ color: "rgba(0, 0, 0, 0.54)" }} />
               </InputAdornment>
             ),
+            endAdornment: (
+              <InputAdornment position="end">
+                {name && <Close fontSize="small" style={{ color: "rgba(0, 0, 0, 0.54)" }} onClick={handleClearName} />}
+              </InputAdornment>
+            ),
           }}
           value={name}
           onChange={handleChangeName}
@@ -201,8 +232,8 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
           textColor="primary"
           onChange={(e, value) => handleChangeParticipantValue(value)}
         >
-          <Tab label={d("Student").t("schedule_time_conflict_student")} value={ParticipantValue.student} />
-          <Tab label={d("Teacher").t("schedule_detail_teacher")} value={ParticipantValue.teacher} />
+          <Tab className={css.tabLabel} label={d("Student").t("schedule_time_conflict_student")} value={ParticipantValue.student} />
+          <Tab className={css.tabLabel} label={d("Teacher").t("schedule_detail_teacher")} value={ParticipantValue.teacher} />
         </Tabs>
         <FormGroup
           className={css.checkboxContainer}
@@ -212,7 +243,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
           onScrollCapture={(e) => handleOnScroll()}
         >
           {tabValue === ParticipantValue.student &&
-            ParticipantsData.classes.students.map((student) => {
+            suggestParticipants.classes.students.map((student) => {
               return (
                 <FormControlLabel
                   key={student.user_id}
@@ -220,6 +251,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                     <Checkbox
                       name="checkedB"
                       color="primary"
+                      style={{ marginRight: 20 }}
                       checked={part.student.some((s) => s.id === student.user_id)}
                       onChange={(e) => handleChange(e, student)}
                     />
@@ -229,7 +261,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
               );
             })}
           {tabValue === ParticipantValue.teacher &&
-            ParticipantsData.classes.teachers.map((teacher) => {
+            suggestParticipants.classes.teachers.map((teacher) => {
               return (
                 <FormControlLabel
                   key={teacher.user_id}
@@ -237,6 +269,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                     <Checkbox
                       name="checkedB"
                       color="primary"
+                      style={{ marginRight: 20 }}
                       checked={part.teacher.some((t) => t.id === teacher.user_id)}
                       onChange={(e) => handleChange(e, teacher)}
                     />
@@ -245,8 +278,8 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
                 />
               );
             })}
-          {((tabValue === ParticipantValue.student && !ParticipantsData.classes.students.length) ||
-            (tabValue === ParticipantValue.teacher && !ParticipantsData.classes.teachers.length)) &&
+          {((tabValue === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
+            (tabValue === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
             !loading && (
               <div className={css.emptyCon}>{name ? "No matching result" : d("No Data Available").t("report_no_data_available")}</div>
             )}
@@ -258,7 +291,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
         </FormGroup>
       </DialogContent>
       <DialogActions classes={{ root: css.dialogActionRoot }}>
-        <Button className={css.okBtn} color="primary" variant="contained" onClick={handleConfirm}>
+        <Button className={css.okBtn} color="primary" variant="contained" disabled={disableOkBtn} onClick={handleConfirm}>
           {d("OK").t("schedule_button_ok")}
         </Button>
       </DialogActions>

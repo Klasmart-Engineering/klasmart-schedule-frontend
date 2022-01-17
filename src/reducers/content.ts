@@ -639,7 +639,7 @@ export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryD
   async ({ id, type }, { dispatch }) => {
     const content =
       type === Action.remove
-        ? d("Are you sure you want to remove this content?").t("library_msg_remove_content")
+        ? d("Are you sure you want to archive this content?").t("library_msg_remove_content")
         : d("Are you sure you want to delete this content?").t("library_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
