@@ -11,9 +11,8 @@ import { actError } from "@reducers/notify";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { safariCompatible } from ".";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
-import { apiResourcePathById } from "../../api/extra";
+import { apiLivePath, apiResourcePathById } from "../../api/extra";
 import PermissionType from "../../api/PermissionType";
 import { Permission } from "../../components/Permission";
 import { usePermission } from "../../hooks/usePermission";
@@ -480,13 +479,24 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const handleGoLive = async (scheduleInfos: ScheduleEditExtend) => {
+    let winRef: Window | null = window;
+    let url: string = "";
+    setTimeout(() => {
+      if (winRef) {
+        winRef = winRef.open(url, "_blank") as Window;
+      }
+    }, 500);
     const currentTime = Math.floor(new Date().getTime());
     let resultInfo: any;
     resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
     if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
-      safariCompatible(resultInfo.payload.token);
+      if (!winRef.document.title) {
+        winRef.location.href = apiLivePath(resultInfo.payload.token);
+      } else {
+        url = apiLivePath(resultInfo.payload.token);
+      }
       return;
     }
     if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
@@ -538,7 +548,11 @@ export default function CustomizeTempalte(props: InfoProps) {
 
     handleClose();
     dispatch(scheduleUpdateStatus({ schedule_id: ScheduleViewInfo.id as string, status: { status: "Started" } }));
-    safariCompatible(resultInfo.payload.token);
+    if (!winRef.document.title) {
+      winRef.location.href = apiLivePath(resultInfo.payload.token);
+    } else {
+      url = apiLivePath(resultInfo.payload.token);
+    }
   };
 
   const deleteHandle = () => {
