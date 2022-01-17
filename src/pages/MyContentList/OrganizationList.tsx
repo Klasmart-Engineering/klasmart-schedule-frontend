@@ -149,7 +149,7 @@ export function OrganizationList(props: OrganizationListProps) {
           ? SortOrder.Asc
           : SortOrder.Desc,
     };
-    const searchValue = search ? search : buttonSearch;
+    const searchValue = search !== undefined ? search : buttonSearch;
     const { payload } = (await dispatch(
       getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
