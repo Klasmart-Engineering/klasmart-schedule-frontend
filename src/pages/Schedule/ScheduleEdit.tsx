@@ -1779,7 +1779,7 @@ function EditBox(props: CalendarStateProps) {
   const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({ group_names: "", page: 1, pages: 10, lesson_plan_name: "" });
 
   const searcLessonPlanList = async (filterQueryAssembly: object) => {
-    console.log(lessonPlanCondition, filterQueryAssembly);
+    // console.log(lessonPlanCondition, filterQueryAssembly);
     const query = {
       ...lessonPlanCondition,
       ...filterQueryAssembly,
@@ -2535,6 +2535,7 @@ function EditBox(props: CalendarStateProps) {
         handleChangeParticipants={handleChangeParticipants}
         participantsIds={participantsIds as ParticipantsShortInfo}
         getParticipantsData={getParticipantsData}
+        participantList={participantMockOptions.participantList}
       />
     </ThemeProvider>
   );
