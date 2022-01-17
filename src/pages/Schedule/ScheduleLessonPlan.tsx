@@ -229,6 +229,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   selectBox: {
     display: "flex",
     alignItems: "center",
+    marginTop: "10px",
     [breakpoints.down(600)]: {
       marginTop: "0px",
     },
@@ -386,6 +387,7 @@ function SelectGroup(props: filterGropProps) {
         <div className={classes.filterBox}>
           {selectGroup.map((item, index) => (
             <Autocomplete
+              key={index}
               id="combo-box-demo"
               options={item.data}
               getOptionLabel={(option: any) => option.name}
