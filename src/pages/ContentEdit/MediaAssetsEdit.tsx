@@ -100,9 +100,8 @@ function AssetEdit(props: AssetEditProps) {
   const [isUploading, setIsUploading] = React.useState(false);
   const isPreview = !!dataSource;
   const VerifyExistingPDF = (source: string, onChange: AssetEditProps["onChange"]) => {
-    const resourceId = source.split("-").pop() || "";
     setPercentage(0);
-    apiWebSocketValidatePDFById(resourceId, setPercentage)
+    apiWebSocketValidatePDFById(source, setPercentage)
       .then((data) => {
         setPercentage(-1);
         if (!data.valid) {

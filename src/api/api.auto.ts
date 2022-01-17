@@ -1521,6 +1521,16 @@ export interface EntityStudentAchievementReportResponse {
   categories?: EntityStudentAchievementReportCategoryItem[];
   student_name?: string;
 }
+export interface EntityLearnerUsageRequest {
+  content_type_list?: string[];
+  durations?: string[];
+}
+
+export interface EntityLearnerUsageResponse {
+  assignment_scheduled?: number;
+  class_scheduled?: number;
+  contents_used?: number;
+}
 
 export interface EntityStudentAssessment {
   complete_at?: number;
@@ -3776,6 +3786,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   };
   reports = {
     /**
+     * @tags reports/learnerUsage
+     * @name getLearnerUsageOverview
+     * @summary get learner usage Report
+     * @request GET:/reports/learner_usage/overview
+     * @description get learner usage Report
+     */
+    getLearnerUsageOverview: (classes_assignments: EntityLearnerUsageRequest, params?: RequestParams) =>
+      this.request<EntityLearnerUsageResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learner_usage/overview`,
+        "POST",
+        params,
+        classes_assignments
+      ),
+    /**
      * @tags reports/learningSummary
      * @name queryAssignmentsSummary
      * @summary query live classes summary
@@ -4125,6 +4149,19 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         overview
       ),
+
+    /**
+     * @tags reports
+     * @name getTeachersReport
+     * @summary get teachers report
+     * @request GET:/reports/teachers
+     * @description get teacher sreport
+     */
+    getTeachersReport: (params?: RequestParams) =>
+      this.request<
+        EntityTeacherReport,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/reports/teachers`, "GET", params),
 
     /**
      * @tags reports

@@ -10,15 +10,15 @@ export default function useTranslation() {
     teacher: d("Teacher").t("report_label_teacher"),
     menuItem1: t("report_label_past_7_days"),
     menuItem2: t("report_label_past_30_days"),
-    noOfClasses:t("report_label_classes_number"),
+    noOfClasses: t("report_label_classes_number"),
     noOfStudent: t("report_label_students_number"),
     current: t("report_label_current"),
     liveCompleted: d("Live Lessons Completed").t("report_label_live_lessons_completed"),
     inClassCompleted: d("In Class Lessons Completed").t("report_label_in_class_lessons_completed"),
     liveMissed: d("Live Lessons Missed").t("report_label_live_lessons_missed"),
     inClassMidded: d("In Class Lessons Missed").t("report_label_in_class_lessons_Missed"),
-    hrs: d("Hrs").t("report_label_hrs"),
-    mins: d("Mins").t("report_label_mins"),
+    hrs: d("hrs").t("report_label_hrs"),
+    mins: d("mins").t("report_label_mins"),
     totalScheduled: d("Total Scheduled").t("report_label_total_scheduled"),
   };
 

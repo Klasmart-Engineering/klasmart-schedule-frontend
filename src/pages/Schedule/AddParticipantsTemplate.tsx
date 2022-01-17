@@ -16,8 +16,9 @@ import {
 } from "@material-ui/core";
 import InputBase from "@material-ui/core/InputBase/InputBase";
 import { Search } from "@material-ui/icons";
+import { modelSchedule } from "@models/ModelSchedule";
 import { cloneDeep } from "lodash";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import { d } from "../../locale/LocaleManager";
@@ -135,7 +136,8 @@ interface InfoProps {
 
 export default function AddParticipantsTemplate(props: InfoProps) {
   const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { handleClose, handleChangeParticipants, participantsIds, getParticipantsData, nameUpperLevel, setSearchName } = props;
+  const { handleClose, handleChangeParticipants, participantsIds, participantList, getParticipantsData, nameUpperLevel, setSearchName } =
+    props;
   const css = useStyles();
   const [defaultFilter, setDefaultFilter] = React.useState(ParticipantValue.student);
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
@@ -143,6 +145,10 @@ export default function AddParticipantsTemplate(props: InfoProps) {
   const [sScrollTop, setsScrollTop] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
+  const suggestParticipants = useMemo(() => {
+    const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantList);
+    return { ...participantsFilterData };
+  }, [ParticipantsData, participantList]);
 
   const handleFilterChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (dom) {
@@ -287,7 +293,7 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         onScrollCapture={(e) => handleOnScroll()}
       >
         {defaultFilter === ParticipantValue.student &&
-          ParticipantsData.classes.students.map((item: RolesData) => {
+          suggestParticipants.classes.students.map((item: RolesData) => {
             return (
               <FormControlLabel
                 key={item.user_id}
@@ -304,7 +310,7 @@ export default function AddParticipantsTemplate(props: InfoProps) {
             );
           })}
         {defaultFilter === ParticipantValue.teacher &&
-          ParticipantsData.classes.teachers.map((item: RolesData) => {
+          suggestParticipants.classes.teachers.map((item: RolesData) => {
             return (
               <FormControlLabel
                 key={item.user_id}
@@ -320,8 +326,8 @@ export default function AddParticipantsTemplate(props: InfoProps) {
               />
             );
           })}
-        {((defaultFilter === ParticipantValue.student && !ParticipantsData.classes.students.length) ||
-          (defaultFilter === ParticipantValue.teacher && !ParticipantsData.classes.teachers.length)) &&
+        {((defaultFilter === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
+          (defaultFilter === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
           !loading && (
             <div className={css.emptyCon}>{name ? "No matching result" : d("No Data Available").t("report_no_data_available")}</div>
           )}

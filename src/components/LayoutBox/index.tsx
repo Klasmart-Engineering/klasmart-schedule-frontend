@@ -2,6 +2,7 @@ import { Box, BoxProps, makeStyles } from "@material-ui/core";
 import React, { ReactNode } from "react";
 
 interface LayoutBoxProps {
+  className?: string;
   mainBase: number;
   holderMin: number;
   holderBase: number;
@@ -27,7 +28,7 @@ const useStyles = makeStyles({
 export default function LayoutBox(props: LayoutBoxProps) {
   const css = useStyles(props);
   return (
-    <Box display="flex">
+    <Box display="flex" className={props.className}>
       <Box className={css.holder} />
       <Box className={css.main}>{props.children}</Box>
       <Box className={css.holder} />

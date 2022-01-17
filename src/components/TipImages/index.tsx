@@ -5,6 +5,7 @@ import comingsoonIconUrl from "../../assets/icons/coming soon.svg";
 import emptyIconUrl from "../../assets/icons/empty.svg";
 import noFilesIconUrl from "../../assets/icons/nofiles.svg";
 import achievementEmptyUrl from "../../assets/icons/noLearningOutcomes.svg";
+import noReportUrl from "../../assets/icons/noReport.svg";
 import noPermissionUrl from "../../assets/icons/permission.jpg";
 import { d, t } from "../../locale/LocaleManager";
 
@@ -27,6 +28,7 @@ export enum TipImagesType {
   noResults = "noResults",
   noPermission = "noPermission",
   achievementEmpty = "achievementEmpty",
+  noReport = "noReport",
 }
 export type TextLabel =
   | "library_msg_no_results_found"
@@ -34,14 +36,15 @@ export type TextLabel =
   | "library_msg_coming_soon"
   | "library_error_no_permissions"
   | "report_msg_no_data"
-  | "report_msg_no_plan";
+  | "report_msg_no_plan"
+  | "report_label_no_report";
 interface TipImagesProps {
   type: TipImagesType;
   text?: TextLabel;
   children?: ReactNode;
 }
 export function TipImages(props: TipImagesProps) {
-  const { type, text,children } = props;
+  const { type, text, children } = props;
   const css = useStyles();
   let src = "";
   if (type === TipImagesType.empty) {
@@ -59,13 +62,18 @@ export function TipImages(props: TipImagesProps) {
   if (type === TipImagesType.achievementEmpty) {
     src = achievementEmptyUrl;
   }
+  if (type === TipImagesType.noReport) {
+    src = noReportUrl;
+  }
   return (
     <Fragment>
       <Box className={css.emptyContainer}>
         <img className={css.emptyImage} alt={type} src={src} />
-        {text && <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
-          {t(text)}
-        </Typography>}
+        {text && (
+          <Typography className={css.emptyDesc} variant="body1" color="textSecondary">
+            {t(text)}
+          </Typography>
+        )}
         {children}
       </Box>
     </Fragment>
@@ -77,6 +85,8 @@ export const comingsoonTip = <TipImages type={TipImagesType.commingSoon} text="l
 export const resultsTip = <TipImages type={TipImagesType.noResults} text="library_msg_no_results_found" />;
 export const achievementEmpty = <TipImages type={TipImagesType.achievementEmpty} text="report_msg_no_data" />;
 export const emptyTipAndCreate = <TipImages type={TipImagesType.empty} text="report_msg_no_plan" />;
+
+export const noReportTip = <TipImages type={TipImagesType.noReport} text="report_label_no_report" />;
 
 export function NoOutcome() {
   return (

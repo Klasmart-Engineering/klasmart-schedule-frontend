@@ -183,6 +183,7 @@ export class modelSchedule {
       rosterIdSet.teachers.push(item?.user_id as never);
     });
     return {
+      ...ParticipantsDatas,
       classes: {
         students: deDuplication(
           ParticipantsDatas?.classes.students.filter((item: RolesData) => !rosterIdSet.students.includes(item.user_id as never))

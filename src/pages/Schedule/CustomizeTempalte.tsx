@@ -1,10 +1,15 @@
 import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Tooltip from "@material-ui/core/Tooltip";
-import { DeleteOutlined, EditOutlined, VisibilityOff, CloseOutlined } from "@material-ui/icons";
+import { CloseOutlined, DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
+import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import GetAppIcon from "@material-ui/icons/GetApp";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
+import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
+import { actError } from "@reducers/notify";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { EntityScheduleViewDetail } from "../../api/api.auto";
 import { apiLivePath, apiResourcePathById } from "../../api/extra";
@@ -12,14 +17,9 @@ import PermissionType from "../../api/PermissionType";
 import { Permission } from "../../components/Permission";
 import { usePermission } from "../../hooks/usePermission";
 import { d, t } from "../../locale/LocaleManager";
-import { RootState } from "../../reducers";
-import { scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
+import { getScheduleLiveToken, scheduleShowOption, scheduleUpdateStatus } from "../../reducers/schedule";
 import { classTypeLabel, EntityScheduleShortInfo, memberType, ScheduleEditExtend, scheduleInfoViewProps } from "../../types/scheduleTypes";
 import ScheduleButton from "./ScheduleButton";
-import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
-import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
-import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
-import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   previewContainer: {
@@ -219,6 +219,7 @@ interface InfoMbProps extends InfoProps {
 
 function CustomizeTempalteMb(props: InfoMbProps) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const {
     handleClose,
     ScheduleViewInfo,
@@ -275,6 +276,18 @@ function CustomizeTempalteMb(props: InfoMbProps) {
       return "";
     }
   };
+
+  useEffect(() => {
+    if (
+      (!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
+      ScheduleViewInfo.class_type_label?.id !== "Task" &&
+      !ScheduleViewInfo.is_home_fun
+    ) {
+      dispatch(
+        actError(d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan"))
+      );
+    }
+  }, [ScheduleViewInfo.class_type_label?.id, ScheduleViewInfo.is_home_fun, ScheduleViewInfo.lesson_plan, dispatch]);
 
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
@@ -417,7 +430,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  // const { liveToken } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const perm = usePermission([PermissionType.attend_live_class_as_a_student_187]);
   const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
@@ -465,12 +478,25 @@ export default function CustomizeTempalte(props: InfoProps) {
     history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${ScheduleViewInfo.id}`);
   };
 
-  const handleGoLive = (scheduleInfos: ScheduleEditExtend) => {
+  const handleGoLive = async (scheduleInfos: ScheduleEditExtend) => {
+    let winRef: Window | null = window;
+    let url: string = "";
+    setTimeout(() => {
+      if (winRef) {
+        winRef = winRef.open(url, "_blank") as Window;
+      }
+    }, 500);
     const currentTime = Math.floor(new Date().getTime());
+    let resultInfo: any;
+    resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
     if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
-      window.open(apiLivePath(liveToken));
+      if (!winRef.document.title) {
+        winRef.location.href = apiLivePath(resultInfo.payload.token);
+      } else {
+        url = apiLivePath(resultInfo.payload.token);
+      }
       return;
     }
     if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
@@ -522,7 +548,11 @@ export default function CustomizeTempalte(props: InfoProps) {
 
     handleClose();
     dispatch(scheduleUpdateStatus({ schedule_id: ScheduleViewInfo.id as string, status: { status: "Started" } }));
-    window.open(apiLivePath(liveToken));
+    if (!winRef.document.title) {
+      winRef.location.href = apiLivePath(resultInfo.payload.token);
+    } else {
+      url = apiLivePath(resultInfo.payload.token);
+    }
   };
 
   const deleteHandle = () => {

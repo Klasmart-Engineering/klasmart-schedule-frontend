@@ -1050,5 +1050,20 @@
   "report_student_usage_incomplete_students": "Học sinh chưa hoàn thành",
   "general_error_fail_get_permission": "Không xin được quyền, vui lòng làm mới",
   "library_error_pdf_validation": "Xác thực PDF không thành công, vui lòng thử lại.",
-  "schedule_search_class_name": "Tìm kiếm tên Lớp"
+  "schedule_search_class_name": "Tìm kiếm tên Lớp",
+  "schedule_conflict_popup": "Schedule Conflict",
+  "schedule_further_action": "Please select a further action",
+  "schedule_msg_assignment_sumbit": "Your assignment will be submitted for assessment. Do you want to continue?",
+  "report_label_skill_coverage": "Phân loại kết quả học tập",
+  "report_label_skill_coverage_info": "Bảng phân tích kết quả học tập bao gồm danh mục kỹ năng do tổ chức của bạn xác định.",
+  "report_label_learner_usage": "Người học sử dụng",
+  "report_label_learner_usage_info": "Hiểu mức độ sử dụng của người học trong 7 ngày qua:\n -Các chỉ số sử dụng học liệu\u2028\n -Tham dự lớp học\n -Chi tiết bài tập",
+  "report_label_content_used": "Nội dung đã được sử dụng",
+  "report_label_5_types": "5 loại",
+  "report_label_class_scheduled": "Lớp học đã lên lịch",
+  "report_label_live_class": "Lớp học trực tuyến",
+  "report_label_assignment_scheduled": "Bài tập đã lên lịch",
+  "report_label_study_and_home_fun": "Bài tập về nhà",
+  "schedule_msg_no_matching_result": "No matching result",
+  "report_label_no_report": "Không có báo cáo"
 }
