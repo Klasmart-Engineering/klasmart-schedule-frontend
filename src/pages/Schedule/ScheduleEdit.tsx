@@ -1782,7 +1782,7 @@ function EditBox(props: CalendarStateProps) {
   const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({
     page: 1,
     page_size: 10,
-    group_names: ["Organization Content", "Badanamu Content", "More Featured Content"],
+    group_names: [],
   });
 
   const filterLessonGropuDatas: LearningComesFilterQuery = {

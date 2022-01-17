@@ -413,10 +413,16 @@ type lessonPlansByScheduleResult = ReturnType<typeof api.contentsLessonPlans.get
 export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
   "content/plans",
   async ({ metaLoading, ...query }) => {
-    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(query, {
-      page_size: query.page_size,
-      page: query.page,
-    });
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(
+      {
+        ...query,
+        group_names: query.group_names?.length ? query.group_names : ["Organization Content", "Badanamu Content", "More Featured Content"],
+      },
+      {
+        page_size: query.page_size,
+        page: query.page,
+      }
+    );
     return { data, total };
   }
 );
@@ -424,10 +430,16 @@ export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleRe
 export const getLessonPlansByScheduleLoadingPage = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
   "content/plansLoading",
   async ({ metaLoading, ...query }) => {
-    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(query, {
-      page_size: query.page_size,
-      page: query.page,
-    });
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(
+      {
+        ...query,
+        group_names: query.group_names?.length ? query.group_names : ["Organization Content", "Badanamu Content", "More Featured Content"],
+      },
+      {
+        page_size: query.page_size,
+        page: query.page,
+      }
+    );
     return { data, total };
   }
 );
