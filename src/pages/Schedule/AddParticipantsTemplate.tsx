@@ -328,7 +328,9 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         {((defaultFilter === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
           (defaultFilter === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
           !loading && (
-            <div className={css.emptyCon}>{name ? "No matching result" : d("No Data Available").t("report_no_data_available")}</div>
+            <div className={css.emptyCon}>
+              {name ? d("No matching result").t("schedule_msg_no_matching_result") : d("No Data Available").t("report_no_data_available")}
+            </div>
           )}
         {loading && (
           <Box sx={{ width: "98%" }}>

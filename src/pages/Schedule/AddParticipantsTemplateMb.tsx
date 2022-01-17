@@ -282,7 +282,11 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
           {((tabValue === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
             (tabValue === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
             !loading && (
-              <div className={css.emptyCon}>{searchName ? "No matching result" : d("No Data Available").t("report_no_data_available")}</div>
+              <div className={css.emptyCon}>
+                {searchName
+                  ? d("No matching result").t("schedule_msg_no_matching_result")
+                  : d("No Data Available").t("report_no_data_available")}
+              </div>
             )}
           {loading && (
             <Box sx={{ width: "98%" }}>

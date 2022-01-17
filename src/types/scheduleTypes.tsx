@@ -303,3 +303,16 @@ export type ParticipantRoleId = {
   Student?: string;
   Teacher?: string;
 };
+
+export interface LessonPlanFilterQuery {
+  programs: string[];
+  subjects: string[];
+  categorys: string[];
+  subs: string[];
+  ages: string[];
+  grades: string[];
+  group_names: string[];
+  page: number;
+  pages: number;
+  lesson_plan_name: string;
+}
