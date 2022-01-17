@@ -74,6 +74,8 @@ import {
   saveScheduleData,
   ScheduleFilterPrograms,
   scheduleShowOption,
+  getLessonPlansBySchedule,
+  getLessonPlansByScheduleLoadingPage,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -1776,15 +1778,34 @@ function EditBox(props: CalendarStateProps) {
     grades: condition.grade_ids ?? [],
   };
 
-  const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({ group_names: "", page: 1, pages: 10, lesson_plan_name: "" });
+  const [lessonPlanCondition, setLessonPlanCondition] = React.useState<any>({
+    page: 1,
+    page_size: 10,
+    group_names: ["Organization Content", "Badanamu Content", "More Featured Content"],
+  });
+
+  const filterLessonGropuDatas: LearningComesFilterQuery = {
+    programs: Array.from(new Set((lessonPlanCondition.program_ids ?? []).concat(scheduleList.program_id ? [scheduleList.program_id] : []))),
+    subjects: Array.from(new Set((lessonPlanCondition.subject_ids ?? []).concat(subjectIds))),
+    categorys: lessonPlanCondition.category_ids ?? [],
+    subs: lessonPlanCondition.sub_category_ids ?? [],
+    ages: lessonPlanCondition.age_ids ?? [],
+    grades: lessonPlanCondition.grade_ids ?? [],
+  };
 
   const searcLessonPlanList = async (filterQueryAssembly: object) => {
-    // console.log(lessonPlanCondition, filterQueryAssembly);
     const query = {
       ...lessonPlanCondition,
       ...filterQueryAssembly,
     };
+
     setLessonPlanCondition({ ...query });
+
+    if (query.page > 1) {
+      await dispatch(getLessonPlansByScheduleLoadingPage({ metaLoading: true, ...query }));
+    } else {
+      await dispatch(getLessonPlansBySchedule({ metaLoading: true, ...query }));
+    }
   };
 
   const handleLessonPlan = async () => {
@@ -1798,14 +1819,6 @@ function EditBox(props: CalendarStateProps) {
         dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
       }
     }
-    await getLearingOuctomeData(
-      {
-        ...condition,
-        program_ids: filterGropuDatas.programs.length ? filterGropuDatas.programs : null,
-        subject_ids: filterGropuDatas.subjects.length ? filterGropuDatas.subjects : null,
-      },
-      false
-    );
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -1816,11 +1829,12 @@ function EditBox(props: CalendarStateProps) {
           handleClose={() => {
             changeModalDate({ openStatus: false, enableCustomization: false });
           }}
-          filterGropuData={filterGropuDatas}
+          filterGropuData={filterLessonGropuDatas}
           searchOutcomesList={searcLessonPlanList}
           programs={modelSchedule.Deduplication(
             modelSchedule.LinkageLessonPlan(contentPreview).program.concat(scheduleMockOptions.programList).concat(programItem!)
           )}
+          lessonPlanId={scheduleList.lesson_plan_id}
           handelSetProgramChildInfo={handelSetProgramChildInfo}
           programChildInfoParent={
             (programChildInfo
@@ -2286,7 +2300,6 @@ function EditBox(props: CalendarStateProps) {
               className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
               multiline
               label={d("Add Participants").t("schedule_detail_participants")}
-              onChange={(e) => handleTopicListChange(e, "title")}
               required
               disabled
             ></TextField>
@@ -2302,38 +2315,28 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Box>
         )}
-        <button
-          style={{ display: "none" }}
-          onClick={() => {
-            handleLessonPlan();
-          }}
-        >
-          lesson plan
-        </button>
         {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
-          <Autocomplete
-            id="combo-box-demo"
-            freeSolo
-            options={lessonPlans}
-            groupBy={(option) => option.group_name as string}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "lesson_plan_id");
-            }}
-            value={lessonPlan}
-            disabled={isScheduleExpired() || isLimit()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className={css.fieldset}
-                label={d("Lesson Plan").t("library_label_lesson_plan")}
-                error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
-                value={scheduleList.lesson_plan_id}
-                variant="outlined"
-                required={scheduleList.class_type !== "Task"}
+          <Box className={css.fieldBox}>
+            <TextField
+              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+              multiline
+              value={lessonPlan?.name}
+              label={lessonPlan?.name ? "" : d("Lesson Plan").t("library_label_lesson_plan")}
+              required
+              error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
+              disabled
+            ></TextField>
+            {!(isScheduleExpired() || isLimit()) && (
+              <AddCircleOutlineOutlined
+                onClick={() => {
+                  if (isScheduleExpired() || isLimit()) return;
+                  if (scheduleDetial?.class?.enable !== false) handleLessonPlan();
+                }}
+                className={css.iconField}
+                style={{ top: "46%", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
               />
             )}
-          />
+          </Box>
         )}
         {scheduleList.class_type !== "Task" && (
           <>
