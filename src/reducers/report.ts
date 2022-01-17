@@ -1136,9 +1136,10 @@ export const onLoadLearningSummary = createAsyncThunk<
   const {
     report: { summaryReportOptions },
   } = getState();
+
   if (!summaryReportOptions.years.length) {
     const params = { time_offset: getTimeOffSecond(), summary_type };
-    await dispatch(getTimeFilter({ ...params, metaLoading: true }));
+    await dispatch(getTimeFilter({ ...params }));
     const {
       report: { learningSummary },
     } = getState();
@@ -1158,9 +1159,10 @@ export const onLoadLearningSummary = createAsyncThunk<
   _year = year ? year : years[0];
   const _week_start = week_start ? week_start : weeks[0].week_start;
   const _week_end = week_end ? week_end : weeks[0].week_end;
+
   if (isOrg || isSchool || isTeacher) {
     if (!summaryReportOptions.schools || !summaryReportOptions.schools.length) {
-      await dispatch(getStudentsByOrg({ metaLoading: true }));
+      await dispatch(getStudentsByOrg({}));
     }
     const {
       report: { learningSummary },
@@ -1204,8 +1206,8 @@ export const onLoadLearningSummary = createAsyncThunk<
     subject_id: _subject_id,
   };
   if (_student_id && _subject_id && _student_id !== "none" && _year && _week_start && _week_end) {
-    dispatch(getLiveClassesSummary({ ...params, metaLoading }));
-    dispatch(getAssignmentSummary({ ...params, metaLoading }));
+    await dispatch(getLiveClassesSummary({ ...params }));
+    await dispatch(getAssignmentSummary({ ...params }));
   }
   return { years, weeks, schools, classes, teachers, students, subjects, summary_type, ...params };
 });
@@ -1278,8 +1280,8 @@ export const getAfterClassFilter = createAsyncThunk<
     subject_id: _subject_id,
   };
   if (_student_id && _subject_id && _student_id !== "none") {
-    dispatch(getLiveClassesSummary({ ...params }));
-    dispatch(getAssignmentSummary({ ...params }));
+    await dispatch(getLiveClassesSummary({ ...params }));
+    await dispatch(getAssignmentSummary({ ...params }));
   }
   if (filter_type === "class") {
     return {

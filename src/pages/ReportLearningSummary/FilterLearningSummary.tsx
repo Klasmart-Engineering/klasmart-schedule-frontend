@@ -103,33 +103,7 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
   return (
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div>
-        {/* {isStudent && ( */}
         <div>
-          <TextField
-            size="small"
-            className={css.selectButton}
-            onChange={handleChangeYear}
-            label={t("report_filter_year")}
-            value={value.year || ""}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getYear()}
-          </TextField>
-          <TextField
-            size="small"
-            className={css.selectButton}
-            onChange={handleChangeWeek}
-            label={t("report_filter_week")}
-            value={defaultWeeksValue || ""}
-            select
-            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-          >
-            {getWeekElement()}
-          </TextField>
-        </div>
-        {/* )} */}
-        <div style={{ marginTop: 20 }}>
           {(isOrg || isSchoolAdmin || isTeacher) && (
             <>
               <TextField
@@ -180,6 +154,30 @@ export function FilterLearningSummary(props: FilterLearningSummaryProps) {
             {getInfos(subjects || [])}
           </TextField>
           {/* )} */}
+        </div>
+        <div style={{ marginTop: 20 }}>
+          <TextField
+            size="small"
+            className={css.selectButton}
+            onChange={handleChangeYear}
+            label={t("report_filter_year")}
+            value={value.year || ""}
+            select
+            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+          >
+            {getYear()}
+          </TextField>
+          <TextField
+            size="small"
+            className={css.selectButton}
+            onChange={handleChangeWeek}
+            label={t("report_filter_week")}
+            value={defaultWeeksValue || ""}
+            select
+            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+          >
+            {getWeekElement()}
+          </TextField>
         </div>
       </div>
       <Divider className={css.divider} />
