@@ -156,7 +156,7 @@ export function ReportDashboard() {
     PermissionType.report_my_skills_taught_642,
     // Learner Usage
     PermissionType.student_usage_report_657,
-    PermissionType.report_organizational_student_usage_654,
+    PermissionType.report_organization_student_usage_654,
     PermissionType.report_school_student_usage_655,
     PermissionType.report_teacher_student_usage_656,
     // list

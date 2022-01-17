@@ -31,10 +31,11 @@ const useStyles = makeStyles(() => ({
   },
   scoreValue: {
     fontSize: "30px",
-    lineHeight: "38px",
+    lineHeight: "35px",
   },
   scoreContainer: {
     width: "38%",
+    marginTop: "19px",
     marginLeft: "25px",
   },
   scoreItem: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles(() => ({
     width: "65%",
     height: "33px",
     margin: "0 auto",
-    marginTop: "35px",
+    marginTop: "20px",
     padding: "0 14px",
     borderRadius: "10px",
     color: "#fff",
@@ -123,7 +124,7 @@ export default function SkillCoverageTab() {
     <Grid container direction="column">
       <Grid wrap="nowrap" container direction="column" className={css.container}>
         <Box flex={1} display={"flex"}>
-          <Box flex={1} display={"flex"} position={"relative"}>
+          <Box flex={1} display={"flex"} marginTop={"15px"} position={"relative"}>
             <ParentSize>
               {(info) => {
                 return (

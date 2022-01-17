@@ -1043,7 +1043,7 @@
   "report_label_student_assignments_completion_rate": "Student Average Assignments Completion Rate for Subjects",
   "report_label_class_average_assignments_completion_rate": "Class Average Assignments Completion Rate",
   "report_label_subject_average_assignments_completion_rate": "Subject Average Assignments Completion Rate",
-  "report_label_student_progress_report": "Student Progress Report",
+  "report_label_student_progress_report": "Learner Monthly Report",
   "report_label_overall_attendance": "Overall Attendance",
   "report_label_overall_completion": "Overall Completion",
   "report_msg_participants_not_included": "Participants are not included",
@@ -1065,5 +1065,10 @@
   "report_label_assignment_scheduled": "Assignment Scheduled",
   "report_label_study_and_home_fun": "Study & Home Fun",
   "schedule_msg_no_matching_result": "No matching result",
-  "report_label_no_report": "No report available"
+  "report_label_no_report": "No report available",
+  "schedule_lesson_plan_search": "Lesson Plan Search",
+  "schedule_lesson_plan_popup_group": "Group",
+  "schedule_lesson_plan_popup_library": "Library",
+  "schedule_lesson_plan_popup_reset": "Reset",
+  "schedule_lesson_plan_popup_result": "Result"
 }

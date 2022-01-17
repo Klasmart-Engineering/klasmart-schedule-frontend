@@ -1,5 +1,4 @@
 import { apiLivePath } from "@api/extra";
-import { ParticipantString } from "@api/type";
 import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
@@ -47,9 +46,17 @@ import {
   getSubjectByProgramId,
   getUserInUndefined,
   ScheduleFilterPrograms,
-  scheduleUpdateStatus
+  scheduleUpdateStatus,
 } from "../../reducers/schedule";
-import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
+import {
+  AlertDialogProps,
+  memberType,
+  modeViewType,
+  ParticipantsShortInfo,
+  ParticipantString,
+  RouteParams,
+  timestampType,
+} from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
@@ -295,23 +302,13 @@ function ScheduleContent() {
   );
 
   const toLive = async (schedule_id?: string, token?: string) => {
-    let winRef: Window | null = window;
-    let url: string = "";
-    setTimeout(() => {
-      if (winRef) {
-        winRef = winRef.open(url, "_blank") as Window;
-      }
-    }, 500);
+    let winRef = window.open("", "_blank");
     await dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
     let resultInfo: any;
     resultInfo = await dispatch(
       getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
     );
-    if (!winRef.document.title) {
-      winRef.location.href = apiLivePath(resultInfo.payload.token);
-    } else {
-      url = apiLivePath(resultInfo.payload.token);
-    }
+    resultInfo.payload.token ? winRef && (winRef.location = apiLivePath(resultInfo.payload.token)) : winRef?.close();
   };
 
   const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {

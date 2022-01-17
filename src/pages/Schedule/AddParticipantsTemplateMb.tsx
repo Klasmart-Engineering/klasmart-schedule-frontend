@@ -1,5 +1,4 @@
 import { ParticipantsByClassQuery } from "@api/api-ko.auto";
-import { ParticipantString, ParticipantValue } from "@api/type";
 import { d } from "@locale/LocaleManager";
 import {
   Box,
@@ -26,8 +25,8 @@ import { resetParticipantsData } from "@reducers/schedule";
 import { cloneDeep } from "lodash";
 import React, { ChangeEvent, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ParticipantsData, ParticipantsShortInfo, RolesData } from "src/types/scheduleTypes";
 import { RootState } from "../../reducers";
+import { ParticipantsData, ParticipantsShortInfo, ParticipantString, ParticipantValue, RolesData } from "../../types/scheduleTypes";
 const useStyles = makeStyles((theme) =>
   createStyles({
     closeBtn: {
@@ -90,14 +89,16 @@ export interface AddParticipantsTemplateMbProps {
   participantsIds: ParticipantsShortInfo;
   participantList: ParticipantsByClassQuery;
   getParticipantsData?: (metaLoading: boolean, search: string, hash: string, roleName: ParticipantString["key"]) => void;
+  setSearchName: (value: string) => void;
+  searchName: string;
 }
 export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps) {
   const css = useStyles();
   const dispatch = useDispatch();
-  const { participantsIds, open, participantList, onClose, handleChangeParticipants, getParticipantsData } = props;
+  const { participantsIds, open, participantList, searchName, onClose, handleChangeParticipants, getParticipantsData, setSearchName } =
+    props;
   const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [tabValue, setTabValue] = useState(ParticipantValue.student);
-  const [name, setName] = useState("");
   const [dom, setDom] = useState<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [part, setPart] = useState<ParticipantsShortInfo>(participantsIds);
@@ -113,7 +114,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
     if (value === ParticipantValue.teacher && ParticipantsData.classes.teachers.length) return;
     setLoading(true);
     if (getParticipantsData) {
-      await getParticipantsData(false, name, "", value);
+      await getParticipantsData(false, searchName, "", value);
     }
     setLoading(false);
   };
@@ -128,7 +129,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
       if (contentScrollTop + clientHeight >= scrollHeight) {
         if (getParticipantsData && next && !loading) {
           setLoading(true);
-          await getParticipantsData(false, name, hash, tabValue);
+          await getParticipantsData(false, searchName, hash, tabValue);
           setLoading(false);
         }
       }
@@ -167,14 +168,14 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
   };
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    setSearchName(e.target.value);
   };
 
   const handleSearch = async () => {
     if (!loading && getParticipantsData) {
       setLoading(true);
       dispatch(resetParticipantsData());
-      await getParticipantsData(false, name, "", tabValue);
+      await getParticipantsData(false, searchName, "", tabValue);
       setLoading(false);
     }
   };
@@ -185,7 +186,7 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
   };
 
   const handleClearName = async () => {
-    setName("");
+    setSearchName("");
     if (!loading && getParticipantsData) {
       setLoading(true);
       dispatch(resetParticipantsData());
@@ -216,11 +217,11 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
             ),
             endAdornment: (
               <InputAdornment position="end">
-                {name && <Close fontSize="small" style={{ color: "rgba(0, 0, 0, 0.54)" }} onClick={handleClearName} />}
+                {searchName && <Close fontSize="small" style={{ color: "rgba(0, 0, 0, 0.54)" }} onClick={handleClearName} />}
               </InputAdornment>
             ),
           }}
-          value={name}
+          value={searchName}
           onChange={handleChangeName}
           onBlur={handleSearch}
         />
@@ -281,7 +282,11 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
           {((tabValue === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
             (tabValue === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
             !loading && (
-              <div className={css.emptyCon}>{name ? "No matching result" : d("No Data Available").t("report_no_data_available")}</div>
+              <div className={css.emptyCon}>
+                {searchName
+                  ? d("No matching result").t("schedule_msg_no_matching_result")
+                  : d("No Data Available").t("report_no_data_available")}
+              </div>
             )}
           {loading && (
             <Box sx={{ width: "98%" }}>

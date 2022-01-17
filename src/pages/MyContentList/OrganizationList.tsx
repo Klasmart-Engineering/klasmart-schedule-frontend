@@ -93,6 +93,7 @@ export enum CursorType {
 export type CursorListProps = Pick<GetOrganizationsQueryVariables, "direction" | "cursor"> & {
   curentPageCursor?: CursorType;
   sort?: OrganizationSortInput;
+  search?: string;
 };
 
 export interface OrganizationListProps {
@@ -119,7 +120,8 @@ export function OrganizationList(props: OrganizationListProps) {
   const [nameOrder, setNameOrder] = useState(false);
   const [emailOrder, setEmailOrder] = useState(false);
   const [sortType, setSortType] = useState<OrganizationSortBy>(OrganizationSortBy.Name);
-  const searchValue = watch()["searchValue"] || "";
+  const inputSearch = watch()["inputSearch"] || "";
+  const [buttonSearch, setButtonSearch] = useState("");
   useMemo(() => {
     const radioNewValue =
       selectedOrg && selectedOrg.length > 0
@@ -139,7 +141,7 @@ export function OrganizationList(props: OrganizationListProps) {
     setNewSelectedOrgIds(false);
   };
 
-  const searchOrgList = async ({ direction, cursor = "", curentPageCursor = CursorType.start, sort }: CursorListProps) => {
+  const searchOrgList = async ({ direction, cursor = "", curentPageCursor = CursorType.start, sort, search }: CursorListProps) => {
     const initSort: OrganizationSortInput = {
       field: [sortType],
       order:
@@ -147,24 +149,33 @@ export function OrganizationList(props: OrganizationListProps) {
           ? SortOrder.Asc
           : SortOrder.Desc,
     };
+    const searchValue = search !== undefined ? search : buttonSearch;
     const { payload } = (await dispatch(
       getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
     if (!payload) return;
     setPageDesc(getPageDesc(curentPageCursor, payload.orgListTotal, pageDesc));
-    reset({ ...getValues(), SELECTED_ORG: getDefaultValue(payload.orgs as OrgInfoProps[], beValues) });
+    reset({
+      ...getValues(),
+      SELECTED_ORG: getDefaultValue(payload.orgs as OrgInfoProps[], beValues),
+      inputSearch: searchValue,
+    });
   };
 
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
-    if (event.key === "Enter") searchOrgList({ direction: ConnectionDirection.Forward });
+    if (event.key === "Enter") {
+      setButtonSearch(inputSearch);
+      searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch });
+    }
   };
 
   const handleSortOrgList = (type: OrganizationSortBy) => {
+    setButtonSearch(inputSearch);
     const sort: OrganizationSortInput = {
       field: [type],
       order: type === OrganizationSortBy.Name ? (nameOrder ? SortOrder.Asc : SortOrder.Desc) : emailOrder ? SortOrder.Asc : SortOrder.Desc,
     };
-    searchOrgList({ direction: ConnectionDirection.Forward, sort });
+    searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch, sort });
     setSortType(type);
     type === OrganizationSortBy.Name ? setNameOrder(!nameOrder) : setEmailOrder(!emailOrder);
   };
@@ -248,7 +259,7 @@ export function OrganizationList(props: OrganizationListProps) {
                           <Controller
                             as={FormattedTextField}
                             control={control}
-                            name="searchValue"
+                            name="inputSearch"
                             size="small"
                             encode={frontTrim}
                             decode={frontTrim}
@@ -263,7 +274,10 @@ export function OrganizationList(props: OrganizationListProps) {
                             variant="contained"
                             color="primary"
                             disabled={radioValue !== ShareScope.share_to_org}
-                            onClick={() => searchOrgList({ direction: ConnectionDirection.Forward })}
+                            onClick={() => {
+                              setButtonSearch(inputSearch);
+                              searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch });
+                            }}
                           >
                             {d("Search").t("library_label_search")}{" "}
                           </Button>

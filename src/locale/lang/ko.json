@@ -1065,5 +1065,10 @@
   "report_label_assignment_scheduled": "등록된 과제",
   "report_label_study_and_home_fun": "스터디 및 홈펀스터디",
   "schedule_msg_no_matching_result": "No matching result",
-  "report_label_no_report": "확인 가능한 리포트가 없습니다."
+  "report_label_no_report": "확인 가능한 리포트가 없습니다.",
+  "schedule_lesson_plan_search": "Lesson Plan Search",
+  "schedule_lesson_plan_popup_group": "Group",
+  "schedule_lesson_plan_popup_library": "Library",
+  "schedule_lesson_plan_popup_reset": "Reset",
+  "schedule_lesson_plan_popup_result": "Result"
 }

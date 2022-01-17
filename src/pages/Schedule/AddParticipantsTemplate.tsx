@@ -1,4 +1,3 @@
-import { ParticipantString, ParticipantValue } from "@api/type";
 import {
   Box,
   Button,
@@ -24,7 +23,7 @@ import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { resetParticipantsData } from "../../reducers/schedule";
-import { ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
+import { ParticipantsShortInfo, ParticipantString, ParticipantValue, RolesData } from "../../types/scheduleTypes";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -329,7 +328,9 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         {((defaultFilter === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
           (defaultFilter === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
           !loading && (
-            <div className={css.emptyCon}>{name ? "No matching result" : d("No Data Available").t("report_no_data_available")}</div>
+            <div className={css.emptyCon}>
+              {name ? d("No matching result").t("schedule_msg_no_matching_result") : d("No Data Available").t("report_no_data_available")}
+            </div>
           )}
         {loading && (
           <Box sx={{ width: "98%" }}>
