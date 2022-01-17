@@ -74,6 +74,7 @@ import {
   ScheduleFilterPrograms,
   scheduleShowOption,
   getLessonPlansBySchedule,
+  getLessonPlansByScheduleLoadingPage,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -1795,7 +1796,12 @@ function EditBox(props: CalendarStateProps) {
     };
 
     setLessonPlanCondition({ ...query });
-    await dispatch(getLessonPlansBySchedule({ metaLoading: true, ...query }));
+
+    if (query.page > 1) {
+      await dispatch(getLessonPlansByScheduleLoadingPage({ metaLoading: true, ...query }));
+    } else {
+      await dispatch(getLessonPlansBySchedule({ metaLoading: true, ...query }));
+    }
   };
 
   const handleLessonPlan = async () => {
@@ -2290,7 +2296,6 @@ function EditBox(props: CalendarStateProps) {
               className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
               multiline
               label={d("Add Participants").t("schedule_detail_participants")}
-              onChange={(e) => handleTopicListChange(e, "title")}
               required
               disabled
             ></TextField>
@@ -2306,37 +2311,28 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Box>
         )}
-        <button
-          onClick={() => {
-            handleLessonPlan();
-          }}
-        >
-          lesson plan
-        </button>
         {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
-          <Autocomplete
-            id="combo-box-demo"
-            freeSolo
-            options={lessonPlans}
-            groupBy={(option) => option.group_name as string}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "lesson_plan_id");
-            }}
-            value={lessonPlan}
-            disabled={isScheduleExpired() || isLimit()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className={css.fieldset}
-                label={d("Lesson Plan").t("library_label_lesson_plan")}
-                error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
-                value={scheduleList.lesson_plan_id}
-                variant="outlined"
-                required={scheduleList.class_type !== "Task"}
+          <Box className={css.fieldBox}>
+            <TextField
+              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+              multiline
+              value={lessonPlan?.name}
+              label={lessonPlan?.name ? "" : d("Lesson Plan").t("library_label_lesson_plan")}
+              required
+              error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
+              disabled
+            ></TextField>
+            {!(isScheduleExpired() || isLimit()) && (
+              <AddCircleOutlineOutlined
+                onClick={() => {
+                  if (isScheduleExpired() || isLimit()) return;
+                  if (scheduleDetial?.class?.enable !== false) handleLessonPlan();
+                }}
+                className={css.iconField}
+                style={{ top: "46%", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
               />
             )}
-          />
+          </Box>
         )}
         {scheduleList.class_type !== "Task" && (
           <>

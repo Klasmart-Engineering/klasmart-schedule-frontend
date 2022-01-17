@@ -419,6 +419,17 @@ export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleRe
   }
 );
 
+export const getLessonPlansByScheduleLoadingPage = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
+  "content/plansLoading",
+  async ({ metaLoading, ...query }) => {
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(query, {
+      page_size: query.page_size,
+      page: query.page,
+    });
+    return { data, total };
+  }
+);
+
 /**
  *  get class by student
  */
@@ -1137,6 +1148,10 @@ const { actions, reducer } = createSlice({
       state.filterOtherClasses = payload.data;
     },
     [getLessonPlansBySchedule.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.lessonPlans = payload.data;
+      state.lessonPlansTotal = payload.total;
+    },
+    [getLessonPlansByScheduleLoadingPage.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.lessonPlans = [...state.lessonPlans, ...payload.data];
       state.lessonPlansTotal = payload.total;
     },

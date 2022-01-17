@@ -27,6 +27,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { EntityLessonPlanForSchedule } from "@api/api.auto";
 import { RootState } from "@reducers/index";
+import clsx from "clsx";
 
 const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
@@ -105,7 +106,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   groupBox: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     height: "50%",
     paddingLeft: "8px",
     borderBottom: "2px solid #EEEEEE",
@@ -137,6 +138,34 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     marginBottom: "18px",
     paddingRight: "3%",
     paddingLeft: "3%",
+  },
+  activeSelect: {
+    "& .MuiInputBase-root": {
+      backgroundColor: "#0E78D5",
+    },
+    "& .MuiInputBase-input , .MuiIconButton-label": {
+      color: "white",
+    },
+    "& .MuiAutocomplete-tag": {
+      color: "white",
+      marginLeft: "12px",
+    },
+    "& .MuiChip-deletable": {
+      backgroundColor: "#0E78D5",
+      color: "white",
+      marginLeft: "0px",
+      "& .MuiChip-deleteIcon": {
+        color: "white",
+      },
+    },
+  },
+  emptyLabel: {
+    fontFamily: "Helvetica",
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#ACACAC",
+    textAlign: "center",
+    marginTop: "16vh",
   },
 }));
 
@@ -276,6 +305,12 @@ function SelectGroup(props: filterGropProps) {
     { name: d("Grade").t("assess_label_grade"), data: deduplication(filteredList.grades), enum: "grades" },
   ];
 
+  const autocompleteValue = (key: string) => {
+    return key === "programs"
+      ? programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))
+      : defaultValues(key as "subjects" | "categorys" | "subs" | "ages" | "grades");
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -290,11 +325,7 @@ function SelectGroup(props: filterGropProps) {
               onChange={(e: any, newValue) => {
                 autocompleteChange(newValue, item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades");
               }}
-              value={
-                item.enum === "programs"
-                  ? programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))
-                  : defaultValues(item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades")
-              }
+              value={autocompleteValue(item.enum)}
               disableCloseOnSelect
               renderOption={(option: any, { selected }) => (
                 <React.Fragment>
@@ -308,8 +339,8 @@ function SelectGroup(props: filterGropProps) {
                   {...params}
                   style={{ marginTop: index > 2 ? 16 : 0 }}
                   size={"small"}
-                  className={classes.fieldset}
-                  label={item.name}
+                  className={clsx(classes.fieldset, autocompleteValue(item.enum).length ? classes.activeSelect : "")}
+                  placeholder={item.name}
                   variant="outlined"
                 />
               )}
@@ -498,6 +529,19 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   const [groupSelect, setGroupSelect] = React.useState<string[]>(lessonQuery.group_names);
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
 
+  const resetDisabled = useMemo(() => {
+    return (
+      filterQuery.programs.length ||
+      filterQuery.subjects.length ||
+      filterQuery.categorys.length ||
+      filterQuery.subs.length ||
+      filterQuery.grades.length ||
+      filterQuery.ages.length ||
+      groupSelect.length < 3 ||
+      selectedValue
+    );
+  }, [filterQuery, groupSelect, selectedValue]);
+
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
 
@@ -527,6 +571,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     setFilterQuery({ ages: [], categorys: [], grades: [], programs: [], subjects: [], subs: [] });
     setGroupSelect(["Organization Content", "Badanamu Content", "More Featured Content"]);
     setLessonPlanName("");
+    setSelectedValue("");
     searchOutcomesList({ page: 1, page_size: 10, group_names: ["Organization Content", "Badanamu Content", "More Featured Content"] });
   };
 
@@ -615,31 +660,41 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           variant="contained"
           style={{ background: "#0E78D5", color: "white", marginLeft: 10, width: "100px" }}
         >
-          Search
+          {d("Search").t("schedule_button_search")}
         </Button>
       </div>
       <div className={classes.groupBox}>
-        <FilterListIcon />
-        <Autocomplete
-          id="combo-box-demo"
-          options={groupLabel}
-          getOptionLabel={(option: any) => option.name}
-          multiple
-          limitTags={1}
-          value={groupLabel.filter((item) => groupSelect?.includes(item.id))}
-          onChange={(e: any, newValue) => {
-            autocompleteLessonChange(newValue);
-          }}
-          disableCloseOnSelect
-          renderOption={(option: any, { selected }) => (
-            <React.Fragment>
-              <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-              {option.name}
-            </React.Fragment>
-          )}
-          style={{ transform: "scale(0.9)" }}
-          renderInput={(params) => <TextField {...params} size={"small"} className={classes.fieldset} label="Group" variant="outlined" />}
-        />
+        <div style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+          <FilterListIcon />
+          <Autocomplete
+            id="combo-box-demo"
+            options={groupLabel}
+            getOptionLabel={(option: any) => option.name}
+            multiple
+            limitTags={1}
+            value={groupLabel.filter((item) => groupSelect?.includes(item.id))}
+            onChange={(e: any, newValue) => {
+              autocompleteLessonChange(newValue);
+            }}
+            disableCloseOnSelect
+            renderOption={(option: any, { selected }) => (
+              <React.Fragment>
+                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </React.Fragment>
+            )}
+            style={{ transform: "scale(0.9)" }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size={"small"}
+                className={clsx(classes.fieldset, groupSelect.length ? classes.activeSelect : "")}
+                placeholder="Group"
+                variant="outlined"
+              />
+            )}
+          />
+        </div>
         <SelectGroup
           programChildInfoParent={programChildInfoParent}
           handelSetProgramChildInfo={handelSetProgramChildInfo}
@@ -661,13 +716,13 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           setProgramChildInfo={setProgramChildInfo}
         />
       </div>
-      <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>152 results</span>
+      <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>{lessonPlansTotal} results</span>
       <div
         ref={(dom) => {
           setDom(dom);
         }}
         onScrollCapture={(e) => handleOnScroll()}
-        style={{ margin: "20px 0 20px 0" }}
+        style={{ margin: "20px 0 20px 0", minHeight: "40vh" }}
         className={classes.customizeContentBox}
       >
         <TableContainer component={Paper}>
@@ -697,13 +752,14 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
             </TableBody>
           </Table>
         </TableContainer>
+        {assemblingLessonPlans.length < 1 && <p className={classes.emptyLabel}>No data available</p>}
         {loading && <LinearProgress />}
       </div>
       <div style={{ textAlign: "end" }}>
-        <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={reset}>
+        <Button variant="outlined" size="large" color="primary" disabled={!resetDisabled} className={classes.margin} onClick={reset}>
           Reset
         </Button>
-        <Button variant="contained" size="large" color="primary" className={classes.margin} onClick={save}>
+        <Button variant="contained" size="large" color="primary" disabled={!selectedValue} className={classes.margin} onClick={save}>
           {d("Save").t("library_label_save")}
         </Button>
       </div>
