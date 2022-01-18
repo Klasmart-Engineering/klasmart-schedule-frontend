@@ -1,10 +1,9 @@
 import { EntityLearnerUsageResponse } from "@api/api.auto";
-import rightArrow from "@assets/icons/rightArrow.svg";
 import { t } from "@locale/LocaleManager";
-import { Icon, Link, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import BottomButton from "./BottomButton";
 
 const useStyles = makeStyles(() => ({
   reportContainer: {
@@ -71,46 +70,6 @@ const useStyles = makeStyles(() => ({
     wordBreak: "normal",
     wordWrap: "break-word",
   },
-  reportBottom: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "73%",
-    height: "33px",
-    margin: "0 auto",
-    marginTop: "20px",
-    color: "#fff",
-    boxSizing: "border-box",
-    cursor: "pointer",
-    fontWeight: "bold",
-    "& > a": {
-      width: "100%",
-      color: "#fff",
-      fontSize: 14,
-      fontWeight: 600,
-      padding: 7,
-      paddingLeft: 14,
-      paddingRight: 14,
-      textDecoration: "none",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      borderRadius: "10px",
-      backgroundColor: "#6D8199",
-      "&:hover": {
-        backgroundColor: "#556577",
-        textDecorationLine: "none",
-      },
-    },
-  },
-  rightIcon: {
-    width: 10,
-    height: 16,
-  },
-  rightIconImg: {
-    width: 10,
-    height: 11,
-  },
 }));
 
 interface ILearnerUsageReportProps {
@@ -154,14 +113,7 @@ export default function LearnerUsageReport({ learnerUsageOverview }: ILearnerUsa
             </div>
           );
         })}
-        <div className={css.reportBottom}>
-          <Link component={RouterLink} to={ReportStudentUsage.routeBasePath}>
-            {t("report_student_usage_report")}
-            <Icon fontSize="inherit" classes={{ root: css.rightIcon }}>
-              <img alt="" className={css.rightIconImg} src={rightArrow} />
-            </Icon>
-          </Link>
-        </div>
+        <BottomButton text={t("report_student_usage_report")} to={ReportStudentUsage.routeBasePath} marginTop={20} />
       </div>
     </div>
   );
