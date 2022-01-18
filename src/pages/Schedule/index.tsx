@@ -302,13 +302,22 @@ function ScheduleContent() {
   );
 
   const toLive = async (schedule_id?: string, token?: string) => {
-    let winRef = window.open("", "_blank");
-    await dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
-    let resultInfo: any;
-    resultInfo = await dispatch(
-      getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
-    );
-    resultInfo.payload.token ? winRef && (winRef.location = apiLivePath(resultInfo.payload.token)) : winRef?.close();
+    if (navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0) {
+      let winRef = window.open("", "_blank");
+      dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
+      let resultInfo: any;
+      resultInfo = await dispatch(
+        getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
+      );
+      resultInfo.payload.token ? winRef && (winRef.location = apiLivePath(resultInfo.payload.token)) : winRef?.close();
+    } else {
+      dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
+      let resultInfo: any;
+      resultInfo = await dispatch(
+        getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
+      );
+      resultInfo.payload.token && window.open(apiLivePath(resultInfo.payload.token), "_blank");
+    }
   };
 
   const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {

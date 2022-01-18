@@ -479,23 +479,67 @@ export default function CustomizeTempalte(props: InfoProps) {
   };
 
   const handleGoLive = async (scheduleInfos: ScheduleEditExtend) => {
-    let winRef: Window | null = window;
-    let url: string = "";
-    setTimeout(() => {
-      if (winRef) {
-        winRef = winRef.open(url, "_blank") as Window;
-      }
-    }, 500);
     const currentTime = Math.floor(new Date().getTime());
+    const isSafari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0;
+    let winRef: Window | null = window;
+    if (isSafari) {
+      if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
+        changeModalDate({
+          title: "",
+          text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                changeModalDate({
+                  enableCustomization: true,
+                  customizeTemplate: (
+                    <CustomizeTempalte
+                      handleDelete={() => {
+                        handleDelete(ScheduleViewInfo);
+                      }}
+                      handleClose={() => {
+                        changeModalDate({ openStatus: false, enableCustomization: false });
+                      }}
+                      scheduleInfo={scheduleInfo}
+                      toLive={toLive}
+                      changeModalDate={changeModalDate}
+                      checkLessonPlan={checkLessonPlan}
+                      handleChangeHidden={handleChangeHidden}
+                      isHidden={isHidden}
+                      refreshView={refreshView}
+                      ScheduleViewInfo={ScheduleViewInfo}
+                      privilegedMembers={privilegedMembers}
+                    />
+                  ),
+                  openStatus: true,
+                  handleClose: () => {
+                    changeModalDate({ openStatus: false });
+                  },
+                  showScheduleInfo: true,
+                });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+        return;
+      }
+      winRef = window.open("", "_blank");
+    }
     let resultInfo: any;
     resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
     if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
-      if (!winRef.document.title) {
-        winRef.location.href = apiLivePath(resultInfo.payload.token);
+      if (isSafari) {
+        resultInfo.payload.token ? winRef && (winRef.location = apiLivePath(resultInfo.payload.token)) : winRef?.close();
       } else {
-        url = apiLivePath(resultInfo.payload.token);
+        resultInfo.payload.token && window.open(apiLivePath(resultInfo.payload.token), "_blank");
       }
       return;
     }
@@ -548,10 +592,10 @@ export default function CustomizeTempalte(props: InfoProps) {
 
     handleClose();
     dispatch(scheduleUpdateStatus({ schedule_id: ScheduleViewInfo.id as string, status: { status: "Started" } }));
-    if (!winRef.document.title) {
-      winRef.location.href = apiLivePath(resultInfo.payload.token);
+    if (isSafari) {
+      resultInfo.payload.token ? winRef && (winRef.location = apiLivePath(resultInfo.payload.token)) : winRef?.close();
     } else {
-      url = apiLivePath(resultInfo.payload.token);
+      resultInfo.payload.token && window.open(apiLivePath(resultInfo.payload.token), "_blank");
     }
   };
 
