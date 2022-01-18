@@ -439,6 +439,7 @@ interface ScheduleLessonPlanMbProps {
   reset: () => void;
   save: () => void;
   selectGroupTemplate: () => ReactNode;
+  lessonPlans: EntityLessonPlanForSchedule[];
 }
 
 function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
@@ -458,10 +459,11 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     reset,
     save,
     selectGroupTemplate,
+    lessonPlans,
   } = props;
   const classes = useStyles();
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
-  const [, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
@@ -528,6 +530,8 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       </div>
       <div className={classes.resultText}>
         {lessonPlansTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
+        {assemblingLessonPlans.length} ===
+        {lessonPlans.length}
       </div>
       <div
         ref={(dom) => {
@@ -560,7 +564,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
               : d("No data available").t("schedule_popup_no_data_available")}
           </p>
         )}
-        {/*<LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />*/}
+        <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       </div>
       <div style={{ textAlign: "center" }}>
         <Button className={classes.saveMb} color="primary" variant="contained" disabled={!selectedValue} onClick={save}>
@@ -797,6 +801,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       setPage={setPage}
       reset={reset}
       save={save}
+      lessonPlans={lessonPlans}
     />
   ) : (
     <Box className={classes.previewContainer}>
