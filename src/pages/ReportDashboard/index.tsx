@@ -226,7 +226,7 @@ export function ReportDashboard() {
       <DiyTooltip title={<div className={css.infoul} dangerouslySetInnerHTML={{ __html: tip }}></div>}>
         <Info
           style={{
-            fontSize: 15,
+            fontSize: 20,
             marginLeft: 6,
           }}
         ></Info>

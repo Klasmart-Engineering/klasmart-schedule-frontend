@@ -1,7 +1,7 @@
 import { EntityTeacherReportCategory } from "@api/api.auto";
+import rightArrow from "@assets/icons/rightArrow.svg";
 import { t } from "@locale/LocaleManager";
-import { Box, Grid, makeStyles } from "@material-ui/core";
-import { ArrowRight } from "@material-ui/icons";
+import { Box, Grid, Icon, makeStyles } from "@material-ui/core";
 import { ReportCategories } from "@pages/ReportCategories";
 import { RootState } from "@reducers/index";
 import { getSkillCoverageReportAll } from "@reducers/report";
@@ -46,7 +46,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#6D8199",
-    width: "65%",
+    width: "73%",
     height: "33px",
     margin: "0 auto",
     marginTop: "20px",
@@ -56,6 +56,11 @@ const useStyles = makeStyles(() => ({
     fontSize: "13px",
     boxSizing: "border-box",
     cursor: "pointer",
+    fontWeight: "bold",
+  },
+  rightIcon: {
+    width: 10,
+    height: 35,
   },
 }));
 
@@ -147,7 +152,9 @@ export default function SkillCoverageTab() {
         <Grid container justifyContent="center" alignItems="center">
           <div onClick={handleClick} className={css.reportBottom}>
             {t("report_label_lo_in_categories")}
-            <ArrowRight />
+            <Icon classes={{ root: css.rightIcon }}>
+              <img alt="" src={rightArrow} />
+            </Icon>
           </div>
         </Grid>
       </Grid>
