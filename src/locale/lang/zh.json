@@ -617,7 +617,7 @@
   "report_label_time_spent_on_h5p_activities_break_down": "游戏时间细化",
   "report_label_total_duration": "总时长",
   "report_label_avg_duration": "平均时长",
-  "report_label_report_list": "报告列表",
+  "report_label_report_list": "分析与报告",
   "report_label_teaching_load": "老师使用报告",
   "report_label_school": "学校",
   "report_label_0_2_hours": "0~2 小时",
@@ -628,7 +628,7 @@
   "report_label_live": "线上课",
   "report_label_hours": "小时",
   "report_label_mins": "分钟",
-  "report_label_go_back": "返回报告列表",
+  "report_label_go_back": "返回分析与报告",
   "report_label_individual_achievement": "学生表现",
   "general_error_unauthorized": "用户未登录，请先登录",
   "general_error_no_organization": "用户没有机构信息",
@@ -1056,7 +1056,7 @@
   "schedule_msg_assignment_sumbit": "您的作业将会被提交并批改。",
   "report_label_skill_coverage": "学习成果分类",
   "report_label_skill_coverage_info": "根据机构定义的技能类别细分的学习成果百分比。",
-  "report_label_learner_usage": "学生使用情况",
+  "report_label_learner_usage": "学生使用报告",
   "report_label_learner_usage_info": "了解学生在过去 7 天内的使用情况：\n<ul>\n  <li>学习资料使用指标\n</li>\n  <li>课堂出勤情况\n</li>\n  <li>作业详情\n</li>\n</ul>",
   "report_label_content_used": "使用的内容",
   "report_label_5_types": "5 种类型",
@@ -1070,5 +1070,8 @@
   "schedule_lesson_plan_popup_group": "组别",
   "schedule_lesson_plan_popup_library": "内容库",
   "schedule_lesson_plan_popup_reset": "重置",
-  "schedule_lesson_plan_popup_result": "个结果"
+  "schedule_lesson_plan_popup_results": "个结果",
+  "schedule_popup_search_for_lesson_plan": "搜索教学课件",
+  "schedule_popup_no_data_available": "暂无可用课件",
+  "schedule_popup_no_matching_result": "没有匹配的搜索结果"
 }
