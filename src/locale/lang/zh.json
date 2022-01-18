@@ -1073,5 +1073,7 @@
   "schedule_lesson_plan_popup_results": "个结果",
   "schedule_popup_search_for_lesson_plan": "搜索教学课件",
   "schedule_popup_no_data_available": "暂无可用课件",
-  "schedule_popup_no_matching_result": "没有匹配的搜索结果"
+  "schedule_popup_no_matching_result": "没有匹配的搜索结果",
+  "library_label_organization": "机构",
+  "library_label_org_owner_email": "机构所有者的电子邮件"
 }
