@@ -459,7 +459,6 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     reset,
     save,
     selectGroupTemplate,
-    lessonPlans,
   } = props;
   const classes = useStyles();
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
@@ -512,6 +511,9 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
             const code = e.keyCode || e.which || e.charCode;
             if (code === 13) inquiryAssembly(filterQuery, false);
           }}
+          onBlur={(e) => {
+            inquiryAssembly(filterQuery, false);
+          }}
           size="small"
           className={classes.mobileSearch}
         />
@@ -530,14 +532,16 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       </div>
       <div className={classes.resultText}>
         {lessonPlansTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
-        {assemblingLessonPlans.length} ===
-        {lessonPlans.length}
       </div>
       <div
         ref={(dom) => {
           setDom(dom);
         }}
-        onScrollCapture={(e) => handleOnScroll()}
+        onScrollCapture={(e) => {
+          const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
+          if (page + 1 > maxPage) return;
+          handleOnScroll();
+        }}
         className={classes.previewDetailMb}
         style={{ height: previewDetailMbHeight() }}
       >
@@ -864,7 +868,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
                       name="radio-button-demo"
                       color="primary"
                     />
-                    {item?.name}
+                    <span style={{ whiteSpace: "pre" }}>{item?.name}</span>
                   </TableCell>
                   <TableCell align="center">{item?.group_name}</TableCell>
                 </TableRow>
