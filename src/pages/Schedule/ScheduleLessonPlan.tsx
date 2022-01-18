@@ -229,6 +229,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   selectBox: {
     display: "flex",
     alignItems: "center",
+    marginTop: "10px",
     [breakpoints.down(600)]: {
       marginTop: "0px",
     },
@@ -386,6 +387,7 @@ function SelectGroup(props: filterGropProps) {
         <div className={classes.filterBox}>
           {selectGroup.map((item, index) => (
             <Autocomplete
+              key={index}
               id="combo-box-demo"
               options={item.data}
               getOptionLabel={(option: any) => option.name}
@@ -460,7 +462,6 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   const classes = useStyles();
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
   const [loading, setLoading] = React.useState(false);
-  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
@@ -471,14 +472,6 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       }
     }
     return `${offset ? window.screen.height - 540 : window.screen.height - 445}px`;
-  };
-  const getSearcherResult = (value: string) => {
-    if (timer) clearTimeout(timer);
-    const timers = setTimeout(async () => {
-      setLessonPlanName(value);
-      await inquiryAssembly(filterQuery, false, value);
-    }, 500);
-    setTimer(timers);
   };
 
   const handleOnScroll = async () => {
@@ -500,18 +493,22 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
       <div className={classes.lessonTitleMb}>
-        <span>Lesson Plan Search</span> <CloseIcon onClick={handleClose} />
+        <span>{d("Lesson Plan Search").t("schedule_lesson_plan_search")}</span> <CloseIcon onClick={handleClose} />
       </div>
       <div style={{ textAlign: "center" }}>
         <TextField
           id="outlined-start-adornment"
-          placeholder="Search for lesson plan"
+          placeholder={d("Search for lesson plan").t("schedule_popup_search_for_lesson_plan")}
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
-          value={lessonPlanName}
           onChange={(e) => {
-            getSearcherResult(e.target.value);
+            setLessonPlanName(e.target.value);
+          }}
+          value={lessonPlanName}
+          onKeyDown={(e) => {
+            const code = e.keyCode || e.which || e.charCode;
+            if (code === 13) inquiryAssembly(filterQuery, false);
           }}
           size="small"
           className={classes.mobileSearch}
@@ -526,10 +523,12 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
             if (resetDisabled) reset();
           }}
         >
-          Reset
+          {d("Reset").t("schedule_lesson_plan_popup_reset")}
         </span>
       </div>
-      <div className={classes.resultText}>{lessonPlansTotal} result</div>
+      <div className={classes.resultText}>
+        {lessonPlansTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
+      </div>
       <div
         ref={(dom) => {
           setDom(dom);
@@ -556,10 +555,12 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         ))}
         {assemblingLessonPlans.length < 1 && (
           <p className={classes.emptyLabel} style={{ fontSize: 16 }}>
-            {lessonPlanName ? "No matching results" : "No data available"}
+            {lessonPlanName
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
           </p>
         )}
-        {loading && <LinearProgress />}
+        <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       </div>
       <div style={{ textAlign: "center" }}>
         <Button className={classes.saveMb} color="primary" variant="contained" disabled={!selectedValue} onClick={save}>
@@ -670,7 +671,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
                 {...params}
                 size={"small"}
                 className={clsx(classes.fieldset, groupSelect.length ? classes.activeSelect : "")}
-                placeholder="Group"
+                placeholder={d("Group").t("schedule_lesson_plan_popup_group")}
                 variant="outlined"
               />
             )}
@@ -743,6 +744,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       page_size: 10,
       page: loadPages ? page + 1 : 1,
     };
+    if (!loadPages) setPage(1);
     await searchOutcomesList(filterQueryAssembly);
   };
 
@@ -783,12 +785,13 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.lessonTitle}>
-        <span>Lesson Plan Search</span> <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
+        <span>{d("Lesson Plan Search").t("schedule_lesson_plan_search")}</span>{" "}
+        <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
       </div>
       <div className={classes.searchValue}>
         <TextField
           id="outlined-start-adornment"
-          placeholder="Search for lesson plan"
+          placeholder={d("Search for lesson plan").t("schedule_popup_search_for_lesson_plan")}
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
@@ -810,7 +813,9 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
         </Button>
       </div>
       <div className={classes.groupBox}>{selectGroupTemplate()}</div>
-      <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>{lessonPlansTotal} results</span>
+      <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>
+        {lessonPlansTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
+      </span>
       <div
         ref={(dom) => {
           setDom(dom);
@@ -824,7 +829,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
             <TableHead style={{ backgroundColor: "#F2F5F7" }}>
               <TableRow>
                 <TableCell align="center">{d("Lesson Plan").t("schedule_detail_lesson_plan")}</TableCell>
-                <TableCell align="center">Library</TableCell>
+                <TableCell align="center">{d("Library").t("schedule_lesson_plan_popup_library")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -847,13 +852,17 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           </Table>
         </TableContainer>
         {assemblingLessonPlans.length < 1 && (
-          <p className={classes.emptyLabel}>{lessonPlanName ? "No matching results" : "No data available"}</p>
+          <p className={classes.emptyLabel}>
+            {lessonPlanName
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
+          </p>
         )}
-        {loading && <LinearProgress />}
+        <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       </div>
       <div style={{ textAlign: "end" }}>
         <Button variant="outlined" size="large" color="primary" disabled={!resetDisabled} className={classes.margin} onClick={reset}>
-          Reset
+          {d("Reset").t("schedule_lesson_plan_popup_reset")}
         </Button>
         <Button variant="contained" size="large" color="primary" disabled={!selectedValue} className={classes.margin} onClick={save}>
           {d("Save").t("library_label_save")}
