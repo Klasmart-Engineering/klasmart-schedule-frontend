@@ -1057,7 +1057,7 @@
   "report_label_skill_coverage": "学习成果分类",
   "report_label_skill_coverage_info": "根据机构定义的技能类别细分的学习成果百分比。",
   "report_label_learner_usage": "学生使用情况",
-  "report_label_learner_usage_info": "了解学生在过去 7 天内的使用情况：\n-学习资料使用指标\n-课堂出勤情况\n-作业详情",
+  "report_label_learner_usage_info": "了解学生在过去 7 天内的使用情况：\n<ul>\n  <li>学习资料使用指标\n</li>\n  <li>课堂出勤情况\n</li>\n  <li>作业详情\n</li>\n</ul>",
   "report_label_content_used": "使用的内容",
   "report_label_5_types": "5 种类型",
   "report_label_class_scheduled": "预定的课程",
