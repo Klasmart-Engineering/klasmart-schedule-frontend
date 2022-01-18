@@ -531,9 +531,9 @@ export default function CustomizeTempalte(props: InfoProps) {
       }
       winRef = window.open("", "_blank");
     }
-    let resultInfo: any;
-    resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
     if (permissionShowLive && ScheduleViewInfo.class_type_label?.id! === "Homework") {
+      let resultInfo: any;
+      resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
       handleClose();
       dispatch(scheduleUpdateStatus({ schedule_id: scheduleInfo.id, status: { status: "Started" } }));
       if (isSafari) {
@@ -589,7 +589,8 @@ export default function CustomizeTempalte(props: InfoProps) {
       });
       return;
     }
-
+    let resultInfo: any;
+    resultInfo = await dispatch(getScheduleLiveToken({ schedule_id: scheduleInfo.id, live_token_type: "live", metaLoading: true }));
     handleClose();
     dispatch(scheduleUpdateStatus({ schedule_id: ScheduleViewInfo.id as string, status: { status: "Started" } }));
     if (isSafari) {
