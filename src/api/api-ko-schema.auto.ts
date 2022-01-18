@@ -547,6 +547,12 @@ export type CreateCategoryInput = {
   subcategories?: Maybe<Array<Scalars["ID"]>>;
 };
 
+export type CreateClassInput = {
+  name: Scalars["String"];
+  organizationId: Scalars["ID"];
+  shortcode?: Maybe<Scalars["String"]>;
+};
+
 export type CreateRoleInput = {
   organizationId: Scalars["ID"];
   roleDescription: Scalars["String"];
@@ -720,6 +726,7 @@ export type Mutation = {
   class?: Maybe<Class>;
   classes?: Maybe<Array<Maybe<Class>>>;
   createCategories?: Maybe<CategoriesMutationResult>;
+  createClasses?: Maybe<ClassesMutationResult>;
   createRoles?: Maybe<RolesMutationResult>;
   createSchools?: Maybe<SchoolsMutationResult>;
   createSubcategories?: Maybe<SubcategoriesMutationResult>;
@@ -812,6 +819,10 @@ export type MutationClassArgs = {
 
 export type MutationCreateCategoriesArgs = {
   input: Array<CreateCategoryInput>;
+};
+
+export type MutationCreateClassesArgs = {
+  input: Array<CreateClassInput>;
 };
 
 export type MutationCreateRolesArgs = {
@@ -1114,6 +1125,7 @@ export type Organization = {
   categories?: Maybe<Array<Category>>;
   /** @deprecated Use 'getClasses'. */
   classes?: Maybe<Array<Maybe<Class>>>;
+  /** @deprecated Sunset Date: 10/04/2022 https://calmisland.atlassian.net/l/c/GSPr3XYb */
   createClass?: Maybe<Class>;
   createOrUpdateAgeRanges?: Maybe<Array<Maybe<AgeRange>>>;
   /** @deprecated Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/l/c/kY3S0K0h */

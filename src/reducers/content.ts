@@ -10,6 +10,7 @@ import {
 } from "@api/api-ko-schema.auto";
 import { OrgInfoProps } from "@pages/MyContentList/OrganizationList";
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
+import { uniq } from "lodash";
 import cloneDeep from "lodash/cloneDeep";
 import uniqBy from "lodash/uniqBy";
 import { UseFormMethods } from "react-hook-form";
@@ -379,6 +380,18 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
   "content/onLoadContentEdit",
   async ({ id, type, searchMedia, isShare }, { dispatch }) => {
     const contentDetail = id ? await api.contents.getContentById(id) : initialState.contentDetail;
+    let developmentals: string[] = [];
+    contentDetail.outcome_entities
+      ?.filter((item) => item && item.categories && item.categories.length)
+      .forEach((item) => {
+        developmentals = developmentals.concat(item.categories || []);
+      });
+    let sckillIds: string[] = [];
+    contentDetail.outcome_entities
+      ?.filter((item) => item && item.subcategories && item.subcategories.length)
+      .forEach((item) => {
+        sckillIds = sckillIds.concat(item.subcategories || []);
+      });
     const [lesson_types, visibility_settings] = await Promise.all([
       type === "material" ? api.lessonTypes.getLessonType() : undefined,
       type === "material" || type === "plan"
@@ -404,12 +417,11 @@ export const onLoadContentEdit = createAsyncThunk<onLoadContentEditResult, onLoa
           default_subject_ids: contentDetail.subject?.join(","),
         })
       ),
-      // dispatch(getOutcomesFullOptions({})),
     ]);
     dispatch(
       getOutcomesResourceOptions({
-        developmentals: contentDetail.outcome_entities?.filter((item) => item.developmental).map((item) => item.developmental || "") ?? [],
-        skillIds: contentDetail.outcome_entities?.filter((item) => item.skills).map((item) => item.skills || "") ?? [],
+        developmentals: uniq(developmentals),
+        skillIds: uniq(sckillIds),
       })
     );
 
@@ -580,30 +592,15 @@ export const searchAuthContentLists = createAsyncThunk<IQueryContentsResult, IQu
 
 interface IQueryOnLoadContentPreviewParams extends LoadingMetaPayload {
   content_id: Parameters<typeof api.contents.getContentById>[0];
-  schedule_id: string;
-  tokenToCall?: boolean;
+  schedule_id?: string;
 }
 interface IQyeryOnLoadCotnentPreviewResult {
   contentDetail: AsyncReturnType<typeof api.contents.getContentById>;
   user_id?: string;
-  token: string;
 }
 export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewResult, IQueryOnLoadContentPreviewParams>(
   "content/onLoadContentPreview",
-  async ({ content_id, schedule_id, tokenToCall = true }) => {
-    let token: string = "";
-    if (tokenToCall) {
-      if (schedule_id) {
-        const data = await api.schedules
-          .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
-          .catch((err) => Promise.reject(err.label));
-        await api.schedules.getScheduleById(schedule_id);
-        token = data.token as string;
-      } else {
-        const data = await api.contents.getContentLiveToken(content_id);
-        token = data.token as string;
-      }
-    }
+  async ({ content_id }) => {
     const contentDetail = await api.contents.getContentById(content_id);
     const {
       data: { myUser },
@@ -611,7 +608,24 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
       query: GetMyIdDocument,
     });
     const user_id = myUser?.node?.id || "";
-    return { contentDetail, user_id, token };
+    return { contentDetail, user_id };
+  }
+);
+export const getLiveToken = createAsyncThunk<string, IQueryOnLoadContentPreviewParams>(
+  "content/getLiveToken",
+  async ({ schedule_id, content_id }) => {
+    let token: string = "";
+    if (schedule_id) {
+      const data = await api.schedules
+        .getScheduleLiveToken(schedule_id, { live_token_type: "preview" })
+        .catch((err) => Promise.reject(err.label));
+      await api.schedules.getScheduleById(schedule_id);
+      token = data.token as string;
+    } else {
+      const data = await api.contents.getContentLiveToken(content_id);
+      token = data.token as string;
+    }
+    return token;
   }
 );
 
@@ -625,7 +639,7 @@ export const deleteContent = createAsyncThunk<IQueryDeleteContentResult, IQueryD
   async ({ id, type }, { dispatch }) => {
     const content =
       type === Action.remove
-        ? d("Are you sure you want to remove this content?").t("library_msg_remove_content")
+        ? d("Are you sure you want to archive this content?").t("library_msg_remove_content")
         : d("Are you sure you want to delete this content?").t("library_msg_delete_content");
     const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content })));
     if (!isConfirmed) return Promise.reject();
@@ -1181,16 +1195,15 @@ const { actions, reducer } = createSlice({
     [contentLists.rejected.type]: (state, { error }: any) => {},
 
     [onLoadContentPreview.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
-      // alert("success");
       state.contentPreview = initialState.contentPreview;
       state.user_id = initialState.user_id;
-      state.token = initialState.token;
     },
     [onLoadContentPreview.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof onLoadContentPreview>>) => {
-      // alert("success");
       state.contentPreview = payload.contentDetail;
       state.user_id = payload.user_id || "";
-      state.token = payload.token;
+    },
+    [getLiveToken.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getLiveToken>>) => {
+      state.token = payload;
     },
     [onLoadContentPreview.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));

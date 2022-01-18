@@ -72,9 +72,10 @@ export class ModelMilestoneOptions {
               : [];
           // const programDefaultValue =
           //   linkedMockOptions.program && linkedMockOptions.program[0] ? [linkedMockOptions.program[0].id || ""] : [];
+          const _program = programValue?.filter((pItem) => linkedMockOptions.program?.find((item) => item.id === pItem));
           result[name] = {
             key: ModelMilestoneOptions.createSelectKey(linkedMockOptions.program, programValue, name),
-            value: regulation === Regulation.ByMilestoneDetail ? programValue : [],
+            value: regulation === Regulation.ByMilestoneDetail ? _program : [],
           };
           break;
         case "subject":
@@ -84,9 +85,12 @@ export class ModelMilestoneOptions {
               : [];
           // const subjectdefaultValue =
           //   linkedMockOptions.subject && linkedMockOptions.subject[0] ? [linkedMockOptions.subject[0].id || ""] : [];
+          const _subject = subjectValue
+            ? subjectValue?.filter((sItem) => linkedMockOptions.subject?.find((item) => item.id === sItem))
+            : [];
           result[name] = {
             key: ModelMilestoneOptions.createSelectKey(linkedMockOptions.subject, subjectValue, name),
-            value: regulation === Regulation.ByMilestoneDetail ? subjectValue : [],
+            value: regulation === Regulation.ByMilestoneDetail ? _subject : [],
           };
           break;
         case "category":
@@ -96,9 +100,10 @@ export class ModelMilestoneOptions {
               : [];
           // const categorydefaultValue =
           //   linkedMockOptions.developmental && linkedMockOptions.developmental[0] ? [linkedMockOptions.developmental[0].id || ""] : [];
+          const _developmental = categoryValue?.filter((dItem) => linkedMockOptions.developmental?.find((item) => dItem === item.id));
           result[name] = {
             key: ModelMilestoneOptions.createSelectKey(linkedMockOptions.developmental, categoryValue, name),
-            value: regulation === Regulation.ByMilestoneDetail ? categoryValue : [],
+            value: regulation === Regulation.ByMilestoneDetail ? _developmental : [],
           };
           break;
         case "sub_category":

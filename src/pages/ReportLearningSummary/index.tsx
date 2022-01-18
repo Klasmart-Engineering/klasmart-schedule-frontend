@@ -90,10 +90,10 @@ export function ReportLearningSummary() {
         year,
         week_start,
         week_end,
-        school_id: "",
-        class_id: "",
-        student_id: "",
-        subject_id: "",
+        school_id,
+        class_id,
+        student_id,
+        subject_id,
         metaLoading: true,
       })
     );
@@ -106,10 +106,10 @@ export function ReportLearningSummary() {
         year,
         week_start: 0,
         week_end: 0,
-        school_id: "",
-        class_id: "",
-        student_id: "",
-        subject_id: "",
+        school_id,
+        class_id,
+        student_id,
+        subject_id,
         metaLoading: true,
       })
     );
@@ -123,13 +123,13 @@ export function ReportLearningSummary() {
   }, [school_id, week_end, week_start, year]);
   const changeSchoolFilter = useMemo(
     () => async (school_id: string) => {
-      await dispatch(getAfterClassFilter({ filter_type: "class", school_id, ...filterParams }));
+      await dispatch(getAfterClassFilter({ filter_type: "class", school_id, ...filterParams, metaLoading: true }));
     },
     [dispatch, filterParams]
   );
   const changeClassFilter = useMemo(
     () => async (class_id: string) => {
-      await dispatch(getAfterClassFilter({ filter_type: "student", school_id, class_id, ...filterParams }));
+      await dispatch(getAfterClassFilter({ filter_type: "student", school_id, class_id, ...filterParams, metaLoading: true }));
     },
     [dispatch, filterParams, school_id]
   );

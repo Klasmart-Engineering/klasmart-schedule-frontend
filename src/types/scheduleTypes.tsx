@@ -1,4 +1,3 @@
-import { MockOptionsItem } from "../api/extra";
 import {
   EntityScheduleDetailsView,
   EntityScheduleFilterClass,
@@ -7,6 +6,7 @@ import {
   EntityScheduleViewDetail,
   ModelOutcomeSetCreateView,
 } from "../api/api.auto";
+import { MockOptionsItem } from "../api/extra";
 
 export type timestampType = {
   start: number;
@@ -141,8 +141,14 @@ export interface ClassesData {
 export interface ParticipantsData {
   classes: ClassesData;
   total?: number;
-  hash?: string;
-  next?: boolean;
+  hash: {
+    teacher?: string;
+    student?: string;
+  };
+  next: {
+    teacher?: boolean;
+    student?: boolean;
+  };
 }
 
 export interface EntityScheduleShortInfo {
@@ -284,4 +290,29 @@ export interface LearningComesFilterQuery {
   subs: string[];
   ages: string[];
   grades: string[];
+}
+
+export enum ParticipantValue {
+  student = "Student",
+  teacher = "Teacher",
+}
+export type ParticipantString = {
+  key: "Student" | "Teacher";
+};
+export type ParticipantRoleId = {
+  Student?: string;
+  Teacher?: string;
+};
+
+export interface LessonPlanFilterQuery {
+  programs: string[];
+  subjects: string[];
+  categorys: string[];
+  subs: string[];
+  ages: string[];
+  grades: string[];
+  group_names: string[];
+  page: number;
+  pages: number;
+  lesson_plan_name: string;
 }

@@ -52,7 +52,7 @@ const useStyles = makeStyles(({ palette, shadows, breakpoints }) => ({
 export const statusList = () => [
   { name: d("Achieved").t("report_label_achieved"), id: ReportFilter.achieved },
   { name: d("Not Achieved").t("report_label_not_achieved"), id: ReportFilter.not_achieved },
-  { name: d("Not Attempted").t("report_label_not_attempted"), id: ReportFilter.not_attempted },
+  { name: d("Not Attempted").t("assess_detail_not_attempted"), id: ReportFilter.not_attempted },
   { name: d("All").t("report_label_all"), id: ReportFilter.all },
 ];
 const sortOptions = () => [

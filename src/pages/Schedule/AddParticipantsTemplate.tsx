@@ -1,27 +1,29 @@
 import {
+  Box,
   Button,
   Checkbox,
   createStyles,
   FormControlLabel,
   FormGroup,
   Grid,
+  LinearProgress,
   makeStyles,
   Radio,
   RadioGroup,
   Theme,
   withStyles,
 } from "@material-ui/core";
-import { Search } from "@material-ui/icons";
-import React, { useMemo } from "react";
-import { d } from "../../locale/LocaleManager";
-import { ClassOptionsItem, ParticipantsShortInfo, RolesData } from "../../types/scheduleTypes";
 import InputBase from "@material-ui/core/InputBase/InputBase";
-import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
-import { resetParticipantsData } from "../../reducers/schedule";
-import { modelSchedule } from "../../models/ModelSchedule";
+import { Search } from "@material-ui/icons";
+import { modelSchedule } from "@models/ModelSchedule";
+import { cloneDeep } from "lodash";
+import React, { ChangeEvent, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ParticipantsByClassQuery } from "../../api/api-ko.auto";
+import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
-import { LinearProgress, Box } from "@material-ui/core";
+import { resetParticipantsData } from "../../reducers/schedule";
+import { ParticipantsShortInfo, ParticipantString, ParticipantValue, RolesData } from "../../types/scheduleTypes";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -112,12 +114,19 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "13px",
     cursor: "pointer",
   },
+  emptyCon: {
+    width: "100%",
+    heigth: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 }));
 
 interface InfoProps {
   handleClose: () => void;
   handleChangeParticipants?: (type: string, data: ParticipantsShortInfo) => void;
-  getParticipantsData?: (metaLoading: boolean, search: string, hash: string) => void;
+  getParticipantsData?: (metaLoading: boolean, search: string, hash: string, roleName: ParticipantString["key"]) => void;
   participantsIds: ParticipantsShortInfo;
   participantList: ParticipantsByClassQuery;
   nameUpperLevel: string;
@@ -126,58 +135,66 @@ interface InfoProps {
 
 export default function AddParticipantsTemplate(props: InfoProps) {
   const { ParticipantsData } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const { handleClose, handleChangeParticipants, participantsIds, getParticipantsData, participantList, nameUpperLevel, setSearchName } =
+  const { handleClose, handleChangeParticipants, participantsIds, participantList, getParticipantsData, nameUpperLevel, setSearchName } =
     props;
   const css = useStyles();
-  const [defaultFilter, setDefaultFilter] = React.useState("students");
+  const [defaultFilter, setDefaultFilter] = React.useState(ParticipantValue.student);
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
   const [tScrollTop, settScrollTop] = React.useState(0);
   const [sScrollTop, setsScrollTop] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
-
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (dom) {
-      dom.scrollTop = event.target.value === "students" ? sScrollTop : tScrollTop;
-    }
-    setDefaultFilter(event.target.value);
-  };
-
   const suggestParticipants = useMemo(() => {
     const participantsFilterData = modelSchedule.FilterParticipants(ParticipantsData, participantList);
-    const filterData: RolesData[] = (
-      defaultFilter === "students" ? participantsFilterData?.classes.students : participantsFilterData?.classes.teachers
-    ) as RolesData[];
-    return { filterData: filterData, next: ParticipantsData.next, hash: ParticipantsData.hash };
-  }, [ParticipantsData, participantList, defaultFilter]);
+    return { ...participantsFilterData };
+  }, [ParticipantsData, participantList]);
+
+  const handleFilterChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (dom) {
+      dom.scrollTop = event.target.value === ParticipantValue.student ? sScrollTop : tScrollTop;
+    }
+    const value = event.target.value as ParticipantValue;
+    setDefaultFilter(value);
+    if (value === ParticipantValue.student && ParticipantsData.classes.students.length) return;
+    if (value === ParticipantValue.teacher && ParticipantsData.classes.teachers.length) return;
+    setLoading(true);
+    if (getParticipantsData) {
+      await getParticipantsData(false, name, "", value);
+    }
+    setLoading(false);
+  };
 
   const [part, setPart] = React.useState<ParticipantsShortInfo>(participantsIds);
 
-  const is_tea_or_stu =
-    defaultFilter === "students"
-      ? (JSON.parse(JSON.stringify(part.student)) as ClassOptionsItem[])
-      : (JSON.parse(JSON.stringify(part.teacher)) as ClassOptionsItem[]);
-
-  const handleChange = (value: RolesData) => {
-    const is_exist = is_tea_or_stu.some((item) => item.id === value.user_id);
-    if (!is_exist) {
-      is_tea_or_stu.push({ id: value.user_id, name: value.user_name });
-      if (defaultFilter === "students") {
-        setPart({ ...part, student: is_tea_or_stu });
-        return;
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, value: RolesData) => {
+    const selectedValue = {
+      id: value.user_id,
+      name: value.user_name,
+    };
+    if (e.target.checked) {
+      if (defaultFilter === ParticipantValue.student) {
+        const student = [...part.student, selectedValue];
+        setPart({ ...part, student });
+      } else {
+        const teacher = [...part.teacher, selectedValue];
+        setPart({ ...part, teacher });
       }
-      setPart({ ...part, teacher: is_tea_or_stu });
-      return;
+    } else {
+      const _part = cloneDeep(part);
+      if (defaultFilter === ParticipantValue.student) {
+        _part.student.splice(
+          _part.student.findIndex((item) => item.id === value.user_id),
+          1
+        );
+      }
+      if (defaultFilter === ParticipantValue.teacher) {
+        _part.teacher.splice(
+          _part.teacher.findIndex((item) => item.id === value.user_id),
+          1
+        );
+      }
+      setPart({ ..._part });
     }
-    is_tea_or_stu.splice(
-      is_tea_or_stu.findIndex((item) => item.id === value.user_id),
-      1
-    );
-    if (defaultFilter === "students") {
-      setPart({ ...part, student: is_tea_or_stu });
-      return;
-    }
-    setPart({ ...part, teacher: is_tea_or_stu });
   };
 
   const handleConfirm = () => {
@@ -193,7 +210,7 @@ export default function AddParticipantsTemplate(props: InfoProps) {
       dispatch(resetParticipantsData());
       settScrollTop(0);
       setsScrollTop(0);
-      await getParticipantsData(false, name, "");
+      await getParticipantsData(false, name, "", defaultFilter);
       setLoading(false);
       setSearchName(name);
     }
@@ -214,15 +231,17 @@ export default function AddParticipantsTemplate(props: InfoProps) {
       const contentScrollTop = dom.scrollTop; //滚动条距离顶部
       const clientHeight = dom.clientHeight; //可视区域
       const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
-      if (defaultFilter === "students") {
+      if (defaultFilter === ParticipantValue.student) {
         setsScrollTop(contentScrollTop);
       } else {
         settScrollTop(contentScrollTop);
       }
+      const hash = defaultFilter === ParticipantValue.student ? ParticipantsData.hash.student ?? "" : ParticipantsData?.hash.teacher ?? "";
+      const next = defaultFilter === ParticipantValue.student ? ParticipantsData.next.student : ParticipantsData.next.teacher;
       if (contentScrollTop + clientHeight >= scrollHeight) {
-        if (suggestParticipants.next && getParticipantsData && !loading) {
+        if (next && getParticipantsData && !loading) {
           setLoading(true);
-          await getParticipantsData(false, name, suggestParticipants.hash ?? "");
+          await getParticipantsData(false, name, hash, defaultFilter);
           setLoading(false);
         }
       }
@@ -252,13 +271,13 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         </Button>
         <RadioGroup aria-label="gender" name="gender1" className={css.radioBox} value={defaultFilter} onChange={handleFilterChange}>
           <FormControlLabel
-            value="students"
+            value={ParticipantValue.student}
             control={<Radio color="primary" />}
             label={d("Student").t("schedule_time_conflict_student")}
             className={css.radioItem}
           />
           <FormControlLabel
-            value="teachers"
+            value={ParticipantValue.teacher}
             control={<Radio color="primary" />}
             label={d("Teacher").t("schedule_detail_teacher")}
             className={css.radioItem}
@@ -272,8 +291,8 @@ export default function AddParticipantsTemplate(props: InfoProps) {
         }}
         onScrollCapture={(e) => handleOnScroll()}
       >
-        {suggestParticipants.filterData &&
-          suggestParticipants.filterData.map((item: RolesData) => {
+        {defaultFilter === ParticipantValue.student &&
+          suggestParticipants.classes.students.map((item: RolesData) => {
             return (
               <FormControlLabel
                 key={item.user_id}
@@ -281,14 +300,38 @@ export default function AddParticipantsTemplate(props: InfoProps) {
                   <Checkbox
                     name="checkedB"
                     color="primary"
-                    checked={is_tea_or_stu.some((item1) => item1.id === item.user_id)}
-                    onChange={() => handleChange(item)}
+                    checked={part.student.some((item1) => item1.id === item.user_id)}
+                    onChange={(e) => handleChange(e, item)}
                   />
                 }
                 label={item.user_name}
               />
             );
           })}
+        {defaultFilter === ParticipantValue.teacher &&
+          suggestParticipants.classes.teachers.map((item: RolesData) => {
+            return (
+              <FormControlLabel
+                key={item.user_id}
+                control={
+                  <Checkbox
+                    name="checkedB"
+                    color="primary"
+                    checked={part.teacher.some((item1) => item1.id === item.user_id)}
+                    onChange={(e) => handleChange(e, item)}
+                  />
+                }
+                label={item.user_name}
+              />
+            );
+          })}
+        {((defaultFilter === ParticipantValue.student && !suggestParticipants.classes.students.length) ||
+          (defaultFilter === ParticipantValue.teacher && !suggestParticipants.classes.teachers.length)) &&
+          !loading && (
+            <div className={css.emptyCon}>
+              {name ? d("No matching result").t("schedule_msg_no_matching_result") : d("No Data Available").t("report_no_data_available")}
+            </div>
+          )}
         {loading && (
           <Box sx={{ width: "98%" }}>
             <LinearProgress />

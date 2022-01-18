@@ -19,7 +19,8 @@ const optionConfig = {
   applicationId: YOUR_NEW_RELIC_APP_ID,
   apiKey: YOUR_NEW_RELIC_USER_API_KEY,
   sourcemapUploadHost: SOURCE_MAP_UPLOAD_HOST,
-  releaseId: commit
+  releaseId: commit,
+  releaseName: new Date(execSync('git show -s --format=%cd').toString()).toString(),
 };
 
 const splits = (i) => i.split(".");

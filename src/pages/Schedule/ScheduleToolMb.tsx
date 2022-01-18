@@ -1,18 +1,17 @@
-import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import InputBase from "@material-ui/core/InputBase";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import { createStyles, makeStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { ArrowBackIosOutlined, SearchOutlined } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router";
-import { useLocation } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
 import { Permission, PermissionsWrapper } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { modeViewType, timestampType } from "../../types/scheduleTypes";
+import { EntityScheduleTimeView } from "@api/api.auto";
 
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
@@ -75,21 +74,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const useQuery = () => {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const name = query.get("name") || "";
-  return name;
-};
-
 function Tool(props: ToolProps) {
   const css = useStyles();
-  const [teacherName, setTeacherName] = React.useState(useQuery());
   const history = useHistory();
   const { includeList, changeTimesTamp, changeModelView, modelView, scheduleId, modelYear } = props;
-
-  const { breakpoints } = useTheme();
-  const mobile = useMediaQuery(breakpoints.down(600));
 
   const selectToday = (): void => {
     changeTimesTamp({
@@ -102,17 +90,8 @@ function Tool(props: ToolProps) {
     if (place === "create") {
       if (scheduleId) selectToday();
       history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
-    } else if (place === "search") {
-      if (!teacherName) return;
-      history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
     } else {
       history.goBack();
-    }
-  };
-
-  const handleKeyDown = (event: any) => {
-    if (event.keyCode === 13 && event.target.value.trim()) {
-      history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
     }
   };
 
@@ -121,8 +100,8 @@ function Tool(props: ToolProps) {
       <Grid container spacing={2} alignItems="center">
         <PermissionsWrapper value={[PermissionType.create_schedule_page_501, PermissionType.schedule_search_582]}>
           <>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              {!includeList && !mobile && (
+            <Grid item xs={12} sm={12} md={3} lg={3} style={{ textAlign: "center" }}>
+              {!includeList && (
                 <Permission
                   value={PermissionType.create_schedule_page_501}
                   render={(value) =>
@@ -131,12 +110,13 @@ function Tool(props: ToolProps) {
                         variant="contained"
                         color="primary"
                         className={css.btnRadio}
-                        style={{ width: mobile ? "100%" : "160px" }}
+                        style={{ width: "50%" }}
                         onClick={() => {
                           toolRouter("create");
+                          document.body.scrollTop = document.documentElement.scrollTop = 0;
                         }}
                       >
-                        <span style={{ fontSize: "23px", marginRight: "8px" }}>+</span>
+                        <span style={{ fontSize: "1.2rem", marginRight: "1rem" }}>+</span>{" "}
                         {d("Schedule Class").t("schedue_button_schedule_class")}
                       </Button>
                     )
@@ -144,55 +124,9 @@ function Tool(props: ToolProps) {
                 />
               )}
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={8}
-              md={4}
-              lg={4}
-              style={{ display: "flex", alignItems: "center", justifyContent: mobile ? "center" : "flex-start" }}
-            >
-              <Permission
-                value={PermissionType.schedule_search_582}
-                render={(value) =>
-                  value && (
-                    <>
-                      {includeList && (
-                        <ArrowBackIosOutlined
-                          className={css.arrowLeft}
-                          onClick={() => {
-                            toolRouter("create");
-                          }}
-                        />
-                      )}
-                      <FormControl style={{ width: mobile ? "68%" : "230px" }}>
-                        <BootstrapInput
-                          id="demo-customized-textbox"
-                          value={teacherName}
-                          onChange={(event) => setTeacherName(event.target.value)}
-                          onKeyDown={handleKeyDown}
-                          placeholder={d("Search teacher").t("schedule_text_search_teacher")}
-                        />
-                      </FormControl>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        className={css.searchBtn}
-                        startIcon={<SearchOutlined />}
-                        onClick={() => {
-                          toolRouter("search");
-                        }}
-                      >
-                        {d("Search").t("schedule_button_search")}
-                      </Button>
-                    </>
-                  )
-                }
-              />
-            </Grid>
-            {!includeList && !mobile && (
-              <Grid item xs={12} sm={12} md={5} lg={5} style={{ textAlign: mobile ? "center" : "right" }}>
-                <FormControl className={css.selectControl} style={{ width: mobile ? "68%" : "230px" }}>
+            {!includeList && (
+              <Grid item xs={12} sm={12} md={5} lg={5} style={{ textAlign: "center" }}>
+                <FormControl className={css.selectControl} style={{ width: "68%" }}>
                   <NativeSelect
                     id="demo-customized-select-native"
                     value={modelYear ? "year" : modelView}
@@ -235,10 +169,11 @@ interface ToolProps extends CalendarStateProps {
   changeModelView: (event: React.ChangeEvent<{ value: unknown }>) => void;
   scheduleId: string;
   modelYear: boolean;
+  scheduleTimeViewData: EntityScheduleTimeView[];
 }
 
-export default function ScheduleTool(props: ToolProps) {
-  const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView, scheduleId, modelYear } = props;
+export default function ScheduleToolMb(props: ToolProps) {
+  const { includeList, timesTamp, changeTimesTamp, changeModelView, modelView, scheduleId, modelYear, scheduleTimeViewData } = props;
   return (
     <Tool
       includeList={includeList}
@@ -248,6 +183,7 @@ export default function ScheduleTool(props: ToolProps) {
       modelView={modelView}
       scheduleId={scheduleId}
       modelYear={modelYear}
+      scheduleTimeViewData={scheduleTimeViewData}
     />
   );
 }

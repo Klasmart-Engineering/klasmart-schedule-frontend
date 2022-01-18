@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
-import { ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
+import { BooleanOperator, ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -25,6 +25,9 @@ import {
   GetProgramsDocument,
   GetProgramsQuery,
   GetProgramsQueryVariables,
+  GetRolesIdDocument,
+  GetRolesIdQuery,
+  GetRolesIdQueryVariables,
   GetSchoolsFilterListDocument,
   GetSchoolsFilterListQuery,
   GetSchoolsFilterListQueryVariables,
@@ -69,8 +72,11 @@ import {
   ClassesData,
   EntityScheduleSchoolInfo,
   filterOptionItem,
+  ParticipantRoleId,
   ParticipantsData,
   ParticipantsShortInfo,
+  ParticipantString,
+  ParticipantValue,
   RolesData,
 } from "../types/scheduleTypes";
 import programsHandler, { LinkedMockOptionsItem } from "./contentEdit/programsHandler";
@@ -124,6 +130,7 @@ export interface ScheduleState {
   classesConnection: GetClassFilterListQuery;
   filterOtherClasses: GetClassFilterListQuery;
   lessonPlans: EntityLessonPlanForSchedule[];
+  lessonPlansTotal: number;
   userInUndefined: GetUserQuery;
 }
 
@@ -244,8 +251,14 @@ const initialState: ScheduleState = {
       teachers: [],
     },
     total: 0,
-    hash: "",
-    next: false,
+    hash: {
+      teacher: "",
+      student: "",
+    },
+    next: {
+      teacher: false,
+      student: false,
+    },
   },
   participantsIds: { student: [], teacher: [] },
   classRosterIds: { student: [], teacher: [] },
@@ -293,6 +306,7 @@ const initialState: ScheduleState = {
   schoolsConnection: {},
   classesConnection: {},
   lessonPlans: [],
+  lessonPlansTotal: 0,
   userInUndefined: {},
   filterOtherClasses: {},
 };
@@ -392,11 +406,43 @@ export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async
   });
 });
 
-type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] & LoadingMetaPayload;
+type lessonPlansByScheduleParams = Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[0] &
+  Parameters<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>[1] &
+  LoadingMetaPayload;
 type lessonPlansByScheduleResult = ReturnType<typeof api.contentsLessonPlans.getLessonPlansCanSchedule>;
-export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>("content/plans", () => {
-  return api.contentsLessonPlans.getLessonPlansCanSchedule();
-});
+export const getLessonPlansBySchedule = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
+  "content/plans",
+  async ({ metaLoading, ...query }) => {
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(
+      {
+        ...query,
+        group_names: query.group_names?.length ? query.group_names : ["Organization Content", "Badanamu Content", "More Featured Content"],
+      },
+      {
+        page_size: query.page_size,
+        page: query.page,
+      }
+    );
+    return { data, total };
+  }
+);
+
+export const getLessonPlansByScheduleLoadingPage = createAsyncThunk<lessonPlansByScheduleResult, lessonPlansByScheduleParams>(
+  "content/plansLoading",
+  async ({ metaLoading, ...query }) => {
+    const { data, total } = await api.contentsLessonPlans.getLessonPlansCanSchedule(
+      {
+        ...query,
+        group_names: query.group_names?.length ? query.group_names : ["Organization Content", "Badanamu Content", "More Featured Content"],
+      },
+      {
+        page_size: query.page_size,
+        page: query.page,
+      }
+    );
+    return { data, total };
+  }
+);
 
 /**
  *  get class by student
@@ -491,12 +537,16 @@ interface participantsDataInterface extends LoadingMetaPayload {
   is_org: boolean;
   hash: string;
   name: string;
+  roleName: ParticipantString["key"]; //"Student" | "Teacher";
 }
 
-export const getParticipantsData = createAsyncThunk<ParticipantsData, participantsDataInterface>(
+export const getParticipantsData = createAsyncThunk<ParticipantsData, participantsDataInterface, { state: Rootstate }>(
   "getParticipantsData",
   // @ts-ignore
-  async ({ is_org, hash, name }) => {
+  async ({ is_org, hash, name, roleName }, { getState }) => {
+    const {
+      schedule: { ParticipantsData },
+    } = getState();
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     let filterQuery = {};
     if (is_org) {
@@ -527,10 +577,31 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
         ...filterQuery,
       };
     }
+    const { data: roleData } = await gqlapi.query<GetRolesIdQuery, GetRolesIdQueryVariables>({
+      query: GetRolesIdDocument,
+      variables: {
+        direction: ConnectionDirection.Forward,
+        directionArgs: { count: 10 },
+        filter: { system: { operator: BooleanOperator.Eq, value: true } },
+      },
+    });
+    const StudentAndTeacherRoleId: ParticipantRoleId = {};
+    roleData.rolesConnection?.edges?.forEach((item) => {
+      if (item?.node?.name === ParticipantValue.student) {
+        StudentAndTeacherRoleId.Student = item.node.id;
+      }
+      if (item?.node?.name === ParticipantValue.teacher) {
+        StudentAndTeacherRoleId.Teacher = item.node.id;
+      }
+    });
     const { data } = await gqlapi.query<GetUserQuery, GetUserQueryVariables>({
       query: GetUserDocument,
       variables: {
-        filter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" }, ...filterQuery },
+        filter: {
+          organizationUserStatus: { operator: StringOperator.Eq, value: "active" },
+          roleId: { operator: UuidOperator.Eq, value: StudentAndTeacherRoleId[roleName] },
+          ...filterQuery,
+        },
         direction: ConnectionDirection.Forward,
         directionArgs: { count: 50, cursor: hash },
       },
@@ -541,17 +612,25 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
     participantListOrigin.usersConnection?.edges?.forEach((item) => {
       if (item?.node?.status !== "active") return;
       item?.node?.roles?.forEach((role) => {
-        if (role.name === "Teacher")
+        if (roleName === ParticipantValue.teacher && role.name === ParticipantValue.teacher)
           teachers.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
-        if (role.name === "Student")
+        if (roleName === ParticipantValue.student && role.name === ParticipantValue.student)
           students.push({ user_id: item.node?.id, user_name: item.node?.givenName + " " + item.node?.familyName });
       });
     });
+    const studentHash =
+      roleName === ParticipantValue.student ? participantListOrigin.usersConnection?.pageInfo?.endCursor : ParticipantsData.hash.student;
+    const teacherHash =
+      roleName === ParticipantValue.teacher ? participantListOrigin.usersConnection?.pageInfo?.endCursor : ParticipantsData.hash.teacher;
+    const studentNext =
+      roleName === ParticipantValue.student ? participantListOrigin.usersConnection?.pageInfo?.hasNextPage : ParticipantsData.next.student;
+    const teacherNext =
+      roleName === ParticipantValue.teacher ? participantListOrigin.usersConnection?.pageInfo?.hasNextPage : ParticipantsData.next.teacher;
     return {
       classes: [{ students: students, teachers: teachers }],
       total: participantListOrigin.usersConnection?.totalCount,
-      hash: participantListOrigin.usersConnection?.pageInfo?.endCursor,
-      next: participantListOrigin.usersConnection?.pageInfo?.hasNextPage,
+      next: { teacher: teacherNext, student: studentNext },
+      hash: { teacher: teacherHash, student: studentHash },
     };
   }
 );
@@ -937,8 +1016,14 @@ const { actions, reducer } = createSlice({
           teachers: [],
         },
         total: 0,
-        hash: "",
-        next: false,
+        hash: {
+          teacher: "",
+          student: "",
+        },
+        next: {
+          teacher: false,
+          student: false,
+        },
       };
     },
   },
@@ -1077,7 +1162,12 @@ const { actions, reducer } = createSlice({
       state.filterOtherClasses = payload.data;
     },
     [getLessonPlansBySchedule.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
-      state.lessonPlans = payload;
+      state.lessonPlans = payload.data;
+      state.lessonPlansTotal = payload.total;
+    },
+    [getLessonPlansByScheduleLoadingPage.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.lessonPlans = [...state.lessonPlans, ...payload.data];
+      state.lessonPlansTotal = payload.total;
     },
     [getUserInUndefined.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.userInUndefined = payload.data;

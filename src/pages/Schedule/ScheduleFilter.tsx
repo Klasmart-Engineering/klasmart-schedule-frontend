@@ -457,7 +457,7 @@ function SchoolTemplate(props: SchoolTemplateProps) {
             <TextField
               id="filled-size-small"
               size="small"
-              placeholder="Search School Name"
+              placeholder={d("Search School Name").t("schedule_search_school_name")}
               onChange={(e) => {
                 getSearcherResult(e.target.value);
               }}
@@ -660,7 +660,7 @@ function OtherTemplate(props: OtherTemplateProps) {
             <TextField
               id="filled-size-small"
               size="small"
-              placeholder="Search Class Name"
+              placeholder={d("Search Class Name").t("schedule_search_class_name")}
               onChange={(e) => {
                 getSearcherResult(e.target.value);
               }}
