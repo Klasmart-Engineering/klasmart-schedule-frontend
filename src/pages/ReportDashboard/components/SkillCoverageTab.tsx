@@ -1,7 +1,7 @@
 import { EntityTeacherReportCategory } from "@api/api.auto";
 import rightArrow from "@assets/icons/rightArrow.svg";
 import { t } from "@locale/LocaleManager";
-import { Box, Grid, Icon, makeStyles } from "@material-ui/core";
+import { Box, Grid, Icon, Link, makeStyles } from "@material-ui/core";
 import { ReportCategories } from "@pages/ReportCategories";
 import { RootState } from "@reducers/index";
 import { getSkillCoverageReportAll } from "@reducers/report";
@@ -9,7 +9,7 @@ import { ParentSize } from "@visx/responsive";
 import _ from "lodash";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import StatisticPieCharts from "./StatisticPieCharts";
 
 const useStyles = makeStyles(() => ({
@@ -45,22 +45,41 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#6D8199",
     width: "73%",
     height: "33px",
     margin: "0 auto",
     marginTop: "20px",
-    padding: "0 14px",
-    borderRadius: "10px",
     color: "#fff",
-    fontSize: "13px",
     boxSizing: "border-box",
     cursor: "pointer",
     fontWeight: "bold",
+    "& > a": {
+      width: "100%",
+      color: "#fff",
+      fontSize: 14,
+      fontWeight: 600,
+      padding: 7,
+      paddingLeft: 14,
+      paddingRight: 14,
+      textDecoration: "none",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderRadius: "10px",
+      backgroundColor: "#6D8199",
+      "&:hover": {
+        backgroundColor: "#556577",
+        textDecorationLine: "none",
+      },
+    },
   },
   rightIcon: {
     width: 10,
-    height: 35,
+    height: 16,
+  },
+  rightIconImg: {
+    width: 10,
+    height: 11,
   },
 }));
 
@@ -99,13 +118,8 @@ function handleListData(data: EntityTeacherReportCategory[]) {
 export default function SkillCoverageTab() {
   const css = useStyles();
   const dispatch = useDispatch();
-  const history = useHistory();
   const { categoriesAll } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const handleData = handleListData(categoriesAll || []);
-
-  const handleClick = () => {
-    history.push(ReportCategories.routeBasePath);
-  };
 
   useEffect(() => {
     dispatch(getSkillCoverageReportAll({ metaLoading: true }));
@@ -150,11 +164,13 @@ export default function SkillCoverageTab() {
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">
-          <div onClick={handleClick} className={css.reportBottom}>
-            {t("report_label_lo_in_categories")}
-            <Icon classes={{ root: css.rightIcon }}>
-              <img alt="" src={rightArrow} />
-            </Icon>
+          <div className={css.reportBottom}>
+            <Link component={RouterLink} to={ReportCategories.routeBasePath}>
+              {t("report_label_lo_in_categories")}
+              <Icon fontSize="inherit" classes={{ root: css.rightIcon }}>
+                <img alt="" className={css.rightIconImg} src={rightArrow} />
+              </Icon>
+            </Link>
           </div>
         </Grid>
       </Grid>
