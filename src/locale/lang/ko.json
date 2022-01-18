@@ -1073,5 +1073,7 @@
   "schedule_lesson_plan_popup_results": "Results",
   "schedule_popup_search_for_lesson_plan": "Search for lesson plan",
   "schedule_popup_no_data_available": "No data available",
-  "schedule_popup_no_matching_result": "No matching result"
+  "schedule_popup_no_matching_result": "No matching result",
+  "library_label_organization": "Organization",
+  "library_label_org_owner_email": "Org Owner Email"
 }
