@@ -50,16 +50,17 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
 
   gridItemWithBg: {
     background: "#FFFFFF",
+    marginTop: 24,
   },
 
   navContainer: {
     "& > ul": {
       margin: 0,
       padding: 0,
-      paddingTop: 20,
+      paddingTop: 24,
       "& > li": {
         listStyle: "none",
-        paddingBottom: 14,
+        paddingBottom: 13,
         "& > a": {
           width: "calc(100% - 48px)",
           padding: 24,
@@ -118,6 +119,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     fontWeight: 600,
     display: "flex",
     alignItems: "center",
+    position: "absolute",
   },
   rightIcon: {
     width: 10,
