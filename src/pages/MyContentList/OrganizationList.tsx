@@ -117,8 +117,8 @@ export function OrganizationList(props: OrganizationListProps) {
   const [newSelectedOrgIds, setNewSelectedOrgIds] = useState(true);
   const [beValues, setBeValues] = useState(selectedOrg[0] === ShareScope.share_all ? [] : selectedOrg);
   const [pageDesc, setPageDesc] = useState(`1-${orgListTotal > PAGESIZE ? PAGESIZE : orgListTotal}`);
-  const [nameOrder, setNameOrder] = useState(false);
-  const [emailOrder, setEmailOrder] = useState(false);
+  const [nameOrder, setNameOrder] = useState(true);
+  const [emailOrder, setEmailOrder] = useState(true);
   const [sortType, setSortType] = useState<OrganizationSortBy>(OrganizationSortBy.Name);
   const inputSearch = watch()["inputSearch"] || "";
   const [buttonSearch, setButtonSearch] = useState("");
@@ -145,7 +145,7 @@ export function OrganizationList(props: OrganizationListProps) {
     const initSort: OrganizationSortInput = {
       field: [sortType],
       order:
-        (sortType === OrganizationSortBy.Name && !nameOrder) || (sortType === OrganizationSortBy.OwnerEmail && !emailOrder)
+        (sortType === OrganizationSortBy.Name && nameOrder) || (sortType === OrganizationSortBy.OwnerEmail && emailOrder)
           ? SortOrder.Asc
           : SortOrder.Desc,
     };
@@ -173,7 +173,7 @@ export function OrganizationList(props: OrganizationListProps) {
     setButtonSearch(inputSearch);
     const sort: OrganizationSortInput = {
       field: [type],
-      order: type === OrganizationSortBy.Name ? (nameOrder ? SortOrder.Asc : SortOrder.Desc) : emailOrder ? SortOrder.Asc : SortOrder.Desc,
+      order: type === OrganizationSortBy.Name ? (nameOrder ? SortOrder.Desc : SortOrder.Asc) : emailOrder ? SortOrder.Desc : SortOrder.Asc,
     };
     searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch, sort });
     setSortType(type);
@@ -291,6 +291,9 @@ export function OrganizationList(props: OrganizationListProps) {
                                   handleChangeBeValues={handleChangeBeValues}
                                   list={orgList}
                                   selectedContentGroupContext={selectedContentGroupContext}
+                                  sortType={sortType}
+                                  nameOrder={nameOrder}
+                                  emailOrder={emailOrder}
                                 />
                               ) : (
                                 resultsTip

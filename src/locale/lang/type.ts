@@ -1620,6 +1620,16 @@ type LangRecord =
       id: "library_error_pdf_validation";
       description: " validate pdf timeout";
       values: undefined;
+    }
+  | {
+      id: "library_label_organization";
+      description: "Organization";
+      values: undefined;
+    }
+  | {
+      id: "library_label_org_owner_email";
+      description: "Org Owner Email";
+      values: undefined;
     };
 
 export type LangRecordId = LangRecord["id"];
