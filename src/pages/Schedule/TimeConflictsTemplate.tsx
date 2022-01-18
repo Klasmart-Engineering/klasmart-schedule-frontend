@@ -45,12 +45,13 @@ const useStyles = makeStyles((theme) => ({
   },
   itemName: {
     paddingLeft: "40px",
+    wordBreak: "break-all",
     [theme.breakpoints.down("md")]: {
       paddingLeft: "20px",
     },
   },
   scrollPart: {
-    maxHeight: "300px",
+    maxHeight: "50vh",
     [theme.breakpoints.down("lg")]: {
       height: "200px",
     },
@@ -391,11 +392,7 @@ export default function TimeConflictsTemplate(props: TimeConflictsTemplateProps)
                   </Grid>
                 );
               })}
-          </div>
-        </div>
-        <div className={css.classRoster}>
-          {personalExist("participants") && <p>{d("Participants").t("schedule_time_conflict_checking")}</p>}
-          <div className={css.scrollPart}>
+            {personalExist("participants") && <p>{d("Participants").t("schedule_time_conflict_checking")}</p>}
             {conflicts.participants_student_ids &&
               conflicts.participants_student_ids.map((item) => {
                 return (
