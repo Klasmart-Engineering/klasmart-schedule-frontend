@@ -1648,15 +1648,20 @@ type LangRecord =
   | {
       id: "report_label_learner_usage_info";
       description: `Understand the level of usage of the learners over the last 7 days: 
--Material consumption metrics 
--Class attendance
--Assignments details`;
+<ul>
+  <li>Material consumption metrics
+</li>
+  <li>Class attendance
+</li>
+  <li>Assignments details
+</li>
+</ul>`;
       values: undefined;
     }
   | { id: "report_label_content_used"; description: `Content Used`; values: undefined }
   | { id: "report_label_5_types"; description: `5 types`; values: undefined }
   | { id: "report_label_class_scheduled"; description: `Class Scheduled`; values: undefined }
-  | { id: "report_label_live_class"; description: `Live class`; values: undefined }
+  | { id: "report_label_live_class"; description: `Live Class`; values: undefined }
   | { id: "report_label_assignment_scheduled"; description: `Assignment Scheduled`; values: undefined }
   | { id: "report_label_study_and_home_fun"; description: `Study & Home Fun`; values: undefined }
   | { id: "schedule_msg_no_matching_result"; description: `No matching result`; values: undefined }
@@ -1665,7 +1670,10 @@ type LangRecord =
   | { id: "schedule_lesson_plan_popup_group"; description: `Group`; values: undefined }
   | { id: "schedule_lesson_plan_popup_library"; description: `Library`; values: undefined }
   | { id: "schedule_lesson_plan_popup_reset"; description: `Reset`; values: undefined }
-  | { id: "schedule_lesson_plan_popup_result"; description: `Result`; values: undefined };
+  | { id: "schedule_lesson_plan_popup_results"; description: `Results`; values: undefined }
+  | { id: "schedule_popup_search_for_lesson_plan"; description: `Search for lesson plan`; values: undefined }
+  | { id: "schedule_popup_no_data_available"; description: `No data available`; values: undefined }
+  | { id: "schedule_popup_no_matching_result"; description: `No matching result`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

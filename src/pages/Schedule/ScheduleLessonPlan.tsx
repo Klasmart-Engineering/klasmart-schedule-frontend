@@ -498,7 +498,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       <div style={{ textAlign: "center" }}>
         <TextField
           id="outlined-start-adornment"
-          placeholder="Search for lesson plan"
+          placeholder={d("Search for lesson plan").t("schedule_popup_search_for_lesson_plan")}
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
@@ -527,7 +527,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         </span>
       </div>
       <div className={classes.resultText}>
-        {lessonPlansTotal} {d("Result").t("schedule_lesson_plan_popup_result")}
+        {lessonPlansTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
       </div>
       <div
         ref={(dom) => {
@@ -555,7 +555,9 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         ))}
         {assemblingLessonPlans.length < 1 && (
           <p className={classes.emptyLabel} style={{ fontSize: 16 }}>
-            {lessonPlanName ? "No matching results" : "No data available"}
+            {lessonPlanName
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
           </p>
         )}
         <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
@@ -789,7 +791,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       <div className={classes.searchValue}>
         <TextField
           id="outlined-start-adornment"
-          placeholder="Search for lesson plan"
+          placeholder={d("Search for lesson plan").t("schedule_popup_search_for_lesson_plan")}
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
@@ -812,7 +814,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       </div>
       <div className={classes.groupBox}>{selectGroupTemplate()}</div>
       <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>
-        {lessonPlansTotal} {d("Result").t("schedule_lesson_plan_popup_result")}
+        {lessonPlansTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
       </span>
       <div
         ref={(dom) => {
@@ -850,7 +852,11 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           </Table>
         </TableContainer>
         {assemblingLessonPlans.length < 1 && (
-          <p className={classes.emptyLabel}>{lessonPlanName ? "No matching results" : "No data available"}</p>
+          <p className={classes.emptyLabel}>
+            {lessonPlanName
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
+          </p>
         )}
         <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       </div>
