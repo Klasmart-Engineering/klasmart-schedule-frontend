@@ -1658,6 +1658,21 @@ type LangRecord =
 </ul>`;
       values: undefined;
     }
+  | {
+      id: "library_error_pdf_validation";
+      description: " validate pdf timeout";
+      values: undefined;
+    }
+  | {
+      id: "library_label_organization";
+      description: "Organization";
+      values: undefined;
+    }
+  | {
+      id: "library_label_org_owner_email";
+      description: "Org Owner Email";
+      values: undefined;
+    }
   | { id: "report_label_content_used"; description: `Content Used`; values: undefined }
   | { id: "report_label_5_types"; description: `5 types`; values: undefined }
   | { id: "report_label_class_scheduled"; description: `Class Scheduled`; values: undefined }

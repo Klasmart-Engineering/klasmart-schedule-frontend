@@ -826,7 +826,7 @@ function FilterTemplate(props: FilterProps) {
     if (node.label === "program" && checked) {
       if (viewSubjectPermission) {
         let resultInfo: any;
-        resultInfo = ((await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown) as PayloadAction<
+        resultInfo = (await dispatch(ScheduleFilterSubject({ program_id: node.self_id, metaLoading: true }))) as unknown as PayloadAction<
           AsyncTrunkReturned<typeof ScheduleFilterSubject>
         >;
         if (resultInfo.payload.length > 0) {

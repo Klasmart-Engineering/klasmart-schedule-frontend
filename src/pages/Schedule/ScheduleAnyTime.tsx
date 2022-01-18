@@ -216,14 +216,14 @@ function AnyTimeSchedule(props: SearchListProps) {
     //   getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true })
     // );
     // if (resultInfo.payload.token) {
-      if (privilegedMembers("Student") && scheduleDetial.class_type_label?.id === "Homework") {
-        toLive(scheduleDetial.id)
-        // toLive(scheduleDetial.id, resultInfo.payload.token);
-        return;
-      } else {
-        toLive(scheduleDetial.id)
-      }
+    if (privilegedMembers("Student") && scheduleDetial.class_type_label?.id === "Homework") {
+      toLive(scheduleDetial.id);
       // toLive(scheduleDetial.id, resultInfo.payload.token);
+      return;
+    } else {
+      toLive(scheduleDetial.id);
+    }
+    // toLive(scheduleDetial.id, resultInfo.payload.token);
     // }
   };
 
