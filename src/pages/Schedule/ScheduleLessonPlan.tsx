@@ -241,7 +241,7 @@ interface LessonPlanProps {
   searchOutcomesList: (filterQueryAssembly: object) => void;
   filterGropuData: LearningComesFilterQuery;
   handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
-  programChildInfoParent: GetProgramsQuery[];
+  programChildInfoParent?: GetProgramsQuery[];
   viewSubjectPermission?: boolean;
   filterQuery?: LearningComesFilterQuery;
   setFilterQuery?: (data: LearningComesFilterQuery) => void;
@@ -258,7 +258,7 @@ interface filterGropProps {
   searchOutcomesList: (filterQueryAssembly: object) => void;
   filterGropuData: LearningComesFilterQuery;
   handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
-  programChildInfoParent: GetProgramsQuery[];
+  programChildInfoParent?: GetProgramsQuery[];
   filterQuery?: LearningComesFilterQuery;
   setFilterQuery?: (data: LearningComesFilterQuery) => void;
   getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
@@ -271,7 +271,7 @@ interface filterGropProps {
   setLessonPlanName: (data: any) => void;
   inquiryAssembly: (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, lessonName?: string, group?: string[]) => void;
   setProgramChildInfo: (data: any) => void;
-  programChildInfo: GetProgramsQuery[];
+  programChildInfo?: GetProgramsQuery[];
 }
 
 function SelectGroup(props: filterGropProps) {
@@ -461,7 +461,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   } = props;
   const classes = useStyles();
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
-  const [loading, setLoading] = React.useState(false);
+  const [, setLoading] = React.useState(false);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
@@ -560,7 +560,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
               : d("No data available").t("schedule_popup_no_data_available")}
           </p>
         )}
-        <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
+        {/*<LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />*/}
       </div>
       <div style={{ textAlign: "center" }}>
         <Button className={classes.saveMb} color="primary" variant="contained" disabled={!selectedValue} onClick={save}>
@@ -595,7 +595,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   const [loading, setLoading] = React.useState(false);
   const [lessonPlanName, setLessonPlanName] = React.useState<string>(lessonQuery.lesson_plan_name);
   const [groupSelect, setGroupSelect] = React.useState<string[]>(lessonQuery.group_names);
-  const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
+  const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[] | undefined>(programChildInfoParent);
 
   const resetDisabled = useMemo(() => {
     return (
@@ -636,11 +636,23 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   };
 
   const reset = () => {
+    const defaultData = {
+      program_ids: [],
+      subject_ids: [],
+      category_ids: [],
+      sub_category_ids: [],
+      age_ids: [],
+      grade_ids: [],
+      group_names: [],
+      lesson_plan_name: "",
+      page_size: 10,
+      page: 1,
+    };
     setFilterQuery({ ages: [], categorys: [], grades: [], programs: [], subjects: [], subs: [] });
     setGroupSelect([]);
     setLessonPlanName("");
-    setSelectedValue("");
-    searchOutcomesList({ page: 1, page_size: 10, group_names: [] });
+    setSelectedValue(lessonPlanId);
+    searchOutcomesList(defaultData);
   };
 
   const selectGroupTemplate = () => {
@@ -740,7 +752,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       age_ids: values(filterResult.ages),
       grade_ids: values(filterResult.grades),
       group_names: group ?? groupSelect,
-      lesson_plan_name: lessonName ?? lessonPlanName,
+      lesson_plan_name: lessonName ? lessonName : lessonPlanName,
       page_size: 10,
       page: loadPages ? page + 1 : 1,
     };
@@ -763,6 +775,10 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     { id: "Badanamu Content", name: "Badanamu Content" },
     { id: "More Featured Content", name: "More Featured Content" },
   ];
+
+  const inSide = () => {
+    return lessonPlans.filter((item) => item.id === selectedValue);
+  };
 
   return mobile ? (
     <ScheduleLessonPlanMb
@@ -864,7 +880,14 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
         <Button variant="outlined" size="large" color="primary" disabled={!resetDisabled} className={classes.margin} onClick={reset}>
           {d("Reset").t("schedule_lesson_plan_popup_reset")}
         </Button>
-        <Button variant="contained" size="large" color="primary" disabled={!selectedValue} className={classes.margin} onClick={save}>
+        <Button
+          variant="contained"
+          size="large"
+          color="primary"
+          disabled={!selectedValue || !inSide().length}
+          className={classes.margin}
+          onClick={save}
+        >
           {d("Save").t("library_label_save")}
         </Button>
       </div>

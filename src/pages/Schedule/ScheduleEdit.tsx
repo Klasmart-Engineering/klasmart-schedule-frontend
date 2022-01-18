@@ -1786,8 +1786,8 @@ function EditBox(props: CalendarStateProps) {
   });
 
   const filterLessonGropuDatas: LearningComesFilterQuery = {
-    programs: Array.from(new Set((lessonPlanCondition.program_ids ?? []).concat(scheduleList.program_id ? [scheduleList.program_id] : []))),
-    subjects: Array.from(new Set((lessonPlanCondition.subject_ids ?? []).concat(subjectIds))),
+    programs: lessonPlanCondition.program_ids ?? [],
+    subjects: lessonPlanCondition.subject_ids ?? [],
     categorys: lessonPlanCondition.category_ids ?? [],
     subs: lessonPlanCondition.sub_category_ids ?? [],
     ages: lessonPlanCondition.age_ids ?? [],
@@ -1810,16 +1810,6 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const handleLessonPlan = async () => {
-    let resultInfo: any;
-    if (scheduleList.program_id) {
-      if (viewSubjectPermission) {
-        resultInfo = (await dispatch(
-          getProgramChild({ program_id: scheduleList.program_id, metaLoading: true })
-        )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getProgramChild>>;
-      } else {
-        dispatch(actError(d("You do not have permission to access this feature.").t("schedule_msg_no_permission")));
-      }
-    }
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
@@ -1837,13 +1827,7 @@ function EditBox(props: CalendarStateProps) {
           )}
           lessonPlanId={scheduleList.lesson_plan_id}
           handelSetProgramChildInfo={handelSetProgramChildInfo}
-          programChildInfoParent={
-            (programChildInfo
-              ? programChildInfo?.concat(resultInfo && resultInfo.payload ? [resultInfo.payload.programChildInfo] : [])
-              : resultInfo && resultInfo.payload
-              ? [resultInfo.payload.programChildInfo]
-              : []) as GetProgramsQuery[]
-          }
+          programChildInfoParent={programChildInfo}
           lessonPlans={lessonPlans}
         />
       ),
