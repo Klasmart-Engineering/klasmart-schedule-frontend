@@ -1,7 +1,7 @@
 import { EntityLearnerUsageResponse } from "@api/api.auto";
+import rightArrow from "@assets/icons/rightArrow.svg";
 import { t } from "@locale/LocaleManager";
-import { makeStyles } from "@material-ui/core";
-import { ArrowRight } from "@material-ui/icons";
+import { Icon, makeStyles } from "@material-ui/core";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
 import React, { useMemo } from "react";
 import { useHistory } from "react-router";
@@ -63,7 +63,7 @@ const useStyles = makeStyles(() => ({
     textAlign: "right",
   },
   category: {
-    width: "55px",
+    width: "77px",
     fontSize: "12px",
     color: "#6D8199",
     textAlign: "left",
@@ -76,7 +76,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#6D8199",
-    width: "65%",
+    width: "73%",
     height: "33px",
     margin: "0 auto",
     marginTop: "15px",
@@ -86,6 +86,11 @@ const useStyles = makeStyles(() => ({
     fontSize: "14px",
     boxSizing: "border-box",
     cursor: "pointer",
+    fontWeight: "bold",
+  },
+  rightIcon: {
+    width: 10,
+    height: 35,
   },
 }));
 
@@ -140,7 +145,9 @@ export default function LearnerUsageReport({ learnerUsageOverview }: ILearnerUsa
         })}
         <div onClick={handleClick} className={css.reportBottom}>
           {t("report_student_usage_report")}
-          <ArrowRight />
+          <Icon classes={{ root: css.rightIcon }}>
+            <img alt="" src={rightArrow} />
+          </Icon>
         </div>
       </div>
     </div>
