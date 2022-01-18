@@ -486,10 +486,10 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       const contentScrollTop = domMb.scrollTop; //滚动条距离顶部
       const clientHeight = domMb.clientHeight; //可视区域
       const scrollHeight = domMb.scrollHeight; //滚动条内容的总高度
-      if (contentScrollTop + clientHeight > scrollHeight) {
+      if (contentScrollTop + clientHeight >= scrollHeight && !lock) {
         setLock(true);
         const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
-        if (page + 1 > maxPage || lock) return;
+        if (page + 1 > maxPage) return;
         setLoading(true);
         await inquiryAssembly(filterQuery, true);
         setLoading(false);
