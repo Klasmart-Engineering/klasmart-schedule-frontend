@@ -1,10 +1,10 @@
 import { EntityLearnerUsageResponse } from "@api/api.auto";
 import rightArrow from "@assets/icons/rightArrow.svg";
 import { t } from "@locale/LocaleManager";
-import { Icon, makeStyles } from "@material-ui/core";
+import { Icon, Link, makeStyles } from "@material-ui/core";
 import ReportStudentUsage from "@pages/ReportStudentUsage";
-import React, { useMemo } from "react";
-import { useHistory } from "react-router";
+import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   reportContainer: {
@@ -75,22 +75,41 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#6D8199",
     width: "73%",
     height: "33px",
     margin: "0 auto",
-    marginTop: "15px",
-    padding: "0 14px",
-    borderRadius: "10px",
+    marginTop: "20px",
     color: "#fff",
-    fontSize: "14px",
     boxSizing: "border-box",
     cursor: "pointer",
     fontWeight: "bold",
+    "& > a": {
+      width: "100%",
+      color: "#fff",
+      fontSize: 14,
+      fontWeight: 600,
+      padding: 7,
+      paddingLeft: 14,
+      paddingRight: 14,
+      textDecoration: "none",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderRadius: "10px",
+      backgroundColor: "#6D8199",
+      "&:hover": {
+        backgroundColor: "#556577",
+        textDecorationLine: "none",
+      },
+    },
   },
   rightIcon: {
     width: 10,
-    height: 35,
+    height: 16,
+  },
+  rightIconImg: {
+    width: 10,
+    height: 11,
   },
 }));
 
@@ -100,7 +119,6 @@ interface ILearnerUsageReportProps {
 
 export default function LearnerUsageReport({ learnerUsageOverview }: ILearnerUsageReportProps) {
   const css = useStyles();
-  const history = useHistory();
   const { assignment_scheduled, class_scheduled, contents_used } = learnerUsageOverview;
 
   const reportList = [
@@ -121,13 +139,6 @@ export default function LearnerUsageReport({ learnerUsageOverview }: ILearnerUsa
     },
   ];
 
-  const handleClick = useMemo(
-    () => () => {
-      history.push(ReportStudentUsage.routeBasePath);
-    },
-    [history]
-  );
-
   return (
     <div className={css.reportContainer}>
       <div className={css.reportListContainer}>
@@ -143,11 +154,13 @@ export default function LearnerUsageReport({ learnerUsageOverview }: ILearnerUsa
             </div>
           );
         })}
-        <div onClick={handleClick} className={css.reportBottom}>
-          {t("report_student_usage_report")}
-          <Icon classes={{ root: css.rightIcon }}>
-            <img alt="" src={rightArrow} />
-          </Icon>
+        <div className={css.reportBottom}>
+          <Link component={RouterLink} to={ReportStudentUsage.routeBasePath}>
+            {t("report_student_usage_report")}
+            <Icon fontSize="inherit" classes={{ root: css.rightIcon }}>
+              <img alt="" className={css.rightIconImg} src={rightArrow} />
+            </Icon>
+          </Link>
         </div>
       </div>
     </div>
