@@ -303,7 +303,7 @@ export const ReportTitle = (props: { title: string; info?: string }) => {
     <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
       <div className={css.reportTitle}>
         <Button color="primary" startIcon={<KeyboardBackspace />} onClick={handleBack}>
-          {d("Return to Reports List").t("report_label_go_back")}
+          {d("Return to Analytics and Reports").t("report_label_go_back")}
         </Button>
         <Typography className={css.reportItemTitleTop}>
           {title}

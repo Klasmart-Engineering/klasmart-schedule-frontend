@@ -754,7 +754,7 @@ type LangRecord =
   | { id: "report_label_time_spent_on_h5p_activities_break_down"; description: `Time Spent on Activities Break Down`; values: undefined }
   | { id: "report_label_total_duration"; description: `Total Duration`; values: undefined }
   | { id: "report_label_avg_duration"; description: `Avg Duration`; values: undefined }
-  | { id: "report_label_report_list"; description: `Reports List`; values: undefined }
+  | { id: "report_label_report_list"; description: `Analytics and Reports`; values: undefined }
   | { id: "report_label_teaching_load"; description: `Teacher Usage Report`; values: undefined }
   | { id: "report_label_school"; description: `School`; values: undefined }
   | { id: "report_label_0_2_hours"; description: `0~2 Hours`; values: undefined }
@@ -765,7 +765,7 @@ type LangRecord =
   | { id: "report_label_live"; description: `Live`; values: undefined }
   | { id: "report_label_hours"; description: `Hours`; values: undefined }
   | { id: "report_label_mins"; description: `mins`; values: undefined }
-  | { id: "report_label_go_back"; description: `Return to Reports List`; values: undefined }
+  | { id: "report_label_go_back"; description: `Return to Analytics and Reports`; values: undefined }
   | { id: "report_label_individual_achievement"; description: `Learner Skill Achievement`; values: undefined }
   | { id: "general_error_unauthorized"; description: `User not logged in, please log in`; values: undefined }
   | { id: "general_error_no_organization"; description: `You have no organization`; values: undefined }
@@ -1623,7 +1623,7 @@ type LangRecord =
       description: `Subject Average Assignments Completion Rate`;
       values: undefined;
     }
-  | { id: "report_label_student_progress_report"; description: `Student Progress Report`; values: undefined }
+  | { id: "report_label_student_progress_report"; description: `Learner Monthly Report`; values: undefined }
   | { id: "report_label_overall_attendance"; description: `Overall Attendance`; values: undefined }
   | { id: "report_label_overall_completion"; description: `Overall Completion`; values: undefined }
   | { id: "report_msg_participants_not_included"; description: `Participants are not included`; values: undefined }
@@ -1641,16 +1641,16 @@ type LangRecord =
   | { id: "report_label_skill_coverage"; description: `Skill Coverage`; values: undefined }
   | {
       id: "report_label_skill_coverage_info";
-      description: `A breakdown of the learning outcomes by skill category as defined by your organization.`;
+      description: `A breakdown of the learning outcomes covered by skill category as defined by your organization.`;
       values: undefined;
     }
   | { id: "report_label_learner_usage"; description: `Learner Usage`; values: undefined }
   | {
       id: "report_label_learner_usage_info";
-      description: `Understand the level of usage of the learners over the last 7 days:
--Material consumption metrics
+      description: `Understand the level of usage of the learners over the last 7 days: 
+-Material consumption metrics 
 -Class attendance
--Missed assignments details`;
+-Assignments details`;
       values: undefined;
     }
   | { id: "report_label_content_used"; description: `Content Used`; values: undefined }
@@ -1660,7 +1660,12 @@ type LangRecord =
   | { id: "report_label_assignment_scheduled"; description: `Assignment Scheduled`; values: undefined }
   | { id: "report_label_study_and_home_fun"; description: `Study & Home Fun`; values: undefined }
   | { id: "schedule_msg_no_matching_result"; description: `No matching result`; values: undefined }
-  | { id: "report_label_no_report"; description: `No report available`; values: undefined };
+  | { id: "report_label_no_report"; description: `No report available`; values: undefined }
+  | { id: "schedule_lesson_plan_search"; description: `Lesson Plan Search`; values: undefined }
+  | { id: "schedule_lesson_plan_popup_group"; description: `Group`; values: undefined }
+  | { id: "schedule_lesson_plan_popup_library"; description: `Library`; values: undefined }
+  | { id: "schedule_lesson_plan_popup_reset"; description: `Reset`; values: undefined }
+  | { id: "schedule_lesson_plan_popup_result"; description: `Result`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
