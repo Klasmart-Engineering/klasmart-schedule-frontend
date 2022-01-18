@@ -1586,7 +1586,7 @@ function EditBox(props: CalendarStateProps) {
       },
     ];
     const classType = list
-      .filter((item) => permsArr.filter((perm) => perm.id === item.id)[0].perms)
+      .filter((item) => privilegedMembers("Student") || permsArr.filter((perm) => perm.id === item.id)[0].perms)
       .map((item) => t(item.name as classTypeLabel))
       .sort();
     const getKey = (name: string) => {

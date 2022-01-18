@@ -217,6 +217,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     fontSize: "16px",
     fontWeight: 700,
     display: "block",
+    whiteSpace: "break-spaces",
   },
   lessonGroupMb: {
     color: "#666666",
@@ -440,6 +441,8 @@ interface ScheduleLessonPlanMbProps {
   save: () => void;
   selectGroupTemplate: () => ReactNode;
   lessonPlans: EntityLessonPlanForSchedule[];
+  domMb: HTMLDivElement | null;
+  setDomMb: (data: HTMLDivElement | null) => void;
 }
 
 function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
@@ -459,10 +462,13 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     reset,
     save,
     selectGroupTemplate,
+    domMb,
+    setDomMb,
   } = props;
   const classes = useStyles();
-  const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
+
   const [loading, setLoading] = React.useState(false);
+  const [lock, setLock] = React.useState(false);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
@@ -476,17 +482,19 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   };
 
   const handleOnScroll = async () => {
-    if (dom) {
-      const contentScrollTop = dom.scrollTop; //滚动条距离顶部
-      const clientHeight = dom.clientHeight; //可视区域
-      const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
-      if (contentScrollTop + clientHeight === scrollHeight) {
+    if (domMb) {
+      const contentScrollTop = domMb.scrollTop; //滚动条距离顶部
+      const clientHeight = domMb.clientHeight; //可视区域
+      const scrollHeight = domMb.scrollHeight; //滚动条内容的总高度
+      if (contentScrollTop + clientHeight > scrollHeight) {
+        setLock(true);
         const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
-        if (page + 1 > maxPage) return;
+        if (page + 1 > maxPage || lock) return;
         setLoading(true);
         await inquiryAssembly(filterQuery, true);
         setLoading(false);
         setPage(page + 1);
+        setLock(false);
       }
     }
   };
@@ -524,7 +532,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
           className={classes.resetControl}
           style={{ color: resetDisabled ? "#0E78D5" : "#666666" }}
           onClick={() => {
-            if (resetDisabled) reset();
+            if (resetDisabled || lessonPlanName) reset();
           }}
         >
           {d("Reset").t("schedule_lesson_plan_popup_reset")}
@@ -535,7 +543,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       </div>
       <div
         ref={(dom) => {
-          setDom(dom);
+          setDomMb(dom);
         }}
         onScrollCapture={(e) => {
           const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
@@ -604,6 +612,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   const [lessonPlanName, setLessonPlanName] = React.useState<string>(lessonQuery.lesson_plan_name);
   const [groupSelect, setGroupSelect] = React.useState<string[]>(lessonQuery.group_names);
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[] | undefined>(programChildInfoParent);
+  const [domMb, setDomMb] = React.useState<HTMLDivElement | null>(null);
 
   const resetDisabled = useMemo(() => {
     return (
@@ -764,7 +773,11 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       page_size: 10,
       page: loadPages ? page + 1 : 1,
     };
-    if (!loadPages) setPage(1);
+    if (!loadPages) {
+      if (dom) dom.scrollTop = 0;
+      if (domMb) domMb.scrollTop = 0;
+      setPage(1);
+    }
     await searchOutcomesList(filterQueryAssembly);
   };
 
@@ -788,6 +801,22 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     return lessonPlans.filter((item) => item.id === selectedValue);
   };
 
+  const reBytesStr = (str: string, len: number) => {
+    let bytesNum = 0;
+    let afterCutting = "";
+    for (let i = 0, lens = str.length; i < lens; i++) {
+      bytesNum += str.charCodeAt(i) > 255 ? 2 : 1;
+      if (bytesNum > len) break;
+      afterCutting = str.substring(0, i + 1);
+    }
+    return bytesNum > len ? `${afterCutting} ....` : afterCutting;
+  };
+
+  const textEllipsis = (value?: string) => {
+    const CharacterCount = 50;
+    return value ? reBytesStr(value, CharacterCount) : "";
+  };
+
   return mobile ? (
     <ScheduleLessonPlanMb
       assemblingLessonPlans={assemblingLessonPlans}
@@ -806,6 +835,8 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       reset={reset}
       save={save}
       lessonPlans={lessonPlans}
+      domMb={domMb}
+      setDomMb={setDomMb}
     />
   ) : (
     <Box className={classes.previewContainer}>
@@ -868,7 +899,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
                       name="radio-button-demo"
                       color="primary"
                     />
-                    <span style={{ whiteSpace: "pre" }}>{item?.name}</span>
+                    <span style={{ whiteSpace: "break-spaces" }}>{textEllipsis(item?.name)}</span>
                   </TableCell>
                   <TableCell align="center">{item?.group_name}</TableCell>
                 </TableRow>
