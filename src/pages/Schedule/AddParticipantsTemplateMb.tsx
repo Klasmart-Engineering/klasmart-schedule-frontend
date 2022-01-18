@@ -224,6 +224,10 @@ export function AddParticipantsTemplateMb(props: AddParticipantsTemplateMbProps)
           value={searchName}
           onChange={handleChangeName}
           onBlur={handleSearch}
+          onKeyDown={(e) => {
+            const code = e.keyCode || e.which || e.charCode;
+            if (code === 13) handleSearch();
+          }}
         />
         <Tabs
           value={tabValue}
