@@ -856,7 +856,7 @@
   "report_msg_no_data": "There was no data to display in this week.",
   "report_navigation_class_view": "Class View",
   "report_msg_individual_infor": "This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.",
-  "report_msg_overall_infor": "The Overall Student Achievement Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.\n<ul>\n  <li>The report shows results from Live, Class, and Study assessments.\n</li>\n  <li>Student absences seen in the Live and Class mean that learner wasn’t attended.\n</li>\n  <li>Student absences seen in the Study mean that the learner didn’t try at all.</li>\n</ul>",
+  "report_msg_overall_infor": "The Learning Outcome Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.\n<ul>\n  <li>The report shows results from Live, Class, and Study assessments.\n</li>\n  <li>Student absences seen in the Live and Class mean that learner wasn’t attended.\n</li>\n  <li>Student absences seen in the Study mean that the learner didn’t try at all.</li>\n</ul>",
   "report_msg_no_achieve": "No achievement data available for this lesson.",
   "report_msg_no_plan": "There are no lesson plans for this teacher. Would you like to add one?",
   "report_button_create_plan": "Create a Lesson Plan",

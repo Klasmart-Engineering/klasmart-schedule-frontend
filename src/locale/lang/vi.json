@@ -1074,6 +1074,6 @@
   "schedule_popup_search_for_lesson_plan": "Tìm kiếm kế hoạch bài giảng",
   "schedule_popup_no_data_available": "Không có dữ liệu",
   "schedule_popup_no_matching_result": "Không có kết quả phù hợp",
-  "library_label_organization": "Organization",
-  "library_label_org_owner_email": "Org Owner Email"
+  "library_label_organization": "Tổ Chức",
+  "library_label_org_owner_email": "Email của chủ sở hữu tổ chức"
 }
