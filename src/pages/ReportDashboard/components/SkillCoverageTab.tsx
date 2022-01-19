@@ -1,7 +1,6 @@
 import { EntityTeacherReportCategory } from "@api/api.auto";
-import rightArrow from "@assets/icons/rightArrow.svg";
 import { t } from "@locale/LocaleManager";
-import { Box, Grid, Icon, Link, makeStyles } from "@material-ui/core";
+import { Box, Grid, makeStyles } from "@material-ui/core";
 import { ReportCategories } from "@pages/ReportCategories";
 import { RootState } from "@reducers/index";
 import { getSkillCoverageReportAll } from "@reducers/report";
@@ -9,7 +8,7 @@ import { ParentSize } from "@visx/responsive";
 import _ from "lodash";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link as RouterLink } from "react-router-dom";
+import BottomButton from "./BottomButton";
 import StatisticPieCharts from "./StatisticPieCharts";
 
 const useStyles = makeStyles(() => ({
@@ -18,7 +17,7 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     height: "321px",
     borderRadius: "12px",
-    padding: "30px 15px 28px 30px",
+    padding: "30px 19px 19px",
     background: "#fff",
   },
   score: {},
@@ -48,7 +47,6 @@ const useStyles = makeStyles(() => ({
     width: "73%",
     height: "33px",
     margin: "0 auto",
-    marginTop: "20px",
     color: "#fff",
     boxSizing: "border-box",
     cursor: "pointer",
@@ -164,14 +162,7 @@ export default function SkillCoverageTab() {
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">
-          <div className={css.reportBottom}>
-            <Link component={RouterLink} to={ReportCategories.routeBasePath}>
-              {t("report_label_lo_in_categories")}
-              <Icon fontSize="inherit" classes={{ root: css.rightIcon }}>
-                <img alt="" className={css.rightIconImg} src={rightArrow} />
-              </Icon>
-            </Link>
-          </div>
+          <BottomButton text={t("report_label_lo_in_categories")} to={ReportCategories.routeBasePath} marginTop={20} />
         </Grid>
       </Grid>
     </Grid>
