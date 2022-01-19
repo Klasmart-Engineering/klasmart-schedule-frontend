@@ -89,6 +89,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   margin: {
     margin: spacing(1),
     width: 104,
+    fontWeight: 700,
   },
   customizeContentBox: {
     width: "100%",
@@ -216,6 +217,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     borderRadius: "8px",
     textAlign: "center",
     marginTop: "6px",
+    fontWeight: 700,
   },
   lessonNameMb: {
     fontFamily: "Helvetica",
@@ -475,6 +477,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
 
   const [loading, setLoading] = React.useState(false);
   const [lock, setLock] = React.useState(false);
+  const [boxHeight, setBoxHeight] = React.useState(window.innerHeight);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
@@ -505,8 +508,12 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     }
   };
 
+  window.onresize = () => {
+    setBoxHeight(window.innerHeight);
+  };
+
   return (
-    <Box className={classes.previewContainerMb} style={{ height: `100%` }}>
+    <Box className={classes.previewContainerMb} style={{ height: `${boxHeight}px` }}>
       <div className={classes.lessonTitleMb}>
         <span>{d("Lesson Plan Search").t("schedule_lesson_plan_search")}</span> <CloseIcon onClick={handleClose} />
       </div>
