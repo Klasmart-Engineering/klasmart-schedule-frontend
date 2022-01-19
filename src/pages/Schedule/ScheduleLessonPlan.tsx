@@ -82,6 +82,9 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     "& .MuiInputBase-root": {
       borderRadius: "10px",
     },
+    "& .MuiAutocomplete-clearIndicator": {
+      display: "none",
+    },
   },
   margin: {
     margin: spacing(1),
@@ -607,7 +610,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   const [lessonQuery, setLessonQuery] = React.useState<LessonPlanFilterQuery>(lessonPlanCondition);
   const [selectedValue, setSelectedValue] = React.useState(lessonPlanId);
   const [dom, setDom] = React.useState<HTMLDivElement | null>(null);
-  const [page, setPage] = React.useState<number>(1);
+  const [page, setPage] = React.useState<number>(lessonPlanCondition.page);
   const [loading, setLoading] = React.useState(false);
   const [lessonPlanName, setLessonPlanName] = React.useState<string>(lessonQuery.lesson_plan_name);
   const [groupSelect, setGroupSelect] = React.useState<string[]>(lessonQuery.group_names);
@@ -670,6 +673,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     setLessonPlanName("");
     setSelectedValue(lessonPlanId);
     searchOutcomesList(defaultData);
+    setPage(1);
   };
 
   const selectGroupTemplate = () => {
