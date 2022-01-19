@@ -760,7 +760,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       const contentScrollTop = dom.scrollTop; //滚动条距离顶部
       const clientHeight = dom.clientHeight; //可视区域
       const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
-      if (contentScrollTop + clientHeight >= scrollHeight && !lock) {
+      if (contentScrollTop + clientHeight >= scrollHeight - 40 && !lock) {
         setLock(true);
         const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
         if (page + 1 > maxPage) return;
