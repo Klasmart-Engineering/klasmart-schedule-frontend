@@ -137,6 +137,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     width: "100%",
     top: 0,
     left: 0,
+    zIndex: 999,
   },
   mobileSearch: {
     width: "80%",
@@ -149,6 +150,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     marginBottom: "18px",
     paddingRight: "3%",
     paddingLeft: "3%",
+    marginTop: 3,
   },
   activeSelect: {
     "& .MuiInputBase-root": {
@@ -238,18 +240,26 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
       marginTop: "0px",
     },
   },
+  tableRow: {
+    "& .MuiTableRow-root.Mui-selected": {
+      background: "#E4F1FF",
+    },
+  },
 }));
 
-interface LessonPlanProps {
+interface LessonPlanCommonProps {
   programs: EntityScheduleShortInfo[];
   searchOutcomesList: (filterQueryAssembly: object) => void;
   filterGropuData: LearningComesFilterQuery;
   handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
   programChildInfoParent?: GetProgramsQuery[];
-  viewSubjectPermission?: boolean;
   filterQuery?: LearningComesFilterQuery;
+  viewSubjectPermission?: boolean;
   setFilterQuery?: (data: LearningComesFilterQuery) => void;
   getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
+}
+
+interface LessonPlanProps extends LessonPlanCommonProps {
   handleClose: () => void;
   lessonPlans: EntityLessonPlanForSchedule[];
   autocompleteChange: (value: any | null, name: string) => void;
@@ -257,16 +267,7 @@ interface LessonPlanProps {
   lessonPlanId?: string;
 }
 
-interface filterGropProps {
-  programs: EntityScheduleShortInfo[];
-  searchOutcomesList: (filterQueryAssembly: object) => void;
-  filterGropuData: LearningComesFilterQuery;
-  handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
-  programChildInfoParent?: GetProgramsQuery[];
-  filterQuery?: LearningComesFilterQuery;
-  setFilterQuery?: (data: LearningComesFilterQuery) => void;
-  getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
-  viewSubjectPermission?: boolean;
+interface filterGropProps extends LessonPlanCommonProps {
   lessonQuery: any;
   setLessonQuery: (data: any) => void;
   lessonPlanName: string;
@@ -276,6 +277,28 @@ interface filterGropProps {
   inquiryAssembly: (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, lessonName?: string, group?: string[]) => void;
   setProgramChildInfo: (data: any) => void;
   programChildInfo?: GetProgramsQuery[];
+}
+
+interface ScheduleLessonPlanMbProps {
+  assemblingLessonPlans: EntityLessonPlanForSchedule[];
+  handleClose: () => void;
+  lessonPlanName: string;
+  setLessonPlanName: (data: any) => void;
+  inquiryAssembly: (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, lessonName?: string, group?: string[]) => void;
+  filterQuery?: LearningComesFilterQuery;
+  selectedValue?: string;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  lessonPlansTotal: number;
+  page: number;
+  setPage: (data: any) => void;
+  resetDisabled: number | boolean;
+  reset: () => void;
+  save: () => void;
+  selectGroupTemplate: () => ReactNode;
+  lessonPlans: EntityLessonPlanForSchedule[];
+  domMb: HTMLDivElement | null;
+  setDomMb: (data: HTMLDivElement | null) => void;
+  saveDisabled: boolean;
 }
 
 function SelectGroup(props: filterGropProps) {
@@ -427,27 +450,6 @@ function SelectGroup(props: filterGropProps) {
   );
 }
 
-interface ScheduleLessonPlanMbProps {
-  assemblingLessonPlans: EntityLessonPlanForSchedule[];
-  handleClose: () => void;
-  lessonPlanName: string;
-  setLessonPlanName: (data: any) => void;
-  inquiryAssembly: (filterQueryData?: LearningComesFilterQuery, loadPages?: boolean, lessonName?: string, group?: string[]) => void;
-  filterQuery?: LearningComesFilterQuery;
-  selectedValue?: string;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  lessonPlansTotal: number;
-  page: number;
-  setPage: (data: any) => void;
-  resetDisabled: string | number | true | undefined;
-  reset: () => void;
-  save: () => void;
-  selectGroupTemplate: () => ReactNode;
-  lessonPlans: EntityLessonPlanForSchedule[];
-  domMb: HTMLDivElement | null;
-  setDomMb: (data: HTMLDivElement | null) => void;
-}
-
 function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   const {
     assemblingLessonPlans,
@@ -467,6 +469,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     selectGroupTemplate,
     domMb,
     setDomMb,
+    saveDisabled,
   } = props;
   const classes = useStyles();
 
@@ -557,7 +560,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         style={{ height: previewDetailMbHeight() }}
       >
         {assemblingLessonPlans.map((item, index) => (
-          <div className={classes.lessonsItemMb}>
+          <div className={classes.lessonsItemMb} style={{ background: selectedValue === item?.id ? "#E4F1FF" : "none" }}>
             <Radio
               checked={selectedValue === item?.id}
               onChange={handleChange}
@@ -582,7 +585,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         <LinearProgress style={{ visibility: loading ? "visible" : "hidden" }} />
       </div>
       <div style={{ textAlign: "center" }}>
-        <Button className={classes.saveMb} color="primary" variant="contained" disabled={!selectedValue} onClick={save}>
+        <Button className={classes.saveMb} color="primary" variant="contained" disabled={saveDisabled} onClick={save}>
           {d("OK").t("general_button_OK")}
         </Button>
       </div>
@@ -626,9 +629,13 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       filterQuery.grades.length ||
       filterQuery.ages.length ||
       groupSelect.length ||
-      selectedValue
+      selectedValue !== lessonPlanId
     );
-  }, [filterQuery, groupSelect, selectedValue]);
+  }, [filterQuery, groupSelect, selectedValue, lessonPlanId]);
+
+  const saveDisabled = useMemo(() => {
+    return !selectedValue || selectedValue === lessonPlanId || !lessonPlans.filter((item) => item.id === selectedValue).length;
+  }, [selectedValue, lessonPlanId, lessonPlans]);
 
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
@@ -801,10 +808,6 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     { id: "More Featured Content", name: "More Featured Content" },
   ];
 
-  const inSide = () => {
-    return lessonPlans.filter((item) => item.id === selectedValue);
-  };
-
   const reBytesStr = (str: string, len: number) => {
     let bytesNum = 0;
     let afterCutting = "";
@@ -841,6 +844,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       lessonPlans={lessonPlans}
       domMb={domMb}
       setDomMb={setDomMb}
+      saveDisabled={saveDisabled}
     />
   ) : (
     <Box className={classes.previewContainer}>
@@ -892,9 +896,9 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
                 <TableCell align="center">{d("Library").t("schedule_lesson_plan_popup_library")}</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody className={classes.tableRow}>
               {assemblingLessonPlans.map((item, index) => (
-                <TableRow key={index}>
+                <TableRow key={index} selected={selectedValue === item?.id}>
                   <TableCell align="left" style={{ paddingLeft: 50 }}>
                     <Radio
                       checked={selectedValue === item?.id}
@@ -924,15 +928,8 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
         <Button variant="outlined" size="large" color="primary" disabled={!resetDisabled} className={classes.margin} onClick={reset}>
           {d("Reset").t("schedule_lesson_plan_popup_reset")}
         </Button>
-        <Button
-          variant="contained"
-          size="large"
-          color="primary"
-          disabled={!selectedValue || !inSide().length}
-          className={classes.margin}
-          onClick={save}
-        >
-          {d("Save").t("library_label_save")}
+        <Button variant="contained" size="large" color="primary" disabled={saveDisabled} className={classes.margin} onClick={save}>
+          {d("OK").t("general_button_OK")}
         </Button>
       </div>
     </Box>
