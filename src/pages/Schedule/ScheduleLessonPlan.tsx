@@ -506,7 +506,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   };
 
   return (
-    <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
+    <Box className={classes.previewContainerMb} style={{ height: `100%` }}>
       <div className={classes.lessonTitleMb}>
         <span>{d("Lesson Plan Search").t("schedule_lesson_plan_search")}</span> <CloseIcon onClick={handleClose} />
       </div>
