@@ -301,6 +301,7 @@ interface ScheduleLessonPlanMbProps {
   domMb: HTMLDivElement | null;
   setDomMb: (data: HTMLDivElement | null) => void;
   saveDisabled: boolean;
+  setLessonPlanNameCondition: (data: any) => void;
 }
 
 function SelectGroup(props: filterGropProps) {
@@ -472,6 +473,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     domMb,
     setDomMb,
     saveDisabled,
+    setLessonPlanNameCondition,
   } = props;
   const classes = useStyles();
 
@@ -530,7 +532,10 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
           value={lessonPlanName}
           onKeyDown={(e) => {
             const code = e.keyCode || e.which || e.charCode;
-            if (code === 13) inquiryAssembly(filterQuery, false);
+            if (code === 13) {
+              setLessonPlanNameCondition(lessonPlanName);
+              inquiryAssembly(filterQuery, false);
+            }
           }}
           onBlur={(e) => {
             inquiryAssembly(filterQuery, false);
@@ -623,9 +628,11 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   const [page, setPage] = React.useState<number>(lessonPlanCondition.page);
   const [loading, setLoading] = React.useState(false);
   const [lessonPlanName, setLessonPlanName] = React.useState<string>(lessonQuery.lesson_plan_name);
+  const [lessonPlanNameCondition, setLessonPlanNameCondition] = React.useState<string>(lessonQuery.lesson_plan_name);
   const [groupSelect, setGroupSelect] = React.useState<string[]>(lessonQuery.group_names);
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[] | undefined>(programChildInfoParent);
   const [domMb, setDomMb] = React.useState<HTMLDivElement | null>(null);
+  const [lock, setLock] = React.useState(false);
 
   const resetDisabled = useMemo(() => {
     return (
@@ -753,13 +760,15 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       const contentScrollTop = dom.scrollTop; //滚动条距离顶部
       const clientHeight = dom.clientHeight; //可视区域
       const scrollHeight = dom.scrollHeight; //滚动条内容的总高度
-      if (contentScrollTop + clientHeight >= scrollHeight) {
+      if (contentScrollTop + clientHeight >= scrollHeight - 40 && !lock) {
+        setLock(true);
         const maxPage = Math.ceil(Number(lessonPlansTotal) / 10);
         if (page + 1 > maxPage) return;
         setLoading(true);
         await inquiryAssembly(filterQuery, true);
         setLoading(false);
         setPage(page + 1);
+        setLock(false);
       }
     }
   };
@@ -787,7 +796,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       age_ids: values(filterResult.ages),
       grade_ids: values(filterResult.grades),
       group_names: group ?? groupSelect,
-      lesson_plan_name: lessonName ? lessonName : lessonPlanName,
+      lesson_plan_name: lessonName ? lessonName : loadPages ? lessonPlanNameCondition : lessonPlanName,
       page_size: 10,
       page: loadPages ? page + 1 : 1,
     };
@@ -852,6 +861,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       domMb={domMb}
       setDomMb={setDomMb}
       saveDisabled={saveDisabled}
+      setLessonPlanNameCondition={setLessonPlanNameCondition}
     />
   ) : (
     <Box className={classes.previewContainer}>
@@ -866,6 +876,13 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
+          onKeyDown={(e) => {
+            const code = e.keyCode || e.which || e.charCode;
+            if (code === 13) {
+              setLessonPlanNameCondition(lessonPlanName);
+              inquiryAssembly(filterQuery, false);
+            }
+          }}
           value={lessonPlanName}
           onChange={(e) => {
             setLessonPlanName(e.target.value);
@@ -875,6 +892,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
         />
         <Button
           onClick={() => {
+            setLessonPlanNameCondition(lessonPlanName);
             inquiryAssembly(filterQuery, false);
           }}
           variant="contained"
