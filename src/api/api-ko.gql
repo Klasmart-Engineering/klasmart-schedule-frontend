@@ -187,6 +187,31 @@ query organizations {
     organization_name
   }
 }
+query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count: PageSize,$sort: OrganizationSortInput!,$filter:OrganizationFilter!) {
+    organizationsConnection(
+      direction: $direction
+      filter: $filter
+      directionArgs: { count: $count, cursor: $cursor }
+      sort: $sort
+    ) {
+      totalCount
+      edges {
+        node {
+          id
+          name
+          owners{
+          email
+         }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
 
 query getSchoolTeacher($user_id: ID!) {
   user(user_id: $user_id) {
@@ -670,7 +695,7 @@ query classesConnection($classFilter:ClassFilter, $classCursor: String, $teacher
     }
   }
 }
-query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
+# query getClassByInfo($filter: ClassFilter, $direction: ConnectionDirection!, $studentCursor: String, $studentDirection: ConnectionDirection, $teacherCursor: String, $teacherDirection: ConnectionDirection) {
 query getClassByInfo(
   $filter: ClassFilter,
   $direction: ConnectionDirection!,
@@ -728,7 +753,7 @@ classesConnection(
   }
 }
 
-query userWithoutClassAndSchool ($direction) {
+query userWithoutClassAndSchool ($direction: ConnectionDirection) {
   usersConnection (
     direction: FORWARD,
     directionArgs: {
@@ -753,6 +778,33 @@ query userWithoutClassAndSchool ($direction) {
       hasPreviousPage
       startCursor
       endCursor
+    }
+  }
+}
+query getRolesId (
+  $filter: RoleFilter,
+  $direction: ConnectionDirection!,
+  $directionArgs: ConnectionsDirectionArgs
+) {
+  rolesConnection(
+    filter: $filter
+    direction: $direction,
+    directionArgs: $directionArgs
+  ) {
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        id
+        name
+        status
+        system
+      }
     }
   }
 }

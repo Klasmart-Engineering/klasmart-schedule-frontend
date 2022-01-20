@@ -1,10 +1,13 @@
 import PermissionType from "@api/PermissionType";
+import { Data } from "@dnd-kit/core/dist/store";
 import { usePermission } from "@hooks/usePermission";
 import { Box, Collapse, useMediaQuery, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AssignmentOutlinedIcon from "@material-ui/icons/AssignmentOutlined";
 import ChevronLeftOutlinedIcon from "@material-ui/icons/ChevronLeftOutlined";
 import ChevronRightOutlinedIcon from "@material-ui/icons/ChevronRightOutlined";
+import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
+import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
 import LiveTvOutlinedIcon from "@material-ui/icons/LiveTvOutlined";
 import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 import SchoolOutlinedIcon from "@material-ui/icons/SchoolOutlined";
@@ -29,12 +32,9 @@ import { EntityScheduleTimeView, EntityScheduleViewDetail } from "../../api/api.
 import { d, localeManager } from "../../locale/LocaleManager";
 import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
 import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
-import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
+import { getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, scheduleInfoViewProps, timestampType } from "../../types/scheduleTypes";
 import YearCalendar from "./YearView";
-import { Data } from "@dnd-kit/core/dist/store";
-import KeyboardArrowUpOutlinedIcon from "@material-ui/icons/KeyboardArrowUpOutlined";
-import KeyboardArrowDownOutlinedIcon from "@material-ui/icons/KeyboardArrowDownOutlined";
 
 const useStyles = makeStyles(({ shadows }) => ({
   calendarBox: {
@@ -316,7 +316,7 @@ function MyCalendar(props: CalendarProps) {
     PermissionType.view_my_calendar_510,
     PermissionType.create_schedule_page_501,
   ]);
-  const permissionShowLive = perm.attend_live_class_as_a_student_187;
+  // const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
@@ -558,13 +558,13 @@ function MyCalendar(props: CalendarProps) {
    * @param event
    */
   const scheduleSelected = async (event: scheduleInfoViewProps) => {
-    const currentTime = Math.floor(new Date().getTime());
-    if (
-      ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
-      (permissionShowLive && event.class_type === "Homework")
-    ) {
-      await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
-    }
+    // const currentTime = Math.floor(new Date().getTime());
+    // if (
+    //   ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
+    //   (permissionShowLive && event.class_type === "Homework")
+    // ) {
+    //   await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
+    // }
     const scheduleInfoView = await getHandleScheduleViewInfo(event.id);
     if (!scheduleInfoView) return;
     changeModalDate({

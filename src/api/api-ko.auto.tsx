@@ -280,6 +280,40 @@ export type OrganizationsQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type GetOrganizationsQueryVariables = Types.Exact<{
+  direction: Types.ConnectionDirection;
+  cursor?: Types.Maybe<Types.Scalars["String"]>;
+  count?: Types.Maybe<Types.Scalars["PageSize"]>;
+  sort: Types.OrganizationSortInput;
+  filter: Types.OrganizationFilter;
+}>;
+
+export type GetOrganizationsQuery = { __typename?: "Query" } & {
+  organizationsConnection?: Types.Maybe<
+    { __typename?: "OrganizationsConnectionResponse" } & Pick<Types.OrganizationsConnectionResponse, "totalCount"> & {
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "OrganizationsConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "OrganizationConnectionNode" } & Pick<Types.OrganizationConnectionNode, "id" | "name"> & {
+                      owners?: Types.Maybe<Array<Types.Maybe<{ __typename?: "UserSummaryNode" } & Pick<Types.UserSummaryNode, "email">>>>;
+                    }
+                >;
+              }
+            >
+          >
+        >;
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
+      }
+  >;
+};
+
 export type GetSchoolTeacherQueryVariables = Types.Exact<{
   user_id: Types.Scalars["ID"];
 }>;
@@ -737,7 +771,12 @@ export type GetProgramsAndSubjectsQuery = { __typename?: "Query" } & {
                         Array<{ __typename?: "GradeSummaryNode" } & Pick<Types.GradeSummaryNode, "id" | "name" | "status" | "system">>
                       >;
                       subjects?: Types.Maybe<
-                        Array<{ __typename?: "SubjectSummaryNode" } & Pick<Types.SubjectSummaryNode, "id" | "name" | "status" | "system">>
+                        Array<
+                          { __typename?: "CoreSubjectConnectionNode" } & Pick<
+                            Types.CoreSubjectConnectionNode,
+                            "id" | "name" | "status" | "system"
+                          >
+                        >
                       >;
                     }
                 >;
@@ -1000,6 +1039,62 @@ export type GetClassByInfoQuery = { __typename?: "Query" } & {
         >
       >;
     }
+  >;
+};
+
+export type UserWithoutClassAndSchoolQueryVariables = Types.Exact<{
+  direction?: Types.Maybe<Types.ConnectionDirection>;
+}>;
+
+export type UserWithoutClassAndSchoolQuery = { __typename?: "Query" } & {
+  usersConnection?: Types.Maybe<
+    { __typename?: "UsersConnectionResponse" } & {
+      edges?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "UsersConnectionEdge" } & {
+              node?: Types.Maybe<{ __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "givenName" | "familyName">>;
+            }
+          >
+        >
+      >;
+      pageInfo?: Types.Maybe<
+        { __typename?: "ConnectionPageInfo" } & Pick<
+          Types.ConnectionPageInfo,
+          "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+        >
+      >;
+    }
+  >;
+};
+
+export type GetRolesIdQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.RoleFilter>;
+  direction: Types.ConnectionDirection;
+  directionArgs?: Types.Maybe<Types.ConnectionsDirectionArgs>;
+}>;
+
+export type GetRolesIdQuery = { __typename?: "Query" } & {
+  rolesConnection?: Types.Maybe<
+    { __typename?: "RolesConnectionResponse" } & Pick<Types.RolesConnectionResponse, "totalCount"> & {
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "RolesConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "RoleConnectionNode" } & Pick<Types.RoleConnectionNode, "id" | "name" | "status" | "system">
+                >;
+              }
+            >
+          >
+        >;
+      }
   >;
 };
 
@@ -1715,6 +1810,68 @@ export function useOrganizationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type OrganizationsQueryHookResult = ReturnType<typeof useOrganizationsQuery>;
 export type OrganizationsLazyQueryHookResult = ReturnType<typeof useOrganizationsLazyQuery>;
 export type OrganizationsQueryResult = Apollo.QueryResult<OrganizationsQuery, OrganizationsQueryVariables>;
+export const GetOrganizationsDocument = gql`
+  query getOrganizations(
+    $direction: ConnectionDirection!
+    $cursor: String
+    $count: PageSize
+    $sort: OrganizationSortInput!
+    $filter: OrganizationFilter!
+  ) {
+    organizationsConnection(direction: $direction, filter: $filter, directionArgs: { count: $count, cursor: $cursor }, sort: $sort) {
+      totalCount
+      edges {
+        node {
+          id
+          name
+          owners {
+            email
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetOrganizationsQuery__
+ *
+ * To run a query within a React component, call `useGetOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrganizationsQuery({
+ *   variables: {
+ *      direction: // value for 'direction'
+ *      cursor: // value for 'cursor'
+ *      count: // value for 'count'
+ *      sort: // value for 'sort'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetOrganizationsQuery(baseOptions: Apollo.QueryHookOptions<GetOrganizationsQuery, GetOrganizationsQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetOrganizationsQuery, GetOrganizationsQueryVariables>(GetOrganizationsDocument, options);
+}
+export function useGetOrganizationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetOrganizationsQuery, GetOrganizationsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetOrganizationsQuery, GetOrganizationsQueryVariables>(GetOrganizationsDocument, options);
+}
+export type GetOrganizationsQueryHookResult = ReturnType<typeof useGetOrganizationsQuery>;
+export type GetOrganizationsLazyQueryHookResult = ReturnType<typeof useGetOrganizationsLazyQuery>;
+export type GetOrganizationsQueryResult = Apollo.QueryResult<GetOrganizationsQuery, GetOrganizationsQueryVariables>;
 export const GetSchoolTeacherDocument = gql`
   query getSchoolTeacher($user_id: ID!) {
     user(user_id: $user_id) {
@@ -2916,3 +3073,122 @@ export function useGetClassByInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetClassByInfoQueryHookResult = ReturnType<typeof useGetClassByInfoQuery>;
 export type GetClassByInfoLazyQueryHookResult = ReturnType<typeof useGetClassByInfoLazyQuery>;
 export type GetClassByInfoQueryResult = Apollo.QueryResult<GetClassByInfoQuery, GetClassByInfoQueryVariables>;
+export const UserWithoutClassAndSchoolDocument = gql`
+  query userWithoutClassAndSchool($direction: ConnectionDirection) {
+    usersConnection(
+      direction: FORWARD
+      directionArgs: { count: 5, cursor: "" }
+      filter: {
+        organizationId: { operator: eq, value: "de6e850a-cf97-4e0b-aa96-c0fedcda71be" }
+        classId: { operator: isNull }
+        organizationUserStatus: { operator: eq, value: "active" }
+      }
+    ) {
+      edges {
+        node {
+          id
+          givenName
+          familyName
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
+
+/**
+ * __useUserWithoutClassAndSchoolQuery__
+ *
+ * To run a query within a React component, call `useUserWithoutClassAndSchoolQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserWithoutClassAndSchoolQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserWithoutClassAndSchoolQuery({
+ *   variables: {
+ *      direction: // value for 'direction'
+ *   },
+ * });
+ */
+export function useUserWithoutClassAndSchoolQuery(
+  baseOptions?: Apollo.QueryHookOptions<UserWithoutClassAndSchoolQuery, UserWithoutClassAndSchoolQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<UserWithoutClassAndSchoolQuery, UserWithoutClassAndSchoolQueryVariables>(
+    UserWithoutClassAndSchoolDocument,
+    options
+  );
+}
+export function useUserWithoutClassAndSchoolLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<UserWithoutClassAndSchoolQuery, UserWithoutClassAndSchoolQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<UserWithoutClassAndSchoolQuery, UserWithoutClassAndSchoolQueryVariables>(
+    UserWithoutClassAndSchoolDocument,
+    options
+  );
+}
+export type UserWithoutClassAndSchoolQueryHookResult = ReturnType<typeof useUserWithoutClassAndSchoolQuery>;
+export type UserWithoutClassAndSchoolLazyQueryHookResult = ReturnType<typeof useUserWithoutClassAndSchoolLazyQuery>;
+export type UserWithoutClassAndSchoolQueryResult = Apollo.QueryResult<
+  UserWithoutClassAndSchoolQuery,
+  UserWithoutClassAndSchoolQueryVariables
+>;
+export const GetRolesIdDocument = gql`
+  query getRolesId($filter: RoleFilter, $direction: ConnectionDirection!, $directionArgs: ConnectionsDirectionArgs) {
+    rolesConnection(filter: $filter, direction: $direction, directionArgs: $directionArgs) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      edges {
+        node {
+          id
+          name
+          status
+          system
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetRolesIdQuery__
+ *
+ * To run a query within a React component, call `useGetRolesIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRolesIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRolesIdQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *      direction: // value for 'direction'
+ *      directionArgs: // value for 'directionArgs'
+ *   },
+ * });
+ */
+export function useGetRolesIdQuery(baseOptions: Apollo.QueryHookOptions<GetRolesIdQuery, GetRolesIdQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetRolesIdQuery, GetRolesIdQueryVariables>(GetRolesIdDocument, options);
+}
+export function useGetRolesIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRolesIdQuery, GetRolesIdQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetRolesIdQuery, GetRolesIdQueryVariables>(GetRolesIdDocument, options);
+}
+export type GetRolesIdQueryHookResult = ReturnType<typeof useGetRolesIdQuery>;
+export type GetRolesIdLazyQueryHookResult = ReturnType<typeof useGetRolesIdLazyQuery>;
+export type GetRolesIdQueryResult = Apollo.QueryResult<GetRolesIdQuery, GetRolesIdQueryVariables>;

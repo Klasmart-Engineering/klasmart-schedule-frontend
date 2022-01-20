@@ -1,6 +1,8 @@
+import { apiLivePath } from "@api/extra";
 import { Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Zoom from "@material-ui/core/Zoom";
+import ScheduleToolMb from "@pages/Schedule/ScheduleToolMb";
 import { onLoadContentPreview } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
@@ -11,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { ConnectionDirection, StringOperator, UuidExclusiveOperator } from "../../api/api-ko-schema.auto";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "../../api/api.auto";
-import { apiLivePath } from "../../api/extra";
 import PermissionType from "../../api/PermissionType";
 import KidsCalendar from "../../components/Calendar";
 import LayoutBox from "../../components/LayoutBox";
@@ -35,6 +36,7 @@ import {
   getParticipantsData,
   getScheduleAnyTimeViewData,
   getScheduleInfo,
+  getScheduleLiveToken,
   getScheduleMockOptions,
   getScheduleParticipant,
   getScheduleTimeViewData,
@@ -46,13 +48,20 @@ import {
   ScheduleFilterPrograms,
   scheduleUpdateStatus,
 } from "../../reducers/schedule";
-import { AlertDialogProps, memberType, modeViewType, ParticipantsShortInfo, RouteParams, timestampType } from "../../types/scheduleTypes";
+import {
+  AlertDialogProps,
+  memberType,
+  modeViewType,
+  ParticipantsShortInfo,
+  ParticipantString,
+  RouteParams,
+  timestampType,
+} from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleAnyTime from "./ScheduleAnyTime";
 import ScheduleEdit from "./ScheduleEdit";
 import ScheduleTool from "./ScheduleTool";
 import SearchList from "./SearchList";
-import ScheduleToolMb from "@pages/Schedule/ScheduleToolMb";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -86,7 +95,7 @@ function ScheduleContent() {
     mockOptions,
     scheduleMockOptions,
     participantMockOptions,
-    liveToken,
+    // liveToken,
     scheduleTimeViewYearData,
     ParticipantsData,
     classRosterIds,
@@ -292,13 +301,27 @@ function ScheduleContent() {
     [isAdmin, isSchool, isTeacher, isStudent]
   );
 
-  const toLive = (schedule_id?: string, token?: string) => {
-    dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
-    if (liveToken || token) window.open(apiLivePath(token ?? liveToken));
+  const toLive = async (schedule_id?: string, token?: string) => {
+    if (navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0) {
+      let winRef = window.open("", "_blank");
+      dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
+      let resultInfo: any;
+      resultInfo = await dispatch(
+        getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
+      );
+      resultInfo.payload.token ? winRef && (winRef.location = apiLivePath(resultInfo.payload.token)) : winRef?.close();
+    } else {
+      dispatch(scheduleUpdateStatus({ schedule_id: schedule_id ?? scheduleId, status: { status: "Started" } }));
+      let resultInfo: any;
+      resultInfo = await dispatch(
+        getScheduleLiveToken({ schedule_id: schedule_id ?? scheduleId, live_token_type: "live", metaLoading: true })
+      );
+      resultInfo.payload.token && window.open(apiLivePath(resultInfo.payload.token), "_blank");
+    }
   };
 
-  const getParticipants = async (metaLoading: boolean = true, search: string, hash: string) => {
-    await dispatch(getParticipantsData({ is_org: isAdmin as boolean, hash: hash, name: search, metaLoading: metaLoading }));
+  const getParticipants = async (metaLoading: boolean = true, search: string, hash: string, roleName: ParticipantString["key"]) => {
+    await dispatch(getParticipantsData({ is_org: isAdmin as boolean, hash: hash, name: search, roleName, metaLoading: metaLoading }));
   };
 
   const getClassesConnection = async (
@@ -359,7 +382,6 @@ function ScheduleContent() {
     );
     return resultInfo.payload ? resultInfo.payload.data.classesConnection.edges : [];
   };
-
   React.useEffect(() => {
     if (includeEdit && stateFlag) {
       // get content
@@ -377,7 +399,14 @@ function ScheduleContent() {
         dispatch(getClassesByStudent());
       }
       // get materials
-      dispatch(getLessonPlansBySchedule({ metaLoading: true }));
+      dispatch(
+        getLessonPlansBySchedule({
+          metaLoading: true,
+          group_names: ["Organization Content", "Badanamu Content", "More Featured Content"],
+          page: 1,
+          page_size: 10,
+        })
+      );
       dispatch(getScheduleMockOptions({}));
       dispatch(getLinkedMockOptions({ metaLoading: true }));
       setStateFlag(false);
@@ -517,6 +546,7 @@ function ScheduleContent() {
               classesConnection={classesConnection}
               userInUndefined={userInUndefined}
               lessonPlans={lessonPlans}
+              mobile={mobile}
             />
           </Grid>
           {mobile && (

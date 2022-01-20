@@ -1,6 +1,7 @@
 import { Box, Button, createStyles, makeStyles, Theme, useMediaQuery, useTheme } from "@material-ui/core";
 import { CloseOutlined, DeleteOutlined, EditOutlined, VisibilityOff } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
+import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback } from "react";
@@ -12,11 +13,10 @@ import AnyTimeNoData from "../../assets/icons/any_time_no_data.png";
 import { Permission } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
 import { actSuccess } from "../../reducers/notify";
-import { getScheduleLiveToken, getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
+import { getScheduleTimeViewData, removeSchedule, scheduleShowOption } from "../../reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, timestampType } from "../../types/scheduleTypes";
 import ConfilctTestTemplate from "./ConfilctTestTemplate";
 import ScheduleButton from "./ScheduleButton";
-import LocalLibraryOutlinedIcon from "@material-ui/icons/LocalLibraryOutlined";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -211,17 +211,20 @@ function AnyTimeSchedule(props: SearchListProps) {
       });
       return;
     }
-    let resultInfo: any;
-    resultInfo = await dispatch(
-      getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true })
-    );
-    if (resultInfo.payload.token) {
-      if (privilegedMembers("Student") && scheduleDetial.class_type_label?.id === "Homework") {
-        toLive(scheduleDetial.id, resultInfo.payload.token);
-        return;
-      }
-      toLive(scheduleDetial.id, resultInfo.payload.token);
+    // let resultInfo: any;
+    // resultInfo = await dispatch(
+    //   getScheduleLiveToken({ schedule_id: scheduleDetial.id as string, live_token_type: "live", metaLoading: true })
+    // );
+    // if (resultInfo.payload.token) {
+    if (privilegedMembers("Student") && scheduleDetial.class_type_label?.id === "Homework") {
+      toLive(scheduleDetial.id);
+      // toLive(scheduleDetial.id, resultInfo.payload.token);
+      return;
+    } else {
+      toLive(scheduleDetial.id);
     }
+    // toLive(scheduleDetial.id, resultInfo.payload.token);
+    // }
   };
 
   const deleteScheduleByid = useCallback(

@@ -19,10 +19,9 @@ export function ReportCategories() {
   const dispatch = useDispatch();
   const { teacherList, categories } = useSelector<RootState, RootState["report"]>((state) => state.report);
   const perm = usePermission([
-    PermissionType.view_reports_610,
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_school_reports_611,
-    PermissionType.view_my_organizations_reports_612,
+    PermissionType.report_organizations_skills_taught_640,
+    PermissionType.report_schools_skills_taught_641,
+    PermissionType.report_my_skills_taught_642,
   ]);
   const handleChangeFilter: SecondSearchHeaderProps["onChange"] = (value, tab) => {
     if (!value) return;
@@ -38,7 +37,7 @@ export function ReportCategories() {
     <>
       <ReportTitle title={t("report_label_lo_in_categories")}></ReportTitle>
       <SecondSearchHeader value={condition} onChange={handleChangeFilter} teacherList={teacherList} perm={perm}></SecondSearchHeader>
-      {perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612
+      {perm.report_organizations_skills_taught_640 || perm.report_schools_skills_taught_641 || perm.report_my_skills_taught_642
         ? categories.length > 0
           ? chart
           : emptyTip
