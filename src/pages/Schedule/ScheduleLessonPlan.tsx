@@ -547,6 +547,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
             }
           }}
           onBlur={(e) => {
+            setLessonPlanNameCondition(lessonPlanName);
             inquiryAssembly(filterQuery, false);
           }}
           size="small"
