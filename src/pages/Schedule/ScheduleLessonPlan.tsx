@@ -82,7 +82,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     "& .MuiInputBase-root": {
       borderRadius: "10px",
     },
-    "& .MuiAutocomplete-clearIndicator": {
+    "& .MuiChip-deleteIcon": {
       display: "none",
     },
   },
@@ -163,6 +163,10 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     "& .MuiAutocomplete-tag": {
       color: "white",
       marginLeft: "12px",
+      display: "none",
+    },
+    "& .MuiAutocomplete-tag:first-of-type": {
+      display: "inline-flex",
     },
     "& .MuiChip-deletable": {
       backgroundColor: "#0E78D5",
@@ -171,6 +175,10 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
       "& .MuiChip-deleteIcon": {
         color: "white",
       },
+      width: "120px",
+    },
+    "& input": {
+      display: "none",
     },
   },
   emptyLabel: {
@@ -515,7 +523,24 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   };
 
   return (
-    <Box className={classes.previewContainerMb} style={{ height: `${boxHeight}px` }}>
+    <Box
+      className={classes.previewContainerMb}
+      style={{ height: `${boxHeight}px` }}
+      onClick={() => {
+        const clickDom = document.getElementsByClassName("MuiAutocomplete-endAdornment");
+        for (let i in clickDom) {
+          if (clickDom[i].nodeType) {
+            const inputDom = clickDom[i].previousElementSibling;
+            if (inputDom !== document.activeElement) {
+              const itemButton = clickDom[i].getElementsByTagName("button")[1];
+              if (itemButton.className.includes("MuiAutocomplete-popupIndicatorOpen")) {
+                itemButton.click();
+              }
+            }
+          }
+        }
+      }}
+    >
       <div className={classes.lessonTitleMb}>
         <span>{d("Lesson Plan Search").t("schedule_lesson_plan_search")}</span> <CloseIcon onClick={handleClose} />
       </div>
@@ -868,7 +893,23 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       setLessonPlanNameCondition={setLessonPlanNameCondition}
     />
   ) : (
-    <Box className={classes.previewContainer}>
+    <Box
+      className={classes.previewContainer}
+      onClick={() => {
+        const clickDom = document.getElementsByClassName("MuiAutocomplete-endAdornment");
+        for (let i in clickDom) {
+          if (clickDom[i].nodeType) {
+            const inputDom = clickDom[i].previousElementSibling;
+            if (inputDom !== document.activeElement) {
+              const itemButton = clickDom[i].getElementsByTagName("button")[1];
+              if (itemButton.className.includes("MuiAutocomplete-popupIndicatorOpen")) {
+                itemButton.click();
+              }
+            }
+          }
+        }
+      }}
+    >
       <div className={classes.lessonTitle}>
         <span>{d("Lesson Plan Search").t("schedule_lesson_plan_search")}</span>{" "}
         <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
