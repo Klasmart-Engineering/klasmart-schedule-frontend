@@ -695,6 +695,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     setSelectedValue(lessonPlanId);
     searchOutcomesList(defaultData);
     setPage(1);
+    setLessonPlanNameCondition("");
   };
 
   const selectGroupTemplate = () => {
@@ -725,7 +726,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
                 {...params}
                 size={"small"}
                 className={clsx(classes.fieldset, groupSelect.length ? classes.activeSelect : "")}
-                placeholder={d("Group").t("schedule_lesson_plan_popup_group")}
+                placeholder={d("Library").t("schedule_lesson_plan_popup_library")}
                 variant="outlined"
               />
             )}
