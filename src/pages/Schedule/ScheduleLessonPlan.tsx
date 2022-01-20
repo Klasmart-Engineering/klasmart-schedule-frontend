@@ -175,7 +175,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
       "& .MuiChip-deleteIcon": {
         color: "white",
       },
-      width: "76%",
+      width: "78%",
       "& span": {
         position: "absolute",
         left: 0,
