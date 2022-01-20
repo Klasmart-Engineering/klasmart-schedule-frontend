@@ -895,7 +895,15 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
   ) : (
     <Box
       className={classes.previewContainer}
-      onClick={() => {
+      onClick={(e: any) => {
+        const className = e.target.className;
+        if (
+          typeof className === "string" &&
+          (className.includes("MuiAutocomplete-option") ||
+            className.includes("MuiAutocomplete-popupIndicator") ||
+            className.includes("PrivateSwitchBase-input"))
+        )
+          return;
         const clickDom = document.getElementsByClassName("MuiAutocomplete-endAdornment");
         for (let i in clickDom) {
           if (clickDom[i].nodeType) {
