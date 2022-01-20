@@ -643,9 +643,10 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
       filterQuery.grades.length ||
       filterQuery.ages.length ||
       groupSelect.length ||
-      selectedValue !== lessonPlanId
+      selectedValue !== lessonPlanId ||
+      !!lessonPlanNameCondition
     );
-  }, [filterQuery, groupSelect, selectedValue, lessonPlanId]);
+  }, [filterQuery, groupSelect, selectedValue, lessonPlanId, lessonPlanNameCondition]);
 
   const saveDisabled = useMemo(() => {
     return !selectedValue || selectedValue === lessonPlanId || !lessonPlans.filter((item) => item.id === selectedValue).length;
@@ -696,6 +697,8 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
     searchOutcomesList(defaultData);
     setPage(1);
     setLessonPlanNameCondition("");
+    if (dom) dom.scrollTop = 0;
+    if (domMb) domMb.scrollTop = 0;
   };
 
   const selectGroupTemplate = () => {
