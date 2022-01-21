@@ -100,8 +100,13 @@ export interface OrganizationListProps {
   open: boolean;
   orgList: OrgInfoProps[];
   onClose: () => any;
-  onShareFolder: (ids: string[]) => ReturnType<LButtonProps["onClick"]>; //ReturnType<LButtonProps["onClick"]>
+  onShareFolder: (ids: string[]) => ReturnType<LButtonProps["onClick"]>;
   selectedOrg: string[];
+}
+export interface OrgsSortType {
+  sortType: OrganizationSortBy;
+  emailOrder: boolean;
+  nameOrder: boolean;
 }
 const PAGESIZE = 10;
 export function OrganizationList(props: OrganizationListProps) {
@@ -117,11 +122,9 @@ export function OrganizationList(props: OrganizationListProps) {
   const [newSelectedOrgIds, setNewSelectedOrgIds] = useState(true);
   const [beValues, setBeValues] = useState(selectedOrg[0] === ShareScope.share_all ? [] : selectedOrg);
   const [pageDesc, setPageDesc] = useState(`1-${orgListTotal > PAGESIZE ? PAGESIZE : orgListTotal}`);
-  const [nameOrder, setNameOrder] = useState(true);
-  const [emailOrder, setEmailOrder] = useState(true);
-  const [sortType, setSortType] = useState<OrganizationSortBy>(OrganizationSortBy.Name);
-  const inputSearch = watch()["inputSearch"] || "";
+  const [orgsSort, setOrgsSort] = useState<OrgsSortType>({ sortType: OrganizationSortBy.Name, emailOrder: true, nameOrder: true });
   const [buttonSearch, setButtonSearch] = useState("");
+  const inputSearch = watch()["inputSearch"] || "";
   useMemo(() => {
     const radioNewValue =
       selectedOrg && selectedOrg.length > 0
@@ -142,6 +145,9 @@ export function OrganizationList(props: OrganizationListProps) {
   };
 
   const searchOrgList = async ({ direction, cursor = "", curentPageCursor = CursorType.start, sort, search }: CursorListProps) => {
+    const { sortType, emailOrder, nameOrder } = orgsSort;
+    const searchValue = search ?? buttonSearch;
+    search !== undefined && setButtonSearch(inputSearch);
     const initSort: OrganizationSortInput = {
       field: [sortType],
       order:
@@ -149,7 +155,7 @@ export function OrganizationList(props: OrganizationListProps) {
           ? SortOrder.Asc
           : SortOrder.Desc,
     };
-    const searchValue = search !== undefined ? search : buttonSearch;
+
     const { payload } = (await dispatch(
       getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
@@ -163,21 +169,19 @@ export function OrganizationList(props: OrganizationListProps) {
   };
 
   const handleKeyPress: TextFieldProps["onKeyPress"] = (event) => {
-    if (event.key === "Enter") {
-      setButtonSearch(inputSearch);
-      searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch });
-    }
+    if (event.key === "Enter") searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch });
   };
 
   const handleSortOrgList = (type: OrganizationSortBy) => {
-    setButtonSearch(inputSearch);
+    const { emailOrder, nameOrder } = orgsSort;
     const sort: OrganizationSortInput = {
       field: [type],
       order: type === OrganizationSortBy.Name ? (nameOrder ? SortOrder.Desc : SortOrder.Asc) : emailOrder ? SortOrder.Desc : SortOrder.Asc,
     };
     searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch, sort });
-    setSortType(type);
-    type === OrganizationSortBy.Name ? setNameOrder(!nameOrder) : setEmailOrder(!emailOrder);
+    type === OrganizationSortBy.Name
+      ? setOrgsSort({ ...orgsSort, sortType: type, nameOrder: !nameOrder })
+      : setOrgsSort({ ...orgsSort, sortType: type, emailOrder: !emailOrder });
   };
 
   const handleChangeBeValues = (id: string, checked: boolean) => {
@@ -274,10 +278,7 @@ export function OrganizationList(props: OrganizationListProps) {
                             variant="contained"
                             color="primary"
                             disabled={radioValue !== ShareScope.share_to_org}
-                            onClick={() => {
-                              setButtonSearch(inputSearch);
-                              searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch });
-                            }}
+                            onClick={() => searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch })}
                           >
                             {d("Search").t("library_label_search")}{" "}
                           </Button>
@@ -287,13 +288,11 @@ export function OrganizationList(props: OrganizationListProps) {
                             <div style={{ minHeight: 520 }}>
                               {orgList?.length > 0 ? (
                                 <OrgsTable
+                                  {...orgsSort}
                                   onSortOrgList={handleSortOrgList}
                                   handleChangeBeValues={handleChangeBeValues}
                                   list={orgList}
                                   selectedContentGroupContext={selectedContentGroupContext}
-                                  sortType={sortType}
-                                  nameOrder={nameOrder}
-                                  emailOrder={emailOrder}
                                 />
                               ) : (
                                 resultsTip
