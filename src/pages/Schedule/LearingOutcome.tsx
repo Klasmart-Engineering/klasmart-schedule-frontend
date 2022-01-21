@@ -3,8 +3,6 @@ import { makeStyles } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -33,10 +31,13 @@ import { EntityScheduleDetailsView } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { EntityScheduleShortInfo, LearningComesFilterQuery, LearningContentList, LearningContentListForm } from "../../types/scheduleTypes";
+import clsx from "clsx";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
-    width: "760px",
+    width: "860px",
     [breakpoints.down(650)]: {
       paddingLeft: "99%",
     },
@@ -102,11 +103,93 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     alignItems: "center",
   },
   fieldset: {
-    width: "100%",
+    width: "230px",
+    "& .MuiInputBase-root": {
+      borderRadius: "10px",
+    },
+    "& .MuiChip-deleteIcon": {
+      display: "none",
+    },
+  },
+  activeSelect: {
+    "& .MuiInputBase-root": {
+      backgroundColor: "#0E78D5",
+    },
+    "& .MuiInputBase-input , .MuiIconButton-label": {
+      color: "white",
+    },
+    "& .MuiAutocomplete-tag": {
+      color: "white",
+      marginLeft: "12px",
+      display: "none",
+    },
+    "& .MuiAutocomplete-tag:first-of-type": {
+      display: "inline-flex",
+    },
+    "& .MuiChip-deletable": {
+      backgroundColor: "#0E78D5",
+      color: "white",
+      marginLeft: "0px",
+      "& .MuiChip-deleteIcon": {
+        color: "white",
+      },
+      width: "78%",
+      "& span": {
+        position: "absolute",
+        left: 0,
+      },
+    },
   },
   root: {
-    marginTop: 10,
+    marginTop: 8,
     flexGrow: 1,
+    display: "flex",
+    [breakpoints.down(600)]: {
+      paddingBottom: 0,
+      marginBottom: 0,
+      marginTop: 0,
+    },
+  },
+  filterBox: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    borderLeft: "2px solid #EEEEEE",
+    [breakpoints.down(600)]: {
+      borderRight: "2px solid #EEEEEE",
+      flexWrap: "unset",
+    },
+  },
+  selectBox: {
+    display: "flex",
+    alignItems: "center",
+    marginTop: "10px",
+    [breakpoints.down(600)]: {
+      marginTop: "0px",
+    },
+  },
+  assumedBnt: {
+    margin: "0 15px 0 15px",
+    width: 100,
+    borderRadius: "10px",
+    backgroundColor: "white",
+    color: "gray",
+  },
+  activeAssumedBnt: {
+    margin: "0 15px 0 15px",
+    width: 100,
+    borderRadius: "10px",
+  },
+  lessonTitle: {
+    display: "flex",
+    justifyContent: "space-between",
+    "& span": {
+      color: "#000000",
+      fontWeight: 700,
+      fontSize: 23,
+      padding: "0 10px 0 10px",
+    },
   },
 }));
 
@@ -120,6 +203,7 @@ interface filterGropProps {
   setFilterQuery?: (data: LearningComesFilterQuery) => void;
   getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
   viewSubjectPermission?: boolean;
+  checkAssume?: (value: boolean) => void;
 }
 
 interface InfoProps extends filterGropProps {
@@ -141,10 +225,13 @@ function SelectGroup(props: filterGropProps) {
     filterQuery,
     setFilterQuery,
     viewSubjectPermission,
+    checkAssume,
   } = props;
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
 
   const dispatch = useDispatch();
+
+  const [checkAssumed, setCheckAssumed] = React.useState<boolean>(false);
 
   const autocompleteChange = async (value: any | null, name: "subjects" | "categorys" | "subs" | "ages" | "grades" | "programs") => {
     const ids = value?.map((item: any) => {
@@ -232,154 +319,74 @@ function SelectGroup(props: filterGropProps) {
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+  const selectGroup = [
+    { name: d("Programs").t("schedule_filter_programs"), data: programs, enum: "programs" },
+    { name: d("Subjects").t("schedule_filter_subjects"), data: deduplication(filteredList.subjects), enum: "subjects" },
+    { name: d("Category").t("library_label_category"), data: deduplication(filteredList.categorys), enum: "categorys" },
+    { name: d("Sub Category").t("schedule_sub_category"), data: deduplication(filteredList.subs), enum: "subs" },
+    { name: d("Age").t("assess_label_age"), data: deduplication(filteredList.ages), enum: "ages" },
+    { name: d("Grade").t("assess_label_grade"), data: deduplication(filteredList.grades), enum: "grades" },
+  ];
+
+  const autocompleteValue = (key: string) => {
+    return key === "programs"
+      ? programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))
+      : defaultValues(key as "subjects" | "categorys" | "subs" | "ages" | "grades");
+  };
+
   return (
     <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={programs}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            limitTags={1}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "programs");
-            }}
-            value={programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Programs").t("schedule_filter_programs")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.subjects)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("subjects")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "subjects");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Subject").t("schedule_detail_subject")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.categorys)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("categorys")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "categorys");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Category").t("assess_label_category")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.subs)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("subs")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "subs");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Sub Category").t("schedule_sub_category")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.ages)}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            limitTags={1}
-            value={defaultValues("ages")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "ages");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Age").t("assess_label_age")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.grades)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("grades")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "grades");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Grade").t("library_label_grade")} variant="outlined" />
-            )}
-          />
-        </Grid>
-      </Grid>
+      <div className={classes.selectBox}>
+        <FilterListIcon />
+        <Button
+          variant="contained"
+          size="medium"
+          color="primary"
+          onClick={(e) => {
+            setCheckAssumed(!checkAssumed);
+            checkAssume && checkAssume(!checkAssumed);
+          }}
+          className={checkAssumed ? classes.activeAssumedBnt : classes.assumedBnt}
+        >
+          {d("Assumed").t("assess_filter_assumed")}
+        </Button>
+      </div>
+      <div className={classes.root}>
+        <div className={classes.filterBox}>
+          {selectGroup.map((item, index) => (
+            <Autocomplete
+              key={index}
+              id="combo-box-demo"
+              options={item.data}
+              getOptionLabel={(option: any) => option.name}
+              multiple
+              limitTags={1}
+              onChange={(e: any, newValue) => {
+                autocompleteChange(newValue, item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades");
+              }}
+              value={autocompleteValue(item.enum)}
+              disableCloseOnSelect
+              renderOption={(option: any, { selected }) => (
+                <React.Fragment>
+                  <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                  {option.name}
+                </React.Fragment>
+              )}
+              style={{ transform: "scale(0.9)" }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  style={{ marginTop: index > 2 ? 16 : 0 }}
+                  size={"small"}
+                  className={clsx(classes.fieldset, autocompleteValue(item.enum).length ? classes.activeSelect : "")}
+                  placeholder={item.name}
+                  variant="outlined"
+                />
+              )}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -523,7 +530,10 @@ export default function LearingOutcome(props: InfoProps) {
 
   return (
     <Box className={classes.previewContainer}>
-      <Box className={classes.flexBox}>
+      <div className={classes.lessonTitle}>
+        <span>Learning Outcome</span> <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
+      </div>
+      <Box className={classes.flexBox} style={{ margin: "10px 0px 0px 10px" }}>
         <div
           style={{
             alignItems: "center",
@@ -564,7 +574,7 @@ export default function LearingOutcome(props: InfoProps) {
             <Controller
               style={{
                 borderLeft: 0,
-                width: "180px",
+                width: "640px",
               }}
               as={TextField}
               defaultValue={learingOutcomeData.search_value}
@@ -589,26 +599,6 @@ export default function LearingOutcome(props: InfoProps) {
             {d("Search").t("library_label_search")}
           </Button>
         </div>
-        <Controller
-          name="is_assumed"
-          control={control}
-          defaultValue={learingOutcomeData.is_assumed}
-          render={(props: { value: boolean | undefined }) => (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={(e) => {
-                    checkAssume(e.target.checked);
-                  }}
-                  checked={props.value}
-                  name="checkedB"
-                  color="primary"
-                />
-              }
-              label={d("Assumed").t("assess_filter_assumed")}
-            />
-          )}
-        />
       </Box>
       <Box className={classes.flexBox}>
         <SelectGroup
@@ -621,6 +611,7 @@ export default function LearingOutcome(props: InfoProps) {
           setFilterQuery={setFilterQuery}
           getFilterQueryAssembly={getFilterQueryAssembly}
           viewSubjectPermission={viewSubjectPermission}
+          checkAssume={checkAssume}
         />
       </Box>
       <div
