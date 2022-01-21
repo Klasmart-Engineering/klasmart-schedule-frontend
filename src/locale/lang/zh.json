@@ -598,7 +598,7 @@
   "report_label_lesson_plan": "教学课件",
   "report_label_status": "状态",
   "report_label_all": "全部",
-  "report_label_achieved": "达标",
+  "report_label_achieved": "Achieved",
   "report_label_not_achieved": "未达标",
   "report_label_not_attempted": "未尝试",
   "report_label_sort_by": "排序",
@@ -1075,5 +1075,12 @@
   "schedule_popup_no_data_available": "暂无可用课件",
   "schedule_popup_no_matching_result": "没有匹配的搜索结果",
   "library_label_organization": "机构",
-  "library_label_org_owner_email": "机构所有者的电子邮件"
+  "library_label_org_owner_email": "机构所有者的电子邮件",
+  "report_label_learning_outcome": "Learning Outcome",
+  "report_label_learning_outcome_report": "Learning Outcome Report",
+  "report_label_learning_outcome_info": "Based on the learning outcomes covered in the last 7 days:\n<ul>\n  <li>Highly Achieved: learners that have achieved more than 80% of the learning outcomes\n</li>\n  <li>Low Achieved: learners that have achieved less than 50% of the learning outcomes\n</li>\n</ul>",
+  "report_label_covered": "Covered",
+  "report_label_above": "Above",
+  "report_label_meets": "Meets",
+  "report_label_below": "Below"
 }

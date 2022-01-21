@@ -598,7 +598,7 @@
   "report_label_lesson_plan": "Plan de la lección",
   "report_label_status": "Estado",
   "report_label_all": "Todo",
-  "report_label_achieved": "Logrado",
+  "report_label_achieved": "Achieved",
   "report_label_not_achieved": "No logrado",
   "report_label_not_attempted": "No intentado",
   "report_label_sort_by": "Ordenar por resultados",
@@ -1075,5 +1075,12 @@
   "schedule_popup_no_data_available": "No hay datos disponibles",
   "schedule_popup_no_matching_result": "Sin resultado coincidente",
   "library_label_organization": "Organización",
-  "library_label_org_owner_email": "Correo electrónico del propietario de la organización"
+  "library_label_org_owner_email": "Correo electrónico del propietario de la organización",
+  "report_label_learning_outcome": "Learning Outcome",
+  "report_label_learning_outcome_report": "Learning Outcome Report",
+  "report_label_learning_outcome_info": "Based on the learning outcomes covered in the last 7 days:\n<ul>\n  <li>Highly Achieved: learners that have achieved more than 80% of the learning outcomes\n</li>\n  <li>Low Achieved: learners that have achieved less than 50% of the learning outcomes\n</li>\n</ul>",
+  "report_label_covered": "Covered",
+  "report_label_above": "Above",
+  "report_label_meets": "Meets",
+  "report_label_below": "Below"
 }
