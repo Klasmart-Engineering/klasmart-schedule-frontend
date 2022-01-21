@@ -948,7 +948,8 @@ export function getOrgsFilter(searchValue: string, orgs: EntityRegionOrganizatio
       { status: { operator: StringOperator.Eq, value: "active" } },
       {
         OR: [
-          { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
+          // 2022/1/21 todo
+          // { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
           { name: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
         ],
       },
@@ -983,7 +984,8 @@ export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParam
     const orgList = data.organizationsConnection?.edges?.map((item) => ({
       organization_id: item?.node?.id,
       organization_name: item?.node?.name,
-      email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
+      // 2022/1/21 todo
+      // email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
     })) as IQueryGetOrgListResult;
     const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
     const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);
@@ -1007,8 +1009,6 @@ export const onloadShareOrgList = createAsyncThunk<void, IQueryGetFoldersSharedR
     };
     if (orgProperty.region && orgProperty.region === Region.vn) {
       await dispatch(getVnOrgList({}));
-      // const { payload } = (await dispatch(getVnOrgList({}))) as PayloadAction<AsyncTrunkReturned<typeof getVnOrgList>>;
-      // await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "", orgs: payload }));
     } else {
       await dispatch(getOrgList({ sort, searchValue: "", direction: ConnectionDirection.Forward, count: 10, cursor: "" }));
     }

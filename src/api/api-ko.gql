@@ -199,9 +199,10 @@ query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count
         node {
           id
           name
-          owners{
-          email
-         }
+          #  // 2022/1/21 todo 
+          # owners{
+          # email
+        #  }
         }
       }
       pageInfo {

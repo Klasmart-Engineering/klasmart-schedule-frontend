@@ -1,18 +1,6 @@
 import { OrganizationSortBy } from "@api/api-ko-schema.auto";
 import { t } from "@locale/LocaleManager";
-import {
-  Box,
-  Checkbox,
-  makeStyles,
-  SvgIcon,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@material-ui/core";
+import { Box, Checkbox, makeStyles, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import React from "react";
 import { ReactComponent as SortSvg } from "../../assets/icons/sort.svg";
 import { ReactComponent as sortAsc } from "../../assets/icons/sortAsc.svg";
@@ -47,7 +35,7 @@ interface OrgsTableProps {
   nameOrder: boolean;
 }
 export function OrgsTable(props: OrgsTableProps) {
-  const { list, selectedContentGroupContext, onSortOrgList, handleChangeBeValues, sortType, emailOrder, nameOrder } = props;
+  const { list, selectedContentGroupContext, onSortOrgList, handleChangeBeValues, sortType, nameOrder } = props;
   const css = useOrgStyles();
   const rows = list?.map((item, idx) => (
     <TableRow key={item.organization_id}>
@@ -65,11 +53,12 @@ export function OrgsTable(props: OrgsTableProps) {
         }
       </TableCell>
       <TableCell className={css.tableName}>{item.organization_name}</TableCell>
-      <TableCell align="center" className={css.tableEmail}>
+      {/* 2022/1/21 todo  */}
+      {/* <TableCell align="center" className={css.tableEmail}>
         <Typography style={{ fontSize: 14 }} noWrap>
           {item.email}
         </Typography>
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   ));
 
@@ -80,27 +69,28 @@ export function OrgsTable(props: OrgsTableProps) {
           <TableRow>
             <TableCell align="center" style={{ width: 30 }}></TableCell>
             <TableCell align="center">
-              <Box display="flex" style={{ cursor: "pointer" }} onClick={() => onSortOrgList(OrganizationSortBy.Name)}>
-                {t("library_label_organization")}
-                <SvgIcon
-                  style={{ marginTop: 1 }}
-                  component={sortType === OrganizationSortBy.OwnerEmail ? SortSvg : nameOrder ? sortAsc : sortDesc}
-                />
+              <Box display="flex">
+                <div style={{ display: "flex", cursor: "pointer" }} onClick={() => onSortOrgList(OrganizationSortBy.Name)}>
+                  {t("library_label_organization")}
+                  <SvgIcon
+                    style={{ marginTop: 1 }}
+                    component={sortType === OrganizationSortBy.OwnerEmail ? SortSvg : nameOrder ? sortAsc : sortDesc}
+                  />
+                </div>
               </Box>
             </TableCell>
-            <TableCell align="center">
-              <Box
-                display="flex"
-                style={{ justifyContent: "center", cursor: "pointer" }}
-                onClick={() => onSortOrgList(OrganizationSortBy.OwnerEmail)}
-              >
-                {t("library_label_org_owner_email")}
-                <SvgIcon
-                  style={{ marginTop: 1 }}
-                  component={sortType === OrganizationSortBy.Name ? SortSvg : emailOrder ? sortAsc : sortDesc}
-                />
+            {/* 2022/1/21 todo  */}
+            {/* <TableCell align="center">
+              <Box display="flex" style={{ justifyContent: "center" }}>
+                <div style={{ display: "flex", cursor: "pointer" }} onClick={() => onSortOrgList(OrganizationSortBy.OwnerEmail)}>
+                  {t("library_label_org_owner_email")}
+                  <SvgIcon
+                    style={{ marginTop: 1 }}
+                    component={sortType === OrganizationSortBy.Name ? SortSvg : emailOrder ? sortAsc : sortDesc}
+                  />
+                </div>
               </Box>
-            </TableCell>
+            </TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>{rows}</TableBody>
