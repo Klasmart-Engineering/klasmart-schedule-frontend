@@ -41,6 +41,12 @@ export type AddProgramsToSchoolInput = {
   schoolId: Scalars["ID"];
 };
 
+export type AddSchoolRolesToUserInput = {
+  roleIds: Array<Scalars["ID"]>;
+  schoolId: Scalars["ID"];
+  userId: Scalars["ID"];
+};
+
 export type AddSubcategoriesToCategoryInput = {
   categoryId: Scalars["ID"];
   subcategoryIds: Array<Scalars["ID"]>;
@@ -50,6 +56,12 @@ export type AddUsersToOrganizationInput = {
   organizationId: Scalars["ID"];
   organizationRoleIds: Array<Scalars["ID"]>;
   shortcode?: Maybe<Scalars["String"]>;
+  userIds: Array<Scalars["ID"]>;
+};
+
+export type AddUsersToSchoolInput = {
+  schoolId: Scalars["ID"];
+  schoolRoleIds?: Maybe<Array<Scalars["ID"]>>;
   userIds: Array<Scalars["ID"]>;
 };
 
@@ -570,6 +582,12 @@ export type CreateSubcategoryInput = {
   organizationId: Scalars["ID"];
 };
 
+export type CreateSubjectInput = {
+  categoryIds?: Maybe<Array<Scalars["ID"]>>;
+  name: Scalars["String"];
+  organizationId: Scalars["ID"];
+};
+
 export type CreateUserInput = {
   alternateEmail?: Maybe<Scalars["String"]>;
   alternatePhone?: Maybe<Scalars["String"]>;
@@ -718,8 +736,10 @@ export type Mutation = {
   addOrganizationRolesToUsers?: Maybe<UsersMutationResult>;
   addProgramsToClasses?: Maybe<ClassesMutationResult>;
   addProgramsToSchools?: Maybe<SchoolsMutationResult>;
+  addSchoolRolesToUsers?: Maybe<UsersMutationResult>;
   addSubcategoriesToCategories?: Maybe<CategoriesMutationResult>;
   addUsersToOrganizations?: Maybe<OrganizationsMutationResult>;
+  addUsersToSchools?: Maybe<SchoolsMutationResult>;
   age_range?: Maybe<AgeRange>;
   /** @deprecated Sunset Date: 24/02/2022 Details: [https://calmisland.atlassian.net/l/c/RKcPTt1p, https://calmisland.atlassian.net/l/c/mTni58mA] */
   category?: Maybe<Category>;
@@ -730,6 +750,7 @@ export type Mutation = {
   createRoles?: Maybe<RolesMutationResult>;
   createSchools?: Maybe<SchoolsMutationResult>;
   createSubcategories?: Maybe<SubcategoriesMutationResult>;
+  createSubjects?: Maybe<SubjectsMutationOutput>;
   createUsers?: Maybe<UsersMutationResult>;
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
@@ -744,8 +765,11 @@ export type Mutation = {
   newUser?: Maybe<User>;
   organization?: Maybe<Organization>;
   program?: Maybe<Program>;
+  removeClassesFromSchools?: Maybe<SchoolsMutationResult>;
   removeOrganizationRolesFromUsers?: Maybe<UsersMutationResult>;
+  removeProgramsFromClasses?: Maybe<ClassesMutationResult>;
   removeProgramsFromSchools?: Maybe<SchoolsMutationResult>;
+  removeSchoolRolesFromUsers?: Maybe<UsersMutationResult>;
   removeSubcategoriesFromCategories?: Maybe<CategoriesMutationResult>;
   removeUsersFromOrganizations?: Maybe<OrganizationsMutationResult>;
   removeUsersFromSchools?: Maybe<SchoolsMutationResult>;
@@ -763,6 +787,7 @@ export type Mutation = {
   /** @deprecated Moved to auth service */
   switch_user?: Maybe<User>;
   updateCategories?: Maybe<CategoriesMutationResult>;
+  updateClasses?: Maybe<ClassesMutationResult>;
   updateRoles?: Maybe<RolesMutationResult>;
   updateSchools?: Maybe<SchoolsMutationResult>;
   updateSubcategories?: Maybe<SubcategoriesMutationResult>;
@@ -797,12 +822,20 @@ export type MutationAddProgramsToSchoolsArgs = {
   input: Array<AddProgramsToSchoolInput>;
 };
 
+export type MutationAddSchoolRolesToUsersArgs = {
+  input: Array<AddSchoolRolesToUserInput>;
+};
+
 export type MutationAddSubcategoriesToCategoriesArgs = {
   input: Array<AddSubcategoriesToCategoryInput>;
 };
 
 export type MutationAddUsersToOrganizationsArgs = {
   input: Array<AddUsersToOrganizationInput>;
+};
+
+export type MutationAddUsersToSchoolsArgs = {
+  input: Array<AddUsersToSchoolInput>;
 };
 
 export type MutationAge_RangeArgs = {
@@ -835,6 +868,10 @@ export type MutationCreateSchoolsArgs = {
 
 export type MutationCreateSubcategoriesArgs = {
   input: Array<CreateSubcategoryInput>;
+};
+
+export type MutationCreateSubjectsArgs = {
+  input: Array<CreateSubjectInput>;
 };
 
 export type MutationCreateUsersArgs = {
@@ -898,12 +935,24 @@ export type MutationProgramArgs = {
   id: Scalars["ID"];
 };
 
+export type MutationRemoveClassesFromSchoolsArgs = {
+  input: Array<RemoveClassesFromSchoolInput>;
+};
+
 export type MutationRemoveOrganizationRolesFromUsersArgs = {
   input: Array<RemoveOrganizationRolesFromUserInput>;
 };
 
+export type MutationRemoveProgramsFromClassesArgs = {
+  input: Array<RemoveProgramsFromClassInput>;
+};
+
 export type MutationRemoveProgramsFromSchoolsArgs = {
   input: Array<RemoveProgramsFromSchoolInput>;
+};
+
+export type MutationRemoveSchoolRolesFromUsersArgs = {
+  input: Array<RemoveSchoolRolesFromUserInput>;
 };
 
 export type MutationRemoveSubcategoriesFromCategoriesArgs = {
@@ -952,6 +1001,10 @@ export type MutationSwitch_UserArgs = {
 
 export type MutationUpdateCategoriesArgs = {
   input: Array<UpdateCategoryInput>;
+};
+
+export type MutationUpdateClassesArgs = {
+  input: Array<UpdateClassInput>;
 };
 
 export type MutationUpdateRolesArgs = {
@@ -1134,6 +1187,7 @@ export type Organization = {
   createOrUpdatePrograms?: Maybe<Array<Maybe<Program>>>;
   /** @deprecated Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2457174175 */
   createOrUpdateSubcategories?: Maybe<Array<Maybe<Subcategory>>>;
+  /** @deprecated Sunset Date: 11/04/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q */
   createOrUpdateSubjects?: Maybe<Array<Maybe<Subject>>>;
   /** @deprecated Sunset Date: 29/03/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q */
   createRole?: Maybe<Role>;
@@ -1977,15 +2031,31 @@ export type QueryUsersConnectionArgs = {
   sort?: Maybe<UserSortInput>;
 };
 
+export type RemoveClassesFromSchoolInput = {
+  classIds: Array<Scalars["ID"]>;
+  schoolId: Scalars["ID"];
+};
+
 export type RemoveOrganizationRolesFromUserInput = {
   organizationId: Scalars["ID"];
   roleIds: Array<Scalars["ID"]>;
   userId: Scalars["ID"];
 };
 
+export type RemoveProgramsFromClassInput = {
+  classId: Scalars["ID"];
+  programIds: Array<Scalars["ID"]>;
+};
+
 export type RemoveProgramsFromSchoolInput = {
   programIds: Array<Scalars["ID"]>;
   schoolId: Scalars["ID"];
+};
+
+export type RemoveSchoolRolesFromUserInput = {
+  roleIds: Array<Scalars["ID"]>;
+  schoolId: Scalars["ID"];
+  userId: Scalars["ID"];
 };
 
 export type RemoveSubcategoriesFromCategoryInput = {
@@ -2225,6 +2295,7 @@ export type SchoolMembership = {
   join_timestamp?: Maybe<Scalars["Date"]>;
   /** @deprecated Sunset Date: 21/03/22 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q */
   leave?: Maybe<Scalars["Boolean"]>;
+  /** @deprecated Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/l/c/ezmgXfSg */
   removeRole?: Maybe<SchoolMembership>;
   roles?: Maybe<Array<Maybe<Role>>>;
   school?: Maybe<School>;
@@ -2510,6 +2581,11 @@ export type SubjectsConnectionResponse = IConnectionResponse & {
   totalCount?: Maybe<Scalars["Int"]>;
 };
 
+export type SubjectsMutationOutput = {
+  __typename?: "SubjectsMutationOutput";
+  subjects: Array<SubjectConnectionNode>;
+};
+
 export type UuidExclusiveFilter = {
   operator: UuidExclusiveOperator;
   value?: Maybe<Scalars["UUID"]>;
@@ -2535,6 +2611,12 @@ export type UpdateCategoryInput = {
   id: Scalars["ID"];
   name?: Maybe<Scalars["String"]>;
   subcategories?: Maybe<Array<Scalars["ID"]>>;
+};
+
+export type UpdateClassInput = {
+  classId: Scalars["ID"];
+  className?: Maybe<Scalars["String"]>;
+  shortcode?: Maybe<Scalars["String"]>;
 };
 
 export type UpdateRoleInput = {
