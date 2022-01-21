@@ -7191,12 +7191,21 @@
     },
     "/schedules_filter/programs": {
       "get": {
-        "description": "get schedule filter programs",
+        "description": "get schedule filter subjects",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["schedule"],
-        "summary": "get schedule filter programs",
-        "operationId": "getProgramsInScheduleFilter",
+        "summary": "get schedule filter subjects",
+        "operationId": "getSubjectsInScheduleFilter",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "program id",
+            "name": "program_id",
+            "in": "query",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -9761,12 +9770,6 @@
         },
         "student_id": {
           "type": "string"
-        },
-        "un_selected_subject_id_list": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -9823,9 +9826,6 @@
           "items": {
             "$ref": "#/definitions/entity.ContentUsage"
           }
-        },
-        "id": {
-          "type": "string"
         }
       }
     },
@@ -9849,7 +9849,7 @@
         "class_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/entity.ClassesAssignmentsDurationRatio"
           }
         },
         "durations": {
@@ -9949,7 +9949,7 @@
         "age_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "integer"
           }
         },
         "authed_org_ids": {
@@ -14795,17 +14795,6 @@
         },
         "subject_name": {
           "type": "string"
-        }
-      }
-    },
-    "utils.Pager": {
-      "type": "object",
-      "properties": {
-        "pageIndex": {
-          "type": "integer"
-        },
-        "pageSize": {
-          "type": "integer"
         }
       }
     },
