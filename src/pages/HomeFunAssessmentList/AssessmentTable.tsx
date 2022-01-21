@@ -1,14 +1,13 @@
 import { createStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Pagination } from "@material-ui/lab";
+import clsx from "clsx";
 import React from "react";
 import { EntityListHomeFunStudiesResultItem } from "../../api/api.auto";
-import { HomeFunAssessmentStatus } from "../../api/type";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
-import { MapStatus } from "../AssesmentList/AssessmentTable";
-import { HomeFunAssessmentQueryCondition } from "./types";
+import { GetHomeFunAssessmentList, GetHomeFunAssessmentListItem, HomeFunAssessmentQueryCondition, HomeFunAssessmentStatus } from "./types";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -40,6 +39,20 @@ const useStyles = makeStyles((theme) =>
       width: 126,
       minWidth: 104,
     },
+    statusCon: {
+      color: "#fff",
+      borderRadius: "15px",
+      height: 26,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    completeColor: {
+      backgroundColor: "#1aa21e",
+    },
+    inCompleteColor: {
+      backgroundColor: "#f1c621",
+    },
   })
 );
 
@@ -51,24 +64,26 @@ const mapScore = (score: number | undefined) => {
   if (score === 4) return `4-${d("Good").t("assess_score_good")}`;
   if (score === 5) return `5-${d("Excellent").t("assess_score_excellent")}`;
 };
-
 interface AssessmentProps {
-  assessment: EntityListHomeFunStudiesResultItem;
+  assessment: GetHomeFunAssessmentListItem;
   onClickAssessment: AssessmentTableProps["onClickAssessment"];
 }
 function AssessmentRow(props: AssessmentProps) {
   const css = useStyles();
   const { assessment, onClickAssessment } = props;
+  const isComplete = assessment.status === HomeFunAssessmentStatus.complete;
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title}</TableCell>
-      <TableCell align="center">{assessment.teacher_names?.join(" ,")}</TableCell>
-      <TableCell align="center">{assessment.student_name}</TableCell>
+      <TableCell align="center">{assessment.teachers?.map((item) => item.name).join(",")}</TableCell>
+      <TableCell align="center">{assessment.student?.name}</TableCell>
       <TableCell align="center" className={css.tableCell}>
-        {MapStatus(assessment.status)}
+        <div className={clsx(css.statusCon, isComplete ? css.completeColor : css.inCompleteColor)}>
+          {isComplete ? d("Complete").t("assess_filter_complete") : d("Incomplete").t("assess_filter_in_progress")}
+        </div>
       </TableCell>
       <TableCell align="center">{assessment.due_at ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}</TableCell>
-      <TableCell align="center">{formattedTime(assessment.latest_feedback_at)}</TableCell>
+      <TableCell align="center">{formattedTime(assessment.submit_at)}</TableCell>
       <TableCell align="center">
         {assessment.status === HomeFunAssessmentStatus.complete ? mapScore(assessment.assess_score) : ""}
       </TableCell>
@@ -80,7 +95,7 @@ function AssessmentRow(props: AssessmentProps) {
 export interface AssessmentTableProps {
   total: number;
   amountPerPage?: number;
-  list: EntityListHomeFunStudiesResultItem[];
+  list: GetHomeFunAssessmentList;
   queryCondition: HomeFunAssessmentQueryCondition;
   onChangePage: (page: number) => void;
   onClickAssessment: (id: EntityListHomeFunStudiesResultItem["id"]) => any;
@@ -109,9 +124,7 @@ export function AssessmentTable(props: AssessmentTableProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {list.map((item, idx) => (
-              <AssessmentRow key={item.id} assessment={item} {...{ queryCondition, onClickAssessment }} />
-            ))}
+            {list && list?.map((item, idx) => <AssessmentRow key={item.id} assessment={item} {...{ queryCondition, onClickAssessment }} />)}
           </TableBody>
         </Table>
       </TableContainer>

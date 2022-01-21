@@ -4,8 +4,8 @@ import { d } from "../../locale/LocaleManager";
 export enum AssessmentTypeValues {
   class = "OfflineClass",
   live = "OnlineClass",
-  homeFun = "homeFun",
-  study = "study",
+  homeFun = "OfflineStudy",
+  study = "OnlineStudy",
 }
 export interface options {
   label?: string;
