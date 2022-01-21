@@ -172,12 +172,6 @@ export interface EntityAddAssessmentResult {
   id?: string;
 }
 
-export interface EntityAddAuthedContentRequest {
-  content_id?: string;
-  from_folder_id?: string;
-  org_id?: string;
-}
-
 export interface EntityAddClassAndLiveAssessmentArgs {
   attendance_ids?: string[];
   class_end_time?: number;
@@ -320,11 +314,6 @@ export interface EntityAssessmentTeacher {
   name?: string;
 }
 
-export interface EntityAssessmentsSummary {
-  complete?: number;
-  in_progress?: number;
-}
-
 export interface EntityAssignmentCompletionRate {
   class_designated_subject?: number;
   duration?: string;
@@ -358,123 +347,6 @@ export interface EntityAssignmentsSummaryItem {
   schedule_id?: string;
   status?: "in_progress" | "complete";
   teacher_feedback?: string;
-}
-
-export interface EntityAuthedContentRecordInfo {
-  age?: string[];
-  age_name?: string[];
-  author?: string;
-  author_name?: string;
-  content_id?: string;
-  content_type?: number;
-  content_type_name?: string;
-  create_at?: number;
-  created_at?: number;
-  creator?: string;
-
-  /** AuthorName string `json:"author_name"` */
-  creator_name?: string;
-  data?: string;
-  delete_at?: number;
-  description?: string;
-  developmental?: string[];
-  developmental_name?: string[];
-  draw_activity?: boolean;
-  duration?: number;
-  extra?: string;
-  from_folder_id?: string;
-  grade?: string[];
-  grade_name?: string[];
-  id?: string;
-  is_mine?: boolean;
-  keywords?: string[];
-  latest_id?: string;
-  lesson_type?: string;
-  lesson_type_name?: string;
-  locked_by?: string;
-  name?: string;
-  org?: string;
-  org_id?: string;
-  org_name?: string;
-  outcome_entities?: EntityOutcome[];
-  outcomes?: string[];
-  permission?: EntityContentPermission;
-  program?: string;
-  program_name?: string;
-  publish_scope?: string[];
-  publish_scope_name?: string[];
-  publish_status?: string;
-  record_id?: string;
-  reject_reason?: string[];
-  remark?: string;
-  self_study?: boolean;
-  skills?: string[];
-  skills_name?: string[];
-  source_id?: string;
-  source_type?: string;
-  subject?: string[];
-  subject_name?: string[];
-  suggest_time?: number;
-
-  /**
-   * TeacherManual     []string `json:"teacher_manual"`
-   * Name []string `json:"teacher_manual_name"`
-   */
-  teacher_manual_batch?: EntityTeacherManualFile[];
-  thumbnail?: string;
-  updated_at?: number;
-  version?: number;
-}
-
-export interface EntityAuthedContentRecordInfoResponse {
-  list?: EntityAuthedContentRecordInfo[];
-  total?: number;
-}
-
-export interface EntityContentConditionRequest {
-  age_ids?: string[];
-  authed_org_ids?: EntityNullStrings;
-  author?: string;
-  category_ids?: string[];
-  content_ids?: EntityNullStrings;
-  content_name?: string;
-  content_type?: number[];
-  data_source_id?: string;
-  dir_path?: string;
-  grade_ids?: string[];
-  group_names?: string[];
-  join_user_id_list?: string[];
-  lesson_plan_name?: string;
-  name?: string;
-  order_by?: string;
-  org?: string;
-  pager?: UtilsPager;
-  parents_path?: EntityNullStrings;
-  program?: string[];
-  program_ids?: string[];
-  publish_status?: string[];
-  published_query_mode?: string;
-  source_type?: string;
-  sub_category_ids?: string[];
-  subject_ids?: string[];
-  visibility_settings?: string[];
-}
-
-export interface EntityAuthedOrgList {
-  orgs?: EntityOrganizationInfo[];
-  total?: number;
-}
-
-export interface EntityBatchAddAuthedContentRequest {
-  content_ids?: string[];
-  folder_id?: string;
-  org_id?: string;
-}
-
-export interface EntityBatchDeleteAuthedContentByOrgsRequest {
-  content_ids?: string[];
-  folder_ids?: string[];
-  org_ids?: string[];
 }
 
 export interface EntityClassAttendanceRequest {
@@ -549,6 +421,35 @@ export interface EntityClassesAssignmentsViewRequest {
   class_ids?: string[];
   durations?: string[];
   type?: string;
+}
+
+export interface EntityContentConditionRequest {
+  age_ids?: string[];
+  authed_org_ids?: EntityNullStrings;
+  author?: string;
+  category_ids?: string[];
+  content_ids?: EntityNullStrings;
+  content_name?: string;
+  content_type?: number[];
+  data_source_id?: string;
+  dir_path?: string;
+  grade_ids?: string[];
+  group_names?: string[];
+  join_user_id_list?: string[];
+  lesson_plan_name?: string;
+  name?: string;
+  order_by?: string;
+  org?: string;
+  pager?: UtilsPager;
+  parents_path?: EntityNullStrings;
+  program?: string[];
+  program_ids?: string[];
+  publish_status?: string[];
+  published_query_mode?: string;
+  source_type?: string;
+  sub_category_ids?: string[];
+  subject_ids?: string[];
+  visibility_settings?: string[];
 }
 
 export interface EntityContentInfoWithDetails {
@@ -675,11 +576,6 @@ export interface EntityCreateContentRequest {
   thumbnail?: string;
 }
 
-export interface EntityGetLessonPlansCanScheduleResponse {
-  data?: EntityLessonPlanForSchedule[];
-  total?: number;
-}
-
 export interface EntityCreateFolderRequest {
   description?: string;
   keywords?: string[];
@@ -688,11 +584,6 @@ export interface EntityCreateFolderRequest {
   parent_id?: string;
   partition?: string;
   thumbnail?: string;
-}
-
-export interface EntityDeleteAuthedContentRequest {
-  content_id?: string;
-  org_id?: string;
 }
 
 export interface EntityFeedbackAssignmentView {
@@ -780,6 +671,11 @@ export interface EntityGetHomeFunStudyResult {
   title?: string;
 }
 
+export interface EntityGetLessonPlansCanScheduleResponse {
+  data?: EntityLessonPlanForSchedule[];
+  total?: number;
+}
+
 export interface EntityGetStudentPerformanceReportResponse {
   assessment_ids?: string[];
   items?: EntityStudentPerformanceReportItem[];
@@ -790,6 +686,11 @@ export interface EntityHomeFunStudyOutcome {
   outcome_id?: string;
   outcome_name?: string;
   status?: "achieved" | "not_achieved" | "not_attempted";
+}
+
+export interface EntityIDName {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityJwtToken {
@@ -822,6 +723,17 @@ export interface EntityLearnOutcomeAchievementResponseItem {
   re_achieved_percentage?: number;
   un_achieved_count?: number;
   un_selected_subjects_average_achieved_percentage?: number;
+}
+
+export interface EntityLearnerUsageRequest {
+  content_type_list?: string[];
+  durations?: string[];
+}
+
+export interface EntityLearnerUsageResponse {
+  assignment_scheduled?: number;
+  class_scheduled?: number;
+  contents_used?: number;
 }
 
 export interface EntityLearningSummaryFilterWeek {
@@ -882,11 +794,6 @@ export interface EntityListHomeFunStudiesResultItem {
   student_name?: string;
   teacher_names?: string[];
   title?: string;
-}
-
-export interface EntityNullStrings {
-  strings?: string[];
-  valid?: boolean;
 }
 
 export interface EntityListStudentsPerformanceReportResponse {
@@ -956,6 +863,7 @@ export interface EntityMilestone {
   programs?: string[];
   reject_reason?: string;
   shortcode?: string;
+  shortcode_num?: number;
   source_id?: string;
   status?: string;
   subcategories?: string[];
@@ -977,6 +885,11 @@ export interface EntityMoveFolderRequest {
   id?: string;
   owner_type?: number;
   partition?: string;
+}
+
+export interface EntityNullStrings {
+  strings?: string[];
+  valid?: boolean;
 }
 
 export interface EntityOrganizationInfo {
@@ -1173,6 +1086,7 @@ export interface EntitySchedule {
   is_hidden?: boolean;
   is_home_fun?: boolean;
   lesson_plan_id?: string;
+  live_lesson_plan?: EntityScheduleLiveLessonPlan;
   org_id?: string;
   program_id?: string;
   repeat_id?: string;
@@ -1272,18 +1186,11 @@ export interface EntityScheduleFeedbackView {
   schedule_id?: string;
   user_id?: string;
 }
-
 export interface EntityScheduleFilterClass {
   id?: string;
   name?: string;
   operator_role_type?: "Student" | "Teacher" | "Unknown";
 }
-
-export interface EntityScheduleFilterSchool {
-  id?: string;
-  name?: string;
-}
-
 export interface EntityScheduleLessonPlan {
   id?: string;
   is_auth?: boolean;
@@ -1314,6 +1221,17 @@ export interface EntityScheduleListView {
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   title?: string;
+}
+
+export interface EntityScheduleLiveLessonMaterial {
+  lesson_material_id?: string;
+  lesson_material_name?: string;
+}
+
+export interface EntityScheduleLiveLessonPlan {
+  lesson_plan_id?: string;
+  lesson_plan_name?: string;
+  materials?: EntityScheduleLiveLessonMaterial[];
 }
 
 export interface EntitySchedulePageView {
@@ -1362,6 +1280,7 @@ export interface EntityScheduleTimeView {
   assessment_status?: "in_progress" | "complete";
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  created_at?: number;
   due_at?: number;
   end_at?: number;
   id?: string;
@@ -1392,6 +1311,7 @@ export interface EntityScheduleTimeViewListRequest {
   /** apply to StartAtGe and EndAtLe, union will include schedules that are only partially within the specified time frame, intersect will not */
   time_boundary?: "intersect" | "union";
   time_zone_offset?: number;
+  user_ids?: string[];
   view_type?: string;
   with_assessment_status?: boolean;
 }
@@ -1414,6 +1334,7 @@ export interface EntityScheduleTimeViewQuery {
   teacher_ids?: string[];
   time_at?: number;
   time_zone_offset?: number;
+  user_ids?: string[];
   view_type?: string;
 }
 
@@ -1480,11 +1401,6 @@ export interface EntityScheduleViewDetail {
   title?: string;
 }
 
-export interface EntitySearchStudentAssessmentsResponse {
-  list?: EntityStudentAssessment[];
-  total?: number;
-}
-
 export interface EntitySet {
   created_at?: number;
   deleted_at?: number;
@@ -1520,53 +1436,6 @@ export interface EntityStudentAchievementReportResponse {
   attend?: boolean;
   categories?: EntityStudentAchievementReportCategoryItem[];
   student_name?: string;
-}
-export interface EntityLearnerUsageRequest {
-  content_type_list?: string[];
-  durations?: string[];
-}
-
-export interface EntityLearnerUsageResponse {
-  assignment_scheduled?: number;
-  class_scheduled?: number;
-  contents_used?: number;
-}
-
-export interface EntityStudentAssessment {
-  complete_at?: number;
-  create_at?: number;
-  id?: string;
-  schedule?: EntityStudentAssessmentSchedule;
-  score?: number;
-  status?: string;
-  student_attachments?: EntityStudentAssessmentAttachment[];
-  teacher_comments?: EntityStudentAssessmentTeacher[];
-  title?: string;
-  update_at?: number;
-}
-
-export interface EntityStudentAssessmentAttachment {
-  id?: string;
-  name?: string;
-}
-
-export interface EntityStudentAssessmentSchedule {
-  attachment?: EntityStudentAssessmentAttachment;
-  id?: string;
-  title?: string;
-  type?: string;
-}
-
-export interface EntityStudentAssessmentTeacher {
-  comment?: string;
-  teacher?: EntityStudentAssessmentTeacherInfo;
-}
-
-export interface EntityStudentAssessmentTeacherInfo {
-  avatar?: string;
-  family_name?: string;
-  given_name?: string;
-  id?: string;
 }
 
 export interface EntityStudentPerformanceReportItem {
@@ -2046,11 +1915,6 @@ export interface ModelOutcomeRejectReq {
   reject_reason?: string;
 }
 
-export interface UtilsPager {
-  pageIndex?: number;
-  pageSize?: number;
-}
-
 export interface ModelOutcomeSetCreateView {
   set_id?: string;
   set_name?: string;
@@ -2100,8 +1964,25 @@ export interface ModelPublishedOutcomeView {
 }
 
 export interface ModelSearchMilestoneResponse {
-  milestones?: ModelCreateMilestoneView[];
+  milestones?: ModelSearchMilestoneView[];
   total?: number;
+}
+
+export interface ModelSearchMilestoneView {
+  author?: ModelAuthorView;
+  category?: ModelCategory[];
+  create_at?: number;
+  last_edited_at?: number;
+  last_edited_by?: string;
+  locked_by?: string;
+  locked_location?: string[];
+  milestone_id?: string;
+  milestone_name?: string;
+  outcome_count?: number;
+  program?: ModelProgram[];
+  shortcode?: string;
+  status?: string;
+  type?: string;
 }
 
 export interface ModelSearchOutcomeResponse {
@@ -2127,6 +2008,228 @@ export interface ModelSubCategory {
 export interface ModelSubject {
   subject_id?: string;
   subject_name?: string;
+}
+
+export interface UtilsPager {
+  pageIndex?: number;
+  pageSize?: number;
+}
+
+export interface V2AssessmentContentReply {
+  content_id?: string;
+  content_name?: string;
+  content_subtype?: string;
+  content_type?: "LessonPlan" | "LessonMaterial" | "Unknown";
+  file_type?: "Unknown" | "HasChildContainer" | "NotChildContainer" | "SupportScoreStandAlone" | "NotSupportScoreStandAlone";
+  h5p_id?: string;
+  max_score?: number;
+  number?: string;
+  outcome_ids?: string[];
+  parent_id?: string;
+  reviewer_comment?: string;
+  status?: "Covered" | "NotCovered";
+}
+
+export interface V2AssessmentDetailReply {
+  class?: EntityIDName;
+  class_end_at?: number;
+  class_length?: number;
+  complete_at?: number;
+  contents?: V2AssessmentContentReply[];
+  id?: string;
+  outcomes?: V2AssessmentOutcomeReply[];
+  program?: EntityIDName;
+  remaining_time?: number;
+  room_id?: string;
+  schedule_due_at?: number;
+  schedule_title?: string;
+  status?: string;
+  students?: V2AssessmentStudentReply[];
+  subjects?: EntityIDName[];
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2AssessmentOutcomeReply {
+  assigned_to?: ("LessonPlan" | "LessonMaterial")[];
+  assumed?: boolean;
+  outcome_id?: string;
+  outcome_name?: string;
+}
+
+export interface V2AssessmentPageReply {
+  assessments?: V2AssessmentQueryReply[];
+  total?: number;
+}
+
+export interface V2AssessmentQueryReply {
+  class_end_at?: number;
+  class_info?: EntityIDName;
+  complete_at?: number;
+  complete_rate?: number;
+  due_at?: number;
+  id?: string;
+  lesson_plan?: EntityIDName;
+  program?: EntityIDName;
+  remaining_time?: number;
+  status?: string;
+  subjects?: EntityIDName[];
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2AssessmentStudentReply {
+  results?: V2AssessmentStudentResultReply[];
+  reviewer_comment?: string;
+  status?: "Participate" | "NotParticipate";
+  student_id?: string;
+  student_name?: string;
+}
+
+export interface V2AssessmentStudentResultOutcomeReply {
+  outcome_id?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2AssessmentStudentResultOutcomeReq {
+  outcome_id?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2AssessmentStudentResultReply {
+  answer?: string;
+  attempted?: boolean;
+  content_id?: string;
+  outcomes?: V2AssessmentStudentResultOutcomeReply[];
+  score?: number;
+}
+
+export interface V2AssessmentStudentResultReq {
+  content_id?: string;
+  outcomes?: V2AssessmentStudentResultOutcomeReq[];
+  parent_id?: string;
+  score?: number;
+}
+
+export interface V2AssessmentStudentUpdateReq {
+  results?: V2AssessmentStudentResultReq[];
+  reviewer_comment?: string;
+  status?: "Participate" | "NotParticipate";
+  student_id?: string;
+}
+
+export interface V2AssessmentUpdateContentReq {
+  content_id?: string;
+  parent_id?: string;
+  reviewer_comment?: string;
+  status?: "Covered" | "NotCovered";
+}
+
+export interface V2AssessmentUpdateReq {
+  action?: "Draft" | "Complete";
+  contents?: V2AssessmentUpdateContentReq[];
+  id?: string;
+  students?: V2AssessmentStudentUpdateReq[];
+}
+
+export interface V2AssessmentsSummary {
+  complete?: number;
+  in_progress?: number;
+}
+
+export interface V2GetOfflineStudyUserResultDetailReply {
+  assess_comment?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
+  complete_at?: number;
+  due_at?: number;
+  feedback_id?: string;
+  id?: string;
+  outcomes?: V2OfflineStudyUserOutcomeReply[];
+  schedule_id?: string;
+  status?: "InProgress" | "Draft" | "Complete";
+  student?: EntityIDName;
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2OfflineStudyUserOutcomeReply {
+  assumed?: boolean;
+  outcome_id?: string;
+  outcome_name?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2OfflineStudyUserOutcomeUpdateReq {
+  outcome_id?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2OfflineStudyUserPageItem {
+  assess_score?: number;
+  complete_at?: number;
+  due_at?: number;
+  id?: string;
+  status?: "Started" | "Draft" | "Complete";
+  student?: EntityIDName;
+  submit_at?: number;
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2OfflineStudyUserPageReply {
+  item?: V2OfflineStudyUserPageItem[];
+  total?: number;
+}
+
+export interface V2OfflineStudyUserResultUpdateReq {
+  action?: "Draft" | "Complete";
+  assess_comment?: string;
+  assess_feedback_id?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
+  id?: string;
+  outcomes?: V2OfflineStudyUserOutcomeUpdateReq[];
+}
+
+export interface V2SearchStudentAssessmentsResponse {
+  list?: V2StudentAssessment[];
+  total?: number;
+}
+
+export interface V2StudentAssessment {
+  complete_at?: number;
+  create_at?: number;
+  id?: string;
+  schedule?: V2StudentAssessmentSchedule;
+  score?: number;
+  status?: string;
+  student_attachments?: V2StudentAssessmentAttachment[];
+  teacher_comments?: V2StudentAssessmentTeacher[];
+  title?: string;
+  update_at?: number;
+}
+
+export interface V2StudentAssessmentAttachment {
+  id?: string;
+  name?: string;
+}
+
+export interface V2StudentAssessmentSchedule {
+  attachment?: V2StudentAssessmentAttachment;
+  id?: string;
+  title?: string;
+  type?: string;
+}
+
+export interface V2StudentAssessmentTeacher {
+  comment?: string;
+  teacher?: V2StudentAssessmentTeacherInfo;
+}
+
+export interface V2StudentAssessmentTeacherInfo {
+  avatar?: string;
+  family_name?: string;
+  given_name?: string;
+  id?: string;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -2342,26 +2445,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntitySearchStudentAssessmentsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<V2SearchStudentAssessmentsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments_for_student${this.addQueryParams(query)}`,
         "GET",
         params
-      ),
-  };
-  assessmentsForTest = {
-    /**
-     * @tags assessments
-     * @name addAssessmentForTest
-     * @summary add assessments for test
-     * @request POST:/assessments_for_test
-     * @description add assessments for test
-     */
-    addAssessmentForTest: (assessment: EntityAddClassAndLiveAssessmentArgs, params?: RequestParams) =>
-      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/assessments_for_test`,
-        "POST",
-        params,
-        assessment
       ),
   };
   assessmentsSummary = {
@@ -2372,11 +2459,64 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/assessments_summary
      * @description get assessments summary
      */
-    getAssessmentsSummary: (query?: { status?: string; teacher_name?: string }, params?: RequestParams) =>
-      this.request<EntityAssessmentsSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+    getAssessmentsSummary: (query?: { status?: string }, params?: RequestParams) =>
+      this.request<V2AssessmentsSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments_summary${this.addQueryParams(query)}`,
         "GET",
         params
+      ),
+  };
+  assessmentsV2 = {
+    /**
+     * @tags assessments
+     * @name queryAssessmentV2
+     * @summary assessments query
+     * @request GET:/assessments_v2
+     * @description assessments query
+     */
+    queryAssessmentV2: (
+      query: {
+        status?: string;
+        query_key?: string;
+        query_type?: "TeacherName";
+        assessment_type: string;
+        page?: number;
+        page_size?: number;
+        order_by?: "class_end_at" | "-class_end_at" | "complete_at" | "-complete_at" | "create_at" | "-create_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<V2AssessmentPageReply, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/assessments_v2${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags assessments
+     * @name getAssessmentDetailV2
+     * @summary get assessment detail
+     * @request GET:/assessments_v2/{id}
+     * @description get assessment detail
+     */
+    getAssessmentDetailV2: (id: string, params?: RequestParams) =>
+      this.request<
+        V2AssessmentDetailReply,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/assessments_v2/${id}`, "GET", params),
+
+    /**
+     * @tags Assessment
+     * @name updateAssessmentV2
+     * @request PUT:/assessments_v2/{id}
+     * @description update assessment
+     */
+    updateAssessmentV2: (id: string, req: V2AssessmentUpdateReq, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/assessments_v2/${id}`,
+        "PUT",
+        params,
+        req
       ),
   };
   bulk = {
@@ -2688,75 +2828,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     getContentsStatistics: (content_id: string, params?: RequestParams) =>
       this.request<EntityContentStatisticsInfo, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/contents/${content_id}/statistics`,
-        "GET",
-        params
-      ),
-  };
-  contentsAuth = {
-    /**
-     * @tags content
-     * @name addAuthedContent
-     * @summary addAuthedContent
-     * @request POST:/contents_auth
-     * @description add authed content to org
-     */
-    addAuthedContent: (content: EntityAddAuthedContentRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth`, "POST", params, content),
-
-    /**
-     * @tags content
-     * @name deleteAuthedContent
-     * @summary deleteAuthedContent
-     * @request DELETE:/contents_auth
-     * @description delete authed content to org
-     */
-    deleteAuthedContent: (content: EntityDeleteAuthedContentRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth`, "DELETE", params, content),
-
-    /**
-     * @tags content
-     * @name batchAddAuthedContent
-     * @summary batchAddAuthedContent
-     * @request POST:/contents_auth/batch
-     * @description batch add authed content to org
-     */
-    batchAddAuthedContent: (content: EntityBatchAddAuthedContentRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth/batch`, "POST", params, content),
-
-    /**
-     * @tags content
-     * @name batchDeleteAuthedContent
-     * @summary batchDeleteAuthedContent
-     * @request DELETE:/contents_auth/batch
-     * @description batch delete authed content to org
-     */
-    batchDeleteAuthedContent: (content: EntityBatchDeleteAuthedContentByOrgsRequest, params?: RequestParams) =>
-      this.request<string, ApiBadRequestResponse | ApiInternalServerErrorResponse>(`/contents_auth/batch`, "DELETE", params, content),
-
-    /**
-     * @tags content
-     * @name getContentAuthedOrg
-     * @summary getContentAuthedOrg
-     * @request GET:/contents_auth/content
-     * @description get content authed org list
-     */
-    getContentAuthedOrg: (query?: { content_id?: string }, params?: RequestParams) =>
-      this.request<EntityAuthedOrgList, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/contents_auth/content${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
-
-    /**
-     * @tags content
-     * @name getOrgAuthedContent
-     * @summary getOrgAuthedContent
-     * @request GET:/contents_auth/org
-     * @description get org authed content list
-     */
-    getOrgAuthedContent: (query?: { org_id?: string }, params?: RequestParams) =>
-      this.request<EntityAuthedContentRecordInfoResponse, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/contents_auth/org${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -3789,7 +3860,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @tags reports/learnerUsage
      * @name getLearnerUsageOverview
      * @summary get learner usage Report
-     * @request GET:/reports/learner_usage/overview
+     * @request POST:/reports/learner_usage/overview
      * @description get learner usage Report
      */
     getLearnerUsageOverview: (classes_assignments: EntityLearnerUsageRequest, params?: RequestParams) =>
@@ -3799,6 +3870,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         params,
         classes_assignments
       ),
+
     /**
      * @tags reports/learningSummary
      * @name queryAssignmentsSummary
@@ -4359,20 +4431,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   schedulesFilter = {
     /**
      * @tags schedule
-     * @name getScheduleFilterClasses
-     * @summary get schedule filter classes
-     * @request GET:/schedules_filter/classes
-     * @description get schedule filter classes
-     */
-    getScheduleFilterClasses: (query?: { school_id?: string }, params?: RequestParams) =>
-      this.request<EntityScheduleFilterClass[], ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/schedules_filter/classes${this.addQueryParams(query)}`,
-        "GET",
-        params
-      ),
-
-    /**
-     * @tags schedule
      * @name getProgramsInScheduleFilter
      * @summary get schedule filter programs
      * @request GET:/schedules_filter/programs
@@ -4380,16 +4438,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getProgramsInScheduleFilter: (params?: RequestParams) =>
       this.request<EntityScheduleShortInfo[], ApiInternalServerErrorResponse>(`/schedules_filter/programs`, "GET", params),
-
-    /**
-     * @tags schedule
-     * @name getScheduleFilterSchool
-     * @summary get schedule filter schools
-     * @request GET:/schedules_filter/schools
-     * @description get get schedule filter schools
-     */
-    getScheduleFilterSchool: (params?: RequestParams) =>
-      this.request<EntityScheduleFilterSchool[], ApiInternalServerErrorResponse>(`/schedules_filter/schools`, "GET", params),
 
     /**
      * @tags schedule
@@ -4435,8 +4483,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         time_zone_offset?: number;
         school_ids?: string;
         teacher_ids?: string;
-        class_ids?: string;
         user_ids?: string;
+        class_ids?: string;
         subject_ids?: string;
         program_ids?: string;
         class_types?: string;
@@ -4694,6 +4742,59 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getSubject: (query?: { program_id?: string }, params?: RequestParams) =>
       this.request<ExternalSubject[], ApiInternalServerErrorResponse>(`/subjects${this.addQueryParams(query)}`, "GET", params),
+  };
+  userOfflineStudy = {
+    /**
+     * @tags assessments
+     * @name queryUserOfflineStudy
+     * @summary query user offline study(homeFun study)
+     * @request GET:/user_offline_study
+     * @description query user offline study
+     */
+    queryUserOfflineStudy: (
+      query?: {
+        status?: string;
+        query_key?: string;
+        query_type?: "TeacherName";
+        page?: number;
+        page_size?: number;
+        order_by?: "complete_at" | "-complete_at" | "submit_at" | "-submit_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<V2OfflineStudyUserPageReply, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/user_offline_study${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags assessments
+     * @name getUserOfflineStudyByID
+     * @summary get user offline study by id
+     * @request GET:/user_offline_study/{id}
+     * @description get user offline study by id
+     */
+    getUserOfflineStudyById: (id: string, params?: RequestParams) =>
+      this.request<
+        V2GetOfflineStudyUserResultDetailReply,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/user_offline_study/${id}`, "GET", params),
+
+    /**
+     * @tags assessments
+     * @name updateUserOfflineStudy
+     * @summary update user offline study
+     * @request PUT:/user_offline_study/{id}
+     * @description update user offline study
+     */
+    updateUserOfflineStudy: (id: string, req: V2OfflineStudyUserResultUpdateReq, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/user_offline_study/${id}`,
+        "PUT",
+        params,
+        req
+      ),
   };
   userSettings = {
     /**

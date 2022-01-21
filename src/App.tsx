@@ -14,8 +14,10 @@ import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit/index";
 import ContentPreview from "./pages/ContentPreview";
+import { DetailAssessment } from "./pages/DetailAssessment";
 import { HomeFunAssessmentList } from "./pages/HomeFunAssessmentList";
 import { AssessmentsHomefunEdit } from "./pages/HomefunEdit";
+import { ListAssessment } from "./pages/ListAssessment";
 import MilestoneEdit from "./pages/MilestoneEdit";
 import MilestonesList from "./pages/MilestoneList";
 import MyContentList from "./pages/MyContentList/index";
@@ -75,6 +77,12 @@ function App() {
                   </Route>
                   <Route path={HomeFunAssessmentList.routeBasePath}>
                     <HomeFunAssessmentList />
+                  </Route>
+                  <Route path={ListAssessment.routeBasePath}>
+                    <ListAssessment />
+                  </Route>
+                  <Route path={DetailAssessment.routeBasePath}>
+                    <DetailAssessment />
                   </Route>
                   <Route path={Schedule.routeMatchPath}>
                     <Schedule />

@@ -74,7 +74,7 @@ export function AssessmentList() {
       );
     }
     if (assessmentType === AssessmentTypeValues.homeFun) {
-      history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
+      history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._submit_at}&page=1`);
     }
     if (assessmentType === AssessmentTypeValues.study) {
       history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);

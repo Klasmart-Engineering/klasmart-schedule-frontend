@@ -25,7 +25,7 @@ import {
 } from "@material-ui/icons";
 import React, { createElement } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
-import { EntityAssessHomeFunStudyArgs, EntityGetHomeFunStudyResult, EntityScheduleFeedbackView } from "../../api/api.auto";
+import { EntityScheduleFeedbackView, V2GetOfflineStudyUserResultDetailReply, V2OfflineStudyUserResultUpdateReq } from "../../api/api.auto";
 import { DownloadButton } from "../../components/DownloadButton";
 import { d } from "../../locale/LocaleManager";
 import { formattedTime } from "../../models/ModelContentDetailForm";
@@ -153,7 +153,7 @@ function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
 interface AssignmentTableProps {
   title: string;
   feedbacks: AssignmentProps["feedbacks"];
-  detail: EntityGetHomeFunStudyResult;
+  detail: V2GetOfflineStudyUserResultDetailReply;
 }
 function AssignmentTable(props: AssignmentTableProps) {
   const { feedbacks, title, detail } = props;
@@ -163,7 +163,7 @@ function AssignmentTable(props: AssignmentTableProps) {
       <TableCell align="center" className={css.assignmentTableBodyItem}>
         {assignments?.map((assignment) => (
           <AssignmentDownloadRow
-            downloadName={`HFS_${detail.student_name}_${assignment.attachment_name}`}
+            downloadName={`HFS_${detail?.student?.name}_${assignment.attachment_name}`}
             name={assignment.attachment_name}
             resourceId={assignment.attachment_id}
             key={assignment.attachment_id}
@@ -205,9 +205,9 @@ function AssignmentTable(props: AssignmentTableProps) {
 
 interface AssignmentProps {
   editable?: boolean;
-  detail: EntityGetHomeFunStudyResult;
+  detail: V2GetOfflineStudyUserResultDetailReply;
   feedbacks: EntityScheduleFeedbackView[];
-  formMethods: UseFormMethods<EntityAssessHomeFunStudyArgs>;
+  formMethods: UseFormMethods<V2OfflineStudyUserResultUpdateReq>;
 }
 
 export function Assignment(props: AssignmentProps) {
@@ -220,7 +220,7 @@ export function Assignment(props: AssignmentProps) {
         feedbacks={feedbacks.slice(0, 1)}
         detail={detail}
         title={d("Assignment of {studentname}").t("assess_assignment_of_student", {
-          studentname: detail.student_name ?? d("Student").t("schedule_time_conflict_student"),
+          studentname: detail.student?.name ?? d("Student").t("schedule_time_conflict_student"),
         })}
       />
       <Typography variant="h5">{d("Teacher Assessment").t("assess_teacher_assessment")}</Typography>

@@ -18,16 +18,18 @@ import InputBase from "@material-ui/core/InputBase";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import Paper from "@material-ui/core/Paper";
 import TableContainer from "@material-ui/core/TableContainer";
+import Tooltip from "@material-ui/core/Tooltip";
+import { OutcomeStatus } from "@pages/DetailAssessment/type";
 import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import {
-  EntityAssessHomeFunStudyArgs,
-  EntityGetHomeFunStudyResult,
   EntityHomeFunStudyOutcome,
   EntityScheduleFeedbackView,
+  V2GetOfflineStudyUserResultDetailReply,
+  V2OfflineStudyUserOutcomeReply,
+  V2OfflineStudyUserResultUpdateReq,
 } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
-import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyle = makeStyles((theme) =>
   createStyles({
@@ -80,10 +82,10 @@ const BootstrapInput = withStyles((theme) => ({
 
 interface AssignmentProps {
   editable?: boolean;
-  detail: EntityGetHomeFunStudyResult;
+  detail: V2GetOfflineStudyUserResultDetailReply;
   feedbacks: EntityScheduleFeedbackView[];
-  formMethods: UseFormMethods<EntityAssessHomeFunStudyArgs>;
-  outcomesList?: EntityHomeFunStudyOutcome[];
+  formMethods: UseFormMethods<V2OfflineStudyUserResultUpdateReq>;
+  outcomesList?: V2OfflineStudyUserOutcomeReply[];
   isComplete: boolean;
 }
 
@@ -117,7 +119,8 @@ export function LessonPlan(props: AssignmentProps) {
 
   const updateStatus = (value: string, index: number, item: EntityHomeFunStudyOutcome) => {
     /** 改成可以取消勾选(小燕提的~) **/
-    let nv = item.status === value ? "default" : value;
+
+    let nv = item.status === value ? OutcomeStatus.Unknown : value;
     setValue(`outcomes[${index}]`, { ...item, status: nv });
   };
 
@@ -126,7 +129,7 @@ export function LessonPlan(props: AssignmentProps) {
       <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "-10px 0 10px 0" }}>
         <Typography variant="h6">
           {d("Learning Outcomes Achievement of {StudentName}").t("assessment_learning_outcomes_achievement", {
-            StudentName: detail.student_name ?? d("Student").t("schedule_time_conflict_student"),
+            StudentName: detail.student?.name ?? d("Student").t("schedule_time_conflict_student"),
           })}
         </Typography>
         <FormControl className={css.margin}>
@@ -178,8 +181,8 @@ export function LessonPlan(props: AssignmentProps) {
                                 onChange={(e) => {
                                   updateStatus(e.target.value, index, value);
                                 }}
-                                value="achieved"
-                                checked={value.status === "achieved"}
+                                value={OutcomeStatus.Achieved}
+                                checked={value.status === OutcomeStatus.Achieved}
                                 color="primary"
                                 disabled={isComplete}
                               />
@@ -193,8 +196,8 @@ export function LessonPlan(props: AssignmentProps) {
                                 onChange={(e) => {
                                   updateStatus(e.target.value, index, value);
                                 }}
-                                value="not_achieved"
-                                checked={value.status === "not_achieved"}
+                                value={OutcomeStatus.NotAchieved}
+                                checked={value.status === OutcomeStatus.NotAchieved}
                                 color="primary"
                                 disabled={isComplete}
                               />
@@ -208,8 +211,8 @@ export function LessonPlan(props: AssignmentProps) {
                                 onChange={(e) => {
                                   updateStatus(e.target.value, index, value);
                                 }}
-                                value="not_attempted"
-                                checked={value.status === "not_attempted"}
+                                value={OutcomeStatus.NotCovered}
+                                checked={value.status === OutcomeStatus.NotCovered}
                                 color="primary"
                                 disabled={isComplete}
                               />

@@ -289,7 +289,7 @@ function MilestoneEditForm() {
         as={Outcomes}
         name="outcomes"
         defaultValue={milestoneDetail?.outcomes}
-        key={initDefaultValue.outcome_ancestor_ids?.key}
+        key={initDefaultValue.outcomes?.key}
         control={control}
         outcomeList={outcomeList}
         outcomeTotal={outcomeTotal}

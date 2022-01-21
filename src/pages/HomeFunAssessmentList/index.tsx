@@ -2,13 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
-import {
-  AssessmentOrderBy,
-  AssessmentStatus,
-  HomeFunAssessmentOrderBy,
-  HomeFunAssessmentStatus,
-  StudyAssessmentOrderBy,
-} from "../../api/type";
+import { AssessmentStatus, HomeFunAssessmentOrderBy, HomeFunAssessmentStatus } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { AssessmentTypeValues } from "../../components/AssessmentType";
 import { emptyTip, permissionTip } from "../../components/TipImages";
@@ -34,11 +28,12 @@ const useQuery = (): HomeFunAssessmentQueryCondition => {
   const { search } = useLocation();
   return useMemo(() => {
     const querys = new URLSearchParams(search);
-    const query = querys.get("query");
-    const status = (querys.get("status") as HomeFunAssessmentStatus | null) || undefined;
+    const query_key = querys.get("query_key");
+    const query_type = querys.get("query_type");
+    const status = querys.get("status") || HomeFunAssessmentStatus.all;
     const page = Number(querys.get("page")) || 1;
-    const order_by = (querys.get("order_by") as HomeFunAssessmentOrderBy | null) || undefined;
-    return clearNull({ query, status, page, order_by });
+    const order_by = (querys.get("order_by") as HomeFunAssessmentOrderBy | null) || HomeFunAssessmentOrderBy._submit_at;
+    return clearNull({ query_key, query_type, status, page, order_by });
   }, [search]);
 };
 
@@ -70,16 +65,10 @@ export function HomeFunAssessmentList() {
   const dispatch = useDispatch<AppDispatch>();
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleChangeAssessmentType = (assessmentType: AssessmentTypeValues) => {
-    if (assessmentType === AssessmentTypeValues.live || assessmentType === AssessmentTypeValues.class) {
-      history.push(
-        `/assessments/assessment-list?class_type=${assessmentType}&status=${AssessmentStatus.all}&order_by=${AssessmentOrderBy._class_end_time}&page=1`
-      );
-    }
     if (assessmentType === AssessmentTypeValues.homeFun) {
-      history.push(`/assessments/home-fun?status=${AssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`);
-    }
-    if (assessmentType === AssessmentTypeValues.study) {
-      history.push(`/assessments/study?status=${AssessmentStatus.all}&order_by=${StudyAssessmentOrderBy._create_at}&page=1`);
+      history.push(`/assessments/home-fun?status=${HomeFunAssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._submit_at}&page=1`);
+    } else {
+      history.push(`/assessments/list?assessment_type=${assessmentType}&status=${AssessmentStatus.all}&page=1`);
     }
   };
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) => {
@@ -125,5 +114,7 @@ export function HomeFunAssessmentList() {
   );
 }
 
-HomeFunAssessmentList.routeBasePath = "/assessments/home-fun";
-HomeFunAssessmentList.routeRedirectDefault = `/assessments/home-fun?status=${HomeFunAssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._latest_feedback_at}&page=1`;
+// HomeFunAssessmentList.routeBasePath = "/assessments/home-fun";
+// HomeFunAssessmentList.routeRedirectDefault = `/assessments/home-fun?status=${HomeFunAssessmentStatus.all}&order_by=${HomeFunAssessmentOrderBy._submit_at}&page=1`;
+HomeFunAssessmentList.routeBasePath = "/assessments/homefunlist";
+HomeFunAssessmentList.routeRedirectDefault = `/assessments/homefunlist?assessment_type=${AssessmentTypeValues.homeFun}order_by=${HomeFunAssessmentOrderBy._submit_at}&status=${AssessmentStatus.all}&page=1`;
