@@ -67,6 +67,7 @@ import {
   EntityStudentAchievementReportItem,
   // EntityStudentPerformanceH5PReportItem,
   EntityStudentPerformanceReportItem,
+  EntityStudentsAchievementOverviewReportResponse,
   EntityStudentUsageMaterialReportRequest,
   EntityStudentUsageMaterialReportResponse,
   EntityStudentUsageMaterialViewCountReportResponse,
@@ -115,6 +116,7 @@ interface IreportState {
   reportMockOptions: GetReportMockOptionsResponse;
   categories: EntityTeacherReportCategory[];
   categoriesAll: EntityTeacherReportCategory[];
+  achievementCounts: EntityStudentsAchievementOverviewReportResponse;
   classesConnection: ClassesConnectionQuery["classesConnection"];
   classes: TeacherByOrgIdQuery["organization"];
   teacherList: Item[];
@@ -233,6 +235,12 @@ const initialState: IreportState = {
   },
   categories: [],
   categoriesAll: [],
+  achievementCounts: {
+    achieved_above_count: 0,
+    achieved_below_count: 0,
+    achieved_meet_count: 0,
+    covered_learn_outcome_count: 0,
+  },
   classesConnection: {},
   classes: {},
   teacherList: [],
@@ -977,6 +985,16 @@ export const getSkillCoverageReportAll = createAsyncThunk<EntityTeacherReportCat
   }
 );
 
+interface GetAchievementOverviewProps extends LoadingMetaPayload {
+  time_range: string;
+}
+
+export const getAchievementOverview = createAsyncThunk<EntityStudentsAchievementOverviewReportResponse, GetAchievementOverviewProps>(
+  "report/students_achievement_overview",
+  async ({ time_range }) => {
+    return await api.reports.listStudentsAchievementOverviewReport({ time_range });
+  }
+);
 export const getTeachingLoadList = createAsyncThunk<
   EntityReportListTeachingLoadResult,
   EntityReportListTeachingLoadArgs & LoadingMetaPayload
@@ -1768,6 +1786,9 @@ const { actions, reducer } = createSlice({
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getSkillCoverageReportAll>>
     ) => {
       state.categoriesAll = payload;
+    },
+    [getAchievementOverview.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAchievementOverview>>) => {
+      state.achievementCounts = payload;
     },
     [categoryReportOnLoad.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof categoryReportOnLoad>>) => {
       state.categories = payload;

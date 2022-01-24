@@ -8,7 +8,7 @@ import { ReportLearningSummary } from "@pages/ReportLearningSummary";
 import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import { RootState } from "@reducers/index";
-import { getLearnerUsageOverview } from "@reducers/report";
+import { getAchievementOverview, getLearnerUsageOverview } from "@reducers/report";
 import { getAWeek } from "@utilities/dateUtilities";
 import clsx from "clsx";
 import React, { useCallback } from "react";
@@ -22,6 +22,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import LearnerUsageReport from "./components/LearnerUsageReport";
+import LearningOutcomeTabs from "./components/LearningOutcomeTabs";
 import SkillCoverageTab from "./components/SkillCoverageTab";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -188,6 +189,7 @@ export function ReportDashboard() {
         content_type_list: ["h5p", "image", "video", "audio", "document"],
       })
     );
+    dispatch(getAchievementOverview({ time_range: getAWeek().join("-") }));
   }, [dispatch]);
 
   const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending] = React.useMemo(() => {
@@ -260,6 +262,14 @@ export function ReportDashboard() {
                 {reportTip(t("report_label_learner_usage"), t("report_label_learner_usage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearnerUsageReport learnerUsageOverview={learnerUsageOverview} />
+                </Box>
+              </Grid>
+            )}
+            {Boolean(perm.organization_class_achievements_report_626) && (
+              <Grid item xs={12} md={4}>
+                {reportTip(t("report_label_learning_outcome" as any), t("report_label_learning_outcome_info" as any))}
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <LearningOutcomeTabs />
                 </Box>
               </Grid>
             )}
