@@ -267,7 +267,7 @@ export function ReportDashboard() {
             )}
             {Boolean(perm.organization_class_achievements_report_626) && (
               <Grid item xs={12} md={4}>
-                {reportTip(t("report_label_learning_outcome" as any), t("report_label_learning_outcome_info" as any))}
+                {reportTip(t("report_label_learning_outcome"), t("report_label_learning_outcome_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearningOutcomeTabs />
                 </Box>

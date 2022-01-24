@@ -66,15 +66,15 @@ export default function LearningOutcomeTabs() {
     (achievementCounts.achieved_meet_count || 0);
   const handleData = [
     {
-      name: t("report_label_above" as any),
+      name: t("report_label_above"),
       count: Math.floor(((achievementCounts.achieved_above_count || 0) / count) * 100),
     },
     {
-      name: t("report_label_meets" as any),
+      name: t("report_label_meets"),
       count: Math.floor(((achievementCounts.achieved_below_count || 0) / count) * 100),
     },
     {
-      name: t("report_label_below" as any),
+      name: t("report_label_below"),
       count: 0,
     },
   ];
@@ -96,7 +96,7 @@ export default function LearningOutcomeTabs() {
   const renderCountNumber = () => {
     return (
       <Box display={"flex"} flexDirection={"column"} alignItems={"center"} position={"absolute"}>
-        <Box color={"#777"}>{t("report_label_covered" as any)}</Box>
+        <Box color={"#777"}>{t("report_label_covered")}</Box>
         <Box color={"#14b799"} fontSize={36}>
           {achievementCounts.covered_learn_outcome_count}
         </Box>
@@ -143,7 +143,7 @@ export default function LearningOutcomeTabs() {
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">
-          <BottomButton text={t("report_label_learning_outcome_report" as any)} to={ReportAchievementList.routeBasePath} marginTop={20} />
+          <BottomButton text={t("report_label_learning_outcome_report")} to={ReportAchievementList.routeBasePath} marginTop={20} />
         </Grid>
       </Grid>
     </Grid>
