@@ -150,7 +150,7 @@ export function FirstSearchHeader() {
               </Permission>
               <Permission value={PermissionType.assessments_page_406}>
                 <Button
-                  onClick={() => history.push(AssessmentList.routeRedirectDefault)}
+                  onClick={() => history.push(ListAssessment.routeRedirectDefault)}
                   className={clsx(css.nav, { [css.actives]: hightLightAssessment })}
                   startIcon={<TimelineOutlinedIcon />}
                 >
