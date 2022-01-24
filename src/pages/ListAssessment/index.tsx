@@ -81,7 +81,7 @@ export function ListAssessment() {
     // }
     else {
       reset();
-      history.push(`/assessments/list?assessment_type=${assessment_type}&status=${AssessmentStatus.all}&page=1`);
+      history.push(`/assessments/assessment-list?assessment_type=${assessment_type}&status=${AssessmentStatus.all}&page=1`);
     }
   };
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
@@ -129,5 +129,8 @@ export function ListAssessment() {
     </>
   );
 }
-ListAssessment.routeBasePath = "/assessments/list";
-ListAssessment.routeRedirectDefault = `/assessments/list?assessment_type=${AssessmentTypeValues.live}&status=${AssessmentStatus.all}&page=1`;
+// ListAssessment.routeBasePath = "/assessments/list";
+// ListAssessment.routeRedirectDefault = `/assessments/list?assessment_type=${AssessmentTypeValues.live}&status=${AssessmentStatus.all}&page=1`;
+
+ListAssessment.routeBasePath = "/assessments/assessment-list";
+ListAssessment.routeRedirectDefault = `/assessments/assessment-list?assessment_type=${AssessmentTypeValues.live}&status=${AssessmentStatus.all}&page=1`;
