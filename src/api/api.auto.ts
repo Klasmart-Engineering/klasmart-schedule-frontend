@@ -4064,19 +4064,6 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports
-     * @name listStudentsAchievementOverviewReport
-     * @summary list student report overview
-     * @request GET:/reports/students_achievement_overview
-     * @description list student report overview
-     */
-    listStudentsAchievementOverviewReport: (query: { time_range: string }, params?: RequestParams) =>
-      this.request<
-        EntityStudentsAchievementOverviewReportResponse,
-        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
-      >(`/reports/students_achievement_overview${this.addQueryParams(query)}`, "GET", params),
-
-    /**
-     * @tags reports
      * @name listTeachingLoadReport
      * @summary list teaching load report
      * @request POST:/reports/teaching_loading

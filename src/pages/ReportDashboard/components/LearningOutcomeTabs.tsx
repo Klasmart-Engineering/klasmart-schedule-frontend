@@ -3,7 +3,7 @@ import { Box, Grid, makeStyles } from "@material-ui/core";
 import { ReportAchievementList } from "@pages/ReportAchievementList";
 import { RootState } from "@reducers/index";
 import { ParentSize } from "@visx/responsive";
-import _ from "lodash";
+import { sumBy } from "lodash";
 import { useSelector } from "react-redux";
 import BottomButton from "./BottomButton";
 import StatisticPieCharts from "./StatisticPieCharts";
@@ -125,8 +125,8 @@ export default function LearningOutcomeTabs() {
                     <StatisticPieCharts
                       width={info.width}
                       height={info.height}
-                      value={_.sumBy(handleData, "count") === 0 ? Array(3).fill(100 / 3) : handleData.map((item) => item.count || 0)}
-                      colors={_.sumBy(handleData, "count") === 0 ? Array<string>(3).fill("#eee") : COLORS}
+                      value={sumBy(handleData, "count") === 0 ? Array(3).fill(100 / 3) : handleData.map((item) => item.count || 0)}
+                      colors={sumBy(handleData, "count") === 0 ? Array<string>(3).fill("#eee") : COLORS}
                     />
                   </Box>
                 );
