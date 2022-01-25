@@ -59,7 +59,6 @@ export interface SearchComProps {
 export function ListSearch(props: SearchComProps) {
   const css = useStyles();
   const { searchFieldList, searchFieldDefaultValue, searchTextDefaultValue, onSearch, formMethods } = props;
-  console.log(searchFieldDefaultValue?.toString());
   const { control, getValues } = formMethods;
   const handleClickSearch = () => {
     const searchField = getValues()[SearchListFormKey.EXECT_SEARCH];
