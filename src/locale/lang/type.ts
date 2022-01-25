@@ -1203,7 +1203,7 @@ type LangRecord =
     }
   | {
       id: "report_msg_overall_infor";
-      description: `The Overall Student Achievement Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.
+      description: `The Learning Outcome Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.
 <ul>
   <li>The report shows results from Live, Class, and Study assessments.
 </li>
@@ -1658,21 +1658,6 @@ type LangRecord =
 </ul>`;
       values: undefined;
     }
-  | {
-      id: "library_error_pdf_validation";
-      description: " validate pdf timeout";
-      values: undefined;
-    }
-  | {
-      id: "library_label_organization";
-      description: "Organization";
-      values: undefined;
-    }
-  | {
-      id: "library_label_org_owner_email";
-      description: "Org Owner Email";
-      values: undefined;
-    }
   | { id: "report_label_content_used"; description: `Content Used`; values: undefined }
   | { id: "report_label_5_types"; description: `5 types`; values: undefined }
   | { id: "report_label_class_scheduled"; description: `Class Scheduled`; values: undefined }
@@ -1688,7 +1673,26 @@ type LangRecord =
   | { id: "schedule_lesson_plan_popup_results"; description: `Results`; values: undefined }
   | { id: "schedule_popup_search_for_lesson_plan"; description: `Search for lesson plan`; values: undefined }
   | { id: "schedule_popup_no_data_available"; description: `No data available`; values: undefined }
-  | { id: "schedule_popup_no_matching_result"; description: `No matching result`; values: undefined };
+  | { id: "schedule_popup_no_matching_result"; description: `No matching result`; values: undefined }
+  | { id: "library_label_organization"; description: `Organization`; values: undefined }
+  | { id: "library_label_org_owner_email"; description: `Org Owner Email`; values: undefined }
+  | { id: "report_label_learning_outcome"; description: `Learning Outcome`; values: undefined }
+  | { id: "report_label_learning_outcome_report"; description: `Learning Outcome Report`; values: undefined }
+  | {
+      id: "report_label_learning_outcome_info";
+      description: `Based on the learning outcomes covered in the last 7 days:
+<ul>
+  <li>Highly Achieved: learners that have achieved more than 80% of the learning outcomes
+</li>
+  <li>Low Achieved: learners that have achieved less than 50% of the learning outcomes
+</li>
+</ul>`;
+      values: undefined;
+    }
+  | { id: "report_label_covered"; description: `Covered`; values: undefined }
+  | { id: "report_label_above"; description: `Above`; values: undefined }
+  | { id: "report_label_meets"; description: `Meets`; values: undefined }
+  | { id: "report_label_below"; description: `Below`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

@@ -1341,6 +1341,12 @@ export interface EntityScheduleSearchView {
   title?: string;
 }
 
+export interface EntityStudentsAchievementOverviewReportResponse {
+  achieved_above_count?: number;
+  achieved_below_count?: number;
+  achieved_meet_count?: number;
+  covered_learn_outcome_count?: number;
+}
 export interface EntityScheduleShortInfo {
   id?: string;
   name?: string;
@@ -4175,6 +4181,19 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         EntityTeacherReport,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
       >(`/reports/teachers/${id}`, "GET", params),
+
+    /**
+     * @tags reports
+     * @name listStudentsAchievementOverviewReport
+     * @summary list student report overview
+     * @request GET:/reports/students_achievement_overview
+     * @description list student report overview
+     */
+    listStudentsAchievementOverviewReport: (query: { time_range: string }, params?: RequestParams) =>
+      this.request<
+        EntityStudentsAchievementOverviewReportResponse,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse
+      >(`/reports/students_achievement_overview${this.addQueryParams(query)}`, "GET", params),
 
     /**
      * @tags reports
