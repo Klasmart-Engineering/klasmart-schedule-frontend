@@ -3,7 +3,6 @@ import { noReportTip } from "@components/TipImages";
 import { Box, Button, Grid, Icon, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
-import { ReportAchievementList } from "@pages/ReportAchievementList";
 import { ReportLearningSummary } from "@pages/ReportLearningSummary";
 import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
@@ -205,11 +204,6 @@ export function ReportDashboard() {
         hasPerm: !!perm.learning_summary_report_653,
         label: t("report_learning_summary_report"),
         url: ReportLearningSummary.routeRedirectDefault,
-      },
-      {
-        hasPerm: !!perm.organization_class_achievements_report_626,
-        label: t("report_label_student_achievement"),
-        url: ReportAchievementList.routeBasePath,
       },
       {
         hasPerm: !!perm.teachers_classes_teaching_time_report_620,

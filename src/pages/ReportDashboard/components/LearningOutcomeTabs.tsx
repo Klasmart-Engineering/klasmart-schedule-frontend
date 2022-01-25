@@ -67,11 +67,11 @@ export default function LearningOutcomeTabs() {
   const handleData = [
     {
       name: t("report_label_above"),
-      count: Math.floor(((achievementCounts.achieved_above_count || 0) / count) * 100),
+      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_above_count || 0) / count) * 100),
     },
     {
       name: t("report_label_meets"),
-      count: Math.floor(((achievementCounts.achieved_below_count || 0) / count) * 100),
+      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_below_count || 0) / count) * 100),
     },
     {
       name: t("report_label_below"),
@@ -104,7 +104,6 @@ export default function LearningOutcomeTabs() {
     );
   };
 
-  console.log(_.sumBy(handleData, "count"));
   return (
     <Grid container direction="column">
       <Grid wrap="nowrap" container direction="column" className={css.container}>
