@@ -6773,7 +6773,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ScheduleDetailsView"
+              "$ref": "#/definitions/entity.ContentInfoWithDetails"
             }
           },
           "400": {

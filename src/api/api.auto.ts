@@ -4158,7 +4158,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get schedule live lesson plan by schedule id, if no one attempted live, return latest version content
      */
     getScheduleLiveLessonPlan: (schedule_id: string, params?: RequestParams) =>
-      this.request<EntityScheduleDetailsView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityContentInfoWithDetails, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/schedules/${schedule_id}/contents`,
         "GET",
         params
