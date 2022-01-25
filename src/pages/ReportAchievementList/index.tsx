@@ -50,12 +50,15 @@ export function ReportAchievementList() {
   const [classList, setClassList] = React.useState<Item[]>([]);
   const perm = usePermission([
     PermissionType.view_reports_610,
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_organizations_reports_612,
-    PermissionType.view_my_school_reports_611,
+    PermissionType.report_organizations_class_achievements_646,
+    PermissionType.report_schools_class_achievements_647,
+    PermissionType.report_my_class_achievments_648,
   ]);
   const hasPerm =
-    perm.view_reports_610 || perm.view_my_reports_614 || perm.view_my_organizations_reports_612 || perm.view_my_school_reports_611;
+    perm.view_reports_610 ||
+    perm.report_organizations_class_achievements_646 ||
+    perm.report_schools_class_achievements_647 ||
+    perm.report_my_class_achievments_648;
 
   const handleChangeFilter: FilterAchievementReportProps["onChange"] = async (value, tab) => {
     computeFilter(tab, value);
