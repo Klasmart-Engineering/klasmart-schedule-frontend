@@ -75,11 +75,7 @@ export function ListAssessment() {
       history.push(
         `/assessments/homefunlist?assessment_type=${AssessmentTypeValues.homeFun}order_by=${HomeFunAssessmentOrderBy._submit_at}&status=${HomeFunAssessmentStatus.all}&page=1`
       );
-    }
-    // else if (assessment_type === AssessmentTypeValues.study) {
-    //   history.push(`/assessments/list?assessment_type=${AssessmentTypeValues.study}&status=${AssessmentStatus.all}&page=1`);
-    // }
-    else {
+    } else {
       reset();
       history.push(`/assessments/assessment-list?assessment_type=${assessment_type}&status=${AssessmentStatus.all}&page=1`);
     }
