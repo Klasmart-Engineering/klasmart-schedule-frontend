@@ -129,6 +129,14 @@ elif [ $env == "alpha" ] && [ $region == "global"  ]
 then
   S3_ENDPOINT=s3://klglobal-alpha-cms
   CLOUDFRONT_ID=E1SZGP6UG9V8DB
+elif [ $env == "research" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-research-cms
+  CLOUDFRONT_ID=E200R0IPUQWE6J
+elif [ $env == "nextgen" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-nextgen-cms
+  CLOUDFRONT_ID=EX9FMZD08DAH6
 fi
 
 # script logic here
