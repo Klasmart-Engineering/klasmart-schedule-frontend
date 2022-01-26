@@ -9855,7 +9855,7 @@
         "durations": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/entity.ContentUsage"
           }
         }
       }
@@ -9997,7 +9997,7 @@
         "join_user_id_list": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "integer"
           }
         },
         "lesson_plan_name": {
@@ -14795,6 +14795,17 @@
         },
         "subject_name": {
           "type": "string"
+        }
+      }
+    },
+    "utils.Pager": {
+      "type": "object",
+      "properties": {
+        "pageIndex": {
+          "type": "integer"
+        },
+        "pageSize": {
+          "type": "integer"
         }
       }
     },
