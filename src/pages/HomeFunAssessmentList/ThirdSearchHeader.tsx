@@ -79,8 +79,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const sortOptions = () => [
-  { label: d("Submit Time (New-Old)").t("assess_submit_new_old"), value: HomeFunAssessmentOrderBy._latest_feedback_at },
-  { label: d("Submit Time (Old-New)").t("assess_submit_old_new"), value: HomeFunAssessmentOrderBy.latest_feedback_at },
+  { label: d("Submit Time (New-Old)").t("assess_submit_new_old"), value: HomeFunAssessmentOrderBy._submit_at },
+  { label: d("Submit Time (Old-New)").t("assess_submit_old_new"), value: HomeFunAssessmentOrderBy.submit_at },
   { label: d("Complete Time (New-Old)").t("assess_complete_time_new_old"), value: HomeFunAssessmentOrderBy._complete_at },
   { label: d("Complete Time (Old-New)").t("assess_complete_time_old_new"), value: HomeFunAssessmentOrderBy.complete_at },
 ];
@@ -174,7 +174,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
                 size="small"
                 style={{ width: 200 }}
                 onChange={handleChangeOrder}
-                value={value.order_by || HomeFunAssessmentOrderBy._latest_feedback_at}
+                value={value.order_by || HomeFunAssessmentOrderBy._submit_at}
                 label={d("Sort By").t("assess_sort_by")}
                 select
                 SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}

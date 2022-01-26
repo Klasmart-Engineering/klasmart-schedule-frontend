@@ -8,6 +8,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import { cloneDeep } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   EntityAssessmentDetailContentOutcome,
@@ -16,10 +17,9 @@ import {
   EntityUpdateAssessmentH5PStudent,
 } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
+import { PLField, PLTableHeader } from "../PLTable";
 import { EditScore } from "./EditScore";
 import { BasicTableProps, formValueMethods } from "./types";
-import { PLField, PLTableHeader } from "../PLTable";
-import { cloneDeep } from "lodash";
 
 const useStyles = makeStyles({
   table: {
@@ -93,9 +93,10 @@ function LOChecklist({
   let [list, setList] = useState(cloneDeep(outcomes));
 
   /** 根据 outcome 得到（用户通过点击 not attempted 而得到的）禁用列表 **/
-  const outcomeDisableList = useMemo(() => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [], [
-    formValue.outcomes,
-  ]);
+  const outcomeDisableList = useMemo(
+    () => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [],
+    [formValue.outcomes]
+  );
 
   useEffect(() => {
     setList(cloneDeep(outcomes));

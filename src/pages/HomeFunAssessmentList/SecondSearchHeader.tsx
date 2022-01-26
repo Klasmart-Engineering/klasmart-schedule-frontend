@@ -99,13 +99,13 @@ const useStyles = makeStyles((theme) => ({
 export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange } = props;
-  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
+  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query_key"]>();
   const handleChangeSearchText = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
-      searchText ? (draft.query = searchText) : delete draft.query;
+      searchText ? (draft.query_key = searchText) : delete draft.query_key;
     });
     onChange({ ...newValue, page: 1 });
   };
@@ -145,10 +145,10 @@ export interface SecondSearchHeaderProps extends HomeFunAssessmentQueryCondition
 export function SecondSearchHeader(props: SecondSearchHeaderProps) {
   const classes = useStyles();
   const { value, onChange, onChangeAssessmentType } = props;
-  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query"]>();
+  const [searchText, setSearchText] = useState<HomeFunAssessmentQueryCondition["query_key"]>();
   const handleClickSearch = () => {
     const newValue = produce(value, (draft) => {
-      searchText ? (draft.query = searchText) : delete draft.query;
+      searchText ? (draft.query_key = searchText) : delete draft.query_key;
     });
     onChange({ ...newValue, page: 1 });
   };
@@ -173,22 +173,11 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={d("Search").t("assess_label_search")}
-                defaultValue={value.query}
+                defaultValue={value.query_key}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("assess_label_search")}
               </Button>
-              {/* <TextField
-                style={{ width: 160, marginLeft: 10 }}
-                size="small"
-                onChange={handleChangeAssessmentType}
-                // label={d("Content Type").t("library")}
-                defaultValue={AssessmentType.homeFun}
-                select
-                SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-              >
-                {menuItemList(assessmentTypes())}
-              </TextField> */}
               <AssessmentType type={AssessmentTypeValues.homeFun} onChangeAssessmentType={onChangeAssessmentType} />
             </Grid>
             <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}></Grid>
@@ -203,7 +192,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 onKeyPress={handleKeyPress}
                 onChange={handleChange}
                 placeholder={d("Search").t("assess_label_search")}
-                defaultValue={value.query}
+                defaultValue={value.query_key}
               />
               <Button variant="contained" color="primary" className={classes.searchBtn} onClick={handleClickSearch}>
                 <Search /> {d("Search").t("assess_label_search")}

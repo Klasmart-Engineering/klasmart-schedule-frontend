@@ -314,11 +314,6 @@ export interface EntityAssessmentTeacher {
   name?: string;
 }
 
-export interface EntityAssessmentsSummary {
-  complete?: number;
-  in_progress?: number;
-}
-
 export interface EntityAssignmentCompletionRate {
   class_designated_subject?: number;
   duration?: string;
@@ -691,6 +686,11 @@ export interface EntityHomeFunStudyOutcome {
   outcome_id?: string;
   outcome_name?: string;
   status?: "achieved" | "not_achieved" | "not_attempted";
+}
+
+export interface EntityIDName {
+  id?: string;
+  name?: string;
 }
 
 export interface EntityJwtToken {
@@ -1190,7 +1190,6 @@ export interface EntityScheduleFeedbackView {
   schedule_id?: string;
   user_id?: string;
 }
-
 export interface EntityScheduleLessonPlan {
   id?: string;
   is_auth?: boolean;
@@ -1405,11 +1404,6 @@ export interface EntityScheduleViewDetail {
   students?: EntityScheduleShortInfo[];
   teachers?: EntityScheduleShortInfo[];
   title?: string;
-}
-
-export interface EntitySearchStudentAssessmentsResponse {
-  list?: EntityStudentAssessment[];
-  total?: number;
 }
 
 export interface EntitySet {
@@ -2070,6 +2064,223 @@ export interface UtilsPager {
   pageSize?: number;
 }
 
+export interface V2AssessmentContentReply {
+  content_id?: string;
+  content_name?: string;
+  content_subtype?: string;
+  content_type?: "LessonPlan" | "LessonMaterial" | "Unknown";
+  file_type?: "Unknown" | "HasChildContainer" | "NotChildContainer" | "SupportScoreStandAlone" | "NotSupportScoreStandAlone";
+  h5p_id?: string;
+  max_score?: number;
+  number?: string;
+  outcome_ids?: string[];
+  parent_id?: string;
+  reviewer_comment?: string;
+  status?: "Covered" | "NotCovered";
+}
+
+export interface V2AssessmentDetailReply {
+  class?: EntityIDName;
+  class_end_at?: number;
+  class_length?: number;
+  complete_at?: number;
+  contents?: V2AssessmentContentReply[];
+  id?: string;
+  outcomes?: V2AssessmentOutcomeReply[];
+  program?: EntityIDName;
+  remaining_time?: number;
+  room_id?: string;
+  schedule_due_at?: number;
+  schedule_title?: string;
+  status?: string;
+  students?: V2AssessmentStudentReply[];
+  subjects?: EntityIDName[];
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2AssessmentOutcomeReply {
+  assigned_to?: ("LessonPlan" | "LessonMaterial")[];
+  assumed?: boolean;
+  outcome_id?: string;
+  outcome_name?: string;
+}
+
+export interface V2AssessmentPageReply {
+  assessments?: V2AssessmentQueryReply[];
+  total?: number;
+}
+
+export interface V2AssessmentQueryReply {
+  class_end_at?: number;
+  class_info?: EntityIDName;
+  complete_at?: number;
+  complete_rate?: number;
+  due_at?: number;
+  id?: string;
+  lesson_plan?: EntityIDName;
+  program?: EntityIDName;
+  remaining_time?: number;
+  status?: string;
+  subjects?: EntityIDName[];
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2AssessmentStudentReply {
+  results?: V2AssessmentStudentResultReply[];
+  reviewer_comment?: string;
+  status?: "Participate" | "NotParticipate";
+  student_id?: string;
+  student_name?: string;
+}
+
+export interface V2AssessmentStudentResultOutcomeReply {
+  outcome_id?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2AssessmentStudentResultOutcomeReq {
+  outcome_id?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2AssessmentStudentResultReply {
+  answer?: string;
+  attempted?: boolean;
+  content_id?: string;
+  outcomes?: V2AssessmentStudentResultOutcomeReply[];
+  score?: number;
+}
+
+export interface V2AssessmentStudentResultReq {
+  content_id?: string;
+  outcomes?: V2AssessmentStudentResultOutcomeReq[];
+  parent_id?: string;
+  score?: number;
+}
+
+export interface V2AssessmentStudentUpdateReq {
+  results?: V2AssessmentStudentResultReq[];
+  reviewer_comment?: string;
+  status?: "Participate" | "NotParticipate";
+  student_id?: string;
+}
+
+export interface V2AssessmentUpdateContentReq {
+  content_id?: string;
+  parent_id?: string;
+  reviewer_comment?: string;
+  status?: "Covered" | "NotCovered";
+}
+
+export interface V2AssessmentUpdateReq {
+  action?: "Draft" | "Complete";
+  contents?: V2AssessmentUpdateContentReq[];
+  id?: string;
+  students?: V2AssessmentStudentUpdateReq[];
+}
+
+export interface V2AssessmentsSummary {
+  complete?: number;
+  in_progress?: number;
+}
+
+export interface V2GetOfflineStudyUserResultDetailReply {
+  assess_comment?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
+  complete_at?: number;
+  due_at?: number;
+  feedback_id?: string;
+  id?: string;
+  outcomes?: V2OfflineStudyUserOutcomeReply[];
+  schedule_id?: string;
+  status?: "InProgress" | "Draft" | "Complete";
+  student?: EntityIDName;
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2OfflineStudyUserOutcomeReply {
+  assumed?: boolean;
+  outcome_id?: string;
+  outcome_name?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2OfflineStudyUserOutcomeUpdateReq {
+  outcome_id?: string;
+  status?: "Unknown" | "NotCovered" | "NotAchieved" | "Achieved";
+}
+
+export interface V2OfflineStudyUserPageItem {
+  assess_score?: number;
+  complete_at?: number;
+  due_at?: number;
+  id?: string;
+  status?: "Started" | "Draft" | "Complete";
+  student?: EntityIDName;
+  submit_at?: number;
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2OfflineStudyUserPageReply {
+  item?: V2OfflineStudyUserPageItem[];
+  total?: number;
+}
+
+export interface V2OfflineStudyUserResultUpdateReq {
+  action?: "Draft" | "Complete";
+  assess_comment?: string;
+  assess_feedback_id?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
+  id?: string;
+  outcomes?: V2OfflineStudyUserOutcomeUpdateReq[];
+}
+
+export interface V2SearchStudentAssessmentsResponse {
+  list?: V2StudentAssessment[];
+  total?: number;
+}
+
+export interface V2StudentAssessment {
+  complete_at?: number;
+  create_at?: number;
+  id?: string;
+  schedule?: V2StudentAssessmentSchedule;
+  score?: number;
+  status?: string;
+  student_attachments?: V2StudentAssessmentAttachment[];
+  teacher_comments?: V2StudentAssessmentTeacher[];
+  title?: string;
+  update_at?: number;
+}
+
+export interface V2StudentAssessmentAttachment {
+  id?: string;
+  name?: string;
+}
+
+export interface V2StudentAssessmentSchedule {
+  attachment?: V2StudentAssessmentAttachment;
+  id?: string;
+  title?: string;
+  type?: string;
+}
+
+export interface V2StudentAssessmentTeacher {
+  comment?: string;
+  teacher?: V2StudentAssessmentTeacherInfo;
+}
+
+export interface V2StudentAssessmentTeacherInfo {
+  avatar?: string;
+  family_name?: string;
+  given_name?: string;
+  id?: string;
+}
+
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
   secure?: boolean;
 };
@@ -2283,26 +2494,10 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<EntitySearchStudentAssessmentsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<V2SearchStudentAssessmentsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments_for_student${this.addQueryParams(query)}`,
         "GET",
         params
-      ),
-  };
-  assessmentsForTest = {
-    /**
-     * @tags assessments
-     * @name addAssessmentForTest
-     * @summary add assessments for test
-     * @request POST:/assessments_for_test
-     * @description add assessments for test
-     */
-    addAssessmentForTest: (assessment: EntityAddClassAndLiveAssessmentArgs, params?: RequestParams) =>
-      this.request<EntityAddAssessmentResult, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
-        `/assessments_for_test`,
-        "POST",
-        params,
-        assessment
       ),
   };
   assessmentsSummary = {
@@ -2313,11 +2508,64 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/assessments_summary
      * @description get assessments summary
      */
-    getAssessmentsSummary: (query?: { status?: string; teacher_name?: string }, params?: RequestParams) =>
-      this.request<EntityAssessmentsSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+    getAssessmentsSummary: (query?: { status?: string }, params?: RequestParams) =>
+      this.request<V2AssessmentsSummary, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments_summary${this.addQueryParams(query)}`,
         "GET",
         params
+      ),
+  };
+  assessmentsV2 = {
+    /**
+     * @tags assessments
+     * @name queryAssessmentV2
+     * @summary assessments query
+     * @request GET:/assessments_v2
+     * @description assessments query
+     */
+    queryAssessmentV2: (
+      query: {
+        status?: string;
+        query_key?: string;
+        query_type?: "TeacherName";
+        assessment_type: string;
+        page?: number;
+        page_size?: number;
+        order_by?: "class_end_at" | "-class_end_at" | "complete_at" | "-complete_at" | "create_at" | "-create_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<V2AssessmentPageReply, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/assessments_v2${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags assessments
+     * @name getAssessmentDetailV2
+     * @summary get assessment detail
+     * @request GET:/assessments_v2/{id}
+     * @description get assessment detail
+     */
+    getAssessmentDetailV2: (id: string, params?: RequestParams) =>
+      this.request<
+        V2AssessmentDetailReply,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/assessments_v2/${id}`, "GET", params),
+
+    /**
+     * @tags Assessment
+     * @name updateAssessmentV2
+     * @request PUT:/assessments_v2/{id}
+     * @description update assessment
+     */
+    updateAssessmentV2: (id: string, req: V2AssessmentUpdateReq, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/assessments_v2/${id}`,
+        "PUT",
+        params,
+        req
       ),
   };
   bulk = {
@@ -4570,6 +4818,59 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      */
     getSubject: (query?: { program_id?: string }, params?: RequestParams) =>
       this.request<ExternalSubject[], ApiInternalServerErrorResponse>(`/subjects${this.addQueryParams(query)}`, "GET", params),
+  };
+  userOfflineStudy = {
+    /**
+     * @tags assessments
+     * @name queryUserOfflineStudy
+     * @summary query user offline study(homeFun study)
+     * @request GET:/user_offline_study
+     * @description query user offline study
+     */
+    queryUserOfflineStudy: (
+      query?: {
+        status?: string;
+        query_key?: string;
+        query_type?: "TeacherName";
+        page?: number;
+        page_size?: number;
+        order_by?: "complete_at" | "-complete_at" | "submit_at" | "-submit_at";
+      },
+      params?: RequestParams
+    ) =>
+      this.request<V2OfflineStudyUserPageReply, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/user_offline_study${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags assessments
+     * @name getUserOfflineStudyByID
+     * @summary get user offline study by id
+     * @request GET:/user_offline_study/{id}
+     * @description get user offline study by id
+     */
+    getUserOfflineStudyById: (id: string, params?: RequestParams) =>
+      this.request<
+        V2GetOfflineStudyUserResultDetailReply,
+        ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse
+      >(`/user_offline_study/${id}`, "GET", params),
+
+    /**
+     * @tags assessments
+     * @name updateUserOfflineStudy
+     * @summary update user offline study
+     * @request PUT:/user_offline_study/{id}
+     * @description update user offline study
+     */
+    updateUserOfflineStudy: (id: string, req: V2OfflineStudyUserResultUpdateReq, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/user_offline_study/${id}`,
+        "PUT",
+        params,
+        req
+      ),
   };
   userSettings = {
     /**
