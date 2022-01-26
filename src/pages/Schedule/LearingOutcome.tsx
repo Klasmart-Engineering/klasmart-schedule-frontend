@@ -34,6 +34,7 @@ import { EntityScheduleShortInfo, LearningComesFilterQuery, LearningContentList,
 import clsx from "clsx";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import CloseIcon from "@material-ui/icons/Close";
+import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 
 const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
@@ -204,6 +205,7 @@ interface filterGropProps {
   getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
   viewSubjectPermission?: boolean;
   checkAssume?: (value: boolean) => void;
+  checkAssumed?: boolean;
 }
 
 interface InfoProps extends filterGropProps {
@@ -226,12 +228,11 @@ function SelectGroup(props: filterGropProps) {
     setFilterQuery,
     viewSubjectPermission,
     checkAssume,
+    checkAssumed,
   } = props;
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
 
   const dispatch = useDispatch();
-
-  const [checkAssumed, setCheckAssumed] = React.useState<boolean>(false);
 
   const autocompleteChange = async (value: any | null, name: "subjects" | "categorys" | "subs" | "ages" | "grades" | "programs") => {
     const ids = value?.map((item: any) => {
@@ -343,7 +344,6 @@ function SelectGroup(props: filterGropProps) {
           size="medium"
           color="primary"
           onClick={(e) => {
-            setCheckAssumed(!checkAssumed);
             checkAssume && checkAssume(!checkAssumed);
           }}
           className={checkAssumed ? classes.activeAssumedBnt : classes.assumedBnt}
@@ -429,6 +429,8 @@ export default function LearingOutcome(props: InfoProps) {
     });
   };
 
+  const [checkAssumed, setCheckAssumed] = React.useState<boolean>(false);
+
   const getFilterQueryAssembly = (filterData: LearningComesFilterQuery) => {
     const values = (item: string[]) => (item.length > 0 ? item : null);
     return {
@@ -506,6 +508,7 @@ export default function LearingOutcome(props: InfoProps) {
 
   const checkAssume = (value: boolean) => {
     //  dispatch(resetActOutcomeList([]));
+    setCheckAssumed(!checkAssumed);
     setValue(`is_assumed`, value);
     setValue(`page`, 1);
     searchOutcomesList(getFilterQueryAssembly(filterQuery));
@@ -527,6 +530,17 @@ export default function LearingOutcome(props: InfoProps) {
       </MenuItem>
     );
   });
+
+  const reset = () => {
+    setFilterQuery({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] });
+    setValue(`search_type`, "all");
+    setValue(`search_value`, "");
+    setValue(`is_assumed`, -1);
+    setValue(`page`, 1);
+    setCheckAssumed(false);
+    setSelectIds(outComeIds);
+    searchOutcomesList(getFilterQueryAssembly({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] }));
+  };
 
   return (
     <Box className={classes.previewContainer}>
@@ -571,19 +585,32 @@ export default function LearingOutcome(props: InfoProps) {
             >
               {templateOption}
             </Controller>
-            <Controller
-              style={{
-                borderLeft: 0,
-                width: "640px",
-              }}
-              as={TextField}
-              defaultValue={learingOutcomeData.search_value}
-              name="search_value"
-              control={control}
-              size="small"
-              className={classes.searchText}
-              placeholder={d("Search").t("library_label_search")}
-            />
+            <div style={{ position: "relative" }}>
+              <Controller
+                style={{
+                  borderLeft: 0,
+                  width: "640px",
+                }}
+                as={TextField}
+                defaultValue={learingOutcomeData.search_value}
+                name="search_value"
+                control={control}
+                size="small"
+                className={classes.searchText}
+                placeholder={d("Search").t("library_label_search")}
+              />
+              <CancelOutlinedIcon
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "8px",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setValue(`search_value`, "");
+                }}
+              />
+            </div>
           </div>
           <Button
             variant="contained"
@@ -612,6 +639,7 @@ export default function LearingOutcome(props: InfoProps) {
           getFilterQueryAssembly={getFilterQueryAssembly}
           viewSubjectPermission={viewSubjectPermission}
           checkAssume={checkAssume}
+          checkAssumed={checkAssumed}
         />
       </Box>
       <div
@@ -636,7 +664,7 @@ export default function LearingOutcome(props: InfoProps) {
             <TableBody>
               {content_lists.map((item, index) => (
                 <Controller
-                  key={item.id}
+                  key={item.id + item.select}
                   name={`content_list[${index}]`}
                   control={control}
                   defaultValue={item}
@@ -708,8 +736,8 @@ export default function LearingOutcome(props: InfoProps) {
           {selectIds.length} {d("Added").t("schedule_lo_number_added")}
         </span>
         <div>
-          <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={handleClose}>
-            {d("Cancel").t("library_label_cancel")}
+          <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={reset}>
+            {d("Reset").t("schedule_lesson_plan_popup_reset")}
           </Button>
           <Button
             disabled={scheduleDetial.complete_assessment}
