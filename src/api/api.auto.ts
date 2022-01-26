@@ -1406,6 +1406,11 @@ export interface EntityScheduleViewDetail {
   title?: string;
 }
 
+export interface EntitySearchStudentAssessmentsResponse {
+  list?: EntityStudentAssessment[];
+  total?: number;
+}
+
 export interface EntitySet {
   created_at?: number;
   deleted_at?: number;
@@ -1441,43 +1446,6 @@ export interface EntityStudentAchievementReportResponse {
   attend?: boolean;
   categories?: EntityStudentAchievementReportCategoryItem[];
   student_name?: string;
-}
-
-export interface EntityStudentAssessment {
-  complete_at?: number;
-  create_at?: number;
-  id?: string;
-  schedule?: EntityStudentAssessmentSchedule;
-  score?: number;
-  status?: string;
-  student_attachments?: EntityStudentAssessmentAttachment[];
-  teacher_comments?: EntityStudentAssessmentTeacher[];
-  title?: string;
-  update_at?: number;
-}
-
-export interface EntityStudentAssessmentAttachment {
-  id?: string;
-  name?: string;
-}
-
-export interface EntityStudentAssessmentSchedule {
-  attachment?: EntityStudentAssessmentAttachment;
-  id?: string;
-  title?: string;
-  type?: string;
-}
-
-export interface EntityStudentAssessmentTeacher {
-  comment?: string;
-  teacher?: EntityStudentAssessmentTeacherInfo;
-}
-
-export interface EntityStudentAssessmentTeacherInfo {
-  avatar?: string;
-  family_name?: string;
-  given_name?: string;
-  id?: string;
 }
 
 export interface EntityStudentPerformanceReportItem {
@@ -2494,7 +2462,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
       },
       params?: RequestParams
     ) =>
-      this.request<V2SearchStudentAssessmentsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntitySearchStudentAssessmentsResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/assessments_for_student${this.addQueryParams(query)}`,
         "GET",
         params
