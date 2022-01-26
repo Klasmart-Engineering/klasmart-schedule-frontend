@@ -1394,6 +1394,7 @@ export interface EntityScheduleTimeViewListRequest {
   time_zone_offset?: number;
   view_type?: string;
   with_assessment_status?: boolean;
+  user_ids?: string[];
 }
 
 export interface EntityScheduleTimeViewListResponse {

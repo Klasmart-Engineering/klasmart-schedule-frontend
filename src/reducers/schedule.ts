@@ -377,12 +377,10 @@ export const getScheduleTimeViewDataByYear = createAsyncThunk<yearSchedulesResul
   }
 );
 
-type viewSchedulesAnyTimeResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeView>;
-type viewSchedulesAnTimeParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeView>[0] & LoadingMetaPayload;
-export const getScheduleAnyTimeViewData = createAsyncThunk<viewSchedulesAnyTimeResultResponse, viewSchedulesAnTimeParams>(
+export const getScheduleAnyTimeViewData = createAsyncThunk<viewSchedulesResultResponse, viewSchedulesParams>(
   "schedule/schedules_any_time_view",
   async (query) => {
-    return api.schedulesTimeView.getScheduleTimeView({ ...query });
+    return api.schedulesTimeView.getScheduleTimeViewList({ ...query });
   }
 );
 
@@ -1129,7 +1127,7 @@ const { actions, reducer } = createSlice({
       state.filterOption.programs = payload;
     },
     [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleAnyTimeViewData = payload;
+      state.scheduleAnyTimeViewData = payload.data;
     },
     [getSchoolByUser.fulfilled.type]: (state, { payload }: any) => {
       state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
