@@ -9929,7 +9929,7 @@
         "class_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/entity.ContentUsage"
           }
         },
         "durations": {
@@ -14795,17 +14795,6 @@
         },
         "subject_name": {
           "type": "string"
-        }
-      }
-    },
-    "utils.Pager": {
-      "type": "object",
-      "properties": {
-        "pageIndex": {
-          "type": "integer"
-        },
-        "pageSize": {
-          "type": "integer"
         }
       }
     },
