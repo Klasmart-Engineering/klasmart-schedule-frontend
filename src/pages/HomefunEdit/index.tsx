@@ -1,15 +1,16 @@
+import { V2OfflineStudyUserResultUpdateReq } from "@api/api.auto";
 import { Box, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import { HomeFunAssessmentStatus } from "@pages/HomeFunAssessmentList/types";
 import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { ExtendedRequestParams } from "../../api";
-import { EntityAssessHomeFunStudyArgs } from "../../api/api.auto";
-import { AssessmentStatus, AssessmentUpdateAction } from "../../api/type";
+import { AssessmentUpdateAction } from "../../api/type";
 import { NoOutcome } from "../../components/TipImages";
 import { d } from "../../locale/LocaleManager";
 import { setQuery } from "../../models/ModelContentDetailForm";
@@ -38,10 +39,10 @@ function AssessmentsHomefunEditIner() {
   const { homefunDetail, homefunFeedbacks, hasPermissionOfHomefun } = useSelector<RootState, RootState["assessments"]>(
     (state) => state.assessments
   );
-  const formMethods = useForm<EntityAssessHomeFunStudyArgs>();
+  const formMethods = useForm<V2OfflineStudyUserResultUpdateReq>();
   const { handleSubmit } = formMethods;
-  const editable = hasPermissionOfHomefun && homefunDetail.status === AssessmentStatus.in_progress;
-  const isComplete = homefunDetail.status === AssessmentStatus.complete;
+  const editable = hasPermissionOfHomefun && homefunDetail.status !== HomeFunAssessmentStatus.complete;
+  const isComplete = homefunDetail.status === HomeFunAssessmentStatus.complete;
   const handleAssessmentSaveOrComplete = (action: AssessmentUpdateAction, message: string) =>
     handleSubmit(async (value) => {
       if (!id) return;
@@ -58,7 +59,7 @@ function AssessmentsHomefunEditIner() {
       /** 检查数据上传合规性 **/
       let errorTimes = 0;
       data.outcomes?.forEach((o) => {
-        if (o.status === "default") errorTimes++;
+        if (o.status === "Unknown") errorTimes++;
       });
       if (errorTimes) {
         return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));

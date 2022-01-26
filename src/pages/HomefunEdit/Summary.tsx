@@ -70,7 +70,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="teacher_names"
-            value={detail.teacher_names}
+            value={detail?.teachers?.map((t) => t.name).join(",")}
             className={css.fieldset}
             label={d("Teacher").t("assess_column_teacher")}
           />
@@ -78,7 +78,7 @@ export function Summary(props: SummaryProps) {
             fullWidth
             disabled
             name="student_name"
-            value={detail.student_name ?? ""}
+            value={detail.student?.name ?? ""}
             className={css.fieldset}
             label={d("Student").t("assess_detail_student")}
           />
