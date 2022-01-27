@@ -71,14 +71,14 @@ export default function LearningOutcomeTabs() {
     },
     {
       name: t("report_label_meets"),
-      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_below_count || 0) / count) * 100),
+      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_meet_count || 0) / count) * 100),
     },
     {
       name: t("report_label_below"),
       count: 0,
     },
   ];
-  handleData[2].count = achievementCounts.achieved_meet_count === 0 ? 0 : 100 - handleData[0].count - handleData[1].count;
+  handleData[2].count = achievementCounts.achieved_below_count === 0 ? 0 : 100 - handleData[0].count - handleData[1].count;
 
   const renderScore = (name: string, number: number, color: string, i: number) => {
     return (
