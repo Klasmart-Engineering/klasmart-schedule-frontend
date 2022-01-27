@@ -137,7 +137,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/entity.AddClassAndLiveAssessmentArgs"
+              "$ref": "#/definitions/v2.ScheduleEndClassCallBackReq"
             }
           }
         ],
@@ -145,7 +145,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.AddAssessmentResult"
+              "$ref": "#/definitions/v2.ScheduleEndClassCallBackResp"
             }
           },
           "400": {
@@ -378,6 +378,47 @@
             "description": "Forbidden",
             "schema": {
               "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/assessments_for_test": {
+      "post": {
+        "description": "add assessments for test",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "add assessments for test",
+        "operationId": "addAssessmentForTest",
+        "parameters": [
+          {
+            "description": "add assessment command",
+            "name": "assessment",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.AddClassAndLiveAssessmentArgs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.AddAssessmentResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
           "500": {
@@ -5219,25 +5260,64 @@
         "description": "query live classes summary",
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["reports/learnerUsage"],
-        "summary": "get learner usage Report",
-        "operationId": "getLearnerUsageOverview",
+        "tags": ["reports/learningSummary"],
+        "summary": "query live classes summary",
+        "operationId": "queryAssignmentsSummary",
         "parameters": [
           {
-            "description": "classAssignments",
-            "name": "classes_assignments",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/entity.LearnerUsageRequest"
-            }
+            "type": "integer",
+            "description": "year",
+            "name": "year",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "week start timestamp(unit: second)",
+            "name": "week_start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "week end timestamp(unit: second)",
+            "name": "week_end",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "school id",
+            "name": "school_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "class id",
+            "name": "class_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "teacher_id",
+            "name": "teacher_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "student_id",
+            "name": "student_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "subject_id",
+            "name": "subject_id",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.LearnerUsageResponse"
+              "$ref": "#/definitions/entity.QueryAssignmentsSummaryResult"
             }
           },
           "400": {
@@ -9855,7 +9935,7 @@
         "durations": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ContentUsage"
+            "type": "string"
           }
         }
       }
@@ -9997,7 +10077,7 @@
         "join_user_id_list": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "string"
           }
         },
         "lesson_plan_name": {
@@ -14798,6 +14878,17 @@
         }
       }
     },
+    "utils.Pager": {
+      "type": "object",
+      "properties": {
+        "pageIndex": {
+          "type": "integer"
+        },
+        "pageSize": {
+          "type": "integer"
+        }
+      }
+    },
     "v2.AssessmentContentReply": {
       "type": "object",
       "properties": {
@@ -15323,6 +15414,34 @@
         }
       }
     },
+    "v2.ScheduleEndClassCallBackReq": {
+      "type": "object",
+      "properties": {
+        "attendance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_end_time": {
+          "type": "integer"
+        },
+        "class_length": {
+          "type": "integer"
+        },
+        "schedule_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v2.ScheduleEndClassCallBackResp": {
+      "type": "object",
+      "properties": {
+        "schedule_id": {
+          "type": "string"
+        }
+      }
+    },
     "v2.SearchStudentAssessmentsResponse": {
       "type": "object",
       "properties": {
@@ -15431,17 +15550,6 @@
         },
         "id": {
           "type": "string"
-        }
-      }
-    },
-    "utils.Pager": {
-      "type": "object",
-      "properties": {
-        "pageIndex": {
-          "type": "integer"
-        },
-        "pageSize": {
-          "type": "integer"
         }
       }
     }
