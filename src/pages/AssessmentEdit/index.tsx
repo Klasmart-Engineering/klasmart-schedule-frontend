@@ -143,7 +143,10 @@ export function AssessmentsEdit() {
           console.log("errorlist:", errorlist);
           if (errorlist && errorlist.length && isLive) {
             const finalErrs = errorlist.filter((err) => {
-              return finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0;
+              return (
+                finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0 ||
+                !finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids
+              );
             });
             if (finalErrs && finalErrs.length) {
               return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));

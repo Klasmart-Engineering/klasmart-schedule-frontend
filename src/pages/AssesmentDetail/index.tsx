@@ -142,7 +142,10 @@ export function AssessmentDetail() {
           data.outcomes.filter((item) => !item.none_achieved && !item.skip && (!item.attendance_ids || item.attendance_ids.length === 0));
         if (errorlist && errorlist.length) {
           const finalErrs = errorlist.filter((err) => {
-            return finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0;
+            return (
+              finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids?.length === 0 ||
+              !finalOutcomeList.find((item) => item.outcome_id === err.outcome_id)?.partial_ids
+            );
           });
           if (finalErrs && finalErrs.length) {
             console.log(finalErrs);
