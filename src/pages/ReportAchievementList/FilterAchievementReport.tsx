@@ -134,7 +134,9 @@ export function FilterAchievementReport(props: FilterAchievementReportProps) {
         <Hidden smDown>
           <Box position="relative" className={css.box}>
             <Box>
-              {(perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) && (
+              {(perm.view_reports_610 ||
+                perm.report_schools_class_achievements_647 ||
+                perm.report_organizations_class_achievements_646) && (
                 <TextField
                   size="small"
                   className={css.selectButton}
