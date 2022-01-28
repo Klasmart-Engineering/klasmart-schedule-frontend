@@ -1,5 +1,5 @@
 import { GetProgramsQuery } from "@api/api-ko.auto";
-import { makeStyles } from "@material-ui/core";
+import { LinearProgress, makeStyles, Radio, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -24,7 +24,7 @@ import { actError } from "@reducers/notify";
 import { getProgramChild } from "@reducers/schedule";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityScheduleDetailsView } from "../../api/api.auto";
@@ -35,6 +35,7 @@ import clsx from "clsx";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import CloseIcon from "@material-ui/icons/Close";
 import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
+import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
@@ -192,6 +193,99 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
       padding: "0 10px 0 10px",
     },
   },
+  previewContainerMb: {
+    position: "fixed",
+    backgroundColor: "white",
+    width: "100%",
+    top: 0,
+    left: 0,
+    zIndex: 999,
+  },
+  lessonTitleMb: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "23px 30px 20px 30px",
+    "& span": {
+      color: "#000000",
+      fontWeight: 700,
+      fontSize: 16,
+      padding: "0 10px 0 10px",
+    },
+  },
+  mobileSearch: {
+    width: "80%",
+    "& .MuiInputBase-root": {
+      borderRadius: "27px",
+    },
+  },
+  scrollSelect: {
+    display: "flex",
+    alignItems: "center",
+    overflow: "auto",
+    borderTop: "1px solid #EFEFEF",
+    boxShadow: "0px 4px 4px rgb(0 0 0 / 25%)",
+    padding: "8px",
+    marginTop: "10px",
+  },
+  resetControl: {
+    fontFamily: "Helvetica",
+    fontSize: "14px",
+    fontWeight: 400,
+    marginLeft: 10,
+  },
+  resultText: {
+    lineHeight: "28px",
+    background: "#EFEFEF",
+    fontSize: "13px",
+    height: "28px",
+    paddingLeft: "18px",
+    color: "#626262",
+  },
+  saveMb: {
+    width: "297px",
+    height: "50px",
+    background: "#0E78D5",
+    borderRadius: "8px",
+    textAlign: "center",
+    marginTop: "6px",
+    fontWeight: 700,
+  },
+  lessonNameMb: {
+    fontFamily: "Helvetica",
+    fontSize: "16px",
+    fontWeight: 700,
+    display: "block",
+    whiteSpace: "break-spaces",
+  },
+  lessonGroupMb: {
+    color: "#666666",
+    fontFamily: "Helvetica",
+    fontSize: "13px",
+    fontWeight: 400,
+    display: "block",
+    margin: "10px 0px 10px 0px",
+  },
+  emptyLabel: {
+    fontFamily: "Helvetica",
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#ACACAC",
+    textAlign: "center",
+    marginTop: "16vh",
+  },
+  previewDetailMb: {
+    overflow: "auto",
+    marginBottom: "18px",
+    paddingRight: "3%",
+    paddingLeft: "3%",
+    marginTop: 3,
+  },
+  lessonsItemMb: {
+    display: "flex",
+    alignItems: "center",
+    borderBottom: "1px solid #D8D8D8",
+    padding: "20px 0 16px 0",
+  },
 }));
 
 interface filterGropProps {
@@ -329,6 +423,9 @@ function SelectGroup(props: filterGropProps) {
     { name: d("Grade").t("assess_label_grade"), data: deduplication(filteredList.grades), enum: "grades" },
   ];
 
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
   const autocompleteValue = (key: string) => {
     return key === "programs"
       ? programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))
@@ -376,7 +473,7 @@ function SelectGroup(props: filterGropProps) {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  style={{ marginTop: index > 2 ? 16 : 0 }}
+                  style={{ marginTop: index > 2 && !mobile ? 16 : 0 }}
                   size={"small"}
                   className={clsx(classes.fieldset, autocompleteValue(item.enum).length ? classes.activeSelect : "")}
                   placeholder={item.name}
@@ -388,6 +485,139 @@ function SelectGroup(props: filterGropProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+interface ScheduleLessonPlanMbProps {
+  content_lists: LearningContentList[];
+  handleClose: () => void;
+  lessonPlanName: string;
+  filterQuery?: LearningComesFilterQuery;
+  selectedValue?: string;
+  getSelectStatus: (index: number, item: LearningContentList) => void;
+  learingOutComeTotal: number;
+  resetDisabled: number | boolean;
+  reset: () => void;
+  save: () => void;
+  selectGroupTemplate: () => ReactNode;
+  saveDisabled: boolean;
+  getLearningFiled: (ids: string[]) => JSX.Element[];
+}
+
+function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
+  const {
+    content_lists,
+    handleClose,
+    lessonPlanName,
+    selectedValue,
+    getSelectStatus,
+    learingOutComeTotal,
+    resetDisabled,
+    reset,
+    save,
+    selectGroupTemplate,
+    saveDisabled,
+    getLearningFiled,
+  } = props;
+  const classes = useStyles();
+  const [boxHeight, setBoxHeight] = React.useState(window.innerHeight);
+  const previewDetailMbHeight = () => {
+    const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    if (offset) {
+      if (window.screen.height < 700) {
+        return `${window.screen.height - 450}px`;
+      } else if (window.screen.height < 750) {
+        return `${window.screen.height - 480}px`;
+      }
+    }
+    return `${offset ? window.screen.height - 540 : window.screen.height - 445}px`;
+  };
+
+  window.onresize = () => {
+    setBoxHeight(window.innerHeight);
+  };
+
+  return (
+    <Box className={classes.previewContainerMb} style={{ height: `${boxHeight}px` }}>
+      <div className={classes.lessonTitleMb}>
+        <span>{d("Add Learning Outcomes").t("library_label_add_learning_outcomes")}</span> <CloseIcon onClick={handleClose} />
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <TextField
+          id="outlined-start-adornment"
+          placeholder={"Search for Learning outcome"}
+          InputProps={{
+            startAdornment: <SearchIcon />,
+          }}
+          onChange={(e) => {
+            // setLessonPlanName(e.target.value);
+          }}
+          value={lessonPlanName}
+          onKeyDown={(e) => {
+            const code = e.keyCode || e.which || e.charCode;
+            if (code === 13) {
+              // setLessonPlanNameCondition(lessonPlanName);
+            }
+          }}
+          onBlur={(e) => {
+            // setLessonPlanNameCondition(lessonPlanName);
+          }}
+          size="small"
+          className={classes.mobileSearch}
+        />
+      </div>
+      <div className={classes.scrollSelect}>
+        {selectGroupTemplate()}
+        <span
+          className={classes.resetControl}
+          style={{ color: resetDisabled ? "#0E78D5" : "#666666" }}
+          onClick={() => {
+            if (resetDisabled || lessonPlanName) reset();
+          }}
+        >
+          {d("Reset").t("schedule_lesson_plan_popup_reset")}
+        </span>
+        +
+      </div>
+      <div className={classes.resultText}>
+        {learingOutComeTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
+      </div>
+      <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
+        {content_lists.map((item, index) => (
+          <div className={classes.lessonsItemMb} style={{ background: selectedValue === item?.id ? "#E4F1FF" : "none" }}>
+            <Radio
+              checked={selectedValue === item?.id}
+              onChange={() => {
+                getSelectStatus(index, item);
+              }}
+              value={item?.id}
+              style={{ margin: "0px 6px 0px 6px", transform: "scale(0.8)" }}
+              name="radio-button-demo"
+              color="primary"
+            />
+            <div>
+              <span className={classes.lessonNameMb}>{item.name}</span>
+              <span className={classes.lessonGroupMb}>{`${getLearningFiled(item.category_ids)} - ${getLearningFiled(
+                item.sub_category_ids
+              )}`}</span>
+            </div>
+          </div>
+        ))}
+        {content_lists.length < 1 && (
+          <p className={classes.emptyLabel} style={{ fontSize: 16 }}>
+            {lessonPlanName
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
+          </p>
+        )}
+        <LinearProgress />
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <Button className={classes.saveMb} color="primary" variant="contained" disabled={saveDisabled} onClick={save}>
+          {d("OK").t("general_button_OK")}
+        </Button>
+      </div>
+    </Box>
   );
 }
 
@@ -542,7 +772,48 @@ export default function LearingOutcome(props: InfoProps) {
     searchOutcomesList(getFilterQueryAssembly({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] }));
   };
 
-  return (
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  const save = () => {
+    saveOutcomesList(selectIds);
+  };
+
+  const selectGroupTemplate = () => {
+    return (
+      <Box className={classes.flexBox}>
+        <SelectGroup
+          programChildInfoParent={programChildInfoParent}
+          handelSetProgramChildInfo={handelSetProgramChildInfo}
+          programs={programs}
+          filterGropuData={filterGropuData}
+          searchOutcomesList={searchOutcomesList}
+          filterQuery={filterQuery}
+          setFilterQuery={setFilterQuery}
+          getFilterQueryAssembly={getFilterQueryAssembly}
+          viewSubjectPermission={viewSubjectPermission}
+          checkAssume={checkAssume}
+          checkAssumed={checkAssumed}
+        />
+      </Box>
+    );
+  };
+
+  return mobile ? (
+    <ScheduleLessonPlanMb
+      content_lists={content_lists}
+      getSelectStatus={getSelectStatus}
+      handleClose={handleClose}
+      lessonPlanName={learingOutcomeData.search_value}
+      learingOutComeTotal={content_lists.length}
+      reset={reset}
+      resetDisabled={false}
+      save={save}
+      saveDisabled={false}
+      getLearningFiled={getLearningFiled}
+      selectGroupTemplate={selectGroupTemplate}
+    />
+  ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.lessonTitle}>
         <span>Learning Outcome</span> <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
@@ -627,21 +898,7 @@ export default function LearingOutcome(props: InfoProps) {
           </Button>
         </div>
       </Box>
-      <Box className={classes.flexBox}>
-        <SelectGroup
-          programChildInfoParent={programChildInfoParent}
-          handelSetProgramChildInfo={handelSetProgramChildInfo}
-          programs={programs}
-          filterGropuData={filterGropuData}
-          searchOutcomesList={searchOutcomesList}
-          filterQuery={filterQuery}
-          setFilterQuery={setFilterQuery}
-          getFilterQueryAssembly={getFilterQueryAssembly}
-          viewSubjectPermission={viewSubjectPermission}
-          checkAssume={checkAssume}
-          checkAssumed={checkAssumed}
-        />
-      </Box>
+      {selectGroupTemplate()}
       <div
         style={{ margin: "20px 0 20px 0" }}
         className={classes.customizeContentBox}
