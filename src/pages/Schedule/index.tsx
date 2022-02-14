@@ -171,9 +171,9 @@ function ScheduleContent() {
       await dispatch(
         getScheduleAnyTimeViewData({
           view_type: "full_view",
-          filter_option: "any_time",
-          class_ids: class_id,
-          user_ids: user_id,
+          anytime: true,
+          class_ids: class_id ? [class_id] : [],
+          user_ids: user_id ? [user_id] : [],
           order_by: "-create_at",
           metaLoading: true,
         })
