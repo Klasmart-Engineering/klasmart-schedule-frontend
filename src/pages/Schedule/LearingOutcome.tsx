@@ -1,5 +1,5 @@
 import { GetProgramsQuery } from "@api/api-ko.auto";
-import { LinearProgress, makeStyles, Radio, useMediaQuery, useTheme } from "@material-ui/core";
+import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -240,6 +240,9 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     height: "28px",
     paddingLeft: "18px",
     color: "#626262",
+    display: "flex",
+    justifyContent: "space-between",
+    paddingRight: "18px"
   },
   saveMb: {
     width: "297px",
@@ -501,7 +504,11 @@ interface ScheduleLessonPlanMbProps {
   save: () => void;
   selectGroupTemplate: () => ReactNode;
   saveDisabled: boolean;
-  getLearningFiled: (ids: string[]) => JSX.Element[];
+  getLearningFiledMb: (ids: string[]) => string | undefined;
+  selectIds: string[];
+  searchVal: () => void;
+  setValueAll: (val: string) => void;
+  control: any;
 }
 
 function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
@@ -517,7 +524,10 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     save,
     selectGroupTemplate,
     saveDisabled,
-    getLearningFiled,
+    getLearningFiledMb,
+    selectIds,
+    searchVal,
+    control
   } = props;
   const classes = useStyles();
   const [boxHeight, setBoxHeight] = React.useState(window.innerHeight);
@@ -543,27 +553,37 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         <span>{d("Add Learning Outcomes").t("library_label_add_learning_outcomes")}</span> <CloseIcon onClick={handleClose} />
       </div>
       <div style={{ textAlign: "center" }}>
-        <TextField
-          id="outlined-start-adornment"
-          placeholder={"Search for Learning outcome"}
-          InputProps={{
-            startAdornment: <SearchIcon />,
+        <Controller
+          style={{
+            borderLeft: 0,
+            width: "640px",
           }}
-          onChange={(e) => {
-            // setLessonPlanName(e.target.value);
-          }}
-          value={lessonPlanName}
-          onKeyDown={(e) => {
-            const code = e.keyCode || e.which || e.charCode;
-            if (code === 13) {
-              // setLessonPlanNameCondition(lessonPlanName);
-            }
-          }}
-          onBlur={(e) => {
-            // setLessonPlanNameCondition(lessonPlanName);
-          }}
+          defaultValue={lessonPlanName}
+          name="search_value"
+          control={control}
           size="small"
-          className={classes.mobileSearch}
+          className={classes.searchText}
+          placeholder={d("Search").t("library_label_search")}
+          render={(props: { value: any }) => (
+            <TextField
+              id="outlined-start-adornment"
+              placeholder={"Search for Learning outcome"}
+              InputProps={{
+                startAdornment: <SearchIcon />,
+              }}
+              onKeyDown={(e) => {
+                const code = e.keyCode || e.which || e.charCode;
+                if (code === 13) {
+                  searchVal()
+                }
+              }}
+              onBlur={(e) => {
+                searchVal()
+              }}
+              size="small"
+              className={classes.mobileSearch}
+            />
+          )}
         />
       </div>
       <div className={classes.scrollSelect}>
@@ -580,26 +600,27 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         +
       </div>
       <div className={classes.resultText}>
-        {learingOutComeTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
+        <span>{learingOutComeTotal} {d("Results").t("schedule_lesson_plan_popup_results")}</span>
+        <span style={{color: "#0E78D5", fontWeight: 700}}>{selectIds.length} {d("Added").t("schedule_lo_number_added")}</span>
       </div>
       <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
         {content_lists.map((item, index) => (
           <div className={classes.lessonsItemMb} style={{ background: selectedValue === item?.id ? "#E4F1FF" : "none" }}>
-            <Radio
-              checked={selectedValue === item?.id}
-              onChange={() => {
-                getSelectStatus(index, item);
-              }}
-              value={item?.id}
-              style={{ margin: "0px 6px 0px 6px", transform: "scale(0.8)" }}
-              name="radio-button-demo"
-              color="primary"
-            />
+            <Checkbox checked={selectedValue?.includes(item?.id)} onChange={() => {
+              getSelectStatus(index, item);
+            }} style={{ margin: "0px 6px 0px 6px" }} value={item?.id} color="primary" size="small" />
             <div>
               <span className={classes.lessonNameMb}>{item.name}</span>
-              <span className={classes.lessonGroupMb}>{`${getLearningFiled(item.category_ids)} - ${getLearningFiled(
+              <span className={classes.lessonGroupMb}>
+                <span style={{
+                  color: "black",
+                  fontWeight: 600
+                }}>{getLearningFiledMb(item.category_ids)}</span>
+                {`${getLearningFiledMb(
                 item.sub_category_ids
-              )}`}</span>
+              ) ? " - " + getLearningFiledMb(
+                item.sub_category_ids
+              ) : ""}`}</span>
             </div>
           </div>
         ))}
@@ -610,7 +631,6 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
               : d("No data available").t("schedule_popup_no_data_available")}
           </p>
         )}
-        <LinearProgress />
       </div>
       <div style={{ textAlign: "center" }}>
         <Button className={classes.saveMb} color="primary" variant="contained" disabled={saveDisabled} onClick={save}>
@@ -657,6 +677,12 @@ export default function LearingOutcome(props: InfoProps) {
         </div>
       );
     });
+  };
+
+  const getLearningFiledMb = (ids: string[]) => {
+    const categoryAssembly = modelSchedule.getLearingOutcomeCategory(skills.concat(developmental), ids ?? []);
+    console.log(categoryAssembly)
+    return categoryAssembly.length ? categoryAssembly[0].name : ""
   };
 
   const [checkAssumed, setCheckAssumed] = React.useState<boolean>(false);
@@ -772,12 +798,39 @@ export default function LearingOutcome(props: InfoProps) {
     searchOutcomesList(getFilterQueryAssembly({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] }));
   };
 
+  const setValueAll = (val: string) => {
+    setValue(`search_type`, "all");
+    setValue(`search_value`, val);
+  }
+
+  const resetDisabled = useMemo(() => {
+    return (
+      filterQuery.programs.length ||
+      filterQuery.subjects.length ||
+      filterQuery.categorys.length ||
+      filterQuery.subs.length ||
+      filterQuery.grades.length ||
+      filterQuery.ages.length ||
+      selectIds.length
+    );
+  }, [filterQuery, selectIds]);
+
+  const saveDisabled = useMemo(() => {
+    return !selectIds.length
+  }, [selectIds]);
+
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
 
   const save = () => {
     saveOutcomesList(selectIds);
   };
+
+  const searchVal = () => {
+    // dispatch(resetActOutcomeList([]));
+    setValue(`page`, 1);
+    searchOutcomesList(getFilterQueryAssembly(filterQuery));
+  }
 
   const selectGroupTemplate = () => {
     return (
@@ -809,10 +862,13 @@ export default function LearingOutcome(props: InfoProps) {
       reset={reset}
       resetDisabled={false}
       save={save}
-      saveDisabled={false}
-      getLearningFiled={getLearningFiled}
+      saveDisabled={saveDisabled}
+      getLearningFiledMb={getLearningFiledMb}
       selectGroupTemplate={selectGroupTemplate}
-    />
+      selectIds={selectIds}
+      searchVal={searchVal}
+      setValueAll={setValueAll}
+      control={control}/>
   ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.lessonTitle}>
@@ -889,9 +945,7 @@ export default function LearingOutcome(props: InfoProps) {
             className={classes.button}
             startIcon={<SearchOutlined />}
             onClick={() => {
-              // dispatch(resetActOutcomeList([]));
-              setValue(`page`, 1);
-              searchOutcomesList(getFilterQueryAssembly(filterQuery));
+              searchVal()
             }}
           >
             {d("Search").t("library_label_search")}
@@ -993,11 +1047,10 @@ export default function LearingOutcome(props: InfoProps) {
           {selectIds.length} {d("Added").t("schedule_lo_number_added")}
         </span>
         <div>
-          <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={reset}>
+          <Button variant="outlined" size="large" color="primary" disabled={!resetDisabled} className={classes.margin} onClick={reset}>
             {d("Reset").t("schedule_lesson_plan_popup_reset")}
           </Button>
           <Button
-            disabled={scheduleDetial.complete_assessment}
             onClick={() => {
               saveOutcomesList(selectIds);
             }}
@@ -1005,6 +1058,7 @@ export default function LearingOutcome(props: InfoProps) {
             size="large"
             color="primary"
             className={classes.margin}
+            disabled={saveDisabled || scheduleDetial.complete_assessment}
           >
             {d("Save").t("library_label_save")}
           </Button>
