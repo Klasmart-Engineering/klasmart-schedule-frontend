@@ -1320,7 +1320,6 @@ export interface EntityScheduleTimeViewListRequest {
   user_ids?: string[];
   view_type?: string;
   with_assessment_status?: boolean;
-  user_ids?: string[];
 }
 
 export interface EntityScheduleTimeViewListResponse {
