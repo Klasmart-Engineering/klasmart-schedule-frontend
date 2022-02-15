@@ -1742,7 +1742,7 @@ function EditBox(props: CalendarStateProps) {
 
   const searchOutcomesList = async (filterQueryAssembly: object) => {
     const query = {
-      exect_search: getValues().search_type,
+      exect_search: "all",
       search_key: getValues().search_value,
       assumed: getValues().is_assumed ? 1 : -1,
       page: getValues().page,
