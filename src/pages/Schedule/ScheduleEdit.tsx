@@ -275,6 +275,9 @@ const useStyles = makeStyles(({ shadows }) => ({
     "& button": {
       display: "none",
     },
+    "& .MuiChip-label": {
+      maxWidth: "200px"
+    }
   },
 }));
 
