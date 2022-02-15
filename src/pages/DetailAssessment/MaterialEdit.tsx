@@ -241,7 +241,7 @@ export function ContentInput(props: ContentInputProps) {
         }
       });
       setContentArr([..._contents]);
-      onChangeContent(contentArr);
+      onChangeContent([..._contents]);
       onClose();
     } else {
       return Promise.reject(
