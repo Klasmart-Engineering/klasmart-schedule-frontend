@@ -116,6 +116,9 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     "& .MuiInputBase-root": {
       backgroundColor: "#0E78D5",
     },
+    "& .MuiChip-label": {
+      width: "170px"
+    },
     "& .MuiInputBase-input , .MuiIconButton-label": {
       color: "white",
     },
