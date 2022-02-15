@@ -234,6 +234,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     fontWeight: 700,
     display: "block",
     whiteSpace: "break-spaces",
+    wordBreak: "break-all",
   },
   lessonGroupMb: {
     color: "#666666",

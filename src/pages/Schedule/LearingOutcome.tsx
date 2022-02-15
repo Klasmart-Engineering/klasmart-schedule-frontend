@@ -164,7 +164,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   selectBox: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "end",
     marginTop: "10px",
     [breakpoints.down(600)]: {
       marginTop: "0px",
@@ -258,6 +258,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     fontWeight: 700,
     display: "block",
     whiteSpace: "break-spaces",
+    wordBreak: "break-all",
   },
   lessonGroupMb: {
     color: "#666666",
@@ -443,7 +444,7 @@ function SelectGroup(props: filterGropProps) {
   return (
     <div className={classes.root}>
       <div className={classes.selectBox}>
-        <FilterListIcon />
+        <FilterListIcon style={{marginTop: "8px"}} />
         <Button
           variant="contained"
           size="medium"
@@ -522,7 +523,6 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     content_lists,
     handleClose,
     lessonPlanName,
-    selectedValue,
     getSelectStatus,
     learingOutComeTotal,
     resetDisabled,
@@ -610,7 +610,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
         {content_lists.map((item, index) => (
           <div className={classes.lessonsItemMb} style={{ background: selectIds.includes(item?.id) ? "#E4F1FF" : "none" }}>
-            <Checkbox checked={selectedValue?.includes(item?.id)} onChange={() => {
+            <Checkbox checked={selectIds?.includes(item?.id)} onChange={() => {
               getSelectStatus(index, item);
             }} style={{ margin: "0px 6px 0px 6px" }} value={item?.id} color="primary" size="small" />
             <div>
@@ -689,7 +689,7 @@ export default function LearingOutcome(props: InfoProps) {
     return categoryAssembly.length ? categoryAssembly[0].name : ""
   };
 
-  const [checkAssumed, setCheckAssumed] = React.useState<boolean>(false);
+  const [checkAssumed, setCheckAssumed] = React.useState<boolean>(learingOutcomeData.is_assumed);
 
   const getFilterQueryAssembly = (filterData: LearningComesFilterQuery) => {
     const values = (item: string[]) => (item.length > 0 ? item : null);
@@ -898,6 +898,12 @@ export default function LearingOutcome(props: InfoProps) {
                 InputProps={{
                   startAdornment: <SearchIcon />,
                 }}
+                onKeyDown={(e:any) => {
+                  const code = e.keyCode || e.which || e.charCode;
+                  if (code === 13) {
+                    searchVal()
+                  }
+                }}
                 className={classes.searchText}
                 placeholder={d("Search").t("library_label_search")}
               />
@@ -907,6 +913,7 @@ export default function LearingOutcome(props: InfoProps) {
                   right: "10px",
                   top: "8px",
                   cursor: "pointer",
+                  display: "none"
                 }}
                 onClick={() => {
                   setValue(`search_value`, "");
@@ -1032,7 +1039,7 @@ export default function LearingOutcome(props: InfoProps) {
             className={classes.margin}
             disabled={saveDisabled || scheduleDetial.complete_assessment}
           >
-            {d("Save").t("library_label_save")}
+            {d("OK").t("general_button_OK")}
           </Button>
         </div>
       </Box>
