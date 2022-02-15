@@ -3,7 +3,6 @@ import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
-import MenuItem from "@material-ui/core/MenuItem";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -14,10 +13,8 @@ import TableRow from "@material-ui/core/TableRow";
 import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import { SearchOutlined } from "@material-ui/icons";
-import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
@@ -71,6 +68,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   button: {
     margin: spacing(1),
+    height: 40
   },
   exectSearchInput: {
     width: 90,
@@ -88,6 +86,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     borderRadius: 4,
     boxSizing: "border-box",
     verticalAlign: "top",
+    width: "85%",
   },
   searchText: {
     "& .MuiOutlinedInput-notchedOutline": {
@@ -275,6 +274,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     color: "#ACACAC",
     textAlign: "center",
     marginTop: "16vh",
+    marginBottom: "8vh"
   },
   previewDetailMb: {
     overflow: "auto",
@@ -288,6 +288,11 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     alignItems: "center",
     borderBottom: "1px solid #D8D8D8",
     padding: "20px 0 16px 0",
+  },
+  tableRow: {
+    "& .MuiTableRow-root.Mui-selected": {
+      background: "#E4F1FF",
+    },
   },
 }));
 
@@ -770,23 +775,6 @@ export default function LearingOutcome(props: InfoProps) {
     searchOutcomesList(getFilterQueryAssembly(filterQuery));
   };
 
-  const filterCode = [
-    { lable: d("All").t("assess_filter_all"), value: "all" },
-    { lable: d("Author").t("assess_label_author"), value: "author_name" },
-    { lable: d("Description").t("assess_label_description"), value: "description" },
-    { lable: d("Keywords").t("assess_label_keywords"), value: "keywords" },
-    { lable: d("Learning Outcome Name").t("assess_label_learning_outcome_name"), value: "outcome_name" },
-    { lable: d("Learning Outcome Set").t("assess_set_learning_outcome_set"), value: "set_name" },
-    { lable: d("Short Code").t("assess_label_short_code"), value: "shortcode" },
-  ];
-  const templateOption = filterCode.map((item, index) => {
-    return (
-      <MenuItem key={index} value={item.value}>
-        {item.lable}
-      </MenuItem>
-    );
-  });
-
   const reset = () => {
     setFilterQuery({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] });
     setValue(`search_type`, "all");
@@ -834,7 +822,9 @@ export default function LearingOutcome(props: InfoProps) {
 
   const selectGroupTemplate = () => {
     return (
-      <Box className={classes.flexBox}>
+      <Box className={classes.flexBox} style={{borderBottom: "2px solid #EEEEEE",
+        paddingBottom: "10px",
+        marginBottom: "10px"}}>
         <SelectGroup
           programChildInfoParent={programChildInfoParent}
           handelSetProgramChildInfo={handelSetProgramChildInfo}
@@ -851,6 +841,8 @@ export default function LearingOutcome(props: InfoProps) {
       </Box>
     );
   };
+
+  console.log(getValues().search_value)
 
   return mobile ? (
     <ScheduleLessonPlanMb
@@ -879,6 +871,7 @@ export default function LearingOutcome(props: InfoProps) {
           style={{
             alignItems: "center",
             display: "flex",
+            width: "100%"
           }}
         >
           <div className={classes.searchCon}>
@@ -893,36 +886,20 @@ export default function LearingOutcome(props: InfoProps) {
               name="page"
               control={control}
             />
-            <Controller
-              as={TextField}
-              control={control}
-              name="search_type"
-              className={classes.exectSearchInput}
-              defaultValue={learingOutcomeData.search_type || "all"}
-              size="small"
-              select
-              SelectProps={{
-                MenuProps: {
-                  transformOrigin: {
-                    vertical: -40,
-                    horizontal: "left",
-                  },
-                },
-              }}
-            >
-              {templateOption}
-            </Controller>
-            <div style={{ position: "relative" }}>
+            <div style={{ position: "relative" , width: "100%"}}>
               <Controller
                 style={{
                   borderLeft: 0,
-                  width: "640px",
+                  width: "90%",
                 }}
                 as={TextField}
                 defaultValue={learingOutcomeData.search_value}
                 name="search_value"
                 control={control}
                 size="small"
+                InputProps={{
+                  startAdornment: <SearchIcon />,
+                }}
                 className={classes.searchText}
                 placeholder={d("Search").t("library_label_search")}
               />
@@ -953,8 +930,11 @@ export default function LearingOutcome(props: InfoProps) {
         </div>
       </Box>
       {selectGroupTemplate()}
+      <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>
+        {content_lists.length} {d("Results").t("schedule_lesson_plan_popup_results")}
+      </span>
       <div
-        style={{ margin: "20px 0 20px 0" }}
+        style={{ margin: "10px 0 20px 0" }}
         className={classes.customizeContentBox}
         ref={(dom) => {
           setDom(dom);
@@ -969,10 +949,9 @@ export default function LearingOutcome(props: InfoProps) {
                 <TableCell align="center">{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
                 <TableCell align="center">{d("Category").t("library_label_category")}</TableCell>
                 <TableCell align="center">{d("Subcategory").t("library_label_subcategory")}</TableCell>
-                <TableCell align="center">{d("Short Code").t("assess_label_short_code")}</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody className={classes.tableRow}>
               {content_lists.map((item, index) => (
                 <Controller
                   key={item.id + item.select}
@@ -985,26 +964,15 @@ export default function LearingOutcome(props: InfoProps) {
                       onClick={() => {
                         handleGoOutcomeDetail(props.value.id);
                       }}
+                      selected={selectIds.includes(props.value.id)}
                     >
                       <TableCell align="center">
-                        {!props.value.select && (
-                          <AddCircleOutlinedIcon
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              getSelectStatus(index, props.value);
-                            }}
-                            style={{ color: "#4CAF50", cursor: "pointer" }}
-                          />
-                        )}
-                        {props.value.select && (
-                          <RemoveCircleOutlinedIcon
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              getSelectStatus(index, props.value);
-                            }}
-                            style={{ color: "#D32F2F", cursor: "pointer" }}
-                          />
-                        )}
+                        <Checkbox checked={props.value.select} onChange={(e) => {
+                          getSelectStatus(index, props.value);
+                        }} onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault()
+                        }} style={{ margin: "0px 6px 0px 6px" }} color="primary" size="small" />
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title={props.value.name as string} placement="top-start">
@@ -1027,7 +995,6 @@ export default function LearingOutcome(props: InfoProps) {
                       <TableCell align="center" style={{ width: "160px" }}>
                         {getLearningFiled(props.value.sub_category_ids)}
                       </TableCell>
-                      <TableCell align="center">{props.value.shortCode}</TableCell>
                     </TableRow>
                   )}
                 />
@@ -1035,6 +1002,13 @@ export default function LearingOutcome(props: InfoProps) {
             </TableBody>
           </Table>
         </TableContainer>
+        {content_lists.length < 1 && (
+          <p className={classes.emptyLabel}>
+            {getValues().search_value
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
+          </p>
+        )}
       </div>
       <Box className={classes.flexBox}>
         <span
