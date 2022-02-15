@@ -298,7 +298,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
 
 interface filterGropProps {
   programs: EntityScheduleShortInfo[];
-  searchOutcomesList: (filterQueryAssembly: object) => void;
+  searchOutcomesList: (filterQueryAssembly: object, assumed?: boolean) => void;
   filterGropuData: LearningComesFilterQuery;
   handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
   programChildInfoParent: GetProgramsQuery[];
@@ -401,7 +401,7 @@ function SelectGroup(props: filterGropProps) {
       age_ids: values(filterResult.ages),
       grade_ids: values(filterResult.grades),
     };
-    searchOutcomesList(filterQueryAssembly);
+    searchOutcomesList(filterQueryAssembly, checkAssumed);
   };
   const filteredList = useMemo(() => {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
@@ -595,14 +595,13 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         {selectGroupTemplate()}
         <span
           className={classes.resetControl}
-          style={{ color: resetDisabled ? "#0E78D5" : "#666666" }}
+          style={{ color: resetDisabled ? "#0E78D5" : "#666666", marginTop: "-20px" }}
           onClick={() => {
-            if (resetDisabled || lessonPlanName) reset();
+            if (resetDisabled) reset();
           }}
         >
           {d("Reset").t("schedule_lesson_plan_popup_reset")}
         </span>
-        +
       </div>
       <div className={classes.resultText}>
         <span>{learingOutComeTotal} {d("Results").t("schedule_lesson_plan_popup_results")}</span>
@@ -610,7 +609,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       </div>
       <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
         {content_lists.map((item, index) => (
-          <div className={classes.lessonsItemMb} style={{ background: selectedValue === item?.id ? "#E4F1FF" : "none" }}>
+          <div className={classes.lessonsItemMb} style={{ background: selectIds.includes(item?.id) ? "#E4F1FF" : "none" }}>
             <Checkbox checked={selectedValue?.includes(item?.id)} onChange={() => {
               getSelectStatus(index, item);
             }} style={{ margin: "0px 6px 0px 6px" }} value={item?.id} color="primary" size="small" />
@@ -772,7 +771,7 @@ export default function LearingOutcome(props: InfoProps) {
     setCheckAssumed(!checkAssumed);
     setValue(`is_assumed`, value);
     setValue(`page`, 1);
-    searchOutcomesList(getFilterQueryAssembly(filterQuery));
+    searchOutcomesList(getFilterQueryAssembly(filterQuery), value);
   };
 
   const reset = () => {
@@ -817,7 +816,7 @@ export default function LearingOutcome(props: InfoProps) {
   const searchVal = () => {
     // dispatch(resetActOutcomeList([]));
     setValue(`page`, 1);
-    searchOutcomesList(getFilterQueryAssembly(filterQuery));
+    searchOutcomesList(getFilterQueryAssembly(filterQuery), checkAssumed);
   }
 
   const selectGroupTemplate = () => {
@@ -852,7 +851,7 @@ export default function LearingOutcome(props: InfoProps) {
       lessonPlanName={learingOutcomeData.search_value}
       learingOutComeTotal={content_lists.length}
       reset={reset}
-      resetDisabled={false}
+      resetDisabled={resetDisabled}
       save={save}
       saveDisabled={saveDisabled}
       getLearningFiledMb={getLearningFiledMb}

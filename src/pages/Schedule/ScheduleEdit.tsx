@@ -1740,11 +1740,11 @@ function EditBox(props: CalendarStateProps) {
     await dispatch(actOutcomeList(clearNull(query)));
   };
 
-  const searchOutcomesList = async (filterQueryAssembly: object) => {
+  const searchOutcomesList = async (filterQueryAssembly: object, is_assumed?: boolean) => {
     const query = {
       exect_search: "all",
       search_key: getValues().search_value,
-      assumed: getValues().is_assumed ? 1 : -1,
+      assumed: is_assumed ? 1 : -1,
       page: getValues().page,
       ...filterQueryAssembly,
     };
