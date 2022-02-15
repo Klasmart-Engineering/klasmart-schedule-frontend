@@ -514,6 +514,7 @@ interface ScheduleLessonPlanMbProps {
   searchVal: () => void;
   setValueAll: (val: string) => void;
   control: any;
+  getValues: any;
 }
 
 function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
@@ -532,7 +533,9 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     getLearningFiledMb,
     selectIds,
     searchVal,
-    control
+    control,
+    setValueAll,
+    getValues
   } = props;
   const classes = useStyles();
   const [boxHeight, setBoxHeight] = React.useState(window.innerHeight);
@@ -576,14 +579,11 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
               InputProps={{
                 startAdornment: <SearchIcon />,
               }}
-              onKeyDown={(e) => {
-                const code = e.keyCode || e.which || e.charCode;
-                if (code === 13) {
-                  searchVal()
-                }
-              }}
               onBlur={(e) => {
                 searchVal()
+              }}
+              onChange={(e)=>{
+                setValueAll(e.target.value)
               }}
               size="small"
               className={classes.mobileSearch}
@@ -630,7 +630,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         ))}
         {content_lists.length < 1 && (
           <p className={classes.emptyLabel} style={{ fontSize: 16 }}>
-            {lessonPlanName
+            {getValues.search_value
               ? d("No matching result").t("schedule_msg_no_matching_result")
               : d("No data available").t("schedule_popup_no_data_available")}
           </p>
@@ -841,8 +841,6 @@ export default function LearingOutcome(props: InfoProps) {
     );
   };
 
-  console.log(getValues().search_value)
-
   return mobile ? (
     <ScheduleLessonPlanMb
       content_lists={content_lists}
@@ -859,6 +857,7 @@ export default function LearingOutcome(props: InfoProps) {
       selectIds={selectIds}
       searchVal={searchVal}
       setValueAll={setValueAll}
+      getValues={getValues()}
       control={control}/>
   ) : (
     <Box className={classes.previewContainer}>
