@@ -714,14 +714,14 @@ export const reportOnload = createAsyncThunk<
   // await dispatch(getTeachersAndClasses({}));
 
   const reportPermission = await permissionCache.usePermission([
-    PermissionType.view_my_reports_614,
-    PermissionType.view_my_organizations_reports_612,
-    PermissionType.view_my_school_reports_611,
+    PermissionType.report_my_class_achievments_648,
+    PermissionType.report_organizations_class_achievements_646,
+    PermissionType.report_schools_class_achievements_647,
   ]);
   const perm: MyPermissonReport = {
-    hasOrganizationPerm: reportPermission.view_my_organizations_reports_612,
-    hasSchoolPerm: reportPermission.view_my_school_reports_611,
-    hasMyPerm: reportPermission.view_my_reports_614,
+    hasOrganizationPerm: reportPermission.report_organizations_class_achievements_646,
+    hasSchoolPerm: reportPermission.report_schools_class_achievements_647,
+    hasMyPerm: reportPermission.report_my_class_achievments_648,
   };
   await dispatch(getTeacherAndClassOld({ perm }));
   const {
@@ -807,10 +807,10 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
     const mySchoolIDs =
       myUser?.node?.schoolMembershipsConnection?.edges?.map((item) => item?.node?.school?.id || "").filter((item) => !!item) || [];
     const perm = await permissionCache.usePermission([
-      PermissionType.view_my_reports_614,
+      PermissionType.report_my_class_achievments_648,
       PermissionType.view_reports_610,
-      PermissionType.view_my_school_reports_611,
-      PermissionType.view_my_organizations_reports_612,
+      PermissionType.report_schools_class_achievements_647,
+      PermissionType.report_organizations_class_achievements_646,
     ]);
     let teacherList: Item[] = [];
     const organizationId: UuidFilter = { operator: UuidOperator.Eq, value: organization_id };
@@ -834,8 +834,8 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
       }
     }
 
-    if (perm.view_reports_610 || perm.view_my_school_reports_611 || perm.view_my_organizations_reports_612) {
-      if (perm.view_my_organizations_reports_612 || perm.view_reports_610) {
+    if (perm.view_reports_610 || perm.report_schools_class_achievements_647 || perm.report_organizations_class_achievements_646) {
+      if (perm.report_organizations_class_achievements_646 || perm.view_reports_610) {
         classesData?.edges?.forEach((item) => {
           teacherList = teacherList.concat(
             item?.node?.teachersConnection?.edges?.map((teacherItem) => ({
@@ -845,7 +845,7 @@ export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesRetur
           );
         });
       }
-      if ((!perm.view_my_organizations_reports_612 && perm.view_my_school_reports_611) || perm.view_reports_610) {
+      if ((!perm.report_organizations_class_achievements_646 && perm.report_schools_class_achievements_647) || perm.view_reports_610) {
         classesData?.edges
           ?.filter((item) => {
             return mySchoolIDs.find((mySchoolId) => item?.node?.schools?.find((schoolItem) => schoolItem.id === mySchoolId));
