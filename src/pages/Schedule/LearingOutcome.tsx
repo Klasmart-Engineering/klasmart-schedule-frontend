@@ -1,11 +1,8 @@
 import { GetProgramsQuery } from "@api/api-ko.auto";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Grid from "@material-ui/core/Grid";
-import MenuItem from "@material-ui/core/MenuItem";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -16,27 +13,30 @@ import TableRow from "@material-ui/core/TableRow";
 import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import { SearchOutlined } from "@material-ui/icons";
-import AddCircleOutlinedIcon from "@material-ui/icons/AddCircleOutlined";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import RemoveCircleOutlinedIcon from "@material-ui/icons/RemoveCircleOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
 import { getProgramChild } from "@reducers/schedule";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityScheduleDetailsView } from "../../api/api.auto";
 import { d } from "../../locale/LocaleManager";
 import { modelSchedule } from "../../models/ModelSchedule";
 import { EntityScheduleShortInfo, LearningComesFilterQuery, LearningContentList, LearningContentListForm } from "../../types/scheduleTypes";
+import clsx from "clsx";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import CloseIcon from "@material-ui/icons/Close";
+import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
+import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
-    width: "760px",
+    width: "860px",
     [breakpoints.down(650)]: {
       paddingLeft: "99%",
     },
@@ -46,7 +46,10 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: "48vh",
+    maxHeight: "42vh",
+    [breakpoints.down(1400)]: {
+      maxHeight: "33vh",
+    },
     [breakpoints.down(650)]: {
       maxHeight: "60vh",
     },
@@ -68,6 +71,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   button: {
     margin: spacing(1),
+    height: 40,
   },
   exectSearchInput: {
     width: 90,
@@ -85,6 +89,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     borderRadius: 4,
     boxSizing: "border-box",
     verticalAlign: "top",
+    width: "86%",
   },
   searchText: {
     "& .MuiOutlinedInput-notchedOutline": {
@@ -95,24 +100,223 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   table: {},
   margin: {
     margin: spacing(1),
+    fontWeight: 700,
   },
   flexBox: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  flexBoxGroup: {
+    borderBottom: "2px solid #EEEEEE",
+    paddingBottom: "10px",
+    marginBottom: "10px",
+    [breakpoints.down(600)]: {
+      borderBottom: "none",
+      paddingBottom: "0px",
+      marginBottom: "0px",
+    },
+  },
   fieldset: {
-    width: "100%",
+    width: "230px",
+    "& .MuiInputBase-root": {
+      borderRadius: "10px",
+    },
+    "& .MuiChip-deleteIcon": {
+      display: "none",
+    },
+  },
+  activeSelect: {
+    "& .MuiInputBase-root": {
+      backgroundColor: "#0E78D5",
+    },
+    "& .MuiChip-label": {
+      width: "170px",
+    },
+    "& .MuiInputBase-input , .MuiIconButton-label": {
+      color: "white",
+    },
+    "& .MuiAutocomplete-tag": {
+      color: "white",
+      marginLeft: "12px",
+      display: "none",
+    },
+    "& .MuiAutocomplete-tag:first-of-type": {
+      display: "inline-flex",
+    },
+    "& .MuiChip-deletable": {
+      backgroundColor: "#0E78D5",
+      color: "white",
+      marginLeft: "0px",
+      "& .MuiChip-deleteIcon": {
+        color: "white",
+      },
+      width: "78%",
+      "& span": {
+        position: "absolute",
+        left: 0,
+      },
+    },
   },
   root: {
-    marginTop: 10,
+    marginTop: 8,
     flexGrow: 1,
+    display: "flex",
+    [breakpoints.down(600)]: {
+      paddingBottom: 0,
+      marginBottom: 0,
+      marginTop: 0,
+    },
+  },
+  filterBox: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    borderLeft: "2px solid #EEEEEE",
+    [breakpoints.down(600)]: {
+      borderRight: "2px solid #EEEEEE",
+      flexWrap: "unset",
+    },
+  },
+  selectBox: {
+    display: "flex",
+    alignItems: "flex-start",
+    marginTop: "10px",
+    [breakpoints.down(600)]: {
+      marginTop: "0px",
+    },
+  },
+  assumedBnt: {
+    margin: "0 15px 0 15px",
+    width: 100,
+    borderRadius: "10px",
+    backgroundColor: "white",
+    color: "gray",
+  },
+  activeAssumedBnt: {
+    margin: "0 15px 0 15px",
+    width: 100,
+    borderRadius: "10px",
+  },
+  lessonTitle: {
+    display: "flex",
+    justifyContent: "space-between",
+    "& span": {
+      color: "#000000",
+      fontWeight: 700,
+      fontSize: 23,
+      padding: "0 10px 0 10px",
+    },
+  },
+  previewContainerMb: {
+    position: "fixed",
+    backgroundColor: "white",
+    width: "100%",
+    top: 0,
+    left: 0,
+    zIndex: 999,
+  },
+  lessonTitleMb: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "23px 30px 20px 30px",
+    "& span": {
+      color: "#000000",
+      fontWeight: 700,
+      fontSize: 16,
+      padding: "0 10px 0 10px",
+    },
+  },
+  mobileSearch: {
+    width: "80%",
+    "& .MuiInputBase-root": {
+      borderRadius: "27px",
+    },
+  },
+  scrollSelect: {
+    display: "flex",
+    alignItems: "center",
+    overflow: "auto",
+    borderTop: "1px solid #EFEFEF",
+    boxShadow: "0px 4px 4px rgb(0 0 0 / 25%)",
+    padding: "8px",
+    marginTop: "10px",
+  },
+  resetControl: {
+    fontFamily: "Helvetica",
+    fontSize: "14px",
+    fontWeight: 400,
+    marginLeft: 10,
+  },
+  resultText: {
+    lineHeight: "28px",
+    background: "#EFEFEF",
+    fontSize: "13px",
+    height: "28px",
+    paddingLeft: "18px",
+    color: "#626262",
+    display: "flex",
+    justifyContent: "space-between",
+    paddingRight: "18px",
+  },
+  saveMb: {
+    width: "297px",
+    height: "50px",
+    background: "#0E78D5",
+    borderRadius: "8px",
+    textAlign: "center",
+    marginTop: "6px",
+    fontWeight: 700,
+  },
+  lessonNameMb: {
+    fontFamily: "Helvetica",
+    fontSize: "16px",
+    fontWeight: 700,
+    display: "block",
+    whiteSpace: "break-spaces",
+    wordBreak: "break-all",
+  },
+  lessonGroupMb: {
+    color: "#666666",
+    fontFamily: "Helvetica",
+    fontSize: "13px",
+    fontWeight: 400,
+    display: "block",
+    margin: "10px 0px 10px 0px",
+  },
+  emptyLabel: {
+    fontFamily: "Helvetica",
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#ACACAC",
+    textAlign: "center",
+    marginTop: "16vh",
+    marginBottom: "8vh",
+  },
+  previewDetailMb: {
+    overflow: "auto",
+    marginBottom: "18px",
+    paddingRight: "3%",
+    paddingLeft: "3%",
+    marginTop: 3,
+  },
+  lessonsItemMb: {
+    display: "flex",
+    alignItems: "center",
+    borderBottom: "1px solid #D8D8D8",
+    padding: "20px 0 16px 0",
+  },
+  tableRow: {
+    "& .MuiTableRow-root.Mui-selected": {
+      background: "#E4F1FF",
+    },
   },
 }));
 
 interface filterGropProps {
   programs: EntityScheduleShortInfo[];
-  searchOutcomesList: (filterQueryAssembly: object) => void;
+  searchOutcomesList: (filterQueryAssembly: object, assumed?: boolean) => void;
   filterGropuData: LearningComesFilterQuery;
   handelSetProgramChildInfo: (data: GetProgramsQuery[]) => void;
   programChildInfoParent: GetProgramsQuery[];
@@ -120,6 +324,8 @@ interface filterGropProps {
   setFilterQuery?: (data: LearningComesFilterQuery) => void;
   getFilterQueryAssembly?: (filterData: LearningComesFilterQuery) => void;
   viewSubjectPermission?: boolean;
+  checkAssume?: (value: boolean) => void;
+  checkAssumed?: boolean;
 }
 
 interface InfoProps extends filterGropProps {
@@ -141,6 +347,8 @@ function SelectGroup(props: filterGropProps) {
     filterQuery,
     setFilterQuery,
     viewSubjectPermission,
+    checkAssume,
+    checkAssumed,
   } = props;
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>(programChildInfoParent);
 
@@ -211,7 +419,7 @@ function SelectGroup(props: filterGropProps) {
       age_ids: values(filterResult.ages),
       grade_ids: values(filterResult.grades),
     };
-    searchOutcomesList(filterQueryAssembly);
+    searchOutcomesList(filterQueryAssembly, checkAssumed);
   };
   const filteredList = useMemo(() => {
     return modelSchedule.learningOutcomeFilerGroup(filterQuery, programChildInfo).assembly;
@@ -232,155 +440,249 @@ function SelectGroup(props: filterGropProps) {
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+  const selectGroup = [
+    { name: d("Programs").t("schedule_filter_programs"), data: programs, enum: "programs" },
+    { name: d("Subjects").t("schedule_filter_subjects"), data: deduplication(filteredList.subjects), enum: "subjects" },
+    { name: d("Category").t("library_label_category"), data: deduplication(filteredList.categorys), enum: "categorys" },
+    { name: d("Sub Category").t("schedule_sub_category"), data: deduplication(filteredList.subs), enum: "subs" },
+    { name: d("Age").t("assess_label_age"), data: deduplication(filteredList.ages), enum: "ages" },
+    { name: d("Grade").t("assess_label_grade"), data: deduplication(filteredList.grades), enum: "grades" },
+  ];
+
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  const autocompleteValue = (key: string) => {
+    return key === "programs"
+      ? programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))
+      : defaultValues(key as "subjects" | "categorys" | "subs" | "ages" | "grades");
+  };
+
   return (
     <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={programs}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            limitTags={1}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "programs");
-            }}
-            value={programs.filter((item) => filterQuery && filterQuery.programs?.includes(item.id as string))}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Programs").t("schedule_filter_programs")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.subjects)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("subjects")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "subjects");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Subject").t("schedule_detail_subject")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.categorys)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("categorys")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "categorys");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Category").t("assess_label_category")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.subs)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("subs")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "subs");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Sub Category").t("schedule_sub_category")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.ages)}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            limitTags={1}
-            value={defaultValues("ages")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "ages");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Age").t("assess_label_age")} variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={4} style={{ paddingLeft: "0px" }}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={deduplication(filteredList.grades)}
-            limitTags={1}
-            getOptionLabel={(option: any) => option.name}
-            multiple
-            value={defaultValues("grades")}
-            onChange={(e: any, newValue) => {
-              autocompleteChange(newValue, "grades");
-            }}
-            disableCloseOnSelect
-            renderOption={(option: any, { selected }) => (
-              <React.Fragment>
-                <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
-              </React.Fragment>
-            )}
-            style={{ transform: "scale(0.9)" }}
-            renderInput={(params) => (
-              <TextField {...params} className={classes.fieldset} label={d("Grade").t("library_label_grade")} variant="outlined" />
-            )}
-          />
-        </Grid>
-      </Grid>
+      <div className={classes.selectBox}>
+        <FilterListIcon style={{ marginTop: "8px" }} />
+        <Button
+          variant="contained"
+          size="medium"
+          color="primary"
+          onClick={(e) => {
+            checkAssume && checkAssume(!checkAssumed);
+          }}
+          className={checkAssumed ? classes.activeAssumedBnt : classes.assumedBnt}
+        >
+          {d("Assumed").t("assess_filter_assumed")}
+        </Button>
+      </div>
+      <div className={classes.root}>
+        <div className={classes.filterBox}>
+          {selectGroup.map((item, index) => (
+            <Autocomplete
+              key={index}
+              id="combo-box-demo"
+              options={item.data}
+              getOptionLabel={(option: any) => option.name}
+              multiple
+              limitTags={1}
+              onChange={(e: any, newValue) => {
+                autocompleteChange(newValue, item.enum as "subjects" | "categorys" | "subs" | "ages" | "grades");
+              }}
+              value={autocompleteValue(item.enum)}
+              disableCloseOnSelect
+              renderOption={(option: any, { selected }) => (
+                <React.Fragment>
+                  <Checkbox color="primary" icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                  {option.name}
+                </React.Fragment>
+              )}
+              style={{ transform: "scale(0.9)" }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  style={{ marginTop: index > 2 && !mobile ? 16 : 0 }}
+                  size={"small"}
+                  className={clsx(classes.fieldset, autocompleteValue(item.enum).length ? classes.activeSelect : "")}
+                  placeholder={item.name}
+                  variant="outlined"
+                />
+              )}
+            />
+          ))}
+        </div>
+      </div>
     </div>
+  );
+}
+
+interface ScheduleLessonPlanMbProps {
+  content_lists: LearningContentList[];
+  handleClose: () => void;
+  searchName: string;
+  filterQuery?: LearningComesFilterQuery;
+  selectedValue?: string;
+  getSelectStatus: (index: number, item: LearningContentList) => void;
+  learingOutComeTotal: number;
+  resetDisabled: number | boolean;
+  reset: () => void;
+  save: () => void;
+  selectGroupTemplate: () => ReactNode;
+  saveDisabled: boolean | undefined;
+  getLearningFiledMb: (ids: string[]) => string | undefined;
+  selectIds: string[];
+  searchVal: () => void;
+  setValueAll: (val: string) => void;
+  control: any;
+  getValues: any;
+}
+
+function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
+  const {
+    content_lists,
+    handleClose,
+    searchName,
+    getSelectStatus,
+    learingOutComeTotal,
+    resetDisabled,
+    reset,
+    save,
+    selectGroupTemplate,
+    saveDisabled,
+    getLearningFiledMb,
+    selectIds,
+    searchVal,
+    control,
+    setValueAll,
+    getValues,
+  } = props;
+  const classes = useStyles();
+  const [boxHeight, setBoxHeight] = React.useState(window.innerHeight);
+  const [searchValueMb, setSearchValueMb] = React.useState<string>(searchName);
+  const previewDetailMbHeight = () => {
+    const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    if (offset) {
+      if (window.screen.height < 700) {
+        return `${window.screen.height - 450}px`;
+      } else if (window.screen.height < 750) {
+        return `${window.screen.height - 480}px`;
+      }
+    }
+    return `${offset ? window.screen.height - 540 : window.screen.height - 445}px`;
+  };
+
+  window.onresize = () => {
+    setBoxHeight(window.innerHeight);
+  };
+
+  return (
+    <Box className={classes.previewContainerMb} style={{ height: `${boxHeight}px` }}>
+      <div className={classes.lessonTitleMb}>
+        <span>{d("Add Learning Outcomes").t("library_label_add_learning_outcomes")}</span> <CloseIcon onClick={handleClose} />
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <Controller
+          style={{
+            borderLeft: 0,
+            width: "640px",
+          }}
+          defaultValue={searchName}
+          name="search_value"
+          control={control}
+          size="small"
+          className={classes.searchText}
+          placeholder={d("Search").t("library_label_search")}
+          render={(props: { value: any }) => (
+            <TextField
+              id="outlined-start-adornment"
+              placeholder={"Search for Learning outcome"}
+              InputProps={{
+                startAdornment: <SearchIcon />,
+              }}
+              value={searchValueMb}
+              onKeyDown={(e) => {
+                const code = e.keyCode || e.which || e.charCode;
+                if (code === 13) {
+                  searchVal();
+                }
+              }}
+              onBlur={(e) => {
+                searchVal();
+              }}
+              onChange={(e) => {
+                setSearchValueMb(e.target.value);
+                setValueAll(e.target.value);
+              }}
+              size="small"
+              className={classes.mobileSearch}
+            />
+          )}
+        />
+      </div>
+      <div className={classes.scrollSelect}>
+        {selectGroupTemplate()}
+        <span
+          className={classes.resetControl}
+          style={{ color: resetDisabled || searchValueMb ? "#0E78D5" : "#666666" }}
+          onClick={() => {
+            if (resetDisabled || searchValueMb) {
+              setSearchValueMb("");
+              reset();
+            }
+          }}
+        >
+          {d("Reset").t("schedule_lesson_plan_popup_reset")}
+        </span>
+      </div>
+      <div className={classes.resultText}>
+        <span>
+          {learingOutComeTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
+        </span>
+        <span style={{ color: "#0E78D5", fontWeight: 700 }}>
+          {selectIds.length} {d("Added").t("schedule_lo_number_added")}
+        </span>
+      </div>
+      <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
+        {content_lists.map((item, index) => (
+          <div className={classes.lessonsItemMb} style={{ background: selectIds.includes(item?.id) ? "#E4F1FF" : "none" }}>
+            <Checkbox
+              checked={selectIds?.includes(item?.id)}
+              onChange={() => {
+                getSelectStatus(index, item);
+              }}
+              style={{ margin: "0px 6px 0px 6px" }}
+              value={item?.id}
+              color="primary"
+              size="small"
+            />
+            <div>
+              <span className={classes.lessonNameMb}>{item.name}</span>
+              <span className={classes.lessonGroupMb}>
+                <span
+                  style={{
+                    color: "black",
+                    fontWeight: 600,
+                  }}
+                >
+                  {getLearningFiledMb(item.category_ids)}
+                </span>
+                {`${getLearningFiledMb(item.sub_category_ids) ? " - " + getLearningFiledMb(item.sub_category_ids) : ""}`}
+              </span>
+            </div>
+          </div>
+        ))}
+        {content_lists.length < 1 && (
+          <p className={classes.emptyLabel} style={{ fontSize: 16 }}>
+            {getValues.search_value
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
+          </p>
+        )}
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <Button className={classes.saveMb} color="primary" variant="contained" disabled={saveDisabled} onClick={save}>
+          {d("OK").t("general_button_OK")}
+        </Button>
+      </div>
+    </Box>
   );
 }
 
@@ -421,6 +723,16 @@ export default function LearingOutcome(props: InfoProps) {
       );
     });
   };
+
+  const getLearningFiledMb = (ids: string[]) => {
+    const categoryAssembly = modelSchedule.getLearingOutcomeCategory(skills.concat(developmental), ids ?? []);
+    console.log(categoryAssembly);
+    return categoryAssembly.length ? categoryAssembly[0].name : "";
+  };
+
+  const [checkAssumed, setCheckAssumed] = React.useState<boolean>(learingOutcomeData.is_assumed);
+
+  const [searchValuePc, setSearchValuePc] = React.useState<string>(learingOutcomeData.search_value);
 
   const getFilterQueryAssembly = (filterData: LearningComesFilterQuery) => {
     const values = (item: string[]) => (item.length > 0 ? item : null);
@@ -499,35 +811,109 @@ export default function LearingOutcome(props: InfoProps) {
 
   const checkAssume = (value: boolean) => {
     //  dispatch(resetActOutcomeList([]));
+    setCheckAssumed(!checkAssumed);
     setValue(`is_assumed`, value);
     setValue(`page`, 1);
-    searchOutcomesList(getFilterQueryAssembly(filterQuery));
+    searchOutcomesList(getFilterQueryAssembly(filterQuery), value);
   };
 
-  const filterCode = [
-    { lable: d("All").t("assess_filter_all"), value: "all" },
-    { lable: d("Author").t("assess_label_author"), value: "author_name" },
-    { lable: d("Description").t("assess_label_description"), value: "description" },
-    { lable: d("Keywords").t("assess_label_keywords"), value: "keywords" },
-    { lable: d("Learning Outcome Name").t("assess_label_learning_outcome_name"), value: "outcome_name" },
-    { lable: d("Learning Outcome Set").t("assess_set_learning_outcome_set"), value: "set_name" },
-    { lable: d("Short Code").t("assess_label_short_code"), value: "shortcode" },
-  ];
-  const templateOption = filterCode.map((item, index) => {
-    return (
-      <MenuItem key={index} value={item.value}>
-        {item.lable}
-      </MenuItem>
-    );
-  });
+  const reset = () => {
+    setFilterQuery({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] });
+    setValue(`search_type`, "all");
+    setValue(`search_value`, "");
+    setValue(`is_assumed`, -1);
+    setValue(`page`, 1);
+    setCheckAssumed(false);
+    setSelectIds(outComeIds);
+    searchOutcomesList(getFilterQueryAssembly({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] }));
+    setSearchValuePc("");
+  };
 
-  return (
+  const setValueAll = (val: string) => {
+    setValue(`search_type`, "all");
+    setValue(`search_value`, val);
+  };
+
+  const resetDisabled = useMemo(() => {
+    return (
+      filterQuery.programs.length ||
+      filterQuery.subjects.length ||
+      filterQuery.categorys.length ||
+      filterQuery.subs.length ||
+      filterQuery.grades.length ||
+      filterQuery.ages.length ||
+      selectIds.length ||
+      checkAssumed
+    );
+  }, [filterQuery, selectIds, checkAssumed]);
+
+  const saveDisabled = useMemo(() => {
+    return !selectIds.length || scheduleDetial.complete_assessment;
+  }, [selectIds, scheduleDetial]);
+
+  const { breakpoints } = useTheme();
+  const mobile = useMediaQuery(breakpoints.down(600));
+
+  const save = () => {
+    saveOutcomesList(selectIds);
+  };
+
+  const searchVal = () => {
+    // dispatch(resetActOutcomeList([]));
+    setValue(`page`, 1);
+    searchOutcomesList(getFilterQueryAssembly(filterQuery), checkAssumed);
+  };
+
+  const selectGroupTemplate = () => {
+    return (
+      <Box className={clsx(classes.flexBox, classes.flexBoxGroup)}>
+        <SelectGroup
+          programChildInfoParent={programChildInfoParent}
+          handelSetProgramChildInfo={handelSetProgramChildInfo}
+          programs={programs}
+          filterGropuData={filterGropuData}
+          searchOutcomesList={searchOutcomesList}
+          filterQuery={filterQuery}
+          setFilterQuery={setFilterQuery}
+          getFilterQueryAssembly={getFilterQueryAssembly}
+          viewSubjectPermission={viewSubjectPermission}
+          checkAssume={checkAssume}
+          checkAssumed={checkAssumed}
+        />
+      </Box>
+    );
+  };
+
+  return mobile ? (
+    <ScheduleLessonPlanMb
+      content_lists={content_lists}
+      getSelectStatus={getSelectStatus}
+      handleClose={handleClose}
+      searchName={learingOutcomeData.search_value}
+      learingOutComeTotal={content_lists.length}
+      reset={reset}
+      resetDisabled={resetDisabled}
+      save={save}
+      saveDisabled={saveDisabled}
+      getLearningFiledMb={getLearningFiledMb}
+      selectGroupTemplate={selectGroupTemplate}
+      selectIds={selectIds}
+      searchVal={searchVal}
+      setValueAll={setValueAll}
+      getValues={getValues()}
+      control={control}
+    />
+  ) : (
     <Box className={classes.previewContainer}>
-      <Box className={classes.flexBox}>
+      <div className={classes.lessonTitle}>
+        <span>Learning Outcome</span> <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
+      </div>
+      <Box className={classes.flexBox} style={{ margin: "10px 0px 0px 10px" }}>
         <div
           style={{
             alignItems: "center",
             display: "flex",
+            width: "100%",
           }}
         >
           <div className={classes.searchCon}>
@@ -542,38 +928,43 @@ export default function LearingOutcome(props: InfoProps) {
               name="page"
               control={control}
             />
-            <Controller
-              as={TextField}
-              control={control}
-              name="search_type"
-              className={classes.exectSearchInput}
-              defaultValue={learingOutcomeData.search_type || "all"}
-              size="small"
-              select
-              SelectProps={{
-                MenuProps: {
-                  transformOrigin: {
-                    vertical: -40,
-                    horizontal: "left",
-                  },
-                },
-              }}
-            >
-              {templateOption}
-            </Controller>
-            <Controller
-              style={{
-                borderLeft: 0,
-                width: "180px",
-              }}
-              as={TextField}
-              defaultValue={learingOutcomeData.search_value}
-              name="search_value"
-              control={control}
-              size="small"
-              className={classes.searchText}
-              placeholder={d("Search").t("library_label_search")}
-            />
+            <div style={{ position: "relative", width: "100%" }}>
+              <Controller
+                style={{
+                  borderLeft: 0,
+                  width: "90%",
+                }}
+                as={TextField}
+                defaultValue={learingOutcomeData.search_value}
+                name="search_value"
+                control={control}
+                size="small"
+                InputProps={{
+                  startAdornment: <SearchIcon />,
+                }}
+                onKeyDown={(e: any) => {
+                  const code = e.keyCode || e.which || e.charCode;
+                  if (code === 13) {
+                    setSearchValuePc(getValues().search_value);
+                    searchVal();
+                  }
+                }}
+                className={classes.searchText}
+                placeholder={d("Search").t("library_label_search")}
+              />
+              <CancelOutlinedIcon
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "8px",
+                  cursor: "pointer",
+                  display: "none",
+                }}
+                onClick={() => {
+                  setValue(`search_value`, "");
+                }}
+              />
+            </div>
           </div>
           <Button
             variant="contained"
@@ -581,50 +972,20 @@ export default function LearingOutcome(props: InfoProps) {
             className={classes.button}
             startIcon={<SearchOutlined />}
             onClick={() => {
-              // dispatch(resetActOutcomeList([]));
-              setValue(`page`, 1);
-              searchOutcomesList(getFilterQueryAssembly(filterQuery));
+              setSearchValuePc(getValues().search_value);
+              searchVal();
             }}
           >
             {d("Search").t("library_label_search")}
           </Button>
         </div>
-        <Controller
-          name="is_assumed"
-          control={control}
-          defaultValue={learingOutcomeData.is_assumed}
-          render={(props: { value: boolean | undefined }) => (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={(e) => {
-                    checkAssume(e.target.checked);
-                  }}
-                  checked={props.value}
-                  name="checkedB"
-                  color="primary"
-                />
-              }
-              label={d("Assumed").t("assess_filter_assumed")}
-            />
-          )}
-        />
       </Box>
-      <Box className={classes.flexBox}>
-        <SelectGroup
-          programChildInfoParent={programChildInfoParent}
-          handelSetProgramChildInfo={handelSetProgramChildInfo}
-          programs={programs}
-          filterGropuData={filterGropuData}
-          searchOutcomesList={searchOutcomesList}
-          filterQuery={filterQuery}
-          setFilterQuery={setFilterQuery}
-          getFilterQueryAssembly={getFilterQueryAssembly}
-          viewSubjectPermission={viewSubjectPermission}
-        />
-      </Box>
+      {selectGroupTemplate()}
+      <span style={{ color: "#666666", fontWeight: 400, fontSize: 14, marginLeft: 8 }}>
+        {content_lists.length} {d("Results").t("schedule_lesson_plan_popup_results")}
+      </span>
       <div
-        style={{ margin: "20px 0 20px 0" }}
+        style={{ margin: "10px 0 20px 0" }}
         className={classes.customizeContentBox}
         ref={(dom) => {
           setDom(dom);
@@ -639,13 +1000,12 @@ export default function LearingOutcome(props: InfoProps) {
                 <TableCell align="center">{d("Learning Outcomes").t("library_label_learning_outcomes")}</TableCell>
                 <TableCell align="center">{d("Category").t("library_label_category")}</TableCell>
                 <TableCell align="center">{d("Subcategory").t("library_label_subcategory")}</TableCell>
-                <TableCell align="center">{d("Short Code").t("assess_label_short_code")}</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody className={classes.tableRow}>
               {content_lists.map((item, index) => (
                 <Controller
-                  key={item.id}
+                  key={item.id + item.select}
                   name={`content_list[${index}]`}
                   control={control}
                   defaultValue={item}
@@ -655,26 +1015,22 @@ export default function LearingOutcome(props: InfoProps) {
                       onClick={() => {
                         handleGoOutcomeDetail(props.value.id);
                       }}
+                      selected={selectIds.includes(props.value.id)}
                     >
                       <TableCell align="center">
-                        {!props.value.select && (
-                          <AddCircleOutlinedIcon
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              getSelectStatus(index, props.value);
-                            }}
-                            style={{ color: "#4CAF50", cursor: "pointer" }}
-                          />
-                        )}
-                        {props.value.select && (
-                          <RemoveCircleOutlinedIcon
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              getSelectStatus(index, props.value);
-                            }}
-                            style={{ color: "#D32F2F", cursor: "pointer" }}
-                          />
-                        )}
+                        <Checkbox
+                          checked={props.value.select}
+                          onChange={(e) => {
+                            getSelectStatus(index, props.value);
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                          }}
+                          style={{ margin: "0px 6px 0px 6px" }}
+                          color="primary"
+                          size="small"
+                        />
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title={props.value.name as string} placement="top-start">
@@ -697,7 +1053,6 @@ export default function LearingOutcome(props: InfoProps) {
                       <TableCell align="center" style={{ width: "160px" }}>
                         {getLearningFiled(props.value.sub_category_ids)}
                       </TableCell>
-                      <TableCell align="center">{props.value.shortCode}</TableCell>
                     </TableRow>
                   )}
                 />
@@ -705,6 +1060,13 @@ export default function LearingOutcome(props: InfoProps) {
             </TableBody>
           </Table>
         </TableContainer>
+        {content_lists.length < 1 && (
+          <p className={classes.emptyLabel}>
+            {getValues().search_value
+              ? d("No matching result").t("schedule_msg_no_matching_result")
+              : d("No data available").t("schedule_popup_no_data_available")}
+          </p>
+        )}
       </div>
       <Box className={classes.flexBox}>
         <span
@@ -717,11 +1079,17 @@ export default function LearingOutcome(props: InfoProps) {
           {selectIds.length} {d("Added").t("schedule_lo_number_added")}
         </span>
         <div>
-          <Button variant="outlined" size="large" color="primary" className={classes.margin} onClick={handleClose}>
-            {d("Cancel").t("library_label_cancel")}
+          <Button
+            variant="outlined"
+            size="large"
+            color="primary"
+            disabled={!resetDisabled && !searchValuePc}
+            className={classes.margin}
+            onClick={reset}
+          >
+            {d("Reset").t("schedule_lesson_plan_popup_reset")}
           </Button>
           <Button
-            disabled={scheduleDetial.complete_assessment}
             onClick={() => {
               saveOutcomesList(selectIds);
             }}
@@ -729,8 +1097,9 @@ export default function LearingOutcome(props: InfoProps) {
             size="large"
             color="primary"
             className={classes.margin}
+            disabled={saveDisabled}
           >
-            {d("Save").t("library_label_save")}
+            {d("OK").t("general_button_OK")}
           </Button>
         </div>
       </Box>

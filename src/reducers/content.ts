@@ -90,6 +90,7 @@ interface IContentState {
   selectedOrg: EntityOrganizationInfo[];
   myOrgId: string;
   user_id: string;
+  scheduleDetailsViewContentPreview: EntityContentInfoWithDetails;
 }
 
 interface RootState {
@@ -239,6 +240,7 @@ const initialState: IContentState = {
   selectedOrg: [],
   myOrgId: "",
   user_id: "",
+  scheduleDetailsViewContentPreview: {},
 };
 const UNKNOW_ERROR_LABEL: LangRecordId = "general_error_unknown";
 
@@ -1052,6 +1054,12 @@ export const actCreateDownload = createAsyncThunk<IGetDownloadPathResult, ActCre
   ({ resourceId }) => api.contentsResources.getDownloadPath(resourceId)
 );
 
+type IGetScheduleLiveLessonPlanParams = Parameters<typeof api.schedules.getScheduleLiveLessonPlan>[0];
+type IGetScheduleLiveLessonPlanResult = AsyncReturnType<typeof api.schedules.getScheduleLiveLessonPlan>;
+export const getScheduleLiveLessonPlan = createAsyncThunk<IGetScheduleLiveLessonPlanResult, IGetScheduleLiveLessonPlanParams>("", (id) => {
+  return api.schedules.getScheduleLiveLessonPlan(id);
+});
+
 const { actions, reducer } = createSlice({
   name: "content",
   initialState,
@@ -1325,6 +1333,12 @@ const { actions, reducer } = createSlice({
       } else {
         state.selectedOrg = [];
       }
+    },
+    [getScheduleLiveLessonPlan.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleLiveLessonPlan>>
+    ) => {
+      state.contentPreview = payload;
     },
   },
 });

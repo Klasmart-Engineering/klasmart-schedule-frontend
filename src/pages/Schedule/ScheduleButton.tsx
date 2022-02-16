@@ -58,12 +58,12 @@ function RouterButton(props: ButtonProps) {
           !scheduleInfo.lesson_plan_id ||
           scheduleInfo.lesson_plan?.is_auth === false ||
           scheduleInfo.role_type === "Student" ||
-          scheduleInfo.class_type_label?.id === "Task"
+          (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Task"
         }
         style={{
           display:
-            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "Homework") ||
-            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "OfflineClass")
+            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
+            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass")
               ? "none"
               : "block",
           backgroundColor: "#E4F1FF",
@@ -87,17 +87,17 @@ function RouterButton(props: ButtonProps) {
           backgroundColor: disabled() ? "" : "#0E78D5",
           color: disabled() ? "" : "#E5E5E5",
           display:
-            (scheduleInfo.role_type !== "Student" && scheduleInfo.class_type_label?.id === "Homework") ||
-            (scheduleInfo.role_type === "Student" && scheduleInfo.class_type_label?.id === "OfflineClass")
+            (scheduleInfo.role_type !== "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
+            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass")
               ? "none"
               : "block",
         }}
         disabled={disabled()}
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
-        {scheduleInfo.class_type_label?.id === "Homework" && d("Go Study").t("schedule_button_go_study")}
-        {scheduleInfo.class_type_label?.id === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
-        {scheduleInfo.class_type_label?.id === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
+        {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework" && d("Go Study").t("schedule_button_go_study")}
+        {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
+        {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
       </Button>
     </>
   );

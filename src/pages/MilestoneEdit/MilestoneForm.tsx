@@ -193,7 +193,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           render={(props) => (
             <FormattedTextField
               select
-              error={errors.program_ids ? true : false}
+              error={errors.program ? true : false}
               label={d("Program").t("assess_label_program")}
               encode={encodeOneItemArray}
               decode={decodeOneItemArray}
@@ -237,7 +237,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           render={(props) => (
             <TextField
               select
-              error={errors.subject_ids ? true : false}
+              error={errors.subject ? true : false}
               label={d("Subject").t("assess_label_subject")}
               {...props}
               onChange={(e) => {
@@ -281,7 +281,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
           render={(props) => (
             <FormattedTextField
               select
-              error={errors.category_ids ? true : false}
+              error={errors.category ? true : false}
               label={d("Category").t("library_label_category")}
               encode={encodeOneItemArray}
               decode={decodeOneItemArray}

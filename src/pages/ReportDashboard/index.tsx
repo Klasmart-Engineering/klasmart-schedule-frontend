@@ -3,12 +3,11 @@ import { noReportTip } from "@components/TipImages";
 import { Box, Button, Grid, Icon, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
-import { ReportAchievementList } from "@pages/ReportAchievementList";
 import { ReportLearningSummary } from "@pages/ReportLearningSummary";
 import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import { RootState } from "@reducers/index";
-import { getLearnerUsageOverview } from "@reducers/report";
+import { getAchievementOverview, getLearnerUsageOverview } from "@reducers/report";
 import { getAWeek } from "@utilities/dateUtilities";
 import clsx from "clsx";
 import React, { useCallback } from "react";
@@ -22,6 +21,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import LearnerUsageReport from "./components/LearnerUsageReport";
+import LearningOutcomeTabs from "./components/LearningOutcomeTabs";
 import SkillCoverageTab from "./components/SkillCoverageTab";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -188,6 +188,7 @@ export function ReportDashboard() {
         content_type_list: ["h5p", "image", "video", "audio", "document"],
       })
     );
+    dispatch(getAchievementOverview({ time_range: getAWeek().join("-") }));
   }, [dispatch]);
 
   const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending] = React.useMemo(() => {
@@ -203,11 +204,6 @@ export function ReportDashboard() {
         hasPerm: !!perm.learning_summary_report_653,
         label: t("report_learning_summary_report"),
         url: ReportLearningSummary.routeRedirectDefault,
-      },
-      {
-        hasPerm: !!perm.organization_class_achievements_report_626,
-        label: t("report_label_student_achievement"),
-        url: ReportAchievementList.routeBasePath,
       },
       {
         hasPerm: !!perm.teachers_classes_teaching_time_report_620,
@@ -260,6 +256,14 @@ export function ReportDashboard() {
                 {reportTip(t("report_label_learner_usage"), t("report_label_learner_usage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearnerUsageReport learnerUsageOverview={learnerUsageOverview} />
+                </Box>
+              </Grid>
+            )}
+            {Boolean(perm.organization_class_achievements_report_626) && (
+              <Grid item xs={12} md={4}>
+                {reportTip(t("report_label_learning_outcome"), t("report_label_learning_outcome_info"))}
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <LearningOutcomeTabs />
                 </Box>
               </Grid>
             )}

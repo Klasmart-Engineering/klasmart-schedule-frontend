@@ -275,6 +275,9 @@ const useStyles = makeStyles(({ shadows }) => ({
     "& button": {
       display: "none",
     },
+    "& span": {
+      maxWidth: "200px",
+    },
   },
 }));
 
@@ -1740,11 +1743,11 @@ function EditBox(props: CalendarStateProps) {
     await dispatch(actOutcomeList(clearNull(query)));
   };
 
-  const searchOutcomesList = async (filterQueryAssembly: object) => {
+  const searchOutcomesList = async (filterQueryAssembly: object, is_assumed?: boolean) => {
     const query = {
-      exect_search: getValues().search_type,
+      exect_search: "all",
       search_key: getValues().search_value,
-      assumed: getValues().is_assumed ? 1 : -1,
+      assumed: is_assumed ? 1 : -1,
       page: getValues().page,
       ...filterQueryAssembly,
     };
@@ -2408,7 +2411,7 @@ function EditBox(props: CalendarStateProps) {
             <Autocomplete
               id="combo-box-demo"
               options={outcomeListInit}
-              getOptionLabel={(option: any) => option.outcome_name}
+              getOptionLabel={(option: any) => option?.outcome_name}
               multiple
               limitTags={1}
               value={learningOutcomeDefault()}

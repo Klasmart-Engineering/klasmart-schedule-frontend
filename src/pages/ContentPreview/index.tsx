@@ -9,6 +9,7 @@ import {
   approveContent,
   deleteContent,
   getLiveToken,
+  getScheduleLiveLessonPlan,
   lockContent,
   onLoadContentPreview,
   publishContent,
@@ -133,7 +134,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
       ) : (
         <LearningOutcome list={contentPreview.outcome_entities || []} />
       )}
-      {tab === TabValue.details && !program_group && (
+      {!sid && tab === TabValue.details && !program_group && (
         <OperationBtn
           permission={contentPreview.permission}
           author={author}
@@ -171,8 +172,12 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     </Fragment>
   );
   useEffect(() => {
-    dispatch(onLoadContentPreview({ metaLoading: true, content_id: id }));
-  }, [dispatch, id]);
+    if (sid) {
+      dispatch(getScheduleLiveLessonPlan(sid));
+    } else {
+      dispatch(onLoadContentPreview({ metaLoading: true, content_id: id }));
+    }
+  }, [dispatch, id, sid]);
   return (
     <Fragment>
       <LayoutPair

@@ -551,7 +551,11 @@ export default function MyContentList() {
             (condition.publish_status === PublishStatus.published ||
               condition.content_type === SearchContentsRequestContentType.assetsandfolder) ? (
             <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
-              <BackToPrevPage onGoBack={handleGoback} parentFolderInfo={parentFolderInfo} onRenameFolder={handleClickRenameFolder} />
+              <BackToPrevPage
+                onGoBack={handleGoback}
+                parentFolderInfo={{ ...parentFolderInfo, available: total }}
+                onRenameFolder={handleClickRenameFolder}
+              />
             </LayoutBox>
           ) : (
             emptyTip

@@ -21,7 +21,7 @@ import clsx from "clsx";
 import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import PermissionType from "../../api/PermissionType";
-import { MilestoneDetailResult, MilestoneListResult, MilestoneStatus } from "../../api/type";
+import { MilestoneDetailResult, MilestoneListItemResult, MilestoneListResult, MilestoneStatus } from "../../api/type";
 import { CheckboxGroup, CheckboxGroupContext } from "../../components/CheckboxGroup";
 import LayoutBox from "../../components/LayoutBox";
 import { LButton } from "../../components/LButton";
@@ -155,7 +155,7 @@ const stopPropagation =
   };
 
 interface MilestoneProps extends MilestoneActionProps {
-  milestone: MilestoneDetailResult;
+  milestone: MilestoneListItemResult;
   queryCondition: MilestoneQueryCondition;
   selectedContentGroupContext: CheckboxGroupContext;
   onClickMilestone: MilestoneTableProps["onClickMilestone"];
