@@ -46,7 +46,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: "48vh",
+    maxHeight: "47vh",
     [breakpoints.down(650)]: {
       maxHeight: "60vh",
     },
@@ -68,7 +68,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   button: {
     margin: spacing(1),
-    height: 40
+    height: 40,
   },
   exectSearchInput: {
     width: 90,
@@ -86,7 +86,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     borderRadius: 4,
     boxSizing: "border-box",
     verticalAlign: "top",
-    width: "85%",
+    width: "86%",
   },
   searchText: {
     "& .MuiOutlinedInput-notchedOutline": {
@@ -103,6 +103,16 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  flexBoxGroup: {
+    borderBottom: "2px solid #EEEEEE",
+    paddingBottom: "10px",
+    marginBottom: "10px",
+    [breakpoints.down(600)]: {
+      borderBottom: "none",
+      paddingBottom: "0px",
+      marginBottom: "0px",
+    },
+  },
   fieldset: {
     width: "230px",
     "& .MuiInputBase-root": {
@@ -117,7 +127,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
       backgroundColor: "#0E78D5",
     },
     "& .MuiChip-label": {
-      width: "170px"
+      width: "170px",
     },
     "& .MuiInputBase-input , .MuiIconButton-label": {
       color: "white",
@@ -167,7 +177,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   selectBox: {
     display: "flex",
-    alignItems: "end",
+    alignItems: "flex-start",
     marginTop: "10px",
     [breakpoints.down(600)]: {
       marginTop: "0px",
@@ -244,7 +254,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     color: "#626262",
     display: "flex",
     justifyContent: "space-between",
-    paddingRight: "18px"
+    paddingRight: "18px",
   },
   saveMb: {
     width: "297px",
@@ -278,7 +288,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     color: "#ACACAC",
     textAlign: "center",
     marginTop: "16vh",
-    marginBottom: "8vh"
+    marginBottom: "8vh",
   },
   previewDetailMb: {
     overflow: "auto",
@@ -447,7 +457,7 @@ function SelectGroup(props: filterGropProps) {
   return (
     <div className={classes.root}>
       <div className={classes.selectBox}>
-        <FilterListIcon style={{marginTop: "8px"}} />
+        <FilterListIcon style={{ marginTop: "8px" }} />
         <Button
           variant="contained"
           size="medium"
@@ -538,7 +548,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
     searchVal,
     control,
     setValueAll,
-    getValues
+    getValues,
   } = props;
   const classes = useStyles();
   const [boxHeight, setBoxHeight] = React.useState(window.innerHeight);
@@ -582,11 +592,17 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
               InputProps={{
                 startAdornment: <SearchIcon />,
               }}
-              onBlur={(e) => {
-                searchVal()
+              onKeyDown={(e) => {
+                const code = e.keyCode || e.which || e.charCode;
+                if (code === 13) {
+                  searchVal();
+                }
               }}
-              onChange={(e)=>{
-                setValueAll(e.target.value)
+              onBlur={(e) => {
+                searchVal();
+              }}
+              onChange={(e) => {
+                setValueAll(e.target.value);
               }}
               size="small"
               className={classes.mobileSearch}
@@ -607,27 +623,39 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         </span>
       </div>
       <div className={classes.resultText}>
-        <span>{learingOutComeTotal} {d("Results").t("schedule_lesson_plan_popup_results")}</span>
-        <span style={{color: "#0E78D5", fontWeight: 700}}>{selectIds.length} {d("Added").t("schedule_lo_number_added")}</span>
+        <span>
+          {learingOutComeTotal} {d("Results").t("schedule_lesson_plan_popup_results")}
+        </span>
+        <span style={{ color: "#0E78D5", fontWeight: 700 }}>
+          {selectIds.length} {d("Added").t("schedule_lo_number_added")}
+        </span>
       </div>
       <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
         {content_lists.map((item, index) => (
           <div className={classes.lessonsItemMb} style={{ background: selectIds.includes(item?.id) ? "#E4F1FF" : "none" }}>
-            <Checkbox checked={selectIds?.includes(item?.id)} onChange={() => {
-              getSelectStatus(index, item);
-            }} style={{ margin: "0px 6px 0px 6px" }} value={item?.id} color="primary" size="small" />
+            <Checkbox
+              checked={selectIds?.includes(item?.id)}
+              onChange={() => {
+                getSelectStatus(index, item);
+              }}
+              style={{ margin: "0px 6px 0px 6px" }}
+              value={item?.id}
+              color="primary"
+              size="small"
+            />
             <div>
               <span className={classes.lessonNameMb}>{item.name}</span>
               <span className={classes.lessonGroupMb}>
-                <span style={{
-                  color: "black",
-                  fontWeight: 600
-                }}>{getLearningFiledMb(item.category_ids)}</span>
-                {`${getLearningFiledMb(
-                item.sub_category_ids
-              ) ? " - " + getLearningFiledMb(
-                item.sub_category_ids
-              ) : ""}`}</span>
+                <span
+                  style={{
+                    color: "black",
+                    fontWeight: 600,
+                  }}
+                >
+                  {getLearningFiledMb(item.category_ids)}
+                </span>
+                {`${getLearningFiledMb(item.sub_category_ids) ? " - " + getLearningFiledMb(item.sub_category_ids) : ""}`}
+              </span>
             </div>
           </div>
         ))}
@@ -688,8 +716,8 @@ export default function LearingOutcome(props: InfoProps) {
 
   const getLearningFiledMb = (ids: string[]) => {
     const categoryAssembly = modelSchedule.getLearingOutcomeCategory(skills.concat(developmental), ids ?? []);
-    console.log(categoryAssembly)
-    return categoryAssembly.length ? categoryAssembly[0].name : ""
+    console.log(categoryAssembly);
+    return categoryAssembly.length ? categoryAssembly[0].name : "";
   };
 
   const [checkAssumed, setCheckAssumed] = React.useState<boolean>(learingOutcomeData.is_assumed);
@@ -791,7 +819,7 @@ export default function LearingOutcome(props: InfoProps) {
   const setValueAll = (val: string) => {
     setValue(`search_type`, "all");
     setValue(`search_value`, val);
-  }
+  };
 
   const resetDisabled = useMemo(() => {
     return (
@@ -801,12 +829,13 @@ export default function LearingOutcome(props: InfoProps) {
       filterQuery.subs.length ||
       filterQuery.grades.length ||
       filterQuery.ages.length ||
-      selectIds.length
+      selectIds.length ||
+      checkAssumed
     );
-  }, [filterQuery, selectIds]);
+  }, [filterQuery, selectIds, checkAssumed]);
 
   const saveDisabled = useMemo(() => {
-    return !selectIds.length
+    return !selectIds.length;
   }, [selectIds]);
 
   const { breakpoints } = useTheme();
@@ -820,13 +849,11 @@ export default function LearingOutcome(props: InfoProps) {
     // dispatch(resetActOutcomeList([]));
     setValue(`page`, 1);
     searchOutcomesList(getFilterQueryAssembly(filterQuery), checkAssumed);
-  }
+  };
 
   const selectGroupTemplate = () => {
     return (
-      <Box className={classes.flexBox} style={{borderBottom: "2px solid #EEEEEE",
-        paddingBottom: "10px",
-        marginBottom: "10px"}}>
+      <Box className={clsx(classes.flexBox, classes.flexBoxGroup)}>
         <SelectGroup
           programChildInfoParent={programChildInfoParent}
           handelSetProgramChildInfo={handelSetProgramChildInfo}
@@ -861,7 +888,8 @@ export default function LearingOutcome(props: InfoProps) {
       searchVal={searchVal}
       setValueAll={setValueAll}
       getValues={getValues()}
-      control={control}/>
+      control={control}
+    />
   ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.lessonTitle}>
@@ -872,7 +900,7 @@ export default function LearingOutcome(props: InfoProps) {
           style={{
             alignItems: "center",
             display: "flex",
-            width: "100%"
+            width: "100%",
           }}
         >
           <div className={classes.searchCon}>
@@ -887,7 +915,7 @@ export default function LearingOutcome(props: InfoProps) {
               name="page"
               control={control}
             />
-            <div style={{ position: "relative" , width: "100%"}}>
+            <div style={{ position: "relative", width: "100%" }}>
               <Controller
                 style={{
                   borderLeft: 0,
@@ -901,10 +929,10 @@ export default function LearingOutcome(props: InfoProps) {
                 InputProps={{
                   startAdornment: <SearchIcon />,
                 }}
-                onKeyDown={(e:any) => {
+                onKeyDown={(e: any) => {
                   const code = e.keyCode || e.which || e.charCode;
                   if (code === 13) {
-                    searchVal()
+                    searchVal();
                   }
                 }}
                 className={classes.searchText}
@@ -916,7 +944,7 @@ export default function LearingOutcome(props: InfoProps) {
                   right: "10px",
                   top: "8px",
                   cursor: "pointer",
-                  display: "none"
+                  display: "none",
                 }}
                 onClick={() => {
                   setValue(`search_value`, "");
@@ -930,7 +958,7 @@ export default function LearingOutcome(props: InfoProps) {
             className={classes.button}
             startIcon={<SearchOutlined />}
             onClick={() => {
-              searchVal()
+              searchVal();
             }}
           >
             {d("Search").t("library_label_search")}
@@ -975,12 +1003,19 @@ export default function LearingOutcome(props: InfoProps) {
                       selected={selectIds.includes(props.value.id)}
                     >
                       <TableCell align="center">
-                        <Checkbox checked={props.value.select} onChange={(e) => {
-                          getSelectStatus(index, props.value);
-                        }} onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault()
-                        }} style={{ margin: "0px 6px 0px 6px" }} color="primary" size="small" />
+                        <Checkbox
+                          checked={props.value.select}
+                          onChange={(e) => {
+                            getSelectStatus(index, props.value);
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                          }}
+                          style={{ margin: "0px 6px 0px 6px" }}
+                          color="primary"
+                          size="small"
+                        />
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title={props.value.name as string} placement="top-start">
