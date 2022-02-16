@@ -2411,7 +2411,7 @@ function EditBox(props: CalendarStateProps) {
             <Autocomplete
               id="combo-box-demo"
               options={outcomeListInit}
-              getOptionLabel={(option: any) => option.outcome_name}
+              getOptionLabel={(option: any) => option?.outcome_name}
               multiple
               limitTags={1}
               value={learningOutcomeDefault()}

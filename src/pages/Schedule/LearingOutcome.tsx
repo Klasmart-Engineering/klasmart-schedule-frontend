@@ -46,7 +46,10 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   customizeContentBox: {
     width: "100%",
-    maxHeight: "47vh",
+    maxHeight: "42vh",
+    [breakpoints.down(1400)]: {
+      maxHeight: "33vh",
+    },
     [breakpoints.down(650)]: {
       maxHeight: "60vh",
     },
@@ -97,6 +100,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   table: {},
   margin: {
     margin: spacing(1),
+    fontWeight: 700,
   },
   flexBox: {
     display: "flex",
@@ -513,7 +517,7 @@ function SelectGroup(props: filterGropProps) {
 interface ScheduleLessonPlanMbProps {
   content_lists: LearningContentList[];
   handleClose: () => void;
-  lessonPlanName: string;
+  searchName: string;
   filterQuery?: LearningComesFilterQuery;
   selectedValue?: string;
   getSelectStatus: (index: number, item: LearningContentList) => void;
@@ -522,7 +526,7 @@ interface ScheduleLessonPlanMbProps {
   reset: () => void;
   save: () => void;
   selectGroupTemplate: () => ReactNode;
-  saveDisabled: boolean;
+  saveDisabled: boolean | undefined;
   getLearningFiledMb: (ids: string[]) => string | undefined;
   selectIds: string[];
   searchVal: () => void;
@@ -535,7 +539,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   const {
     content_lists,
     handleClose,
-    lessonPlanName,
+    searchName,
     getSelectStatus,
     learingOutComeTotal,
     resetDisabled,
@@ -579,7 +583,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
             borderLeft: 0,
             width: "640px",
           }}
-          defaultValue={lessonPlanName}
+          defaultValue={searchName}
           name="search_value"
           control={control}
           size="small"
@@ -592,6 +596,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
               InputProps={{
                 startAdornment: <SearchIcon />,
               }}
+              defaultValue={searchName}
               onKeyDown={(e) => {
                 const code = e.keyCode || e.which || e.charCode;
                 if (code === 13) {
@@ -835,8 +840,8 @@ export default function LearingOutcome(props: InfoProps) {
   }, [filterQuery, selectIds, checkAssumed]);
 
   const saveDisabled = useMemo(() => {
-    return !selectIds.length;
-  }, [selectIds]);
+    return !selectIds.length || scheduleDetial.complete_assessment;
+  }, [selectIds, scheduleDetial]);
 
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
@@ -876,7 +881,7 @@ export default function LearingOutcome(props: InfoProps) {
       content_lists={content_lists}
       getSelectStatus={getSelectStatus}
       handleClose={handleClose}
-      lessonPlanName={learingOutcomeData.search_value}
+      searchName={learingOutcomeData.search_value}
       learingOutComeTotal={content_lists.length}
       reset={reset}
       resetDisabled={resetDisabled}
@@ -1075,7 +1080,7 @@ export default function LearingOutcome(props: InfoProps) {
             size="large"
             color="primary"
             className={classes.margin}
-            disabled={saveDisabled || scheduleDetial.complete_assessment}
+            disabled={saveDisabled}
           >
             {d("OK").t("general_button_OK")}
           </Button>
