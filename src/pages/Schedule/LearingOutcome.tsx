@@ -556,6 +556,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
   } = props;
   const classes = useStyles();
   const [boxHeight, setBoxHeight] = React.useState(window.innerHeight);
+  const [searchValueMb, setSearchValueMb] = React.useState<string>(searchName);
   const previewDetailMbHeight = () => {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
@@ -596,7 +597,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
               InputProps={{
                 startAdornment: <SearchIcon />,
               }}
-              defaultValue={searchName}
+              value={searchValueMb}
               onKeyDown={(e) => {
                 const code = e.keyCode || e.which || e.charCode;
                 if (code === 13) {
@@ -607,6 +608,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
                 searchVal();
               }}
               onChange={(e) => {
+                setSearchValueMb(e.target.value);
                 setValueAll(e.target.value);
               }}
               size="small"
@@ -619,9 +621,12 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         {selectGroupTemplate()}
         <span
           className={classes.resetControl}
-          style={{ color: resetDisabled ? "#0E78D5" : "#666666", marginTop: "-20px" }}
+          style={{ color: resetDisabled || searchValueMb ? "#0E78D5" : "#666666" }}
           onClick={() => {
-            if (resetDisabled) reset();
+            if (resetDisabled || searchValueMb) {
+              setSearchValueMb("");
+              reset();
+            }
           }}
         >
           {d("Reset").t("schedule_lesson_plan_popup_reset")}
@@ -727,6 +732,8 @@ export default function LearingOutcome(props: InfoProps) {
 
   const [checkAssumed, setCheckAssumed] = React.useState<boolean>(learingOutcomeData.is_assumed);
 
+  const [searchValuePc, setSearchValuePc] = React.useState<string>(learingOutcomeData.search_value);
+
   const getFilterQueryAssembly = (filterData: LearningComesFilterQuery) => {
     const values = (item: string[]) => (item.length > 0 ? item : null);
     return {
@@ -819,6 +826,7 @@ export default function LearingOutcome(props: InfoProps) {
     setCheckAssumed(false);
     setSelectIds(outComeIds);
     searchOutcomesList(getFilterQueryAssembly({ programs: [], subjects: [], categorys: [], subs: [], ages: [], grades: [] }));
+    setSearchValuePc("");
   };
 
   const setValueAll = (val: string) => {
@@ -937,6 +945,7 @@ export default function LearingOutcome(props: InfoProps) {
                 onKeyDown={(e: any) => {
                   const code = e.keyCode || e.which || e.charCode;
                   if (code === 13) {
+                    setSearchValuePc(getValues().search_value);
                     searchVal();
                   }
                 }}
@@ -963,6 +972,7 @@ export default function LearingOutcome(props: InfoProps) {
             className={classes.button}
             startIcon={<SearchOutlined />}
             onClick={() => {
+              setSearchValuePc(getValues().search_value);
               searchVal();
             }}
           >
@@ -1069,7 +1079,14 @@ export default function LearingOutcome(props: InfoProps) {
           {selectIds.length} {d("Added").t("schedule_lo_number_added")}
         </span>
         <div>
-          <Button variant="outlined" size="large" color="primary" disabled={!resetDisabled} className={classes.margin} onClick={reset}>
+          <Button
+            variant="outlined"
+            size="large"
+            color="primary"
+            disabled={!resetDisabled && !searchValuePc}
+            className={classes.margin}
+            onClick={reset}
+          >
             {d("Reset").t("schedule_lesson_plan_popup_reset")}
           </Button>
           <Button
