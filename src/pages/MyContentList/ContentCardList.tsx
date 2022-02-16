@@ -626,7 +626,7 @@ export function ContentCardList(props: ContentCardListProps) {
                     queryCondition.path !== "/" &&
                     queryCondition.page === 1 &&
                     JSON.stringify(parentFolderInfo) !== "{}" && (
-                      <BackToPrevPage parentFolderInfo={parentFolderInfo} {...{ onGoBack, onRenameFolder }} />
+                      <BackToPrevPage parentFolderInfo={{ ...parentFolderInfo, available: total }} {...{ onGoBack, onRenameFolder }} />
                     )}
                   {list.map((item, idx) => (
                     <Grid key={item.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
