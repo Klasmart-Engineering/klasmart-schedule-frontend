@@ -67,6 +67,7 @@ const Row = (props: {
           {Math.floor((row?.durations_ratio?.[2].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell
+          align="center"
           style={{ minWidth: 168, color: unattendedTableOpenId === row?.class_id ? "#117ad5" : "", cursor: "pointer" }}
           onClick={() => {
             handleclickUnattendedTable(unattendedTableOpenId === row?.class_id ? "" : row?.class_id);
