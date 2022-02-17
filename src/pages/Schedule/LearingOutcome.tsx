@@ -186,6 +186,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     marginTop: "10px",
     [breakpoints.down(600)]: {
       marginTop: "0px",
+      alignItems: "center",
     },
   },
   assumedBnt: {
@@ -481,7 +482,7 @@ function SelectGroup(props: filterGropProps) {
   return (
     <div className={classes.root}>
       <div className={classes.selectBox}>
-        <FilterListIcon style={{ marginTop: "8px" }} />
+        <FilterListIcon style={{ marginTop: mobile ? "0px" : "8px" }} />
         {!mobile && (
           <Button
             variant="contained"
@@ -664,6 +665,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         >
           {d("Reset").t("schedule_lesson_plan_popup_reset")}
         </span>
+        &nbsp;&nbsp;
       </div>
       <div className={classes.resultText}>
         <span>
