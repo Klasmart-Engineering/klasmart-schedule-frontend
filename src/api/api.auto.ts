@@ -1244,6 +1244,15 @@ export interface EntityScheduleRealTimeView {
   lesson_plan_is_auth?: boolean;
 }
 
+export interface EntityScheduleRelationIDs {
+  class_roster_class_id?: string;
+  class_roster_student_ids?: string[];
+  class_roster_teacher_ids?: string[];
+  org_id?: string;
+  participant_student_ids?: string[];
+  participant_teacher_ids?: string[];
+}
+
 export interface EntityScheduleSearchView {
   class?: EntityScheduleAccessibleUserView;
   due_at?: number;
@@ -1276,17 +1285,21 @@ export interface EntityScheduleSimplifiedPageView {
 }
 
 export interface EntityScheduleTimeView {
-  /** Accurate for Home Fun Study only, in_progress: submitted, complete: completed, empty string: never submitted */
+  /** Accurate for Home Fun Study and student user only, in_progress: submitted, complete: completed, empty string: never submitted */
   assessment_status?: "in_progress" | "complete";
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   created_at?: number;
   due_at?: number;
   end_at?: number;
+  exist_feedback?: boolean;
   id?: string;
+  is_hidden?: boolean;
   is_home_fun?: boolean;
+  is_locked_lesson_plan?: boolean;
   is_repeat?: boolean;
   lesson_plan_id?: string;
+  role_type?: "Student" | "Teacher" | "Unknown";
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   title?: string;
@@ -3423,6 +3436,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityScheduleSimplifiedPageView, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
         `/internal/schedules${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags schedule
+     * @name queryScheduleRelationIDInternal
+     * @summary queryScheduleRelationIDInternal
+     * @request GET:/internal/schedules/{schedule_id}/relation_ids
+     * @description query schedule relation ids internal
+     */
+    queryScheduleRelationIdInternal: (schedule_id: string, params?: RequestParams) =>
+      this.request<EntityScheduleRelationIDs, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/internal/schedules/${schedule_id}/relation_ids`,
         "GET",
         params
       ),
