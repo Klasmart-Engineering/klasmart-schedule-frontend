@@ -42,8 +42,9 @@ const Row = (props: {
   unattendedTableOpenId?: string;
   classList?: MutiSelect.ISelect[];
   listTitle: string;
+  type: string;
 }) => {
-  const { row, classList, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId, listTitle } = props;
+  const { row, classList, classesAssignmentsUnattend, handleclickUnattendedTable, unattendedTableOpenId, listTitle, type } = props;
   const [childrenPage, setChildrenPage] = React.useState(1);
   const className = classList?.find((item) => item.value === row?.class_id)?.label;
   const total = classesAssignmentsUnattend.length;
@@ -53,16 +54,16 @@ const Row = (props: {
         <TableCell align="center" component="th" scope="row" style={{ width: "250px" }}>
           {className}
         </TableCell>
-        <TableCell align="center" style={{ width: "200px" }}>
+        <TableCell align="center" style={{ width: "150px" }}>
           {row?.total}
         </TableCell>
-        <TableCell align="center" style={{ width: "200px" }}>
+        <TableCell align="center" style={{ width: "150px" }}>
           {Math.floor((row?.durations_ratio?.[0].ratio as number) * 100) + "%"}
         </TableCell>
-        <TableCell align="center" style={{ width: "200px" }}>
+        <TableCell align="center" style={{ width: "150px" }}>
           {Math.floor((row?.durations_ratio?.[1].ratio as number) * 100) + "%"}
         </TableCell>
-        <TableCell align="center" style={{ width: "200px" }}>
+        <TableCell align="center" style={{ width: "150px" }}>
           {Math.floor((row?.durations_ratio?.[2].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell
@@ -72,7 +73,9 @@ const Row = (props: {
             setChildrenPage(1);
           }}
         >
-          {t("report_student_usage_unattendedStudents")}
+          {type === "study" || type === "home_fun"
+            ? t("report_student_usage_incomplete_students")
+            : t("report_student_usage_unattendedStudents")}
           <IconButton aria-label="expand row" size="small">
             {unattendedTableOpenId === row?.class_id ? <KeyboardArrowUpIcon style={{ color: "#117ad5" }} /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -151,6 +154,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
     total,
     classList,
     listTitle,
+    type,
   } = props;
   const { months } = useTranslation();
   const latestThreeMonths = getTimeDots();
@@ -164,6 +168,16 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
             <TableRow>
               <TableCell align="center">
                 <b>{t("report_student_usage_class")}</b>
+                <Tooltip
+                  arrow
+                  placement="top"
+                  title={d("Participants are not included").t("report_msg_participants_not_included")}
+                  classes={styles}
+                  aria-label="info"
+                  style={{ position: "relative", left: "12px", top: "5px", fontSize: "19px", color: "#818283" }}
+                >
+                  <InfoOutlined></InfoOutlined>
+                </Tooltip>
               </TableCell>
               <TableCell align="center">
                 <b>{t("report_student_usage_total")}</b>
@@ -231,6 +245,7 @@ export default function ClassesAndAssignmentsTable(props: IClassesAndAssignments
                 classList={classList}
                 key={row.class_id}
                 row={row}
+                type={type}
                 listTitle={listTitle}
               />
             ))}
