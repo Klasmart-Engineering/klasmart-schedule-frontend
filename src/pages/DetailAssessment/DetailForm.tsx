@@ -130,6 +130,17 @@ export function DetailForm(props: DetailFormProps) {
               />
             </>
           )}
+          {isStudy && (
+            <TextField
+              fullWidth
+              disabled
+              multiline
+              name="teacher.name"
+              value={teacherList}
+              className={css.fieldset}
+              label={d("Teacher List").t("assess_detail_teacher_list")}
+            />
+          )}
           <StudentEdit students={students} editable={editable} onChangeStudent={onChangeStudent} />
           {isClassAndLive && (
             <Box className={css.editBox}>

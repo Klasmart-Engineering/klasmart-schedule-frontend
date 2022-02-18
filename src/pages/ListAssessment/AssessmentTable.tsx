@@ -107,7 +107,7 @@ export function AssessmentTable(props: AssessmentTableprops) {
     onChangePage,
     onClickAssessment,
   } = props;
-  const amountPerPage = 20;
+  const amountPerPage = 10;
   const header = assessmentHeader(assessment_type);
   const handleChangePage = (event: object, page: number) => onChangePage(page);
   return (
