@@ -84,16 +84,8 @@ export function ResourceView(props: ResourceViewProps) {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          {resourceType === "Essay" && (
-            <div
-              className={css.detailView}
-            >{`${answer}和哈佛的哈佛很多时间咖啡和的骄傲立法会的哈佛的就爱上了飞机奥地利和发挥到了咖啡和打法好啦哈佛家里的拉法基但是`}</div>
-          )}
-          {resourceType === "ViewComment" && (
-            <div
-              className={css.detailView}
-            >{`${comment}和哈佛的哈佛很多时间咖啡和的骄傲立法会的哈佛的就爱上了飞机奥地利和发挥到了咖啡和打法好啦哈佛家里的拉法基但是`}</div>
-          )}
+          {resourceType === "Essay" && <div className={css.detailView}>{answer}</div>}
+          {resourceType === "ViewComment" && <div className={css.detailView}>{comment}</div>}
           {resourceType === "AudioRecorder" && <div className={css.detailView}></div>}
           {resourceType === "EditComment" && (
             <div className={css.detailView}>

@@ -2055,6 +2055,7 @@ export interface V2AssessmentDetailReply {
   class_end_at?: number;
   class_length?: number;
   complete_at?: number;
+  complete_rate?: number;
   contents?: V2AssessmentContentReply[];
   id?: string;
   outcomes?: V2AssessmentOutcomeReply[];

@@ -235,7 +235,10 @@ export function StudentView(props: StudentViewProps) {
                     {editable && (
                       <span
                         onClick={stopPropagation((e) => handleOpenAddStudentComment(sitem.reviewer_comment ?? "", sitem.student_id))}
-                        style={{ display: checkedArr[index] ? "block" : "none", color: "rgb(0, 108, 207)" }}
+                        style={{
+                          display: (checkedArr.length ? checkedArr[index] : initCheckArr[index]) ? "block" : "none",
+                          color: "rgb(0, 108, 207)",
+                        }}
                       >
                         {d("Click to add comments").t("assess_detail_click_to_add_comments")}
                       </span>
@@ -243,7 +246,10 @@ export function StudentView(props: StudentViewProps) {
                     {!editable && sitem?.reviewer_comment && (
                       <span
                         onClick={stopPropagation((e) => handleClickViewStudentComment(sitem.reviewer_comment ?? ""))}
-                        style={{ display: checkedArr[index] ? "block" : "none", color: "rgb(0, 108, 207)" }}
+                        style={{
+                          display: (checkedArr.length ? checkedArr[index] : initCheckArr[index]) ? "block" : "none",
+                          color: "rgb(0, 108, 207)",
+                        }}
                       >
                         {d("Click to view comments").t("assess_detail_click_to_view_comments")}
                       </span>

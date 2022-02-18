@@ -62,8 +62,7 @@ export function DetailForm(props: DetailFormProps) {
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const { assessmentDetail, students, contents, assessmentType, formMethods, editable, completeRate, onChangeStudent, onChangeContents } =
-    props;
+  const { assessmentDetail, students, contents, assessmentType, formMethods, editable, onChangeStudent, onChangeContents } = props;
   const isClassAndLive = assessmentType === AssessmentTypeValues.class || assessmentType === AssessmentTypeValues.live;
   const isStudy = assessmentType === AssessmentTypeValues.study;
   const teacherList = useMemo(() => {
@@ -217,7 +216,11 @@ export function DetailForm(props: DetailFormProps) {
               <TextField
                 fullWidth
                 disabled
-                value={completeRate}
+                value={
+                  assessmentDetail?.complete_rate
+                    ? `${Math.round(assessmentDetail?.complete_rate * 100)}%`
+                    : d("N/A").t("assess_column_n_a")
+                }
                 className={css.fieldset}
                 label={d("Completion Rate").t("assess_list_completion_rate")}
               />

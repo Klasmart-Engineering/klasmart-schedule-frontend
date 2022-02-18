@@ -15034,6 +15034,9 @@
         "complete_at": {
           "type": "integer"
         },
+        "complete_rate": {
+          "type": "number"
+        },
         "contents": {
           "type": "array",
           "items": {

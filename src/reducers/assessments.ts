@@ -540,7 +540,7 @@ export const getAssessmentListV2 = createAsyncThunk<IQueryAssessmentV2Result, IQ
           : AssessmentStatusValues.complete;
     }
     const _query = { ...query, status: _status, order_by: _order_by };
-    const { assessments, total } = await api.assessmentsV2.queryAssessmentV2({ ..._query, page_size: 10 });
+    const { assessments, total } = await api.assessmentsV2.queryAssessmentV2({ ..._query, page_size: 20 });
     return { assessments, total };
   }
 );
