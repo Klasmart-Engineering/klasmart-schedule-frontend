@@ -33,6 +33,7 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import CloseIcon from "@material-ui/icons/Close";
 import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import SearchIcon from "@material-ui/icons/Search";
+import CheckIcon from "@material-ui/icons/Check";
 
 const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
@@ -185,6 +186,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     marginTop: "10px",
     [breakpoints.down(600)]: {
       marginTop: "0px",
+      alignItems: "center",
     },
   },
   assumedBnt: {
@@ -196,8 +198,26 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   activeAssumedBnt: {
     margin: "0 15px 0 15px",
-    width: 100,
+    width: 114,
     borderRadius: "10px",
+  },
+  assumedButton: {
+    width: "120px",
+    height: "36px",
+    borderRadius: "10px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "14px",
+    margin: "0 10px 0 10px",
+  },
+  assumedButtonSelect: {
+    backgroundColor: "#0E78D5",
+    color: "white",
+  },
+  assumedButtonUnSelect: {
+    color: "#666666",
+    border: "1px solid rgba(0, 0, 0, 0.26)",
   },
   lessonTitle: {
     display: "flex",
@@ -242,6 +262,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     boxShadow: "0px 4px 4px rgb(0 0 0 / 25%)",
     padding: "8px",
     marginTop: "10px",
+    paddingRight: "10px",
   },
   resetControl: {
     fontFamily: "Helvetica",
@@ -461,18 +482,31 @@ function SelectGroup(props: filterGropProps) {
   return (
     <div className={classes.root}>
       <div className={classes.selectBox}>
-        <FilterListIcon style={{ marginTop: "8px" }} />
-        <Button
-          variant="contained"
-          size="medium"
-          color="primary"
-          onClick={(e) => {
-            checkAssume && checkAssume(!checkAssumed);
-          }}
-          className={checkAssumed ? classes.activeAssumedBnt : classes.assumedBnt}
-        >
-          {d("Assumed").t("assess_filter_assumed")}
-        </Button>
+        <FilterListIcon style={{ marginTop: mobile ? "0px" : "8px" }} />
+        {!mobile && (
+          <Button
+            variant="contained"
+            size="medium"
+            color="primary"
+            onClick={(e) => {
+              checkAssume && checkAssume(!checkAssumed);
+            }}
+            className={checkAssumed ? classes.activeAssumedBnt : classes.assumedBnt}
+          >
+            {d("Assumed").t("assess_filter_assumed")} {checkAssumed && <CheckIcon style={{ fontSize: "16px", marginLeft: "6px" }} />}
+          </Button>
+        )}
+        {mobile && (
+          <div
+            className={clsx(classes.assumedButton, checkAssumed ? classes.assumedButtonSelect : classes.assumedButtonUnSelect)}
+            onClick={(e) => {
+              checkAssume && checkAssume(!checkAssumed);
+            }}
+          >
+            <div> {d("Assumed").t("assess_filter_assumed")}</div>{" "}
+            {checkAssumed && <CheckIcon style={{ fontSize: "16px", marginLeft: "6px" }} />}
+          </div>
+        )}
       </div>
       <div className={classes.root}>
         <div className={classes.filterBox}>
@@ -631,6 +665,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
         >
           {d("Reset").t("schedule_lesson_plan_popup_reset")}
         </span>
+        &nbsp;&nbsp;
       </div>
       <div className={classes.resultText}>
         <span>
