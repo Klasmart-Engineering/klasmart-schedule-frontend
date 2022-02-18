@@ -56,12 +56,14 @@ export interface DetailFormProps {
   formMethods: UseFormMethods<UpdateAssessmentDataOmitAction>;
   onChangeStudent: (students: DetailFormProps["students"]) => void;
   onChangeContents: (contents: DetailFormProps["contents"]) => void;
+  completeRate: string;
 }
 export function DetailForm(props: DetailFormProps) {
   const css = useStyles();
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down("sm"));
-  const { assessmentDetail, students, contents, assessmentType, formMethods, editable, onChangeStudent, onChangeContents } = props;
+  const { assessmentDetail, students, contents, assessmentType, formMethods, editable, completeRate, onChangeStudent, onChangeContents } =
+    props;
   const isClassAndLive = assessmentType === AssessmentTypeValues.class || assessmentType === AssessmentTypeValues.live;
   const isStudy = assessmentType === AssessmentTypeValues.study;
   const teacherList = useMemo(() => {
@@ -72,7 +74,6 @@ export function DetailForm(props: DetailFormProps) {
   const lessonPlan = assessmentDetail.contents
     ? assessmentDetail.contents.find((item) => item.content_type === "LessonPlan")?.content_name
     : "";
-  const completeRate = 0;
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>

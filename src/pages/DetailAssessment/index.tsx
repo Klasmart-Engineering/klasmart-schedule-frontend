@@ -77,7 +77,15 @@ export function DetailAssessment() {
   const isMyAssessment = Boolean(isMyAssessmentlist && isMyAssessmentlist.length > 0);
   const hasRemainTime = assessmentDetailV2.remaining_time ? assessmentDetailV2.remaining_time > 0 : false;
   const isComplete = assessmentDetailV2.status === AssessmentStatus.complete;
-  const editable = isStudy ? isMyAssessment && perm_439 && !hasRemainTime && !isComplete : isMyAssessment && perm_439 && !isComplete;
+  const editable = isStudy
+    ? isMyAssessment && perm_439 && !hasRemainTime && !isComplete
+    : isMyAssessment && perm_439 && !isComplete && !hasRemainTime;
+  const completeRate = useMemo(() => {
+    const { all, attempt } = ModelAssessment.getCompleteRateV2(computedStudentViewItems ? computedStudentViewItems : initStudentViewItems);
+    if (all === 0) return d("N/A").t("assess_column_n_a");
+    if (attempt === 0) return "0";
+    return `${Math.round((attempt / all) * 100)}%`;
+  }, [computedStudentViewItems, initStudentViewItems]);
   const handleGoBack = () => {
     history.goBack();
   };
@@ -382,6 +390,7 @@ export function DetailAssessment() {
           editable={editable}
           onChangeStudent={handleChangeStudent}
           onChangeContents={handleChangeContents}
+          completeRate={completeRate}
         />
         {rightside}
       </LayoutPair>
