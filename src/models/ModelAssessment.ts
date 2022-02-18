@@ -715,6 +715,25 @@ export const ModelAssessment = {
     }
     return !!hasNotAttemptArr.find((item) => item);
   },
+  getCompleteRateV2(studentViewItems?: StudentViewItemsProps[]) {
+    let all: number = 0;
+    let attempt: number = 0;
+    if (studentViewItems && studentViewItems[0]) {
+      studentViewItems.forEach((item) => {
+        if (item.result && item.result[0]) {
+          item.result.forEach((v) => {
+            if (v.h5p_id) {
+              all += 1;
+              if (v.attempted) {
+                attempt += 1;
+              }
+            }
+          });
+        }
+      });
+    }
+    return { all, attempt };
+  },
 };
 
 export type UpdateStudyAssessmentDataOmitAction = Omit<UpdataStudyAssessmentRequestData, "action">;
