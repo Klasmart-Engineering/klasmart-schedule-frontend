@@ -5,11 +5,14 @@ import { EntityContentInfoWithDetails } from "../../api/api.auto";
 import { ContentType } from "../../api/type";
 import { Thumbnail } from "../../components/Thumbnail";
 import { d } from "../../locale/LocaleManager";
+import { ActionProps, OperationBtnMb } from "./OperationBtn";
 import { TabValue } from "./type";
 
 const useStyles = makeStyles((theme: Theme) => ({
   closeIconCon: {
-    textAlign: "right",
+    // textAlign: "right",
+    display: "flex",
+    justifyContent: "flex-end",
   },
   text: {
     fontSize: "24px",
@@ -47,20 +50,50 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface ContentPreviewProps {
+interface ContentPreviewProps extends ActionProps {
   tab: string;
   contentPreview: EntityContentInfoWithDetails;
   content_type: EntityContentInfoWithDetails["content_type"];
+  md: boolean;
   onClose: () => any;
   onChangeTab: (value: TabValue) => any;
 }
 export function ContentPreviewHeader(props: ContentPreviewProps) {
   const css = useStyles();
-  const { tab, contentPreview, content_type, onClose, onChangeTab } = props;
+  const {
+    tab,
+    contentPreview,
+    onClose,
+    onChangeTab,
+    md,
+    permission,
+    author,
+    publish_status,
+    content_type,
+    onDelete,
+    onPublish,
+    onApprove,
+    onReject,
+    onEdit,
+  } = props;
   return (
     <Fragment>
       <Box className={css.closeIconCon}>
-        <CloseIcon style={{ cursor: "pointer" }} onClick={onClose} />
+        {md && (
+          <OperationBtnMb
+            permission={permission}
+            author={author}
+            isMine={contentPreview.is_mine}
+            publish_status={publish_status}
+            content_type={contentPreview.content_type}
+            onDelete={onDelete}
+            onPublish={onPublish}
+            onApprove={onApprove}
+            onReject={onReject}
+            onEdit={onEdit}
+          />
+        )}
+        <CloseIcon style={{ cursor: "pointer", marginTop: "3px" }} onClick={onClose} />
       </Box>
       <Box className={css.nameCon}>
         <Typography className={css.text}>{contentPreview.name}</Typography>
