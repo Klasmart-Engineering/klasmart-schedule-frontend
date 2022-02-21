@@ -645,7 +645,7 @@ function EditBox(props: CalendarStateProps) {
       // const currentTime = Math.floor(new Date().getTime());
       // if (
       //   (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
-      //   newData.start_at! * 1000 - currentTime < 15 * 60 * 1000
+      //   newData.start_at! * 1000 - currentTime < 5 * 60 * 1000
       // ) {
       //   dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       // }
@@ -1211,7 +1211,7 @@ function EditBox(props: CalendarStateProps) {
       scheduleId &&
       scheduleDetial &&
       scheduleList.start_at &&
-      scheduleList.start_at - currentTime < 15 * 60 &&
+      scheduleList.start_at - currentTime < 5 * 60 &&
       scheduleList.class_type !== "Task" &&
       scheduleList.class_type !== "Homework"
     ) {
@@ -1440,7 +1440,7 @@ function EditBox(props: CalendarStateProps) {
         return;
       }
     } else {
-      if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
+      if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 5 * 60) {
         changeModalDate({
           title: "",
           // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
@@ -1670,7 +1670,7 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
 
-    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
+    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 5 * 60) {
       changeModalDate({
         title: "",
         text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
