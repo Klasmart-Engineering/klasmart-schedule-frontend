@@ -33,6 +33,7 @@ export interface MaterialViewItemStudentProps {
   student_name?: string;
   answer?: string;
   score?: number;
+  attempted?: boolean;
   // file_type?: string;
   // max_score?: number;
 }

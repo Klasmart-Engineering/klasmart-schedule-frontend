@@ -582,10 +582,22 @@ export const ModelAssessment = {
     studentViewItems?.forEach((sItem) => {
       const { student_id, student_name } = sItem;
       sItem.result
-        ?.filter((r) => r.content_type === "LessonMaterial")
+        ?.filter((r) => r.content_type === "LessonMaterial" || r.content_type === "Unknown")
         .forEach((rItem) => {
-          const { content_id, content_name, number, content_subtype, answer, score, max_score, file_type, parent_id, outcomes, status } =
-            rItem;
+          const {
+            content_id,
+            content_name,
+            number,
+            content_subtype,
+            answer,
+            score,
+            max_score,
+            file_type,
+            parent_id,
+            outcomes,
+            status,
+            attempted,
+          } = rItem;
           if (!materialViewObj[content_id!]) {
             materialViewObj[content_id!] = {
               content_id,
@@ -602,6 +614,7 @@ export const ModelAssessment = {
                   student_name,
                   answer,
                   score,
+                  attempted,
                 },
               ],
               outcomes: outcomes?.map((oItem) => {
@@ -616,7 +629,7 @@ export const ModelAssessment = {
               }),
             };
           } else {
-            materialViewObj[content_id!].students?.push({ student_id, student_name, answer, score });
+            materialViewObj[content_id!].students?.push({ student_id, student_name, answer, score, attempted });
             materialViewObj[content_id!].outcomes = materialViewObj[content_id!].outcomes?.map((oItem) => {
               const currOutcome = outcomes?.find((item) => item.outcome_id === oItem.outcome_id);
               const _attendance_ids = oItem.attendance_ids ?? [];

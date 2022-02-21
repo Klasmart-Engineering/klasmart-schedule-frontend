@@ -276,10 +276,10 @@ export function MaterialView(props: MaterialViewProps) {
                                 <TableCell>
                                   <EditScore
                                     fileType={item.file_type}
-                                    score={item.score}
+                                    score={sItem.score}
                                     editable={editable}
                                     maxScore={item.max_score}
-                                    attempted={item.attempted}
+                                    attempted={sItem.attempted}
                                     studentId={sItem.student_id}
                                     contentId={item.content_id}
                                     isSubjectiveActivity={true}
@@ -291,7 +291,7 @@ export function MaterialView(props: MaterialViewProps) {
                                   {item.parent_id
                                     ? item?.max_score! === 0
                                       ? ""
-                                      : Math.ceil((item?.score! / item?.max_score!) * 100) + "%"
+                                      : Math.ceil((sItem?.score! / item?.max_score!) * 100) + "%"
                                     : "100%"}
                                 </TableCell>
                               </TableRow>
