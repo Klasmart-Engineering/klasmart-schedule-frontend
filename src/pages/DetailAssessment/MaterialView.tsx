@@ -288,6 +288,7 @@ export function MaterialView(props: MaterialViewProps) {
                                   />
                                 </TableCell>
                                 <TableCell align="center">
+                                  {/* 有parent_id说明是子material 否则显示100%*/}
                                   {item.parent_id
                                     ? item?.max_score! === 0
                                       ? ""
