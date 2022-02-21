@@ -158,7 +158,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     margin: "0 auto",
   },
   participantBox: {
-    width: "100%",
+    width: document.body.clientWidth - 40 + "px",
     maxHeight: "260px",
     border: "1px solid rgba(0, 0, 0, 0.23)",
     marginTop: "20px",
