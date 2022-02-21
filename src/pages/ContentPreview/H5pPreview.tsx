@@ -1,4 +1,4 @@
-import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
+import { Box, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
@@ -48,6 +48,11 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "column",
+    [breakpoints.down("md")]: {
+      height: "auto",
+      minHeight: "520px",
+      marginTop: 10,
+    },
   },
   contentBtnCon: {
     width: "100%",
@@ -56,6 +61,10 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
+    [breakpoints.down("md")]: {
+      height: "auto",
+      minHeight: "320px",
+    },
   },
   h5pCon: {
     width: "90%",
@@ -65,6 +74,10 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     alignItems: "center",
     paddingTop: 20,
     position: "relative",
+    [breakpoints.down("md")]: {
+      height: "auto",
+      minHeight: "220px",
+    },
   },
   innerH5pCon: {
     flex: 1,
@@ -81,6 +94,9 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     justifyContent: "center",
     marginTop: 20,
     position: "relative",
+    [breakpoints.down("md")]: {
+      marginTop: 0,
+    },
   },
   viewBtn: {
     width: 204,
@@ -95,9 +111,9 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     color: "#fff",
     cursor: "pointer",
     [breakpoints.down("md")]: {
-      width: 100,
+      // width: 100,
       height: 40,
-      borderRadius: 20,
+      borderRadius: 10,
     },
   },
   btnFontSize: {
@@ -225,6 +241,32 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  mbArrowCon: {
+    width: "100%",
+    height: 40,
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  mbArrow: {
+    height: 20,
+    width: 20,
+    background: "rgba(0,0,0,0.3)",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.3) !important",
+    },
+  },
+  countCon: {
+    width: 40,
+    height: 20,
+    fontSize: "12px",
+    lineHeight: "20px",
+    color: "#fff",
+    textAlign: "center",
+    background: "rgba(0,0,0,0.3)",
+    borderRadius: "5px",
+  },
 }));
 
 function EmptyContent() {
@@ -280,7 +322,8 @@ export function H5pPreview(props: IH5pPreviewProps) {
   };
   const parsedData: any = h5pItem && h5pItem.data ? JSON.parse(h5pItem.data) : {};
   const isEmpty = !h5pItem || !parsedData || h5pItem.data === "{}";
-
+  const defaultTheme = useTheme();
+  const md = useMediaQuery(defaultTheme.breakpoints.down("md"));
   return (
     <Box className={css.previewContainer}>
       <Box className={css.contentBtnCon}>
@@ -292,7 +335,7 @@ export function H5pPreview(props: IH5pPreviewProps) {
           ) : (
             <AssetPreview resourceId={parsedData} isHideFileType={true} className={css.assetPreview} />
           )}
-          {h5pArray.length > 1 && (
+          {h5pArray.length > 1 && !md && (
             <Box className={css.iconCon}>
               <IconButton
                 disabled={currIndex === 0}
@@ -313,9 +356,38 @@ export function H5pPreview(props: IH5pPreviewProps) {
             </Box>
           )}
         </div>
+        {h5pArray.length > 1 && md && (
+          <div className={css.mbArrowCon}>
+            <IconButton
+              classes={{ root: css.mbArrow }}
+              // disabled={currIndex === 0}
+              className={css.mbArrow}
+              style={{ left: -32 }}
+              onClick={handlePrev}
+            >
+              <ArrowBackIosOutlinedIcon style={{ color: "#fff", fontSize: 12 }} />
+            </IconButton>
+            <div className={css.countCon}>
+              {currIndex + 1}/{h5pArray.length}
+            </div>
+            <IconButton
+              // disabled={currIndex >= h5pArray.length - 1}
+              className={css.mbArrow}
+              style={{ right: -32 }}
+              onClick={handleNext}
+            >
+              <ArrowForwardIosOutlinedIcon style={{ color: "#fff", fontSize: 12 }} />
+            </IconButton>
+          </div>
+        )}
         <Box className={css.btnCon}>
           <Box className={clsx(css.viewBtn)} onClick={onGoLive}>
-            {d("View in").t("library_label_view_in") !== "-" && (
+            {d("View in").t("library_label_view_in") !== "-" && d("View in").t("library_label_view_in")}{" "}
+            {classType === "OnlineClass" && d("Live Class").t("library_label_kidsloop_live")}
+            {classType === "OfflineClass" && d("KidsLoop Class").t("schedule_preview_class")}
+            {classType === "Homework" && d("KidsLoop Study").t("schedule_preview_study")}
+            {classType === "Task" && d("Live Class").t("library_label_kidsloop_live")}
+            {/* {d("View in").t("library_label_view_in") !== "-" && (
               <Box style={{ fontSize: 18 }}>{d("View in").t("library_label_view_in")}</Box>
             )}
             {classType === "OnlineClass" && (
@@ -329,7 +401,7 @@ export function H5pPreview(props: IH5pPreviewProps) {
             )}
             {classType === "Task" && (
               <Typography className={css.btnFontSize}>{d("Live Class").t("library_label_kidsloop_live")}</Typography>
-            )}
+            )} */}
           </Box>
         </Box>
       </Box>

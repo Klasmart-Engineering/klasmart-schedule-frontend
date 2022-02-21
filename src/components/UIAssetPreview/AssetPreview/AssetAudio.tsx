@@ -1,6 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Slider from "@material-ui/core/Slider";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import FastForwardOutlinedIcon from "@material-ui/icons/FastForwardOutlined";
 import FastRewindOutlinedIcon from "@material-ui/icons/FastRewindOutlined";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
@@ -8,7 +8,7 @@ import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOut
 import React, { useEffect, useReducer, useRef } from "react";
 import audioUrl from "../../../assets/icons/music.svg";
 import AssetLoading from "./AssetLoading";
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   wrap: {
     width: "100%",
     height: "100%",
@@ -20,6 +20,9 @@ const useStyles = makeStyles({
   },
   audioCon: {
     marginBottom: 137,
+    [theme.breakpoints.down("md")]: {
+      marginBottom: 60,
+    },
   },
   audioImg: {
     width: "73px",
@@ -34,6 +37,9 @@ const useStyles = makeStyles({
     alignItems: "center",
     background: "#009688",
     margin: "0 auto",
+    [theme.breakpoints.down("md")]: {
+      width: "98%",
+    },
   },
   tools: {
     width: "100px",
@@ -49,7 +55,7 @@ const useStyles = makeStyles({
     marginRight: "10px",
     color: "#fff",
   },
-});
+}));
 
 interface Audio {
   src: string | undefined;
