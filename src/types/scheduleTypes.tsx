@@ -1,6 +1,5 @@
 import {
   EntityScheduleDetailsView,
-  EntityScheduleFilterClass,
   EntityScheduleLessonPlan,
   EntityScheduleListView,
   EntityScheduleViewDetail,
@@ -315,4 +314,10 @@ export interface LessonPlanFilterQuery {
   page: number;
   pages: number;
   lesson_plan_name: string;
+}
+
+export interface EntityScheduleFilterClass {
+  id?: string;
+  name?: string;
+  operator_role_type?: "Student" | "Teacher" | "Unknown";
 }

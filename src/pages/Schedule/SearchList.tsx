@@ -242,20 +242,24 @@ export default function SearchList(props: SearchListProps) {
                 )}
                 <div
                   className={classes.searchItemMb}
-                  style={{ backgroundColor: CustomEvent(item.class?.type), borderRadius: "12px", marginTop: "10px" }}
+                  style={{ backgroundColor: CustomEvent(item.class_type), borderRadius: "12px", marginTop: "10px" }}
                 >
                   <span style={{ fontSize: "20px", fontWeight: 700 }} onClick={() => previewSchedule(item.id as unknown as number)}>
                     {item.title}
                   </span>
-                  <span style={{ fontSize: "14px", fontWeight: 400, marginTop: "20px" }}>
+                  <span style={{ fontSize: "14px", fontWeight: 400, marginTop: "18px" }}>
                     <AccessTime className={classes.clockIcon} /> {timeFormat(item.start_at as number, "timeOnly")} -{" "}
                     {timeFormat(item.end_at as number, "timeOnly")}{" "}
                   </span>
-                  <span style={{ fontSize: "14px", fontWeight: 400, marginTop: "20px" }}>
+                  <span style={{ fontSize: "14px", fontWeight: 400, marginTop: "18px" }}>
                     <PeopleOutlineOutlined className={classes.clockIcon} /> {getTeacherList(item.member_teachers, item.student_count)}{" "}
                   </span>
-                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "20px" }}>Jess_testing_Lesson_Plan</span>
-                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "6px" }}>None Specified</span>
+                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "18px" }}>{item?.program?.name}</span>
+                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "6px" }}>
+                    {item?.subjects?.map((sub) => {
+                      return ` ${sub.name} `;
+                    })}
+                  </span>
                 </div>
               </div>
             ))}

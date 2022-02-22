@@ -106,6 +106,7 @@ import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles(({ shadows }) => ({
   fieldset: {
@@ -278,6 +279,15 @@ const useStyles = makeStyles(({ shadows }) => ({
     "& span": {
       maxWidth: "200px",
     },
+  },
+  saveMb: {
+    width: "297px",
+    height: "50px",
+    background: "#0E78D5",
+    borderRadius: "8px",
+    textAlign: "center",
+    marginTop: "6px",
+    fontWeight: 700,
   },
 }));
 
@@ -1345,6 +1355,8 @@ function EditBox(props: CalendarStateProps) {
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
+
+    mobile && showRepeatMb();
   };
 
   const handleDueDateChange = (date: Date | null) => {
@@ -1908,6 +1920,38 @@ function EditBox(props: CalendarStateProps) {
         })[0];
       })
       .reverse();
+  };
+
+  const showRepeatMb = () => {
+    changeModalDate({
+      openStatus: true,
+      enableCustomization: true,
+      customizeTemplate: (
+        <Box style={{ paddingBottom: "10px", paddingTop: "10px" }}>
+          <div style={{ textAlign: "end", paddingRight: "10px" }}>
+            <CloseIcon
+              onClick={() => {
+                setStatus({ ...checkedStatus, repeatCheck: false });
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              }}
+            />
+          </div>
+          <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
+          <div style={{ textAlign: "center" }}>
+            <Button
+              className={css.saveMb}
+              color="primary"
+              variant="contained"
+              onClick={() => {
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              }}
+            >
+              {d("OK").t("general_button_OK")}
+            </Button>
+          </div>
+        </Box>
+      ),
+    });
   };
 
   return (

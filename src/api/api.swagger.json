@@ -3381,6 +3381,41 @@
         }
       }
     },
+    "/internal/schedules/{schedule_id}/relation_ids": {
+      "get": {
+        "description": "query schedule relation ids internal",
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "queryScheduleRelationIDInternal",
+        "operationId": "queryScheduleRelationIDInternal",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.ScheduleRelationIDs"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/learning_outcomes": {
       "get": {
         "description": "search learning outcomes",
@@ -12103,11 +12138,50 @@
         }
       }
     },
+    "entity.ScheduleRelationIDs": {
+      "type": "object",
+      "properties": {
+        "class_roster_class_id": {
+          "type": "string"
+        },
+        "class_roster_student_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class_roster_teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "org_id": {
+          "type": "string"
+        },
+        "participant_student_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "participant_teacher_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "entity.ScheduleSearchView": {
       "type": "object",
       "properties": {
         "class": {
           "$ref": "#/definitions/entity.ScheduleAccessibleUserView"
+        },
+        "class_type": {
+          "type": "string",
+          "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
         "due_at": {
           "type": "integer"
@@ -12196,7 +12270,7 @@
       "type": "object",
       "properties": {
         "assessment_status": {
-          "description": "Accurate for Home Fun Study only, in_progress: submitted, complete: completed, empty string: never submitted",
+          "description": "Accurate for Home Fun Study and student user only, in_progress: submitted, complete: completed, empty string: never submitted",
           "type": "string",
           "enum": ["in_progress", "complete"]
         },
@@ -12216,10 +12290,19 @@
         "end_at": {
           "type": "integer"
         },
+        "exist_feedback": {
+          "type": "boolean"
+        },
         "id": {
           "type": "string"
         },
+        "is_hidden": {
+          "type": "boolean"
+        },
         "is_home_fun": {
+          "type": "boolean"
+        },
+        "is_locked_lesson_plan": {
           "type": "boolean"
         },
         "is_repeat": {
@@ -12227,6 +12310,10 @@
         },
         "lesson_plan_id": {
           "type": "string"
+        },
+        "role_type": {
+          "type": "string",
+          "enum": ["Student", "Teacher", "Unknown"]
         },
         "start_at": {
           "type": "integer"
