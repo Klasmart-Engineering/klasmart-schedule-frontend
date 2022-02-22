@@ -22,7 +22,14 @@ import { DetailAssessmentResult, DetailAssessmentResultStudent } from "../ListAs
 import { EditScore } from "./EditScore";
 import { Dimension } from "./MultiSelect";
 import { ResourceView, useResourceView } from "./ResourceView";
-import { OutcomeStatus, StudentViewItemsProps, SubDimensionOptions } from "./type";
+import {
+  FileTypes,
+  MaterialViewItemResultOutcomeProps,
+  MaterialViewItemStudentProps,
+  OutcomeStatus,
+  StudentViewItemsProps,
+  SubDimensionOptions,
+} from "./type";
 const useStyles = makeStyles({
   tableBar: {
     display: "flex",
@@ -192,7 +199,7 @@ export function MaterialView(props: MaterialViewProps) {
                             <Table className={css.table}>
                               <PLTableHeader fields={LearningOutcomesHeader} style={{ backgroundColor: "#F7F7F2", height: 35 }} />
                               <TableBody>
-                                {item.outcomes.map((outcome) => (
+                                {item.outcomes.map((outcome: MaterialViewItemResultOutcomeProps) => (
                                   <TableRow key={outcome.outcome_id}>
                                     <TableCell align="center">{outcome.outcome_name}</TableCell>
                                     <TableCell align="center">{outcome.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
@@ -260,7 +267,7 @@ export function MaterialView(props: MaterialViewProps) {
                         <Table className={css.table}>
                           <PLTableHeader fields={MaterialDefaultHeader} style={{ backgroundColor: "#F7F2F3", height: 35 }} />
                           <TableBody>
-                            {item.students?.map((sItem) => (
+                            {item.students?.map((sItem: MaterialViewItemStudentProps) => (
                               <TableRow key={sItem.student_id}>
                                 <TableCell align="center">{sItem.student_name}</TableCell>
                                 <TableCell align="center">
@@ -288,12 +295,13 @@ export function MaterialView(props: MaterialViewProps) {
                                   />
                                 </TableCell>
                                 <TableCell align="center">
-                                  {/* 有parent_id说明是子material 否则显示100%*/}
-                                  {item.parent_id
-                                    ? item?.max_score! === 0
+                                  {sItem.attempted
+                                    ? item.parent_id === "" && item.file_type === FileTypes.HasChildContainer
+                                      ? "100%"
+                                      : item?.max_score! === 0
                                       ? ""
                                       : Math.ceil((sItem?.score! / item?.max_score!) * 100) + "%"
-                                    : "100%"}
+                                    : ""}
                                 </TableCell>
                               </TableRow>
                             ))}
