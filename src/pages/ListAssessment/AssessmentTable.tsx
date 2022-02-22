@@ -75,7 +75,9 @@ function AssessmentRow(props: AssessmentProps) {
       {isStudy && (
         <>
           <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>
-          <TableCell align="center">{formattedTime(assessment.due_at) ?? d("N/A").t("assess_column_n_a")}</TableCell>
+          <TableCell align="center">
+            {formattedTime(assessment.due_at) ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}
+          </TableCell>
           <TableCell align="center">
             {assessment?.complete_rate ? `${Math.round(assessment?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")}
           </TableCell>
