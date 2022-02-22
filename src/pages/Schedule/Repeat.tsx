@@ -32,6 +32,7 @@ const useStyles = makeStyles(({ breakpoints }) =>
       fontSize: "14px",
       boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.16)",
       [breakpoints.down(600)]: {
+        width: document.body.clientWidth - 64 + "px",
         boxShadow: "none",
         padding: "0px 20px 0px 20px !important",
       },

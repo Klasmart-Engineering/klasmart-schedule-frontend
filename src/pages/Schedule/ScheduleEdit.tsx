@@ -108,7 +108,7 @@ import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import CloseIcon from "@material-ui/icons/Close";
 
-const useStyles = makeStyles(({ shadows }) => ({
+const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldset: {
     marginTop: 20,
     width: "100%",
@@ -159,7 +159,10 @@ const useStyles = makeStyles(({ shadows }) => ({
     margin: "0 auto",
   },
   participantBox: {
-    width: document.body.clientWidth - 40 + "px",
+    width: "100%",
+    [breakpoints.down(600)]: {
+      width: document.body.clientWidth - 40 + "px",
+    },
     maxHeight: "260px",
     border: "1px solid rgba(0, 0, 0, 0.23)",
     marginTop: "20px",
