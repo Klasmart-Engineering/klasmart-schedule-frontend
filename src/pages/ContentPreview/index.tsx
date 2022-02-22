@@ -123,7 +123,7 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     }
   };
   const leftside = (
-    <Box style={{ padding: 12 }}>
+    <Box style={{ padding: 12, overflowX: "hidden" }}>
       <ContentPreviewHeader
         tab={tab}
         contentPreview={contentPreview}
