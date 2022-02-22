@@ -48,10 +48,14 @@ interface OrgsTableProps {
   emailOrder: boolean;
   nameOrder: boolean;
   render: ReactNode;
+  disabled?: boolean;
 }
 export function OrgsTable(props: OrgsTableProps) {
-  const { list, selectedContentGroupContext, onSortOrgList, handleChangeBeValues, sortType, nameOrder, emailOrder, render } = props;
+  const { list, selectedContentGroupContext, onSortOrgList, handleChangeBeValues, sortType, nameOrder, emailOrder, render, disabled } =
+    props;
   const css = useOrgStyles();
+  const sortIconStyle = { display: "flex", cursor: disabled ? "default" : "pointer" };
+  const tabelCellStyle = { fontSize: 14, color: disabled ? "#999" : "rgba(0, 0, 0, 0.87)" };
   const rows = list?.map((item, idx) => (
     <TableRow key={item.organization_id}>
       <TableCell className={css.tableCell}>
@@ -59,6 +63,7 @@ export function OrgsTable(props: OrgsTableProps) {
           <Checkbox
             color="primary"
             value={item.organization_id}
+            disabled={disabled}
             checked={selectedContentGroupContext.hashValue[item.organization_id] || false}
             onChange={(e, checked) => {
               selectedContentGroupContext.registerChange(e);
@@ -68,17 +73,17 @@ export function OrgsTable(props: OrgsTableProps) {
         }
       </TableCell>
       <TableCell style={{ width: 270 }} className={css.tableBorder}>
-        <Typography style={{ fontSize: 14 }} noWrap>
+        <Typography style={tabelCellStyle} noWrap>
           {item.organization_id}
         </Typography>
       </TableCell>
       <TableCell align="center" className={clsx(css.tableWidth, css.tableBorder)}>
-        <Typography style={{ fontSize: 14 }} noWrap>
+        <Typography style={tabelCellStyle} noWrap>
           {item.organization_name}
         </Typography>
       </TableCell>
       <TableCell align="center" className={clsx(css.tableWidth, css.tableCell)}>
-        <Typography style={{ fontSize: 14 }} noWrap>
+        <Typography style={tabelCellStyle} noWrap>
           {item.email}
         </Typography>
       </TableCell>
@@ -86,18 +91,18 @@ export function OrgsTable(props: OrgsTableProps) {
   ));
 
   return (
-    <TableContainer style={{ minHeight: 470, overflow: "auto" }}>
-      <Table stickyHeader>
+    <TableContainer style={{ minHeight: 473, overflow: "auto" }}>
+      <Table size="small">
         <TableHead className={css.tableHead}>
           <TableRow>
             <TableCell align="center" style={{ width: 30 }}>
               {" "}
               {render}
             </TableCell>
-            <TableCell align="center">Organization ID</TableCell>
+            <TableCell align="center">{t("library_label_organization_id")}</TableCell>
             <TableCell align="center">
-              <Box display="flex" style={{ justifyContent: "center" }}>
-                <div style={{ display: "flex", cursor: "pointer" }} onClick={() => onSortOrgList(OrganizationSortBy.Name)}>
+              <Box display="flex" style={{ justifyContent: "center", cursor: "" }}>
+                <div style={sortIconStyle} onClick={() => !disabled && onSortOrgList(OrganizationSortBy.Name)}>
                   {t("library_label_organization")}
                   <SvgIcon
                     style={{ marginTop: 1 }}
@@ -108,7 +113,7 @@ export function OrgsTable(props: OrgsTableProps) {
             </TableCell>
             <TableCell align="center">
               <Box display="flex" style={{ justifyContent: "center" }}>
-                <div style={{ display: "flex", cursor: "pointer" }} onClick={() => onSortOrgList(OrganizationSortBy.OwnerEmail)}>
+                <div style={sortIconStyle} onClick={() => !disabled && onSortOrgList(OrganizationSortBy.OwnerEmail)}>
                   {t("library_label_org_owner_email")}
                   <SvgIcon
                     style={{ marginTop: 1 }}

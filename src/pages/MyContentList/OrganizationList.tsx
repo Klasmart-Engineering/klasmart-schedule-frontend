@@ -20,7 +20,7 @@ import {
   Tooltip,
   withStyles,
 } from "@material-ui/core";
-import { InfoOutlined } from "@material-ui/icons";
+import { InfoOutlined, Search } from "@material-ui/icons";
 import { getOrgList } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { AsyncTrunkReturned } from "@reducers/type";
@@ -73,11 +73,11 @@ const useStyles = makeStyles(() =>
       width: "60%",
     },
     content: {
-      paddingTop: 10,
-      height: 523,
+      paddingTop: 6,
+      height: 521,
     },
     radio: {
-      padding: "10px 0px",
+      // padding: "10px 0px",
       margin: 0,
     },
   })
@@ -217,7 +217,7 @@ export function OrganizationList(props: OrganizationListProps) {
   };
   return (
     <Dialog open={open} maxWidth="md" fullWidth>
-      <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
+      <DialogTitle style={{ padding: "10px 24px" }}>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
           <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
@@ -247,7 +247,6 @@ export function OrganizationList(props: OrganizationListProps) {
               label={
                 <>
                   <span>{d("Select Organizations").t("library_label_select_organizations")}</span>{" "}
-                  {/* <ArrowForwardIosIcon fontSize="small" className={css.tooltipIcon} /> */}
                 </>
               }
             />
@@ -273,7 +272,7 @@ export function OrganizationList(props: OrganizationListProps) {
               disabled={radioValue !== ShareScope.share_to_org}
               onClick={() => searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch })}
             >
-              {d("Search").t("library_label_search")}{" "}
+              <Search fontSize="small" /> {d("Search").t("library_label_search")}{" "}
             </Button>
           </div>
           {
@@ -289,41 +288,40 @@ export function OrganizationList(props: OrganizationListProps) {
                     {...props}
                     render={(selectedContentGroupContext) => (
                       <div {...{ ref }} className={css.content}>
-                        {radioValue === ShareScope.share_to_org && (
+                        {orgList?.length > 0 ? (
                           <>
-                            {orgList?.length > 0 ? (
-                              <>
-                                <OrgsTable
-                                  {...orgsSort}
-                                  onSortOrgList={handleSortOrgList}
-                                  handleChangeBeValues={handleChangeBeValues}
-                                  list={orgList}
-                                  selectedContentGroupContext={selectedContentGroupContext}
-                                  render={
-                                    <Checkbox
-                                      color="primary"
-                                      checked={selectedContentGroupContext.isAllvalue}
-                                      onChange={(e, checked) => {
-                                        selectedContentGroupContext.registerAllChange(e);
-                                        handleChangeAllBeValues(checked);
-                                      }}
-                                    />
-                                  }
+                            <OrgsTable
+                              {...orgsSort}
+                              disabled={radioValue !== ShareScope.share_to_org}
+                              onSortOrgList={handleSortOrgList}
+                              handleChangeBeValues={handleChangeBeValues}
+                              list={orgList}
+                              selectedContentGroupContext={selectedContentGroupContext}
+                              render={
+                                <Checkbox
+                                  disabled={radioValue !== ShareScope.share_to_org}
+                                  color="primary"
+                                  checked={selectedContentGroupContext.isAllvalue}
+                                  onChange={(e, checked) => {
+                                    selectedContentGroupContext.registerAllChange(e);
+                                    handleChangeAllBeValues(checked);
+                                  }}
                                 />
-                                <CursorPagination
-                                  pageDesc={pageDesc}
-                                  total={orgListTotal}
-                                  pageInfo={orgListPageInfo}
-                                  onChange={searchOrgList}
-                                  // pageSize={pageSize}
-                                  // rowsPerPages={[10, 25, 50]}
-                                  // onChangePageSize={setPageSize}
-                                />
-                              </>
-                            ) : (
-                              resultsTip
-                            )}
+                              }
+                            />
+                            <CursorPagination
+                              pageDesc={pageDesc}
+                              total={orgListTotal}
+                              pageInfo={orgListPageInfo}
+                              onChange={searchOrgList}
+                              disabled={radioValue !== ShareScope.share_to_org}
+                              // pageSize={pageSize}
+                              // rowsPerPages={[10, 25, 50]}
+                              // onChangePageSize={setPageSize}
+                            />
                           </>
+                        ) : (
+                          resultsTip
                         )}
                       </div>
                     )}
@@ -334,7 +332,7 @@ export function OrganizationList(props: OrganizationListProps) {
           }
         </div>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ padding: "0px 24px 20px 0px" }}>
         <Button onClick={onClose} disableRipple={true} color="primary" variant="outlined">
           {d("CANCEL").t("general_button_CANCEL")}
         </Button>

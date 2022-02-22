@@ -26,10 +26,11 @@ interface IPagination {
   pageSize?: number;
   rowsPerPages?: number[];
   onChangePageSize?: (pageSize: number) => any;
+  disabled?: boolean;
 }
 
 export default function CursorPagination(props: IPagination) {
-  const { pageDesc, total, pageInfo, onChange, rowsPerPages, pageSize, onChangePageSize } = props;
+  const { pageDesc, total, pageInfo, onChange, rowsPerPages, pageSize, onChangePageSize, disabled } = props;
   const css = useStyles();
   const { hasNextPage, hasPreviousPage, startCursor, endCursor } = pageInfo;
   const handleChangePageSize = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -54,25 +55,25 @@ export default function CursorPagination(props: IPagination) {
       )}
       <span className={css.pageDesc}>{t("report_student_usage_of", { total, value: pageDesc })}</span>
       <IconButton
-        disabled={!hasPreviousPage}
+        disabled={disabled || !hasPreviousPage}
         onClick={() => onChange({ direction: ConnectionDirection.Forward, cursor: "", curentPageCursor: CursorType.start })}
       >
         <FirstPage />
       </IconButton>
       <IconButton
-        disabled={!hasPreviousPage}
+        disabled={disabled || !hasPreviousPage}
         onClick={() => onChange({ direction: ConnectionDirection.Backward, cursor: startCursor, curentPageCursor: CursorType.prev })}
       >
         <ChevronLeft />
       </IconButton>
       <IconButton
-        disabled={!hasNextPage}
+        disabled={disabled || !hasNextPage}
         onClick={() => onChange({ direction: ConnectionDirection.Forward, cursor: endCursor, curentPageCursor: CursorType.next })}
       >
         <ChevronRight />
       </IconButton>
       <IconButton
-        disabled={!hasNextPage}
+        disabled={disabled || !hasNextPage}
         onClick={() => onChange({ direction: ConnectionDirection.Backward, cursor: "", curentPageCursor: CursorType.end })}
       >
         <LastPage />
