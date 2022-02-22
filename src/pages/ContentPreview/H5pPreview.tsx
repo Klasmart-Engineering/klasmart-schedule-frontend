@@ -48,6 +48,7 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "column",
+    overflowX: "hidden",
     [breakpoints.down("md")]: {
       height: "auto",
       minHeight: "520px",
