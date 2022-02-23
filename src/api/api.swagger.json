@@ -5290,6 +5290,51 @@
         }
       }
     },
+    "/reports/learner_weekly_overview": {
+      "get": {
+        "description": "get student usage of material report",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "get student usage of material report",
+        "operationId": "getLearnerWeeklyReportOverview",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "time_range",
+            "name": "time_range",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.LearnerWeeklyReportOverview"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/reports/learning_summary/assignments": {
       "get": {
         "description": "query live classes summary",
@@ -11031,6 +11076,26 @@
         },
         "contents_used": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.LearnerWeeklyReportOverview": {
+      "type": "object",
+      "properties": {
+        "above_expectation": {
+          "type": "number"
+        },
+        "attendees": {
+          "type": "integer"
+        },
+        "below_expectation": {
+          "type": "number"
+        },
+        "meet_expectation": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },

@@ -736,6 +736,14 @@ export interface EntityLearnerUsageResponse {
   contents_used?: number;
 }
 
+export interface EntityLearnerWeeklyReportOverview {
+  above_expectation?: number;
+  attendees?: number;
+  below_expectation?: number;
+  meet_expectation?: number;
+  status?: string;
+}
+
 export interface EntityLearningSummaryFilterWeek {
   week_end?: number;
   week_start?: number;
@@ -3928,6 +3936,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "POST",
         params,
         classes_assignments
+      ),
+
+    /**
+     * @tags reports
+     * @name getLearnerWeeklyReportOverview
+     * @summary get student usage of material report
+     * @request GET:/reports/learner_weekly_overview
+     * @description get student usage of material report
+     */
+    getLearnerWeeklyReportOverview: (query: { time_range: string }, params?: RequestParams) =>
+      this.request<EntityLearnerWeeklyReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learner_weekly_overview${this.addQueryParams(query)}`,
+        "GET",
+        params
       ),
 
     /**

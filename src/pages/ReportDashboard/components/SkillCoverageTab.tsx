@@ -27,18 +27,20 @@ const useStyles = makeStyles(() => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     width: "100%",
+    color: "#A5A5A5",
   },
   scoreValue: {
     fontSize: "30px",
     lineHeight: "35px",
+    fontWeight: "bold",
   },
   scoreContainer: {
     width: "38%",
-    marginTop: "19px",
+    marginTop: "10px",
     marginLeft: "25px",
   },
   scoreItem: {
-    marginBottom: "7px",
+    marginBottom: "12px",
   },
   reportBottom: {
     display: "flex",
@@ -151,6 +153,8 @@ export default function SkillCoverageTab() {
                       height={info.height}
                       value={_.sum(handleData) === 0 ? Array(3).fill(100 / 3) : handleData.map((item) => item.count || 0)}
                       colors={_.sum(handleData) === 0 ? Array<string>(3).fill("#eee") : COLORS}
+                      setRound
+                      barWidth={12}
                     />
                   </Box>
                 );
