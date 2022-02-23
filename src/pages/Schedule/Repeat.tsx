@@ -36,6 +36,9 @@ const useStyles = makeStyles(({ breakpoints }) =>
         boxShadow: "none",
         padding: "0px 20px 0px 20px !important",
       },
+      [breakpoints.down(350)]: {
+        width: document.body.clientWidth - 20 + "px",
+      },
       zIndex: 999,
     },
     formControl: {
