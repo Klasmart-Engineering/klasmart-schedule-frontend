@@ -989,14 +989,14 @@ export type GetClassByInfoQuery = { __typename?: "Query" } & {
                             edges?: Types.Maybe<
                               Array<
                                 Types.Maybe<
-                                  { __typename?: "UsersConnectionEdge" } & {
-                                    node?: Types.Maybe<
-                                      { __typename?: "UserConnectionNode" } & Pick<
-                                        Types.UserConnectionNode,
-                                        "id" | "givenName" | "familyName" | "status"
-                                      >
-                                    >;
-                                  }
+                                  { __typename?: "UsersConnectionEdge" } & Pick<Types.UsersConnectionEdge, "cursor"> & {
+                                      node?: Types.Maybe<
+                                        { __typename?: "UserConnectionNode" } & Pick<
+                                          Types.UserConnectionNode,
+                                          "id" | "givenName" | "familyName" | "status"
+                                        >
+                                      >;
+                                    }
                                 >
                               >
                             >;
@@ -1013,14 +1013,14 @@ export type GetClassByInfoQuery = { __typename?: "Query" } & {
                             edges?: Types.Maybe<
                               Array<
                                 Types.Maybe<
-                                  { __typename?: "UsersConnectionEdge" } & {
-                                    node?: Types.Maybe<
-                                      { __typename?: "UserConnectionNode" } & Pick<
-                                        Types.UserConnectionNode,
-                                        "id" | "givenName" | "familyName" | "status"
-                                      >
-                                    >;
-                                  }
+                                  { __typename?: "UsersConnectionEdge" } & Pick<Types.UsersConnectionEdge, "cursor"> & {
+                                      node?: Types.Maybe<
+                                        { __typename?: "UserConnectionNode" } & Pick<
+                                          Types.UserConnectionNode,
+                                          "id" | "givenName" | "familyName" | "status"
+                                        >
+                                      >;
+                                    }
                                 >
                               >
                             >;
@@ -3002,6 +3002,7 @@ export const GetClassByInfoDocument = gql`
           studentsConnection(filter: $studentFilter, cursor: $studentCursor, direction: $studentDirection) {
             totalCount
             edges {
+              cursor
               node {
                 id
                 givenName
@@ -3019,6 +3020,7 @@ export const GetClassByInfoDocument = gql`
           teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: $teacherDirection) {
             totalCount
             edges {
+              cursor
               node {
                 id
                 givenName

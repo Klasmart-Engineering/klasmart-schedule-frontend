@@ -2946,6 +2946,8 @@ export type UserFilter = {
   email?: Maybe<StringFilter>;
   familyName?: Maybe<StringFilter>;
   givenName?: Maybe<StringFilter>;
+  /** Filter users on the grades assigned to the classes they're a member of */
+  gradeId?: Maybe<UuidFilter>;
   organizationId?: Maybe<UuidFilter>;
   /** Note: use organizationUserStatus with organizationId filter to avoid duplicating users */
   organizationUserStatus?: Maybe<StringFilter>;
