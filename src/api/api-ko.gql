@@ -718,6 +718,7 @@ classesConnection(
         studentsConnection(filter: $studentFilter, cursor: $studentCursor, direction: $studentDirection) {
           totalCount
           edges {
+            cursor
             node {
               id
               givenName
@@ -735,6 +736,7 @@ classesConnection(
         teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: $teacherDirection) {
           totalCount
           edges {
+            cursor
             node {
               id
               givenName

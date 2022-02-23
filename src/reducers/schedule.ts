@@ -820,20 +820,37 @@ export const getSubjectByProgramId = createAsyncThunk<SubjectResourseResult, { p
 export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMockOptionsResponse, getScheduleParticipantsPayLoad>(
   "getParticipant",
   async ({ class_id }) => {
-    const { data } = await gqlapi.query<GetClassByInfoQuery, GetClassByInfoQueryVariables>({
-      query: GetClassByInfoDocument,
-      variables: {
-        filter: { id: { operator: UuidOperator.Eq, value: class_id } },
-        direction: ConnectionDirection.Forward,
-        studentFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
-        teacherFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
-      },
-    });
+    let studentsConnection: any[] = [];
+    let teachersConnection: any[] = [];
+
+    const getClassRoster = async (studentCursor: string, teacherCursor: string) => {
+      const { data } = await gqlapi.query<GetClassByInfoQuery, GetClassByInfoQueryVariables>({
+        query: GetClassByInfoDocument,
+        variables: {
+          filter: { id: { operator: UuidOperator.Eq, value: class_id } },
+          direction: ConnectionDirection.Forward,
+          studentFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
+          teacherFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
+          studentCursor: studentCursor,
+          teacherCursor: teacherCursor,
+        },
+      });
+      const studentHasNextPage = data.classesConnection?.edges![0]?.node?.studentsConnection?.pageInfo?.hasNextPage;
+      const teacherHasNextPage = data.classesConnection?.edges![0]?.node?.teachersConnection?.pageInfo?.hasNextPage;
+      const studentEdge = data.classesConnection?.edges![0]?.node?.studentsConnection?.edges;
+      const teacherEdge = data.classesConnection?.edges![0]?.node?.teachersConnection?.edges;
+      const studentItem = studentEdge && studentEdge[studentEdge?.length - 1];
+      const teacherItem = teacherEdge && teacherEdge[teacherEdge?.length - 1];
+      studentsConnection = studentsConnection.concat(studentEdge);
+      teachersConnection = teachersConnection.concat(teacherEdge);
+      if (studentHasNextPage || teacherHasNextPage) await getClassRoster(studentItem?.cursor ?? "", teacherItem?.cursor ?? "");
+    };
+
+    await getClassRoster("", "");
+
     const participantList: {
       class: { teachers: { user_id: string; user_name: string }[]; students: { user_id: string; user_name: string }[] };
     } = { class: { teachers: [], students: [] } };
-    const studentsConnection = data?.classesConnection?.edges![0]?.node?.studentsConnection?.edges;
-    const teachersConnection = data?.classesConnection?.edges![0]?.node?.teachersConnection?.edges;
     studentsConnection?.forEach((student) => {
       if (student?.node?.status === "active")
         participantList.class.students.push({
