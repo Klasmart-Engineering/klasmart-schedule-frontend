@@ -1953,7 +1953,7 @@ const { actions, reducer } = createSlice({
         item.students?.map((val) =>
           stuList.push({
             id: val?.user_id!,
-            name: val?.full_name!,
+            name: val?.user_name!,
           })
         )
       );
@@ -1972,7 +1972,7 @@ const { actions, reducer } = createSlice({
         item.students?.map((val) =>
           stuList.push({
             id: val?.user_id!,
-            name: val?.full_name!,
+            name: val?.user_name!,
           })
         )
       );
@@ -1991,11 +1991,12 @@ const { actions, reducer } = createSlice({
         item.students?.map((val) =>
           stuList.push({
             id: val?.user_id!,
-            name: val?.full_name!,
+            name: val?.user_name!,
           })
         )
       );
       const studentName = stuList?.find((val) => val.id === payload?.request?.student_id)?.name || "";
+
       if (payload?.items?.length === 4) {
         state.fourWeekslearnOutcomeAchievementMassage = getLearnOutcomeAchievementFeedback(payload?.items, studentName);
       }

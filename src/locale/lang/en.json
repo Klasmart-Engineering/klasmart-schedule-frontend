@@ -1082,5 +1082,7 @@
   "report_label_covered": "Covered",
   "report_label_above": "Above",
   "report_label_meets": "Meets",
-  "report_label_below": "Below"
+  "report_label_below": "Below",
+  "schedule_study_due_on": "Due on",
+  "library_label_organization_id": "Organization ID"
 }

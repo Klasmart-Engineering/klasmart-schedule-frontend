@@ -4,7 +4,7 @@ import PermissionType from "@api/PermissionType";
 import { ContentType } from "@api/type";
 import { usePermission } from "@hooks/usePermission";
 import { t } from "@locale/LocaleManager";
-import { Box } from "@material-ui/core";
+import { Box, useMediaQuery, useTheme } from "@material-ui/core";
 import {
   approveContent,
   deleteContent,
@@ -55,6 +55,8 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   const content_type = contentPreview.content_type;
   const history = useHistory();
   const perm = usePermission([PermissionType.attend_live_class_as_a_teacher_186]);
+  const defaultTheme = useTheme();
+  const md = useMediaQuery(defaultTheme.breakpoints.down("md"));
   const handleDelete = async () => {
     await dispatch(deleteContent({ id, type: "delete" }));
     history.go(-1);
@@ -121,20 +123,30 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
     }
   };
   const leftside = (
-    <Box style={{ padding: 12 }}>
+    <Box style={{ padding: 12, overflowX: "hidden" }}>
       <ContentPreviewHeader
         tab={tab}
         contentPreview={contentPreview}
         content_type={content_type}
         onClose={handleClose}
         onChangeTab={handleChangeTab}
+        md={md}
+        permission={contentPreview.permission}
+        author={author}
+        isMine={contentPreview.is_mine}
+        publish_status={contentPreview.publish_status}
+        onDelete={handleDelete}
+        onPublish={handlePublish}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        onEdit={handleEdit}
       />
       {tab === TabValue.details ? (
         <Detail contentPreview={contentPreview} />
       ) : (
         <LearningOutcome list={contentPreview.outcome_entities || []} />
       )}
-      {!sid && tab === TabValue.details && !program_group && (
+      {!sid && tab === TabValue.details && !program_group && !md && (
         <OperationBtn
           permission={contentPreview.permission}
           author={author}
