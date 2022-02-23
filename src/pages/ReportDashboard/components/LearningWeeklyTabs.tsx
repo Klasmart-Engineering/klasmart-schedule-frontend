@@ -1,3 +1,4 @@
+import { EntityLearnerWeeklyReportOverview } from "@api/api.auto";
 import { t } from "@locale/LocaleManager";
 import { Box, Grid, makeStyles } from "@material-ui/core";
 import { ReportAchievementList } from "@pages/ReportAchievementList";
@@ -16,6 +17,18 @@ const useStyles = makeStyles(() => ({
     padding: "0px 19px 19px",
     background: "#fff",
   },
+  titleTip: {
+    height: "0px",
+    lineHeight: "47px",
+    fontSize: "12px",
+    color: "#6D8199",
+  },
+  scoreContainer: {
+    width: "25%",
+    marginTop: "36px",
+    marginLeft: "25px",
+    marginRight: "15px",
+  },
   scoreName: {
     lineHeight: "14px",
     whiteSpace: "nowrap",
@@ -30,47 +43,40 @@ const useStyles = makeStyles(() => ({
     lineHeight: "35px",
     fontWeight: "bold",
   },
-  scoreContainer: {
-    width: "25%",
-    marginTop: "36px",
-    marginLeft: "25px",
-    marginRight: "15px",
-  },
   scoreItem: {
     marginBottom: "12px",
-  },
-  titleTip: {
-    height: "0px",
-    lineHeight: "47px",
-    fontSize: "12px",
-    color: "#6D8199",
   },
 }));
 
 const COLORS = ["#3ab8f3", "#ffd038", "#e80861"];
 
-export default function LearningOutcomeTabs() {
+const computeDatum = (value: number | undefined, count: number) => {
+  return count === 0 ? 0 : Math.floor(((value || 0) / count) * 100);
+};
+export default function LearningWeeklyTabs() {
   const css = useStyles();
-  const { achievementCounts } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const learningWeeklyOverview: EntityLearnerWeeklyReportOverview = useSelector<RootState, RootState["report"]>(
+    (state) => state.report
+  ).learningWeeklyOverview;
   const count =
-    (achievementCounts.achieved_above_count || 0) +
-    (achievementCounts.achieved_below_count || 0) +
-    (achievementCounts.achieved_meet_count || 0);
+    (learningWeeklyOverview.above_expectation || 0) +
+    (learningWeeklyOverview.meet_expectation || 0) +
+    (learningWeeklyOverview.below_expectation || 0);
   const handleData = [
     {
       name: t("report_label_above"),
-      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_above_count || 0) / count) * 100),
+      count: computeDatum(learningWeeklyOverview.above_expectation, count),
     },
     {
       name: t("report_label_meets"),
-      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_meet_count || 0) / count) * 100),
+      count: computeDatum(learningWeeklyOverview.meet_expectation, count),
     },
     {
       name: t("report_label_below"),
       count: 0,
     },
   ];
-  handleData[2].count = achievementCounts.achieved_below_count === 0 ? 0 : 100 - handleData[0].count - handleData[1].count;
+  handleData[2].count = count === 0 ? 0 : 100 - handleData[0].count - handleData[1].count;
 
   const renderScore = (name: string, number: number, color: string, i: number) => {
     return (
@@ -88,9 +94,9 @@ export default function LearningOutcomeTabs() {
   const renderCountNumber = () => {
     return (
       <Box display={"flex"} flexDirection={"column"} alignItems={"center"} position={"absolute"}>
-        <Box color={"#777"}>{t("report_label_covered")}</Box>
+        <Box color={"#777"}>{t("assess_detail_attendance")}</Box>
         <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
-          {achievementCounts.covered_learn_outcome_count}
+          {learningWeeklyOverview.attendees}
         </Box>
       </Box>
     );
@@ -131,7 +137,7 @@ export default function LearningOutcomeTabs() {
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">
-          <BottomButton text={t("report_label_learning_outcome_report")} to={ReportAchievementList.routeBasePath} marginTop={20} />
+          <BottomButton text={t("report_learning_summary_report")} to={ReportAchievementList.routeBasePath} marginTop={20} />
         </Grid>
       </Grid>
     </Grid>
