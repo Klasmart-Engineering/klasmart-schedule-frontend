@@ -51,19 +51,19 @@ const Row = (props: {
   return (
     <React.Fragment>
       <TableRow style={{ height: "64px" }}>
-        <TableCell align="center" component="th" scope="row" style={{ width: "250px" }}>
+        <TableCell align="center" component="th" scope="row" style={{ maxWidth: "250px" }}>
           {className}
         </TableCell>
-        <TableCell align="center" style={{ width: "150px" }}>
+        <TableCell align="center" style={{ maxWidth: "150px" }}>
           {row?.total}
         </TableCell>
-        <TableCell align="center" style={{ width: "150px" }}>
+        <TableCell align="center" style={{ maxWidth: "150px" }}>
           {Math.floor((row?.durations_ratio?.[0].ratio as number) * 100) + "%"}
         </TableCell>
-        <TableCell align="center" style={{ width: "150px" }}>
+        <TableCell align="center" style={{ maxWidth: "150px" }}>
           {Math.floor((row?.durations_ratio?.[1].ratio as number) * 100) + "%"}
         </TableCell>
-        <TableCell align="center" style={{ width: "150px" }}>
+        <TableCell align="center" style={{ maxWidth: "150px" }}>
           {Math.floor((row?.durations_ratio?.[2].ratio as number) * 100) + "%"}
         </TableCell>
         <TableCell

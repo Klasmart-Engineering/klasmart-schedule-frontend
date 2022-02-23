@@ -1,4 +1,5 @@
-import { Box, createStyles, makeStyles, Paper, Theme } from "@material-ui/core";
+import { Box, createStyles, makeStyles, Paper, Theme, Tooltip } from "@material-ui/core";
+import { Info } from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import PercentCircle from "../../../components/Chart/PercentCircle";
@@ -8,6 +9,7 @@ interface IProps {
   value: number;
   total: number;
   active?: boolean;
+  tip: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -48,8 +50,24 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export default function Statistics({ title, value, total, active }: IProps) {
+const useTooltipStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    arrow: {
+      color: theme.palette.common.black,
+    },
+    tooltip: {
+      backgroundColor: theme.palette.common.black,
+      maxWidth: 196,
+      padding: 10,
+      textAlign: "center",
+    },
+  })
+);
+
+export default function Statistics({ title, value, total, active, tip }: IProps) {
   const classes = useStyles();
+  const styles = useTooltipStyles();
+
   return (
     <Paper className={clsx(classes.container, active ? "active" : "")}>
       <Box className={clsx(classes.text, "text")}>
@@ -57,7 +75,7 @@ export default function Statistics({ title, value, total, active }: IProps) {
         <Box className={clsx(classes.value, "value")}>{total}</Box>
       </Box>
       <Box className={clsx(classes.chart, "chart")}>
-        <Box>
+        <Box style={{ position: "relative" }}>
           <PercentCircle
             width={90}
             height={90}
@@ -69,6 +87,16 @@ export default function Statistics({ title, value, total, active }: IProps) {
             colors={active ? ["#fff", "#4A9ADF"] : ["#0E78D5", "#E4E4E4"]}
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           />
+          <Tooltip
+            arrow
+            placement="top"
+            classes={styles}
+            title={tip}
+            aria-label="info"
+            style={{ position: "absolute", right: "-5px", top: "5px", fontSize: "18px", color: active ? "#fff" : "#818283" }}
+          >
+            <Info></Info>
+          </Tooltip>
         </Box>
       </Box>
     </Paper>
