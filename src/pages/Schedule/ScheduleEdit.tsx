@@ -284,13 +284,25 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     },
   },
   saveMb: {
-    width: "297px",
+    width: "70%",
     height: "50px",
     background: "#0E78D5",
     borderRadius: "8px",
     textAlign: "center",
     marginTop: "6px",
     fontWeight: 700,
+  },
+  repeatBoxMb: {
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
+    display: "flex",
+    zIndex: 99,
+    position: "fixed",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 }));
 
@@ -1359,7 +1371,7 @@ function EditBox(props: CalendarStateProps) {
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
 
-    mobile && showRepeatMb();
+    mobile && showRepeatMbHandle(event.target.checked);
   };
 
   const handleDueDateChange = (date: Date | null) => {
@@ -1725,6 +1737,7 @@ function EditBox(props: CalendarStateProps) {
   const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
   const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all", assumed: -1 });
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>();
+  const [showRepeatMb, setShowRepeatMb] = React.useState<boolean>(false);
   const handelSetProgramChildInfo = (data: GetProgramsQuery[]) => {
     setProgramChildInfo(data);
   };
@@ -1925,36 +1938,9 @@ function EditBox(props: CalendarStateProps) {
       .reverse();
   };
 
-  const showRepeatMb = () => {
-    changeModalDate({
-      openStatus: true,
-      enableCustomization: true,
-      customizeTemplate: (
-        <Box style={{ paddingBottom: "10px", paddingTop: "10px" }}>
-          <div style={{ textAlign: "end", paddingRight: "10px" }}>
-            <CloseIcon
-              onClick={() => {
-                setStatus({ ...checkedStatus, repeatCheck: false });
-                changeModalDate({ openStatus: false, enableCustomization: false });
-              }}
-            />
-          </div>
-          <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
-          <div style={{ textAlign: "center" }}>
-            <Button
-              className={css.saveMb}
-              color="primary"
-              variant="contained"
-              onClick={() => {
-                changeModalDate({ openStatus: false, enableCustomization: false });
-              }}
-            >
-              {d("OK").t("general_button_OK")}
-            </Button>
-          </div>
-        </Box>
-      ),
-    });
+  const showRepeatMbHandle = (show: boolean) => {
+    setShowRepeatMb(show);
+    document.getElementsByTagName("html")[0].style.overflow = show ? "hidden" : "auto";
   };
 
   return (
@@ -2560,7 +2546,7 @@ function EditBox(props: CalendarStateProps) {
             />
           </Box>
         )}
-        {checkedStatus.repeatCheck && (
+        {checkedStatus.repeatCheck && !mobile && (
           <Box className={css.repeatBox}>
             <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
           </Box>
@@ -2577,6 +2563,35 @@ function EditBox(props: CalendarStateProps) {
         setSearchName={setSearchName}
         searchName={name}
       />
+      {showRepeatMb && mobile && (
+        <div className={css.repeatBoxMb}>
+          <Box style={{ paddingBottom: "10px", paddingTop: "10px", backgroundColor: "white" }}>
+            <div style={{ textAlign: "end", paddingRight: "10px" }}>
+              <CloseIcon
+                onClick={() => {
+                  setStatus({ ...checkedStatus, repeatCheck: false });
+                  showRepeatMbHandle(false);
+                }}
+              />
+            </div>
+            <div style={{ maxHeight: window.innerHeight - 200 + "px", overflow: "auto" }}>
+              <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Button
+                className={css.saveMb}
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  showRepeatMbHandle(false);
+                }}
+              >
+                {d("OK").t("general_button_OK")}
+              </Button>
+            </div>
+          </Box>
+        </div>
+      )}
     </ThemeProvider>
   );
 }
