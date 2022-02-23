@@ -1,7 +1,6 @@
 import { OrganizationSortBy } from "@api/api-ko-schema.auto";
 import { t } from "@locale/LocaleManager";
 import {
-  Box,
   Checkbox,
   makeStyles,
   SvgIcon,
@@ -21,6 +20,10 @@ import { ReactComponent as sortDesc } from "../../assets/icons/sortDesc.svg";
 import { CheckboxGroupContext } from "../../components/CheckboxGroup";
 import { CursorType, OrgInfoProps } from "./OrganizationList";
 const useOrgStyles = makeStyles(() => ({
+  table: {
+    minHeight: 440,
+    overflow: "auto",
+  },
   tableHead: {
     backgroundColor: "#F2F5F7",
     "& .MuiTableCell-root": {
@@ -31,12 +34,16 @@ const useOrgStyles = makeStyles(() => ({
     padding: 0,
   },
   tableBorder: {
-    padding: 10,
+    padding: "0px 10px",
     borderRight: "1px solid rgba(0, 0, 0, .12)",
   },
   tableWidth: {
-    maxWidth: 270,
-    padding: 10,
+    maxWidth: 260,
+    padding: "0px 10px",
+  },
+  displayFlex: {
+    justifyContent: "center",
+    display: "flex",
   },
 }));
 interface OrgsTableProps {
@@ -54,10 +61,10 @@ export function OrgsTable(props: OrgsTableProps) {
   const { list, selectedContentGroupContext, onSortOrgList, handleChangeBeValues, sortType, nameOrder, emailOrder, render, disabled } =
     props;
   const css = useOrgStyles();
-  const sortIconStyle = { display: "flex", cursor: disabled ? "default" : "pointer" };
+  const sortIconStyle = { display: "flex", alignItems: "center", cursor: disabled ? "default" : "pointer" };
   const tabelCellStyle = { fontSize: 14, color: disabled ? "#999" : "rgba(0, 0, 0, 0.87)" };
   const rows = list?.map((item, idx) => (
-    <TableRow key={item.organization_id}>
+    <TableRow key={item.organization_id} style={{ height: 40 }}>
       <TableCell className={css.tableCell}>
         {
           <Checkbox
@@ -69,6 +76,7 @@ export function OrgsTable(props: OrgsTableProps) {
               selectedContentGroupContext.registerChange(e);
               handleChangeBeValues(item.organization_id, checked);
             }}
+            style={{ height: 20, padding: 5 }}
           />
         }
       </TableCell>
@@ -91,36 +99,36 @@ export function OrgsTable(props: OrgsTableProps) {
   ));
 
   return (
-    <TableContainer style={{ minHeight: 473, overflow: "auto" }}>
+    <TableContainer className={css.table}>
       <Table size="small">
         <TableHead className={css.tableHead}>
-          <TableRow>
+          <TableRow style={{ height: 40 }}>
             <TableCell align="center" style={{ width: 30 }}>
               {" "}
               {render}
             </TableCell>
             <TableCell align="center">{t("library_label_organization_id")}</TableCell>
             <TableCell align="center">
-              <Box display="flex" style={{ justifyContent: "center", cursor: "" }}>
+              <div className={css.displayFlex}>
                 <div style={sortIconStyle} onClick={() => !disabled && onSortOrgList(OrganizationSortBy.Name)}>
                   {t("library_label_organization")}
                   <SvgIcon
-                    style={{ marginTop: 1 }}
+                    style={{ marginTop: 5 }}
                     component={sortType === OrganizationSortBy.OwnerEmail ? SortSvg : nameOrder ? sortAsc : sortDesc}
                   />
                 </div>
-              </Box>
+              </div>
             </TableCell>
             <TableCell align="center">
-              <Box display="flex" style={{ justifyContent: "center" }}>
+              <div className={css.displayFlex}>
                 <div style={sortIconStyle} onClick={() => !disabled && onSortOrgList(OrganizationSortBy.OwnerEmail)}>
                   {t("library_label_org_owner_email")}
                   <SvgIcon
-                    style={{ marginTop: 1 }}
+                    style={{ marginTop: 5 }}
                     component={sortType === OrganizationSortBy.Name ? SortSvg : emailOrder ? sortAsc : sortDesc}
                   />
                 </div>
-              </Box>
+              </div>
             </TableCell>
           </TableRow>
         </TableHead>
