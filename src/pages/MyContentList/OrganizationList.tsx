@@ -55,8 +55,14 @@ const useStyles = makeStyles(() =>
     okBtn: {
       marginLeft: "40px !important",
     },
+    dialogTitle: {
+      padding: "10px 24px",
+      "& .MuiTypography-h6": {
+        fontWeight: 700,
+      },
+    },
     dialogContent: {
-      padding: "0px 24px",
+      padding: "0px 40px",
       borderBottom: "none",
     },
     tooltipIcon: {
@@ -67,17 +73,21 @@ const useStyles = makeStyles(() =>
     searchButon: {
       marginLeft: 10,
       minWidth: 95,
+      height: 28,
     },
     searchBar: {
       display: "flex",
       width: "60%",
+      "& .MuiOutlinedInput-inputMarginDense": {
+        padding: "4.5px 10.5px",
+      },
     },
     content: {
-      paddingTop: 6,
-      height: 521,
+      paddingTop: 10,
+      height: 490,
     },
     radio: {
-      // padding: "10px 0px",
+      padding: "11px 0px",
       margin: 0,
     },
   })
@@ -217,7 +227,7 @@ export function OrganizationList(props: OrganizationListProps) {
   };
   return (
     <Dialog open={open} maxWidth="md" fullWidth>
-      <DialogTitle style={{ padding: "10px 24px" }}>{d("Distribute").t("library_label_distribute")}</DialogTitle>
+      <DialogTitle className={css.dialogTitle}>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
           <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
@@ -306,6 +316,7 @@ export function OrganizationList(props: OrganizationListProps) {
                                     selectedContentGroupContext.registerAllChange(e);
                                     handleChangeAllBeValues(checked);
                                   }}
+                                  style={{ height: 20, padding: 5 }}
                                 />
                               }
                             />
@@ -332,7 +343,7 @@ export function OrganizationList(props: OrganizationListProps) {
           }
         </div>
       </DialogContent>
-      <DialogActions style={{ padding: "0px 24px 20px 0px" }}>
+      <DialogActions style={{ padding: "0px 40px 15px 0px" }}>
         <Button onClick={onClose} disableRipple={true} color="primary" variant="outlined">
           {d("CANCEL").t("general_button_CANCEL")}
         </Button>
