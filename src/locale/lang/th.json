@@ -1075,5 +1075,14 @@
   "schedule_popup_no_data_available": "ไม่มีข้อมูลที่สามารถใช้ได้",
   "schedule_popup_no_matching_result": "ไม่มีผลลัพธ์ที่ตรงกัน",
   "library_label_organization": "องค์กร",
-  "library_label_org_owner_email": "อีเมลเจ้าขององค์กร"
+  "library_label_org_owner_email": "อีเมลเจ้าขององค์กร",
+  "report_label_learning_outcome": "ผลการเรียนรู้ที่ได้รับ %",
+  "report_label_learning_outcome_report": "ผลสัมฤทธิ์ทางการเรียน",
+  "report_label_learning_outcome_info": "ตามผลการเรียนรู้ที่ครอบคลุมใน 7 วันที่ผ่านมา:\n <ul>\n <li> ประสบความสำเร็จอย่างมาก: ผู้เรียนที่ประสบความสำเร็จมากกว่า 80% ของผลลัพธ์การเรียนรู้\n </li>\n <li> สำเร็จต่ำ: ผู้เรียนที่ประสบความสำเร็จน้อยกว่า 50% ของผลการเรียนรู้\n </li>\n </ul>",
+  "report_label_covered": "ครอบคลุม",
+  "report_label_above": "ข้างต้น",
+  "report_label_meets": "พบกับ",
+  "report_label_below": "ด้านล่าง",
+  "schedule_study_due_on": "Due on",
+  "library_label_organization_id": "Organization ID"
 }
