@@ -17,7 +17,8 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     width: "100%",
     height: "calc(100% - 80px)",
     [breakpoints.down("md")]: {
-      minHeight: 866,
+      // 为适应手机端从866改为320
+      minHeight: 320,
     },
   },
 }));
