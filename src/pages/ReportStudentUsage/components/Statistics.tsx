@@ -1,5 +1,4 @@
-import { Box, createStyles, makeStyles, Paper, Theme, Tooltip } from "@material-ui/core";
-import { Info } from "@material-ui/icons";
+import { Box, createStyles, makeStyles, Paper, Theme } from "@material-ui/core";
 import clsx from "clsx";
 import React from "react";
 import PercentCircle from "../../../components/Chart/PercentCircle";
@@ -15,7 +14,7 @@ interface IProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: 220,
+      width: 228,
       height: 90,
       padding: 20,
       display: "flex",
@@ -46,27 +45,29 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: "bold",
     },
     chart: {
-      width: "40%",
+      // width: "40%",
+      width: "90px",
+      height: "90px",
     },
-  })
-);
-const useTooltipStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    arrow: {
-      color: theme.palette.common.black,
-    },
-    tooltip: {
-      backgroundColor: theme.palette.common.black,
-      maxWidth: 196,
-      padding: 10,
+    tipStyle: {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "63px",
+      height: "70px",
+      fontSize: "12px",
       textAlign: "center",
+      wordBreak: "break-word",
     },
   })
 );
 
 export default function Statistics({ title, value, total, active, tip }: IProps) {
   const classes = useStyles();
-  const styles = useTooltipStyles();
 
   return (
     <Paper className={clsx(classes.container, active ? "active" : "")}>
@@ -75,7 +76,7 @@ export default function Statistics({ title, value, total, active, tip }: IProps)
         <Box className={clsx(classes.value, "value")}>{total}</Box>
       </Box>
       <Box className={clsx(classes.chart, "chart")}>
-        <Box style={{ position: "relative" }}>
+        <Box style={{ position: "relative", height: "90px" }}>
           <PercentCircle
             width={90}
             height={90}
@@ -87,16 +88,9 @@ export default function Statistics({ title, value, total, active, tip }: IProps)
             colors={active ? ["#fff", "#4A9ADF"] : ["#0E78D5", "#E4E4E4"]}
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           />
-          <Tooltip
-            arrow
-            placement="top"
-            classes={styles}
-            title={tip}
-            aria-label="info"
-            style={{ position: "absolute", right: "-5px", top: "5px", fontSize: "18px", color: active ? "#fff" : "#818283" }}
-          >
-            <Info></Info>
-          </Tooltip>
+          <Box className={classes.tipStyle} style={{ color: active ? "#fff" : "#999999" }}>
+            {tip}
+          </Box>
         </Box>
       </Box>
     </Paper>
