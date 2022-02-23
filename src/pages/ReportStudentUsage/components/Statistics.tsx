@@ -88,7 +88,7 @@ export default function Statistics({ title, value, total, active, tip }: IProps)
             colors={active ? ["#fff", "#4A9ADF"] : ["#0E78D5", "#E4E4E4"]}
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           />
-          <Box className={classes.tipStyle} style={{ color: active ? "#fff" : "#999999" }}>
+          <Box className={classes.tipStyle} style={{ color: active ? "rgba(255, 255, 255, 0.5)" : "#999999" }}>
             {tip}
           </Box>
         </Box>
