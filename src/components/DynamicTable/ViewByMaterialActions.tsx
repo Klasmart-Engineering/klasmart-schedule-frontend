@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
 import { Box, Checkbox, FormControlLabel } from "@material-ui/core";
-import { d } from "../../locale/LocaleManager";
-import { EntityAssessmentDetailContentOutcome, EntityAssessmentStudentViewH5PItem } from "../../api/api.auto";
 import { cloneDeep, isEmpty } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
+import { EntityAssessmentDetailContentOutcome, EntityAssessmentStudentViewH5PItem } from "../../api/api.auto";
+import { d } from "../../locale/LocaleManager";
 import { BasicTableProps, formValueMethods } from "./types";
 
 interface AssessActionProps extends formValueMethods {

@@ -20,8 +20,7 @@ import {
   Tooltip,
   withStyles,
 } from "@material-ui/core";
-import { InfoOutlined } from "@material-ui/icons";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import { InfoOutlined, Search } from "@material-ui/icons";
 import { getOrgList } from "@reducers/content";
 import { RootState } from "@reducers/index";
 import { AsyncTrunkReturned } from "@reducers/type";
@@ -56,9 +55,15 @@ const useStyles = makeStyles(() =>
     okBtn: {
       marginLeft: "40px !important",
     },
+    dialogTitle: {
+      padding: "10px 24px",
+      "& .MuiTypography-h6": {
+        fontWeight: 700,
+      },
+    },
     dialogContent: {
-      padding: 0,
-      paddingLeft: 30,
+      padding: "0px 40px",
+      borderBottom: "none",
     },
     tooltipIcon: {
       color: "#666",
@@ -67,15 +72,23 @@ const useStyles = makeStyles(() =>
     },
     searchButon: {
       marginLeft: 10,
+      minWidth: 95,
+      height: 28,
     },
     searchBar: {
       display: "flex",
-      margin: " 0px 16px 10px",
+      width: "60%",
+      "& .MuiOutlinedInput-inputMarginDense": {
+        padding: "4.5px 10.5px",
+      },
     },
     content: {
-      borderLeft: "1px solid rgb(0,0,0,.12)",
       paddingTop: 10,
-      height: 620,
+      height: 490,
+    },
+    radio: {
+      padding: "11px 0px",
+      margin: 0,
     },
   })
 );
@@ -90,7 +103,7 @@ export enum CursorType {
   next = "next",
   end = "end",
 }
-export type CursorListProps = Pick<GetOrganizationsQueryVariables, "direction" | "cursor"> & {
+export type CursorListProps = Pick<GetOrganizationsQueryVariables, "direction" | "cursor" | "count"> & {
   curentPageCursor?: CursorType;
   sort?: OrganizationSortInput;
   search?: string;
@@ -108,7 +121,6 @@ export interface OrgsSortType {
   emailOrder: boolean;
   nameOrder: boolean;
 }
-const PAGESIZE = 10;
 export function OrganizationList(props: OrganizationListProps) {
   const css = useStyles();
   const { open, orgList, selectedOrg, onClose, onShareFolder } = props;
@@ -121,7 +133,8 @@ export function OrganizationList(props: OrganizationListProps) {
   );
   const [newSelectedOrgIds, setNewSelectedOrgIds] = useState(true);
   const [beValues, setBeValues] = useState(selectedOrg[0] === ShareScope.share_all ? [] : selectedOrg);
-  const [pageDesc, setPageDesc] = useState(`1-${orgListTotal > PAGESIZE ? PAGESIZE : orgListTotal}`);
+  const [pageSize] = useState(10);
+  const [pageDesc, setPageDesc] = useState(`1-${orgListTotal > pageSize ? pageSize : orgListTotal}`);
   const [orgsSort, setOrgsSort] = useState<OrgsSortType>({ sortType: OrganizationSortBy.Name, emailOrder: true, nameOrder: true });
   const [buttonSearch, setButtonSearch] = useState("");
   const inputSearch = watch()["inputSearch"] || "";
@@ -144,7 +157,7 @@ export function OrganizationList(props: OrganizationListProps) {
     setNewSelectedOrgIds(false);
   };
 
-  const searchOrgList = async ({ direction, cursor = "", curentPageCursor = CursorType.start, sort, search }: CursorListProps) => {
+  const searchOrgList = async ({ direction, cursor = "", curentPageCursor = CursorType.start, sort, search, count }: CursorListProps) => {
     const { sortType, emailOrder, nameOrder } = orgsSort;
     const searchValue = search ?? buttonSearch;
     search !== undefined && setButtonSearch(inputSearch);
@@ -157,10 +170,10 @@ export function OrganizationList(props: OrganizationListProps) {
     };
 
     const { payload } = (await dispatch(
-      getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: 10 })
+      getOrgList({ metaLoading: true, cursor, direction, sort: sort || initSort, searchValue, count: count || pageSize })
     )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getOrgList>>;
     if (!payload) return;
-    setPageDesc(getPageDesc(curentPageCursor, payload.orgListTotal, pageDesc));
+    setPageDesc(getPageDesc(curentPageCursor, count || pageSize, payload.orgListTotal, pageDesc));
     reset({
       ...getValues(),
       SELECTED_ORG: getDefaultValue(payload.orgs as OrgInfoProps[], beValues),
@@ -214,11 +227,13 @@ export function OrganizationList(props: OrganizationListProps) {
   };
   return (
     <Dialog open={open} maxWidth="md" fullWidth>
-      <DialogTitle>{d("Distribute").t("library_label_distribute")}</DialogTitle>
+      <DialogTitle className={css.dialogTitle}>{d("Distribute").t("library_label_distribute")}</DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
-        <div style={{ display: "flex" }}>
-          <RadioGroup style={{ minWidth: 250, marginTop: 30 }} value={radioValue} onChange={(e) => handleChange(e.target.value)}>
+        <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
+          <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
             <FormControlLabel
+              className={css.radio}
+              style={{ borderBottom: "1px solid rgba(0, 0, 0, .12)" }}
               value={ShareScope.share_all}
               control={<Radio />}
               label={
@@ -236,16 +251,40 @@ export function OrganizationList(props: OrganizationListProps) {
               }
             />
             <FormControlLabel
+              className={css.radio}
               value={ShareScope.share_to_org}
               control={<Radio />}
               label={
                 <>
                   <span>{d("Select Organizations").t("library_label_select_organizations")}</span>{" "}
-                  <ArrowForwardIosIcon fontSize="small" className={css.tooltipIcon} />
                 </>
               }
             />
           </RadioGroup>
+          <div className={css.searchBar}>
+            <Controller
+              as={FormattedTextField}
+              control={control}
+              name="inputSearch"
+              size="small"
+              encode={frontTrim}
+              decode={frontTrim}
+              defaultValue={""}
+              fullWidth
+              onKeyPress={handleKeyPress}
+              placeholder={d("Search").t("library_label_search")}
+              disabled={radioValue !== ShareScope.share_to_org}
+            />
+            <Button
+              className={css.searchButon}
+              variant="contained"
+              color="primary"
+              disabled={radioValue !== ShareScope.share_to_org}
+              onClick={() => searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch })}
+            >
+              <Search fontSize="small" /> {d("Search").t("library_label_search")}{" "}
+            </Button>
+          </div>
           {
             <div style={{ flex: 1 }}>
               <Controller
@@ -259,68 +298,41 @@ export function OrganizationList(props: OrganizationListProps) {
                     {...props}
                     render={(selectedContentGroupContext) => (
                       <div {...{ ref }} className={css.content}>
-                        <div className={css.searchBar}>
-                          <Controller
-                            as={FormattedTextField}
-                            control={control}
-                            name="inputSearch"
-                            size="small"
-                            encode={frontTrim}
-                            decode={frontTrim}
-                            defaultValue={""}
-                            fullWidth
-                            onKeyPress={handleKeyPress}
-                            placeholder={d("Search").t("library_label_search")}
-                            disabled={radioValue !== ShareScope.share_to_org}
-                          />
-                          <Button
-                            className={css.searchButon}
-                            variant="contained"
-                            color="primary"
-                            disabled={radioValue !== ShareScope.share_to_org}
-                            onClick={() => searchOrgList({ direction: ConnectionDirection.Forward, search: inputSearch })}
-                          >
-                            {d("Search").t("library_label_search")}{" "}
-                          </Button>
-                        </div>
-                        {radioValue === ShareScope.share_to_org && (
+                        {orgList?.length > 0 ? (
                           <>
-                            <div style={{ minHeight: 520 }}>
-                              {orgList?.length > 0 ? (
-                                <OrgsTable
-                                  {...orgsSort}
-                                  onSortOrgList={handleSortOrgList}
-                                  handleChangeBeValues={handleChangeBeValues}
-                                  list={orgList}
-                                  selectedContentGroupContext={selectedContentGroupContext}
+                            <OrgsTable
+                              {...orgsSort}
+                              disabled={radioValue !== ShareScope.share_to_org}
+                              onSortOrgList={handleSortOrgList}
+                              handleChangeBeValues={handleChangeBeValues}
+                              list={orgList}
+                              selectedContentGroupContext={selectedContentGroupContext}
+                              render={
+                                <Checkbox
+                                  disabled={radioValue !== ShareScope.share_to_org}
+                                  color="primary"
+                                  checked={selectedContentGroupContext.isAllvalue}
+                                  onChange={(e, checked) => {
+                                    selectedContentGroupContext.registerAllChange(e);
+                                    handleChangeAllBeValues(checked);
+                                  }}
+                                  style={{ height: 20, padding: 5 }}
                                 />
-                              ) : (
-                                resultsTip
-                              )}
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    color="primary"
-                                    checked={selectedContentGroupContext.isAllvalue}
-                                    onChange={(e, checked) => {
-                                      selectedContentGroupContext.registerAllChange(e);
-                                      handleChangeAllBeValues(checked);
-                                    }}
-                                  />
-                                }
-                                style={{ marginLeft: 4 }}
-                                label={d("All").t("library_label_all_organizations")}
-                              />
-                              <CursorPagination
-                                pageDesc={pageDesc}
-                                total={orgListTotal}
-                                pageInfo={orgListPageInfo}
-                                onChange={searchOrgList}
-                              />
-                            </div>
+                              }
+                            />
+                            <CursorPagination
+                              pageDesc={pageDesc}
+                              total={orgListTotal}
+                              pageInfo={orgListPageInfo}
+                              onChange={searchOrgList}
+                              disabled={radioValue !== ShareScope.share_to_org}
+                              // pageSize={pageSize}
+                              // rowsPerPages={[10, 25, 50]}
+                              // onChangePageSize={setPageSize}
+                            />
                           </>
+                        ) : (
+                          resultsTip
                         )}
                       </div>
                     )}
@@ -331,7 +343,7 @@ export function OrganizationList(props: OrganizationListProps) {
           }
         </div>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ padding: "0px 40px 15px 0px" }}>
         <Button onClick={onClose} disableRipple={true} color="primary" variant="outlined">
           {d("CANCEL").t("general_button_CANCEL")}
         </Button>

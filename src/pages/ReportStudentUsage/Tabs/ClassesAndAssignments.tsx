@@ -103,18 +103,21 @@ export default function ClassesAndAssignments() {
         total: overview[0]?.count || 0,
         value: overview[0]?.ratio || 0,
         id: "live",
+        tip: t("report_label_overall_attendance"),
       },
       {
         title: t("report_student_usage_study"),
         total: overview[1]?.count || 0,
         value: overview[1]?.ratio || 0,
         id: "study",
+        tip: t("report_label_overall_completion"),
       },
       {
         title: t("report_student_usage_home_fun"),
         total: overview[2]?.count || 0,
         value: overview[2]?.ratio || 0,
         id: "home_fun",
+        tip: t("report_label_overall_completion"),
       },
     ];
   }, [overview]);

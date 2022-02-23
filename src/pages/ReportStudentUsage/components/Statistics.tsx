@@ -8,12 +8,13 @@ interface IProps {
   value: number;
   total: number;
   active?: boolean;
+  tip: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: 220,
+      width: 228,
       height: 90,
       padding: 20,
       display: "flex",
@@ -44,12 +45,30 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: "bold",
     },
     chart: {
-      width: "40%",
+      // width: "40%",
+      width: "90px",
+      height: "90px",
+    },
+    tipStyle: {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "63px",
+      height: "70px",
+      fontSize: "12px",
+      textAlign: "center",
+      wordBreak: "break-word",
     },
   })
 );
-export default function Statistics({ title, value, total, active }: IProps) {
+
+export default function Statistics({ title, value, total, active, tip }: IProps) {
   const classes = useStyles();
+
   return (
     <Paper className={clsx(classes.container, active ? "active" : "")}>
       <Box className={clsx(classes.text, "text")}>
@@ -57,7 +76,7 @@ export default function Statistics({ title, value, total, active }: IProps) {
         <Box className={clsx(classes.value, "value")}>{total}</Box>
       </Box>
       <Box className={clsx(classes.chart, "chart")}>
-        <Box>
+        <Box style={{ position: "relative", height: "90px" }}>
           <PercentCircle
             width={90}
             height={90}
@@ -69,6 +88,9 @@ export default function Statistics({ title, value, total, active }: IProps) {
             colors={active ? ["#fff", "#4A9ADF"] : ["#0E78D5", "#E4E4E4"]}
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           />
+          <Box className={classes.tipStyle} style={{ color: active ? "rgba(255, 255, 255, 0.5)" : "#999999" }}>
+            {tip}
+          </Box>
         </Box>
       </Box>
     </Paper>
