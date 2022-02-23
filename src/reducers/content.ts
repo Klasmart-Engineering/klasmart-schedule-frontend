@@ -944,14 +944,14 @@ export enum Region {
 }
 
 type IQueryGetOrgListResult = AsyncReturnType<typeof api.organizationsRegion.getOrganizationByHeadquarterForDetails>["orgs"];
-export function getOrgsFilter(searchValue: string, orgs: EntityRegionOrganizationInfo[] = []) {
+export function getOrgsFilter(searchValue: string, myOrgId: string, orgs: EntityRegionOrganizationInfo[] = []) {
   let filter: OrganizationFilter = {
     AND: [
       { status: { operator: StringOperator.Eq, value: "active" } },
+      { id: { operator: UuidOperator.Neq, value: myOrgId } },
       {
         OR: [
-          // 2022/1/21 todo
-          // { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
+          { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
           { name: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
         ],
       },
@@ -960,6 +960,16 @@ export function getOrgsFilter(searchValue: string, orgs: EntityRegionOrganizatio
   if (orgs.length) {
     const idFilter: OrganizationFilter = { OR: orgs.map((item) => ({ id: { operator: UuidOperator.Eq, value: item.organization_id } })) };
     filter = { AND: filter.AND?.concat([idFilter]) };
+  }
+  if (/\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/.test(searchValue)) {
+    // 判断是否是uuid
+    filter = {
+      AND: [
+        { status: { operator: StringOperator.Eq, value: "active" } },
+        { id: { operator: UuidOperator.Neq, value: myOrgId } },
+        { id: { operator: UuidOperator.Eq, value: searchValue } },
+      ],
+    };
   }
   return filter;
 }
@@ -975,10 +985,13 @@ type IGetOrgListParams = Omit<GetOrganizationsQueryVariables, "filter"> &
     orgs?: EntityRegionOrganizationInfo[];
   };
 
-export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParams>(
+export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParams, { state: RootState }>(
   "content/getOrgList",
-  async ({ metaLoading, searchValue, orgs, ...restorganizationQueryVariables }) => {
-    const filter = getOrgsFilter(searchValue, orgs);
+  async ({ metaLoading, searchValue, orgs, ...restorganizationQueryVariables }, { getState }) => {
+    const {
+      content: { myOrgId },
+    } = getState();
+    const filter = getOrgsFilter(searchValue, myOrgId, orgs);
     const { data } = await gqlapi.query<GetOrganizationsQuery, GetOrganizationsQueryVariables>({
       query: GetOrganizationsDocument,
       variables: { ...restorganizationQueryVariables, filter },
@@ -986,8 +999,7 @@ export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParam
     const orgList = data.organizationsConnection?.edges?.map((item) => ({
       organization_id: item?.node?.id,
       organization_name: item?.node?.name,
-      // 2022/1/21 todo
-      // email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
+      email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
     })) as IQueryGetOrgListResult;
     const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
     const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);

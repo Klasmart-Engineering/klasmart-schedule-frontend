@@ -1,7 +1,7 @@
-import { ApiPullOutcomeSetResponse } from "../api/api.auto";
+import { ApiPullOutcomeSetResponse, ModelOutcomeDetailView } from "../api/api.auto";
 import { GetOutcomeDetail, OutcomeSetResult } from "../api/type";
 
-export const modelOutcomeDetail = (outcomeDetail: GetOutcomeDetail) => {
+export const modelOutcomeDetail = (outcomeDetail: ModelOutcomeDetailView) => {
   const afterData = JSON.parse(JSON.stringify(outcomeDetail));
   const { program, subject, developmental, skills, age, grade } = outcomeDetail;
   if (program && program.length) {
