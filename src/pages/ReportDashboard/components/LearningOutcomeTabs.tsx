@@ -67,10 +67,14 @@ export default function LearningOutcomeTabs() {
     },
     {
       name: t("report_label_below"),
-      count: 0,
+      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_below_count || 0) / count) * 100),
     },
   ];
-  handleData[2].count = achievementCounts.achieved_below_count === 0 ? 0 : 100 - handleData[0].count - handleData[1].count;
+
+  const filterData = handleData.filter((item) => item.count);
+  if (filterData.length === 2) {
+    filterData[1].count = 100 - filterData[0].count;
+  }
 
   const renderScore = (name: string, number: number, color: string, i: number) => {
     return (

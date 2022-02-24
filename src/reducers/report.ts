@@ -228,10 +228,10 @@ const initialState: IreportState = {
   achievementDetail: [],
   student_name: "",
   learningWeeklyOverview: {
-    above_expectation: 0,
+    num_above: 0,
     attendees: 0,
-    below_expectation: 0,
-    meet_expectation: 0,
+    num_below: 0,
+    num_meet: 0,
     status: "",
   },
   reportMockOptions: {
