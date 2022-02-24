@@ -737,10 +737,16 @@ export interface EntityLearnerUsageResponse {
 }
 
 export interface EntityLearnerWeeklyReportOverview {
-  above_expectation?: number;
   attendees?: number;
-  below_expectation?: number;
-  meet_expectation?: number;
+
+  /** num of above student */
+  num_above?: number;
+
+  /** num of below student */
+  num_below?: number;
+
+  /** num of meet student */
+  num_meet?: number;
   status?: string;
 }
 

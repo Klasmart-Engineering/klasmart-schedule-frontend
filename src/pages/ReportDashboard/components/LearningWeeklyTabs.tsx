@@ -58,26 +58,26 @@ export default function LearningWeeklyTabs() {
   const learningWeeklyOverview: EntityLearnerWeeklyReportOverview = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   ).learningWeeklyOverview;
-  const count =
-    (learningWeeklyOverview.above_expectation || 0) +
-    (learningWeeklyOverview.meet_expectation || 0) +
-    (learningWeeklyOverview.below_expectation || 0);
-  const handleData = [
+  const count = (learningWeeklyOverview.num_above || 0) + (learningWeeklyOverview.num_meet || 0) + (learningWeeklyOverview.num_below || 0);
+  let handleData = [
     {
       name: t("report_label_above"),
-      count: computeDatum(learningWeeklyOverview.above_expectation, count),
+      count: computeDatum(learningWeeklyOverview.num_above, count),
     },
     {
       name: t("report_label_meets"),
-      count: computeDatum(learningWeeklyOverview.meet_expectation, count),
+      count: computeDatum(learningWeeklyOverview.num_meet, count),
     },
     {
       name: t("report_label_below"),
-      count: 0,
+      count: computeDatum(learningWeeklyOverview.num_below, count),
     },
   ];
-  handleData[2].count = count === 0 ? 0 : 100 - handleData[0].count - handleData[1].count;
 
+  const filterData = handleData.filter((item) => item.count);
+  if (filterData.length === 2) {
+    filterData[1].count = 100 - filterData[0].count;
+  }
   const renderScore = (name: string, number: number, color: string, i: number) => {
     return (
       <Grid container direction="column" className={css.scoreItem} key={i}>

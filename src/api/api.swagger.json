@@ -11082,17 +11082,20 @@
     "entity.LearnerWeeklyReportOverview": {
       "type": "object",
       "properties": {
-        "above_expectation": {
-          "type": "number"
-        },
         "attendees": {
           "type": "integer"
         },
-        "below_expectation": {
-          "type": "number"
+        "num_above": {
+          "description": "num of above student",
+          "type": "integer"
         },
-        "meet_expectation": {
-          "type": "number"
+        "num_below": {
+          "description": "num of below student",
+          "type": "integer"
+        },
+        "num_meet": {
+          "description": "num of meet student",
+          "type": "integer"
         },
         "status": {
           "type": "string"
