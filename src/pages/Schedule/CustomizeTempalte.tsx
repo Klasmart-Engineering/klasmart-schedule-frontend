@@ -335,11 +335,12 @@ function CustomizeTempalteMb(props: InfoMbProps) {
               visibility: ScheduleViewInfo.class_type_label?.id === "Homework" ? "visible" : "hidden",
             }}
           >
-            Due On {timestampToTime(ScheduleViewInfo.due_at as number, true)}
+            {d("Due on").t("schedule_study_due_on")} {timestampToTime(ScheduleViewInfo.due_at as number, true)}
           </span>
           <span
             className={classes.timeMb}
             style={{
+              display: ScheduleViewInfo.class_type_label?.id === "Homework" ? "none" : "block",
               visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
             }}
           >
