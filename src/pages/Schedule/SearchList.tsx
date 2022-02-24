@@ -234,7 +234,7 @@ export default function SearchList(props: SearchListProps) {
         mobile ? (
           <Box>
             {searchScheduleList.map((item: EntityScheduleSearchView, index: number) => (
-              <div style={{ padding: "0px 16px 0px 16px" }}>
+              <div style={{ padding: "0px 16px 0px 16px" }} onClick={() => previewSchedule(item.id as unknown as number)}>
                 {isTitleSame(item, index) && (
                   <p style={{ fontSize: "16px", fontWeight: 700 }}>
                     {timeFormat((item.start_at! > 0 ? item.start_at : item.due_at) as number, "dateDay")}
@@ -244,7 +244,10 @@ export default function SearchList(props: SearchListProps) {
                   className={classes.searchItemMb}
                   style={{ backgroundColor: CustomEvent(item.class_type), borderRadius: "12px", marginTop: "10px" }}
                 >
-                  <span style={{ fontSize: "20px", fontWeight: 700 }} onClick={() => previewSchedule(item.id as unknown as number)}>
+                  <span
+                    style={{ fontSize: "20px", fontWeight: 700, wordBreak: "break-word" }}
+                    onClick={() => previewSchedule(item.id as unknown as number)}
+                  >
                     {item.title}
                   </span>
                   <span style={{ fontSize: "14px", fontWeight: 400, marginTop: "18px" }}>
@@ -254,12 +257,8 @@ export default function SearchList(props: SearchListProps) {
                   <span style={{ fontSize: "14px", fontWeight: 400, marginTop: "18px" }}>
                     <PeopleOutlineOutlined className={classes.clockIcon} /> {getTeacherList(item.member_teachers, item.student_count)}{" "}
                   </span>
-                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "18px" }}>{item?.program?.name}</span>
-                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "6px" }}>
-                    {item?.subjects?.map((sub) => {
-                      return ` ${sub.name} `;
-                    })}
-                  </span>
+                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "18px" }}>{item?.lesson_plan?.name}</span>
+                  <span style={{ fontSize: "12px", fontWeight: 300, marginTop: "6px" }}>{item?.program?.name}</span>
                 </div>
               </div>
             ))}
