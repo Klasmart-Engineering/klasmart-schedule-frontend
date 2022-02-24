@@ -1,7 +1,7 @@
 import { EntityLearnerWeeklyReportOverview } from "@api/api.auto";
 import { t } from "@locale/LocaleManager";
 import { Box, Grid, makeStyles } from "@material-ui/core";
-import { ReportAchievementList } from "@pages/ReportAchievementList";
+import { ReportLearningSummary } from "@pages/ReportLearningSummary";
 import { RootState } from "@reducers/index";
 import { ParentSize } from "@visx/responsive";
 import { sumBy } from "lodash";
@@ -137,7 +137,7 @@ export default function LearningWeeklyTabs() {
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">
-          <BottomButton text={t("report_learning_summary_report")} to={ReportAchievementList.routeBasePath} marginTop={20} />
+          <BottomButton text={t("report_learning_summary_report")} to={ReportLearningSummary.routeRedirectDefault} marginTop={20} />
         </Grid>
       </Grid>
     </Grid>
