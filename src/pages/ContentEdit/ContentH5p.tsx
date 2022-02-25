@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import React, { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import api from "../../api";
 import { apiGenH5pResourceByToken } from "../../api/extra";
 import { H5pSub } from "../../api/type";
@@ -17,8 +17,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     width: "100%",
     height: "calc(100% - 80px)",
     [breakpoints.down("md")]: {
-      // 为适应手机端从866改为320
-      minHeight: 320,
+      minHeight: 866,
     },
   },
 }));

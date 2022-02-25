@@ -3,7 +3,7 @@ import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import ArrowBackIosOutlinedIcon from "@material-ui/icons/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@material-ui/icons/ArrowForwardIosOutlined";
 import clsx from "clsx";
-import React, { useState } from "react";
+import { useState } from "react";
 import { EntityContentInfoWithDetails, EntityScheduleDetailsView } from "../../api/api.auto";
 import { ContentFileType, ContentType, H5pSub } from "../../api/type";
 import noH5pUrl from "../../assets/icons/noh5p.svg";
@@ -76,8 +76,10 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
     paddingTop: 20,
     position: "relative",
     [breakpoints.down("md")]: {
-      height: "auto",
-      minHeight: "220px",
+      height: "220px",
+      justifyContent: "left",
+      alignItems: "flex-start",
+      overflowY: "scroll",
     },
   },
   innerH5pCon: {
