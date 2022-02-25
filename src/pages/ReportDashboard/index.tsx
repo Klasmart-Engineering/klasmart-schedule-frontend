@@ -135,11 +135,12 @@ interface ReportItem {
 
 const DiyTooltip = withStyles((theme: Theme) => ({
   tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "#78869C",
+    backgroundColor: theme.palette.common.black,
+    color: "#fff",
     boxShadow: theme.shadows[1],
     fontSize: 11,
     padding: 10,
+    borderRadius: 14,
     lineHeight: "18px",
   },
 }))(Tooltip);
@@ -217,7 +218,7 @@ export function ReportDashboard() {
   const reportTip = (title: string, tip: string) => (
     <div className={css.reportTop}>
       {title}
-      <DiyTooltip title={<div className={css.infoul} dangerouslySetInnerHTML={{ __html: tip }}></div>}>
+      <DiyTooltip placement={"right-start"} title={<div className={css.infoul} dangerouslySetInnerHTML={{ __html: tip }}></div>}>
         <InfoOutlined
           style={{
             fontSize: 20,
@@ -242,7 +243,7 @@ export function ReportDashboard() {
           <Grid container spacing={2}>
             {Boolean(perm.learning_summary_report_653) && (
               <Grid item xs={12} md={4}>
-                {reportTip(t("report_learning_summary_report"), t("report_label_skill_coverage_info"))}
+                {reportTip(t("report_learning_summary_report"), t("report_label_learner_weekly_report_info" as any))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearningWeeklyTabs />
                 </Box>
