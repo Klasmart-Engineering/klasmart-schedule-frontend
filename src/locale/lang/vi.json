@@ -532,9 +532,9 @@
   "schedule_filter_no_data": "Không có dữ liệu",
   "schedule_msg_no_permission": "Bạn không được phép truy cập tính năng này",
   "schedule_msg_no_student": "Không có học sinh trong lớp học này",
-  "schedule_msg_delete_minutes": "Bạn chỉ có thể xóa 1 lớp học trong vòng 15 phút trước thời gian bắt đầu.",
-  "schedule_msg_edit_minutes": "Bạn chỉ có thể chỉnh sửa 1 lớp học trong vòng 15 phút trước thời gian bắt đầu.",
-  "schedule_msg_start_minutes": "Bạn chỉ có thể bắt đầu 1 lớp học trong vòng 15 phút trước thời gian bắt đầu.",
+  "schedule_msg_delete_minutes": "Bạn chỉ có thể xóa 1 lớp học trong vòng 5 phút trước thời gian bắt đầu.",
+  "schedule_msg_edit_minutes": "Bạn chỉ có thể chỉnh sửa 1 lớp học trong vòng 5 phút trước thời gian bắt đầu.",
+  "schedule_msg_start_minutes": "Bạn chỉ có thể bắt đầu 1 lớp học trong vòng 5 phút trước thời gian bắt đầu.",
   "schedule_button_click_to schedule": "Tạo thời khóa biểu",
   "schedule_msg_time_expired": "Thời gian hết hiệu lực.",
   "schedule_msg_recall_lesson_plan": "Xin lỗi, Giáo án đính kèm bài học này đã bị xóa!",
@@ -1083,6 +1083,7 @@
   "report_label_above": "Bên trên",
   "report_label_meets": "Đạt",
   "report_label_below": "Bên dưới",
-  "schedule_study_due_on": "Due on",
-  "library_label_organization_id": "Organization ID"
+  "schedule_study_due_on": "Hết hạn ngày",
+  "library_label_organization_id": "Mã tổ chức",
+  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }

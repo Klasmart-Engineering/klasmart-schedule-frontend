@@ -532,9 +532,9 @@
   "schedule_filter_no_data": "空数据",
   "schedule_msg_no_permission": "您没有此功能的权限。",
   "schedule_msg_no_student": "您选择的班级里面没有学生",
-  "schedule_msg_delete_minutes": "您只能于开课时间15分钟之前删除该课程",
-  "schedule_msg_edit_minutes": "您只能于开课时间15分钟之前编辑该课程",
-  "schedule_msg_start_minutes": "您只能于开课时间15分钟之内开始上课",
+  "schedule_msg_delete_minutes": "您只能于开课时间5分钟之前删除该课程",
+  "schedule_msg_edit_minutes": "您只能于开课时间5分钟之前编辑该课程",
+  "schedule_msg_start_minutes": "您只能于开课时间5分钟之内开始上课",
   "schedule_button_click_to schedule": "确认",
   "schedule_msg_time_expired": "时间过期",
   "schedule_msg_recall_lesson_plan": "这节课的教学课件已被删除！",
@@ -1084,5 +1084,6 @@
   "report_label_meets": "达标",
   "report_label_below": "不足",
   "schedule_study_due_on": "截至",
-  "library_label_organization_id": "机构ID"
+  "library_label_organization_id": "机构ID",
+  "report_label_learner_weekly_report_info": "在过去 4 周内有学习记录的学生中，通过计算出勤率和作业完成率，如果两个比率都在 80% 以上，则归类为“高于预期”，如果两个比率均低于 50%，则归类为“低于预期” ' ."
 }

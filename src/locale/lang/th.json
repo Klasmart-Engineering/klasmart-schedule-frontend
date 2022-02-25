@@ -532,9 +532,9 @@
   "schedule_filter_no_data": "ไม่มีข้อมูล",
   "schedule_msg_no_permission": "คุณไม่ได้รับอนุญาตให้เข้าถึงคุณลักษณะนี้",
   "schedule_msg_no_student": "ไม่มีนักเรียนในชั้นเรียนนี้",
-  "schedule_msg_delete_minutes": "คุณลบชั้นเรียนได้ก่อนเวลาเริ่มต้นอย่างน้อย 15 นาทีเท่านั้น",
-  "schedule_msg_edit_minutes": "คุณแก้ไขชั้นเรียนได้ก่อนเวลาเริ่มต้นอย่างน้อย 15 นาทีเท่านั้น",
-  "schedule_msg_start_minutes": "คุณสามารถเริ่มชั้นเรียนได้ก่อนเวลาเริ่มต้น 15 นาทีเท่านั้น",
+  "schedule_msg_delete_minutes": "คุณลบชั้นเรียนได้ก่อนเวลาเริ่มต้นอย่างน้อย 5 นาทีเท่านั้น",
+  "schedule_msg_edit_minutes": "คุณแก้ไขชั้นเรียนได้ก่อนเวลาเริ่มต้นอย่างน้อย 5 นาทีเท่านั้น",
+  "schedule_msg_start_minutes": "คุณสามารถเริ่มชั้นเรียนได้ก่อนเวลาเริ่มต้น 5 นาทีเท่านั้น",
   "schedule_button_click_to schedule": "คลิกเพื่อกำหนดเวลา",
   "schedule_msg_time_expired": "เวลาหมดอายุ",
   "schedule_msg_recall_lesson_plan": "อ๊ะ! แผนการสอนที่รวมอยู่ในบทเรียนนี้ได้ถูกลบไปแล้ว!",
@@ -1084,5 +1084,6 @@
   "report_label_meets": "พบกับ",
   "report_label_below": "ด้านล่าง",
   "schedule_study_due_on": "Due on",
-  "library_label_organization_id": "Organization ID"
+  "library_label_organization_id": "Organization ID",
+  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }
