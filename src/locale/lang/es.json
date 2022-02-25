@@ -532,9 +532,9 @@
   "schedule_filter_no_data": "Sin datos",
   "schedule_msg_no_permission": "No tienes permiso para acceder a esta funcionalidad.",
   "schedule_msg_no_student": "No hay estudiantes en esta clase",
-  "schedule_msg_delete_minutes": "Solo puedes eliminar una clase si faltan al menos 15 minutos para la hora de inicio.",
-  "schedule_msg_edit_minutes": "Solo puedes editar una clase si faltan al menos 15 minutos para la hora de inicio.",
-  "schedule_msg_start_minutes": "Solo puedes iniciar una clase si faltan al menos 15 minutos para la hora de inicio.",
+  "schedule_msg_delete_minutes": "Solo puedes eliminar una clase si faltan al menos 5 minutos para la hora de inicio.",
+  "schedule_msg_edit_minutes": "Solo puedes editar una clase si faltan al menos 5 minutos para la hora de inicio.",
+  "schedule_msg_start_minutes": "Solo puedes iniciar una clase si faltan al menos 5 minutos para la hora de inicio.",
   "schedule_button_click_to schedule": "Haz clic para programar",
   "schedule_msg_time_expired": "Tiempo vencido",
   "schedule_msg_recall_lesson_plan": "¡Uy! El plan de la lección incluido para esta lección se eliminó.",
@@ -1084,5 +1084,6 @@
   "report_label_meets": "Satisface",
   "report_label_below": "Debajo",
   "schedule_study_due_on": "Due on",
-  "library_label_organization_id": "Organization ID"
+  "library_label_organization_id": "Organization ID",
+  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }

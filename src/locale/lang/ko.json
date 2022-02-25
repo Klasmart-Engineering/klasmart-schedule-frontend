@@ -532,9 +532,9 @@
   "schedule_filter_no_data": "데이터 없음",
   "schedule_msg_no_permission": "이 기능을 사용할 수 있는 권한이 없습니다",
   "schedule_msg_no_student": "수업에 학생이 없습니다",
-  "schedule_msg_delete_minutes": "수업 삭제는 수업 시간 15분 전까지만 가능합니다",
-  "schedule_msg_edit_minutes": "수업 편집은 수업 시간 15분 전까지만 가능합니다",
-  "schedule_msg_start_minutes": "수업 시작은 수업 시간 15분 전부터 가능합니다",
+  "schedule_msg_delete_minutes": "수업 삭제는 수업 시간 5분 전까지만 가능합니다",
+  "schedule_msg_edit_minutes": "수업 편집은 수업 시간 5분 전까지만 가능합니다",
+  "schedule_msg_start_minutes": "수업 시작은 수업 시간 5분 전부터 가능합니다",
   "schedule_button_click_to schedule": "수업 스케줄 하기",
   "schedule_msg_time_expired": "시간 만료",
   "schedule_msg_recall_lesson_plan": "이런! 이 수업에 포함된 수업계획이 이미 삭제되었어요!",
@@ -1084,5 +1084,6 @@
   "report_label_meets": "평균",
   "report_label_below": "기대 이하",
   "schedule_study_due_on": "Due on",
-  "library_label_organization_id": "Organization ID"
+  "library_label_organization_id": "Organization ID",
+  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }
