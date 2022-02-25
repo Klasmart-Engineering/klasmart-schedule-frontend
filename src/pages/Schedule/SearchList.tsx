@@ -309,7 +309,7 @@ export default function SearchList(props: SearchListProps) {
           <p>{d("No results found.").t("schedule_msg_no_result")}</p>
         </div>
       )}
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <div style={{ textAlign: "center", marginTop: "20px", paddingBottom: "10px" }}>
         <Pagination
           count={Math.ceil(total / 10)}
           color="primary"

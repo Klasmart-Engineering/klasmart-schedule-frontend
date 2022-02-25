@@ -1371,7 +1371,7 @@ function EditBox(props: CalendarStateProps) {
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
 
-    mobile && showRepeatMbHandle(event.target.checked);
+    mobile && event.target.name === "repeatCheck" && showRepeatMbHandle(event.target.checked);
   };
 
   const handleDueDateChange = (date: Date | null) => {
