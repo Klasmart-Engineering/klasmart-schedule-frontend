@@ -1218,6 +1218,7 @@ export interface EntityScheduleListView {
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
+  assessment_status?: "in_progress" | "complete";
   due_at?: number;
   end_at?: number;
   exist_assessment?: boolean;

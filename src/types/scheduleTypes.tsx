@@ -208,6 +208,7 @@ export interface scheduleInfoViewProps {
   role_type: string;
   exist_assessment: boolean;
   complete_assessment: boolean;
+  assessment_status?: "in_progress" | "complete";
   lesson_plan: EntityScheduleLessonPlan;
   class_type_label: EntityScheduleShortInfo;
 }
@@ -228,11 +229,13 @@ export interface ScheduleEditExtend extends EntityScheduleDetailsView {
   class_id: string;
   lesson_plan_id: string;
   complete_assessment: boolean;
+  assessment_status?: "in_progress" | "complete";
   lesson_plan: EntityScheduleLessonPlan;
 }
 
 export interface EntityScheduleViewDetailExtend extends EntityScheduleViewDetail {
   complete_assessment?: boolean;
+  assessment_status?: "in_progress" | "complete";
 }
 
 export interface EntityScheduleListViewExtend extends EntityScheduleListView {
