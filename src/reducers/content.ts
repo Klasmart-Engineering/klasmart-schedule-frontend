@@ -944,14 +944,14 @@ export enum Region {
 }
 
 type IQueryGetOrgListResult = AsyncReturnType<typeof api.organizationsRegion.getOrganizationByHeadquarterForDetails>["orgs"];
-export function getOrgsFilter(searchValue: string, myOrgId: string, orgs: EntityRegionOrganizationInfo[] = []) {
+export function getOrgsFilter(searchValue: string, orgs: EntityRegionOrganizationInfo[] = []) {
   let filter: OrganizationFilter = {
     AND: [
       { status: { operator: StringOperator.Eq, value: "active" } },
-      { id: { operator: UuidOperator.Neq, value: myOrgId } },
       {
         OR: [
-          { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
+          // 2022/1/21 todo
+          // { ownerUserEmail: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
           { name: { operator: StringOperator.Contains, value: searchValue, caseInsensitive: true } },
         ],
       },
@@ -975,13 +975,10 @@ type IGetOrgListParams = Omit<GetOrganizationsQueryVariables, "filter"> &
     orgs?: EntityRegionOrganizationInfo[];
   };
 
-export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParams, { state: RootState }>(
+export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParams>(
   "content/getOrgList",
-  async ({ metaLoading, searchValue, orgs, ...restorganizationQueryVariables }, { getState }) => {
-    const {
-      content: { myOrgId },
-    } = getState();
-    const filter = getOrgsFilter(searchValue, myOrgId, orgs);
+  async ({ metaLoading, searchValue, orgs, ...restorganizationQueryVariables }) => {
+    const filter = getOrgsFilter(searchValue, orgs);
     const { data } = await gqlapi.query<GetOrganizationsQuery, GetOrganizationsQueryVariables>({
       query: GetOrganizationsDocument,
       variables: { ...restorganizationQueryVariables, filter },
@@ -989,7 +986,8 @@ export const getOrgList = createAsyncThunk<IGetOrgListResponse, IGetOrgListParam
     const orgList = data.organizationsConnection?.edges?.map((item) => ({
       organization_id: item?.node?.id,
       organization_name: item?.node?.name,
-      email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
+      // 2022/1/21 todo
+      // email: item?.node?.owners && item?.node?.owners.length > 0 ? item?.node?.owners[0]?.email : "",
     })) as IQueryGetOrgListResult;
     const orgListPageInfo = data.organizationsConnection?.pageInfo as ConnectionPageInfo;
     const orgListTotal = data.organizationsConnection?.totalCount || (0 as number);
