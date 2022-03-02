@@ -396,7 +396,7 @@ function ScheduleContent() {
       } else if (privilegedMembers("Teacher")) {
         dispatch(getClassesByTeacher());
       } else if (privilegedMembers("Student")) {
-        dispatch(getClassesByStudent());
+        dispatch(getClassesByStudent()); //可以删
       }
       // get materials
       dispatch(

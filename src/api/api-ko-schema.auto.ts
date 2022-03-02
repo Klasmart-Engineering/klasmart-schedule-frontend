@@ -665,6 +665,11 @@ export type DeleteSubjectInput = {
   id: Scalars["ID"];
 };
 
+export type DeleteUsersFromOrganizationInput = {
+  organizationId: Scalars["ID"];
+  userIds: Array<Scalars["ID"]>;
+};
+
 export type EligibleMembersFilter = {
   AND?: Maybe<Array<EligibleMembersFilter>>;
   OR?: Maybe<Array<EligibleMembersFilter>>;
@@ -810,12 +815,23 @@ export type Mutation = {
   deleteSchools?: Maybe<SchoolsMutationResult>;
   deleteSubcategories?: Maybe<SubcategoriesMutationResult>;
   deleteSubjects?: Maybe<SubjectsMutationResult>;
+  /**
+   * Deletes users from an organization. They will
+   * be treated as if they had never been part of the organizaton.
+   * Membership data may not be maintained.
+   */
+  deleteUsersFromOrganizations?: Maybe<OrganizationsMutationResult>;
   grade?: Maybe<Grade>;
   me?: Maybe<User>;
   /** @deprecated Use the inviteUser() method */
   newUser?: Maybe<User>;
   organization?: Maybe<Organization>;
   program?: Maybe<Program>;
+  /**
+   * Reactivates users for an organization who were inactivated via removeUsersFromOrganizations
+   * They will have the same roles they had at the time of removal.
+   */
+  reactivateUsersFromOrganizations?: Maybe<OrganizationsMutationResult>;
   removeClassesFromSchools?: Maybe<SchoolsMutationResult>;
   removeOrganizationRolesFromUsers?: Maybe<UsersMutationResult>;
   removeProgramsFromClasses?: Maybe<ClassesMutationResult>;
@@ -824,6 +840,10 @@ export type Mutation = {
   removeStudentsFromClasses?: Maybe<ClassesMutationResult>;
   removeSubcategoriesFromCategories?: Maybe<CategoriesMutationResult>;
   removeTeachersFromClasses?: Maybe<ClassesMutationResult>;
+  /**
+   * Inactivates users in an organization. Their membership data
+   * will be maintained and can be restored with reactivateUsersFromOrganizations.
+   */
   removeUsersFromOrganizations?: Maybe<OrganizationsMutationResult>;
   removeUsersFromSchools?: Maybe<SchoolsMutationResult>;
   renameDuplicateGrades?: Maybe<Scalars["Boolean"]>;
@@ -986,6 +1006,10 @@ export type MutationDeleteSubjectsArgs = {
   input: Array<DeleteSubjectInput>;
 };
 
+export type MutationDeleteUsersFromOrganizationsArgs = {
+  input: Array<DeleteUsersFromOrganizationInput>;
+};
+
 export type MutationGradeArgs = {
   id: Scalars["ID"];
 };
@@ -1012,6 +1036,10 @@ export type MutationOrganizationArgs = {
 
 export type MutationProgramArgs = {
   id: Scalars["ID"];
+};
+
+export type MutationReactivateUsersFromOrganizationsArgs = {
+  input: Array<ReactivateUsersFromOrganizationInput>;
 };
 
 export type MutationRemoveClassesFromSchoolsArgs = {
@@ -1573,7 +1601,7 @@ export type OrganizationMembershipSchoolMembershipsArgs = {
 
 export type OrganizationMembershipConnectionNode = {
   __typename?: "OrganizationMembershipConnectionNode";
-  joinTimestamp?: Maybe<Scalars["String"]>;
+  joinTimestamp?: Maybe<Scalars["Date"]>;
   organization?: Maybe<OrganizationConnectionNode>;
   organizationId: Scalars["String"];
   rolesConnection?: Maybe<RolesConnectionResponse>;
@@ -2139,6 +2167,11 @@ export type QueryUsersConnectionArgs = {
   sort?: Maybe<UserSortInput>;
 };
 
+export type ReactivateUsersFromOrganizationInput = {
+  organizationId: Scalars["ID"];
+  userIds: Array<Scalars["ID"]>;
+};
+
 export type RemoveClassesFromSchoolInput = {
   classIds: Array<Scalars["ID"]>;
   schoolId: Scalars["ID"];
@@ -2445,7 +2478,7 @@ export type SchoolMembershipRemoveRoleArgs = {
 
 export type SchoolMembershipConnectionNode = {
   __typename?: "SchoolMembershipConnectionNode";
-  joinTimestamp?: Maybe<Scalars["String"]>;
+  joinTimestamp?: Maybe<Scalars["Date"]>;
   rolesConnection?: Maybe<RolesConnectionResponse>;
   school?: Maybe<SchoolConnectionNode>;
   schoolId: Scalars["String"];
@@ -2539,6 +2572,7 @@ export enum SortOrder {
 
 export enum Status {
   Active = "active",
+  Deleted = "deleted",
   Inactive = "inactive",
 }
 
