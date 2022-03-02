@@ -34,13 +34,10 @@ import {
   GetUserDocument,
   GetUserQuery,
   GetUserQueryVariables,
-  MySchoolIDsDocument,
-  MySchoolIDsQuery,
-  MySchoolIDsQueryVariables,
   ParticipantsByClassQuery,
-  QeuryMeDocument,
-  QeuryMeQuery,
-  QeuryMeQueryVariables,
+  QueryMyUserDocument,
+  QueryMyUserQuery,
+  QueryMyUserQueryVariables,
   SchoolByOrgQueryDocument,
   SchoolByOrgQueryQuery,
   SchoolByOrgQueryQueryVariables,
@@ -65,7 +62,7 @@ import {
   EntityScheduleViewDetail,
   ModelPublishedOutcomeView,
 } from "../api/api.auto";
-import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "../api/extra";
+import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions, recursiveGetSchoolMemberships } from "../api/extra";
 import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import {
   ChangeParticipants,
@@ -90,6 +87,12 @@ interface classOptionsProp {
   classListTeacher: ClassesByTeacherQuery;
   classListSchool: ClassesBySchoolQuery;
   classListStudent: ClassesStudentQueryQuery;
+}
+
+interface mySchoolIdsResProp {
+  mySchoolIds: (string | undefined)[];
+  cursor: string;
+  hasNextPage: boolean;
 }
 
 export interface ScheduleState {
@@ -132,6 +135,7 @@ export interface ScheduleState {
   lessonPlans: EntityLessonPlanForSchedule[];
   lessonPlansTotal: number;
   userInUndefined: GetUserQuery;
+  mySchoolIdsRes: mySchoolIdsResProp;
 }
 
 interface Rootstate {
@@ -309,6 +313,11 @@ const initialState: ScheduleState = {
   lessonPlansTotal: 0,
   userInUndefined: {},
   filterOtherClasses: {},
+  mySchoolIdsRes: {
+    mySchoolIds: [],
+    cursor: "",
+    hasNextPage: false,
+  },
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -389,16 +398,13 @@ export const getScheduleAnyTimeViewData = createAsyncThunk<viewSchedulesResultRe
  */
 export const getClassesByTeacher = createAsyncThunk("getClassesByTeacher", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
+  const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
   return gqlapi.query<ClassesTeachingQueryQuery, ClassesTeachingQueryQueryVariables>({
     query: ClassesTeachingQueryDocument,
     variables: {
-      user_id: meInfo.me?.user_id as string,
+      user_id: meInfo.myUser?.node?.id as string,
       organization_id,
     },
   });
@@ -447,16 +453,13 @@ export const getLessonPlansByScheduleLoadingPage = createAsyncThunk<lessonPlansB
  */
 export const getClassesByStudent = createAsyncThunk("getClassesByStudent", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
+  const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
   return gqlapi.query<ClassesStudentQueryQuery, ClassesStudentQueryQueryVariables>({
     query: ClassesStudentQueryDocument,
     variables: {
-      user_id: meInfo.me?.user_id as string,
+      user_id: meInfo.myUser?.node?.id as string,
       organization_id,
     },
   });
@@ -550,11 +553,34 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
     if (is_org) {
       filterQuery = { organizationId: { operator: UuidExclusiveOperator.Eq, value: organization_id } };
     } else {
-      const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
-        query: MySchoolIDsDocument,
-        variables: { organization_id },
+      // const { data: schoolInfo } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+      //   query: MySchoolIDsDocument,
+      //   variables: { organization_id },
+      // });
+      // const school_ids = schoolInfo.me?.membership?.schoolMemberships?.map((item) => {
+      //   return { schoolId: { operator: UuidExclusiveOperator.Eq, value: item?.school_id } };
+      // });
+      // MySchoolIDsQuery查询替换为QueryMyUserQuery
+      const {
+        data: { myUser },
+      } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+        query: QueryMyUserDocument,
       });
-      const school_ids = schoolInfo.me?.membership?.schoolMemberships?.map((item) => {
+      const userId = myUser?.node?.id;
+      const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+      const filter = {
+        userId: {
+          operator: UuidOperator.Eq,
+          value: userId,
+        },
+        organizationId: {
+          operator: UuidOperator.Eq,
+          value: organization_id,
+        },
+        cursor: "",
+      };
+      const schoolIdsV2 = await recursiveGetSchoolMemberships(filter, []);
+      const school_ids = schoolIdsV2.map((item) => {
         return { schoolId: { operator: UuidExclusiveOperator.Eq, value: item?.school_id } };
       });
       filterQuery = { OR: school_ids };
@@ -634,14 +660,33 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
 );
 
 export const getClassesBySchool = createAsyncThunk("getClassesBySchool", async () => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const { data } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
-    query: MySchoolIDsDocument,
-    variables: { organization_id },
+  // const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
+  // const { data } = await gqlapi.query<MySchoolIDsQuery, MySchoolIDsQueryVariables>({
+  //   query: MySchoolIDsDocument,
+  //   variables: { organization_id },
+  // });
+  const {
+    data: { myUser },
+  } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
-  if (data?.me?.membership?.schoolMemberships?.length) {
+  const userId = myUser?.node?.id;
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const filter = {
+    userId: {
+      operator: UuidOperator.Eq,
+      value: userId,
+    },
+    organizationId: {
+      operator: UuidOperator.Eq,
+      value: organization_id,
+    },
+    cursor: "",
+  };
+  const schoolIdsV2 = await recursiveGetSchoolMemberships(filter, []);
+  if (schoolIdsV2.length) {
     return Promise.all(
-      data?.me?.membership?.schoolMemberships?.map(async (item) => {
+      schoolIdsV2?.map(async (item) => {
         const { data } = await gqlapi.query<ClassesBySchoolQuery, ClassesBySchoolQueryVariables>({
           query: ClassesBySchoolDocument,
           variables: {
@@ -903,18 +948,16 @@ export const getMockOptions = createAsyncThunk("mock/options", async () => {
   return apiGetMockOptions();
 });
 
+//没找到调接口的地方
 export const getSchoolByUser = createAsyncThunk("getSchoolByUser", async () => {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-    query: QeuryMeDocument,
-    variables: {
-      organization_id,
-    },
+  const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
   return gqlapi.query<SchoolByUserQueryQuery, SchoolByUserQueryQueryVariables>({
     query: SchoolByUserQueryDocument,
     variables: {
-      user_id: meInfo.me?.user_id as string,
+      user_id: meInfo.myUser?.node?.id as string,
       organization_id: organization_id,
     },
   });

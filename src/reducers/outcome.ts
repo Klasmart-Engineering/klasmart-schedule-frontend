@@ -1,6 +1,6 @@
-import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "@api/api-ko.auto";
+import { QueryMyUserDocument, QueryMyUserQuery, QueryMyUserQueryVariables } from "@api/api-ko.auto";
 import { ApiPullOutcomeSetResponse } from "@api/api.auto";
-import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions } from "@api/extra";
+import { apiGetMockOptions, MockOptions } from "@api/extra";
 import api, { gqlapi } from "@api/index";
 import { GetOutcomeDetail, GetOutcomeList, GetOutcomeListResult, OutcomePublishStatus } from "@api/type";
 import { LangRecordId } from "@locale/lang/type";
@@ -126,22 +126,18 @@ const PAGE_SIZE = 20;
 export const getNewOptions = createAsyncThunk<ResultGetNewOptions, ParamsGetNewOptions & LoadingMetaPayload>(
   "getNewOptions",
   async ({ development_id, default_subject_ids, program_id }) => {
-    // if(!development_id && !program_id)
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const program = await programsHandler.getProgramsOptions();
     const programId = program_id ? program_id : program[0].id;
     const [subject, age, grade] = await programsHandler.getSubjectAgeGradeByProgramId(programId);
-    if (!subject.length) return { program, subject: [], developmental: [], skills: [], age: [], grade: [], user_id: meInfo.me?.user_id };
+    if (!subject.length)
+      return { program, subject: [], developmental: [], skills: [], age: [], grade: [], user_id: meInfo.myUser?.node?.id };
     const subjectIds = default_subject_ids ? default_subject_ids : subject[0].id;
     const [developmental, skills] = await getDevelopmentalAndSkills(programId, subjectIds, development_id);
-    return { program, subject, developmental, skills, age, grade, user_id: meInfo.me?.user_id };
+    return { program, subject, developmental, skills, age, grade, user_id: meInfo.myUser?.node?.id };
   }
 );
 
@@ -159,16 +155,12 @@ type IQueryOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searc
 export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
   "outcome/outcomeList",
   async ({ metaLoading, ...query }) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const { list, total } = await api.learningOutcomes.searchLearningOutcomes(query);
-    return { list, total, user_id: meInfo.me?.user_id };
+    return { list, total, user_id: meInfo.myUser?.node?.id };
   }
 );
 
@@ -177,16 +169,12 @@ type IQueryPendingOutcomeListResult = AsyncReturnType<typeof api.pendingLearning
 export const actPendingOutcomeList = createAsyncThunk<IQueryPendingOutcomeListResult, IQueryPendingOutcomeListParams>(
   "outcome/actPendingOutcomeList",
   async ({ metaLoading, ...query }) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const { list, total } = await api.pendingLearningOutcomes.searchPendingLearningOutcomes(query);
-    return { list, total, user_id: meInfo.me?.user_id };
+    return { list, total, user_id: meInfo.myUser?.node?.id };
   }
 );
 
@@ -195,16 +183,12 @@ type IQueryPrivateOutcomeListResult = AsyncReturnType<typeof api.privateLearning
 export const actPrivateOutcomeList = createAsyncThunk<IQueryPrivateOutcomeListResult, IQueryPrivateOutcomeListParams>(
   "outcome/actPrivateOutcomeList",
   async ({ metaLoading, ...query }) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const { list, total } = await api.privateLearningOutcomes.searchPrivateLearningOutcomes(query);
-    return { list, total, user_id: meInfo.me?.user_id };
+    return { list, total, user_id: meInfo.myUser?.node?.id };
   }
 );
 
@@ -218,16 +202,12 @@ type IQueryOnLoadOutcomeListResult = {
 export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult, IQueryOnLoadOutcomeListParams>(
   "outcome/onLoadOutcomeList",
   async (query) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
     const resObj: IQueryOnLoadOutcomeListResult = {};
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
-    resObj.user_id = meInfo.me?.user_id;
+    resObj.user_id = meInfo.myUser?.node?.id;
     const { search_key, publish_status, author_name, page, order_by, is_unpub, exect_search } = query;
     const params: OutcomeQueryCondition = {
       publish_status,
