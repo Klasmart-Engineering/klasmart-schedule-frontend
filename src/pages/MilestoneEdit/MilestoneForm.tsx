@@ -5,7 +5,6 @@ import { Box, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import { formattedTime } from "@models/ModelContentDetailForm";
 import { CreateDefaultValueAndKeyResult } from "@models/ModelMilestone";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
-import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { GENERALMILESTONE } from "../MilestoneList/MilestoneTable";
 const useStyles = makeStyles(({ palette }) => ({
@@ -82,7 +81,7 @@ export default function MilestoneForm(props: MilestoneFormProps) {
         required
         fullWidth
         multiline
-        rowsMax={3}
+        maxRows={3}
         className={isRejected ? css.fieldset : ""}
         encode={frontTrim}
         decode={frontTrim}

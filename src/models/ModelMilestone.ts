@@ -4,8 +4,8 @@ import {
   ModelAuthorView,
   ModelCategory,
   ModelGrade,
+  ModelMilestoneOutcomeView,
   ModelOrganizationView,
-  ModelOutcomeView,
   ModelProgram,
   ModelSubCategory,
   ModelSubject,
@@ -43,7 +43,7 @@ export class ModelMilestoneOptions {
       | ModelGrade[]
       | ModelAuthorView
       | ModelOrganizationView
-      | ModelOutcomeView[]
+      | ModelMilestoneOutcomeView[]
     )[]
   ): string {
     return args
@@ -137,8 +137,6 @@ export class ModelMilestoneOptions {
             key: ModelMilestoneOptions.createSelectKey(linkedMockOptions.grade, gradeValue, name),
             value: regulation === Regulation.ByMilestoneDetail ? gradeValue : [],
           };
-          break;
-        case "outcomes":
           break;
         default:
           result[name] = {
