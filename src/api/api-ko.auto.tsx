@@ -279,11 +279,7 @@ export type GetOrganizationsQuery = { __typename?: "Query" } & {
           Array<
             Types.Maybe<
               { __typename?: "OrganizationsConnectionEdge" } & {
-                node?: Types.Maybe<
-                  { __typename?: "OrganizationConnectionNode" } & Pick<Types.OrganizationConnectionNode, "id" | "name"> & {
-                      owners?: Types.Maybe<Array<Types.Maybe<{ __typename?: "UserSummaryNode" } & Pick<Types.UserSummaryNode, "email">>>>;
-                    }
-                >;
+                node?: Types.Maybe<{ __typename?: "OrganizationConnectionNode" } & Pick<Types.OrganizationConnectionNode, "id" | "name">>;
               }
             >
           >
@@ -1577,9 +1573,6 @@ export const GetOrganizationsDocument = gql`
         node {
           id
           name
-          owners {
-            email
-          }
         }
       }
       pageInfo {
