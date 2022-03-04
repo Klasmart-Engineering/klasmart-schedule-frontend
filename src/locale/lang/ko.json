@@ -1083,7 +1083,7 @@
   "report_label_above": "기대 이상",
   "report_label_meets": "평균",
   "report_label_below": "기대 이하",
-  "schedule_study_due_on": "Due on",
-  "library_label_organization_id": "Organization ID",
+  "schedule_study_due_on": "마감일",
+  "library_label_organization_id": "기관 ID",
   "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }
