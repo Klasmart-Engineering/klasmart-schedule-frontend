@@ -197,9 +197,9 @@ query queryMyUser {
 query getSchoolMemberships($userId: UUIDFilter, $organizationId: UUIDFilter, $cursor: String) {
   schoolsConnection(
     filter: {
-      userId: $userId, 
+      userId: $userId,
       organizationId: $organizationId
-    }, 
+    },
     direction: FORWARD,
     directionArgs: {
       cursor: $cursor
@@ -270,10 +270,9 @@ query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count
         node {
           id
           name
-          #  // 2022/1/21 todo 
-          # owners{
-          # email
-        #  }
+          owners{
+          email
+         }
         }
       }
       pageInfo {
