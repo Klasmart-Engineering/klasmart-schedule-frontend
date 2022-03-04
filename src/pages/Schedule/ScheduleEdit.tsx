@@ -1243,7 +1243,7 @@ function EditBox(props: CalendarStateProps) {
       changeModalDate({
         title: "",
         // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
-        text: d("You can only edit a class at least 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
+        text: d("You can only edit a class at least 5 minutes before the start time.").t("schedule_msg_edit_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
@@ -1471,7 +1471,7 @@ function EditBox(props: CalendarStateProps) {
         changeModalDate({
           title: "",
           // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
-          text: d("You can only edit a class at least 15 minutes before the start time.").t("schedule_msg_edit_minutes"),
+          text: d("You can only edit a class at least 5 minutes before the start time.").t("schedule_msg_edit_minutes"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
@@ -1700,7 +1700,7 @@ function EditBox(props: CalendarStateProps) {
     if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 5 * 60) {
       changeModalDate({
         title: "",
-        text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
+        text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
