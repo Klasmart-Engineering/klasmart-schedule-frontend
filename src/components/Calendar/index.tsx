@@ -491,7 +491,7 @@ function MyCalendar(props: CalendarProps) {
           return;
         }
       } else {
-        if (scheduleInfo.start.valueOf() - currentTime < 15 * 60 * 1000) {
+        if (scheduleInfo.start.valueOf() - currentTime < 5 * 60 * 1000) {
           changeModalDate({
             title: "",
             text: d("You can only delete a class at least 15 minutes before the start time.").t("schedule_msg_delete_minutes"),
@@ -560,7 +560,7 @@ function MyCalendar(props: CalendarProps) {
   const scheduleSelected = async (event: scheduleInfoViewProps) => {
     // const currentTime = Math.floor(new Date().getTime());
     // if (
-    //   ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 15 * 60 * 1000) ||
+    //   ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 5 * 60 * 1000) ||
     //   (permissionShowLive && event.class_type === "Homework")
     // ) {
     //   await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));

@@ -13,6 +13,10 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   emptyImage: {
     marginTop: 200,
     marginBottom: 40,
+    [breakpoints.down("md")]: {
+      marginTop: 40,
+      marginBottom: 20,
+    },
   },
   emptyDesc: {
     marginBottom: "auto",

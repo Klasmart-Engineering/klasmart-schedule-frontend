@@ -532,9 +532,9 @@
   "schedule_filter_no_data": "No Data",
   "schedule_msg_no_permission": "You do not have permission to access this feature.",
   "schedule_msg_no_student": "There is no student in this class",
-  "schedule_msg_delete_minutes": "You can only delete a class at least 15 minutes before the start time.",
-  "schedule_msg_edit_minutes": "You can only edit a class at least 15 minutes before the start time.",
-  "schedule_msg_start_minutes": "You can only start a class 15 minutes before the start time.",
+  "schedule_msg_delete_minutes": "You can only delete a class at least 5 minutes before the start time.",
+  "schedule_msg_edit_minutes": "You can only edit a class at least 5 minutes before the start time.",
+  "schedule_msg_start_minutes": "You can only start a class 5 minutes before the start time.",
   "schedule_button_click_to schedule": "Click to Schedule",
   "schedule_msg_time_expired": "Time Expired",
   "schedule_msg_recall_lesson_plan": "Oops! The lesson plan included for this lesson has already been deleted!",
@@ -1082,5 +1082,8 @@
   "report_label_covered": "Covered",
   "report_label_above": "Above",
   "report_label_meets": "Meets",
-  "report_label_below": "Below"
+  "report_label_below": "Below",
+  "schedule_study_due_on": "Due on",
+  "library_label_organization_id": "Organization ID",
+  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }

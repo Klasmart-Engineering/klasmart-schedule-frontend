@@ -961,6 +961,16 @@ export function getOrgsFilter(searchValue: string, orgs: EntityRegionOrganizatio
     const idFilter: OrganizationFilter = { OR: orgs.map((item) => ({ id: { operator: UuidOperator.Eq, value: item.organization_id } })) };
     filter = { AND: filter.AND?.concat([idFilter]) };
   }
+  if (/\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/.test(searchValue)) {
+    // 判断是否是uuid
+    filter = {
+      AND: [
+        { status: { operator: StringOperator.Eq, value: "active" } },
+        { id: { operator: UuidOperator.Neq, value: myOrgId } },
+        { id: { operator: UuidOperator.Eq, value: searchValue } },
+      ],
+    };
+  }
   return filter;
 }
 interface IGetOrgListResponse {

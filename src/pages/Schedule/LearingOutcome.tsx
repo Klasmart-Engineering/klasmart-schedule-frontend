@@ -282,7 +282,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     paddingRight: "18px",
   },
   saveMb: {
-    width: "297px",
+    width: "70px",
     height: "50px",
     background: "#0E78D5",
     borderRadius: "8px",

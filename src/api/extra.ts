@@ -6,6 +6,15 @@ import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
+import { UuidFilter } from "./api-ko-schema.auto";
+import {
+  GetClassesTeachingDocument,
+  GetClassesTeachingQuery,
+  GetClassesTeachingQueryVariables,
+  GetSchoolMembershipsDocument,
+  GetSchoolMembershipsQuery,
+  GetSchoolMembershipsQueryVariables,
+} from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
@@ -154,7 +163,7 @@ export const getDocumentUrl = (router: string) => {
   return `${origin}/${search}#/${router}`;
 };
 
-export const apiWaitForOrganizationOfPage = () => {
+export const apiWaitForOrganizationOfPage = (): Promise<string> => {
   const errorLabel: LangRecordId = "general_error_no_organization";
   // const infoLabel: LangRecordId = "general_info_waiting_orgnization_info";
   const TIME_OUT = 3600 * 1000;
@@ -355,4 +364,79 @@ export const refreshToken = async () => {
     .then((resp) => resp.json())
     .then((data) => data);
   return resp;
+};
+
+export interface GetSchoolMembershipProps {
+  userId?: UuidFilter;
+  organizationId?: UuidFilter;
+  cursor?: string;
+}
+export interface SchoolIdProps {
+  school_id?: string;
+  status?: string;
+}
+export const recursiveGetSchoolMemberships = async (param: GetSchoolMembershipProps, arr: SchoolIdProps[]): Promise<SchoolIdProps[]> => {
+  let schoolIds: SchoolIdProps[] = [...arr];
+  const {
+    data: { schoolsConnection },
+  } = await gqlapi.query<GetSchoolMembershipsQuery, GetSchoolMembershipsQueryVariables>({
+    query: GetSchoolMembershipsDocument,
+    variables: {
+      ...param,
+    },
+  });
+  const res: SchoolIdProps[] =
+    schoolsConnection?.edges?.map((item) => {
+      return {
+        school_id: item?.node?.id,
+        status: item?.node?.status,
+      };
+    }) || [];
+  schoolIds = [...schoolIds, ...res];
+  if (schoolsConnection?.pageInfo?.hasNextPage) {
+    const cursor = schoolsConnection.pageInfo.endCursor as string;
+    recursiveGetSchoolMemberships({ ...param, cursor }, [...schoolIds]);
+  }
+  return new Promise((resolve) => {
+    resolve(schoolIds);
+  });
+};
+
+export interface ClassesTeachingProps {
+  class_id?: string;
+  status?: string;
+}
+export interface ClassTeachingFilter {
+  organizationId: UuidFilter;
+  cursor: string;
+}
+export const recursiveGetClassTeaching = async (
+  param: ClassTeachingFilter,
+  arr: ClassesTeachingProps[]
+): Promise<ClassesTeachingProps[]> => {
+  let classes: ClassesTeachingProps[] = [...arr];
+
+  const {
+    data: { myUser },
+  } = await gqlapi.query<GetClassesTeachingQuery, GetClassesTeachingQueryVariables>({
+    query: GetClassesTeachingDocument,
+    variables: {
+      ...param,
+    },
+  });
+  const res =
+    myUser?.node?.classesTeachingConnection?.edges?.map((item) => {
+      return {
+        class_id: item?.node?.id,
+        status: item?.node?.status,
+      };
+    }) || [];
+  classes = [...classes, ...res];
+  if (myUser?.node?.classesTeachingConnection?.pageInfo?.hasNextPage) {
+    const cursor = myUser?.node?.classesTeachingConnection?.pageInfo?.endCursor as string;
+    recursiveGetClassTeaching({ ...param, cursor }, [...classes]);
+  }
+  return new Promise((resolve) => {
+    resolve(classes);
+  });
 };

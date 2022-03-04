@@ -191,7 +191,7 @@ function AnyTimeSchedule(props: SearchListProps) {
 
   const handleGoLive = async (scheduleDetial: EntityScheduleListView) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
+    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 5 * 60) {
       changeModalDate({
         title: "",
         text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
@@ -287,7 +287,7 @@ function AnyTimeSchedule(props: SearchListProps) {
           return;
         }
       } else {
-        if ((scheduleInfo.start_at as number).valueOf() - currentTime < 15 * 60 * 1000) {
+        if ((scheduleInfo.start_at as number).valueOf() - currentTime < 5 * 60 * 1000) {
           changeModalDate({
             title: "",
             text: d("You can only delete a class at least 15 minutes before the start time.").t("schedule_msg_delete_minutes"),
@@ -501,11 +501,13 @@ function AnyTimeSchedule(props: SearchListProps) {
         )}
         {showDeleteButto && (
           <Button
-            className={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment ? classes.disabledButton : classes.editButton}
+            className={
+              !scheduleInfo.is_home_fun && scheduleInfo.assessment_status === "complete" ? classes.disabledButton : classes.editButton
+            }
             onClick={() => handleEditSchedule(scheduleInfo)}
             variant="outlined"
             color="inherit"
-            disabled={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment}
+            disabled={!scheduleInfo.is_home_fun && scheduleInfo.assessment_status === "complete"}
           >
             {d("Edit").t("schedule_button_edit")}
           </Button>
@@ -516,14 +518,18 @@ function AnyTimeSchedule(props: SearchListProps) {
             render={(value) =>
               value && (
                 <Button
-                  className={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment ? classes.disabledButton : classes.deleteButton}
+                  className={
+                    !scheduleInfo.is_home_fun && scheduleInfo.assessment_status === "complete"
+                      ? classes.disabledButton
+                      : classes.deleteButton
+                  }
                   style={{ marginLeft: "20px" }}
                   variant="outlined"
                   color="secondary"
                   onClick={() => {
                     deleteHandle(scheduleInfo);
                   }}
-                  disabled={!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment}
+                  disabled={!scheduleInfo.is_home_fun && scheduleInfo.assessment_status === "complete"}
                 >
                   {d("Delete").t("assess_label_delete")}
                 </Button>
@@ -548,7 +554,7 @@ function AnyTimeSchedule(props: SearchListProps) {
     };
     return (
       <span>
-        {showDeleteButto && !(!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment) && (
+        {showDeleteButto && !(!scheduleInfo.is_home_fun && scheduleInfo.assessment_status === "complete") && (
           <EditOutlined
             style={{ marginRight: "20px" }}
             onClick={() => {
@@ -564,7 +570,7 @@ function AnyTimeSchedule(props: SearchListProps) {
             value={PermissionType.delete_event_540}
             render={(value) =>
               value &&
-              !(!scheduleInfo.is_home_fun && scheduleInfo.complete_assessment) && (
+              !(!scheduleInfo.is_home_fun && scheduleInfo.assessment_status === "complete") && (
                 <DeleteOutlined
                   onClick={() => {
                     deleteHandle(scheduleInfo);

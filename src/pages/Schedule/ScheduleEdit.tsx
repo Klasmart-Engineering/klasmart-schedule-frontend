@@ -106,8 +106,9 @@ import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
+import CloseIcon from "@material-ui/icons/Close";
 
-const useStyles = makeStyles(({ shadows }) => ({
+const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldset: {
     marginTop: 20,
     width: "100%",
@@ -159,6 +160,9 @@ const useStyles = makeStyles(({ shadows }) => ({
   },
   participantBox: {
     width: "100%",
+    [breakpoints.down(600)]: {
+      width: document.body.clientWidth - 40 + "px",
+    },
     maxHeight: "260px",
     border: "1px solid rgba(0, 0, 0, 0.23)",
     marginTop: "20px",
@@ -278,6 +282,27 @@ const useStyles = makeStyles(({ shadows }) => ({
     "& span": {
       maxWidth: "200px",
     },
+  },
+  saveMb: {
+    width: "70%",
+    height: "50px",
+    background: "#0E78D5",
+    borderRadius: "8px",
+    textAlign: "center",
+    marginTop: "6px",
+    fontWeight: 700,
+  },
+  repeatBoxMb: {
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
+    display: "flex",
+    zIndex: 99,
+    position: "fixed",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 }));
 
@@ -645,7 +670,7 @@ function EditBox(props: CalendarStateProps) {
       // const currentTime = Math.floor(new Date().getTime());
       // if (
       //   (scheduleDetial.status === "NotStart" || scheduleDetial.status === "Started") &&
-      //   newData.start_at! * 1000 - currentTime < 15 * 60 * 1000
+      //   newData.start_at! * 1000 - currentTime < 5 * 60 * 1000
       // ) {
       //   dispatch(getScheduleLiveToken({ schedule_id: scheduleDetial.id, live_token_type: "live", metaLoading: true }));
       // }
@@ -1211,7 +1236,7 @@ function EditBox(props: CalendarStateProps) {
       scheduleId &&
       scheduleDetial &&
       scheduleList.start_at &&
-      scheduleList.start_at - currentTime < 15 * 60 &&
+      scheduleList.start_at - currentTime < 5 * 60 &&
       scheduleList.class_type !== "Task" &&
       scheduleList.class_type !== "Homework"
     ) {
@@ -1345,6 +1370,8 @@ function EditBox(props: CalendarStateProps) {
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
+
+    mobile && event.target.name === "repeatCheck" && showRepeatMbHandle(event.target.checked);
   };
 
   const handleDueDateChange = (date: Date | null) => {
@@ -1440,7 +1467,7 @@ function EditBox(props: CalendarStateProps) {
         return;
       }
     } else {
-      if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 15 * 60) {
+      if (scheduleId && scheduleDetial && scheduleList.start_at && scheduleList.start_at - currentTime < 5 * 60) {
         changeModalDate({
           title: "",
           // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
@@ -1670,7 +1697,7 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
 
-    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
+    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 5 * 60) {
       changeModalDate({
         title: "",
         text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
@@ -1710,6 +1737,7 @@ function EditBox(props: CalendarStateProps) {
   const [outComeIds, setOutcomeIds] = React.useState<string[]>([]);
   const [condition, setCondition] = React.useState<any>({ page: 1, exect_search: "all", assumed: -1 });
   const [programChildInfo, setProgramChildInfo] = React.useState<GetProgramsQuery[]>();
+  const [showRepeatMb, setShowRepeatMb] = React.useState<boolean>(false);
   const handelSetProgramChildInfo = (data: GetProgramsQuery[]) => {
     setProgramChildInfo(data);
   };
@@ -1908,6 +1936,11 @@ function EditBox(props: CalendarStateProps) {
         })[0];
       })
       .reverse();
+  };
+
+  const showRepeatMbHandle = (show: boolean) => {
+    setShowRepeatMb(show);
+    document.getElementsByTagName("html")[0].style.overflow = show ? "hidden" : "auto";
   };
 
   return (
@@ -2513,7 +2546,7 @@ function EditBox(props: CalendarStateProps) {
             />
           </Box>
         )}
-        {checkedStatus.repeatCheck && (
+        {checkedStatus.repeatCheck && !mobile && (
           <Box className={css.repeatBox}>
             <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
           </Box>
@@ -2530,6 +2563,35 @@ function EditBox(props: CalendarStateProps) {
         setSearchName={setSearchName}
         searchName={name}
       />
+      {showRepeatMb && mobile && (
+        <div className={css.repeatBoxMb}>
+          <Box style={{ paddingBottom: "10px", paddingTop: "10px", backgroundColor: "white" }}>
+            <div style={{ textAlign: "end", paddingRight: "10px" }}>
+              <CloseIcon
+                onClick={() => {
+                  setStatus({ ...checkedStatus, repeatCheck: false });
+                  showRepeatMbHandle(false);
+                }}
+              />
+            </div>
+            <div style={{ maxHeight: window.innerHeight - 200 + "px", overflow: "auto" }}>
+              <RepeatSchedule handleRepeatData={handleRepeatData} repeatState={state} />
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Button
+                className={css.saveMb}
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  showRepeatMbHandle(false);
+                }}
+              >
+                {d("OK").t("general_button_OK")}
+              </Button>
+            </div>
+          </Box>
+        </div>
+      )}
     </ThemeProvider>
   );
 }

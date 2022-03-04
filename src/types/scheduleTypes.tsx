@@ -1,6 +1,5 @@
 import {
   EntityScheduleDetailsView,
-  EntityScheduleFilterClass,
   EntityScheduleLessonPlan,
   EntityScheduleListView,
   EntityScheduleViewDetail,
@@ -209,6 +208,7 @@ export interface scheduleInfoViewProps {
   role_type: string;
   exist_assessment: boolean;
   complete_assessment: boolean;
+  assessment_status?: "in_progress" | "complete";
   lesson_plan: EntityScheduleLessonPlan;
   class_type_label: EntityScheduleShortInfo;
 }
@@ -229,11 +229,13 @@ export interface ScheduleEditExtend extends EntityScheduleDetailsView {
   class_id: string;
   lesson_plan_id: string;
   complete_assessment: boolean;
+  assessment_status?: "in_progress" | "complete";
   lesson_plan: EntityScheduleLessonPlan;
 }
 
 export interface EntityScheduleViewDetailExtend extends EntityScheduleViewDetail {
   complete_assessment?: boolean;
+  assessment_status?: "in_progress" | "complete";
 }
 
 export interface EntityScheduleListViewExtend extends EntityScheduleListView {
@@ -315,4 +317,10 @@ export interface LessonPlanFilterQuery {
   page: number;
   pages: number;
   lesson_plan_name: string;
+}
+
+export interface EntityScheduleFilterClass {
+  id?: string;
+  name?: string;
+  operator_role_type?: "Student" | "Teacher" | "Unknown";
 }

@@ -4,9 +4,10 @@ import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { getScheduleParticipantsMockOptionsResponse } from "@reducers/schedule";
 import { Status } from "../api/api-ko-schema.auto";
 import { GetClassFilterListQuery, GetProgramsQuery, GetUserQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
-import { EntityContentInfoWithDetails, EntityScheduleFilterClass, ModelPublishedOutcomeView } from "../api/api.auto";
+import { EntityContentInfoWithDetails, ModelPublishedOutcomeView } from "../api/api.auto";
 import {
   ClassOptionsItem,
+  EntityScheduleFilterClass,
   EntityScheduleSchoolInfo,
   EntityScheduleShortInfo,
   FilterQueryTypeProps,

@@ -212,7 +212,7 @@ interface InfoMbProps extends InfoProps {
   deleteHandle: () => void;
   showDelete: () => void;
   textEllipsis: (characterCount: number, values?: string) => string;
-  timestampToTime: (timestamp: number) => string;
+  timestampToTime: (timestamp: number, is_yaer: boolean) => string;
   multiStructure: (item?: EntityScheduleShortInfo[]) => string[] | undefined;
   handleGoLive: (scheduleInfos: ScheduleEditExtend) => void;
 }
@@ -332,12 +332,21 @@ function CustomizeTempalteMb(props: InfoMbProps) {
           <span
             className={classes.timeMb}
             style={{
+              visibility: ScheduleViewInfo.class_type_label?.id === "Homework" ? "visible" : "hidden",
+            }}
+          >
+            {d("Due on").t("schedule_study_due_on")} {timestampToTime(ScheduleViewInfo.due_at as number, true)}
+          </span>
+          <span
+            className={classes.timeMb}
+            style={{
+              display: ScheduleViewInfo.class_type_label?.id === "Homework" ? "none" : "block",
               visibility: ScheduleViewInfo.class_type_label?.id !== "Homework" ? "visible" : "hidden",
             }}
           >
             {sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number) !== ""
               ? sameDay(ScheduleViewInfo.start_at as number, ScheduleViewInfo.end_at as number)
-              : timestampToTime(ScheduleViewInfo.start_at as number)}
+              : timestampToTime(ScheduleViewInfo.start_at as number, false)}
           </span>
           <span
             className={classes.timeMb}
@@ -349,7 +358,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
                   : "hidden",
             }}
           >
-            {timestampToTime(ScheduleViewInfo.end_at as number)}
+            {timestampToTime(ScheduleViewInfo.end_at as number, false)}
           </span>
         </div>
         <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
@@ -434,7 +443,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   const perm = usePermission([PermissionType.attend_live_class_as_a_student_187]);
   const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
-  const timestampToTime = (timestamp: number): string => {
+  const timestampToTime = (timestamp: number, is_yaer: boolean): string => {
     if (!timestamp) return "N/A";
     const timestampDate = new Date(timestamp * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -446,7 +455,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       dateNumFun((timestampDate as Date).getHours()),
       dateNumFun((timestampDate as Date).getMinutes()),
     ];
-    return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
+    return is_yaer ? `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y}` : `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
   };
 
   const handleEditSchedule = (scheduleInfo: EntityScheduleViewDetail): void => {
@@ -483,7 +492,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     const isSafari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0;
     let winRef: Window | null = window;
     if (isSafari) {
-      if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
+      if (ScheduleViewInfo.start_at! * 1000 - currentTime > 5 * 60 * 1000) {
         changeModalDate({
           title: "",
           text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
@@ -543,7 +552,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       }
       return;
     }
-    if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
+    if (ScheduleViewInfo.start_at! * 1000 - currentTime > 5 * 60 * 1000) {
       changeModalDate({
         title: "",
         text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
@@ -789,11 +798,11 @@ export default function CustomizeTempalte(props: InfoProps) {
           <>
             <p className={classes.contentRow}>
               <span className={classes.row}>{d("Start Time").t("schedule_detail_start_time")}</span>
-              <span className={classes.row2}>{timestampToTime(ScheduleViewInfo.start_at as number)}</span>
+              <span className={classes.row2}>{timestampToTime(ScheduleViewInfo.start_at as number, false)}</span>
             </p>
             <p className={classes.contentRow}>
               <span className={classes.row}>{d("End Time").t("schedule_detail_end_time")}</span>
-              <span className={classes.row2}>{timestampToTime(ScheduleViewInfo.end_at as number)}</span>
+              <span className={classes.row2}>{timestampToTime(ScheduleViewInfo.end_at as number, false)}</span>
             </p>
           </>
         )}

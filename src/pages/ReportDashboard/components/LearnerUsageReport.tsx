@@ -21,16 +21,6 @@ const useStyles = makeStyles(() => ({
     lineHeight: "47px",
     fontSize: "12px",
     color: "#6D8199",
-    "&:before": {
-      display: "inline-block",
-      content: "''",
-      width: "4px",
-      height: "4px",
-      borderRadius: "50%",
-      backgroundColor: "#00C7FD",
-      marginRight: "5px",
-      marginBottom: "2.5px",
-    },
   },
   reportList: {
     width: "100%",
@@ -46,7 +36,7 @@ const useStyles = makeStyles(() => ({
   },
   reportLeft: {
     fontSize: "14px",
-    fontWeight: 600,
+    fontWeight: "bold",
     wordBreak: "normal",
     wordWrap: "break-word",
     maxWidth: "150px",
