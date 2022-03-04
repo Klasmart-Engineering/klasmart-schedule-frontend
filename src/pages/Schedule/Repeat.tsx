@@ -707,6 +707,7 @@ function RepeatHeader(props: ExtendsProps) {
               id="outlined-adornment-weight"
               value={interval}
               onChange={handleChangeInterval}
+              type="number"
               // endAdornment={endAdornment}
               endAdornment={
                 type === "daily"

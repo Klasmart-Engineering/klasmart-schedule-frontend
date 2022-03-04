@@ -276,6 +276,9 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     marginLeft: "4px",
   },
   addOutcomeBox: {
+    "& svg": {
+      display: "none",
+    },
     "& button": {
       display: "none",
     },
