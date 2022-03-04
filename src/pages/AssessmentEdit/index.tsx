@@ -45,8 +45,7 @@ export function AssessmentsEdit() {
   const formMethods = useForm<UpdateAssessmentRequestDataOmitAction>();
   const { handleSubmit, reset, watch, setValue } = formMethods;
   const formValue = watch();
-  const { lesson_materials, attendance_ids, outcomes } = formValue;
-  console.log("outcomes", outcomes);
+  const { lesson_materials, attendance_ids } = formValue;
   const [autocompleteValue, setChangeAutocompleteValue] = React.useState<
     {
       id: string | number;

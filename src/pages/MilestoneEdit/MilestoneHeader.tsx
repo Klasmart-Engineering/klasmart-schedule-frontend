@@ -7,7 +7,6 @@ import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
 import SaveOutlinedIcon from "@material-ui/icons/SaveOutlined";
 import clsx from "clsx";
-import React from "react";
 import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
@@ -505,7 +504,7 @@ export function MilestoneHeader(props: MilestoneHeaderProps) {
     <>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
         <Button size="small" className={css.arrowBack} onClick={goBack}>
-          <ArrowBack fontSize={sm ? "small" : "default"} />
+          <ArrowBack fontSize={sm ? "small" : "medium"} />
         </Button>
         {/* <Hidden smDown>
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />

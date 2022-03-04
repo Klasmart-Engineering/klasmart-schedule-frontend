@@ -1692,7 +1692,9 @@ type LangRecord =
   | { id: "report_label_covered"; description: `Covered`; values: undefined }
   | { id: "report_label_above"; description: `Above`; values: undefined }
   | { id: "report_label_meets"; description: `Meets`; values: undefined }
-  | { id: "report_label_below"; description: `Below`; values: undefined };
+  | { id: "report_label_below"; description: `Below`; values: undefined }
+  | { id: "schedule_study_due_on"; description: `Due on`; values: undefined }
+  | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

@@ -80,8 +80,8 @@ export enum AssessmentStatus {
 }
 
 export enum AssessmentUpdateAction {
-  save = "save",
-  complete = "complete",
+  save = "Draft",
+  complete = "Complete",
 }
 
 export enum AssessmentOrderBy {
@@ -147,16 +147,16 @@ export enum FolderFileTyoe {
 }
 
 export enum HomeFunAssessmentOrderBy {
-  latest_feedback_at = "latest_feedback_at",
-  _latest_feedback_at = "-latest_feedback_at",
+  submit_at = "submit_at",
+  _submit_at = "-submit_at",
   complete_at = "complete_at",
   _complete_at = "-complete_at",
 }
 
 export enum HomeFunAssessmentStatus {
-  all = "all",
-  in_progress = "in_progress",
-  complete = "complete",
+  all = "Started,Draft,Complete",
+  in_progress = "Started,Draft",
+  complete = "Complete",
 }
 
 export type GetOutcomeListResult = AsyncReturnType<typeof api.learningOutcomes.searchLearningOutcomes>;
@@ -198,9 +198,9 @@ export type DetailStudyAssessment = AsyncReturnType<typeof api.studyAssessments.
 export type UpdataStudyAssessmentRequestData = Parameters<typeof api.studyAssessments.updateStudyAssessment>[1];
 export type UpdateStudyAssessmentStudentIds = NonNullable<UpdataStudyAssessmentRequestData["attendance_ids"]>;
 export enum ExectSeachType {
-  all = "all",
-  class_name = "class_name",
-  teacher_name = "teacher_name",
+  all = " ",
+  // class_name = "class_name",
+  teacher_name = "TeacherName",
 }
 // 添加的被删除的接口的类型-learningsummaryreport相关 s
 export interface EntityQueryLearningSummaryRemainingFilterResultItem {
@@ -230,3 +230,11 @@ export type IParamQueryRemainFilter = {
   student_id?: string;
 };
 // 添加的被删除的接口的类型-learningsummaryreport相关 e
+export enum OrderByAssessmentList {
+  class_end_time = "class_end_at",
+  _class_end_time = "-class_end_at",
+  create_at = "create_at",
+  _create_at = "-create_at",
+  complete_at = "complete_at",
+  _complete_at = "-complete_at",
+}

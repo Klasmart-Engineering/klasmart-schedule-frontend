@@ -4,7 +4,11 @@ type NonOnlyNull<T> = T extends null ? never : T;
 type NonNullRecordValue<T> = {
   [K in keyof T]: NonOnlyNull<T[K]>;
 };
-
+type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
+  ? U
+  : T extends (...args: any) => infer U
+  ? U
+  : any;
 export type OutcomeQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.learningOutcomes.searchLearningOutcomes>[0]>>;
 export type OutcomeQueryConditionChangeHandler = (value: OutcomeQueryCondition) => any;
 export type OutcomeQueryConditionBaseProps = {
@@ -12,7 +16,9 @@ export type OutcomeQueryConditionBaseProps = {
   value: OutcomeQueryCondition;
 };
 
-export type HomeFunAssessmentQueryCondition = NonNullRecordValue<NonNullable<Parameters<typeof api.homeFunStudies.listHomeFunStudies>[0]>>;
+export type HomeFunAssessmentQueryCondition = NonNullRecordValue<
+  NonNullable<Parameters<typeof api.userOfflineStudy.queryUserOfflineStudy>[0]>
+>;
 export type HomeFuAssessmentQueryConditionChangeHandler = (value: HomeFunAssessmentQueryCondition) => any;
 export type HomeFunAssessmentQueryConditionBaseProps = {
   onChange: HomeFuAssessmentQueryConditionChangeHandler;
@@ -31,4 +37,12 @@ export interface BulkListForm {
 export enum HeaderCategory {
   assessment = "assessments",
   outcome = "outcome",
+}
+
+export type GetHomeFunAssessmentList = NonNullable<AsyncReturnType<typeof api.userOfflineStudy.queryUserOfflineStudy>>["item"];
+export type GetHomeFunAssessmentListItem = NonNullable<GetHomeFunAssessmentList>[0];
+export enum HomeFunAssessmentStatus {
+  all = "Started,Draft,Complete",
+  in_progress = "Started,Draft",
+  complete = "Complete",
 }

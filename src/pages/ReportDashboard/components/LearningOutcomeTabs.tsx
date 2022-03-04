@@ -17,16 +17,18 @@ const useStyles = makeStyles(() => ({
     background: "#fff",
   },
   scoreName: {
-    lineHeight: "13px",
+    lineHeight: "14px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
     width: "100%",
     fontSize: "13px",
+    color: "#A5A5A5",
   },
   scoreValue: {
     fontSize: "30px",
     lineHeight: "35px",
+    fontWeight: "bold",
   },
   scoreContainer: {
     width: "25%",
@@ -35,23 +37,13 @@ const useStyles = makeStyles(() => ({
     marginRight: "15px",
   },
   scoreItem: {
-    marginBottom: "7px",
+    marginBottom: "12px",
   },
   titleTip: {
     height: "0px",
     lineHeight: "47px",
     fontSize: "12px",
     color: "#6D8199",
-    "&:before": {
-      display: "inline-block",
-      content: "' '",
-      width: "4px",
-      height: "4px",
-      borderRadius: "50%",
-      backgroundColor: "#00C7FD",
-      marginRight: "5px",
-      marginBottom: "2.5px",
-    },
   },
 }));
 
@@ -75,10 +67,14 @@ export default function LearningOutcomeTabs() {
     },
     {
       name: t("report_label_below"),
-      count: 0,
+      count: count === 0 ? 0 : Math.floor(((achievementCounts.achieved_below_count || 0) / count) * 100),
     },
   ];
-  handleData[2].count = achievementCounts.achieved_below_count === 0 ? 0 : 100 - handleData[0].count - handleData[1].count;
+
+  const filterData = handleData.filter((item) => item.count);
+  if (filterData.length === 2) {
+    filterData[1].count = 100 - filterData[0].count;
+  }
 
   const renderScore = (name: string, number: number, color: string, i: number) => {
     return (
@@ -97,7 +93,7 @@ export default function LearningOutcomeTabs() {
     return (
       <Box display={"flex"} flexDirection={"column"} alignItems={"center"} position={"absolute"}>
         <Box color={"#777"}>{t("report_label_covered")}</Box>
-        <Box color={"#14b799"} fontSize={36}>
+        <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
           {achievementCounts.covered_learn_outcome_count}
         </Box>
       </Box>
@@ -135,9 +131,6 @@ export default function LearningOutcomeTabs() {
             {renderCountNumber()}
           </Box>
           <Grid container direction="column" justifyContent="center" className={css.scoreContainer}>
-            <Box borderBottom={"1px solid #ddd"} fontWeight={600} marginBottom={"10px"} paddingBottom={"10px"}>
-              {t("report_label_achieved")}
-            </Box>
             {handleData.map((item, i) => renderScore(item.name || "", item.count || 0, COLORS[i], i))}
           </Grid>
         </Box>

@@ -1,9 +1,11 @@
+import { Dimension } from "@pages/DetailAssessment/MultiSelect";
 import { cloneDeep, uniq } from "lodash";
 import {
   EntityAssessmentDetailContent,
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
+  V2AssessmentContentReply,
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
@@ -13,6 +15,15 @@ import {
   UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
+import {
+  MaterialViewItemResultProps,
+  OutcomeStatus,
+  OverAllOutcomesItem,
+  StudentParticipate,
+  StudentViewItemsProps,
+  SubDimensionOptions,
+} from "../pages/DetailAssessment/type";
+import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 
 interface ObjContainId {
   id?: string;
@@ -397,6 +408,344 @@ export const ModelAssessment = {
       co.attendance_ids = uniq(co.attendance_ids);
     });
     return contentOutcomes;
+  },
+  setInitFormValue(contents: DetailAssessmentResult["contents"], students: DetailAssessmentResult["students"]) {
+    const _contents = contents
+      ?.filter((item) => item.content_type === "LessonMaterial" && !item.parent_id)
+      .map((item) => {
+        const { content_id, parent_id, reviewer_comment, status } = item;
+        return {
+          content_id,
+          parent_id,
+          reviewer_comment,
+          status,
+        };
+      });
+    return { contents: _contents };
+  },
+  getStudentViewItems(
+    students: DetailAssessmentResult["students"],
+    contents: DetailAssessmentResult["contents"],
+    outcomes: DetailAssessmentResult["outcomes"]
+  ): StudentViewItemsProps[] | undefined {
+    const participateStudent = students?.filter((item) => item.status === StudentParticipate.Participate);
+    const contentObj: Record<string, DetailAssessmentResultContent> = {};
+    const outcomeObj: Record<string, DetailAssessmentResultOutcome> = {};
+    contents
+      ?.filter((item) => item.status === "Covered")
+      .forEach((item) => {
+        if (!contentObj[item.content_id!]) {
+          contentObj[item.content_id!] = { ...item };
+        }
+      });
+    outcomes?.forEach((item) => {
+      if (!outcomeObj[item.outcome_id!]) {
+        outcomeObj[item.outcome_id!] = { ...item };
+      }
+    });
+    const studentViewItems: StudentViewItemsProps[] | undefined = participateStudent?.map((item) => {
+      const { student_id, student_name, reviewer_comment, status, results } = item;
+      return {
+        student_id,
+        student_name,
+        reviewer_comment,
+        status,
+        result: results
+          ?.filter((r) => !!contentObj[r.content_id!])
+          .map((result) => {
+            const { answer, attempted, content_id, score, outcomes } = result;
+            const { content_name, content_type, content_subtype, file_type, max_score, number, parent_id, h5p_id, status } =
+              contentObj[content_id!];
+            return {
+              answer,
+              attempted,
+              content_id,
+              score,
+              content_name,
+              content_type,
+              content_subtype,
+              file_type,
+              max_score,
+              number,
+              parent_id,
+              h5p_id,
+              status,
+              outcomes: outcomes?.map((item) => {
+                const { assumed, outcome_name, assigned_to } = outcomeObj[item.outcome_id!];
+                return {
+                  ...item,
+                  assumed,
+                  outcome_name,
+                  assigned_to,
+                };
+              }),
+            };
+          }),
+      };
+    });
+    return studentViewItems;
+  },
+  getOverallOutcomes(studentViewItems: StudentViewItemsProps[] | undefined): OverAllOutcomesItem[] {
+    let outcomeView: Record<string, OverAllOutcomesItem> = {};
+    let overAllOutcomes: OverAllOutcomesItem[] = [];
+    studentViewItems?.forEach((sItem) => {
+      const { student_id } = sItem;
+      sItem.result?.forEach((rItem) => {
+        if (rItem.content_type === "LessonMaterial") {
+          rItem.outcomes?.forEach((oItem) => {
+            const { outcome_id, status, outcome_name, assumed, assigned_to } = oItem;
+            if (!outcomeView[outcome_id!]) {
+              outcomeView[outcome_id!] = {
+                outcome_id,
+                outcome_name,
+                assumed,
+                assigned_to,
+                attendance_ids: status === OutcomeStatus.Achieved ? [student_id!] : [],
+                not_attendance_ids: status !== OutcomeStatus.Achieved ? [student_id!] : [],
+                partial_attendance_ids: [],
+                none_achieved: status === OutcomeStatus.NotAchieved,
+                skip: status === OutcomeStatus.NotCovered,
+              };
+            } else {
+              const { none_achieved, skip, attendance_ids, not_attendance_ids } = outcomeView[outcome_id!];
+              outcomeView[outcome_id!].none_achieved = status === "NotAchieved" && none_achieved;
+              outcomeView[outcome_id!].skip = status === "NotCovered" && skip;
+              const a_index = attendance_ids?.indexOf(student_id!) ?? -1;
+              const n_index = not_attendance_ids?.indexOf(student_id!) ?? -1;
+              if (status === "Achieved") {
+                if (a_index < 0 && n_index < 0) {
+                  outcomeView[outcome_id!].attendance_ids?.push(student_id!);
+                }
+                if (n_index >= 0) {
+                  outcomeView[outcome_id!].partial_attendance_ids?.push(student_id!);
+                  if (a_index >= 0) {
+                    outcomeView[outcome_id!].attendance_ids?.splice(a_index, 1);
+                  }
+                }
+              } else {
+                if (a_index >= 0) {
+                  outcomeView[outcome_id!].partial_attendance_ids?.push(student_id!);
+                  outcomeView[outcome_id!].attendance_ids?.splice(a_index, 1);
+                }
+                if (n_index < 0) {
+                  outcomeView[outcome_id!].not_attendance_ids?.push(student_id!);
+                }
+              }
+            }
+          });
+        } else {
+          rItem.outcomes?.forEach((oItem) => {
+            const { outcome_id, status, outcome_name, assumed, assigned_to } = oItem;
+            if (oItem.assigned_to?.length === 1) {
+              if (!outcomeView[outcome_id!]) {
+                outcomeView[outcome_id!] = {
+                  outcome_id,
+                  outcome_name,
+                  assumed,
+                  assigned_to,
+                  attendance_ids: status === OutcomeStatus.Achieved ? [student_id!] : [],
+                  not_attendance_ids: [],
+                  partial_attendance_ids: [],
+                  none_achieved: status === OutcomeStatus.NotAchieved,
+                  skip: status === OutcomeStatus.NotCovered,
+                };
+              } else {
+                const { none_achieved, skip, attendance_ids = [] } = outcomeView[outcome_id!];
+                outcomeView[outcome_id!].none_achieved = status === OutcomeStatus.NotAchieved && none_achieved;
+                outcomeView[outcome_id!].skip = status === OutcomeStatus.NotCovered && skip;
+                const a_index = attendance_ids?.indexOf(student_id!) ?? -1;
+                if (status === OutcomeStatus.Achieved) {
+                  if (a_index < 0) {
+                    outcomeView[outcome_id!].attendance_ids?.push(student_id!);
+                  }
+                } else {
+                  if (a_index >= 0) {
+                    outcomeView[outcome_id!].attendance_ids?.splice(a_index, 1);
+                  }
+                }
+              }
+            }
+          });
+        }
+      });
+    });
+    overAllOutcomes = Object.values(outcomeView);
+    return overAllOutcomes;
+  },
+  getMaterialViewItems(
+    contents: DetailAssessmentResult["contents"],
+    students: DetailAssessmentResult["students"],
+    studentViewItems?: StudentViewItemsProps[]
+  ): MaterialViewItemResultProps[] {
+    const materialViewObj: Record<string, MaterialViewItemResultProps> = {};
+    let materialViewItems: MaterialViewItemResultProps[] = [];
+    studentViewItems?.forEach((sItem) => {
+      const { student_id, student_name } = sItem;
+      sItem.result
+        ?.filter((r) => r.content_type === "LessonMaterial" || r.content_type === "Unknown")
+        .forEach((rItem) => {
+          const {
+            content_id,
+            content_name,
+            number,
+            content_subtype,
+            answer,
+            score,
+            max_score,
+            file_type,
+            parent_id,
+            outcomes,
+            status,
+            attempted,
+          } = rItem;
+          if (!materialViewObj[content_id!]) {
+            materialViewObj[content_id!] = {
+              content_id,
+              content_name,
+              content_subtype,
+              number,
+              max_score,
+              file_type,
+              parent_id,
+              status,
+              students: [
+                {
+                  student_id,
+                  student_name,
+                  answer,
+                  score,
+                  attempted,
+                },
+              ],
+              outcomes: outcomes?.map((oItem) => {
+                const { outcome_id, outcome_name, assumed, status } = oItem;
+                return {
+                  outcome_id,
+                  outcome_name,
+                  assumed,
+                  status,
+                  attendance_ids: status === OutcomeStatus.Achieved ? [student_id!] : [],
+                };
+              }),
+            };
+          } else {
+            materialViewObj[content_id!].students?.push({ student_id, student_name, answer, score, attempted });
+            materialViewObj[content_id!].outcomes = materialViewObj[content_id!].outcomes?.map((oItem) => {
+              const currOutcome = outcomes?.find((item) => item.outcome_id === oItem.outcome_id);
+              const _attendance_ids = oItem.attendance_ids ?? [];
+              let n_attendance_ids: string[] = [];
+              if (currOutcome?.status === OutcomeStatus.Achieved) {
+                n_attendance_ids = [..._attendance_ids, student_id!];
+              }
+              return {
+                ...oItem,
+                attendance_ids: currOutcome?.status === OutcomeStatus.Achieved ? n_attendance_ids : _attendance_ids,
+              };
+            });
+          }
+        });
+    });
+    materialViewItems = Object.values(materialViewObj);
+    return materialViewItems;
+  },
+  getInitSubDimension(dimension: Dimension, studentViewItems: StudentViewItemsProps[] | undefined): SubDimensionOptions[] | undefined {
+    if (dimension === Dimension.student) {
+      return studentViewItems?.map((item) => {
+        return { id: item.student_id!, name: item.student_name! };
+      });
+    } else {
+      if (studentViewItems && studentViewItems[0] && studentViewItems[0].result) {
+        return studentViewItems[0].result
+          .filter((item) => item.content_type === "LessonMaterial" && item.status === "Covered" && item.parent_id === "")
+          .map((item) => {
+            return { id: item.content_id!, name: item.content_name! };
+          });
+      } else {
+        return [];
+      }
+    }
+  },
+  getUpdateAssessmentData(contents?: V2AssessmentContentReply[], students?: StudentViewItemsProps[]) {
+    const _contents =
+      contents?.map((item) => {
+        const { content_id, content_subtype, content_type, parent_id, status, reviewer_comment } = item;
+        return {
+          content_id,
+          content_subtype,
+          content_type,
+          parent_id,
+          status,
+          reviewer_comment,
+        };
+      }) ?? [];
+    const _students =
+      students?.map((item) => {
+        const { student_id, status, reviewer_comment, result } = item;
+        return {
+          student_id,
+          reviewer_comment,
+          status,
+          results: result?.map((rItem) => {
+            const { content_id, parent_id, score, outcomes } = rItem;
+            return {
+              content_id,
+              parent_id,
+              score,
+              outcomes: outcomes?.map((oItem) => {
+                const { outcome_id, status } = oItem;
+                return {
+                  outcome_id,
+                  status,
+                };
+              }),
+            };
+          }),
+        };
+      }) ?? [];
+    return { _contents, _students };
+  },
+  getCompleteStatus(studentViewItems?: StudentViewItemsProps[]) {
+    let hasNotAttemptArr: boolean[] = [];
+    if (studentViewItems && studentViewItems[0]) {
+      hasNotAttemptArr = studentViewItems.map((item) => {
+        let all: number = 0;
+        let attempt: number = 0;
+        if (item.result && item.result[0]) {
+          item.result.forEach((v) => {
+            if (v.content_type === "LessonMaterial") {
+              if (v.h5p_id) {
+                all += 1;
+                if (v.attempted) {
+                  attempt += 1;
+                }
+              }
+            }
+          });
+        }
+        const hasNotAttempt = all && attempt && all > attempt ? true : false;
+        return hasNotAttempt;
+      });
+    }
+    return !!hasNotAttemptArr.find((item) => item);
+  },
+  getCompleteRateV2(studentViewItems?: StudentViewItemsProps[]) {
+    let all: number = 0;
+    let attempt: number = 0;
+    if (studentViewItems && studentViewItems[0]) {
+      studentViewItems.forEach((item) => {
+        if (item.result && item.result[0]) {
+          item.result.forEach((v) => {
+            if (v.h5p_id) {
+              all += 1;
+              if (v.attempted) {
+                attempt += 1;
+              }
+            }
+          });
+        }
+      });
+    }
+    return { all, attempt };
   },
 };
 

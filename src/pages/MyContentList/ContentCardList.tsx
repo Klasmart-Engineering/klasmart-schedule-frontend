@@ -101,7 +101,6 @@ const useStyles = makeStyles((theme) =>
       zIndex: 10,
     },
     cardActions: {
-      flexWrap: "wrap",
       justifyContent: "space-between",
       height: "40px",
     },
@@ -373,7 +372,7 @@ function ContentCard(props: ContentProps) {
       </CardActionArea>
       <CardContent className={css.cardContent}>
         <Grid container alignContent="space-between">
-          <Typography variant="h6" style={{ flex: 1 }} noWrap={true}>
+          <Typography variant="h6" style={{ flex: 1 }} noWrap>
             {content?.name}
           </Typography>
           {content.content_type === ContentType.folder && (
@@ -403,7 +402,7 @@ function ContentCard(props: ContentProps) {
         {content?.content_type === ContentType.assets && file_type === ContentType.doc % 10 && d("Document").t("library_label_document")}
       </Typography>
       <CardActions className={css.cardActions}>
-        <Typography className={css.body2} variant="body2">
+        <Typography className={css.body2} variant="body2" noWrap style={{ flex: 1 }}>
           {content?.author_name}
         </Typography>
         <div>

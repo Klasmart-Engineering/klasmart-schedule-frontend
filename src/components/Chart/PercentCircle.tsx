@@ -65,7 +65,14 @@ export default function PercentCircle({
     <Box>
       <svg width={width} height={height}>
         <Group top={centerY + margin.top} left={centerX + margin.left}>
-          <Pie data={alldata} pieValue={getValue} outerRadius={radius} innerRadius={radius - donutThickness} cornerRadius={1} padAngle={0}>
+          <Pie
+            data={alldata}
+            pieValue={getValue}
+            outerRadius={radius + 8}
+            innerRadius={radius + 8 - donutThickness}
+            cornerRadius={1}
+            padAngle={0}
+          >
             {(pie) => {
               return pie.arcs.map((arc, index) => {
                 const arcPath = pie.path(arc);

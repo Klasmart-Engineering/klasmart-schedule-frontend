@@ -2,12 +2,11 @@ import rightArrow from "@assets/icons/rightArrow.svg";
 import { noReportTip } from "@components/TipImages";
 import { Box, Button, Grid, Icon, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
-import { Info, InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
-import { ReportLearningSummary } from "@pages/ReportLearningSummary";
+import { InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
 import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import { RootState } from "@reducers/index";
-import { getAchievementOverview, getLearnerUsageOverview } from "@reducers/report";
+import { getAchievementOverview, getLearnerUsageOverview, getLearnerWeeklyReportOverview } from "@reducers/report";
 import { getAWeek } from "@utilities/dateUtilities";
 import clsx from "clsx";
 import React, { useCallback } from "react";
@@ -22,6 +21,7 @@ import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import LearnerUsageReport from "./components/LearnerUsageReport";
 import LearningOutcomeTabs from "./components/LearningOutcomeTabs";
+import LearningWeeklyTabs from "./components/LearningWeeklyTabs";
 import SkillCoverageTab from "./components/SkillCoverageTab";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -135,11 +135,12 @@ interface ReportItem {
 
 const DiyTooltip = withStyles((theme: Theme) => ({
   tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
+    backgroundColor: theme.palette.common.black,
+    color: "#fff",
     boxShadow: theme.shadows[1],
     fontSize: 11,
     padding: 10,
+    borderRadius: 14,
     lineHeight: "18px",
   },
 }))(Tooltip);
@@ -189,6 +190,7 @@ export function ReportDashboard() {
       })
     );
     dispatch(getAchievementOverview({ time_range: getAWeek().join("-") }));
+    dispatch(getLearnerWeeklyReportOverview({ time_range: getAWeek().join("-") }));
   }, [dispatch]);
 
   const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending] = React.useMemo(() => {
@@ -199,11 +201,6 @@ export function ReportDashboard() {
         hasPerm: !!perm.student_progress_report_662,
         label: t("report_label_student_progress_report"),
         url: ReportStudentProgress.routeBasePath,
-      },
-      {
-        hasPerm: !!perm.learning_summary_report_653,
-        label: t("report_learning_summary_report"),
-        url: ReportLearningSummary.routeRedirectDefault,
       },
       {
         hasPerm: !!perm.teachers_classes_teaching_time_report_620,
@@ -221,13 +218,14 @@ export function ReportDashboard() {
   const reportTip = (title: string, tip: string) => (
     <div className={css.reportTop}>
       {title}
-      <DiyTooltip title={<div className={css.infoul} dangerouslySetInnerHTML={{ __html: tip }}></div>}>
-        <Info
+      <DiyTooltip placement={"right-start"} title={<div className={css.infoul} dangerouslySetInnerHTML={{ __html: tip }}></div>}>
+        <InfoOutlined
           style={{
             fontSize: 20,
             marginLeft: 6,
+            color: "#000",
           }}
-        ></Info>
+        ></InfoOutlined>
       </DiyTooltip>
     </div>
   );
@@ -243,6 +241,22 @@ export function ReportDashboard() {
         {!isPending && !hasPerm && noReportTip}
         {!isPending && hasPerm && (
           <Grid container spacing={2}>
+            {Boolean(perm.learning_summary_report_653) && (
+              <Grid item xs={12} md={4}>
+                {reportTip(t("report_learning_summary_report"), t("report_label_learner_weekly_report_info" as any))}
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <LearningWeeklyTabs />
+                </Box>
+              </Grid>
+            )}
+            {Boolean(perm.organization_class_achievements_report_626) && (
+              <Grid item xs={12} md={4}>
+                {reportTip(t("report_label_learning_outcome"), t("report_label_learning_outcome_info"))}
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <LearningOutcomeTabs />
+                </Box>
+              </Grid>
+            )}
             {hasSkillCoveragePerm && (
               <Grid item xs={12} md={4}>
                 {reportTip(t("report_label_skill_coverage"), t("report_label_skill_coverage_info"))}
@@ -256,14 +270,6 @@ export function ReportDashboard() {
                 {reportTip(t("report_label_learner_usage"), t("report_label_learner_usage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearnerUsageReport learnerUsageOverview={learnerUsageOverview} />
-                </Box>
-              </Grid>
-            )}
-            {Boolean(perm.organization_class_achievements_report_626) && (
-              <Grid item xs={12} md={4}>
-                {reportTip(t("report_label_learning_outcome"), t("report_label_learning_outcome_info"))}
-                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
-                  <LearningOutcomeTabs />
                 </Box>
               </Grid>
             )}

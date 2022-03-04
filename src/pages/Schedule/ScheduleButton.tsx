@@ -43,7 +43,7 @@ function RouterButton(props: ButtonProps) {
   const disabled = () => {
     return (
       (scheduleInfo.status !== "NotStart" && scheduleInfo.status !== "Started") ||
-      (scheduleInfo.role_type === "Student" && scheduleInfo.complete_assessment) ||
+      (scheduleInfo.role_type === "Student" && scheduleInfo.assessment_status === "complete") ||
       !scheduleInfo.lesson_plan_id ||
       scheduleInfo.lesson_plan?.is_auth === false
     );
@@ -96,7 +96,8 @@ function RouterButton(props: ButtonProps) {
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
         {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework" && d("Go Study").t("schedule_button_go_study")}
-        {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass" && d("Start Class").t("schedule_button_start_class")}
+        {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass" &&
+          d("Start Class").t("schedule_button_start_class")}
         {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
       </Button>
     </>

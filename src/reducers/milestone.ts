@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { gqlapi } from "../api";
-import { QeuryMeDocument, QeuryMeQuery, QeuryMeQueryVariables } from "../api/api-ko.auto";
-import { apiWaitForOrganizationOfPage } from "../api/extra";
+import { QueryMyUserDocument, QueryMyUserQuery, QueryMyUserQueryVariables } from "../api/api-ko.auto";
 import { GetOutcomeList, MilestoneDetailResult, MilestoneListResult, MilestoneStatus, SearchMilestonneResult } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { MilestoneQueryCondition } from "../pages/MilestoneList/types";
@@ -32,22 +31,14 @@ const initialState: IMilestoneState = {
   milestoneList: [],
   milestoneDetail: {
     age: [],
-    // age_ids: [],
-    // ancestor_id: "",
     author: {},
     category: [],
-    // category_ids: [],
     create_at: 0,
     description: "",
     grade: [],
-    // grade_ids: [],
-    // latest_id: "",
-    // locked_by: "",
     milestone_id: "",
     milestone_name: "",
     organization: {},
-    // outcome_ancestor_ids: [],
-    // outcome_count: 0,
     outcomes: [],
     program: [
       {
@@ -55,14 +46,10 @@ const initialState: IMilestoneState = {
         program_name: "",
       },
     ],
-    // program_ids: [],
     shortcode: "",
-    // source_id: "",
     status: "",
     sub_category: [],
-    // subcategory_ids: [],
     subject: [],
-    // subject_ids: [],
   },
   total: undefined,
   shortCode: "",
@@ -93,16 +80,13 @@ type ResultMilestoneList = {
 export const onLoadMilestoneList = createAsyncThunk<ResultMilestoneList, ParamsMilestoneList>(
   "milestone/onLoadMilestoneList",
   async ({ metaLoading, ...query }) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+    // const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const { author_id } = query;
-    const user_id = meInfo.me?.user_id;
+    const user_id = meInfo.myUser?.node?.id;
     const resObj: ResultMilestoneList = {};
     resObj.user_id = user_id as string;
     const { status, is_unpub } = query;
@@ -152,15 +136,11 @@ export const onLoadMilestoneEdit = createAsyncThunk<ResultOnLoadMilestoneEdit, P
           milestoneDetail.subject && milestoneDetail.subject[0] ? milestoneDetail.subject?.map((v) => v.subject_id).join(",") : "",
       })
     );
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const { data } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
       fetchPolicy: "cache-first",
     });
-    const user_id = data?.me?.user_id as string;
+    const user_id = meInfo.myUser?.node?.id;
     return { milestoneDetail, user_id };
   }
 );
@@ -310,16 +290,13 @@ type IQueryOnLoadOutcomeListResult = {
 export const onLoadOutcomeList = createAsyncThunk<IQueryOnLoadOutcomeListResult, IQueryOnLoadOutcomeListParams>(
   "milestone/onLoadOutcomeList",
   async (query) => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
     // 拉取我的user_id
     const resObj: IQueryOnLoadOutcomeListResult = {};
-    const { data: meInfo } = await gqlapi.query<QeuryMeQuery, QeuryMeQueryVariables>({
-      query: QeuryMeDocument,
-      variables: {
-        organization_id,
-      },
+    const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
+      fetchPolicy: "cache-first",
     });
-    resObj.user_id = meInfo.me?.user_id;
+    resObj.user_id = meInfo.myUser?.node?.id;
     const { search_key, page, exect_search, assumed } = query;
     const params: OutcomeQueryCondition = {
       publish_status: "published",
