@@ -495,7 +495,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       if (ScheduleViewInfo.start_at! * 1000 - currentTime > 5 * 60 * 1000) {
         changeModalDate({
           title: "",
-          text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
+          text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
@@ -555,7 +555,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     if (ScheduleViewInfo.start_at! * 1000 - currentTime > 5 * 60 * 1000) {
       changeModalDate({
         title: "",
-        text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
+        text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [

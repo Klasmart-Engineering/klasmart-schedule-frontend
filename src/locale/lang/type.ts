@@ -1,9 +1,9 @@
 import { MessageDescriptor } from "react-intl";
 
-export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
+export type LangName = "en" | "ko" | "zh" | "vi" | "id";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id", "es", "th"].includes(name)) throw new TypeError();
+  if (!name || !["en", "ko", "zh", "vi", "id"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -619,15 +619,15 @@ type LangRecord =
   | { id: "schedule_msg_no_student"; description: `There is no student in this class`; values: undefined }
   | {
       id: "schedule_msg_delete_minutes";
-      description: `You can only delete a class at least 15 minutes before the start time.`;
+      description: `You can only delete a class at least 5 minutes before the start time.`;
       values: undefined;
     }
   | {
       id: "schedule_msg_edit_minutes";
-      description: `You can only edit a class at least 15 minutes before the start time.`;
+      description: `You can only edit a class at least 5 minutes before the start time.`;
       values: undefined;
     }
-  | { id: "schedule_msg_start_minutes"; description: `You can only start a class 15 minutes before the start time.`; values: undefined }
+  | { id: "schedule_msg_start_minutes"; description: `You can only start a class 5 minutes before the start time.`; values: undefined }
   | { id: "schedule_button_click_to schedule"; description: `Click to Schedule`; values: undefined }
   | { id: "schedule_msg_time_expired"; description: `Time Expired`; values: undefined }
   | {
@@ -1694,7 +1694,12 @@ type LangRecord =
   | { id: "report_label_meets"; description: `Meets`; values: undefined }
   | { id: "report_label_below"; description: `Below`; values: undefined }
   | { id: "schedule_study_due_on"; description: `Due on`; values: undefined }
-  | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined };
+  | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined }
+  | {
+      id: "report_label_learner_weekly_report_info";
+      description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .`;
+      values: undefined;
+    };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
