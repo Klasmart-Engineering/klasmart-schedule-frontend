@@ -7,7 +7,7 @@ import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, M
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { ResultGetNewOptions } from "@reducers/outcome";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 
 const useStyles = makeStyles((theme) => ({
@@ -178,6 +178,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 error={errors.outcome_name ? true : false}
               />
             </Grid>
+            {/* {outcome_id && ( */}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="shortcode"
@@ -208,21 +209,9 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 {d("Assumed").t("assess_label_assumed")}
               </p>
             </Grid>
-            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
-              <Controller
-                name="organization_name"
-                control={control}
-                as={TextField}
-                defaultValue={outcomeDetail.organization_name}
-                fullWidth
-                label={d("Organization").t("assess_label_organization")}
-                disabled
-                size="small"
-              />
-            </Grid>
             {outcome_id && (
               <>
-                {/* <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+                <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                   <Controller
                     name="organization_name"
                     control={control}
@@ -233,7 +222,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     disabled
                     size="small"
                   />
-                </Grid> */}
+                </Grid>
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                   <Controller
                     name="created_at"
@@ -507,6 +496,37 @@ export function OutcomeForm(props: OutcomeFormProps) {
           )}
         </Box>
         <Box style={{ marginTop: 40 }}>
+          {/*          <Grid container justify="space-between" style={{ marginTop: "40px" }}>
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <Controller
+                as={FormattedTextField}
+                control={control}
+                name="estimated_time"
+                decode={Number}
+                type="number"
+                label={d("Estimated Time (Minutes)").t("assess_label_estimated_time")}
+                defaultValue={outcome_id ? outcomeDetail.estimated_time : 0}
+                fullWidth
+                disabled={showEdit}
+                inputProps={{ min: 0 }}
+                // rules={{ pattern: /^[0-9]*$ / }}
+                // error={errors.estimated_time ? true : false}
+              />
+            </Grid>
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <Controller
+                as={FormattedTextField}
+                control={control}
+                name="keywords"
+                decode={decodeArray}
+                defaultValue={outcome_id ? outcomeDetail.keywords : []}
+                label={d("Keywords").t("assess_label_keywords")}
+                helperText=""
+                fullWidth
+                disabled={showEdit}
+              />
+            </Grid>
+          </Grid>*/}
           <Grid container justify="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
               <Controller
