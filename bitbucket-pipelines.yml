@@ -9,7 +9,7 @@ pipelines:
           script:
             - apk update && apk add git openssh --no-cache
 
-            - npm ci --legacy-peer-deps
+            - npm ci
             - mv deploy/config/alpha/.env.alpha ./.env.production
             - npm run build
           after-script:
@@ -31,7 +31,7 @@ pipelines:
           size: 2x
           script:
             - apk update && apk add git openssh --no-cache
-            - npm ci --legacy-peer-deps
+            - npm ci
             - mv deploy/config/sre/.env.alpha ./.env.production
             - npm run build && mv build infra
           after-script:
@@ -115,7 +115,7 @@ pipelines:
         size: 2x
         script:
           - apk update && apk add git openssh --no-cache
-          - npm ci --legacy-peer-deps
+          - npm ci
           - mv deploy/config/$KIDSLOOP_REGION/.env.$KIDSLOOP_ENV ./.env.production 
           - npm run build
         after-script:
