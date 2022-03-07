@@ -17,11 +17,7 @@ fetchIntercept.register({
       if (!organization) return [originUrl, config];
       const URL_REPLACE = "https://_u_r_l_r_e_p_l_a_c_e_";
       const url = new URL(originUrl, URL_REPLACE);
-      console.log(url);
-      if (url.pathname.indexOf("kidsloop") >= 0) {
-        // 暂时改一下：获取s3资源的时候不需要传orgid,不然会报403
-        url.searchParams.append(ORG_ID_KEY, organization);
-      }
+      url.searchParams.append(ORG_ID_KEY, organization);
       return [url.toString().replace(URL_REPLACE, ""), config];
     } catch (err) {
       console.error(err);
