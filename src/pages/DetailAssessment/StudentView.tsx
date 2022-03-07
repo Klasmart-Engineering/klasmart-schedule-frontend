@@ -20,7 +20,7 @@ import { PLField, PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
 import { EditScore } from "./EditScore";
 import { Dimension } from "./MultiSelect";
-import { ResourceView, showAudioRecorder, useResourceView } from "./ResourceView";
+import { ResourceView, useResourceView } from "./ResourceView";
 import { OutcomeStatus, StudentViewItemsProps, SubDimensionOptions } from "./type";
 const useStyles = makeStyles({
   tableBar: {
@@ -89,19 +89,15 @@ export interface StudentViewProps {
   editable: boolean;
   onChangeComputedStudentViewItems: (studentViewItems?: StudentViewItemsProps[]) => void;
   studentViewItems?: StudentViewItemsProps[];
-  roomId?: string;
 }
 export function StudentView(props: StudentViewProps) {
   const css = useStyles();
-  const { studentViewItems, editable, subDimension, roomId, onChangeComputedStudentViewItems } = props;
+  const { studentViewItems, editable, subDimension, onChangeComputedStudentViewItems } = props;
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
   const [resourceType, setResourceType] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [studentId, setStudentId] = useState<string | undefined>("");
-  const [room, setRoom] = useState<string | undefined>("");
-  const [h5pId, setH5pId] = useState<string | undefined>("");
-  const [userId, setUserId] = useState<string | undefined>("");
   const subDimensionIds = useMemo(() => {
     return subDimension.length ? subDimension.map((item) => item.id) : [];
   }, [subDimension]);
@@ -173,13 +169,6 @@ export function StudentView(props: StudentViewProps) {
     openResourceView();
     setResourceType("Essay");
     setAnswer(answer);
-  };
-  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, userId?: string) => {
-    openResourceView();
-    setResourceType("AudioRecorder");
-    setRoom(roomId);
-    setH5pId(h5pId);
-    setUserId(userId);
   };
   const handleChangeScore = (score?: number, studentId?: string, contentId?: string) => {
     const _studentViewItems = studentViewItems?.map((sItem) => {
@@ -298,14 +287,6 @@ export function StudentView(props: StudentViewProps) {
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
                                   )}
-                                  {showAudioRecorder(ritem.content_subtype) && (
-                                    <span
-                                      style={{ color: "#006CCF", cursor: "pointer" }}
-                                      onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, sitem.student_id)}
-                                    >
-                                      {d("Click to View").t("assess_detail_click_to_view")}
-                                    </span>
-                                  )}
                                 </TableCell>
                                 <TableCell align="center">
                                   <EditScore
@@ -361,9 +342,6 @@ export function StudentView(props: StudentViewProps) {
         studentId={studentId}
         onChangeComment={handleChangeComment}
         onClose={closeResourceView}
-        roomId={room}
-        userId={userId}
-        h5pId={h5pId}
       />
     </>
   );
