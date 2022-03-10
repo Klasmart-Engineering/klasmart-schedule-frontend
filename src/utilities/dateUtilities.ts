@@ -17,6 +17,10 @@ export function getFourWeeks() {
   return res.reverse();
 }
 
+export function getSingleOfFourWeeks() {
+  return [moment().subtract(4, "week").unix(), moment().unix()];
+}
+
 export function getDurationByDay(day: number) {
   const currentDate = moment().startOf("day").unix();
   return `${currentDate - 3600 * 24 * day}-${currentDate}`;

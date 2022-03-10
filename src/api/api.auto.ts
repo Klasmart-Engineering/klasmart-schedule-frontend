@@ -725,6 +725,19 @@ export interface EntityLearnOutcomeAchievementResponseItem {
   un_selected_subjects_average_achieved_percentage?: number;
 }
 
+export interface EntityLearnerMonthlyReportOverview {
+  attendees?: number;
+
+  /** num of above student */
+  num_above?: number;
+
+  /** num of below student */
+  num_below?: number;
+
+  /** num of meet student */
+  num_meet?: number;
+}
+
 export interface EntityLearnerUsageRequest {
   content_type_list?: string[];
   durations?: string[];
@@ -940,6 +953,7 @@ export interface EntityOutcome {
   publish_scope?: string;
   publish_status?: string;
   reject_reason?: string;
+  scoreThreshold?: number;
   sets?: EntitySet[];
   shortcode?: string;
   shortcode_cum?: number;
@@ -1088,6 +1102,8 @@ export interface EntitySchedule {
   /** disabled */
   class_id?: string;
   class_type?: string;
+  content_end_at?: number;
+  content_start_at?: number;
   created_at?: number;
   created_id?: string;
   delete_at?: number;
@@ -1099,12 +1115,14 @@ export interface EntitySchedule {
   is_all_day?: boolean;
   is_hidden?: boolean;
   is_home_fun?: boolean;
+  is_review?: boolean;
   lesson_plan_id?: string;
   live_lesson_plan?: EntityScheduleLiveLessonPlan;
   org_id?: string;
   program_id?: string;
   repeat_id?: string;
   repeat_json?: string;
+  review_status?: string;
   schedule_version?: number;
   start_at?: number;
   status?: string;
@@ -1158,6 +1176,8 @@ export interface EntityScheduleDetailsView {
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
+  content_end_at?: number;
+  content_start_at?: number;
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -1168,6 +1188,7 @@ export interface EntityScheduleDetailsView {
   is_hidden?: boolean;
   is_home_fun?: boolean;
   is_repeat?: boolean;
+  is_review?: boolean;
   lesson_plan?: EntityScheduleLessonPlan;
   org_id?: string;
   outcome_ids?: string[];
@@ -1176,6 +1197,7 @@ export interface EntityScheduleDetailsView {
   program?: EntityScheduleShortInfo;
   real_time_status?: EntityScheduleRealTimeView;
   repeat?: EntityRepeatOptions;
+  review_status?: "pending" | "success" | "failed";
   role_type?: "Student" | "Teacher" | "Unknown";
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
@@ -1218,7 +1240,8 @@ export interface EntityScheduleListView {
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
-  assessment_status?: "in_progress" | "complete";
+  content_end_at?: number;
+  content_start_at?: number;
   due_at?: number;
   end_at?: number;
   exist_assessment?: boolean;
@@ -1227,7 +1250,9 @@ export interface EntityScheduleListView {
   is_hidden?: boolean;
   is_home_fun?: boolean;
   is_repeat?: boolean;
+  is_review?: boolean;
   lesson_plan_id?: string;
+  review_status?: string;
   role_type?: string;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
@@ -1301,6 +1326,8 @@ export interface EntityScheduleTimeView {
   assessment_status?: "in_progress" | "complete";
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  content_end_at?: number;
+  content_start_at?: number;
   created_at?: number;
   due_at?: number;
   end_at?: number;
@@ -1310,7 +1337,9 @@ export interface EntityScheduleTimeView {
   is_home_fun?: boolean;
   is_locked_lesson_plan?: boolean;
   is_repeat?: boolean;
+  is_review?: boolean;
   lesson_plan_id?: string;
+  review_status?: "pending" | "success" | "failed";
   role_type?: "Student" | "Teacher" | "Unknown";
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
@@ -1903,6 +1932,7 @@ export interface ModelOutcomeCreateView {
   outcome_id?: string;
   outcome_name?: string;
   program?: string[];
+  score_threshold?: number;
   sets?: ModelOutcomeSetCreateView[];
   shortcode?: string;
   skills?: string[];
@@ -1932,6 +1962,7 @@ export interface ModelOutcomeDetailView {
   program?: ModelProgram[];
   publish_status?: string;
   reject_reason?: string;
+  score_threshold?: number;
   sets?: ModelOutcomeSetCreateView[];
   shortcode?: string;
   skills?: ModelSkill[];
@@ -1967,6 +1998,7 @@ export interface ModelOutcomeView {
   outcome_name?: string;
   program?: ModelProgram[];
   publish_status?: string;
+  score_threshold?: number;
   sets?: ModelOutcomeSetCreateView[];
   shortcode?: string;
   update_at?: number;
@@ -1989,6 +2021,7 @@ export interface ModelPublishedOutcomeView {
   outcome_id?: string;
   outcome_name?: string;
   program_ids?: string[];
+  score_threshold?: number;
   sets?: ModelOutcomeSetCreateView[];
   shortcode?: string;
   sub_category_ids?: string[];
@@ -2079,6 +2112,13 @@ export interface V2AssessmentDetailReply {
   status?: string;
   students?: V2AssessmentStudentReply[];
   subjects?: EntityIDName[];
+  teachers?: EntityIDName[];
+  title?: string;
+}
+
+export interface V2AssessmentItemForHomePage {
+  id?: string;
+  status?: string;
   teachers?: EntityIDName[];
   title?: string;
 }
@@ -2183,6 +2223,11 @@ export interface V2GetOfflineStudyUserResultDetailReply {
   student?: EntityIDName;
   teachers?: EntityIDName[];
   title?: string;
+}
+
+export interface V2ListAssessmentsResultForHomePage {
+  items?: V2AssessmentItemForHomePage[];
+  total?: number;
 }
 
 export interface V2OfflineStudyUserOutcomeReply {
@@ -3931,6 +3976,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
   };
   reports = {
     /**
+     * @tags reports
+     * @name getLearnerMonthlyReportOverview
+     * @summary get learner monthly report overview
+     * @request GET:/reports/learner_monthly_overview
+     * @description get learner monthly report overview
+     */
+    getLearnerMonthlyReportOverview: (query: { time_range: string }, params?: RequestParams) =>
+      this.request<EntityLearnerMonthlyReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learner_monthly_overview${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
      * @tags reports/learnerUsage
      * @name getLearnerUsageOverview
      * @summary get learner usage Report
@@ -3948,9 +4007,9 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     /**
      * @tags reports
      * @name getLearnerWeeklyReportOverview
-     * @summary get student usage of material report
+     * @summary get learner weekly report overview
      * @request GET:/reports/learner_weekly_overview
-     * @description get student usage of material report
+     * @description get learner weekly report overview
      */
     getLearnerWeeklyReportOverview: (query: { time_range: string }, params?: RequestParams) =>
       this.request<EntityLearnerWeeklyReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(

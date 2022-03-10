@@ -58,6 +58,7 @@ import {
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
+  EntityLearnerMonthlyReportOverview,
   EntityLearnerUsageResponse,
   EntityLearnerWeeklyReportOverview,
   EntityLearnOutcomeAchievementRequest,
@@ -211,6 +212,7 @@ interface IreportState {
   fourWeeksClassAttendanceMassage: string;
   learnerUsageOverview: EntityLearnerUsageResponse;
   learningWeeklyOverview: EntityLearnerWeeklyReportOverview;
+  learningMonthlyOverview: EntityLearnerMonthlyReportOverview;
 }
 
 interface IObj {
@@ -242,6 +244,12 @@ const initialState: IreportState = {
     num_below: 0,
     num_meet: 0,
     status: "",
+  },
+  learningMonthlyOverview: {
+    num_above: 0,
+    attendees: 0,
+    num_below: 0,
+    num_meet: 0,
   },
   reportMockOptions: {
     teacherList: [],
@@ -1207,6 +1215,14 @@ export const getLearnerWeeklyReportOverview = createAsyncThunk<
   return await api.reports.getLearnerWeeklyReportOverview(query);
 });
 
+export type IParamLearnerMonthlyOverview = Parameters<typeof api.reports.getLearnerMonthlyReportOverview>[0];
+export const getLearnerMonthlyReportOverview = createAsyncThunk<
+  EntityLearnerMonthlyReportOverview,
+  IParamLearnerMonthlyOverview & LoadingMetaPayload
+>("report/getLearnerMonthlyReportOverview", async ({ metaLoading, ...query }) => {
+  return await api.reports.getLearnerMonthlyReportOverview(query);
+});
+
 export type IParamQueryTimeFilter = Parameters<typeof api.reports.queryLearningSummaryTimeFilter>[0];
 export type IResultQueryTimeFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryTimeFilter>;
 export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQueryTimeFilter & LoadingMetaPayload>(
@@ -1923,6 +1939,12 @@ const { actions, reducer } = createSlice({
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerWeeklyReportOverview>>
     ) => {
       state.learningWeeklyOverview = payload;
+    },
+    [getLearnerMonthlyReportOverview.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerMonthlyReportOverview>>
+    ) => {
+      state.learningMonthlyOverview = payload;
     },
     [getStudentUsageMaterial.fulfilled.type]: (state, { payload }) => {
       state.studentUsageReport = payload;

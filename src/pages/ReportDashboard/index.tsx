@@ -3,11 +3,15 @@ import { noReportTip } from "@components/TipImages";
 import { Box, Button, Grid, Icon, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
-import ReportStudentProgress from "@pages/ReportStudentProgress";
 import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import { RootState } from "@reducers/index";
-import { getAchievementOverview, getLearnerUsageOverview, getLearnerWeeklyReportOverview } from "@reducers/report";
-import { getAWeek } from "@utilities/dateUtilities";
+import {
+  getAchievementOverview,
+  getLearnerMonthlyReportOverview,
+  getLearnerUsageOverview,
+  getLearnerWeeklyReportOverview,
+} from "@reducers/report";
+import { getAWeek, getSingleOfFourWeeks } from "@utilities/dateUtilities";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +24,7 @@ import { d, t } from "../../locale/LocaleManager";
 import { actSetLoading } from "../../reducers/loading";
 import { resetReportMockOptions } from "../../reducers/report";
 import LearnerUsageReport from "./components/LearnerUsageReport";
+import LearningMonthlyTabs from "./components/LearningMonthlyTabs";
 import LearningOutcomeTabs from "./components/LearningOutcomeTabs";
 import LearningWeeklyTabs from "./components/LearningWeeklyTabs";
 import SkillCoverageTab from "./components/SkillCoverageTab";
@@ -191,17 +196,13 @@ export function ReportDashboard() {
     );
     dispatch(getAchievementOverview({ time_range: getAWeek().join("-") }));
     dispatch(getLearnerWeeklyReportOverview({ time_range: getAWeek().join("-") }));
+    dispatch(getLearnerMonthlyReportOverview({ time_range: getSingleOfFourWeeks().join("-") }));
   }, [dispatch]);
 
   const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending] = React.useMemo(() => {
     const hasSkillCoveragePerm = !!perm.report_learning_outcomes_in_categories_616;
     const hasLearnerUsagePerm = !!perm.student_usage_report_657;
     const reportList: ReportItem[] = [
-      {
-        hasPerm: !!perm.student_progress_report_662,
-        label: t("report_label_student_progress_report"),
-        url: ReportStudentProgress.routeBasePath,
-      },
       {
         hasPerm: !!perm.teachers_classes_teaching_time_report_620,
         label: t("report_label_teaching_load"),
@@ -241,9 +242,17 @@ export function ReportDashboard() {
         {!isPending && !hasPerm && noReportTip}
         {!isPending && hasPerm && (
           <Grid container spacing={2}>
+            {Boolean(perm.student_progress_report_662) && (
+              <Grid item xs={12} md={4}>
+                {reportTip(t("report_label_student_progress_report"), t("report_label_learner_monthly_report_info" as any))}
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <LearningMonthlyTabs />
+                </Box>
+              </Grid>
+            )}
             {Boolean(perm.learning_summary_report_653) && (
               <Grid item xs={12} md={4}>
-                {reportTip(t("report_learning_summary_report"), t("report_label_learner_weekly_report_info" as any))}
+                {reportTip(t("report_learning_summary_report"), t("report_label_learner_weekly_report_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearningWeeklyTabs />
                 </Box>
