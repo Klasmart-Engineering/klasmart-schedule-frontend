@@ -1,7 +1,7 @@
 import { MilestoneDetailResult, MilestoneStatus } from "@api/type";
 import { decodeOneItemArray, encodeOneItemArray, FormattedTextField, frontTrim } from "@components/FormattedTextField";
 import { d } from "@locale/LocaleManager";
-import { Box, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
+import React, { Box, Grid, makeStyles, MenuItem, TextField } from "@material-ui/core";
 import { formattedTime } from "@models/ModelContentDetailForm";
 import { CreateDefaultValueAndKeyResult } from "@models/ModelMilestone";
 import { LinkedMockOptions, LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";

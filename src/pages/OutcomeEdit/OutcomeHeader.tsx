@@ -664,7 +664,7 @@ function OutcomeHeader(props: OutcomeHeaderProps) {
     <Fragment>
       <Box display="flex" alignItems="center" pl={sm ? 2 : 3} pr={10} height={72} boxShadow={3}>
         <Button size="small" className={css.arrowBack} onClick={goBack}>
-          <ArrowBack fontSize={sm ? "small" : "default"} />
+          <ArrowBack fontSize={sm ? "small" : "medium"} />
         </Button>
         {/* <Hidden smDown>
           <img className={css.kidsloopLogo} src={KidsloopLogo} alt="kidsloop logo" />

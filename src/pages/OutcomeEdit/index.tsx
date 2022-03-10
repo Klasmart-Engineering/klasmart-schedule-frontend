@@ -1,3 +1,4 @@
+import { ModelOutcomeCreateView } from "@api/api.auto";
 import PermissionType from "@api/PermissionType";
 import { OutcomeSetResult } from "@api/type";
 import { usePermission } from "@hooks/usePermission";
@@ -18,7 +19,7 @@ import {
   reject,
   resetShortCode,
   save,
-  updateOutcome,
+  updateOutcome
 } from "@reducers/outcome";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -141,14 +142,15 @@ export default function CreateOutcomings() {
 
   const handleSave = React.useMemo(
     () =>
-      handleSubmit(async (value) => {
-        if (!value.shortcode.trim()) {
+      handleSubmit(async (value: ModelOutcomeCreateView) => {
+        if (value.shortcode && !value.shortcode.trim()) {
           const resultInfo = (await dispatch(generateShortcode({ kind: "outcomes" }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof generateShortcode>
           >;
           value.shortcode = resultInfo.payload.shortcode;
         }
         setValue("assumed", isAssumed);
+        const newValue = { ...value, score_threshold: value.score_threshold ? (value.score_threshold/100) : 0 }
         if (outcome_id) {
           const { payload } = (await dispatch(updateOutcome({ outcome_id, value }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateOutcome>
@@ -270,6 +272,11 @@ export default function CreateOutcomings() {
       shouldDirty: true,
     });
     setIsAssumed(event.target.checked);
+    if(!event.target.checked) {
+      setValue("score_threshold", 80)
+    } else {
+      setValue("score_threshold", 0)
+    }
   };
 
   const handleClickSearchOutcomSet: OutcomeFormProps["onSearchOutcomeSet"] = async (set_name) => {

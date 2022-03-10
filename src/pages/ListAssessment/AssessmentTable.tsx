@@ -2,7 +2,7 @@ import { AssessmentTypeValues } from "@components/AssessmentType";
 import { createStyles, makeStyles, Table, TableBody, TableCell, TableContainer, TableRow } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
