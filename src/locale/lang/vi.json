@@ -1085,5 +1085,6 @@
   "report_label_below": "Bên dưới",
   "schedule_study_due_on": "Hết hạn ngày",
   "library_label_organization_id": "Mã tổ chức",
-  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
+  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .",
+  "report_label_learner_monthly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }

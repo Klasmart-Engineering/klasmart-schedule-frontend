@@ -1085,5 +1085,6 @@
   "report_label_below": "不足",
   "schedule_study_due_on": "截至",
   "library_label_organization_id": "机构ID",
-  "report_label_learner_weekly_report_info": "在过去 4 周内有学习记录的学生中，通过计算出勤率和作业完成率，如果两个比率都在 80% 以上，则归类为“高于预期”，如果两个比率均低于 50%，则归类为“低于预期” ' ."
+  "report_label_learner_weekly_report_info": "在过去 4 周内有学习记录的学生中，通过计算出勤率和作业完成率，如果两个比率都在 80% 以上，则归类为“高于预期”，如果两个比率均低于 50%，则归类为“低于预期” ' .",
+  "report_label_learner_monthly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
 }
