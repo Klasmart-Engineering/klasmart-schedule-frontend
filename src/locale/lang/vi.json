@@ -1080,11 +1080,14 @@
   "report_label_learning_outcome_report": "Báo cáo kết quả học tập",
   "report_label_learning_outcome_info": "Dựa trên kết quả học tập trong 7 ngày qua:\n <ul>\n <li> Đạt thành tích cao: người học đã đạt được hơn 80% kết quả học tập\n </li>\n <li> Đạt thành tích thấp: người học đạt ít hơn 50% kết quả học tập\n </li>\n </ul>",
   "report_label_covered": "Đề cập",
-  "report_label_above": "Bên trên",
+  "report_label_above": "Trên mức đạt",
   "report_label_meets": "Đạt",
-  "report_label_below": "Bên dưới",
+  "report_label_below": "Dưới mức đạt",
   "schedule_study_due_on": "Hết hạn ngày",
   "library_label_organization_id": "Mã tổ chức",
   "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .",
-  "report_label_learner_monthly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
+  "report_label_learner_monthly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .",
+  "app2web_badanamu_activities": "Badanamu Activities",
+  "app2web_please_enter_the_link": "Please enter the link",
+  "app2web_badanamu_activities_link": "Badanamu Activities Link"
 }
