@@ -19,7 +19,7 @@ import {
   reject,
   resetShortCode,
   save,
-  updateOutcome
+  updateOutcome,
 } from "@reducers/outcome";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -151,7 +151,7 @@ export default function CreateOutcomings() {
         }
         setValue("assumed", isAssumed);
         const { score_threshold, ...restValue } = value;
-        const new_score_threshold = score_threshold ? (Number(score_threshold)/100) : 0;
+        const new_score_threshold = score_threshold ? Number(score_threshold) / 100 : 0;
         const finalValue = { ...restValue, score_threshold: new_score_threshold };
         if (outcome_id) {
           const { payload } = (await dispatch(updateOutcome({ outcome_id, value: finalValue }))) as unknown as PayloadAction<
@@ -274,10 +274,10 @@ export default function CreateOutcomings() {
       shouldDirty: true,
     });
     setIsAssumed(event.target.checked);
-    if(!event.target.checked) {
-      setValue("score_threshold", 80, {shouldValidate: true})
+    if (!event.target.checked) {
+      setValue("score_threshold", 80, { shouldValidate: true });
     } else {
-      setValue("score_threshold", 0)
+      setValue("score_threshold", 0);
     }
   };
 

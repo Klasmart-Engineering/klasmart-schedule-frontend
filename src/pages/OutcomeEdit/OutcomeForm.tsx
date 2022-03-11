@@ -146,7 +146,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
       if(!value) return false;
       if(!re.test(value)) return false;
     }
-  }
+  };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
   };
@@ -227,11 +227,11 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 label={"Threhold"}
                 disabled={isAssumed ? true : showEdit}
                 InputProps={{
-                  endAdornment:(<InputAdornment position="end">%</InputAdornment>)
+                  endAdornment: <InputAdornment position="end">%</InputAdornment>,
                 }}
                 error={!!errors["score_threshold"]}
                 helperText={"Score threshold cannot be set as blank"}
-                rules={{ validate: scoreThresholdValidate}}
+                rules={{ validate: scoreThresholdValidate }}
               />
             </Grid>
             {outcome_id && (

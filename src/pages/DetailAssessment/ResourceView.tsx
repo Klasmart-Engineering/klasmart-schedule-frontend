@@ -8,7 +8,7 @@ import {
   IconButton,
   InputAdornment,
   makeStyles,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import BorderColorIcon from "@material-ui/icons/BorderColor";

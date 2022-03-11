@@ -1,7 +1,7 @@
 import { EntityLearnerReportOverview } from "@api/api.auto";
 import { t } from "@locale/LocaleManager";
 import { Box, Grid, makeStyles } from "@material-ui/core";
-import { ReportLearningSummary } from "@pages/ReportLearningSummary";
+import ReportStudentProgress from "@pages/ReportStudentProgress";
 import { RootState } from "@reducers/index";
 import { ParentSize } from "@visx/responsive";
 import { sumBy } from "lodash";
@@ -55,22 +55,23 @@ const computeDatum = (value: number | undefined, count: number) => {
 };
 export default function LearningWeeklyTabs() {
   const css = useStyles();
-  const learningWeeklyOverview: EntityLearnerReportOverview = useSelector<RootState, RootState["report"]>(
+  const learningMonthlyOverview: EntityLearnerReportOverview = useSelector<RootState, RootState["report"]>(
     (state) => state.report
-  ).learningWeeklyOverview;
-  const count = (learningWeeklyOverview.num_above || 0) + (learningWeeklyOverview.num_meet || 0) + (learningWeeklyOverview.num_below || 0);
+  ).learningMonthlyOverview;
+  const count =
+    (learningMonthlyOverview.num_above || 0) + (learningMonthlyOverview.num_meet || 0) + (learningMonthlyOverview.num_below || 0);
   let handleData = [
     {
       name: t("report_label_above"),
-      count: computeDatum(learningWeeklyOverview.num_above, count),
+      count: computeDatum(learningMonthlyOverview.num_above, count),
     },
     {
       name: t("report_label_meets"),
-      count: computeDatum(learningWeeklyOverview.num_meet, count),
+      count: computeDatum(learningMonthlyOverview.num_meet, count),
     },
     {
       name: t("report_label_below"),
-      count: computeDatum(learningWeeklyOverview.num_below, count),
+      count: computeDatum(learningMonthlyOverview.num_below, count),
     },
   ];
 
@@ -80,6 +81,7 @@ export default function LearningWeeklyTabs() {
   } else if (filterData.length === 3) {
     filterData[2].count = 100 - filterData[0].count - filterData[1].count;
   }
+
   const renderScore = (name: string, number: number, color: string, i: number) => {
     return (
       <Grid container direction="column" className={css.scoreItem} key={i}>
@@ -98,7 +100,7 @@ export default function LearningWeeklyTabs() {
       <Box display={"flex"} flexDirection={"column"} alignItems={"center"} position={"absolute"}>
         <Box color={"#777"}>{t("assess_detail_attendance")}</Box>
         <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
-          {learningWeeklyOverview.attendees}
+          {learningMonthlyOverview.attendees}
         </Box>
       </Box>
     );
@@ -107,7 +109,7 @@ export default function LearningWeeklyTabs() {
   return (
     <Grid container direction="column">
       <Grid wrap="nowrap" container direction="column" className={css.container}>
-        <Box className={css.titleTip}>{t("report_label_past_7_days")}</Box>
+        <Box className={css.titleTip}>{t("report_label_4_weeks")}</Box>
         <Box flex={1} display={"flex"}>
           <Box
             flex={1}
@@ -139,7 +141,7 @@ export default function LearningWeeklyTabs() {
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">
-          <BottomButton text={t("report_learning_summary_report")} to={ReportLearningSummary.routeRedirectDefault} marginTop={20} />
+          <BottomButton text={t("report_label_student_progress_report")} to={ReportStudentProgress.routeBasePath} marginTop={20} />
         </Grid>
       </Grid>
     </Grid>

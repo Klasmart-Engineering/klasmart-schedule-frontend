@@ -11,7 +11,7 @@ import {
   onLoadMilestoneEdit,
   onLoadOutcomeList,
   saveMilestone,
-  updateMilestone
+  updateMilestone,
 } from "@reducers/milestone";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
