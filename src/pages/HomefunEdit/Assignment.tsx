@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import {
   GetApp,
@@ -21,7 +21,7 @@ import {
   SentimentSatisfiedOutlined,
   SentimentVeryDissatisfiedOutlined,
   SentimentVerySatisfiedOutlined,
-  SvgIconComponent
+  SvgIconComponent,
 } from "@material-ui/icons";
 import React, { createElement } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";

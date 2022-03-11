@@ -142,11 +142,11 @@ export function OutcomeForm(props: OutcomeFormProps) {
   };
   const scoreThresholdValidate = (value: string) => {
     const re = /^(1|([1-9]\d{0,1})|100)$/;
-    if(!isAssumed) {
-      if(!value) return false;
-      if(!re.test(value)) return false;
+    if (!isAssumed) {
+      if (!value) return false;
+      if (!re.test(value)) return false;
     }
-  }
+  };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
   };
@@ -222,16 +222,16 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 control={control}
                 as={TextField}
                 variant="outlined"
-                defaultValue={outcome_id ? Number(outcomeDetail.score_threshold)*100+"" : (isAssumed ? "0" : "80")}
+                defaultValue={outcome_id ? Number(outcomeDetail.score_threshold) * 100 + "" : isAssumed ? "0" : "80"}
                 fullWidth
                 label={"Threhold"}
                 disabled={isAssumed ? true : showEdit}
                 InputProps={{
-                  endAdornment:(<InputAdornment position="end">%</InputAdornment>)
+                  endAdornment: <InputAdornment position="end">%</InputAdornment>,
                 }}
                 error={!!errors["score_threshold"]}
                 helperText={"Score threshold cannot be set as blank"}
-                rules={{ validate: scoreThresholdValidate}}
+                rules={{ validate: scoreThresholdValidate }}
               />
             </Grid>
             {outcome_id && (

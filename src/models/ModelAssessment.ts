@@ -5,21 +5,22 @@ import {
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
-  V2AssessmentContentReply
+  V2AssessmentContentReply,
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
   UpdataStudyAssessmentRequestData,
   UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials
+  UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import {
   MaterialViewItemResultProps,
   OutcomeStatus,
-  OverAllOutcomesItem, StudentViewItemsProps,
-  SubDimensionOptions
+  OverAllOutcomesItem,
+  StudentViewItemsProps,
+  SubDimensionOptions,
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 

@@ -9,7 +9,7 @@ import {
   FormControlLabel,
   makeStyles,
   TextField,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { actWarning } from "@reducers/notify";
 import clsx from "clsx";

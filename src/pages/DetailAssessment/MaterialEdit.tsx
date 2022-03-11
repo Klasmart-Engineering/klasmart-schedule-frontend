@@ -11,7 +11,7 @@ import {
   InputAdornment,
   makeStyles,
   TextField,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import BorderColorOutlinedIcon from "@material-ui/icons/BorderColorOutlined";

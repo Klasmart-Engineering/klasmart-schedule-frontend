@@ -1697,9 +1697,17 @@ type LangRecord =
   | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined }
   | {
       id: "report_label_learner_weekly_report_info";
+      description: `Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .`;
+      values: undefined;
+    }
+  | {
+      id: "report_label_learner_monthly_report_info";
       description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .`;
       values: undefined;
-    };
+    }
+  | { id: "app2web_badanamu_activities"; description: `Badanamu Activities`; values: undefined }
+  | { id: "app2web_please_enter_the_link"; description: `Please enter the link`; values: undefined }
+  | { id: "app2web_badanamu_activities_link"; description: `Badanamu Activities Link`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
