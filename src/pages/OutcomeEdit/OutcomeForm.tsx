@@ -89,7 +89,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
   const {
     outcome_id,
     showEdit,
-    formMethods: { control, errors, setError },
+    formMethods: { control, errors },
     outcomeDetail,
     onChangeProgram,
     onChangeDevelopmental,
