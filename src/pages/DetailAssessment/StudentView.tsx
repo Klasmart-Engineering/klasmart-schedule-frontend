@@ -21,7 +21,7 @@ import { d } from "../../locale/LocaleManager";
 import { EditScore } from "./EditScore";
 import { Dimension } from "./MultiSelect";
 import { ResourceView, useResourceView } from "./ResourceView";
-import { OutcomeStatus, StudentViewItemsProps, SubDimensionOptions } from "./type";
+import { OutcomeStatus, StudentParticipate, StudentViewItemsProps, SubDimensionOptions } from "./type";
 const useStyles = makeStyles({
   tableBar: {
     display: "flex",
@@ -224,7 +224,7 @@ export function StudentView(props: StudentViewProps) {
   return (
     <>
       <TableContainer style={{ marginBottom: "20px" }}>
-        {studentViewItems?.map(
+        {studentViewItems?.filter(student => student.status === StudentParticipate.Participate).map(
           (sitem, index) =>
             (isSelectAll ? true : subDimensionIds.indexOf(sitem.student_id!) >= 0) && (
               <Fragment key={sitem.student_id}>
