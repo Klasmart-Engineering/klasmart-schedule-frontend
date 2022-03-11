@@ -396,6 +396,7 @@ export default function CreateOutcomings() {
       setValue("skills", []);
     }
     // setIsAssumed(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     condition,
     newOptions.age,
@@ -407,7 +408,6 @@ export default function CreateOutcomings() {
     outcomeDetail,
     outcome_id,
     shortCode,
-    isAssumed,
     reset,
     setValue,
   ]);
