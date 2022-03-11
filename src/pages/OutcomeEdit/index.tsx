@@ -19,7 +19,7 @@ import {
   reject,
   resetShortCode,
   save,
-  updateOutcome,
+  updateOutcome
 } from "@reducers/outcome";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -407,6 +407,7 @@ export default function CreateOutcomings() {
     outcomeDetail,
     outcome_id,
     shortCode,
+    isAssumed,
     reset,
     setValue,
   ]);
