@@ -39,7 +39,7 @@ import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
 import { ids2Content, ids2removeOrDelete } from "../../models/ModelEntityFolderContent";
 import { excludeFolderOfTree } from "../../models/ModelFolderTree";
-import { orgs2id } from "../../models/ModelOrgProperty";
+import { excludeMyOrg, orgs2id } from "../../models/ModelOrgProperty";
 import { AppDispatch, RootState } from "../../reducers";
 import ContentEdit from "../ContentEdit";
 import ContentPreview from "../ContentPreview";
@@ -143,7 +143,7 @@ export default function MyContentList() {
   const conditionFormMethods = useForm<ContentListForm>();
   const { watch, reset, getValues, handleSubmit } = conditionFormMethods;
   const ids = watch(ContentListFormKey.CHECKED_CONTENT_IDS);
-  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty } = useSelector<
+  const { contentsList, total, page_size, folderTree, parentFolderInfo, orgList, selectedOrg, orgProperty, myOrgId } = useSelector<
     RootState,
     RootState["content"]
   >((state) => state.content);
@@ -157,6 +157,7 @@ export default function MyContentList() {
   const { folderTreeActive, closeFolderTree, openFolderTree, referContent, setReferContent, folderTreeShowIndex } =
     useFolderTree<EntityFolderContentData[]>();
   const selctedOrgIds = useMemo(() => orgs2id(selectedOrg), [selectedOrg]);
+  const filterOrgList = useMemo(() => excludeMyOrg(orgList, myOrgId), [myOrgId, orgList]);
   const { organizationListActive, closeOrganizationList, openOrganizationList, organizationListShowIndex, shareFolder, setShareFolder } =
     useOrganizationList();
   const { folderFormActive, closeFolderForm, openFolderForm } = useFolderForm();
@@ -573,7 +574,7 @@ export default function MyContentList() {
         />
         {orgProperty.region === Region.vn ? (
           <SpecialOrgList
-            orgList={orgList}
+            orgList={filterOrgList}
             selectedOrg={selctedOrgIds}
             onClose={closeOrganizationList}
             open={organizationListActive}
@@ -582,7 +583,7 @@ export default function MyContentList() {
           />
         ) : (
           <OrganizationList
-            orgList={orgList}
+            orgList={filterOrgList}
             selectedOrg={selctedOrgIds}
             onClose={closeOrganizationList}
             open={organizationListActive}

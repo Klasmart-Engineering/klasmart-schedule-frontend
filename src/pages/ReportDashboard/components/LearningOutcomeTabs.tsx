@@ -74,8 +74,9 @@ export default function LearningOutcomeTabs() {
   const filterData = handleData.filter((item) => item.count);
   if (filterData.length === 2) {
     filterData[1].count = 100 - filterData[0].count;
+  } else if (filterData.length === 3) {
+    filterData[2].count = 100 - filterData[0].count - filterData[1].count;
   }
-
   const renderScore = (name: string, number: number, color: string, i: number) => {
     return (
       <Grid container direction="column" className={css.scoreItem} key={i}>

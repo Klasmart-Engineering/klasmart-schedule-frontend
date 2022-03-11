@@ -1,3 +1,4 @@
+import { ModelOutcomeCreateView } from "@api/api.auto";
 import PermissionType from "@api/PermissionType";
 import { OutcomeSetResult } from "@api/type";
 import { usePermission } from "@hooks/usePermission";
@@ -18,7 +19,7 @@ import {
   reject,
   resetShortCode,
   save,
-  updateOutcome,
+  updateOutcome
 } from "@reducers/outcome";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
@@ -141,16 +142,19 @@ export default function CreateOutcomings() {
 
   const handleSave = React.useMemo(
     () =>
-      handleSubmit(async (value) => {
-        if (!value.shortcode.trim()) {
+      handleSubmit(async (value: ModelOutcomeCreateView) => {
+        if (value.shortcode && !value.shortcode.trim()) {
           const resultInfo = (await dispatch(generateShortcode({ kind: "outcomes" }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof generateShortcode>
           >;
           value.shortcode = resultInfo.payload.shortcode;
         }
         setValue("assumed", isAssumed);
+        const { score_threshold, ...restValue } = value;
+        const new_score_threshold = score_threshold ? (Number(score_threshold)/100) : 0;
+        const finalValue = { ...restValue, score_threshold: new_score_threshold };
         if (outcome_id) {
-          const { payload } = (await dispatch(updateOutcome({ outcome_id, value }))) as unknown as PayloadAction<
+          const { payload } = (await dispatch(updateOutcome({ outcome_id, value: finalValue }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateOutcome>
           >;
           if (payload === "ok") {
@@ -160,7 +164,7 @@ export default function CreateOutcomings() {
             setCondition("default");
           }
         } else {
-          const { payload } = (await dispatch(save(value))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
+          const { payload } = (await dispatch(save(finalValue))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
           if (payload?.outcome_id) {
             history.push(`/assessments/outcome-edit?outcome_id=${payload.outcome_id}&status=createDfaft`);
             dispatch(actSuccess(d("Saved Successfully").t("assess_msg_saved_successfully")));
@@ -270,6 +274,11 @@ export default function CreateOutcomings() {
       shouldDirty: true,
     });
     setIsAssumed(event.target.checked);
+    if(!event.target.checked) {
+      setValue("score_threshold", 80, {shouldValidate: true})
+    } else {
+      setValue("score_threshold", 0)
+    }
   };
 
   const handleClickSearchOutcomSet: OutcomeFormProps["onSearchOutcomeSet"] = async (set_name) => {

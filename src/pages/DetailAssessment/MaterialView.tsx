@@ -8,13 +8,13 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableRow,
+  TableRow
 } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import { ModelAssessment } from "@models/ModelAssessment";
 import { cloneDeep } from "lodash";
-import { ChangeEvent, Fragment, useMemo, useState } from "react";
+import React, { ChangeEvent, Fragment, useMemo, useState } from "react";
 import { AchievedTooltips } from "../../components/DynamicTable";
 import { PLField, PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
@@ -28,7 +28,7 @@ import {
   MaterialViewItemStudentProps,
   OutcomeStatus,
   StudentViewItemsProps,
-  SubDimensionOptions,
+  SubDimensionOptions
 } from "./type";
 const useStyles = makeStyles({
   tableBar: {

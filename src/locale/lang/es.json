@@ -1083,7 +1083,11 @@
   "report_label_above": "Sobre",
   "report_label_meets": "Satisface",
   "report_label_below": "Debajo",
-  "schedule_study_due_on": "Due on",
-  "library_label_organization_id": "Organization ID",
-  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
+  "schedule_study_due_on": "Vencimiento en",
+  "library_label_organization_id": "ID de organización",
+  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .",
+  "report_label_learner_monthly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .",
+  "app2web_badanamu_activities": "Badanamu Activities",
+  "app2web_please_enter_the_link": "Please enter the link",
+  "app2web_badanamu_activities_link": "Badanamu Activities Link"
 }

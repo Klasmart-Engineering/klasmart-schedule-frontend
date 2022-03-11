@@ -441,7 +441,7 @@
         "parameters": [
           {
             "type": "string",
-            "description": "search status, multiple states are separated by commas,optional value is NotStarted,Started,Draft,Complete",
+            "description": "search status, multiple states are separated by commas,optional value is Started,Draft,Complete",
             "name": "status",
             "in": "query"
           }
@@ -5243,6 +5243,51 @@
         }
       }
     },
+    "/reports/learner_monthly_overview": {
+      "get": {
+        "description": "get learner monthly report overview",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports"],
+        "summary": "get learner monthly report overview",
+        "operationId": "getLearnerMonthlyReportOverview",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "time_range",
+            "name": "time_range",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.LearnerMonthlyReportOverview"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/reports/learner_usage/overview": {
       "post": {
         "description": "get learner usage Report",
@@ -5292,11 +5337,11 @@
     },
     "/reports/learner_weekly_overview": {
       "get": {
-        "description": "get student usage of material report",
+        "description": "get learner weekly report overview",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "tags": ["reports"],
-        "summary": "get student usage of material report",
+        "summary": "get learner weekly report overview",
         "operationId": "getLearnerWeeklyReportOverview",
         "parameters": [
           {
@@ -11048,6 +11093,26 @@
         }
       }
     },
+    "entity.LearnerMonthlyReportOverview": {
+      "type": "object",
+      "properties": {
+        "attendees": {
+          "type": "integer"
+        },
+        "num_above": {
+          "description": "num of above student",
+          "type": "integer"
+        },
+        "num_below": {
+          "description": "num of below student",
+          "type": "integer"
+        },
+        "num_meet": {
+          "description": "num of meet student",
+          "type": "integer"
+        }
+      }
+    },
     "entity.LearnerUsageRequest": {
       "type": "object",
       "properties": {
@@ -11650,6 +11715,9 @@
         "reject_reason": {
           "type": "string"
         },
+        "scoreThreshold": {
+          "type": "number"
+        },
         "sets": {
           "type": "array",
           "items": {
@@ -12083,6 +12151,12 @@
         "class_type": {
           "type": "string"
         },
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
         "created_at": {
           "type": "integer"
         },
@@ -12116,6 +12190,9 @@
         "is_home_fun": {
           "type": "boolean"
         },
+        "is_review": {
+          "type": "boolean"
+        },
         "lesson_plan_id": {
           "type": "string"
         },
@@ -12132,6 +12209,9 @@
           "type": "string"
         },
         "repeat_json": {
+          "type": "string"
+        },
+        "review_status": {
           "type": "string"
         },
         "schedule_version": {
@@ -12302,6 +12382,12 @@
         "complete_assessment": {
           "type": "boolean"
         },
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
         "description": {
           "type": "string"
         },
@@ -12330,6 +12416,9 @@
           "type": "boolean"
         },
         "is_repeat": {
+          "type": "boolean"
+        },
+        "is_review": {
           "type": "boolean"
         },
         "lesson_plan": {
@@ -12364,6 +12453,10 @@
         },
         "repeat": {
           "$ref": "#/definitions/entity.RepeatOptions"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": ["pending", "success", "failed"]
         },
         "role_type": {
           "type": "string",
@@ -12489,6 +12582,12 @@
         "complete_assessment": {
           "type": "boolean"
         },
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
         "due_at": {
           "type": "integer"
         },
@@ -12513,7 +12612,13 @@
         "is_repeat": {
           "type": "boolean"
         },
+        "is_review": {
+          "type": "boolean"
+        },
         "lesson_plan_id": {
+          "type": "string"
+        },
+        "review_status": {
           "type": "string"
         },
         "role_type": {
@@ -12727,6 +12832,12 @@
           "type": "string",
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
         "created_at": {
           "type": "integer"
         },
@@ -12754,8 +12865,15 @@
         "is_repeat": {
           "type": "boolean"
         },
+        "is_review": {
+          "type": "boolean"
+        },
         "lesson_plan_id": {
           "type": "string"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": ["pending", "success", "failed"]
         },
         "role_type": {
           "type": "string",
@@ -14587,6 +14705,9 @@
             "type": "string"
           }
         },
+        "score_threshold": {
+          "type": "number"
+        },
         "sets": {
           "type": "array",
           "items": {
@@ -14700,6 +14821,9 @@
         "reject_reason": {
           "type": "string"
         },
+        "score_threshold": {
+          "type": "number"
+        },
         "sets": {
           "type": "array",
           "items": {
@@ -14810,6 +14934,9 @@
         "publish_status": {
           "type": "string"
         },
+        "score_threshold": {
+          "type": "number"
+        },
         "sets": {
           "type": "array",
           "items": {
@@ -14878,6 +15005,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "score_threshold": {
+          "type": "number"
         },
         "sets": {
           "type": "array",
@@ -15153,6 +15283,26 @@
           "items": {
             "$ref": "#/definitions/entity.IDName"
           }
+        },
+        "teachers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.IDName"
+          }
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v2.AssessmentItemForHomePage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
         },
         "teachers": {
           "type": "array",
@@ -15461,6 +15611,20 @@
         },
         "title": {
           "type": "string"
+        }
+      }
+    },
+    "v2.ListAssessmentsResultForHomePage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v2.AssessmentItemForHomePage"
+          }
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },

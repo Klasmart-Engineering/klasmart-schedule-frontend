@@ -1,5 +1,5 @@
 import { Box, makeStyles, Paper, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { UseFormMethods } from "react-hook-form";
 import { AssessmentTypeValues } from "../../components/AssessmentType";
 import { d } from "../../locale/LocaleManager";
@@ -209,7 +209,7 @@ export function DetailForm(props: DetailFormProps) {
                 fullWidth
                 disabled
                 name="due_at"
-                value={formattedTime(0) || d("N/A").t("assess_column_n_a")}
+                value={formattedTime(assessmentDetail.schedule_due_at) || d("N/A").t("assess_column_n_a")}
                 className={css.fieldset}
                 label={d("Due Date").t("assess_column_due_date")}
               />

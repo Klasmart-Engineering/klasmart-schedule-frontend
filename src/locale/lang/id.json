@@ -1083,7 +1083,11 @@
   "report_label_above": "Di Atas",
   "report_label_meets": "Memenuhi",
   "report_label_below": "Di Bawah",
-  "schedule_study_due_on": "Due on",
-  "library_label_organization_id": "Organization ID",
-  "report_label_learner_weekly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' ."
+  "schedule_study_due_on": "Tanggal Kumpul",
+  "library_label_organization_id": "ID Organisasi",
+  "report_label_learner_weekly_report_info": "Dari data siswa yang sudah belajar selama 4 minggu terakhir, dengan menghitung kehadiran dan keberhasilan menyelesaikan tugas, jika rata-rata keduanya berada di atas 80% maka dikategorikan sebagai 'Di atas ekspektasi', dan bila di bawah 50% dikategorikan sebagai 'Di bawah ekspektasi'.",
+  "report_label_learner_monthly_report_info": "Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .",
+  "app2web_badanamu_activities": "Badanamu Activities",
+  "app2web_please_enter_the_link": "Please enter the link",
+  "app2web_badanamu_activities_link": "Badanamu Activities Link"
 }
