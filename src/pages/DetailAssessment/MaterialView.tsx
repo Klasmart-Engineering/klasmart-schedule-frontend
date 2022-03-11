@@ -21,7 +21,7 @@ import { d } from "../../locale/LocaleManager";
 import { DetailAssessmentResult, DetailAssessmentResultStudent } from "../ListAssessment/types";
 import { EditScore } from "./EditScore";
 import { Dimension } from "./MultiSelect";
-import { ResourceView, useResourceView } from "./ResourceView";
+import { ResourceView, showAudioRecorder, useResourceView } from "./ResourceView";
 import {
   FileTypes,
   MaterialViewItemResultOutcomeProps,
@@ -73,6 +73,7 @@ export interface MaterialViewProps {
   contents: DetailAssessmentResult["contents"];
   students: DetailAssessmentResult["students"];
   editable: boolean;
+  roomId?: string;
   onChangeMaterialAllAchieved: (checked: boolean, content_id?: string, outcome_id?: string) => void;
   onChangeMaterialNoneAchieved: (checked: boolean, content_id?: string, outcome_id?: string) => void;
   onChangeMatarialStudentStatus: (checked: boolean, student_id?: string, content_id?: string, outcome_id?: string) => void;
@@ -103,7 +104,9 @@ export function MaterialView(props: MaterialViewProps) {
   ];
   const [resourceType, setResourceType] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
-
+  const [room, setRoom] = useState<string | undefined>("");
+  const [h5pId, setH5pId] = useState<string | undefined>("");
+  const [userId, setUserId] = useState<string | undefined>("");
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
   const {
     studentViewItems,
@@ -111,6 +114,7 @@ export function MaterialView(props: MaterialViewProps) {
     students,
     editable,
     subDimension,
+    roomId,
     onChangeMaterialAllAchieved,
     onChangeMaterialNoneAchieved,
     onChangeMatarialStudentStatus,
@@ -148,6 +152,13 @@ export function MaterialView(props: MaterialViewProps) {
     openResourceView();
     setResourceType("Essay");
     setAnswer(answer);
+  };
+  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, userId?: string) => {
+    openResourceView();
+    setResourceType("AudioRecorder");
+    setRoom(roomId);
+    setH5pId(h5pId);
+    setUserId(userId);
   };
   const handleChangeScore = (score?: number, studentId?: string, contentId?: string) => {
     const _studentViewItems = studentViewItems?.map((sItem) => {
@@ -280,6 +291,14 @@ export function MaterialView(props: MaterialViewProps) {
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
                                   )}
+                                  {showAudioRecorder(item.content_subtype) && (
+                                    <span
+                                      style={{ color: "#006CCF", cursor: "pointer" }}
+                                      onClick={(e) => handleClickAudioRecorder(roomId, item.h5p_id, sItem.student_id)}
+                                    >
+                                      {d("Click to View").t("assess_detail_click_to_view")}
+                                    </span>
+                                  )}
                                 </TableCell>
                                 <TableCell>
                                   <EditScore
@@ -315,7 +334,15 @@ export function MaterialView(props: MaterialViewProps) {
               </Fragment>
             )
         )}
-      <ResourceView open={resourceViewActive} resourceType={resourceType} answer={answer} onClose={closeResourceView} />
+      <ResourceView
+        open={resourceViewActive}
+        resourceType={resourceType}
+        answer={answer}
+        onClose={closeResourceView}
+        roomId={room}
+        userId={userId}
+        h5pId={h5pId}
+      />
     </>
   );
 }
