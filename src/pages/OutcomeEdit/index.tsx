@@ -343,6 +343,7 @@ export default function CreateOutcomings() {
       grade: [],
       assumed: true,
       shortcode: shortCode,
+      score_threshold: isAssumed ? 0 : 80
     };
     if (outcome_id) {
       setSelectedOutcomeSet(outcomeDetail.sets || []);
@@ -371,7 +372,8 @@ export default function CreateOutcomings() {
         setValue("program", _program, { shouldDirty: true });
         setValue("subject", _subject);
         setValue("developmental", _developmental);
-        const _detail = { ...detail, program: _program, subject: _subject, developmental: _developmental };
+        const new_score_threshold = detail.score_threshold ? Math.floor(detail.score_threshold*100) : 0;
+        const _detail = { ...detail, program: _program, subject: _subject, developmental: _developmental, score_threshold: new_score_threshold };
         reset(modelOutcomeDetail(_detail));
       }
       return;
