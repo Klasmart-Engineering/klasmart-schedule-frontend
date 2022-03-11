@@ -141,10 +141,10 @@ export function OutcomeForm(props: OutcomeFormProps) {
     if (newValue.length && (newValue.length < 5 || !re.test(newValue))) return false;
   };
   const scoreThresholdValidate = (value: string) => {
-    const re = /^(1|([1-9]\d{0,1})|100)$/;
-    if (!isAssumed) {
-      if (!value) return false;
-      if (!re.test(value)) return false;
+    const re = /^(?:\d?\d|100)$/;
+    if(!isAssumed) {
+      if(!value) return false;
+      if(!re.test(value)) return false;
     }
   };
   const handleDelete = (set_id: string) => {
@@ -222,7 +222,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 control={control}
                 as={TextField}
                 variant="outlined"
-                defaultValue={outcome_id ? Number(outcomeDetail.score_threshold) * 100 + "" : isAssumed ? "0" : "80"}
+                defaultValue={outcome_id? outcomeDetail.score_threshold : (isAssumed ? 0 : 80)}
                 fullWidth
                 label={"Threhold"}
                 disabled={isAssumed ? true : showEdit}

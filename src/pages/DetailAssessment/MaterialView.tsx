@@ -27,6 +27,7 @@ import {
   MaterialViewItemResultOutcomeProps,
   MaterialViewItemStudentProps,
   OutcomeStatus,
+  StudentParticipate,
   StudentViewItemsProps,
   SubDimensionOptions,
 } from "./type";
@@ -267,7 +268,7 @@ export function MaterialView(props: MaterialViewProps) {
                         <Table className={css.table}>
                           <PLTableHeader fields={MaterialDefaultHeader} style={{ backgroundColor: "#F7F2F3", height: 35 }} />
                           <TableBody>
-                            {item.students?.map((sItem: MaterialViewItemStudentProps) => (
+                            {item.students?.filter(student => student.status === StudentParticipate.Participate)?.map((sItem: MaterialViewItemStudentProps) => (
                               <TableRow key={sItem.student_id}>
                                 <TableCell align="center">{sItem.student_name}</TableCell>
                                 <TableCell align="center">
