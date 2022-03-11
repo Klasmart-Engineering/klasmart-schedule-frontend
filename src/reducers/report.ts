@@ -58,9 +58,8 @@ import {
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
-  EntityLearnerMonthlyReportOverview,
+  EntityLearnerReportOverview,
   EntityLearnerUsageResponse,
-  EntityLearnerWeeklyReportOverview,
   EntityLearnOutcomeAchievementRequest,
   EntityLearnOutcomeAchievementResponse,
   EntityQueryAssignmentsSummaryResult,
@@ -211,8 +210,8 @@ interface IreportState {
   fourWeeksAssignmentsCompletionMassage: string;
   fourWeeksClassAttendanceMassage: string;
   learnerUsageOverview: EntityLearnerUsageResponse;
-  learningWeeklyOverview: EntityLearnerWeeklyReportOverview;
-  learningMonthlyOverview: EntityLearnerMonthlyReportOverview;
+  learningWeeklyOverview: EntityLearnerReportOverview;
+  learningMonthlyOverview: EntityLearnerReportOverview;
 }
 
 interface IObj {
@@ -1209,7 +1208,7 @@ export const getLearnerUsageOverview = createAsyncThunk<EntityLearnerUsageRespon
 
 export type IParamLearnerWeeklyOverview = Parameters<typeof api.reports.getLearnerWeeklyReportOverview>[0];
 export const getLearnerWeeklyReportOverview = createAsyncThunk<
-  EntityLearnerWeeklyReportOverview,
+  EntityLearnerReportOverview,
   IParamLearnerWeeklyOverview & LoadingMetaPayload
 >("report/getLearnerWeeklyReportOverview", async ({ metaLoading, ...query }) => {
   return await api.reports.getLearnerWeeklyReportOverview(query);
@@ -1217,7 +1216,7 @@ export const getLearnerWeeklyReportOverview = createAsyncThunk<
 
 export type IParamLearnerMonthlyOverview = Parameters<typeof api.reports.getLearnerMonthlyReportOverview>[0];
 export const getLearnerMonthlyReportOverview = createAsyncThunk<
-  EntityLearnerMonthlyReportOverview,
+  EntityLearnerReportOverview,
   IParamLearnerMonthlyOverview & LoadingMetaPayload
 >("report/getLearnerMonthlyReportOverview", async ({ metaLoading, ...query }) => {
   return await api.reports.getLearnerMonthlyReportOverview(query);

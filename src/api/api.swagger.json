@@ -5264,7 +5264,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.LearnerMonthlyReportOverview"
+              "$ref": "#/definitions/entity.LearnerReportOverview"
             }
           },
           "400": {
@@ -5356,7 +5356,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.LearnerWeeklyReportOverview"
+              "$ref": "#/definitions/entity.LearnerReportOverview"
             }
           },
           "400": {
@@ -6889,6 +6889,100 @@
             "description": "Conflict",
             "schema": {
               "$ref": "#/definitions/api.ConflictResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules/review/check_data": {
+      "post": {
+        "description": "check schedule review data before create",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "checkScheduleReviewData",
+        "operationId": "checkScheduleReviewData",
+        "parameters": [
+          {
+            "description": "schedule review data to check",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.CheckScheduleReviewDataRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.CheckScheduleReviewDataResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/schedules/update_review_status": {
+      "post": {
+        "description": "update review schedule status",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["schedule"],
+        "summary": "updateScheduleReviewStatus",
+        "operationId": "updateScheduleReviewStatus",
+        "parameters": [
+          {
+            "description": "schedule review create result",
+            "name": "queryData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entity.UpdateScheduleReviewStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/api.NotFoundResponse"
             }
           },
           "500": {
@@ -9945,6 +10039,57 @@
         }
       }
     },
+    "entity.CheckScheduleReviewDataRequest": {
+      "type": "object",
+      "properties": {
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
+        "program_id": {
+          "type": "string"
+        },
+        "student_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_zone_offset": {
+          "type": "integer"
+        }
+      }
+    },
+    "entity.CheckScheduleReviewDataResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.CheckScheduleReviewDataResult"
+          }
+        }
+      }
+    },
+    "entity.CheckScheduleReviewDataResult": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "boolean"
+        },
+        "student_id": {
+          "type": "string"
+        }
+      }
+    },
     "entity.ClassAttendanceRequest": {
       "type": "object",
       "required": ["class_id", "student_id"],
@@ -11093,7 +11238,7 @@
         }
       }
     },
-    "entity.LearnerMonthlyReportOverview": {
+    "entity.LearnerReportOverview": {
       "type": "object",
       "properties": {
         "attendees": {
@@ -11110,6 +11255,9 @@
         "num_meet": {
           "description": "num of meet student",
           "type": "integer"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -11141,29 +11289,6 @@
         },
         "contents_used": {
           "type": "integer"
-        }
-      }
-    },
-    "entity.LearnerWeeklyReportOverview": {
-      "type": "object",
-      "properties": {
-        "attendees": {
-          "type": "integer"
-        },
-        "num_above": {
-          "description": "num of above student",
-          "type": "integer"
-        },
-        "num_below": {
-          "description": "num of below student",
-          "type": "integer"
-        },
-        "num_meet": {
-          "description": "num of meet student",
-          "type": "integer"
-        },
-        "status": {
-          "type": "string"
         }
       }
     },
@@ -12280,6 +12405,12 @@
           "type": "string",
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
         "description": {
           "type": "string"
         },
@@ -12299,6 +12430,9 @@
           "type": "boolean"
         },
         "is_repeat": {
+          "type": "boolean"
+        },
+        "is_review": {
           "type": "boolean"
         },
         "lesson_plan_id": {
@@ -12724,6 +12858,35 @@
         }
       }
     },
+    "entity.ScheduleReviewFailedResult": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "student_id": {
+          "type": "string"
+        }
+      }
+    },
+    "entity.ScheduleReviewSucceededResult": {
+      "type": "object",
+      "properties": {
+        "content_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["random", " personalized"]
+        }
+      }
+    },
     "entity.ScheduleSearchView": {
       "type": "object",
       "properties": {
@@ -13084,6 +13247,12 @@
           "type": "string",
           "enum": ["OnlineClass", "OfflineClass", "Homework", "Task"]
         },
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
         "description": {
           "type": "string"
         },
@@ -13106,6 +13275,9 @@
           "type": "boolean"
         },
         "is_repeat": {
+          "type": "boolean"
+        },
+        "is_review": {
           "type": "boolean"
         },
         "lesson_plan_id": {
@@ -13197,6 +13369,12 @@
         "complete_assessment": {
           "type": "boolean"
         },
+        "content_end_at": {
+          "type": "integer"
+        },
+        "content_start_at": {
+          "type": "integer"
+        },
         "description": {
           "type": "string"
         },
@@ -13224,6 +13402,9 @@
         "is_repeat": {
           "type": "boolean"
         },
+        "is_review": {
+          "type": "boolean"
+        },
         "lesson_plan": {
           "$ref": "#/definitions/entity.ScheduleLessonPlan"
         },
@@ -13235,6 +13416,19 @@
           "items": {
             "type": "string"
           }
+        },
+        "personalized_review_students": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
+        "program": {
+          "$ref": "#/definitions/entity.ScheduleShortInfo"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": ["pending", "success", "failed"]
         },
         "role_type": {
           "type": "string",
@@ -13251,6 +13445,12 @@
           "enum": ["NotStart", "Started", "Closed"]
         },
         "students": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleShortInfo"
+          }
+        },
+        "subjects": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/entity.ScheduleShortInfo"
@@ -13965,6 +14165,26 @@
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "entity.UpdateScheduleReviewStatusRequest": {
+      "type": "object",
+      "properties": {
+        "failed_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleReviewFailedResult"
+          }
+        },
+        "schedule_id": {
+          "type": "string"
+        },
+        "succeeded_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.ScheduleReviewSucceededResult"
+          }
         }
       }
     },

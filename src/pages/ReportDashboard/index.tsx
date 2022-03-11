@@ -244,7 +244,7 @@ export function ReportDashboard() {
           <Grid container spacing={2}>
             {Boolean(perm.student_progress_report_662) && (
               <Grid item xs={12} md={4}>
-                {reportTip(t("report_label_student_progress_report"), t("report_label_learner_monthly_report_info" as any))}
+                {reportTip(t("report_label_student_progress_report"), t("report_label_learner_monthly_report_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <LearningMonthlyTabs />
                 </Box>

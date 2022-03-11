@@ -1,4 +1,4 @@
-import { EntityLearnerWeeklyReportOverview } from "@api/api.auto";
+import { EntityLearnerReportOverview } from "@api/api.auto";
 import { t } from "@locale/LocaleManager";
 import { Box, Grid, makeStyles } from "@material-ui/core";
 import { ReportLearningSummary } from "@pages/ReportLearningSummary";
@@ -55,7 +55,7 @@ const computeDatum = (value: number | undefined, count: number) => {
 };
 export default function LearningWeeklyTabs() {
   const css = useStyles();
-  const learningWeeklyOverview: EntityLearnerWeeklyReportOverview = useSelector<RootState, RootState["report"]>(
+  const learningWeeklyOverview: EntityLearnerReportOverview = useSelector<RootState, RootState["report"]>(
     (state) => state.report
   ).learningWeeklyOverview;
   const count = (learningWeeklyOverview.num_above || 0) + (learningWeeklyOverview.num_meet || 0) + (learningWeeklyOverview.num_below || 0);
