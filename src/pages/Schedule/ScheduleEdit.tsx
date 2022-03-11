@@ -1067,6 +1067,10 @@ function EditBox(props: CalendarStateProps) {
       if (!addData["class_roster_teacher_ids"].includes(item.id)) addData["participants_teacher_ids"].push(item.id);
     });
 
+    addData['is_review'] = checkedStatus.reviewCheck;
+
+    console.log(addData);
+
     let resultInfo: any;
     resultInfo = (await dispatch(
       saveScheduleData({
