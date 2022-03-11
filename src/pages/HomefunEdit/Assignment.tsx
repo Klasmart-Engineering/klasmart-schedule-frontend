@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import {
   GetApp,
@@ -21,7 +21,7 @@ import {
   SentimentSatisfiedOutlined,
   SentimentVeryDissatisfiedOutlined,
   SentimentVerySatisfiedOutlined,
-  SvgIconComponent,
+  SvgIconComponent
 } from "@material-ui/icons";
 import React, { createElement } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
@@ -264,7 +264,7 @@ export function Assignment(props: AssignmentProps) {
         multiline
         className={css.comment}
         fullWidth
-        inputProps={{ className: css.commentInput, maxLength: 100 }}
+        inputProps={{ className: css.commentInput, maxLength: 500 }}
       />
       <AssignmentTable detail={detail} feedbacks={feedbacks.slice(1)} title={d("Submission History").t("assess_submission_history")} />
     </div>

@@ -1,5 +1,5 @@
 import { Box, makeStyles, Paper, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { UseFormMethods } from "react-hook-form";
 import { AssessmentTypeValues } from "../../components/AssessmentType";
 import { d } from "../../locale/LocaleManager";

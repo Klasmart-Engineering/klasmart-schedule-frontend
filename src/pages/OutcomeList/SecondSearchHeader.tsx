@@ -144,7 +144,7 @@ export function SecondSearchHeaderMb(props: SecondSearchHeaderProps) {
                 </Button>
               </Permission>
             </Grid>
-            <Grid container item xs={4} sm={4} justify="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
+            <Grid container item xs={4} sm={4} justifyContent="flex-end" alignItems="center" style={{ fontSize: "24px" }}>
               {!isPending(value) && (
                 <>
                   <LocalBarOutlinedIcon onClick={handleClickIconMyonly} />
@@ -208,7 +208,7 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
                 formMethods={formMethods}
               />
             </Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
+            <Grid container direction="row" justifyContent="flex-end" alignItems="center" item md={2} lg={4} xl={4}>
               {!isPending(value) ? (
                 <FormControlLabel
                   value="end"
