@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
 const useStyles = makeStyles((theme) =>

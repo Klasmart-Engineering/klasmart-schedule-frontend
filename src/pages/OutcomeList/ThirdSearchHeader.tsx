@@ -323,7 +323,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             <Grid item md={6}>
               <SubLearningOutcome value={value} onChange={onChange} />
             </Grid>
-            <Grid container direction="row" justify="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
+            <Grid container direction="row" justifyContent="flex-end" alignItems="center" item sm={6} xs={6} md={3}>
               <TextField
                 size="small"
                 style={{ width: 200 }}
@@ -397,7 +397,7 @@ export function ThirdSearchHeaderMb(props: ThirdSearchHeaderProps) {
             <Grid item sm={10} xs={10}>
               <SubLearningOutcome value={value} onChange={onChange} />
             </Grid>
-            <Grid container justify="flex-end" alignItems="center" item sm={2} xs={2}>
+            <Grid container justifyContent="flex-end" alignItems="center" item sm={2} xs={2}>
               {actions.length > 0 && <MoreHoriz onClick={handleClickBulkActionButton} />}
               <Menu anchorEl={anchorElLeft} keepMounted open={Boolean(anchorElLeft)} onClose={handleClose}>
                 {actions.map((item, index) => (

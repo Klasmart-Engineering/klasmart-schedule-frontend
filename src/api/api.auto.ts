@@ -1244,6 +1244,7 @@ export interface EntityScheduleLessonPlanMaterial {
 }
 
 export interface EntityScheduleListView {
+  assessment_status?: "in_progress" | "complete";
   class_id?: string;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;

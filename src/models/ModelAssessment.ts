@@ -19,7 +19,6 @@ import {
   MaterialViewItemResultProps,
   OutcomeStatus,
   OverAllOutcomesItem,
-  StudentParticipate,
   StudentViewItemsProps,
   SubDimensionOptions,
 } from "../pages/DetailAssessment/type";
@@ -428,7 +427,7 @@ export const ModelAssessment = {
     contents: DetailAssessmentResult["contents"],
     outcomes: DetailAssessmentResult["outcomes"]
   ): StudentViewItemsProps[] | undefined {
-    const participateStudent = students?.filter((item) => item.status === StudentParticipate.Participate);
+    // const participateStudent = students?.filter((item) => item.status === StudentParticipate.Participate);
     const contentObj: Record<string, DetailAssessmentResultContent> = {};
     const outcomeObj: Record<string, DetailAssessmentResultOutcome> = {};
     contents
@@ -443,7 +442,7 @@ export const ModelAssessment = {
         outcomeObj[item.outcome_id!] = { ...item };
       }
     });
-    const studentViewItems: StudentViewItemsProps[] | undefined = participateStudent?.map((item) => {
+    const studentViewItems: StudentViewItemsProps[] | undefined = students?.map((item) => {
       const { student_id, student_name, reviewer_comment, status, results } = item;
       return {
         student_id,

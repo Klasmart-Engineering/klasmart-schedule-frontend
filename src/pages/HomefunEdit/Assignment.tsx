@@ -264,7 +264,7 @@ export function Assignment(props: AssignmentProps) {
         multiline
         className={css.comment}
         fullWidth
-        inputProps={{ className: css.commentInput, maxLength: 100 }}
+        inputProps={{ className: css.commentInput, maxLength: 500 }}
       />
       <AssignmentTable detail={detail} feedbacks={feedbacks.slice(1)} title={d("Submission History").t("assess_submission_history")} />
     </div>

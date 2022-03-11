@@ -1,5 +1,5 @@
 import { Box, Checkbox, FormControlLabel, makeStyles, Table, TableBody, TableCell, TableContainer, TableRow } from "@material-ui/core";
-import { ChangeEvent } from "react";
+import React, { ChangeEvent } from "react";
 import { AchievedTooltips } from "../../components/DynamicTable";
 import { PLField, PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
