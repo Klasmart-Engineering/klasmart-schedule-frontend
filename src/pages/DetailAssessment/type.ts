@@ -34,6 +34,7 @@ export interface MaterialViewItemStudentProps {
   answer?: string;
   score?: number;
   attempted?: boolean;
+  status?: "Participate" | "NotParticipate";
   // file_type?: string;
   // max_score?: number;
 }
