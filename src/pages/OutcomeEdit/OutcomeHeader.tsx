@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, fade, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
+import { alpha, Box, Button, ButtonProps, Hidden, IconButton, makeStyles, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Clear, ClearSharp, Create, Delete, Publish, Save } from "@material-ui/icons";
 import clsx from "clsx";
@@ -22,7 +22,7 @@ const createOutlinedColor = (paletteColor: PaletteColor, palette: Palette) => ({
   borderColor: paletteColor.light,
   "&:hover": {
     borderColor: paletteColor.main,
-    backgroundColor: fade(paletteColor.main, palette.action.hoverOpacity),
+    backgroundColor: alpha(paletteColor.main, palette.action.hoverOpacity),
   },
 });
 

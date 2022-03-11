@@ -150,9 +150,11 @@ export default function CreateOutcomings() {
           value.shortcode = resultInfo.payload.shortcode;
         }
         setValue("assumed", isAssumed);
-        const newValue = { ...value, score_threshold: value.score_threshold ? (value.score_threshold/100) : 0 }
+        const { score_threshold, ...restValue } = value;
+        const new_score_threshold = score_threshold ? (Number(score_threshold)/100) : 0;
+        const finalValue = { ...restValue, score_threshold: new_score_threshold };
         if (outcome_id) {
-          const { payload } = (await dispatch(updateOutcome({ outcome_id, value }))) as unknown as PayloadAction<
+          const { payload } = (await dispatch(updateOutcome({ outcome_id, value: finalValue }))) as unknown as PayloadAction<
             AsyncTrunkReturned<typeof updateOutcome>
           >;
           if (payload === "ok") {
@@ -162,7 +164,7 @@ export default function CreateOutcomings() {
             setCondition("default");
           }
         } else {
-          const { payload } = (await dispatch(save(value))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
+          const { payload } = (await dispatch(save(finalValue))) as unknown as PayloadAction<AsyncTrunkReturned<typeof save>>;
           if (payload?.outcome_id) {
             history.push(`/assessments/outcome-edit?outcome_id=${payload.outcome_id}&status=createDfaft`);
             dispatch(actSuccess(d("Saved Successfully").t("assess_msg_saved_successfully")));
@@ -273,7 +275,7 @@ export default function CreateOutcomings() {
     });
     setIsAssumed(event.target.checked);
     if(!event.target.checked) {
-      setValue("score_threshold", 80)
+      setValue("score_threshold", 80, {shouldValidate: true})
     } else {
       setValue("score_threshold", 0)
     }

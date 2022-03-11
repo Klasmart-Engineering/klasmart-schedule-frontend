@@ -221,7 +221,8 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 name="score_threshold"
                 control={control}
                 as={TextField}
-                defaultValue={outcome_id ? outcomeDetail.score_threshold : isAssumed ? 0 : 80}
+                variant="outlined"
+                defaultValue={outcome_id ? outcomeDetail.score_threshold+"" : (isAssumed ? "0" : "80")}
                 fullWidth
                 label={"Threhold"}
                 disabled={isAssumed ? true : showEdit}
@@ -512,7 +513,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   variant="outlined"
                   className={classes.milestoneCon}
                   multiline
-                  rowsMax={3}
+                  maxRows={3}
                   value={outcomeDetail.milestones?.map((v) => v.milestone_name).join(",") || ""}
                 />
               </Grid>
