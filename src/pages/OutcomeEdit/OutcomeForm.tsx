@@ -222,7 +222,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 control={control}
                 as={TextField}
                 variant="outlined"
-                defaultValue={outcome_id ? outcomeDetail.score_threshold+"" : (isAssumed ? "0" : "80")}
+                defaultValue={outcome_id ? Number(outcomeDetail.score_threshold)*100+"" : (isAssumed ? "0" : "80")}
                 fullWidth
                 label={"Threhold"}
                 disabled={isAssumed ? true : showEdit}
