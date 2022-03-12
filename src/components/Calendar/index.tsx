@@ -634,12 +634,28 @@ function MyCalendar(props: CalendarProps) {
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={css.classTypeMb} /> },
   ];
 
+  const timestampToTime = (timestamp: number): string => {
+    if (!timestamp) return "N/A";
+    const timestampDate = new Date(timestamp * 1000);
+    const [M, D] = [
+      (timestampDate as Date).getMonth(),
+      (timestampDate as Date).getDate(),
+    ];
+    return  `${monthArr[M]} ${D}`;
+  };
+
+  const reviewColor = {pending: "#13AAA999", success:"#13AAA9", failed:"#C02121"}
+
   const CustomEventMonth = (event: any) => {
     const eventTemplate = eventColor.filter((item) => item.id === event.event.class_type);
+    const color =  event.event.is_review ? reviewColor[event.event.review_status as "pending" | "success" | "failed"] : eventTemplate[0].color
     return (
-      <div className={css.eventTemplateCalendar} style={{ backgroundColor: eventTemplate[0].color }}>
+      <div className={css.eventTemplateCalendar} style={{ backgroundColor: color }}>
         <div className={css.eventTemplateIcon}>{eventTemplate[0].icon}</div>
         <span>{event.event.title}</span>
+        {
+          event.event.is_review && <span>Review: {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} Materials</span>
+        }
       </div>
     );
   };
@@ -647,10 +663,14 @@ function MyCalendar(props: CalendarProps) {
   const CustomEventDay = (event: any) => {
     const padding = event.event.end_at - event.event.start_at > 3600;
     const eventTemplate = eventColorMb.filter((item) => item.id === event.event.class_type);
+    const color =  event.event.is_review ? reviewColor[event.event.review_status as "pending" | "success" | "failed"] : eventTemplate[0].color
     return (
-      <div className={css.customerEventMb} style={{ backgroundColor: eventTemplate[0].color, paddingTop: padding ? "8px" : "0px" }}>
+      <div className={css.customerEventMb} style={{ backgroundColor: color, paddingTop: padding ? "8px" : "0px" }}>
         <div>{eventTemplate[0].icon}</div>
         <span>{event.event.title}</span>
+        {
+          event.event.is_review && <span>Review: {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} Materials</span>
+        }
       </div>
     );
   };
