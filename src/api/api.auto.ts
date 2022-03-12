@@ -743,7 +743,7 @@ export interface EntityLearnOutcomeAchievementResponseItem {
   un_selected_subjects_average_achieved_percentage?: number;
 }
 
-export interface EntityLearnerWeeklyReportOverview {
+export interface EntityLearnerReportOverview {
   attendees?: number;
 
   /** num of above student */
@@ -4019,7 +4019,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get learner monthly report overview
      */
     getLearnerMonthlyReportOverview: (query: { time_range: string }, params?: RequestParams) =>
-      this.request<EntityLearnerWeeklyReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityLearnerReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learner_monthly_overview${this.addQueryParams(query)}`,
         "GET",
         params
@@ -4048,7 +4048,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get learner weekly report overview
      */
     getLearnerWeeklyReportOverview: (query: { time_range: string }, params?: RequestParams) =>
-      this.request<EntityLearnerWeeklyReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityLearnerReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learner_weekly_overview${this.addQueryParams(query)}`,
         "GET",
         params

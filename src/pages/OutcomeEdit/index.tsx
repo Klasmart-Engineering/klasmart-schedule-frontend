@@ -151,7 +151,7 @@ export default function CreateOutcomings() {
         }
         setValue("assumed", isAssumed);
         const { score_threshold, ...restValue } = value;
-        const new_score_threshold = score_threshold ? (Number(score_threshold)/100) : 0;
+        const new_score_threshold = score_threshold ? Number(score_threshold) / 100 : 0;
         const finalValue = { ...restValue, score_threshold: new_score_threshold };
         if (outcome_id) {
           const { payload } = (await dispatch(updateOutcome({ outcome_id, value: finalValue }))) as unknown as PayloadAction<
@@ -274,10 +274,10 @@ export default function CreateOutcomings() {
       shouldDirty: true,
     });
     setIsAssumed(event.target.checked);
-    if(!event.target.checked) {
-      setValue("score_threshold", 80, {shouldValidate: true})
+    if (!event.target.checked) {
+      setValue("score_threshold", 80, { shouldValidate: true });
     } else {
-      setValue("score_threshold", 0)
+      setValue("score_threshold", 0);
     }
   };
 
@@ -343,6 +343,7 @@ export default function CreateOutcomings() {
       grade: [],
       assumed: true,
       shortcode: shortCode,
+      score_threshold: isAssumed ? 0 : 80
     };
     if (outcome_id) {
       setSelectedOutcomeSet(outcomeDetail.sets || []);
@@ -371,7 +372,8 @@ export default function CreateOutcomings() {
         setValue("program", _program, { shouldDirty: true });
         setValue("subject", _subject);
         setValue("developmental", _developmental);
-        const _detail = { ...detail, program: _program, subject: _subject, developmental: _developmental };
+        const new_score_threshold = detail.score_threshold ? Math.floor(detail.score_threshold*100) : 0;
+        const _detail = { ...detail, program: _program, subject: _subject, developmental: _developmental, score_threshold: new_score_threshold };
         reset(modelOutcomeDetail(_detail));
       }
       return;
@@ -405,6 +407,7 @@ export default function CreateOutcomings() {
     outcomeDetail,
     outcome_id,
     shortCode,
+    isAssumed,
     reset,
     setValue,
   ]);

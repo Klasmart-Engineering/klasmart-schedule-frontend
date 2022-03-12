@@ -5,21 +5,22 @@ import {
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
-  V2AssessmentContentReply
+  V2AssessmentContentReply,
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
   UpdataStudyAssessmentRequestData,
   UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials
+  UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import {
   MaterialViewItemResultProps,
   OutcomeStatus,
-  OverAllOutcomesItem, StudentViewItemsProps,
-  SubDimensionOptions
+  OverAllOutcomesItem,
+  StudentViewItemsProps,
+  SubDimensionOptions,
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 
@@ -613,6 +614,7 @@ export const ModelAssessment = {
                   answer,
                   score,
                   attempted,
+                  status: sItem.status,
                 },
               ],
               outcomes: outcomes?.map((oItem) => {
@@ -627,7 +629,7 @@ export const ModelAssessment = {
               }),
             };
           } else {
-            materialViewObj[content_id!].students?.push({ student_id, student_name, answer, score, attempted });
+            materialViewObj[content_id!].students?.push({ student_id, student_name, answer, score, attempted, status: sItem.status });
             materialViewObj[content_id!].outcomes = materialViewObj[content_id!].outcomes?.map((oItem) => {
               const currOutcome = outcomes?.find((item) => item.outcome_id === oItem.outcome_id);
               const _attendance_ids = oItem.attendance_ids ?? [];
