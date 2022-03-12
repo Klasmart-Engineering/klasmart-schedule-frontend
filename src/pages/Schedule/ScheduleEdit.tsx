@@ -71,6 +71,7 @@ import {
   resetParticipantsData,
   resetScheduleDetial,
   saveScheduleData,
+  saveScheduleDataReview,
   ScheduleFilterPrograms,
   scheduleShowOption,
   getLessonPlansBySchedule,
@@ -1009,8 +1010,9 @@ function EditBox(props: CalendarStateProps) {
     addData["is_force"] = isForce ?? is_force;
 
     if (checkedStatus.reviewCheck) {
-      addData["start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000);
-      addData["end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000);
+      addData["start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000, "all_day_end");
+      addData["end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000, "all_day_end");
+      addData["due_at"] = dueDateTimestamp;
     }
 
     if (scheduleList.class_type === "Homework") {
@@ -1069,16 +1071,24 @@ function EditBox(props: CalendarStateProps) {
 
     addData['is_review'] = checkedStatus.reviewCheck;
 
-    console.log(addData);
-
     let resultInfo: any;
-    resultInfo = (await dispatch(
-      saveScheduleData({
-        payload: { ...scheduleList, ...addData },
-        is_new_schedule: is_new_schedule,
-        metaLoading: true,
-      })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    if (checkedStatus.reviewCheck) {
+      resultInfo = (await dispatch(
+        saveScheduleDataReview({
+          payload: { ...scheduleList, ...addData },
+          is_new_schedule: is_new_schedule,
+          metaLoading: true,
+        })
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    }else {
+      resultInfo = (await dispatch(
+        saveScheduleData({
+          payload: { ...scheduleList, ...addData },
+          is_new_schedule: is_new_schedule,
+          metaLoading: true,
+        })
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    }
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -1124,7 +1134,11 @@ function EditBox(props: CalendarStateProps) {
       changeTimesTamp(timesTampCallback);
       setIsForce(false);
       if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, stateCurrentCid as string);
-      history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+      if(checkedStatus.reviewCheck) {
+        history.push(`/schedule/calendar/rightside/scheduleTable/model/preview`);
+      }else {
+        history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+      }
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
         openStatus: true,

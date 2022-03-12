@@ -368,6 +368,19 @@ export const saveScheduleData = createAsyncThunk<
   }
 );
 
+export const saveScheduleDataReview = createAsyncThunk<
+  EntityScheduleAddView,
+  SaveStatusResourseParams & LoadingMetaPayload,
+  { state: Rootstate }
+  >(
+  "scheduleReview/save",
+  // @ts-ignore
+  async ({ payload, is_new_schedule }, { getState }) => {
+     return await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
+  }
+);
+
+
 type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeViewList>[0] & LoadingMetaPayload;
 type viewSchedulesResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
 export const getScheduleTimeViewData = createAsyncThunk<viewSchedulesResultResponse, viewSchedulesParams>(

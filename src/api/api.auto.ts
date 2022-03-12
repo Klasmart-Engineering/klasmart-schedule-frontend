@@ -349,6 +349,24 @@ export interface EntityAssignmentsSummaryItem {
   teacher_feedback?: string;
 }
 
+export interface EntityCheckScheduleReviewDataRequest {
+  content_end_at?: number;
+  content_start_at?: number;
+  program_id?: string;
+  student_ids?: string[];
+  subject_ids?: string[];
+  time_zone_offset?: number;
+}
+
+export interface EntityCheckScheduleReviewDataResponse {
+  results?: EntityCheckScheduleReviewDataResult[];
+}
+
+export interface EntityCheckScheduleReviewDataResult {
+  status?: boolean;
+  student_id?: string;
+}
+
 export interface EntityClassAttendanceRequest {
   class_id: string;
   durations?: string[];
@@ -725,30 +743,6 @@ export interface EntityLearnOutcomeAchievementResponseItem {
   un_selected_subjects_average_achieved_percentage?: number;
 }
 
-export interface EntityLearnerMonthlyReportOverview {
-  attendees?: number;
-
-  /** num of above student */
-  num_above?: number;
-
-  /** num of below student */
-  num_below?: number;
-
-  /** num of meet student */
-  num_meet?: number;
-}
-
-export interface EntityLearnerUsageRequest {
-  content_type_list?: string[];
-  durations?: string[];
-}
-
-export interface EntityLearnerUsageResponse {
-  assignment_scheduled?: number;
-  class_scheduled?: number;
-  contents_used?: number;
-}
-
 export interface EntityLearnerWeeklyReportOverview {
   attendees?: number;
 
@@ -761,6 +755,17 @@ export interface EntityLearnerWeeklyReportOverview {
   /** num of meet student */
   num_meet?: number;
   status?: string;
+}
+
+export interface EntityLearnerUsageRequest {
+  content_type_list?: string[];
+  durations?: string[];
+}
+
+export interface EntityLearnerUsageResponse {
+  assignment_scheduled?: number;
+  class_scheduled?: number;
+  contents_used?: number;
 }
 
 export interface EntityLearningSummaryFilterWeek {
@@ -1147,6 +1152,8 @@ export interface EntityScheduleAddView {
   class_roster_student_ids?: string[];
   class_roster_teacher_ids?: string[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  content_end_at?: number;
+  content_start_at?: number;
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -1154,6 +1161,7 @@ export interface EntityScheduleAddView {
   is_force?: boolean;
   is_home_fun?: boolean;
   is_repeat?: boolean;
+  is_review?: boolean;
   lesson_plan_id?: string;
   org_id?: string;
   outcome_ids?: string[];
@@ -1290,6 +1298,17 @@ export interface EntityScheduleRelationIDs {
   participant_teacher_ids?: string[];
 }
 
+export interface EntityScheduleReviewFailedResult {
+  status?: string;
+  student_id?: string;
+}
+
+export interface EntityScheduleReviewSucceededResult {
+  content_ids?: string[];
+  student_id?: string;
+  type?: "random" | " personalized";
+}
+
 export interface EntityScheduleSearchView {
   class?: EntityScheduleAccessibleUserView;
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
@@ -1399,6 +1418,8 @@ export interface EntityScheduleUpdateView {
   class_roster_student_ids?: string[];
   class_roster_teacher_ids?: string[];
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
+  content_end_at?: number;
+  content_start_at?: number;
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -1407,6 +1428,7 @@ export interface EntityScheduleUpdateView {
   is_force?: boolean;
   is_home_fun?: boolean;
   is_repeat?: boolean;
+  is_review?: boolean;
   lesson_plan_id?: string;
   org_id?: string;
   outcome_ids?: string[];
@@ -1435,6 +1457,8 @@ export interface EntityScheduleViewDetail {
   class_type?: EntityScheduleShortInfo;
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
+  content_end_at?: number;
+  content_start_at?: number;
   description?: string;
   due_at?: number;
   end_at?: number;
@@ -1444,14 +1468,19 @@ export interface EntityScheduleViewDetail {
   is_hidden?: boolean;
   is_home_fun?: boolean;
   is_repeat?: boolean;
+  is_review?: boolean;
   lesson_plan?: EntityScheduleLessonPlan;
   lesson_plan_id?: string;
   outcome_ids?: string[];
+  personalized_review_students?: EntityScheduleShortInfo[];
+  program?: EntityScheduleShortInfo;
+  review_status?: "pending" | "success" | "failed";
   role_type?: "Student" | "Teacher" | "Unknown";
   room_id?: string;
   start_at?: number;
   status?: "NotStart" | "Started" | "Closed";
   students?: EntityScheduleShortInfo[];
+  subjects?: EntityScheduleShortInfo[];
   teachers?: EntityScheduleShortInfo[];
   title?: string;
 }
@@ -1698,6 +1727,12 @@ export interface EntityUpdateFolderRequest {
 export interface EntityUpdateHomeFunStudyOutcomeArgs {
   outcome_id?: string;
   status?: string;
+}
+
+export interface EntityUpdateScheduleReviewStatusRequest {
+  failed_results?: EntityScheduleReviewFailedResult[];
+  schedule_id?: string;
+  succeeded_results?: EntityScheduleReviewSucceededResult[];
 }
 
 export interface EntityUserSettingJsonContent {
@@ -3984,7 +4019,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @description get learner monthly report overview
      */
     getLearnerMonthlyReportOverview: (query: { time_range: string }, params?: RequestParams) =>
-      this.request<EntityLearnerMonthlyReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+      this.request<EntityLearnerWeeklyReportOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learner_monthly_overview${this.addQueryParams(query)}`,
         "GET",
         params
@@ -4461,6 +4496,36 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         ApiSuccessRequestResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiNotFoundResponse | ApiConflictResponse | ApiInternalServerErrorResponse
       >(`/schedules`, "POST", params, scheduleData),
+
+    /**
+     * @tags schedule
+     * @name checkScheduleReviewData
+     * @summary checkScheduleReviewData
+     * @request POST:/schedules/review/check_data
+     * @description check schedule review data before create
+     */
+    checkScheduleReviewData: (queryData: EntityCheckScheduleReviewDataRequest, params?: RequestParams) =>
+      this.request<EntityCheckScheduleReviewDataResponse, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/schedules/review/check_data`,
+        "POST",
+        params,
+        queryData
+      ),
+
+    /**
+     * @tags schedule
+     * @name updateScheduleReviewStatus
+     * @summary updateScheduleReviewStatus
+     * @request POST:/schedules/update_review_status
+     * @description update review schedule status
+     */
+    updateScheduleReviewStatus: (queryData: EntityUpdateScheduleReviewStatusRequest, params?: RequestParams) =>
+      this.request<string, ApiBadRequestResponse | ApiNotFoundResponse | ApiInternalServerErrorResponse>(
+        `/schedules/update_review_status`,
+        "POST",
+        params,
+        queryData
+      ),
 
     /**
      * @tags schedule
