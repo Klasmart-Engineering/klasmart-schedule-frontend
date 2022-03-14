@@ -15,7 +15,7 @@ function format(filePath, parser) {
 }
 
 function downloadAndGenerateApi() {
-  execSync(`curl https://swagger-ui.kidsloop.net/config/api.swagger.json -o ${swaggerFilePath}`);
+  execSync(`curl  -u swagger:Badana@135790  https://swagger-ui.kidsloop.cn/config/api.swagger.json -o ${swaggerFilePath}`);
   format(swaggerFilePath, 'json');
   execSync(`sta -p src/api/api.swagger.json -o ${apiDir} -n ${apiAutoFileName}`);
   format(apiAutoFilePath, 'typescript');

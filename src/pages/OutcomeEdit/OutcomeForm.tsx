@@ -7,7 +7,7 @@ import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, M
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { ResultGetNewOptions } from "@reducers/outcome";
-import React, { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 
 const useStyles = makeStyles((theme) => ({
@@ -109,6 +109,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     onInputChange,
   } = props;
   const classes = useStyles();
+  const [thresholdErrorMsg, setThresholdErrorMsg] = useState("")
   const getItems = (list: LinkedMockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
@@ -143,7 +144,14 @@ export function OutcomeForm(props: OutcomeFormProps) {
   const scoreThresholdValidate = (value: string) => {
     const re = /^(?:\d?\d|100)$/;
     if(!isAssumed) {
-      if(!value) return false;
+      if(value === "0") {
+        setThresholdErrorMsg("Score threshold cannot be set as blank")
+        return false;
+      }
+      if(!value) {
+        setThresholdErrorMsg("A score threshold must be entered")
+        return false;
+      }
       if(!re.test(value)) return false;
     }
   };
@@ -185,7 +193,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 error={errors.outcome_name ? true : false}
               />
             </Grid>
-            {/* {outcome_id && ( */}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="shortcode"
@@ -224,13 +231,13 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 variant="outlined"
                 defaultValue={outcome_id? outcomeDetail.score_threshold : (isAssumed ? 0 : 80)}
                 fullWidth
-                label={"Threhold"}
+                label={"Threshold"}
                 disabled={isAssumed ? true : showEdit}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">%</InputAdornment>,
                 }}
                 error={!!errors["score_threshold"]}
-                helperText={"Score threshold cannot be set as blank"}
+                helperText={thresholdErrorMsg}
                 rules={{ validate: scoreThresholdValidate }}
               />
             </Grid>
