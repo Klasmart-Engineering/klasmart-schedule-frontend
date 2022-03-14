@@ -791,7 +791,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
         <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
-          <span>{textEllipsis(10, ScheduleViewInfo.is_review ? `Review: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, false)} Materials` : ScheduleViewInfo.title)}</span>
+          <span>{textEllipsis(mobile ? 10 : 30, ScheduleViewInfo.is_review ? `Review: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, false)} Materials` : ScheduleViewInfo.title)}</span>
         </Tooltip>
         <div>
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
@@ -846,7 +846,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         }
         <p className={classes.contentRow}>
           <span className={classes.row}>{d("Class Type").t("schedule_detail_class_type")}</span>
-          <span className={classes.row2}>{t(ScheduleViewInfo.class_type?.name as classTypeLabel)}</span>
+          <span className={classes.row2}>{ScheduleViewInfo.is_review ? "Review" : t(ScheduleViewInfo.class_type?.name as classTypeLabel)}</span>
         </p>
         {
           ScheduleViewInfo.is_review && <>
