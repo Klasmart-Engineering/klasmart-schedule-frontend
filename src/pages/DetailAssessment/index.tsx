@@ -345,6 +345,7 @@ export function DetailAssessment() {
             subDimension={selectedSubdimension ? selectedSubdimension : initSubDimension || []}
             studentViewItems={computedStudentViewItems ? computedStudentViewItems : initStudentViewItems}
             editable={editable}
+            roomId={assessmentDetailV2.room_id}
             onChangeComputedStudentViewItems={handleChangeComputedStudentViewItems}
           />
         </>
@@ -359,6 +360,7 @@ export function DetailAssessment() {
             students={students ? students : assessmentDetailV2.students}
             contents={contents ? contents : assessmentDetailV2.contents}
             editable={editable}
+            roomId={assessmentDetailV2.room_id}
             onChangeMaterialAllAchieved={handleChangeMaterialAllAchieved}
             onChangeMaterialNoneAchieved={handleChangeMaterialNoneAchieved}
             onChangeMatarialStudentStatus={handleChangeMatarialStudentStatus}
