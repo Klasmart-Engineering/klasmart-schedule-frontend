@@ -2,6 +2,7 @@ import { Button, makeStyles, useMediaQuery, useTheme } from "@material-ui/core";
 import React from "react";
 import { d } from "../../locale/LocaleManager";
 import { School } from "@material-ui/icons";
+import { repeatOptionsType } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme) => ({
   reviewBox: {
@@ -67,10 +68,17 @@ const useStyles = makeStyles((theme) => ({
 
 interface InfoProps {
   handleClose: () => void;
+  checkScheduleReviewData: any;
+  saveSchedule: (
+    repeat_edit_options: repeatOptionsType,
+    is_force: boolean,
+    is_new_schedule: boolean,
+    is_check_review: boolean
+  ) => void
 }
 
 export default function ScheduleReviewTemplate(props: InfoProps) {
-  const { handleClose } = props;
+  const { handleClose, checkScheduleReviewData, saveSchedule } = props;
   const css = useStyles();
   const { breakpoints } = useTheme();
   const mobile = useMediaQuery(breakpoints.down(600));
@@ -86,24 +94,20 @@ export default function ScheduleReviewTemplate(props: InfoProps) {
         let your student working on at least 10 activities before setting a review session:
       </p>
       <div className={css.checkboxContainer}>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Dahee Jung</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Angela Chae</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Huyen Nguyen</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Dahee Jung</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Angela Chae</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Huyen Nguyen</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Dahee Jung</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Angela Chae</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Huyen Nguyen</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Dahee Jung</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Angela Chae</span>
-        <span> {!mobile && <School style={{ marginRight: 12 }} />} Huyen Nguyen</span>
+        {
+          checkScheduleReviewData?.usersConnection?.edges?.map((item: any)=>{
+            return <span> {!mobile && <School style={{ marginRight: 12 }} />} {item.node.givenName} {item.node.familyName}</span>
+          })
+        }
       </div>
       <div className={css.buttons}>
         <Button variant="outlined" onClick={handleClose}>
           {d("Cancel").t("assess_button_cancel")}
         </Button>
-        <Button variant="contained" color="primary" className={css.lastButton}>
+        <Button variant="contained" color="primary" className={css.lastButton} onClick={()=>{
+          saveSchedule("only_current", true, false, false)
+          handleClose()
+        }}>
           {d("OK").t("assess_label_ok")}
         </Button>
       </div>
