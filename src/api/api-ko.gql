@@ -66,7 +66,7 @@ query classesSchoolsByOrganization($organization_id: ID!) {
     }
   }
 }
-# 换成connection
+# 换成connection => classesTeachersConnection
 query classesTeachersByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
@@ -74,14 +74,86 @@ query classesTeachersByOrganization($organization_id: ID!) {
       status
       teachers {
         ...userIdName
-        school_memberships {
-          school_id
-          status
-        }
       }
     }
   }
 }
+query classesTeachersConnection(
+  $cursor: String,
+  $filter: ClassFilter,
+  $teacherFilter: UserFilter,
+  $teacherCursor: String,
+  ) {
+classesConnection(
+    filter: $filter
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+    sort:{
+    order:ASC
+    field:name
+    }
+    ) {
+     totalCount
+     edges {
+      node {
+        id
+        name
+        teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: FORWARD) {
+          totalCount
+          edges {
+            cursor
+            node {
+              id
+              givenName
+              familyName
+              status
+            }
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        },
+      }
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+
+    }
+  }
+}
+query classNode($classId:ID!,$teacherCursor:String){
+  classNode(id:$classId){
+    name
+    teachersConnection(cursor:$teacherCursor){
+      totalCount
+      edges{
+        node{
+          id
+          familyName
+          givenName
+          status
+        }
+      }
+      pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+      }
+      
+    }
+  }
+
+}
+ 
 
 # 只用到了查询的类型，没调这个接口 应该可以删掉
 query classStudentsByOrganization($organization_id: ID!) {

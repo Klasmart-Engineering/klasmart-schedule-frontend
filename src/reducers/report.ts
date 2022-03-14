@@ -88,6 +88,8 @@ import {
 import {
   apiWaitForOrganizationOfPage,
   ClassesTeachingProps,
+  IClassTeachers,
+  recursiveGetClassTeachers,
   recursiveGetClassTeaching,
   recursiveGetSchoolMemberships,
   SchoolIdProps,
@@ -656,6 +658,19 @@ export const getClassTeaching = createAsyncThunk<AsyncReturnType<typeof recursiv
   };
   return recursiveGetClassTeaching(filter, []);
 });
+export const getClassTeachers = createAsyncThunk<AsyncReturnType<typeof recursiveGetClassTeachers>>("getClassTeachers", async () => {
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const filter = {
+    filter: {
+      organizationId: {
+        operator: UuidOperator.Eq,
+        value: organization_id,
+      },
+    },
+    cursor: "",
+  };
+  return recursiveGetClassTeachers(filter, []);
+});
 
 export const getMyInfo = createAsyncThunk<ApolloQueryResult<GetMyIdQuery>["data"]>("getMyInfo", async () => {
   const res = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
@@ -677,7 +692,8 @@ export const getTeachersByOrg = createAsyncThunk<
     // ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
-    ApolloQueryResult<ClassesTeachersByOrganizationQuery>,
+    // ApolloQueryResult<ClassesTeachersByOrganizationQuery>,
+    IClassTeachers[],
     ApolloQueryResult<GetMyIdQuery>["data"],
     SchoolIdProps[],
     ClassesTeachingProps[]
@@ -700,9 +716,12 @@ export const getTeachersByOrg = createAsyncThunk<
     dispatch(getSchoolsIdNameByOrganizationDocument())
       .unwrap()
       .then((res) => res.res),
-    dispatch(getClassesTeachersByOrganizationDocument())
+    // dispatch(getClassesTeachersByOrganizationDocument())
+    //   .unwrap()
+    //   .then((res) => res.res),
+    dispatch(getClassTeachers())
       .unwrap()
-      .then((res) => res.res),
+      .then((res) => res),
     // 代替getMyPermissionClassAndTeaching()函数
     dispatch(getMyInfo())
       .unwrap()
@@ -1702,7 +1721,8 @@ const { actions, reducer } = createSlice({
     [getTeachersByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersByOrg>>) => {
       const classesSchools = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
       const schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
-      const classesTeachers = payload[3].data.organization?.classes as Pick<Class, "class_id" | "teachers">[];
+      // const classesTeachers = payload[3].data.organization?.classes as Pick<Class, "class_id" | "teachers">[];
+      const classesTeachers = payload[3] as Pick<Class, "class_id" | "teachers">[];
       // const myId = payload[1].data.me?.user_id;
       const myId = payload[4].myUser?.node?.id;
       const permissions = payload[0];
