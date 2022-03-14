@@ -231,7 +231,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 variant="outlined"
                 defaultValue={outcome_id? outcomeDetail.score_threshold : (isAssumed ? 0 : 80)}
                 fullWidth
-                label={"Threhold"}
+                label={"Threshold"}
                 disabled={isAssumed ? true : showEdit}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">%</InputAdornment>,

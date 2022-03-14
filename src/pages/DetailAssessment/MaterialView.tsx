@@ -8,7 +8,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableRow,
+  TableRow
 } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
@@ -29,7 +29,7 @@ import {
   OutcomeStatus,
   StudentParticipate,
   StudentViewItemsProps,
-  SubDimensionOptions,
+  SubDimensionOptions
 } from "./type";
 const useStyles = makeStyles({
   tableBar: {
@@ -281,7 +281,7 @@ export function MaterialView(props: MaterialViewProps) {
                           <TableBody>
                             {item.students?.filter(student => student.status === StudentParticipate.Participate)?.map((sItem: MaterialViewItemStudentProps) => (
                               <TableRow key={sItem.student_id}>
-                                <TableCell align="center">{sItem.student_name}</TableCell>
+                                <TableCell align="center">{sItem.student_name ? sItem.student_name : "unknow"}</TableCell>
                                 <TableCell align="center">
                                   {item.content_subtype === "Essay" && (
                                     <span

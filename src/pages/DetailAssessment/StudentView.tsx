@@ -242,7 +242,7 @@ export function StudentView(props: StudentViewProps) {
                 <Box className={css.tableBar} onClick={(e) => toggleCheck(index)}>
                   <div style={{ color: checkedArr[index] ? "black" : "#666666" }}>
                     <AccountCircleIcon />
-                    <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name}</span>
+                    <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name ? sitem.student_name : "unknow"}</span>
                     {editable && (
                       <span
                         onClick={stopPropagation((e) => handleOpenAddStudentComment(sitem.reviewer_comment ?? "", sitem.student_id))}
