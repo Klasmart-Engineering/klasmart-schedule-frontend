@@ -75,7 +75,7 @@ import {
   ScheduleFilterPrograms,
   scheduleShowOption,
   getLessonPlansBySchedule,
-  getLessonPlansByScheduleLoadingPage,
+  getLessonPlansByScheduleLoadingPage, checkScheduleReview
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -108,6 +108,8 @@ import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import CloseIcon from "@material-ui/icons/Close";
+import ScheduleReviewTemplate from "./ScheduleReviewTemplate"
+import { getStudentUserNamesById } from "@reducers/schedule";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldset: {
@@ -452,7 +454,7 @@ function EditBox(props: CalendarStateProps) {
     mobile,
   } = props;
   const { classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
-  const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours() + 24)));
+  const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
   const [subjectItem, setSubjectItem] = React.useState<EntityScheduleShortInfo[]>([]);
@@ -935,7 +937,8 @@ function EditBox(props: CalendarStateProps) {
   const saveSchedule = async (
     repeat_edit_options: repeatOptionsType = "only_current",
     is_force: boolean = true,
-    is_new_schedule: boolean = false
+    is_new_schedule: boolean = false,
+    is_check_review: boolean = true
   ) => {
     if (!validatorFun()) return;
     changeModalDate({
@@ -1010,8 +1013,8 @@ function EditBox(props: CalendarStateProps) {
     addData["is_force"] = isForce ?? is_force;
 
     if (checkedStatus.reviewCheck) {
-      addData["start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000, "all_day_end");
-      addData["end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000, "all_day_end");
+      addData["content_start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000, "all_day_end");
+      addData["content_end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000, "all_day_end");
       addData["due_at"] = dueDateTimestamp;
     }
 
@@ -1070,6 +1073,60 @@ function EditBox(props: CalendarStateProps) {
     });
 
     addData['is_review'] = checkedStatus.reviewCheck;
+
+    if (checkedStatus.reviewCheck && is_check_review) {
+      let reviewResultInfo: any;
+      reviewResultInfo = (await dispatch(checkScheduleReview({
+        content_end_at: addData["end_at"],
+        content_start_at: addData["start_at"],
+        program_id: addData["program_id"],
+        student_ids: addData["class_roster_student_ids"].concat(addData["participants_student_ids"]),
+        subject_ids: addData["subject_ids"],
+        time_zone_offset: addData["time_zone_offset"],
+        metaLoading: true,
+      }))) as unknown as PayloadAction<AsyncTrunkReturned<typeof checkScheduleReview>>;
+      if (reviewResultInfo.payload.results.length) {
+        const student = reviewResultInfo.payload.results.map((student: any)=>{return student.student_id})
+        let reviewStudentInfo: any;
+        reviewStudentInfo = (await dispatch(getStudentUserNamesById({metaLoading: true, userIds:student}))
+        ) as unknown as PayloadAction<AsyncTrunkReturned<typeof getStudentUserNamesById>>;
+        changeModalDate({
+          openStatus: true,
+          enableCustomization: true,
+          customizeTemplate: (
+            <ScheduleReviewTemplate
+              saveSchedule={saveSchedule}
+              handleClose={() => {
+                changeModalDate({
+                  openStatus: false,
+                });
+              }}
+              checkScheduleReviewData={reviewStudentInfo.payload.data}
+            />
+          ),
+        });
+      }else {
+        changeModalDate({
+          title: "",
+          text: "The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.",
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                saveSchedule("only_current", true, false, false)
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+      }
+      return;
+    }
 
     let resultInfo: any;
     if (checkedStatus.reviewCheck) {
@@ -1408,7 +1465,12 @@ function EditBox(props: CalendarStateProps) {
     let studyCheck = {};
 
     if (event.target.name === "homeFunCheck" && event.target.checked) studyCheck = { reviewCheck: false };
-    if (event.target.name === "reviewCheck" && event.target.checked) studyCheck = { homeFunCheck: false };
+    if (event.target.name === "reviewCheck" && event.target.checked){
+      studyCheck = { homeFunCheck: false };
+      setSelectedDate(new Date(new Date().setHours(new Date().getHours() + 24)))
+    }else {
+      setSelectedDate(new Date(new Date().setHours(new Date().getHours())))
+    }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked, ...studyCheck });
 
