@@ -5,14 +5,14 @@ import {
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
-  V2AssessmentContentReply,
+  V2AssessmentContentReply
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
   UpdataStudyAssessmentRequestData,
   UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials,
+  UpdateAssessmentRequestDataLessonMaterials
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import {
@@ -20,7 +20,7 @@ import {
   OutcomeStatus,
   OverAllOutcomesItem,
   StudentViewItemsProps,
-  SubDimensionOptions,
+  SubDimensionOptions
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 
@@ -596,6 +596,7 @@ export const ModelAssessment = {
             outcomes,
             status,
             attempted,
+            h5p_id,
           } = rItem;
           if (!materialViewObj[content_id!]) {
             materialViewObj[content_id!] = {
@@ -607,6 +608,8 @@ export const ModelAssessment = {
               file_type,
               parent_id,
               status,
+              attempted,
+              h5p_id,
               students: [
                 {
                   student_id,
