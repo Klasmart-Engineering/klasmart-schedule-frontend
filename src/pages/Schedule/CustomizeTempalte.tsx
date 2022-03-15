@@ -214,7 +214,7 @@ interface InfoMbProps extends InfoProps {
   deleteHandle: () => void;
   showDelete: () => void;
   textEllipsis: (characterCount: number, values?: string) => string;
-  timestampToTime: (timestamp: number, is_yaer: boolean) => string;
+  timestampToTime: (timestamp: number, is_yaer: boolean, is_month?: boolean) => string;
   multiStructure: (item?: EntityScheduleShortInfo[]) => string[] | undefined;
   handleGoLive: (scheduleInfos: ScheduleEditExtend) => void;
 }
@@ -291,7 +291,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
     }
     if (ScheduleViewInfo.review_status === "failed") {
       dispatch(
-        actError(d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan"))
+        actError(d("System failed to generate a review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {value: timestampToTime(ScheduleViewInfo.due_at as number, true)}))
       );
     }
     if (ScheduleViewInfo.review_status === "pending") {
@@ -300,7 +300,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
       );
     }
 
-  }, [ScheduleViewInfo, dispatch]);
+  }, [ScheduleViewInfo, timestampToTime, dispatch]);
 
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
@@ -308,8 +308,8 @@ function CustomizeTempalteMb(props: InfoMbProps) {
         {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
           <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
         )}
-        {!ScheduleViewInfo.is_hidden && disableDelete() && <DeleteOutlined className={classes.disableLastIcon} />}
-        {!ScheduleViewInfo.is_hidden && showDelete() && (
+        {!ScheduleViewInfo.is_hidden && disableDelete() && ScheduleViewInfo.review_status !== "success" && <DeleteOutlined className={classes.disableLastIcon} />}
+        {!ScheduleViewInfo.is_hidden && showDelete() && ScheduleViewInfo.review_status !== "success" && (
           <Permission
             value={PermissionType.delete_event_540}
             render={(value) =>
@@ -339,7 +339,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
         <div style={{ color: eventTemplate[0].color, display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
           {eventTemplate[0].icon}
           <span className={classes.titleMb}>
-            {ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class?.name} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : eventTemplate[0].title}
+            {ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class?.name} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, false, true)} ${d("Material").t("library_label_material")}` : eventTemplate[0].title}
           </span>
         </div>
         <div>
@@ -394,7 +394,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
           {
             ScheduleViewInfo.is_review && <div className={classes.previewDetailSubMb}>
               <span>{d("Date Range").t("schedule_review_popup_date_range")} </span>
-              <span> {timestampToTime(ScheduleViewInfo.content_start_at as number, false)} ~  {timestampToTime(ScheduleViewInfo.content_end_at as number, false)}</span>
+              <span> {timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} ~  {timestampToTime(ScheduleViewInfo.content_end_at as number, false, true)}</span>
             </div>
           }
           <div className={classes.previewDetailSubMb}>
@@ -405,10 +405,12 @@ function CustomizeTempalteMb(props: InfoMbProps) {
             <span>{d("Teacher").t("schedule_detail_teacher")}</span>
             <span>{multiStructure(ScheduleViewInfo.teachers)}</span>
           </div>
-          <div className={classes.previewDetailSubMb}>
-            <span>{d("Student").t("assess_detail_student")}</span>
-            <span>{multiStructure(ScheduleViewInfo.students)}</span>
-          </div>
+          {!privilegedMembers("Student") && !(ScheduleViewInfo.is_review && privilegedMembers("Admin")) && (
+            <div className={classes.previewDetailSubMb}>
+              <span>{d("Student").t("assess_detail_student")}</span>
+              <span>{multiStructure(ScheduleViewInfo.students)}</span>
+            </div>
+          )}
           {
             !ScheduleViewInfo.is_review && <>
               <div className={classes.previewDetailSubMb}>
@@ -498,7 +500,7 @@ export default function CustomizeTempalte(props: InfoProps) {
   const perm = usePermission([PermissionType.attend_live_class_as_a_student_187]);
   const permissionShowLive = perm.attend_live_class_as_a_student_187;
 
-  const timestampToTime = (timestamp: number, is_yaer: boolean): string => {
+  const timestampToTime = (timestamp: number, is_yaer: boolean, is_month?: boolean): string => {
     if (!timestamp) return "N/A";
     const timestampDate = new Date(timestamp * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
@@ -510,7 +512,9 @@ export default function CustomizeTempalte(props: InfoProps) {
       dateNumFun((timestampDate as Date).getHours()),
       dateNumFun((timestampDate as Date).getMinutes()),
     ];
-    return is_yaer ? `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y}` : `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
+    if (is_month) return `${monthArr[M]} ${D}, ${Y}`
+    if (is_yaer) return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y}`
+    return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
   };
 
   const handleEditSchedule = (scheduleInfo: EntityScheduleViewDetail): void => {
@@ -803,15 +807,15 @@ export default function CustomizeTempalte(props: InfoProps) {
   ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
-        <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
-          <span>{ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title}</span>
+        <Tooltip title={(ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title) as string} placement="top-start">
+          <span>{ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title}</span>
         </Tooltip>
         <div>
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
             <VisibilityOff style={{ color: "#000000" }} onClick={handleHide} className={classes.lastIcon} />
           )}
-          {!ScheduleViewInfo.is_hidden && disableDelete() && <DeleteOutlined className={classes.disableLastIcon} />}
-          {!ScheduleViewInfo.is_hidden && showDelete() && (
+          {!ScheduleViewInfo.is_hidden && disableDelete() && ScheduleViewInfo.review_status !== "success" &&  <DeleteOutlined className={classes.disableLastIcon} />}
+          {!ScheduleViewInfo.is_hidden && showDelete() && ScheduleViewInfo.review_status !== "success" &&  (
             <Permission
               value={PermissionType.delete_event_540}
               render={(value) =>
@@ -833,13 +837,13 @@ export default function CustomizeTempalte(props: InfoProps) {
         ScheduleViewInfo.class_type_label?.id !== "Task" &&
         !ScheduleViewInfo.is_home_fun && !ScheduleViewInfo.is_review && (
           <p className={classes.checkPlan}>
-            {d("System failed to generate a review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {value: timestampToTime(ScheduleViewInfo.due_at as number, true)})}
+            {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
           </p>
         )}
       {
         ScheduleViewInfo.review_status === "failed" && (
           <p className={classes.checkPlan}>
-            {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
+            {d("System failed to generate a review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {value: timestampToTime(ScheduleViewInfo.due_at as number, true)})}
           </p>
         )
       }
@@ -870,9 +874,9 @@ export default function CustomizeTempalte(props: InfoProps) {
             <p className={classes.contentRow}>
               <span className={classes.row}>{d("Date Range").t("schedule_review_popup_date_range")}</span>
               <span className={classes.row2}>
-                {timestampToTime(ScheduleViewInfo.content_start_at as number, true)}
-                 -
-                {timestampToTime(ScheduleViewInfo.content_end_at as number, true)}
+                {timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)}
+                  ~
+                {timestampToTime(ScheduleViewInfo.content_end_at as number, false, true)}
               </span>
             </p>
           </>
@@ -905,7 +909,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span className={classes.row}>{d("Teacher").t("schedule_detail_teacher")}</span>
           <span className={classes.row2}>{multiStructure(ScheduleViewInfo.teachers)}</span>
         </p>
-        {!privilegedMembers("Student") && (
+        {!privilegedMembers("Student") && !(ScheduleViewInfo.is_review && privilegedMembers("Admin")) && (
           <p className={classes.contentRow}>
             <span className={classes.row}>{d("Student").t("assess_detail_student")}</span>
             <span className={classes.row2}>{multiStructure(ScheduleViewInfo.students)}</span>
@@ -947,7 +951,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         {
           ScheduleViewInfo.is_review && <>
             {
-              ScheduleViewInfo.review_status === "success" && !privilegedMembers("Student") && <>
+              ScheduleViewInfo.review_status === "success" && !privilegedMembers("Student") && (ScheduleViewInfo.personalized_review_students?.length === ScheduleViewInfo.students?.length) && <>
                 <p className={classes.contentRow}>
                   <span className={classes.row}>{d("Students with Personalized Lesson Plans").t("schedule_review_popup_student_list")}</span>
                   <span className={classes.row2}>{multiStructure(ScheduleViewInfo.personalized_review_students)}</span>
