@@ -549,13 +549,13 @@ function EndRepeat(props: ExtendsProps) {
               label={d("Never").t("schedule_repeat_never")}
               className={classes.repeatItem}
             />
+            <FormControlLabel value="after_time" control={<Radio />} label="on" />
             <FormControlLabel
               value="after_count"
               control={<Radio />}
               label={d("After").t("schedule_repeat_after")}
               className={classes.repeatItem}
             />
-            <FormControlLabel value="after_time" control={<Radio />} label={d("After").t("schedule_repeat_after")} />
           </RadioGroup>
         </Grid>
         <Grid item xs={7} sm={7} md={7} lg={7} xl={7} className={`${classes.positionInput} ${classes.specialContainer}`}>
