@@ -89,7 +89,8 @@ function RouterButton(props: ButtonProps) {
           color: disabled() ? "" : "#E5E5E5",
           display:
             (scheduleInfo.role_type !== "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
-            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass")
+            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass") ||
+            (scheduleInfo.is_review)
               ? "none"
               : "block",
         }}

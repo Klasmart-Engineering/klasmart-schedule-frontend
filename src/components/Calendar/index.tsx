@@ -654,7 +654,7 @@ function MyCalendar(props: CalendarProps) {
         <div className={css.eventTemplateIcon}>{eventTemplate[0].icon}</div>
         <span>{event.event.title}</span>
         {
-          event.event.is_review && <span>Review: {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} Materials</span>
+          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} {d("Material").t("library_label_material")}</span>
         }
       </div>
     );
@@ -669,7 +669,7 @@ function MyCalendar(props: CalendarProps) {
         <div>{eventTemplate[0].icon}</div>
         <span>{event.event.title}</span>
         {
-          event.event.is_review && <span>Review: {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} Materials</span>
+          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} {d("Material").t("library_label_material")}</span>
         }
       </div>
     );
