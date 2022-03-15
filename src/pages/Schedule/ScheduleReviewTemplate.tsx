@@ -108,7 +108,7 @@ export default function ScheduleReviewTemplate(props: InfoProps) {
           saveSchedule("only_current", true, false, false)
           handleClose()
         }}>
-          {d("OK").t("assess_label_ok")}
+          {d("Confirm").t("h5p_label_confirm")}
         </Button>
       </div>
     </div>

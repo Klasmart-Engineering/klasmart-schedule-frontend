@@ -211,6 +211,8 @@ export interface scheduleInfoViewProps {
   assessment_status?: "in_progress" | "complete";
   lesson_plan: EntityScheduleLessonPlan;
   class_type_label: EntityScheduleShortInfo;
+  is_review?: boolean;
+  review_status?: string;
 }
 
 export interface FilterDataItemsProps {
