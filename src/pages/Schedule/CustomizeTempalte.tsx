@@ -339,7 +339,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
         <div style={{ color: eventTemplate[0].color, display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
           {eventTemplate[0].icon}
           <span className={classes.titleMb}>
-            {ScheduleViewInfo.is_review ? `Review ${ScheduleViewInfo.class?.name} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} Materials` : eventTemplate[0].title}
+            {ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class?.name} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : eventTemplate[0].title}
           </span>
         </div>
         <div>
@@ -804,7 +804,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
         <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
-          <span>{ScheduleViewInfo.is_review ? `Review: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} Materials` : ScheduleViewInfo.title}</span>
+          <span>{ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title}</span>
         </Tooltip>
         <div>
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (

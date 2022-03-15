@@ -1016,6 +1016,7 @@ function EditBox(props: CalendarStateProps) {
       addData["content_start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000, "all_day_end");
       addData["content_end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000, "all_day_end");
       addData["due_at"] = dueDateTimestamp;
+      addData["title"] = classItem?.name ?? ""
     }
 
     if (scheduleList.class_type === "Homework") {
