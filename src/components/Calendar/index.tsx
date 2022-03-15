@@ -652,9 +652,9 @@ function MyCalendar(props: CalendarProps) {
     return (
       <div className={css.eventTemplateCalendar} style={{ backgroundColor: color }}>
         <div className={css.eventTemplateIcon}>{eventTemplate[0].icon}</div>
-        <span>{event.event.title}</span>
+        {!event.event.is_review && <span>{event.event.title}</span>}
         {
-          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} {d("Material").t("library_label_material")}</span>
+          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.content_start_at)} - {timestampToTime(event.event.content_end_at)} {d("Material").t("library_label_material")}</span>
         }
       </div>
     );
@@ -667,9 +667,9 @@ function MyCalendar(props: CalendarProps) {
     return (
       <div className={css.customerEventMb} style={{ backgroundColor: color, paddingTop: padding ? "8px" : "0px" }}>
         <div>{eventTemplate[0].icon}</div>
-        <span>{event.event.title}</span>
+        {!event.event.is_review && <span>{event.event.title}</span>}
         {
-          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} {d("Material").t("library_label_material")}</span>
+          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.content_start_at)} - {timestampToTime(event.event.content_end_at)} {d("Material").t("library_label_material")}</span>
         }
       </div>
     );

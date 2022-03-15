@@ -1103,6 +1103,7 @@ function EditBox(props: CalendarStateProps) {
                 });
               }}
               checkScheduleReviewData={reviewStudentInfo.payload.data}
+              disabledConfirm={reviewStudentInfo.payload.data?.usersConnection?.edges?.length === (addData["class_roster_student_ids"].concat(addData["participants_student_ids"])).length}
             />
           ),
         });
@@ -2107,11 +2108,13 @@ function EditBox(props: CalendarStateProps) {
                 control={<Checkbox name="homeFunCheck" color="primary" checked={checkedStatus.homeFunCheck} onChange={handleCheck} />}
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
-              <FormControlLabel
-                disabled={isScheduleExpired() || isLimit()}
-                control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
-                label="Review"
-              />
+              {
+                !scheduleId && <FormControlLabel
+                  disabled={isScheduleExpired() || isLimit()}
+                  control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
+                  label="Review"
+                />
+              }
             </FormGroup>
             {checkedStatus.reviewCheck && (
               <span style={{ color: "#666666", fontSize: "16px", fontWeight: 400 }}>

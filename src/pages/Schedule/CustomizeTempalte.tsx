@@ -68,7 +68,9 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     color: "#E02020",
     fontWeight: "bold",
     paddingTop: "10px",
-    textAlign: "center",
+    textAlign: "left",
+    width: "90%",
+    marginLeft: "8%"
   },
   customizeTitleBox: {
     display: "flex",
@@ -405,7 +407,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
             <span>{d("Teacher").t("schedule_detail_teacher")}</span>
             <span>{multiStructure(ScheduleViewInfo.teachers)}</span>
           </div>
-          {!privilegedMembers("Student") && !(ScheduleViewInfo.is_review && privilegedMembers("Admin")) && (
+          {!privilegedMembers("Student") && !privilegedMembers("Student") && !(ScheduleViewInfo.review_status === "success" && (ScheduleViewInfo.personalized_review_students?.length !== ScheduleViewInfo.students?.length)) && (
             <div className={classes.previewDetailSubMb}>
               <span>{d("Student").t("assess_detail_student")}</span>
               <span>{multiStructure(ScheduleViewInfo.students)}</span>
@@ -448,14 +450,18 @@ function CustomizeTempalteMb(props: InfoMbProps) {
           }
           {
             ScheduleViewInfo.is_review && !privilegedMembers("Student") && <>
-              <div className={classes.previewDetailSubMb}>
-                <span> {d("Students with Personalized Lesson Plans").t("schedule_review_popup_student_list")}</span>
-                <span>{multiStructure(ScheduleViewInfo.personalized_review_students)}</span>
-              </div>
-              <div className={classes.previewDetailSubMb}>
-                <span>{d("Students who receive a random Lesson Plan due to no enough content to review").t("schedule_review_popup_random_student_list")}</span>
-                <span>{multiStructure(ScheduleViewInfo.random_review_students)}</span>
-              </div>
+              {
+                ScheduleViewInfo.review_status === "success" && !privilegedMembers("Student") && (ScheduleViewInfo.personalized_review_students?.length !== ScheduleViewInfo.students?.length) && <>
+                  <div className={classes.previewDetailSubMb}>
+                    <span> {d("Students with Personalized Lesson Plans").t("schedule_review_popup_student_list")}</span>
+                    <span>{multiStructure(ScheduleViewInfo.personalized_review_students)}</span>
+                  </div>
+                  <div className={classes.previewDetailSubMb}>
+                    <span>{d("Students who receive a random Lesson Plan due to no enough content to review").t("schedule_review_popup_random_student_list")}</span>
+                    <span>{multiStructure(ScheduleViewInfo.random_review_students)}</span>
+                  </div>
+                </>
+              }
               <div className={classes.previewDetailSubMb}>
                 <span> {d("Program").t("schedule_detail_program")}</span>
                 <span>{ScheduleViewInfo.program?.name}</span>
@@ -512,7 +518,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       dateNumFun((timestampDate as Date).getHours()),
       dateNumFun((timestampDate as Date).getMinutes()),
     ];
-    if (is_month) return `${monthArr[M]} ${D}, ${Y}`
+    if (is_month) return `${monthArr[M]} ${D}`
     if (is_yaer) return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y}`
     return `${weekArr[W]}, ${monthArr[M]} ${D}, ${Y} ${h}:${m}`;
   };
@@ -807,8 +813,8 @@ export default function CustomizeTempalte(props: InfoProps) {
   ) : (
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
-        <Tooltip title={(ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title) as string} placement="top-start">
-          <span>{ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title}</span>
+        <Tooltip title={(ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} ~ ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title) as string} placement="top-start">
+          <span>{ScheduleViewInfo.is_review ? `${d("Review").t("schedule_lable_class_type_review")}: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false, true)} ~ ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} ${d("Material").t("library_label_material")}` : ScheduleViewInfo.title}</span>
         </Tooltip>
         <div>
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
@@ -909,7 +915,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span className={classes.row}>{d("Teacher").t("schedule_detail_teacher")}</span>
           <span className={classes.row2}>{multiStructure(ScheduleViewInfo.teachers)}</span>
         </p>
-        {!privilegedMembers("Student") && !(ScheduleViewInfo.is_review && privilegedMembers("Admin")) && (
+        {!privilegedMembers("Student") && !(ScheduleViewInfo.review_status === "success" && (ScheduleViewInfo.personalized_review_students?.length !== ScheduleViewInfo.students?.length)) && (
           <p className={classes.contentRow}>
             <span className={classes.row}>{d("Student").t("assess_detail_student")}</span>
             <span className={classes.row2}>{multiStructure(ScheduleViewInfo.students)}</span>
@@ -951,7 +957,7 @@ export default function CustomizeTempalte(props: InfoProps) {
         {
           ScheduleViewInfo.is_review && <>
             {
-              ScheduleViewInfo.review_status === "success" && !privilegedMembers("Student") && (ScheduleViewInfo.personalized_review_students?.length === ScheduleViewInfo.students?.length) && <>
+              ScheduleViewInfo.review_status === "success" && !privilegedMembers("Student") && (ScheduleViewInfo.personalized_review_students?.length !== ScheduleViewInfo.students?.length) && <>
                 <p className={classes.contentRow}>
                   <span className={classes.row}>{d("Students with Personalized Lesson Plans").t("schedule_review_popup_student_list")}</span>
                   <span className={classes.row2}>{multiStructure(ScheduleViewInfo.personalized_review_students)}</span>
