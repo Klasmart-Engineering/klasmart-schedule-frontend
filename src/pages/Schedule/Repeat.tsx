@@ -549,17 +549,32 @@ function EndRepeat(props: ExtendsProps) {
               label={d("Never").t("schedule_repeat_never")}
               className={classes.repeatItem}
             />
-            <FormControlLabel value="after_time" control={<Radio />} label="on" />
             <FormControlLabel
-              value="after_count"
+              value="after_time"
               control={<Radio />}
-              label={d("After").t("schedule_repeat_after")}
+              label="on"
               className={classes.repeatItem}
             />
+            <FormControlLabel value="after_count" control={<Radio />} label={d("After").t("schedule_repeat_after")} />
           </RadioGroup>
         </Grid>
         <Grid item xs={7} sm={7} md={7} lg={7} xl={7} className={`${classes.positionInput} ${classes.specialContainer}`}>
           <Grid container alignItems="flex-end">
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
+              <TextField
+                fullWidth
+                id="datetime-local"
+                label={null}
+                type="datetime-local"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={timestampToTime(end.after_time)}
+                disabled={end.type !== "after_count"}
+                onChange={handleAfterTime}
+                className={classes.after_time}
+              />
+            </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
               <FormControl variant="outlined" style={{ width: "100%" }} size="small">
                 <OutlinedInput
@@ -571,25 +586,10 @@ function EndRepeat(props: ExtendsProps) {
                   }}
                   labelWidth={0}
                   onChange={handleAfterCount}
-                  disabled={end.type !== "after_count"}
+                  disabled={end.type !== "after_time"}
                 />
               </FormControl>
               <span className={classes.positionText}>{d("Occurrence(s)").t("schedule_repeat_occurrence(s)")}</span>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
-              <TextField
-                fullWidth
-                id="datetime-local"
-                label={null}
-                type="datetime-local"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                value={timestampToTime(end.after_time)}
-                disabled={end.type !== "after_time"}
-                onChange={handleAfterTime}
-                className={classes.after_time}
-              />
             </Grid>
           </Grid>
         </Grid>
