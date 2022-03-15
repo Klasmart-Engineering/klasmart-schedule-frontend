@@ -21,7 +21,7 @@ import { d } from "../../locale/LocaleManager";
 import { EditScore } from "./EditScore";
 import { Dimension } from "./MultiSelect";
 import { ResourceView, showAudioRecorder, useResourceView } from "./ResourceView";
-import { OutcomeStatus, StudentParticipate, StudentViewItemsProps, SubDimensionOptions } from "./type";
+import { FileTypes, OutcomeStatus, StudentParticipate, StudentViewItemsProps, SubDimensionOptions } from "./type";
 const useStyles = makeStyles({
   tableBar: {
     display: "flex",
@@ -290,7 +290,7 @@ export function StudentView(props: StudentViewProps) {
                                   {/* todo 加字段 */}
                                 </TableCell>
                                 <TableCell align="center">
-                                  {ritem.content_subtype === "Essay" && (
+                                  {ritem.attempted && ritem.content_subtype === "Essay" && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
                                       onClick={(e) => handleClickView(ritem.answer ?? "")}
@@ -298,7 +298,7 @@ export function StudentView(props: StudentViewProps) {
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
                                   )}
-                                  {showAudioRecorder(ritem.content_subtype) && (
+                                  {ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
                                       onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, sitem.student_id, ritem.content_subtype)}
