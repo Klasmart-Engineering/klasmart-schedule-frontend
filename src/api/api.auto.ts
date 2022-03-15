@@ -1473,6 +1473,7 @@ export interface EntityScheduleViewDetail {
   lesson_plan_id?: string;
   outcome_ids?: string[];
   personalized_review_students?: EntityScheduleShortInfo[];
+  random_review_students?: EntityScheduleShortInfo[];
   program?: EntityScheduleShortInfo;
   review_status?: "pending" | "success" | "failed";
   role_type?: "Student" | "Teacher" | "Unknown";

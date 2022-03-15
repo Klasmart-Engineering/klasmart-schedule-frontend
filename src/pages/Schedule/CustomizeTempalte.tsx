@@ -84,7 +84,9 @@ const useStyles = makeStyles(({ breakpoints }) => ({
         fontSize: "0.8rem",
       },
       fontWeight: "bold",
-      width: "68%",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
     },
   },
   customizeContentBox: {
@@ -326,7 +328,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
         <div style={{ color: eventTemplate[0].color, display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
           {eventTemplate[0].icon}
           <span className={classes.titleMb}>
-            {ScheduleViewInfo.is_review ? `Review ${ScheduleViewInfo.class?.name} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, false)} Materials` : eventTemplate[0].title}
+            {ScheduleViewInfo.is_review ? `Review ${ScheduleViewInfo.class?.name} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} Materials` : eventTemplate[0].title}
           </span>
         </div>
         <div>
@@ -439,7 +441,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
               </div>
               <div className={classes.previewDetailSubMb}>
                 <span>STUDENTS WHO RECEIVE A RANDOM LESSON PLAN DUE TO NO ENOUGH CONTENT TO REVIEW</span>
-                <span>{multiStructure(ScheduleViewInfo.students)}</span>
+                <span>{multiStructure(ScheduleViewInfo.random_review_students)}</span>
               </div>
               <div className={classes.previewDetailSubMb}>
                 <span>PROGRAM</span>
@@ -791,7 +793,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     <Box className={classes.previewContainer}>
       <div className={classes.customizeTitleBox}>
         <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
-          <span>{textEllipsis(mobile ? 10 : 30, ScheduleViewInfo.is_review ? `Review: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, false)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, false)} Materials` : ScheduleViewInfo.title)}</span>
+          <span>{ScheduleViewInfo.is_review ? `Review: ${ScheduleViewInfo.class ? ScheduleViewInfo.class?.name : ""} ${timestampToTime(ScheduleViewInfo.content_start_at as number, true)} - ${timestampToTime(ScheduleViewInfo.content_end_at as number, true)} Materials` : ScheduleViewInfo.title}</span>
         </Tooltip>
         <div>
           {ScheduleViewInfo.exist_feedback && ScheduleViewInfo.is_hidden && !privilegedMembers("Student") && (
@@ -818,9 +820,9 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       {(!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
         ScheduleViewInfo.class_type_label?.id !== "Task" &&
-        !ScheduleViewInfo.is_home_fun && (
+        !ScheduleViewInfo.is_home_fun && !ScheduleViewInfo.is_review && (
           <p className={classes.checkPlan}>
-            {d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan")}
+            System failed to generate a review session on MM/DD/YYYY. Please try again.
           </p>
         )}
       {
@@ -832,7 +834,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       }
       {
         ScheduleViewInfo.review_status === "pending" && (
-          <p className={classes.checkPlan}>
+          <p className={classes.checkPlan} style={{color: "#666666"}}>
             System is generating adaptive learning lesson plan for each students.
           </p>
         )
@@ -857,9 +859,9 @@ export default function CustomizeTempalte(props: InfoProps) {
             <p className={classes.contentRow}>
               <span className={classes.row}>Date Range</span>
               <span className={classes.row2}>
-                {timestampToTime(ScheduleViewInfo.content_start_at as number, false)}
+                {timestampToTime(ScheduleViewInfo.content_start_at as number, true)}
                  -
-                {timestampToTime(ScheduleViewInfo.content_end_at as number, false)}
+                {timestampToTime(ScheduleViewInfo.content_end_at as number, true)}
               </span>
             </p>
           </>
@@ -941,16 +943,16 @@ export default function CustomizeTempalte(props: InfoProps) {
                 </p>
                 <p className={classes.contentRow}>
                   <span className={classes.row}>Students who receive a random Lesson Plan due to no enough content to review</span>
-                  <span className={classes.row2}>{multiStructure(ScheduleViewInfo.students)}</span>
+                  <span className={classes.row2}>{multiStructure(ScheduleViewInfo.random_review_students)}</span>
                 </p>
               </>
             }
             <p className={classes.contentRow}>
-              <span className={classes.row}>Program</span>
+              <span className={classes.row}>{d("Program").t("schedule_detail_program")}</span>
               <span className={classes.row2}>{ScheduleViewInfo.program?.name}</span>
             </p>
             <p className={classes.contentRow}>
-              <span className={classes.row}>Subject</span>
+              <span className={classes.row}>{d("Subject").t("assess_label_subject")}</span>
               <span className={classes.row2}>{multiStructure(ScheduleViewInfo.subjects)}</span>
             </p>
           </>

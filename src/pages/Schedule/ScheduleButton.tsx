@@ -63,7 +63,8 @@ function RouterButton(props: ButtonProps) {
         style={{
           display:
             (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
-            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass")
+            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass") ||
+            (scheduleInfo.is_review)
               ? "none"
               : "block",
           backgroundColor: "#E4F1FF",
@@ -99,6 +100,16 @@ function RouterButton(props: ButtonProps) {
         {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass" &&
           d("Start Class").t("schedule_button_start_class")}
         {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
+      </Button>
+      <Button
+        color="primary"
+        variant="outlined"
+        autoFocus
+        className={buttonClass[templateType]}
+        style={{ display: (scheduleInfo.is_review && scheduleInfo.role_type === "Student") ? "block" : "none" }}
+        onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
+      >
+        {(scheduleInfo.is_review && scheduleInfo.review_status === "success") && "Go Review"}
       </Button>
     </>
   );
