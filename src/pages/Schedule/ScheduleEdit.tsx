@@ -1108,7 +1108,7 @@ function EditBox(props: CalendarStateProps) {
       }else {
         changeModalDate({
           title: "",
-          text: "The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.",
+          text: d("The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.").t("schedule_review_pop_up_all_success"),
           openStatus: true,
           enableCustomization: false,
           buttons: [

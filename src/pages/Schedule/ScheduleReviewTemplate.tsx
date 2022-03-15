@@ -87,11 +87,10 @@ export default function ScheduleReviewTemplate(props: InfoProps) {
     <div className={css.reviewBox}>
       <div className={css.title}></div>
       <p>
-        The schedule will appear on the students’ calendar once the system completes publishing a personalized Lesson Plan for each student.{" "}
+        {d("The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.").t("schedule_review_pop_up_all_success")}{" "}
       </p>
       <p>
-        The following students will receive a random Lesson Plan as they have not enough data during the time range selected. To avoid this,
-        let your student working on at least 10 activities before setting a review session:
+        {d("The following students will receive a random Lesson Plan as they have not enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:").t("schedule_review_popup_partical_success")}
       </p>
       <div className={css.checkboxContainer}>
         {
