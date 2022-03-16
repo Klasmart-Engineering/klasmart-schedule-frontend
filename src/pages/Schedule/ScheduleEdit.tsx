@@ -815,7 +815,7 @@ function EditBox(props: CalendarStateProps) {
     }
 
     if (name === "subject_id") {
-      setSubjectItem(value);
+      setSubjectItem(checkedStatus.reviewCheck ? [value] : value);
     }
 
     if (name === "program_id") {
@@ -1086,10 +1086,11 @@ function EditBox(props: CalendarStateProps) {
         time_zone_offset: addData["time_zone_offset"],
         metaLoading: true,
       }))) as unknown as PayloadAction<AsyncTrunkReturned<typeof checkScheduleReview>>;
-      if (reviewResultInfo.payload.results.length) {
-        const student = reviewResultInfo.payload.results.map((student: any)=>{return student.student_id})
+      const studentInfo = reviewResultInfo.payload.results.filter((item: any)=> !item.status).map((student: any)=> student.student_id)
+
+      if (studentInfo.length) {
         let reviewStudentInfo: any;
-        reviewStudentInfo = (await dispatch(getStudentUserNamesById({metaLoading: true, userIds:student}))
+        reviewStudentInfo = (await dispatch(getStudentUserNamesById({metaLoading: true, userIds:studentInfo}))
         ) as unknown as PayloadAction<AsyncTrunkReturned<typeof getStudentUserNamesById>>;
         changeModalDate({
           openStatus: true,
@@ -2112,13 +2113,13 @@ function EditBox(props: CalendarStateProps) {
                 !scheduleId && <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
-                  label="Review"
+                  label={d("Review").t("schedule_lable_class_type_review")}
                 />
               }
             </FormGroup>
             {checkedStatus.reviewCheck && (
               <span style={{ color: "#666666", fontSize: "16px", fontWeight: 400 }}>
-                Due Date can only be set +1 days from today to allow time for students to complete.
+                {d("Due Date can only be set after +1 days from today to allow time for students to complete.").t("schedule_due_date_info")}
               </span>
             )}
           </Box>
@@ -2165,7 +2166,7 @@ function EditBox(props: CalendarStateProps) {
           <Box>
             {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
               <span style={{ color: "#666666", fontSize: "16px", fontWeight: 400, paddingLeft: "8px", marginTop: "8px", display: "block" }}>
-                I would like content to be reviewed that was covered:
+                {d("I would like content to be reviewed that was covered:").t("schedule_review_date_range_info")}
               </span>
             )}
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -2563,7 +2564,7 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           )}
         {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
-          <span style={{ fontSize: "16px", fontWeight: 400, paddingLeft: "8px", marginTop: "10px", display: "block" }}>Review Area</span>
+          <span style={{ fontSize: "16px", fontWeight: 400, paddingLeft: "8px", marginTop: "30px", display: "block" }}>{d("Review Area").t("schedule_review_review_area")}</span>
         )}
         {scheduleList.class_type !== "Task" && (
           <>
@@ -2627,14 +2628,14 @@ function EditBox(props: CalendarStateProps) {
                   )}
                 />
                 <Autocomplete
-                  multiple
+                  multiple={!checkedStatus.reviewCheck}
                   id="combo-box-demo"
                   options={modelSchedule.Deduplication(scheduleMockOptions.subjectList.concat(subjectItem!))}
                   getOptionLabel={(option: any) => option.name}
                   onChange={(e: any, newValue) => {
                     autocompleteChange(newValue, "subject_id");
                   }}
-                  value={subjectItem}
+                  value={checkedStatus.reviewCheck ? subjectItem[0] : subjectItem}
                   disabled={isScheduleExpired() || isLimit() || !scheduleList.program_id}
                   renderInput={(params) => (
                     <TextField
@@ -2642,7 +2643,7 @@ function EditBox(props: CalendarStateProps) {
                       className={css.fieldset}
                       label={d("Subject").t("assess_label_subject")}
                       variant="outlined"
-                      value={scheduleList.subject_ids}
+                      value={checkedStatus.reviewCheck ? scheduleList.subject_ids && scheduleList.subject_ids[0] : scheduleList.subject_ids}
                       disabled={isScheduleExpired() || isLimit()}
                     />
                   )}
