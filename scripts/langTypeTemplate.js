@@ -6,7 +6,7 @@ import { MessageDescriptor } from "react-intl";
 export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id", "es", "th"].includes(name)) throw new TypeError();
+  if (!name || !["en", "ko", "zh", "vi", "id" , "es" , "th"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {

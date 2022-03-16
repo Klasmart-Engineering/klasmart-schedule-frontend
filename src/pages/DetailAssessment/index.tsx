@@ -9,7 +9,7 @@ import { actSuccess, actWarning } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import { cloneDeep } from "lodash";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -345,6 +345,7 @@ export function DetailAssessment() {
             subDimension={selectedSubdimension ? selectedSubdimension : initSubDimension || []}
             studentViewItems={computedStudentViewItems ? computedStudentViewItems : initStudentViewItems}
             editable={editable}
+            roomId={assessmentDetailV2.room_id}
             onChangeComputedStudentViewItems={handleChangeComputedStudentViewItems}
           />
         </>
@@ -359,6 +360,7 @@ export function DetailAssessment() {
             students={students ? students : assessmentDetailV2.students}
             contents={contents ? contents : assessmentDetailV2.contents}
             editable={editable}
+            roomId={assessmentDetailV2.room_id}
             onChangeMaterialAllAchieved={handleChangeMaterialAllAchieved}
             onChangeMaterialNoneAchieved={handleChangeMaterialNoneAchieved}
             onChangeMatarialStudentStatus={handleChangeMatarialStudentStatus}

@@ -1697,9 +1697,67 @@ type LangRecord =
   | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined }
   | {
       id: "report_label_learner_weekly_report_info";
-      description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation' .`;
+      description: `Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
       values: undefined;
-    };
+    }
+  | {
+      id: "report_label_learner_monthly_report_info";
+      description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
+      values: undefined;
+    }
+  | { id: "app2web_badanamu_activities"; description: `Badanamu Activities`; values: undefined }
+  | { id: "app2web_please_enter_the_link"; description: `Please enter the link`; values: undefined }
+  | { id: "app2web_badanamu_activities_link"; description: `Badanamu Activities Link`; values: undefined }
+  | { id: "schedule_lable_class_type_review"; description: `Review`; values: undefined }
+  | {
+      id: "schedule_due_date_info";
+      description: `Due Date can only be set after +1 days from today to allow time for students to complete.`;
+      values: undefined;
+    }
+  | { id: "schedule_review_date_range_info"; description: `I would like content to be reviewed that was covered:`; values: undefined }
+  | { id: "schedule_review_start_date"; description: `Start Date`; values: undefined }
+  | { id: "schedule_review_end_date"; description: `End Date`; values: undefined }
+  | { id: "schedule_review_dafault_date_range"; description: `Past 2 Weeks`; values: undefined }
+  | { id: "schedule_review_review_area"; description: `Review Area`; values: undefined }
+  | {
+      id: "schedule_review_pop_up_all_success";
+      description: `The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.`;
+      values: undefined;
+    }
+  | {
+      id: "schedule_review_popup_partical_success";
+      description: `The following students will receive a random Lesson Plan as they have no enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:`;
+      values: undefined;
+    }
+  | { id: "learning_outcome_lable_threshold"; description: `Score Threshold`; values: undefined }
+  | { id: "assessment_summary_label_attendance_unknown"; description: `Unknown`; values: undefined }
+  | { id: "learning_outcome_threshold_blank_alert"; description: `A score threshold must be entered`; values: undefined }
+  | { id: "learning_outcome_threshold_error_toast"; description: `Please input an integer from 1 to 100`; values: undefined }
+  | {
+      id: "schedule_review_group_fail_no_data";
+      description: `There was not enough content covered for this group of students during the date range specified to create a review session. Please try again with a different date range or student group.`;
+      values: undefined;
+    }
+  | { id: "schedule_review_popup_date_range"; description: `Date Range`; values: undefined }
+  | { id: "schedule_review_popup_student_list"; description: `Students with Personalized Lesson Plans`; values: undefined }
+  | {
+      id: "schedule_review_popup_random_student_list";
+      description: `Students who receive a random Lesson Plan due to no enough content to review`;
+      values: undefined;
+    }
+  | {
+      id: "schedule_review_popup_fail_notice";
+      description: `System failed to generate a review session on {value}. Please try again.`;
+      values: { value: string | number };
+    }
+  | {
+      id: "schedule_review_popup_pending_notice";
+      description: `System is generating adaptive learning lesson plan for each student.`;
+      values: undefined;
+    }
+  | { id: "schedule_review_popup_confirm"; description: `Confirm`; values: undefined }
+  | { id: "schedule_review_class_name"; description: `Review: {value} Materials`; values: { value: string | number } }
+  | { id: "schedule_repeat_end_on"; description: `On`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

@@ -1,3 +1,4 @@
+import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from "@apollo/client";
 import {
   Button,
   createStyles,
@@ -8,13 +9,14 @@ import {
   IconButton,
   InputAdornment,
   makeStyles,
-  TextField,
+  TextField
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
+import AudioView from "./AudioView";
 const useStyles = makeStyles((theme) =>
   createStyles({
     closeBtn: {
@@ -53,6 +55,10 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
+export const showAudioRecorder = (type?: string) => {
+  const types = ["AudioRecorder", "SpeakTheWordsSet", "SpeakTheWords"];
+  return types.indexOf(type as string) >= 0;
+};
 export interface ResourceViewProps {
   open: boolean;
   resourceType: string;
@@ -61,10 +67,14 @@ export interface ResourceViewProps {
   comment?: string;
   onChangeComment?: (studentId?: string, comment?: string) => void;
   studentId?: string;
+  roomId?: string;
+  h5pId?: string;
+  userId?: string;
+  h5pSubId?: string;
 }
 export function ResourceView(props: ResourceViewProps) {
   const css = useStyles();
-  const { resourceType, open, answer, comment, studentId, onChangeComment, onClose } = props;
+  const { resourceType, open, answer, comment, studentId, h5pId, roomId, userId, h5pSubId, onChangeComment, onClose } = props;
   const formMethods = useForm();
   const { control, getValues } = formMethods;
   const handleOk = () => {
@@ -72,11 +82,19 @@ export function ResourceView(props: ResourceViewProps) {
     onChangeComment && onChangeComment(studentId, comment);
     onClose();
   };
+  const link = createHttpLink({
+    uri: `${process.env.REACT_APP_KO_BASE_API}/audio-storage/graphql/`,
+    credentials: "include",
+  });
+  const client = new ApolloClient({
+    link,
+    cache: new InMemoryCache(),
+  });
   return (
     <>
       <Dialog open={open}>
         <DialogTitle className={css.title}>
-          {(resourceType === "Essay" || resourceType === "AudioRecorder") && d("Detailed Answer").t("assess_popup_detailed_answer")}
+          {(resourceType === "Essay" || showAudioRecorder(resourceType)) && d("Detailed Answer").t("assess_popup_detailed_answer")}
           {resourceType === "ViewComment" && d("View Comments").t("assess_popup_view_comments")}
           {resourceType === "EditComment" && d("Add Comments").t("assess_popup_add_comments")}
           <IconButton onClick={onClose} className={css.closeBtn}>
@@ -86,7 +104,13 @@ export function ResourceView(props: ResourceViewProps) {
         <DialogContent>
           {resourceType === "Essay" && <div className={css.detailView}>{answer}</div>}
           {resourceType === "ViewComment" && <div className={css.detailView}>{comment}</div>}
-          {resourceType === "AudioRecorder" && <div className={css.detailView}></div>}
+          {showAudioRecorder(resourceType) && (
+            <div className={css.detailView}>
+              <ApolloProvider client={client}>
+                <AudioView resourceType={resourceType} userId={userId as string} roomId={roomId as string} h5pId={h5pId as string} h5pSubId={h5pSubId} client={client} />
+              </ApolloProvider>
+            </div>
+          )}
           {resourceType === "EditComment" && (
             <div className={css.detailView}>
               <Controller

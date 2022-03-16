@@ -5,23 +5,22 @@ import {
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
-  V2AssessmentContentReply,
+  V2AssessmentContentReply
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
   UpdataStudyAssessmentRequestData,
   UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials,
+  UpdateAssessmentRequestDataLessonMaterials
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import {
   MaterialViewItemResultProps,
   OutcomeStatus,
   OverAllOutcomesItem,
-  StudentParticipate,
   StudentViewItemsProps,
-  SubDimensionOptions,
+  SubDimensionOptions
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 
@@ -428,7 +427,7 @@ export const ModelAssessment = {
     contents: DetailAssessmentResult["contents"],
     outcomes: DetailAssessmentResult["outcomes"]
   ): StudentViewItemsProps[] | undefined {
-    const participateStudent = students?.filter((item) => item.status === StudentParticipate.Participate);
+    // const participateStudent = students?.filter((item) => item.status === StudentParticipate.Participate);
     const contentObj: Record<string, DetailAssessmentResultContent> = {};
     const outcomeObj: Record<string, DetailAssessmentResultOutcome> = {};
     contents
@@ -443,7 +442,7 @@ export const ModelAssessment = {
         outcomeObj[item.outcome_id!] = { ...item };
       }
     });
-    const studentViewItems: StudentViewItemsProps[] | undefined = participateStudent?.map((item) => {
+    const studentViewItems: StudentViewItemsProps[] | undefined = students?.map((item) => {
       const { student_id, student_name, reviewer_comment, status, results } = item;
       return {
         student_id,
@@ -454,7 +453,7 @@ export const ModelAssessment = {
           ?.filter((r) => !!contentObj[r.content_id!])
           .map((result) => {
             const { answer, attempted, content_id, score, outcomes } = result;
-            const { content_name, content_type, content_subtype, file_type, max_score, number, parent_id, h5p_id, status } =
+            const { content_name, content_type, content_subtype, file_type, max_score, number, parent_id, h5p_id, h5p_sub_id, status } =
               contentObj[content_id!];
             return {
               answer,
@@ -469,6 +468,7 @@ export const ModelAssessment = {
               number,
               parent_id,
               h5p_id,
+              h5p_sub_id,
               status,
               outcomes: outcomes?.map((item) => {
                 const { assumed, outcome_name, assigned_to } = outcomeObj[item.outcome_id!];
@@ -597,6 +597,8 @@ export const ModelAssessment = {
             outcomes,
             status,
             attempted,
+            h5p_id,
+            h5p_sub_id,
           } = rItem;
           if (!materialViewObj[content_id!]) {
             materialViewObj[content_id!] = {
@@ -608,6 +610,9 @@ export const ModelAssessment = {
               file_type,
               parent_id,
               status,
+              attempted,
+              h5p_id,
+              h5p_sub_id,
               students: [
                 {
                   student_id,
@@ -615,6 +620,7 @@ export const ModelAssessment = {
                   answer,
                   score,
                   attempted,
+                  status: sItem.status,
                 },
               ],
               outcomes: outcomes?.map((oItem) => {
@@ -629,7 +635,7 @@ export const ModelAssessment = {
               }),
             };
           } else {
-            materialViewObj[content_id!].students?.push({ student_id, student_name, answer, score, attempted });
+            materialViewObj[content_id!].students?.push({ student_id, student_name, answer, score, attempted, status: sItem.status });
             materialViewObj[content_id!].outcomes = materialViewObj[content_id!].outcomes?.map((oItem) => {
               const currOutcome = outcomes?.find((item) => item.outcome_id === oItem.outcome_id);
               const _attendance_ids = oItem.attendance_ids ?? [];

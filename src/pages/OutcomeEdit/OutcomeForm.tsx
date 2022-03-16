@@ -7,7 +7,7 @@ import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, M
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { ResultGetNewOptions } from "@reducers/outcome";
-import React, { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 
 const useStyles = makeStyles((theme) => ({
@@ -109,6 +109,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     onInputChange,
   } = props;
   const classes = useStyles();
+  const [thresholdErrorMsg, setThresholdErrorMsg] = useState("")
   const getItems = (list: LinkedMockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
@@ -140,6 +141,25 @@ export function OutcomeForm(props: OutcomeFormProps) {
     const newValue = value.trim();
     if (newValue.length && (newValue.length < 5 || !re.test(newValue))) return false;
   };
+  const scoreThresholdValidate = (value: string) => {
+    const re = /^(?:\d?\d|100)$/;
+    if(!isAssumed) {
+      if(value === "0") {
+        setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
+        return false;
+      } else 
+      if(!value) {
+        setThresholdErrorMsg(t("learning_outcome_threshold_blank_alert"))
+        return false;
+      } else 
+      if(!re.test(value)) {
+        setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
+        return false;
+      } else {
+        setThresholdErrorMsg("")
+      }
+    }
+  };
   const handleDelete = (set_id: string) => {
     onDeleteSet(set_id);
   };
@@ -164,7 +184,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               </Grid>
             </Grid>
           )}
-          <Grid container justify="space-between">
+          <Grid container justifyContent="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="outcome_name"
@@ -178,7 +198,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 error={errors.outcome_name ? true : false}
               />
             </Grid>
-            {/* {outcome_id && ( */}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="shortcode"
@@ -209,9 +228,27 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 {d("Assumed").t("assess_label_assumed")}
               </p>
             </Grid>
+            <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+              <Controller
+                name="score_threshold"
+                control={control}
+                as={TextField}
+                variant="outlined"
+                defaultValue={outcome_id? outcomeDetail.score_threshold : (isAssumed ? 0 : 80)}
+                fullWidth
+                label={d("Score Threshold").t("learning_outcome_lable_threshold")}
+                disabled={isAssumed ? true : showEdit}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                }}
+                error={!!errors["score_threshold"]}
+                helperText={thresholdErrorMsg}
+                rules={{ validate: scoreThresholdValidate }}
+              />
+            </Grid>
             {outcome_id && (
               <>
-                <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
+                {/* <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                   <Controller
                     name="organization_name"
                     control={control}
@@ -222,7 +259,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                     disabled
                     size="small"
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
                   <Controller
                     name="created_at"
@@ -261,7 +298,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
           </Grid>
         </Box>
         <Box style={{ paddingBottom: "10px", borderBottom: "1px solid #d7d7d7" }}>
-          <Grid container justify="space-between">
+          <Grid container justifyContent="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="program"
@@ -321,7 +358,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               />
             </Grid>
           </Grid>
-          <Grid container justify="space-between">
+          <Grid container justifyContent="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="developmental"
@@ -367,7 +404,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               </Controller>
             </Grid>
           </Grid>
-          <Grid container justify="space-between">
+          <Grid container justifyContent="space-between">
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 as={TextField}
@@ -399,7 +436,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               </Controller>
             </Grid>
           </Grid>
-          <Grid container justify="space-between" className={classes.marginItem}>
+          <Grid container justifyContent="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
               {showEdit && (
                 <TextField
@@ -447,7 +484,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               )}
             </Grid>
           </Grid>
-          <Grid container justify="space-between" className={classes.marginItem}>
+          <Grid container justifyContent="space-between" className={classes.marginItem}>
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12}>
               {!showEdit && (
                 <OutcomeSet
@@ -479,7 +516,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
             </Grid>
           </Grid>
           {outcome_id && (
-            <Grid container justify="space-between" className={classes.marginItem}>
+            <Grid container justifyContent="space-between" className={classes.marginItem}>
               <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
                 <TextField
                   label={t("assess_label_milestone")}
@@ -488,7 +525,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                   variant="outlined"
                   className={classes.milestoneCon}
                   multiline
-                  rowsMax={3}
+                  maxRows={3}
                   value={outcomeDetail.milestones?.map((v) => v.milestone_name).join(",") || ""}
                 />
               </Grid>
@@ -527,7 +564,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
               />
             </Grid>
           </Grid>*/}
-          <Grid container justify="space-between" className={classes.marginItem}>
+          <Grid container justifyContent="space-between" className={classes.marginItem}>
             <Grid item lg={12} xl={12} md={12} sm={12} xs={12}>
               <Controller
                 name="description"

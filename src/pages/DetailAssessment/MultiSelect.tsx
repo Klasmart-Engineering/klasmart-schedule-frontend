@@ -1,6 +1,6 @@
 import { makeStyles, MenuItem, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-import { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { d } from "../../locale/LocaleManager";
 import { SubDimensionOptions } from "./type";
 const useStyles = makeStyles(({ palette, breakpoints }) => ({

@@ -9,19 +9,19 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  Tooltip,
+  Tooltip
 } from "@material-ui/core";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import { cloneDeep } from "lodash";
-import { ChangeEvent, Fragment, useMemo, useState } from "react";
+import React, { ChangeEvent, Fragment, useMemo, useState } from "react";
 import { PLField, PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
 import { EditScore } from "./EditScore";
 import { Dimension } from "./MultiSelect";
-import { ResourceView, useResourceView } from "./ResourceView";
-import { OutcomeStatus, StudentViewItemsProps, SubDimensionOptions } from "./type";
+import { ResourceView, showAudioRecorder, useResourceView } from "./ResourceView";
+import { FileTypes, OutcomeStatus, StudentParticipate, StudentViewItemsProps, SubDimensionOptions } from "./type";
 const useStyles = makeStyles({
   tableBar: {
     display: "flex",
@@ -89,15 +89,20 @@ export interface StudentViewProps {
   editable: boolean;
   onChangeComputedStudentViewItems: (studentViewItems?: StudentViewItemsProps[]) => void;
   studentViewItems?: StudentViewItemsProps[];
+  roomId?: string;
 }
 export function StudentView(props: StudentViewProps) {
   const css = useStyles();
-  const { studentViewItems, editable, subDimension, onChangeComputedStudentViewItems } = props;
+  const { studentViewItems, editable, subDimension, roomId, onChangeComputedStudentViewItems } = props;
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
   const [resourceType, setResourceType] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [studentId, setStudentId] = useState<string | undefined>("");
+  const [room, setRoom] = useState<string | undefined>("");
+  const [h5pId, setH5pId] = useState<string | undefined>("");
+  const [userId, setUserId] = useState<string | undefined>("");
+  const [h5pSubId, setH5pSubId] = useState<string | undefined>("");
   const subDimensionIds = useMemo(() => {
     return subDimension.length ? subDimension.map((item) => item.id) : [];
   }, [subDimension]);
@@ -170,6 +175,14 @@ export function StudentView(props: StudentViewProps) {
     setResourceType("Essay");
     setAnswer(answer);
   };
+  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, h5pSubId?: string, userId?: string, content_subtype?: string) => {
+    openResourceView();
+    setResourceType(content_subtype as string);
+    setRoom(roomId);
+    setH5pId(h5pId);
+    setUserId(userId);
+    setH5pSubId(h5pSubId);
+  };
   const handleChangeScore = (score?: number, studentId?: string, contentId?: string) => {
     const _studentViewItems = studentViewItems?.map((sItem) => {
       if (sItem.student_id === studentId) {
@@ -224,14 +237,14 @@ export function StudentView(props: StudentViewProps) {
   return (
     <>
       <TableContainer style={{ marginBottom: "20px" }}>
-        {studentViewItems?.map(
+        {studentViewItems?.filter(student => student.status === StudentParticipate.Participate).map(
           (sitem, index) =>
             (isSelectAll ? true : subDimensionIds.indexOf(sitem.student_id!) >= 0) && (
               <Fragment key={sitem.student_id}>
                 <Box className={css.tableBar} onClick={(e) => toggleCheck(index)}>
                   <div style={{ color: checkedArr[index] ? "black" : "#666666" }}>
                     <AccountCircleIcon />
-                    <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name}</span>
+                    <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name ? sitem.student_name : "unknow"}</span>
                     {editable && (
                       <span
                         onClick={stopPropagation((e) => handleOpenAddStudentComment(sitem.reviewer_comment ?? "", sitem.student_id))}
@@ -279,10 +292,18 @@ export function StudentView(props: StudentViewProps) {
                                   {/* todo 加字段 */}
                                 </TableCell>
                                 <TableCell align="center">
-                                  {ritem.content_subtype === "Essay" && (
+                                  {ritem.attempted && ritem.content_subtype === "Essay" && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
                                       onClick={(e) => handleClickView(ritem.answer ?? "")}
+                                    >
+                                      {d("Click to View").t("assess_detail_click_to_view")}
+                                    </span>
+                                  )}
+                                  {false && ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
+                                    <span
+                                      style={{ color: "#006CCF", cursor: "pointer" }}
+                                      onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, ritem.h5p_sub_id, sitem.student_id, ritem.content_subtype)}
                                     >
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
@@ -342,6 +363,10 @@ export function StudentView(props: StudentViewProps) {
         studentId={studentId}
         onChangeComment={handleChangeComment}
         onClose={closeResourceView}
+        roomId={room}
+        userId={userId}
+        h5pId={h5pId}
+        h5pSubId={h5pSubId}
       />
     </>
   );

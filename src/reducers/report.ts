@@ -58,8 +58,8 @@ import {
   EntityClassesAssignmentOverView,
   EntityClassesAssignmentsUnattendedStudentsView,
   EntityClassesAssignmentsView,
+  EntityLearnerReportOverview,
   EntityLearnerUsageResponse,
-  EntityLearnerWeeklyReportOverview,
   EntityLearnOutcomeAchievementRequest,
   EntityLearnOutcomeAchievementResponse,
   EntityQueryAssignmentsSummaryResult,
@@ -210,7 +210,8 @@ interface IreportState {
   fourWeeksAssignmentsCompletionMassage: string;
   fourWeeksClassAttendanceMassage: string;
   learnerUsageOverview: EntityLearnerUsageResponse;
-  learningWeeklyOverview: EntityLearnerWeeklyReportOverview;
+  learningWeeklyOverview: EntityLearnerReportOverview;
+  learningMonthlyOverview: EntityLearnerReportOverview;
 }
 
 interface IObj {
@@ -242,6 +243,12 @@ const initialState: IreportState = {
     num_below: 0,
     num_meet: 0,
     status: "",
+  },
+  learningMonthlyOverview: {
+    num_above: 0,
+    attendees: 0,
+    num_below: 0,
+    num_meet: 0,
   },
   reportMockOptions: {
     teacherList: [],
@@ -1201,10 +1208,18 @@ export const getLearnerUsageOverview = createAsyncThunk<EntityLearnerUsageRespon
 
 export type IParamLearnerWeeklyOverview = Parameters<typeof api.reports.getLearnerWeeklyReportOverview>[0];
 export const getLearnerWeeklyReportOverview = createAsyncThunk<
-  EntityLearnerWeeklyReportOverview,
+  EntityLearnerReportOverview,
   IParamLearnerWeeklyOverview & LoadingMetaPayload
 >("report/getLearnerWeeklyReportOverview", async ({ metaLoading, ...query }) => {
   return await api.reports.getLearnerWeeklyReportOverview(query);
+});
+
+export type IParamLearnerMonthlyOverview = Parameters<typeof api.reports.getLearnerMonthlyReportOverview>[0];
+export const getLearnerMonthlyReportOverview = createAsyncThunk<
+  EntityLearnerReportOverview,
+  IParamLearnerMonthlyOverview & LoadingMetaPayload
+>("report/getLearnerMonthlyReportOverview", async ({ metaLoading, ...query }) => {
+  return await api.reports.getLearnerMonthlyReportOverview(query);
 });
 
 export type IParamQueryTimeFilter = Parameters<typeof api.reports.queryLearningSummaryTimeFilter>[0];
@@ -1618,6 +1633,7 @@ const { actions, reducer } = createSlice({
       const classIDs = payload[3].map((item) => {
         return item.class_id;
       });
+      console.log(schoolIDs, classIDs);
       const permissions = payload[0];
       if (permissions[PermissionType.report_learning_summary_org_652]) {
         state.learningSummary.schoolList = schools;
@@ -1628,6 +1644,7 @@ const { actions, reducer } = createSlice({
         state.learningSummary.schoolList = schools.filter((school) => {
           return schoolIDs.indexOf(school.school_id) >= 0;
         });
+        console.log(state.learningSummary.schoolList);
         const allSchools = getAllUsers(state.learningSummary.schoolList, noneSchoolClasses, true);
         state.learningSummary.schools = [...allSchools];
       } else if (permissions[PermissionType.report_learning_summary_teacher_650]) {
@@ -1923,6 +1940,12 @@ const { actions, reducer } = createSlice({
       { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerWeeklyReportOverview>>
     ) => {
       state.learningWeeklyOverview = payload;
+    },
+    [getLearnerMonthlyReportOverview.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof getLearnerMonthlyReportOverview>>
+    ) => {
+      state.learningMonthlyOverview = payload;
     },
     [getStudentUsageMaterial.fulfilled.type]: (state, { payload }) => {
       state.studentUsageReport = payload;
