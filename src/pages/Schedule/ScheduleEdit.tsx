@@ -2110,7 +2110,7 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
               {
-                !scheduleId && process.env.REACT_APP_KO_BASE_API === "https://api.kidsloop.in" && <FormControlLabel
+                !scheduleId && false && <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
                   label={d("Review").t("schedule_lable_class_type_review")}
