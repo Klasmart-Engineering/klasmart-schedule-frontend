@@ -1102,7 +1102,7 @@
   "learning_outcome_lable_threshold": "分数阈值",
   "assessment_summary_label_attendance_unknown": "未知用户",
   "learning_outcome_threshold_blank_alert": "必须输入分数阈值",
-  "learning_outcome_threshold_error_toast": "分数阈值不能设置为空",
+  "learning_outcome_threshold_error_toast": "请输入1-100之间的整数",
   "schedule_review_group_fail_no_data": "在指定的日期范围内，这组学生均没有足够的能生成个性化学习课件的数据。请选择不同地日期范围或学生再重试。",
   "schedule_review_popup_date_range": "日期范围",
   "schedule_review_popup_student_list": "收到个性化学习课件的学生",
@@ -1110,5 +1110,6 @@
   "schedule_review_popup_fail_notice": "系统未能在{value}上生成自适应学习课件。请再试一次。",
   "schedule_review_popup_pending_notice": "系统正在为每个学生生成自适应学习课件。",
   "schedule_review_popup_confirm": "确认",
-  "schedule_review_class_name": "适应性复习: {value}教学素材"
+  "schedule_review_class_name": "适应性复习: {value}教学素材",
+  "schedule_repeat_end_on": "于"
 }
