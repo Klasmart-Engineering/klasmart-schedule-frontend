@@ -570,7 +570,7 @@ function EndRepeat(props: ExtendsProps) {
                   shrink: true,
                 }}
                 value={timestampToTime(end.after_time)}
-                disabled={end.type !== "after_count"}
+                disabled={end.type !== "after_time"}
                 onChange={handleAfterTime}
                 className={classes.after_time}
               />
@@ -586,10 +586,10 @@ function EndRepeat(props: ExtendsProps) {
                   }}
                   labelWidth={0}
                   onChange={handleAfterCount}
-                  disabled={end.type !== "after_time"}
+                  disabled={end.type !== "after_count"}
                 />
               </FormControl>
-              <span className={classes.positionText}>{d("Occurrence(s)").t("schedule_repeat_occurrence(s)")}</span>
+              <span className={classes.positionText} style={{top: "75px"}}>{d("Occurrence(s)").t("schedule_repeat_occurrence(s)")}</span>
             </Grid>
           </Grid>
         </Grid>
