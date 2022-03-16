@@ -18,7 +18,7 @@ export function getFourWeeks() {
 }
 
 export function getSingleOfFourWeeks() {
-  return [moment().subtract(4, "week").unix(), moment().unix()];
+  return [moment().subtract(4, "week").minute(0).hours(0).second(0).unix(), moment().unix()];
 }
 
 export function getDurationByDay(day: number) {
