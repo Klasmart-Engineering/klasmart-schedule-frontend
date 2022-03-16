@@ -144,18 +144,19 @@ export function OutcomeForm(props: OutcomeFormProps) {
   const scoreThresholdValidate = (value: string) => {
     const re = /^(?:\d?\d|100)$/;
     if(!isAssumed) {
-      
-      if(value === "0" ) {
+      if(value === "0") {
         setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
         return false;
-      }
+      } else 
       if(!value) {
         setThresholdErrorMsg(t("learning_outcome_threshold_blank_alert"))
         return false;
-      }
+      } else 
       if(!re.test(value)) {
         setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
         return false;
+      } else {
+        setThresholdErrorMsg("")
       }
     }
   };
