@@ -1098,17 +1098,18 @@
   "schedule_review_dafault_date_range": "Past 2 Weeks",
   "schedule_review_review_area": "Review Area",
   "schedule_review_pop_up_all_success": "The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.",
-  "schedule_review_popup_partical_success": "The following students will receive a random Lesson Plan as they have not enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:",
+  "schedule_review_popup_partical_success": "The following students will receive a random Lesson Plan as they have no enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:",
   "learning_outcome_lable_threshold": "Score Threshold",
   "assessment_summary_label_attendance_unknown": "Unknown",
   "learning_outcome_threshold_blank_alert": "A score threshold must be entered",
-  "learning_outcome_threshold_error_toast": "Score threshold cannot be set as blank",
-  "schedule_review_group_fail_no_data": "There were not enough content covered for this group of students during the date range specified to create a review session. Please try again with a different date range or student group.",
+  "learning_outcome_threshold_error_toast": "1에서 100 사이의 정수를 입력하세요.",
+  "schedule_review_group_fail_no_data": "There was not enough content covered for this group of students during the date range specified to create a review session. Please try again with a different date range or student group.",
   "schedule_review_popup_date_range": "Date Range",
   "schedule_review_popup_student_list": "Students with Personalized Lesson Plans",
   "schedule_review_popup_random_student_list": "Students who receive a random Lesson Plan due to no enough content to review",
   "schedule_review_popup_fail_notice": "System failed to generate a review session on {value}. Please try again.",
   "schedule_review_popup_pending_notice": "System is generating adaptive learning lesson plan for each student.",
   "schedule_review_popup_confirm": "Confirm",
-  "schedule_review_class_name": "Review: {value} Materials"
+  "schedule_review_class_name": "Review: {value} Materials",
+  "schedule_repeat_end_on": "이후"
 }
