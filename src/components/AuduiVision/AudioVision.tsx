@@ -66,8 +66,6 @@ export const AudioVision = (props: AudioVisionProps) => {
     audio.currentTime = audio.duration * (newValue as number) * 0.01;
     if(isplay) {
       visualizer?.play(src, audio.currentTime)
-    } else {
-      setPauseTime(audio.currentTime)
     }
   };
 
@@ -77,7 +75,6 @@ export const AudioVision = (props: AudioVisionProps) => {
     setIsplay(!isplay);
     if(isplay) {
       setPauseTime(audio.currentTime)
-      // setCurrent(audio.currentTime);
       audio.pause();
       visualizer?.pause();
     } else {
@@ -85,10 +82,10 @@ export const AudioVision = (props: AudioVisionProps) => {
       if(audio.currentTime === 0) {
         visualizer?.play(src, audio.currentTime)
       } else {
-        if(audio.currentTime - pauseTime < 0.0003) {
+        if(Math.abs(audio.currentTime - pauseTime) < 0.0003) {
           visualizer?.resume();
         } else {
-          // visualizer?.resume();
+          visualizer?.resume();
           visualizer?.play(src, audio.currentTime);
         }
       }

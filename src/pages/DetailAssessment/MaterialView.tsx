@@ -107,6 +107,7 @@ export function MaterialView(props: MaterialViewProps) {
   const [room, setRoom] = useState<string | undefined>("");
   const [h5pId, setH5pId] = useState<string | undefined>("");
   const [userId, setUserId] = useState<string | undefined>("");
+  const [h5pSubId, setH5pSubId] = useState<string | undefined>("");
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
   const {
     studentViewItems,
@@ -153,12 +154,13 @@ export function MaterialView(props: MaterialViewProps) {
     setResourceType("Essay");
     setAnswer(answer);
   };
-  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, userId?: string, content_subtype?: string) => {
+  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, h5pSubId?: string,  userId?: string, content_subtype?: string) => {
     openResourceView();
     setResourceType(content_subtype as string);
     setRoom(roomId);
     setH5pId(h5pId);
     setUserId(userId);
+    setH5pSubId(h5pSubId);
   };
   const handleChangeScore = (score?: number, studentId?: string, contentId?: string) => {
     const _studentViewItems = studentViewItems?.map((sItem) => {
@@ -294,7 +296,7 @@ export function MaterialView(props: MaterialViewProps) {
                                   {item.file_type !== FileTypes.HasChildContainer && sItem.attempted && showAudioRecorder(item.content_subtype) && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
-                                      onClick={(e) => handleClickAudioRecorder(roomId, item.h5p_id, sItem.student_id, item.content_subtype)}
+                                      onClick={(e) => handleClickAudioRecorder(roomId, item.h5p_id, item.h5p_sub_id, sItem.student_id, item.content_subtype)}
                                     >
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
@@ -342,6 +344,7 @@ export function MaterialView(props: MaterialViewProps) {
         roomId={room}
         userId={userId}
         h5pId={h5pId}
+        h5pSubId={h5pSubId}
       />
     </>
   );
