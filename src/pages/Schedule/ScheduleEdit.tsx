@@ -71,10 +71,11 @@ import {
   resetParticipantsData,
   resetScheduleDetial,
   saveScheduleData,
+  saveScheduleDataReview,
   ScheduleFilterPrograms,
   scheduleShowOption,
   getLessonPlansBySchedule,
-  getLessonPlansByScheduleLoadingPage,
+  getLessonPlansByScheduleLoadingPage, checkScheduleReview
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -107,6 +108,8 @@ import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import CloseIcon from "@material-ui/icons/Close";
+import ScheduleReviewTemplate from "./ScheduleReviewTemplate"
+import { getStudentUserNamesById } from "@reducers/schedule";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldset: {
@@ -276,6 +279,9 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     marginLeft: "4px",
   },
   addOutcomeBox: {
+    "& svg": {
+      display: "none",
+    },
     "& button": {
       display: "none",
     },
@@ -569,6 +575,8 @@ function EditBox(props: CalendarStateProps) {
       repeatCheck: false,
       dueDateCheck: false,
       homeFunCheck: false,
+      reviewCheck: false,
+      past2: true,
     });
     const newData: any = {
       attachment_path: "",
@@ -626,6 +634,8 @@ function EditBox(props: CalendarStateProps) {
         repeatCheck: false,
         dueDateCheck: newData.due_at ? true : false,
         homeFunCheck: newData.is_home_fun ? true : false,
+        reviewCheck: false,
+        past2: true,
       });
       if (scheduleDetial.class) setClassItem(scheduleDetial.class);
       setLessonPlan(scheduleDetial.lesson_plan);
@@ -805,7 +815,7 @@ function EditBox(props: CalendarStateProps) {
     }
 
     if (name === "subject_id") {
-      setSubjectItem(value);
+      setSubjectItem(checkedStatus.reviewCheck ? [value] : value);
     }
 
     if (name === "program_id") {
@@ -854,6 +864,8 @@ function EditBox(props: CalendarStateProps) {
         repeatCheck: false,
         dueDateCheck: false,
         homeFunCheck: false,
+        reviewCheck: false,
+        past2: true,
       });
     }
     setScheduleData(name, value);
@@ -882,7 +894,7 @@ function EditBox(props: CalendarStateProps) {
     class_type: false,
   };
   const [validator, setValidator] = React.useState<{
-    title: boolean;
+    title?: boolean;
     lesson_plan_id?: boolean;
     start_at: boolean;
     end_at: boolean;
@@ -897,6 +909,8 @@ function EditBox(props: CalendarStateProps) {
         ? taskValidator
         : checkedStatus.homeFunCheck
         ? { ...taskValidator, program_id: false }
+        : checkedStatus.reviewCheck
+        ? { start_at: false, end_at: false, class_type: false, program_id: false }
         : isValidator;
 
     for (let name in scheduleList) {
@@ -923,7 +937,8 @@ function EditBox(props: CalendarStateProps) {
   const saveSchedule = async (
     repeat_edit_options: repeatOptionsType = "only_current",
     is_force: boolean = true,
-    is_new_schedule: boolean = false
+    is_new_schedule: boolean = false,
+    is_check_review: boolean = true
   ) => {
     if (!validatorFun()) return;
     changeModalDate({
@@ -997,6 +1012,13 @@ function EditBox(props: CalendarStateProps) {
 
     addData["is_force"] = isForce ?? is_force;
 
+    if (checkedStatus.reviewCheck) {
+      addData["content_start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000, "all_day_end");
+      addData["content_end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000, "all_day_end");
+      addData["due_at"] = dueDateTimestamp;
+      addData["title"] = classItem?.name ?? ""
+    }
+
     if (scheduleList.class_type === "Homework") {
       addData["is_home_fun"] = checkedStatus.homeFunCheck;
     } else {
@@ -1051,14 +1073,82 @@ function EditBox(props: CalendarStateProps) {
       if (!addData["class_roster_teacher_ids"].includes(item.id)) addData["participants_teacher_ids"].push(item.id);
     });
 
-    let resultInfo: any;
-    resultInfo = (await dispatch(
-      saveScheduleData({
-        payload: { ...scheduleList, ...addData },
-        is_new_schedule: is_new_schedule,
+    addData['is_review'] = checkedStatus.reviewCheck;
+
+    if (checkedStatus.reviewCheck && is_check_review) {
+      let reviewResultInfo: any;
+      reviewResultInfo = (await dispatch(checkScheduleReview({
+        content_end_at: addData["end_at"],
+        content_start_at: addData["start_at"],
+        program_id: addData["program_id"],
+        student_ids: addData["class_roster_student_ids"].concat(addData["participants_student_ids"]),
+        subject_ids: addData["subject_ids"],
+        time_zone_offset: addData["time_zone_offset"],
         metaLoading: true,
-      })
-    )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+      }))) as unknown as PayloadAction<AsyncTrunkReturned<typeof checkScheduleReview>>;
+      const studentInfo = reviewResultInfo.payload.results.filter((item: any)=> !item.status).map((student: any)=> student.student_id)
+
+      if (studentInfo.length) {
+        let reviewStudentInfo: any;
+        reviewStudentInfo = (await dispatch(getStudentUserNamesById({metaLoading: true, userIds:studentInfo}))
+        ) as unknown as PayloadAction<AsyncTrunkReturned<typeof getStudentUserNamesById>>;
+        changeModalDate({
+          openStatus: true,
+          enableCustomization: true,
+          customizeTemplate: (
+            <ScheduleReviewTemplate
+              saveSchedule={saveSchedule}
+              handleClose={() => {
+                changeModalDate({
+                  openStatus: false,
+                });
+              }}
+              checkScheduleReviewData={reviewStudentInfo.payload.data}
+              disabledConfirm={reviewStudentInfo.payload.data?.usersConnection?.edges?.length === (addData["class_roster_student_ids"].concat(addData["participants_student_ids"])).length}
+            />
+          ),
+        });
+      }else {
+        changeModalDate({
+          title: "",
+          text: d("The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.").t("schedule_review_pop_up_all_success"),
+          openStatus: true,
+          enableCustomization: false,
+          buttons: [
+            {
+              label: d("OK").t("schedule_button_ok"),
+              event: () => {
+                saveSchedule("only_current", true, false, false)
+                changeModalDate({ openStatus: false, enableCustomization: false });
+              },
+            },
+          ],
+          handleClose: () => {
+            changeModalDate({ openStatus: false, enableCustomization: false });
+          },
+        });
+      }
+      return;
+    }
+
+    let resultInfo: any;
+    if (checkedStatus.reviewCheck) {
+      resultInfo = (await dispatch(
+        saveScheduleDataReview({
+          payload: { ...scheduleList, ...addData },
+          is_new_schedule: is_new_schedule,
+          metaLoading: true,
+        })
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    }else {
+      resultInfo = (await dispatch(
+        saveScheduleData({
+          payload: { ...scheduleList, ...addData },
+          is_new_schedule: is_new_schedule,
+          metaLoading: true,
+        })
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
+    }
 
     if (resultInfo.payload) {
       if (resultInfo.payload.data && resultInfo.payload.label && resultInfo.payload.label === "schedule_msg_users_conflict") {
@@ -1104,7 +1194,11 @@ function EditBox(props: CalendarStateProps) {
       changeTimesTamp(timesTampCallback);
       setIsForce(false);
       if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, stateCurrentCid as string);
-      history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+      if(checkedStatus.reviewCheck) {
+        history.push(`/schedule/calendar/rightside/scheduleTable/model/preview`);
+      }else {
+        history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+      }
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
         openStatus: true,
@@ -1357,6 +1451,8 @@ function EditBox(props: CalendarStateProps) {
     repeatCheck: false,
     dueDateCheck: false,
     homeFunCheck: false,
+    reviewCheck: false,
+    past2: true,
   });
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1369,12 +1465,23 @@ function EditBox(props: CalendarStateProps) {
       setScheduleList(newTopocList as unknown as { [key in keyof EntityScheduleAddView]: EntityScheduleAddView[key] });
     }
 
-    setStatus({ ...checkedStatus, [event.target.name]: event.target.checked });
+    let studyCheck = {};
+
+    if (event.target.name === "homeFunCheck" && event.target.checked) studyCheck = { reviewCheck: false };
+    if (event.target.name === "reviewCheck" && event.target.checked){
+      studyCheck = { homeFunCheck: false };
+      setSelectedDate(new Date(new Date().setHours(new Date().getHours() + 24)))
+    }else {
+      setSelectedDate(new Date(new Date().setHours(new Date().getHours())))
+    }
+
+    setStatus({ ...checkedStatus, [event.target.name]: event.target.checked, ...studyCheck });
 
     mobile && event.target.name === "repeatCheck" && showRepeatMbHandle(event.target.checked);
   };
 
   const handleDueDateChange = (date: Date | null) => {
+    if (date?.getMonth()! < new Date().getMonth() || date?.getDate()! <= new Date().getDate()) return;
     setSelectedDate(date);
   };
 
@@ -1995,30 +2102,111 @@ function EditBox(props: CalendarStateProps) {
           {menuItemListClassType(scheduleMockOptions.classTypeList)}
         </TextField>
         {scheduleList.class_type === "Homework" && (
-          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", paddingLeft: "8px" }}>
             <FormGroup row>
               <FormControlLabel
                 disabled={isScheduleExpired() || isLimit()}
                 control={<Checkbox name="homeFunCheck" color="primary" checked={checkedStatus.homeFunCheck} onChange={handleCheck} />}
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
+              {
+                !scheduleId && false && <FormControlLabel
+                  disabled={isScheduleExpired() || isLimit()}
+                  control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
+                  label={d("Review").t("schedule_lable_class_type_review")}
+                />
+              }
             </FormGroup>
+            {checkedStatus.reviewCheck && (
+              <span style={{ color: "#666666", fontSize: "16px", fontWeight: 400 }}>
+                {d("Due Date can only be set after +1 days from today to allow time for students to complete.").t("schedule_due_date_info")}
+              </span>
+            )}
           </Box>
         )}
-        <Box className={css.fieldBox}>
-          <TextField
-            error={validator.title && !scheduleList.title}
-            className={css.fieldset}
-            multiline
-            rows={6}
-            label={d("Lesson Name").t("schedule_detail_lesson_name")}
-            value={scheduleList.title}
-            onChange={(e) => handleTopicListChange(e, "title")}
-            required
-            disabled={isScheduleExpired() || isLimit()}
-          ></TextField>
-          <FileCopyOutlined className={css.iconField} />
-        </Box>
+        {checkedStatus.reviewCheck && (
+          <Box className={css.fieldBox}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="MM/dd/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label="Due Date"
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+                className={css.fieldset}
+                required
+                value={selectedDueDate}
+                disabled={isScheduleExpired() || isLimit()}
+                onChange={handleDueDateChange}
+              />
+            </MuiPickersUtilsProvider>
+          </Box>
+        )}
+        {!(scheduleList.class_type === "Homework" && checkedStatus.reviewCheck) && (
+          <Box className={css.fieldBox}>
+            <TextField
+              error={validator.title && !scheduleList.title}
+              className={css.fieldset}
+              multiline
+              rows={6}
+              label={d("Lesson Name").t("schedule_detail_lesson_name")}
+              value={scheduleList.title}
+              onChange={(e) => handleTopicListChange(e, "title")}
+              required
+              disabled={isScheduleExpired() || isLimit()}
+            ></TextField>
+            <FileCopyOutlined className={css.iconField} />
+          </Box>
+        )}
+        {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
+          <Box>
+            {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
+              <span style={{ color: "#666666", fontSize: "16px", fontWeight: 400, paddingLeft: "8px", marginTop: "8px", display: "block" }}>
+                {d("I would like content to be reviewed that was covered:").t("schedule_review_date_range_info")}
+              </span>
+            )}
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="MM/dd/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label={d("Start Time").t("schedule_detail_start_time")}
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+                className={css.fieldset}
+                required
+                value={new Date(new Date().setHours(new Date().getHours() - 14 * 24))}
+                disabled
+                onChange={handleDueDateChange}
+              />
+            </MuiPickersUtilsProvider>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="MM/dd/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label={d("End Time").t("schedule_detail_end_time")}
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+                className={css.fieldset}
+                required
+                value={new Date(new Date().setHours(new Date().getHours() - 24))}
+                disabled
+                onChange={handleDueDateChange}
+              />
+            </MuiPickersUtilsProvider>
+          </Box>
+        )}
         {scheduleList.class_type !== "Homework" && (
           <Box>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -2057,6 +2245,17 @@ function EditBox(props: CalendarStateProps) {
             </MuiPickersUtilsProvider>
           </Box>
         )}
+        {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
+          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", paddingLeft: "8px" }}>
+            <FormGroup row>
+              <FormControlLabel
+                disabled
+                control={<Checkbox name="past2" color="primary" checked={checkedStatus.past2} onChange={handleCheck} />}
+                label="Past 2 week"
+              />
+            </FormGroup>
+          </Box>
+        )}
         {scheduleList.class_type !== "Homework" && (
           <Box>
             <FormGroup row>
@@ -2077,7 +2276,11 @@ function EditBox(props: CalendarStateProps) {
         )}
         <Box
           style={{
-            display: (scheduleList?.class_type === "Task" || scheduleList?.class_type === "Homework") && !dueDataHide() ? "block" : "none",
+            display:
+              (scheduleList?.class_type === "Task" || (scheduleList?.class_type === "Homework" && !checkedStatus.reviewCheck)) &&
+              !dueDataHide()
+                ? "block"
+                : "none",
           }}
         >
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -2336,32 +2539,36 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Box>
         )}
-        {scheduleList.class_type !== "Task" && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
-          <Box className={css.fieldBox}>
-            <TextField
-              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
-              multiline
-              value={lessonPlan?.name}
-              label={lessonPlan?.name ? "" : d("Lesson Plan").t("library_label_lesson_plan")}
-              required
-              error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
-              disabled
-            ></TextField>
-            {!(isScheduleExpired() || isLimit()) && (
-              <AddCircleOutlineOutlined
-                onClick={() => {
-                  if (isScheduleExpired() || isLimit()) return;
-                  if (scheduleDetial?.class?.enable !== false) handleLessonPlan();
-                }}
-                className={css.iconField}
-                style={{ top: "46%", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
-              />
-            )}
-          </Box>
+        {scheduleList.class_type !== "Task" &&
+          !((checkedStatus.homeFunCheck || checkedStatus.reviewCheck) && scheduleList.class_type === "Homework") && (
+            <Box className={css.fieldBox}>
+              <TextField
+                className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+                multiline
+                value={lessonPlan?.name}
+                label={lessonPlan?.name ? "" : d("Lesson Plan").t("library_label_lesson_plan")}
+                required
+                error={validator.lesson_plan_id && !scheduleList.lesson_plan_id}
+                disabled
+              ></TextField>
+              {!(isScheduleExpired() || isLimit()) && (
+                <AddCircleOutlineOutlined
+                  onClick={() => {
+                    if (isScheduleExpired() || isLimit()) return;
+                    if (scheduleDetial?.class?.enable !== false) handleLessonPlan();
+                  }}
+                  className={css.iconField}
+                  style={{ top: "46%", cursor: scheduleDetial?.class?.enable !== false ? "pointer" : "no-drop" }}
+                />
+              )}
+            </Box>
+          )}
+        {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
+          <span style={{ fontSize: "16px", fontWeight: 400, paddingLeft: "8px", marginTop: "30px", display: "block" }}>{d("Review Area").t("schedule_review_review_area")}</span>
         )}
         {scheduleList.class_type !== "Task" && (
           <>
-            {!(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
+            {!((checkedStatus.homeFunCheck || checkedStatus.reviewCheck) && scheduleList.class_type === "Homework") && (
               <span
                 style={{ color: "#0E78D5", cursor: "pointer", fontSize: "14px" }}
                 onClick={() => {
@@ -2379,18 +2586,24 @@ function EditBox(props: CalendarStateProps) {
                 )}
               </span>
             )}
-            <Collapse in={linkageLessonPlanOpen || (checkedStatus.homeFunCheck && scheduleList.class_type === "Homework")}>
+            <Collapse
+              in={
+                linkageLessonPlanOpen ||
+                ((checkedStatus.homeFunCheck || checkedStatus.reviewCheck) && scheduleList.class_type === "Homework")
+              }
+            >
               <Paper elevation={0} className={css.paper}>
-                {menuItemListMaterial() && !(checkedStatus.homeFunCheck && scheduleList.class_type === "Homework") && (
-                  <Box style={{ position: "relative" }}>
-                    <span className={css.rosterNotice}>
-                      {d("Lesson Material").t("schedule_detail_lesson_material")} <span style={{ color: "#D32F2F" }}>*</span>
-                    </span>
-                    <Box className={css.participantSaveBox} style={{ padding: "0px" }}>
-                      {menuItemListMaterial()}
+                {menuItemListMaterial() &&
+                  !((checkedStatus.homeFunCheck || checkedStatus.reviewCheck) && scheduleList.class_type === "Homework") && (
+                    <Box style={{ position: "relative" }}>
+                      <span className={css.rosterNotice}>
+                        {d("Lesson Material").t("schedule_detail_lesson_material")} <span style={{ color: "#D32F2F" }}>*</span>
+                      </span>
+                      <Box className={css.participantSaveBox} style={{ padding: "0px" }}>
+                        {menuItemListMaterial()}
+                      </Box>
                     </Box>
-                  </Box>
-                )}
+                  )}
                 <Autocomplete
                   id="combo-box-demo"
                   options={modelSchedule.Deduplication(
@@ -2415,14 +2628,14 @@ function EditBox(props: CalendarStateProps) {
                   )}
                 />
                 <Autocomplete
-                  multiple
+                  multiple={!checkedStatus.reviewCheck}
                   id="combo-box-demo"
                   options={modelSchedule.Deduplication(scheduleMockOptions.subjectList.concat(subjectItem!))}
                   getOptionLabel={(option: any) => option.name}
                   onChange={(e: any, newValue) => {
                     autocompleteChange(newValue, "subject_id");
                   }}
-                  value={subjectItem}
+                  value={checkedStatus.reviewCheck ? subjectItem[0] : subjectItem}
                   disabled={isScheduleExpired() || isLimit() || !scheduleList.program_id}
                   renderInput={(params) => (
                     <TextField
@@ -2430,7 +2643,7 @@ function EditBox(props: CalendarStateProps) {
                       className={css.fieldset}
                       label={d("Subject").t("assess_label_subject")}
                       variant="outlined"
-                      value={scheduleList.subject_ids}
+                      value={checkedStatus.reviewCheck ? scheduleList.subject_ids && scheduleList.subject_ids[0] : scheduleList.subject_ids}
                       disabled={isScheduleExpired() || isLimit()}
                     />
                   )}
@@ -2480,27 +2693,31 @@ function EditBox(props: CalendarStateProps) {
             )}
           </Box>
         )}
-        <TextField
-          id="outlined-multiline-static"
-          className={css.fieldset}
-          label={d("Description").t("assess_label_description")}
-          multiline
-          rows={4}
-          variant="outlined"
-          value={scheduleList.description}
-          disabled={isScheduleExpired() || isLimit()}
-          onChange={(e) => handleTopicListChange(e, "description")}
-        />
-        <ScheduleAttachment
-          setAttachmentId={setAttachmentId}
-          attachmentId={attachmentId}
-          attachmentName={attachmentName}
-          setAttachmentName={setAttachmentName}
-          setSpecificStatus={setSpecificStatus}
-          specificStatus={specificStatus}
-          isStudent={privilegedMembers("Student")}
-          isDisabled={isScheduleExpired() || isLimit()}
-        />
+        {!(checkedStatus.reviewCheck && scheduleList.class_type === "Homework") && (
+          <>
+            <TextField
+              id="outlined-multiline-static"
+              className={css.fieldset}
+              label={d("Description").t("assess_label_description")}
+              multiline
+              rows={4}
+              variant="outlined"
+              value={scheduleList.description}
+              disabled={isScheduleExpired() || isLimit()}
+              onChange={(e) => handleTopicListChange(e, "description")}
+            />
+            <ScheduleAttachment
+              setAttachmentId={setAttachmentId}
+              attachmentId={attachmentId}
+              attachmentName={attachmentName}
+              setAttachmentName={setAttachmentName}
+              setSpecificStatus={setSpecificStatus}
+              specificStatus={specificStatus}
+              isStudent={privilegedMembers("Student")}
+              isDisabled={isScheduleExpired() || isLimit()}
+            />
+          </>
+        )}
         {scheduleId && scheduleDetial.role_type === "Student" && scheduleDetial.class_type === "Homework" && checkedStatus.homeFunCheck && (
           <ScheduleFeedback
             schedule_id={scheduleId}

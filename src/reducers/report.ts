@@ -1633,6 +1633,7 @@ const { actions, reducer } = createSlice({
       const classIDs = payload[3].map((item) => {
         return item.class_id;
       });
+      console.log(schoolIDs, classIDs);
       const permissions = payload[0];
       if (permissions[PermissionType.report_learning_summary_org_652]) {
         state.learningSummary.schoolList = schools;
@@ -1643,6 +1644,7 @@ const { actions, reducer } = createSlice({
         state.learningSummary.schoolList = schools.filter((school) => {
           return schoolIDs.indexOf(school.school_id) >= 0;
         });
+        console.log(state.learningSummary.schoolList);
         const allSchools = getAllUsers(state.learningSummary.schoolList, noneSchoolClasses, true);
         state.learningSummary.schools = [...allSchools];
       } else if (permissions[PermissionType.report_learning_summary_teacher_650]) {

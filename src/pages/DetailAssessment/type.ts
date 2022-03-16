@@ -34,6 +34,7 @@ export interface MaterialViewItemStudentProps {
   answer?: string;
   score?: number;
   attempted?: boolean;
+  status?: "Participate" | "NotParticipate";
   // file_type?: string;
   // max_score?: number;
 }
@@ -55,6 +56,7 @@ export interface ResultBaseProps {
   number?: string;
   parent_id?: string;
   h5p_id?: string;
+  h5p_sub_id?: string;
   status?: "Covered" | "NotCovered";
 }
 export interface StudenmtViewItemResultProps extends ResultBaseProps {

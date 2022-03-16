@@ -30,10 +30,11 @@ interface ButtonProps {
   scheduleInfo: scheduleInfoViewProps | ScheduleEditExtend | EntityScheduleListViewExtend | EntityScheduleViewDetailExtend;
   templateType: "scheduleEdit" | "schedulePopup" | "scheduleAnyTime";
   handleGoLive: (scheduleDetial: ScheduleEditExtend) => void;
+  handleClose?: () => void;
 }
 
 function RouterButton(props: ButtonProps) {
-  const { scheduleInfo, templateType, handleGoLive } = props;
+  const { scheduleInfo, templateType, handleGoLive, handleClose } = props;
   const classes = useStyles();
   const buttonClass = {
     scheduleEdit: classes.editButton,
@@ -63,7 +64,8 @@ function RouterButton(props: ButtonProps) {
         style={{
           display:
             (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
-            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass")
+            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass") ||
+            (scheduleInfo.is_review)
               ? "none"
               : "block",
           backgroundColor: "#E4F1FF",
@@ -88,7 +90,8 @@ function RouterButton(props: ButtonProps) {
           color: disabled() ? "" : "#E5E5E5",
           display:
             (scheduleInfo.role_type !== "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
-            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass")
+            (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass") ||
+            (scheduleInfo.is_review)
               ? "none"
               : "block",
         }}
@@ -100,11 +103,33 @@ function RouterButton(props: ButtonProps) {
           d("Start Class").t("schedule_button_start_class")}
         {(scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OnlineClass" && d("Go Live").t("schedule_button_go_live")}
       </Button>
+      <Button
+        color="primary"
+        variant="outlined"
+        autoFocus
+        className={buttonClass[templateType]}
+        style={{ display: (scheduleInfo.is_review && scheduleInfo.role_type === "Student") ? "block" : "none" }}
+        onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
+      >
+        {(scheduleInfo.is_review && scheduleInfo.review_status === "success") && "Go Review"}
+      </Button>
+      <Button
+        color="primary"
+        variant="outlined"
+        autoFocus
+        className={buttonClass[templateType]}
+        style={{ display: (scheduleInfo.is_review && scheduleInfo.role_type !== "Student") ? "block" : "none", backgroundColor: "#0E78D5", color: "white" }}
+        onClick={() => {
+          handleClose && handleClose()
+        }}
+      >
+        {d("OK").t("general_button_OK")}
+      </Button>
     </>
   );
 }
 
 export default function ScheduleButton(props: ButtonProps) {
-  const { scheduleInfo, templateType, handleGoLive } = props;
-  return <RouterButton scheduleInfo={scheduleInfo} templateType={templateType} handleGoLive={handleGoLive} />;
+  const { scheduleInfo, templateType, handleGoLive, handleClose } = props;
+  return <RouterButton scheduleInfo={scheduleInfo} handleClose={handleClose} templateType={templateType} handleGoLive={handleGoLive} />;
 }

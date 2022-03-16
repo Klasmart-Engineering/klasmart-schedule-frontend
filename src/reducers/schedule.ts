@@ -1,7 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { uniqBy } from "lodash";
 import api, { gqlapi } from "../api";
-import { BooleanOperator, ConnectionDirection, StringOperator, UuidExclusiveOperator, UuidOperator } from "../api/api-ko-schema.auto";
+import {
+  BooleanOperator,
+  ConnectionDirection,
+  StringOperator,
+  UserFilter,
+  UuidExclusiveOperator,
+  UuidOperator
+} from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -31,6 +38,9 @@ import {
   GetSchoolsFilterListDocument,
   GetSchoolsFilterListQuery,
   GetSchoolsFilterListQueryVariables,
+  GetStudentNameByIdDocument,
+  GetStudentNameByIdQuery,
+  GetStudentNameByIdQueryVariables,
   GetUserDocument,
   GetUserQuery,
   GetUserQueryVariables,
@@ -46,7 +56,7 @@ import {
   SchoolByUserQueryQueryVariables,
   TeachersByOrgnizationDocument,
   TeachersByOrgnizationQuery,
-  TeachersByOrgnizationQueryVariables,
+  TeachersByOrgnizationQueryVariables
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -136,6 +146,7 @@ export interface ScheduleState {
   lessonPlansTotal: number;
   userInUndefined: GetUserQuery;
   mySchoolIdsRes: mySchoolIdsResProp;
+  userNameData: GetStudentNameByIdQuery;
 }
 
 interface Rootstate {
@@ -318,6 +329,7 @@ const initialState: ScheduleState = {
     cursor: "",
     hasNextPage: false,
   },
+  userNameData: {}
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -367,6 +379,19 @@ export const saveScheduleData = createAsyncThunk<
     return await api.schedules.getScheduleById(id).catch((err) => Promise.reject(err.label));
   }
 );
+
+export const saveScheduleDataReview = createAsyncThunk<
+  EntityScheduleAddView,
+  SaveStatusResourseParams & LoadingMetaPayload,
+  { state: Rootstate }
+  >(
+  "scheduleReview/save",
+  // @ts-ignore
+  async ({ payload, is_new_schedule }, { getState }) => {
+     return await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
+  }
+);
+
 
 type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeViewList>[0] & LoadingMetaPayload;
 type viewSchedulesResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
@@ -1014,6 +1039,15 @@ export const getScheduleViewInfo = createAsyncThunk<GetScheduleViewInfoResult, G
   }
 );
 
+type checkScheduleReviewParams = Parameters<typeof api.schedules.checkScheduleReviewData>[0] & LoadingMetaPayload;
+type checkScheduleReviewResult = AsyncReturnType<typeof api.schedules.checkScheduleReviewData>;
+export const checkScheduleReview = createAsyncThunk<checkScheduleReviewResult, checkScheduleReviewParams>(
+  "schedules/checkScheduleReviewData",
+  async ({ metaLoading, ...query }) => {
+    return api.schedules.checkScheduleReviewData(query)
+  }
+);
+
 type IQueryOutcomeListParams = Parameters<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>[0] & LoadingMetaPayload;
 type IQueryOutcomeListResult = AsyncReturnType<typeof api.publishedLearningOutcomes.searchPublishedLearningOutcomes>;
 export const actOutcomeList = createAsyncThunk<IQueryOutcomeListResult, IQueryOutcomeListParams>(
@@ -1040,6 +1074,24 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LoadingM
   const [developmental, skills] = await Promise.all([api.developmentals.getDevelopmental(), api.skills.getSkill()]);
   return { developmental, skills };
 });
+
+export const getStudentUserNamesById = createAsyncThunk(
+  "getStudentUserNamesById", async (data: {userIds: string[]} & LoadingMetaPayload) => {
+    const filter = {
+      OR: data.userIds.map((id) => ({
+        userId: {
+          operator: UuidOperator.Eq,
+          value: id
+        },
+      })),
+    } as UserFilter;
+    return gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
+      query: GetStudentNameByIdDocument,
+      variables: {
+        filter,
+      },
+    });
+  });
 
 const { actions, reducer } = createSlice({
   name: "schedule",
@@ -1229,6 +1281,9 @@ const { actions, reducer } = createSlice({
     },
     [getUserInUndefined.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.userInUndefined = payload.data;
+    },
+    [getStudentUserNamesById.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.userNameData = payload.data;
     },
   },
 });

@@ -7,7 +7,7 @@ import { Box, Checkbox, CheckboxProps, Chip, Grid, InputAdornment, makeStyles, M
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { ResultGetNewOptions } from "@reducers/outcome";
-import React, { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 
 const useStyles = makeStyles((theme) => ({
@@ -109,6 +109,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
     onInputChange,
   } = props;
   const classes = useStyles();
+  const [thresholdErrorMsg, setThresholdErrorMsg] = useState("")
   const getItems = (list: LinkedMockOptionsItem[]) =>
     list.map((item) => (
       <MenuItem key={item.id} value={item.id}>
@@ -141,10 +142,22 @@ export function OutcomeForm(props: OutcomeFormProps) {
     if (newValue.length && (newValue.length < 5 || !re.test(newValue))) return false;
   };
   const scoreThresholdValidate = (value: string) => {
-    const re = /^(1|([1-9]\d{0,1})|100)$/;
-    if (!isAssumed) {
-      if (!value) return false;
-      if (!re.test(value)) return false;
+    const re = /^(?:\d?\d|100)$/;
+    if(!isAssumed) {
+      if(value === "0") {
+        setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
+        return false;
+      } else 
+      if(!value) {
+        setThresholdErrorMsg(t("learning_outcome_threshold_blank_alert"))
+        return false;
+      } else 
+      if(!re.test(value)) {
+        setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
+        return false;
+      } else {
+        setThresholdErrorMsg("")
+      }
     }
   };
   const handleDelete = (set_id: string) => {
@@ -185,7 +198,6 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 error={errors.outcome_name ? true : false}
               />
             </Grid>
-            {/* {outcome_id && ( */}
             <Grid item lg={5} xl={5} md={5} sm={12} xs={12} className={classes.marginItem}>
               <Controller
                 name="shortcode"
@@ -222,15 +234,15 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 control={control}
                 as={TextField}
                 variant="outlined"
-                defaultValue={outcome_id ? Number(outcomeDetail.score_threshold) * 100 + "" : isAssumed ? "0" : "80"}
+                defaultValue={outcome_id? outcomeDetail.score_threshold : (isAssumed ? 0 : 80)}
                 fullWidth
-                label={"Threhold"}
+                label={d("Score Threshold").t("learning_outcome_lable_threshold")}
                 disabled={isAssumed ? true : showEdit}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">%</InputAdornment>,
                 }}
                 error={!!errors["score_threshold"]}
-                helperText={"Score threshold cannot be set as blank"}
+                helperText={thresholdErrorMsg}
                 rules={{ validate: scoreThresholdValidate }}
               />
             </Grid>

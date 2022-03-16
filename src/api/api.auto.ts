@@ -1473,6 +1473,7 @@ export interface EntityScheduleViewDetail {
   lesson_plan_id?: string;
   outcome_ids?: string[];
   personalized_review_students?: EntityScheduleShortInfo[];
+  random_review_students?: EntityScheduleShortInfo[];
   program?: EntityScheduleShortInfo;
   review_status?: "pending" | "success" | "failed";
   role_type?: "Student" | "Teacher" | "Unknown";
@@ -2123,6 +2124,7 @@ export interface V2AssessmentContentReply {
   content_type?: "LessonPlan" | "LessonMaterial" | "Unknown";
   file_type?: "Unknown" | "HasChildContainer" | "NotChildContainer" | "SupportScoreStandAlone" | "NotSupportScoreStandAlone";
   h5p_id?: string;
+  h5p_sub_id?: string;
   max_score?: number;
   number?: string;
   outcome_ids?: string[];
