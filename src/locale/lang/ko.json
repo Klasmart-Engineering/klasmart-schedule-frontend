@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "Review Area",
   "schedule_review_pop_up_all_success": "The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.",
   "schedule_review_popup_partical_success": "The following students will receive a random Lesson Plan as they have no enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:",
-  "learning_outcome_lable_threshold": "Score Threshold",
+  "learning_outcome_lable_threshold": "점수 임계값",
   "assessment_summary_label_attendance_unknown": "알려지지 않은",
   "learning_outcome_threshold_blank_alert": "점수 임계값을 입력해야 합니다.",
   "learning_outcome_threshold_error_toast": "1에서 100 사이의 정수를 입력하세요.",

@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "Review Area",
   "schedule_review_pop_up_all_success": "The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.",
   "schedule_review_popup_partical_success": "The following students will receive a random Lesson Plan as they have no enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:",
-  "learning_outcome_lable_threshold": "Score Threshold",
+  "learning_outcome_lable_threshold": "Umbral de puntuación",
   "assessment_summary_label_attendance_unknown": "Desconocido",
   "learning_outcome_threshold_blank_alert": "Se debe introducir un umbral de puntuación",
   "learning_outcome_threshold_error_toast": "Introduzca un entero de 1 a 100",
