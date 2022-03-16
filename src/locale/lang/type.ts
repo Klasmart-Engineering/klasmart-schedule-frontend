@@ -117,10 +117,10 @@ type LangRecord =
   | { id: "library_msg_publish_lesson_material"; description: `How would you like to publish?`; values: undefined }
   | { id: "library_msg_only_publish_lesson_material"; description: `Only publish a lesson material`; values: undefined }
   | {
-  id: "library_msg_publish_lesson_material_and_asset";
-  description: `Publish a lesson material, and add to assets library`;
-  values: undefined;
-}
+      id: "library_msg_publish_lesson_material_and_asset";
+      description: `Publish a lesson material, and add to assets library`;
+      values: undefined;
+    }
   | { id: "library_label_lesson_type"; description: `Lesson Type`; values: undefined }
   | { id: "library_label_test"; description: `Test`; values: undefined }
   | { id: "library_label_not_test"; description: `Not Test`; values: undefined }
@@ -132,21 +132,21 @@ type LangRecord =
   | { id: "library_error_unsupported_format"; description: `Unsupported Format`; values: undefined }
   | { id: "library_error_no_content"; description: `Content does not exist`; values: undefined }
   | {
-  id: "library_error_content_locked";
-  description: `This content is locked by editor at {email}. To use this content, ask the editor to check their Draft or Waiting for Approval or Rejected content, publish, then get it approved.`;
-  values: { email: string | number };
-}
+      id: "library_error_content_locked";
+      description: `This content is locked by editor at {email}. To use this content, ask the editor to check their Draft or Waiting for Approval or Rejected content, publish, then get it approved.`;
+      values: { email: string | number };
+    }
   | {
-  id: "library_error_content_locked_by_me";
-  description: `This content is in your Waiting for Approval list. To edit this content, ask administrator to approve or reject it.`;
-  values: undefined;
-}
+      id: "library_error_content_locked_by_me";
+      description: `This content is in your Waiting for Approval list. To edit this content, ask administrator to approve or reject it.`;
+      values: undefined;
+    }
   | { id: "library_error_content_data_invalid"; description: `Content is empty, please upload a file.`; values: undefined }
   | {
-  id: "library_error_delete_lesson_plan_in_schedule";
-  description: `Unable to delete lesson plan which is scheduled`;
-  values: undefined;
-}
+      id: "library_error_delete_lesson_plan_in_schedule";
+      description: `Unable to delete lesson plan which is scheduled`;
+      values: undefined;
+    }
   | { id: "library_error_update_content_failed"; description: `Update content failed`; values: undefined }
   | { id: "library_error_read_content_failed"; description: `Read content failed`; values: undefined }
   | { id: "library_error_delete_content_failed"; description: `Delete content failed`; values: undefined }
@@ -171,10 +171,10 @@ type LangRecord =
   | { id: "library_label_distribute"; description: `Distribute`; values: undefined }
   | { id: "library_label_preset"; description: `Preset`; values: undefined }
   | {
-  id: "library_msg_preset";
-  description: `Choosing this option will make the selected content available to current and future organizations.`;
-  values: undefined;
-}
+      id: "library_msg_preset";
+      description: `Choosing this option will make the selected content available to current and future organizations.`;
+      values: undefined;
+    }
   | { id: "library_label_select_organizations"; description: `Select Organizations`; values: undefined }
   | { id: "library_label_all_organizations"; description: `All`; values: undefined }
   | { id: "library_label_org"; description: `Org`; values: undefined }
@@ -182,37 +182,37 @@ type LangRecord =
   | { id: "library_label_max_file_number"; description: `Max File Number`; values: undefined }
   | { id: "library_error_excceed_max_size"; description: `Cannot excceed max size 500 MB`; values: undefined }
   | {
-  id: "library_error_excceed_max_file_number";
-  description: `Failed to upload as total files number exceeds limitation 5`;
-  values: undefined;
-}
+      id: "library_error_excceed_max_file_number";
+      description: `Failed to upload as total files number exceeds limitation 5`;
+      values: undefined;
+    }
   | { id: "library_label_new_content"; description: `New Content`; values: undefined }
   | { id: "library_msg_only_publish_lesson_plan"; description: `Only publish a Lesson plan`; values: undefined }
   | {
-  id: "library_msg_publish_lesson_plan_and asset";
-  description: `Publish a lesson plan, and add teacher manuals to assets library`;
-  values: undefined;
-}
+      id: "library_msg_publish_lesson_plan_and asset";
+      description: `Publish a lesson plan, and add teacher manuals to assets library`;
+      values: undefined;
+    }
   | { id: "library_label_edit_folder"; description: `Edit Folder`; values: undefined }
   | { id: "library_label_contentType"; description: `Content Type`; values: undefined }
   | { id: "library_label_files_selected"; description: `( {value} files selected )`; values: { value: string | number } }
   | { id: "library_label_more"; description: `More`; values: undefined }
   | { id: "library_error_plan_duration"; description: `Plan's duration should be greater than lesson materials' sum`; values: undefined }
   | {
-  id: "library_label_uploadInfo1";
-  description: `Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MP4, MP3, WAV`;
-  values: undefined;
-}
+      id: "library_label_uploadInfo1";
+      description: `Supported format: PDF, JPG, JPEG, PNG, GIF, BMP, AVI, MP4, MP3, WAV`;
+      values: undefined;
+    }
   | {
-  id: "library_label_uploadInfo2";
-  description: `(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)`;
-  values: undefined;
-}
+      id: "library_label_uploadInfo2";
+      description: `(For Office documents, we suggest converting to PDF then upload, or using screen-sharing during class time)`;
+      values: undefined;
+    }
   | {
-  id: "library_error_include_archived_lesson_material";
-  description: `This lesson plan includes archived lesson material, please remove it and try publishing again.`;
-  values: undefined;
-}
+      id: "library_error_include_archived_lesson_material";
+      description: `This lesson plan includes archived lesson material, please remove it and try publishing again.`;
+      values: undefined;
+    }
   | { id: "assess_tab_assessments"; description: `Assessments`; values: undefined }
   | { id: "assess_button_search"; description: `Search`; values: undefined }
   | { id: "assess_text_search teacher"; description: `Search Teacher`; values: undefined }
@@ -287,10 +287,10 @@ type LangRecord =
   | { id: "assess_submit_new_old"; description: `Submit Time (New-Old)`; values: undefined }
   | { id: "assess_submit_old_new"; description: `Submit Time (Old-New)`; values: undefined }
   | {
-  id: "assess_new_version_comment";
-  description: `We update to get this student's newest assignment, please assess again.`;
-  values: undefined;
-}
+      id: "assess_new_version_comment";
+      description: `We update to get this student's newest assignment, please assess again.`;
+      values: undefined;
+    }
   | { id: "assess_detail_room_id"; description: `Room ID`; values: undefined }
   | { id: "assess_detail_class_name"; description: `Class Name`; values: undefined }
   | { id: "assess_detail_lesson_name"; description: `Lesson Name`; values: undefined }
@@ -333,10 +333,10 @@ type LangRecord =
   | { id: "assess_popup_view_comments"; description: `View Comments`; values: undefined }
   | { id: "assess_popup_detailed_answer"; description: `Detailed Answer`; values: undefined }
   | {
-  id: "assess_popup_students_not_started";
-  description: `There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete!`;
-  values: undefined;
-}
+      id: "assess_popup_students_not_started";
+      description: `There are still students who have not started the Study activities. You cannot change the assessment after Clicking complete!`;
+      values: undefined;
+    }
   | { id: "assess_detail_lesson_plan_assessment"; description: `Lesson Plan Assessment`; values: undefined }
   | { id: "assess_detail_score_assessment"; description: `Score Assessment`; values: undefined }
   | { id: "assess_detail_score_full_marks"; description: `Score / Full Marks`; values: undefined }
@@ -426,26 +426,26 @@ type LangRecord =
   | { id: "assess_milestone_detail_add"; description: `Add`; values: undefined }
   | { id: "assess_milestone_code_requirement"; description: `5 characters long, number 0-9 & letters A-Z only`; values: undefined }
   | {
-  id: "assess_msg_exist_milestone_short_code";
-  description: `This milestone short code already exists, please enter it again.`;
-  values: undefined;
-}
+      id: "assess_msg_exist_milestone_short_code";
+      description: `This milestone short code already exists, please enter it again.`;
+      values: undefined;
+    }
   | { id: "assess_msg_deleted_successfully"; description: `Deleted Successfully`; values: undefined }
   | { id: "assess_msg_saved_successfully"; description: `Saved Successfully`; values: undefined }
   | { id: "assess_msg_updated_successfully"; description: `Updated Successfully`; values: undefined }
   | { id: "assess_msg_published_successfully"; description: `Published Successfully`; values: undefined }
   | { id: "assess_msg_delete_milestone"; description: `Are you sure you want to delete this milestone?`; values: undefined }
   | {
-  id: "assess_error_message_locked";
-  description: `This content is locked by editor at {email}. To use this content, ask the editor to get it approved.`;
-  values: { email: string | number };
-}
+      id: "assess_error_message_locked";
+      description: `This content is locked by editor at {email}. To use this content, ask the editor to get it approved.`;
+      values: { email: string | number };
+    }
   | { id: "assess_create_new_milestone"; description: `Create New Milestone`; values: undefined }
   | {
-  id: "assess_msg_unlocked_milestone";
-  description: `This content has been republished with a new version, please refresh.`;
-  values: undefined;
-}
+      id: "assess_msg_unlocked_milestone";
+      description: `This content has been republished with a new version, please refresh.`;
+      values: undefined;
+    }
   | { id: "assess_approved_successfully"; description: `Approved Successfully`; values: undefined }
   | { id: "schedule_tab_schedule"; description: `Schedule`; values: undefined }
   | { id: "schedue_button_schedule_class"; description: `Schedule Class`; values: undefined }
@@ -573,10 +573,10 @@ type LangRecord =
   | { id: "schedule_msg_two_year"; description: `You cannot schedule a class beyond two years.`; values: undefined }
   | { id: "schedule_button_ok"; description: `OK`; values: undefined }
   | {
-  id: "schedule_msg_overlap";
-  description: `You already have a class scheduled during this time. Confirm to schedule?`;
-  values: undefined;
-}
+      id: "schedule_msg_overlap";
+      description: `You already have a class scheduled during this time. Confirm to schedule?`;
+      values: undefined;
+    }
   | { id: "schedule_button_confirm"; description: `CONFIRM`; values: undefined }
   | { id: "schedule_msg_edit_recurring"; description: `Edit recurring event`; values: undefined }
   | { id: "schedule_msg_delete_recurring"; description: `Delete recurring event`; values: undefined }
@@ -587,19 +587,19 @@ type LangRecord =
   | { id: "schedule_msg_attachment"; description: `The attachment you uploaded does not meet the requirement.`; values: undefined }
   | { id: "schedule_msg_no_result"; description: `No results found.`; values: undefined }
   | {
-  id: "schedule_schedule_msg_edit_all";
-  description: `This is an event in a series. Are you sure you want to edit this and following events?`;
-  values: undefined;
-}
+      id: "schedule_schedule_msg_edit_all";
+      description: `This is an event in a series. Are you sure you want to edit this and following events?`;
+      values: undefined;
+    }
   | { id: "schedule_msg_delete_success"; description: `Deleted sucessfully`; values: undefined }
   | { id: "schedule_msg_upload_format"; description: `Please upload the file in the correct format`; values: undefined }
   | { id: "schedule_label_teacher_name"; description: `Teacher Name`; values: undefined }
   | { id: "schedule_msg_start_current"; description: `Start time cannot be earlier than current time`; values: undefined }
   | {
-  id: "schedule_msg_due_date_earlier";
-  description: `The due date cannot be earlier than the scheduled class end time.`;
-  values: undefined;
-}
+      id: "schedule_msg_due_date_earlier";
+      description: `The due date cannot be earlier than the scheduled class end time.`;
+      values: undefined;
+    }
   | { id: "schedule_msg_end_time_earlier"; description: `End time cannot be earlier than start time`; values: undefined }
   | { id: "schedule_button_edit"; description: `Edit`; values: undefined }
   | { id: "schedule_popup_fillin"; description: `Please fill out this field`; values: undefined }
@@ -618,23 +618,23 @@ type LangRecord =
   | { id: "schedule_msg_no_permission"; description: `You do not have permission to access this feature.`; values: undefined }
   | { id: "schedule_msg_no_student"; description: `There is no student in this class`; values: undefined }
   | {
-  id: "schedule_msg_delete_minutes";
-  description: `You can only delete a class at least 5 minutes before the start time.`;
-  values: undefined;
-}
+      id: "schedule_msg_delete_minutes";
+      description: `You can only delete a class at least 5 minutes before the start time.`;
+      values: undefined;
+    }
   | {
-  id: "schedule_msg_edit_minutes";
-  description: `You can only edit a class at least 5 minutes before the start time.`;
-  values: undefined;
-}
+      id: "schedule_msg_edit_minutes";
+      description: `You can only edit a class at least 5 minutes before the start time.`;
+      values: undefined;
+    }
   | { id: "schedule_msg_start_minutes"; description: `You can only start a class 5 minutes before the start time.`; values: undefined }
   | { id: "schedule_button_click_to schedule"; description: `Click to Schedule`; values: undefined }
   | { id: "schedule_msg_time_expired"; description: `Time Expired`; values: undefined }
   | {
-  id: "schedule_msg_recall_lesson_plan";
-  description: `Oops! The lesson plan included for this lesson has already been deleted!`;
-  values: undefined;
-}
+      id: "schedule_msg_recall_lesson_plan";
+      description: `Oops! The lesson plan included for this lesson has already been deleted!`;
+      values: undefined;
+    }
   | { id: "schedule_button_start_class"; description: `Start Class`; values: undefined }
   | { id: "schedule_button_go_study"; description: `Go Study`; values: undefined }
   | { id: "schedule_msg_earlier_today"; description: `Due date cannot be earlier than today.`; values: undefined }
@@ -649,30 +649,30 @@ type LangRecord =
   | { id: "schedule_time_conflict_checking"; description: `Participants`; values: undefined }
   | { id: "schedule_msg_roster_no_ok"; description: `Please confirm the field of ‘Class Roster’ by clicking OK`; values: undefined }
   | {
-  id: "schedule_msg_no_user";
-  description: `For ‘Add Class’ (Class Roster) and ‘Add Participants’, at least a student and a teacher will need to be added into either of the field.`;
-  values: undefined;
-}
+      id: "schedule_msg_no_user";
+      description: `For ‘Add Class’ (Class Roster) and ‘Add Participants’, at least a student and a teacher will need to be added into either of the field.`;
+      values: undefined;
+    }
   | {
-  id: "schedule_msg_roster_update";
-  description: `The class roster has just been updated, please refresh and try again`;
-  values: undefined;
-}
+      id: "schedule_msg_roster_update";
+      description: `The class roster has just been updated, please refresh and try again`;
+      values: undefined;
+    }
   | {
-  id: "schedule_msg_participants_update";
-  description: `The participants' list has just been updated, please refresh and try again`;
-  values: undefined;
-}
+      id: "schedule_msg_participants_update";
+      description: `The participants' list has just been updated, please refresh and try again`;
+      values: undefined;
+    }
   | {
-  id: "schedule_msg_roster_participants_edit";
-  description: `Please kindly be notified that the users included in this event had been updated.`;
-  values: undefined;
-}
+      id: "schedule_msg_roster_participants_edit";
+      description: `Please kindly be notified that the users included in this event had been updated.`;
+      values: undefined;
+    }
   | {
-  id: "schedule_msg_participants_no_ok";
-  description: `Please confirm the fileld of ‘Add Participants’ by clicking OK`;
-  values: undefined;
-}
+      id: "schedule_msg_participants_no_ok";
+      description: `Please confirm the fileld of ‘Add Participants’ by clicking OK`;
+      values: undefined;
+    }
   | { id: "schedule_msg_edit_due_date"; description: `You cannot edit this event after the due date.`; values: undefined }
   | { id: "schedule_msg_delete_due_date"; description: `You cannot delete this event after the due date.`; values: undefined }
   | { id: "schedule_checkbox_home_fun"; description: `Home Fun`; values: undefined }
@@ -682,22 +682,22 @@ type LangRecord =
   | { id: "schedule_upload_more"; description: `Upload More`; values: undefined }
   | { id: "schedule_button_submit"; description: `Submit`; values: undefined }
   | {
-  id: "schedule_msg_assignment_new";
-  description: `Students have already submitted assignments, a new event will be created.`;
-  values: undefined;
-}
+      id: "schedule_msg_assignment_new";
+      description: `Students have already submitted assignments, a new event will be created.`;
+      values: undefined;
+    }
   | {
-  id: "schedule_msg_hide";
-  description: `This event cannot be deleted because assignments have already been uploaded. Do you want to hide it instead?`;
-  values: undefined;
-}
+      id: "schedule_msg_hide";
+      description: `This event cannot be deleted because assignments have already been uploaded. Do you want to hide it instead?`;
+      values: undefined;
+    }
   | { id: "schedule_msg_visible"; description: `This event is visible again.`; values: undefined }
   | { id: "schedule_msg_submit"; description: `Your assignment will be submitted for assessment.`; values: undefined }
   | {
-  id: "schedule_msg_cannot_submit";
-  description: `You cannot submit again because your assignment has already been assessed.`;
-  values: undefined;
-}
+      id: "schedule_msg_cannot_submit";
+      description: `You cannot submit again because your assignment has already been assessed.`;
+      values: undefined;
+    }
   | { id: "schedule_detail_see_more"; description: `See More`; values: undefined }
   | { id: "schedule_msg_hidden"; description: `This event has been hidden`; values: undefined }
   | { id: "schedule_msg_three_attachment"; description: `You can upload no more than three attachments.`; values: undefined }
@@ -720,15 +720,15 @@ type LangRecord =
   | { id: "schedule_popup_class_name"; description: `Class Name`; values: undefined }
   | { id: "schedule_detail_lesson_material"; description: `Lesson Material`; values: undefined }
   | {
-  id: "schedule_msg_cannot_edit_study";
-  description: `This event cannot be edited because some students already made progress for Study activities.`;
-  values: undefined;
-}
+      id: "schedule_msg_cannot_edit_study";
+      description: `This event cannot be edited because some students already made progress for Study activities.`;
+      values: undefined;
+    }
   | {
-  id: "schedule_msg_cannot_delete_study";
-  description: `This event cannot be deleted because some students already made progress for Study activities.`;
-  values: undefined;
-}
+      id: "schedule_msg_cannot_delete_study";
+      description: `This event cannot be deleted because some students already made progress for Study activities.`;
+      values: undefined;
+    }
   | { id: "report_label_student_achievement"; description: `Learning Outcome Report`; values: undefined }
   | { id: "report_label_teacher"; description: `Teacher`; values: undefined }
   | { id: "report_label_class"; description: `Class`; values: undefined }
@@ -781,10 +781,10 @@ type LangRecord =
   | { id: "general_error_no_permission"; description: `You have no permission`; values: undefined }
   | { id: "h5p_label_commonFields"; description: `Text overrides and translations`; values: undefined }
   | {
-  id: "h5p_label_commonFieldsDescription";
-  description: `Here you can edit settings or translate texts used in this content.`;
-  values: undefined;
-}
+      id: "h5p_label_commonFieldsDescription";
+      description: `Here you can edit settings or translate texts used in this content.`;
+      values: undefined;
+    }
   | { id: "h5p_label_language"; description: `Language`; values: undefined }
   | { id: "h5p_label_ADD"; description: `Add`; values: undefined }
   | { id: "h5p_label_ITEM"; description: `Item`; values: undefined }
@@ -813,10 +813,10 @@ type LangRecord =
   | { id: "h5p_label_detail"; description: `Detail`; values: undefined }
   | { id: "h5p_label_change_content_type"; description: `Change Content Type?`; values: undefined }
   | {
-  id: "h5p_label_dialog_content";
-  description: `By doing this you will lose all work done with the current content type. Are you sure you wish to change content type?`;
-  values: undefined;
-}
+      id: "h5p_label_dialog_content";
+      description: `By doing this you will lose all work done with the current content type. Are you sure you wish to change content type?`;
+      values: undefined;
+    }
   | { id: "h5p_label_cancel"; description: `Cancel`; values: undefined }
   | { id: "h5p_label_confirm"; description: `Confirm`; values: undefined }
   | { id: "h5p_label_imageSummary"; description: `Here you can upload image types like jpg, jpeg, png, gif, bmp.`; values: undefined }
@@ -909,10 +909,10 @@ type LangRecord =
   | { id: "h5p_label_lib_summary_ImageSequencing"; description: `Place images in the correct order`; values: undefined }
   | { id: "h5p_label_lib_summary_Flashcards"; description: `Create stylish and modern flashcards`; values: undefined }
   | {
-  id: "h5p_label_lib_summary_SpeakTheWordsSet";
-  description: `Create a series of questions answered by speech (Chrome only)`;
-  values: undefined;
-}
+      id: "h5p_label_lib_summary_SpeakTheWordsSet";
+      description: `Create a series of questions answered by speech (Chrome only)`;
+      values: undefined;
+    }
   | { id: "h5p_label_lib_summary_ImageSlider"; description: `Easily create an Image Slider`; values: undefined }
   | { id: "h5p_label_lib_summary_Essay"; description: `Create Essay with instant feedback`; values: undefined }
   | { id: "h5p_label_lib_summary_ImagePair"; description: `Drag and drop image matching game`; values: undefined }
@@ -924,230 +924,230 @@ type LangRecord =
   | { id: "h5p_label_lib_summary_KewArCode"; description: `Create QR codes for different purposes`; values: undefined }
   | { id: "h5p_label_lib_summary_AdventCalendar"; description: `Create surprises that will be unveiled daily`; values: undefined }
   | {
-  id: "h5p_label_lib_description_Accordion";
-  description: `Reduce the amount of text presented to readers by using this responsive accordion. Readers decide which headlines to take a closer look at by expanding the title. Excellent for providing an overview with optional in-depth explanations.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Accordion";
+      description: `Reduce the amount of text presented to readers by using this responsive accordion. Readers decide which headlines to take a closer look at by expanding the title. Excellent for providing an overview with optional in-depth explanations.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ArithmeticQuiz";
-  description: `Create arithmetic quizzes consisting of multiple choice questions. As an author, all you have to do is decide the type and length of the quiz. Users keep track of score and time spent when solving the quiz.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ArithmeticQuiz";
+      description: `Create arithmetic quizzes consisting of multiple choice questions. As an author, all you have to do is decide the type and length of the quiz. Users keep track of score and time spent when solving the quiz.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Chart";
-  description: `Need to present simple statistical data graphically without creating the artwork manually? Chart is your answer.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Chart";
+      description: `Need to present simple statistical data graphically without creating the artwork manually? Chart is your answer.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Collage";
-  description: `The Collage tool allows you to organize images into a soothing composition.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Collage";
+      description: `The Collage tool allows you to organize images into a soothing composition.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Column";
-  description: `Organize your content type into a column layout with H5P Column. Content types that address similar material or share a common theme can now be grouped together to create a coherent learning experience. In addition, authors are free to be creative by combining almost all of the existing H5P content types.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Column";
+      description: `Organize your content type into a column layout with H5P Column. Content types that address similar material or share a common theme can now be grouped together to create a coherent learning experience. In addition, authors are free to be creative by combining almost all of the existing H5P content types.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_CoursePresentation";
-  description: `Course presentations consist of slides with multimedia, text, and many different types of interactions like interactive summaries, multiple choice questions and interactive videos. Learners can experience new interactive learning material and test their knowledge and memory in Course Presentations. As always with H5P, content is editable in web browsers, and the Course Presentation activity type includes a WYSIWYG drag and drop based authoring tool. A typical use of the Course Presentation activity is to use a few slides to introduce a subject and follow these with a few more slides in which the user’s knowledge is tested. Course Presentations may however be used in many different ways, including as a presentation tool for use in the classroom, or as a game where the usual navigation is replaced with navigation buttons on top of the slides to let the user make choices and see the consequences of their choices.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_CoursePresentation";
+      description: `Course presentations consist of slides with multimedia, text, and many different types of interactions like interactive summaries, multiple choice questions and interactive videos. Learners can experience new interactive learning material and test their knowledge and memory in Course Presentations. As always with H5P, content is editable in web browsers, and the Course Presentation activity type includes a WYSIWYG drag and drop based authoring tool. A typical use of the Course Presentation activity is to use a few slides to introduce a subject and follow these with a few more slides in which the user’s knowledge is tested. Course Presentations may however be used in many different ways, including as a presentation tool for use in the classroom, or as a game where the usual navigation is replaced with navigation buttons on top of the slides to let the user make choices and see the consequences of their choices.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Dialogcards";
-  description: `Dialog cards can be used as a drill to help learners memorize words, expressions or sentences. On the front of the card, there's a hint for a word or expression. By turning the card the learner reveals a corresponding word or expression. Dialog cards can be used in language learning, to present math problems or help learners remember facts such as historical events, formulas or names.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Dialogcards";
+      description: `Dialog cards can be used as a drill to help learners memorize words, expressions or sentences. On the front of the card, there's a hint for a word or expression. By turning the card the learner reveals a corresponding word or expression. Dialog cards can be used in language learning, to present math problems or help learners remember facts such as historical events, formulas or names.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_DocumentationTool";
-  description: `The documentation tool aims to make it easy to create assessment wizards for goal driven activities. It can also be used as a form wizard. While editing, the author can add multiple steps to the wizard. In each step, the author can define which content goes into that step. Content can be plain text, input fields, goal definition and goal assessment. Once published, the end user will be taken through the steps of the wizard. On the last step of the wizard, the user can generate a document with all the input that has been submitted. This document can be downloaded. The Documentation tool is fully responsive and works great on smaller screens as well as on your desktop.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_DocumentationTool";
+      description: `The documentation tool aims to make it easy to create assessment wizards for goal driven activities. It can also be used as a form wizard. While editing, the author can add multiple steps to the wizard. In each step, the author can define which content goes into that step. Content can be plain text, input fields, goal definition and goal assessment. Once published, the end user will be taken through the steps of the wizard. On the last step of the wizard, the user can generate a document with all the input that has been submitted. This document can be downloaded. The Documentation tool is fully responsive and works great on smaller screens as well as on your desktop.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_DragQuestion";
-  description: `Drag and drop question enables the learner to associate two or more elements and to make logical connections in a visual way. Create Drag and drop questions using both text and images as draggable alternatives. H5P Drag and drop questions support one-to-one, one-to-many, many-to-one and many-to-many relations between questions and answers.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_DragQuestion";
+      description: `Drag and drop question enables the learner to associate two or more elements and to make logical connections in a visual way. Create Drag and drop questions using both text and images as draggable alternatives. H5P Drag and drop questions support one-to-one, one-to-many, many-to-one and many-to-many relations between questions and answers.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_DragText";
-  description: `Drag the Words allows content designers to create textual expressions with missing pieces of text. The end user drags a missing piece of text to its correct place, to form a complete expression. May be used to check if the user remembers a text she has read, or if she understands something. Helps the user think through a text. It's super easy to create a drag the words task. The editor just writes the text and encloses the words that are to be draggable with asterisk signs like *draggableWord*.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_DragText";
+      description: `Drag the Words allows content designers to create textual expressions with missing pieces of text. The end user drags a missing piece of text to its correct place, to form a complete expression. May be used to check if the user remembers a text she has read, or if she understands something. Helps the user think through a text. It's super easy to create a drag the words task. The editor just writes the text and encloses the words that are to be draggable with asterisk signs like *draggableWord*.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Blanks";
-  description: `Learners fill in the missing words in a text. The learner is shown a solution after filling in all the missing words, or after each word depending on settings. Authors enter text and mark words to be replaced with an asterix. In addition to native and second language learning, Fill in the blanks can be used to test the learner's ability to reproduce facts or produce mathematical inferences.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Blanks";
+      description: `Learners fill in the missing words in a text. The learner is shown a solution after filling in all the missing words, or after each word depending on settings. Authors enter text and mark words to be replaced with an asterix. In addition to native and second language learning, Fill in the blanks can be used to test the learner's ability to reproduce facts or produce mathematical inferences.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ImageHotspotQuestion";
-  description: `This content type allows end users to press somewhere on an image and get feedback on whether that was correct or incorrect according to the task description. The author uploads an image and defines various hotspots corresponding to details or sections of the image. Hotspots can either be defined as correct or incorrect, and the author provides appropriate feedback text in both cases. The author can also define a feedback if the end user presses somewhere which is neither defined as a correct nor incorrect hotspot.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ImageHotspotQuestion";
+      description: `This content type allows end users to press somewhere on an image and get feedback on whether that was correct or incorrect according to the task description. The author uploads an image and defines various hotspots corresponding to details or sections of the image. Hotspots can either be defined as correct or incorrect, and the author provides appropriate feedback text in both cases. The author can also define a feedback if the end user presses somewhere which is neither defined as a correct nor incorrect hotspot.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_GuessTheAnswer";
-  description: `This content type allows authors to upload an image and add a suitable description. End users can guess the answer and press the bar below the image to reveal the correct answer.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_GuessTheAnswer";
+      description: `This content type allows authors to upload an image and add a suitable description. End users can guess the answer and press the bar below the image to reveal the correct answer.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_IFrameEmbed";
-  description: `The Iframe embedder makes it easy to make an H5P of already existing JavaScript applications.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_IFrameEmbed";
+      description: `The Iframe embedder makes it easy to make an H5P of already existing JavaScript applications.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_InteractiveVideo";
-  description: `Add interactivity to your video with explanations, extra pictures, tables, Fill in the Blank and multiple choice questions. Quiz questions support adaptivity, meaning that you can jump to another part of the video based on the user's input. Interactive summaries can be added at the end of the video. Interactive videos are created and edited using the H5P authoring tool in a standard web browser.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_InteractiveVideo";
+      description: `Add interactivity to your video with explanations, extra pictures, tables, Fill in the Blank and multiple choice questions. Quiz questions support adaptivity, meaning that you can jump to another part of the video based on the user's input. Interactive summaries can be added at the end of the video. Interactive videos are created and edited using the H5P authoring tool in a standard web browser.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_MarkTheWords";
-  description: `Mark the words allows content designers to create textual expressions with a defined set of correct words. The end user highlights words according to the task description and is given a score. For the editor it is super easy to create a click the words challenge. The editor types in the text and encloses the words that the user is supposed to click, the right answers, in asterix like *correctWord*.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_MarkTheWords";
+      description: `Mark the words allows content designers to create textual expressions with a defined set of correct words. The end user highlights words according to the task description and is given a score. For the editor it is super easy to create a click the words challenge. The editor types in the text and encloses the words that the user is supposed to click, the right answers, in asterix like *correctWord*.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_MemoryGame";
-  description: `Create your own memory games and test the memory of your site's users with this simple yet beautiful HTML5 game.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_MemoryGame";
+      description: `Create your own memory games and test the memory of your site's users with this simple yet beautiful HTML5 game.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_MultiChoice";
-  description: `Multiple Choice questions can be an effective assesment tool. The learner is given immediate performance feedback. The H5P Multiple Choice questions can have a single or multiple correct options per question.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_MultiChoice";
+      description: `Multiple Choice questions can be an effective assesment tool. The learner is given immediate performance feedback. The H5P Multiple Choice questions can have a single or multiple correct options per question.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_PersonalityQuiz";
-  description: `In this content type, the author defines a series of questions with alternatives, where each alternative is matched against one or more personalities. At the end of the quiz, the end user will see which personality matches the best. There are several ways of making this quiz visually appealing, by eg. representing questions, alternatives, and personalities using images.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_PersonalityQuiz";
+      description: `In this content type, the author defines a series of questions with alternatives, where each alternative is matched against one or more personalities. At the end of the quiz, the end user will see which personality matches the best. There are several ways of making this quiz visually appealing, by eg. representing questions, alternatives, and personalities using images.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Questionnaire";
-  description: `Gain feedback and ask open ended questions in Interactive Videos and other content types with Questionnaire. Questionnaire makes the user's answers available via an xAPI integration. This means that website owners may store the answers in many different ways. Answers may be stored in an LRS, the sites own custom storage or a script can fetch the e-mail address and use it to send the user an e-mail. On H5P.org answers are stored in Google Analytics.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Questionnaire";
+      description: `Gain feedback and ask open ended questions in Interactive Videos and other content types with Questionnaire. Questionnaire makes the user's answers available via an xAPI integration. This means that website owners may store the answers in many different ways. Answers may be stored in an LRS, the sites own custom storage or a script can fetch the e-mail address and use it to send the user an e-mail. On H5P.org answers are stored in Google Analytics.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_QuestionSet";
-  description: `Question Set is your typical quiz content type. It allows the learner to solve a sequence of various question types such as Multichoice, Drag and drop and Fill in the blanks in a Question set. As an author, there are many settings you can use to make it behave just the way you want it to. You may, for instance, customize the Question set with background images and define a pass percentage for the learner. The Question Set also allows you to add videos that are played at the end. One video for success, another if the learner fails the test. This might motivate learners to try again if they fail so that they get to see the success video.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_QuestionSet";
+      description: `Question Set is your typical quiz content type. It allows the learner to solve a sequence of various question types such as Multichoice, Drag and drop and Fill in the blanks in a Question set. As an author, there are many settings you can use to make it behave just the way you want it to. You may, for instance, customize the Question set with background images and define a pass percentage for the learner. The Question Set also allows you to add videos that are played at the end. One video for success, another if the learner fails the test. This might motivate learners to try again if they fail so that they get to see the success video.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_SingleChoiceSet";
-  description: `Single choice set allows content designers to create question sets with one correct answer per question. The end user gets immediate feedback after submitting each answer.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_SingleChoiceSet";
+      description: `Single choice set allows content designers to create question sets with one correct answer per question. The end user gets immediate feedback after submitting each answer.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Summary";
-  description: `Summaries help the learner remember key information in a text, video or presentation, by actively buliding a summary about the topic at hand. When the learner has completed a summary, a complete list of key statements about the topic is shown.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Summary";
+      description: `Summaries help the learner remember key information in a text, video or presentation, by actively buliding a summary about the topic at hand. When the learner has completed a summary, a complete list of key statements about the topic is shown.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Timeline";
-  description: `This is Timeline.js developed by Knight Lab, packaged as an H5P content type in order to make timelines easily editable, shareable and reuseable. The Timeline content type allows you to place a sequence of events in a chronological order. For each event you may add images and texts. You may also include assets from Twitter, YouTube, Flickr, Vimeo, Google Maps and SoundCloud.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Timeline";
+      description: `This is Timeline.js developed by Knight Lab, packaged as an H5P content type in order to make timelines easily editable, shareable and reuseable. The Timeline content type allows you to place a sequence of events in a chronological order. For each event you may add images and texts. You may also include assets from Twitter, YouTube, Flickr, Vimeo, Google Maps and SoundCloud.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_TrueFalse";
-  description: `True/False Question is a simple and straightforward content type that can work by itself or be inserted into other content types such as Course Presentation. A more complex question can be created by adding an image or a video.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_TrueFalse";
+      description: `True/False Question is a simple and straightforward content type that can work by itself or be inserted into other content types such as Course Presentation. A more complex question can be created by adding an image or a video.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ImageHotspots";
-  description: `Image hotspots makes it possible to create an image with interactive hotspots. When the user presses a hotspot, a popup containing a header and text or video is displayed. Using the H5P editor, you may add as many hotspots as you like.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ImageHotspots";
+      description: `Image hotspots makes it possible to create an image with interactive hotspots. When the user presses a hotspot, a popup containing a header and text or video is displayed. Using the H5P editor, you may add as many hotspots as you like.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ImageMultipleHotspotQuestion";
-  description: `A free HTML5 based question type allowing creatives to create an image based test where the learner is to find the correct spots on an image. Use this content type with the H5P plugin for WordPress, Moodle or Drupal to challenge your users.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ImageMultipleHotspotQuestion";
+      description: `A free HTML5 based question type allowing creatives to create an image based test where the learner is to find the correct spots on an image. Use this content type with the H5P plugin for WordPress, Moodle or Drupal to challenge your users.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ImageJuxtaposition";
-  description: `A free HTML5-based image content type that allows users to compare two images interactively. Tell your image stories with H5P and Image Juxtaposition on WordPress, Moodle or Drupal.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ImageJuxtaposition";
+      description: `A free HTML5-based image content type that allows users to compare two images interactively. Tell your image stories with H5P and Image Juxtaposition on WordPress, Moodle or Drupal.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Audio";
-  description: `Upload an audio recording in .mp3, .wav, .ogg or provide the link for an audio recording.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Audio";
+      description: `Upload an audio recording in .mp3, .wav, .ogg or provide the link for an audio recording.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_AudioRecorder";
-  description: `An HTML5 audio recorder. Record your voice and play back or download a .wav file of your recording. Use the H5P plugin to create the H5P Audio Recorder to your Drupal, Wordpress or Moodle site.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_AudioRecorder";
+      description: `An HTML5 audio recorder. Record your voice and play back or download a .wav file of your recording. Use the H5P plugin to create the H5P Audio Recorder to your Drupal, Wordpress or Moodle site.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_SpeakTheWords";
-  description: `Speak the Words is only supported in browsers that implements the Web Speech API (Chrome browsers, except on iOS). You need a microphone to answer the question. Ask a question to users and make them answer using their voice. You can choose multiple correct answers. The user will be able to see what his words were interpreted as, and how close it was to the correct answers.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_SpeakTheWords";
+      description: `Speak the Words is only supported in browsers that implements the Web Speech API (Chrome browsers, except on iOS). You need a microphone to answer the question. Ask a question to users and make them answer using their voice. You can choose multiple correct answers. The user will be able to see what his words were interpreted as, and how close it was to the correct answers.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Agamotto";
-  description: `Present a sequence of images that people are supposed to look at one after the other, e.g. photos of an item that changes over time, schematics or maps that are organized in different layers or images that reveal more and more details.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Agamotto";
+      description: `Present a sequence of images that people are supposed to look at one after the other, e.g. photos of an item that changes over time, schematics or maps that are organized in different layers or images that reveal more and more details.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ImageSequencing";
-  description: `A free HTML5 based image sequencing content type that allows authors to add a sequence of their own images (and optional image description) to the game in a particular order. The order of the images will be randomized and players will have to reorder them based on the task description.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ImageSequencing";
+      description: `A free HTML5 based image sequencing content type that allows authors to add a sequence of their own images (and optional image description) to the game in a particular order. The order of the images will be randomized and players will have to reorder them based on the task description.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Flashcards";
-  description: `This content type allows authors to create a single flash card or a set of flashcards, where each card has images paired with questions and answers. Learners are required to fill in the text field and then check the correctness of their solution.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Flashcards";
+      description: `This content type allows authors to create a single flash card or a set of flashcards, where each card has images paired with questions and answers. Learners are required to fill in the text field and then check the correctness of their solution.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_SpeakTheWordsSet";
-  description: `Speak the Words Set is only supported in browsers that implement the Web Speech API (Chrome browsers, except on ios). You need a microphone to answer the question. Create a set of questions that learners can answer using their voice. you can choose multiple correct answers. The user will be able to see what his words were interpreted as, and how close it was to the correct answers.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_SpeakTheWordsSet";
+      description: `Speak the Words Set is only supported in browsers that implement the Web Speech API (Chrome browsers, except on ios). You need a microphone to answer the question. Create a set of questions that learners can answer using their voice. you can choose multiple correct answers. The user will be able to see what his words were interpreted as, and how close it was to the correct answers.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ImageSlider";
-  description: `Present your images in an appealing way with ease. Authors just have to upload images and provide alternative texts for the images. The next two images are always preloaded so switching between images will usually be snappy with no delay for loading the next image. Images may be experienced as part of the page or in full-screen mode. When used as part of the page the system will pick a fixed aspect ratio depending on the images being used. Authors may decide to handle aspect ratios differently.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ImageSlider";
+      description: `Present your images in an appealing way with ease. Authors just have to upload images and provide alternative texts for the images. The next two images are always preloaded so switching between images will usually be snappy with no delay for loading the next image. Images may be experienced as part of the page or in full-screen mode. When used as part of the page the system will pick a fixed aspect ratio depending on the images being used. Authors may decide to handle aspect ratios differently.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Essay";
-  description: `In this content type, the author defines a set of keywords that represent crucial aspects of a topic. These keywords are matched against a text that students have composed and can be used to immediately provide feedback - either suggesting to revise certain topic details if a keyword is missing or, confirming the student's ideas if the text contains a keyword.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Essay";
+      description: `In this content type, the author defines a set of keywords that represent crucial aspects of a topic. These keywords are matched against a text that students have composed and can be used to immediately provide feedback - either suggesting to revise certain topic details if a keyword is missing or, confirming the student's ideas if the text contains a keyword.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ImagePair";
-  description: `Image pairing is a simple and effective activity that require learners to match pairs of images. Since it is not required for both images in a pair to be the same, authors are also able to test the understanding of a relation between two different images.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ImagePair";
+      description: `Image pairing is a simple and effective activity that require learners to match pairs of images. Since it is not required for both images in a pair to be the same, authors are also able to test the understanding of a relation between two different images.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_Dictation";
-  description: `You can add audio samples containing a sentence for dictation and enter the correct transcription. Your students can listen to the samples and enter what they have heard in to a text field. Their answers will be evaluated automatically. Several options will allow you to control the exercise's difficulty. You can optionally add a second audio sample for a sentence that could hold a version spoken slowly. You can also set a limit for how often a sample can be played, define if punctuation should be relevant for scoring, and decide whether small mistakes like typing errors should be counted as no mistake, a full mistake, or just a half mistake.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_Dictation";
+      description: `You can add audio samples containing a sentence for dictation and enter the correct transcription. Your students can listen to the samples and enter what they have heard in to a text field. Their answers will be evaluated automatically. Several options will allow you to control the exercise's difficulty. You can optionally add a second audio sample for a sentence that could hold a version spoken slowly. You can also set a limit for how often a sample can be played, define if punctuation should be relevant for scoring, and decide whether small mistakes like typing errors should be counted as no mistake, a full mistake, or just a half mistake.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_BranchingScenario";
-  description: `Branching Scenario allow authors to present the learners with a variety of rich interactive content and choices. The choices the learners make will determine the next content they see. May be used to create dilemmas, serious games, and self-paced learning.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_BranchingScenario";
+      description: `Branching Scenario allow authors to present the learners with a variety of rich interactive content and choices. The choices the learners make will determine the next content they see. May be used to create dilemmas, serious games, and self-paced learning.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_ThreeImage";
-  description: `360 (equirectangular) and normal images may be enriched with interactivities like explanations, videos, sounds, and interactive questions. The images create scenes that also may be linked together to give the user an impression of moving between environments or between different viewpoints within the same environment.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_ThreeImage";
+      description: `360 (equirectangular) and normal images may be enriched with interactivities like explanations, videos, sounds, and interactive questions. The images create scenes that also may be linked together to give the user an impression of moving between environments or between different viewpoints within the same environment.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_FindTheWords";
-  description: `A free HTML5-based word search activity that allows authors to create a list of words that will be drawn in a grid. The learner's task is to find and select the words in the grid.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_FindTheWords";
+      description: `A free HTML5-based word search activity that allows authors to create a list of words that will be drawn in a grid. The learner's task is to find and select the words in the grid.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_InteractiveBook";
-  description: `Create small courses, books, or tests. Interactive Book allows authors to combine large amounts of interactive content like interactive videos, questions, course presentations, and more on multiple pages. There is a summary at the end summing up the scores obtained by the learner throughout the book.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_InteractiveBook";
+      description: `Create small courses, books, or tests. Interactive Book allows authors to combine large amounts of interactive content like interactive videos, questions, course presentations, and more on multiple pages. There is a summary at the end summing up the scores obtained by the learner throughout the book.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_KewArCode";
-  description: `KewAr Code enables content designers to create well-known QR codes. Those QR codes can encode URLs, but also contact information, events, geo-locations, etc. People can scan them with a QR code reader in order to trigger the chosen action.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_KewArCode";
+      description: `KewAr Code enables content designers to create well-known QR codes. Those QR codes can encode URLs, but also contact information, events, geo-locations, etc. People can scan them with a QR code reader in order to trigger the chosen action.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_lib_description_AdventCalendar";
-  description: `Build and customize a beautiful advent calendar. You may add a background image to the entire calendar, on each door, and as a background on the content inside each door. You may also add snow- effect and music. Inside each door, you may add a sound, video, text, image, or link. Do note that it is easy for computer-savvy users to reveal the content of all doors right away. If you plan to reveal big secrets on future days you should wait until that day before adding your big secrets to the calendar.`;
-  values: undefined;
-}
+      id: "h5p_label_lib_description_AdventCalendar";
+      description: `Build and customize a beautiful advent calendar. You may add a background image to the entire calendar, on each door, and as a background on the content inside each door. You may also add snow- effect and music. Inside each door, you may add a sound, video, text, image, or link. Do note that it is easy for computer-savvy users to reveal the content of all doors right away. If you plan to reveal big secrets on future days you should wait until that day before adding your big secrets to the calendar.`;
+      values: undefined;
+    }
   | { id: "h5p_label_license_useCommercially"; description: `Use Commercially`; values: undefined }
   | { id: "h5p_label_license_modifiable"; description: `Modifiable`; values: undefined }
   | { id: "h5p_label_license_distributable"; description: `Distributable`; values: undefined }
@@ -1177,33 +1177,33 @@ type LangRecord =
   | { id: "H5p_label_image_background"; description: `Image background`; values: undefined }
   | { id: "h5p_label_fill_background"; description: `Color fill background`; values: undefined }
   | {
-  id: "h5p_label_templete_title";
-  description: `Will be applied to this slide only, and will override any 'Template' settings.`;
-  values: undefined;
-}
+      id: "h5p_label_templete_title";
+      description: `Will be applied to this slide only, and will override any 'Template' settings.`;
+      values: undefined;
+    }
   | {
-  id: "h5p_label_thisSlide_title";
-  description: `Will be applied to all slides not overridden by any 'This slide' settings.`;
-  values: undefined;
-}
+      id: "h5p_label_thisSlide_title";
+      description: `Will be applied to all slides not overridden by any 'This slide' settings.`;
+      values: undefined;
+    }
   | { id: "h5p_label_coursepresentation_noTitle"; description: `no title`; values: undefined }
   | { id: "h5p_label_link"; description: `Link`; values: undefined }
   | {
-  id: "library_error_cannot_delete_lesson_plan";
-  description: `This lesson plan cannot be deleted because it has already been used in Schedule.`;
-  values: undefined;
-}
+      id: "library_error_cannot_delete_lesson_plan";
+      description: `This lesson plan cannot be deleted because it has already been used in Schedule.`;
+      values: undefined;
+    }
   | { id: "library_label_visibility_schools"; description: `Schools`; values: undefined }
   | { id: "report_msg_no_data"; description: `There was no data to display in this week.`; values: undefined }
   | { id: "report_navigation_class_view"; description: `Class View`; values: undefined }
   | {
-  id: "report_msg_individual_infor";
-  description: `This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.`;
-  values: undefined;
-}
+      id: "report_msg_individual_infor";
+      description: `This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.`;
+      values: undefined;
+    }
   | {
-  id: "report_msg_overall_infor";
-  description: `The Learning Outcome Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.
+      id: "report_msg_overall_infor";
+      description: `The Learning Outcome Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.
 <ul>
   <li>The report shows results from Live, Class, and Study assessments.
 </li>
@@ -1211,8 +1211,8 @@ type LangRecord =
 </li>
   <li>Student absences seen in the Study mean that the learner didn’t try at all.</li>
 </ul>`;
-  values: undefined;
-}
+      values: undefined;
+    }
   | { id: "report_msg_no_achieve"; description: `No achievement data available for this lesson.`; values: undefined }
   | { id: "report_msg_no_plan"; description: `There are no lesson plans for this teacher. Would you like to add one?`; values: undefined }
   | { id: "report_button_create_plan"; description: `Create a Lesson Plan`; values: undefined }
@@ -1227,10 +1227,10 @@ type LangRecord =
   | { id: "schedule_set_learning_outcome"; description: `Set Learning Outcome`; values: undefined }
   | { id: "report_learning_summary_report"; description: `Learner Weekly Report`; values: undefined }
   | {
-  id: "report_msg_lsr";
-  description: `This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly.`;
-  values: undefined;
-}
+      id: "report_msg_lsr";
+      description: `This report shows an overall summary of student learning activities for the past week. Report data is refreshed weekly.`;
+      values: undefined;
+    }
   | { id: "report_filter_year"; description: `Year`; values: undefined }
   | { id: "report_filter_week"; description: `Week`; values: undefined }
   | { id: "report_filter_subject"; description: `Subject`; values: undefined }
@@ -1251,20 +1251,20 @@ type LangRecord =
   | { id: "assessment_assignment_assessment"; description: `Assignment Assessment`; values: undefined }
   | { id: "assessment_learning_outcomes_assessment"; description: `Learning Outcomes Assessment`; values: undefined }
   | {
-  id: "assessment_learning_outcomes_achievement";
-  description: `Learning Outcomes Achievement of {StudentName}`;
-  values: { StudentName: string | number };
-}
+      id: "assessment_learning_outcomes_achievement";
+      description: `Learning Outcomes Achievement of {StudentName}`;
+      values: { StudentName: string | number };
+    }
   | { id: "schedule_lo_number_added"; description: `Added`; values: undefined }
   | { id: "schedule_filter_select_all_classes"; description: `Select All Classes`; values: undefined }
   | { id: "report_filter_student"; description: `Student`; values: undefined }
   | { id: "report_tab_assessments_completed"; description: `Assessments Completed`; values: undefined }
   | { id: "report_no_class"; description: `Please select a class from the list on the left to view the results.`; values: undefined }
   | {
-  id: "report_no_assessment";
-  description: `Please select an assessment from the list on the left to view the results.`;
-  values: undefined;
-}
+      id: "report_no_assessment";
+      description: `Please select an assessment from the list on the left to view the results.`;
+      values: undefined;
+    }
   | { id: "assessment_not_applicable"; description: `Not Applicable`; values: undefined }
   | { id: "assessment_activity_attempted"; description: `Attempted`; values: undefined }
   | { id: "assessment_partially_achieved"; description: `Partially Achieved`; values: undefined }
@@ -1302,16 +1302,16 @@ type LangRecord =
   | { id: "report_student_usage_audio_listened"; description: `Audio listened`; values: undefined }
   | { id: "report_student_usage_this_months_class_attendance_rate"; description: `This month‘s class attendance rate`; values: undefined }
   | {
-  id: "library_msg_pdf_validation";
-  description: `The PDF file you uploaded cannot be displayed properly in live classes. Please upload a different file.`;
-  values: undefined;
-}
+      id: "library_msg_pdf_validation";
+      description: `The PDF file you uploaded cannot be displayed properly in live classes. Please upload a different file.`;
+      values: undefined;
+    }
   | { id: "report_content_total_viewed"; description: `Content total viewed (latest 3 months)`; values: undefined }
   | {
-  id: "report_numbers_of_scheduled_classes_in_the_past_3_months";
-  description: `Numbers of scheduled classes in the past 3 months`;
-  values: undefined;
-}
+      id: "report_numbers_of_scheduled_classes_in_the_past_3_months";
+      description: `Numbers of scheduled classes in the past 3 months`;
+      values: undefined;
+    }
   | { id: "library_label_category_subcategory"; description: `Category — Subcategory`; values: undefined }
   | { id: "report_label_none"; description: `None`; values: undefined }
   | { id: "report_student_usage_study_title"; description: `Study Scheduled (latest 3 months)`; values: undefined }
@@ -1349,237 +1349,237 @@ type LangRecord =
   | { id: "report_label_assessments_pending"; description: `Assessments Pending`; values: undefined }
   | { id: "report_label_avg_days_pending"; description: `Avg Days Pending`; values: undefined }
   | {
-  id: "report_msg_learning_outcomes_covered";
-  description: `Observable competency that can be demonstrated by the student by the end of the lesson.`;
-  values: undefined;
-}
+      id: "report_msg_learning_outcomes_covered";
+      description: `Observable competency that can be demonstrated by the student by the end of the lesson.`;
+      values: undefined;
+    }
   | { id: "report_label_teaching_hours"; description: `Teaching Hours in Next 7 Days`; values: undefined }
   | {
-  id: "report_msg_students_number";
-  description: `Number of students currently assigned to the teacher. Values are based on filter selection.`;
-  values: undefined;
-}
+      id: "report_msg_students_number";
+      description: `Number of students currently assigned to the teacher. Values are based on filter selection.`;
+      values: undefined;
+    }
   | {
-  id: "report_msg_classes_number";
-  description: `Number of classes currently assigned to the teacher. Values are based on filter selection.`;
-  values: undefined;
-}
+      id: "report_msg_classes_number";
+      description: `Number of classes currently assigned to the teacher. Values are based on filter selection.`;
+      values: undefined;
+    }
   | {
-  id: "report_msg_assignments_scheduled";
-  description: `Number of assignments the teacher has newly planned and assigned during the time range. Values are based on filter selection.`;
-  values: undefined;
-}
+      id: "report_msg_assignments_scheduled";
+      description: `Number of assignments the teacher has newly planned and assigned during the time range. Values are based on filter selection.`;
+      values: undefined;
+    }
   | {
-  id: "report_msg_assessments_completed";
-  description: `Number of assessments completed by the teacher for each student submission. Values are based on filter selection.`;
-  values: undefined;
-}
+      id: "report_msg_assessments_completed";
+      description: `Number of assessments completed by the teacher for each student submission. Values are based on filter selection.`;
+      values: undefined;
+    }
   | {
-  id: "report_msg_feedback";
-  description: `% of individual student assessments that are completed of which the teacher has provided feedback for. Values are based on filter selection.`;
-  values: undefined;
-}
+      id: "report_msg_feedback";
+      description: `% of individual student assessments that are completed of which the teacher has provided feedback for. Values are based on filter selection.`;
+      values: undefined;
+    }
   | {
-  id: "report_msg_assessments_pending";
-  description: `Number of assessments pending for the teacher to complete for every student submission. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.`;
-  values: undefined;
-}
+      id: "report_msg_assessments_pending";
+      description: `Number of assessments pending for the teacher to complete for every student submission. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.`;
+      values: undefined;
+    }
   | {
-  id: "report_msg_avg_days_pending";
-  description: `Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.`;
-  values: undefined;
-}
+      id: "report_msg_avg_days_pending";
+      description: `Average number of days the assessments have been in pending status. Pending status means the due date has passed but assessment has not been completed yet. Values are based on filter selection.`;
+      values: undefined;
+    }
   | { id: "schedule_search_school_name"; description: `Search School Name`; values: undefined }
   | {
-  id: "report_msg_lo_default";
-  description: `{Name} is continuing to learn on KidsLoop. This week, {Name} achieved {AchievedLoCount} learning outcomes out of {LearntLoCount}.`;
-  values: { Name: string | number; AchievedLoCount: string | number; LearntLoCount: string | number };
-}
+      id: "report_msg_lo_default";
+      description: `{Name} is continuing to learn on KidsLoop. This week, {Name} achieved {AchievedLoCount} learning outcomes out of {LearntLoCount}.`;
+      values: { Name: string | number; AchievedLoCount: string | number; LearntLoCount: string | number };
+    }
   | {
-  id: "report_msg_lo_new";
-  description: `{Name} started learning on KidsLoop this week. So far, {Name} achieved {AchievedLoCount} learning outcomes out of {LearntLoCount}.`;
-  values: { Name: string | number; AchievedLoCount: string | number; LearntLoCount: string | number };
-}
+      id: "report_msg_lo_new";
+      description: `{Name} started learning on KidsLoop this week. So far, {Name} achieved {AchievedLoCount} learning outcomes out of {LearntLoCount}.`;
+      values: { Name: string | number; AchievedLoCount: string | number; LearntLoCount: string | number };
+    }
   | {
-  id: "report_msg_lo_increase_previous_w";
-  description: `{Name} has achieved {LOCompareLastWeek}% more learning outcomes compared to the previous week.`;
-  values: { Name: string | number; LOCompareLastWeek: string | number };
-}
+      id: "report_msg_lo_increase_previous_w";
+      description: `{Name} has achieved {LOCompareLastWeek}% more learning outcomes compared to the previous week.`;
+      values: { Name: string | number; LOCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_lo_decrease_previous_w";
-  description: `{Name} has achieved {LOCompareLastWeek}% less learning outcomes compared to the previous week.`;
-  values: { Name: string | number; LOCompareLastWeek: string | number };
-}
+      id: "report_msg_lo_decrease_previous_w";
+      description: `{Name} has achieved {LOCompareLastWeek}% less learning outcomes compared to the previous week.`;
+      values: { Name: string | number; LOCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_lo_increase_previous_large_w";
-  description: `{Name} has achieved {LOCompareLastWeek}% more learning outcomes compared to the previous week. Give {Name} a big high-five for a job well done!`;
-  values: { Name: string | number; LOCompareLastWeek: string | number };
-}
+      id: "report_msg_lo_increase_previous_large_w";
+      description: `{Name} has achieved {LOCompareLastWeek}% more learning outcomes compared to the previous week. Give {Name} a big high-five for a job well done!`;
+      values: { Name: string | number; LOCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_lo_decrease_previous_large_w";
-  description: `{Name} has achieved {LOCompareLastWeek}% less learning outcomes compared to the previous week. It might be time to check in with {Name}.`;
-  values: { Name: string | number; LOCompareLastWeek: string | number };
-}
+      id: "report_msg_lo_decrease_previous_large_w";
+      description: `{Name} has achieved {LOCompareLastWeek}% less learning outcomes compared to the previous week. It might be time to check in with {Name}.`;
+      values: { Name: string | number; LOCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_lo_increase_3w";
-  description: `{Name} achieved more learning outcomes in the last 3 consecutive weeks. In total, {Name} achieved {LOCompareLast3Week}% more learning outcomes as compared to 3 weeks ago.`;
-  values: { Name: string | number; LOCompareLast3Week: string | number };
-}
+      id: "report_msg_lo_increase_3w";
+      description: `{Name} achieved more learning outcomes in the last 3 consecutive weeks. In total, {Name} achieved {LOCompareLast3Week}% more learning outcomes as compared to 3 weeks ago.`;
+      values: { Name: string | number; LOCompareLast3Week: string | number };
+    }
   | {
-  id: "report_msg_lo_decrease_3w";
-  description: `{Name} achieved fewer learning outcomes in the last 3 consecutive weeks. In total, {Name} achieved {LOCompareLast3Week}% less learning outcomes as compared to 3 weeks ago.`;
-  values: { Name: string | number; LOCompareLast3Week: string | number };
-}
+      id: "report_msg_lo_decrease_3w";
+      description: `{Name} achieved fewer learning outcomes in the last 3 consecutive weeks. In total, {Name} achieved {LOCompareLast3Week}% less learning outcomes as compared to 3 weeks ago.`;
+      values: { Name: string | number; LOCompareLast3Week: string | number };
+    }
   | {
-  id: "report_msg_lo_high_class_w";
-  description: `This week, {Name} has achieved {LOCompareClass}% more learning outcomes than the class average.`;
-  values: { Name: string | number; LOCompareClass: string | number };
-}
+      id: "report_msg_lo_high_class_w";
+      description: `This week, {Name} has achieved {LOCompareClass}% more learning outcomes than the class average.`;
+      values: { Name: string | number; LOCompareClass: string | number };
+    }
   | {
-  id: "report_msg_lo_low_class_w";
-  description: `This week, {Name} has achieved {LOCompareClass}% less learning outcomes than the class average.`;
-  values: { Name: string | number; LOCompareClass: string | number };
-}
+      id: "report_msg_lo_low_class_w";
+      description: `This week, {Name} has achieved {LOCompareClass}% less learning outcomes than the class average.`;
+      values: { Name: string | number; LOCompareClass: string | number };
+    }
   | {
-  id: "report_msg_lo_high_class_3w";
-  description: `During these past 3 consecutive weeks, {Name} has achieved {LOCompareClass3week}% more learning outcomes than the class average.`;
-  values: { Name: string | number; LOCompareClass3week: string | number };
-}
+      id: "report_msg_lo_high_class_3w";
+      description: `During these past 3 consecutive weeks, {Name} has achieved {LOCompareClass3week}% more learning outcomes than the class average.`;
+      values: { Name: string | number; LOCompareClass3week: string | number };
+    }
   | {
-  id: "report_msg_lo_low_class_3w";
-  description: `During these past 3 consecutive weeks, {Name} has achieved {LOCompareClass3week}% less learning outcomes than the class average.`;
-  values: { Name: string | number; LOCompareClass3week: string | number };
-}
+      id: "report_msg_lo_low_class_3w";
+      description: `During these past 3 consecutive weeks, {Name} has achieved {LOCompareClass3week}% less learning outcomes than the class average.`;
+      values: { Name: string | number; LOCompareClass3week: string | number };
+    }
   | {
-  id: "report_msg_lo_high_class_review_w";
-  description: `This week, {Name} has achieved {LOReviewCompareClass}% more reviewed learning outcomes than the class average.`;
-  values: { Name: string | number; LOReviewCompareClass: string | number };
-}
+      id: "report_msg_lo_high_class_review_w";
+      description: `This week, {Name} has achieved {LOReviewCompareClass}% more reviewed learning outcomes than the class average.`;
+      values: { Name: string | number; LOReviewCompareClass: string | number };
+    }
   | {
-  id: "report_msg_lo_low_class_review_w";
-  description: `This week, {Name} has achieved {LOReviewCompareClass}% less reviewed learning outcomes than the class average.`;
-  values: { Name: string | number; LOReviewCompareClass: string | number };
-}
+      id: "report_msg_lo_low_class_review_w";
+      description: `This week, {Name} has achieved {LOReviewCompareClass}% less reviewed learning outcomes than the class average.`;
+      values: { Name: string | number; LOReviewCompareClass: string | number };
+    }
   | {
-  id: "report_msg_att_default";
-  description: `{Name} is continuing to learn on KidsLoop. This week, {Name} attended {AttendedCount} classes among {ScheduledCount} scheduled classes.`;
-  values: { Name: string | number; AttendedCount: string | number; ScheduledCount: string | number };
-}
+      id: "report_msg_att_default";
+      description: `{Name} is continuing to learn on KidsLoop. This week, {Name} attended {AttendedCount} classes among {ScheduledCount} scheduled classes.`;
+      values: { Name: string | number; AttendedCount: string | number; ScheduledCount: string | number };
+    }
   | {
-  id: "report_msg_att_new";
-  description: `{Name} started learning on KidsLoop. So far, {Name} attended {AttendedCount} classes among {ScheduledCount} scheduled classes.`;
-  values: { Name: string | number; AttendedCount: string | number; ScheduledCount: string | number };
-}
+      id: "report_msg_att_new";
+      description: `{Name} started learning on KidsLoop. So far, {Name} attended {AttendedCount} classes among {ScheduledCount} scheduled classes.`;
+      values: { Name: string | number; AttendedCount: string | number; ScheduledCount: string | number };
+    }
   | {
-  id: "report_msg_att_increase_previous_w";
-  description: `{Name} has attended {AttendCompareLastWeek}% more classes as compared to the previous week.`;
-  values: { Name: string | number; AttendCompareLastWeek: string | number };
-}
+      id: "report_msg_att_increase_previous_w";
+      description: `{Name} has attended {AttendCompareLastWeek}% more classes as compared to the previous week.`;
+      values: { Name: string | number; AttendCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_att_decrease_previous_w";
-  description: `{Name} has attended {AttendCompareLastWeek}% less classes as compared to the previous week.`;
-  values: { Name: string | number; AttendCompareLastWeek: string | number };
-}
+      id: "report_msg_att_decrease_previous_w";
+      description: `{Name} has attended {AttendCompareLastWeek}% less classes as compared to the previous week.`;
+      values: { Name: string | number; AttendCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_att_increase_previous_large_w";
-  description: `{Name} has attended {AttendCompareLastWeek}% more classes as compared to the previous week. Tell {Name}, "Awesome job!"`;
-  values: { Name: string | number; AttendCompareLastWeek: string | number };
-}
+      id: "report_msg_att_increase_previous_large_w";
+      description: `{Name} has attended {AttendCompareLastWeek}% more classes as compared to the previous week. Tell {Name}, "Awesome job!"`;
+      values: { Name: string | number; AttendCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_att_decrease_previous_large_w";
-  description: `{Name} has attended {AttendCompareLastWeek}% less classes as compared to the previous week. Please check if {Name} has any problems with the learning environment.`;
-  values: { Name: string | number; AttendCompareLastWeek: string | number };
-}
+      id: "report_msg_att_decrease_previous_large_w";
+      description: `{Name} has attended {AttendCompareLastWeek}% less classes as compared to the previous week. Please check if {Name} has any problems with the learning environment.`;
+      values: { Name: string | number; AttendCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_att_increase_3w";
-  description: `During these past 3 consecutive weeks, {Name} has attended {AttendCompareLast3Week}% more classes.`;
-  values: { Name: string | number; AttendCompareLast3Week: string | number };
-}
+      id: "report_msg_att_increase_3w";
+      description: `During these past 3 consecutive weeks, {Name} has attended {AttendCompareLast3Week}% more classes.`;
+      values: { Name: string | number; AttendCompareLast3Week: string | number };
+    }
   | {
-  id: "report_msg_att_decrease_3w";
-  description: `During these past 3 consecutive weeks, {Name} has attended {AttendCompareLast3Week}% less classes.`;
-  values: { Name: string | number; AttendCompareLast3Week: string | number };
-}
+      id: "report_msg_att_decrease_3w";
+      description: `During these past 3 consecutive weeks, {Name} has attended {AttendCompareLast3Week}% less classes.`;
+      values: { Name: string | number; AttendCompareLast3Week: string | number };
+    }
   | {
-  id: "report_msg_att_high_class_w";
-  description: `This week, {Name} has attended {LOCompareClass}% more classes than the class average.`;
-  values: { Name: string | number; LOCompareClass: string | number };
-}
+      id: "report_msg_att_high_class_w";
+      description: `This week, {Name} has attended {LOCompareClass}% more classes than the class average.`;
+      values: { Name: string | number; LOCompareClass: string | number };
+    }
   | {
-  id: "report_msg_att_low_class_w";
-  description: `This week, {Name} has attended {LOCompareClass}% less classes than the class average.`;
-  values: { Name: string | number; LOCompareClass: string | number };
-}
+      id: "report_msg_att_low_class_w";
+      description: `This week, {Name} has attended {LOCompareClass}% less classes than the class average.`;
+      values: { Name: string | number; LOCompareClass: string | number };
+    }
   | {
-  id: "report_msg_att_high_class_3w";
-  description: `During these past 3 consecutive weeks, {Name} has attended {LOCompareClass3week}% more classes than the class average.`;
-  values: { Name: string | number; LOCompareClass3week: string | number };
-}
+      id: "report_msg_att_high_class_3w";
+      description: `During these past 3 consecutive weeks, {Name} has attended {LOCompareClass3week}% more classes than the class average.`;
+      values: { Name: string | number; LOCompareClass3week: string | number };
+    }
   | {
-  id: "report_msg_att_low_class_3w";
-  description: `During these past 3 consecutive weeks, {Name} has attended {LOCompareClass3week}% less classes than the class average.`;
-  values: { Name: string | number; LOCompareClass3week: string | number };
-}
+      id: "report_msg_att_low_class_3w";
+      description: `During these past 3 consecutive weeks, {Name} has attended {LOCompareClass3week}% less classes than the class average.`;
+      values: { Name: string | number; LOCompareClass3week: string | number };
+    }
   | {
-  id: "report_msg_assign_default";
-  description: `{Name} is continuing to learn on KidsLoop. This week, {Name} completed {AssignCompleteCount} assignments among {AssignmentCount} given assignments.`;
-  values: { Name: string | number; AssignCompleteCount: string | number; AssignmentCount: string | number };
-}
+      id: "report_msg_assign_default";
+      description: `{Name} is continuing to learn on KidsLoop. This week, {Name} completed {AssignCompleteCount} assignments among {AssignmentCount} given assignments.`;
+      values: { Name: string | number; AssignCompleteCount: string | number; AssignmentCount: string | number };
+    }
   | {
-  id: "report_msg_assign_new";
-  description: `{Name} started learning on KidsLoop. So far, {Name} completed {AssignmentCompleteCount} assignments among {AssignmentCount} given assignments.`;
-  values: { Name: string | number; AssignmentCompleteCount: string | number; AssignmentCount: string | number };
-}
+      id: "report_msg_assign_new";
+      description: `{Name} started learning on KidsLoop. So far, {Name} completed {AssignmentCompleteCount} assignments among {AssignmentCount} given assignments.`;
+      values: { Name: string | number; AssignmentCompleteCount: string | number; AssignmentCount: string | number };
+    }
   | {
-  id: "report_msg_assign_increase_previous_w";
-  description: `{Name} has completed {AssignCompareLastWeek}% more assignments as compared to the previous week.`;
-  values: { Name: string | number; AssignCompareLastWeek: string | number };
-}
+      id: "report_msg_assign_increase_previous_w";
+      description: `{Name} has completed {AssignCompareLastWeek}% more assignments as compared to the previous week.`;
+      values: { Name: string | number; AssignCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_assign_decrease_previous_w";
-  description: `{Name} has completed {AssignCompareLastWeek}% less assignments as compared to the previous week.`;
-  values: { Name: string | number; AssignCompareLastWeek: string | number };
-}
+      id: "report_msg_assign_decrease_previous_w";
+      description: `{Name} has completed {AssignCompareLastWeek}% less assignments as compared to the previous week.`;
+      values: { Name: string | number; AssignCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_assign_increase_previous_large_w";
-  description: `{Name} has completed {AssignCompareLastWeek}% more assignments as compared to the previous week. Give {Name} a big compliment!`;
-  values: { Name: string | number; AssignCompareLastWeek: string | number };
-}
+      id: "report_msg_assign_increase_previous_large_w";
+      description: `{Name} has completed {AssignCompareLastWeek}% more assignments as compared to the previous week. Give {Name} a big compliment!`;
+      values: { Name: string | number; AssignCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_assign_decrease_previous_large_w";
-  description: `{Name} has completed {AssignCompareLastWeek}% less assignments as compared to the previous week. Please check if {Name} needs more support.`;
-  values: { Name: string | number; AssignCompareLastWeek: string | number };
-}
+      id: "report_msg_assign_decrease_previous_large_w";
+      description: `{Name} has completed {AssignCompareLastWeek}% less assignments as compared to the previous week. Please check if {Name} needs more support.`;
+      values: { Name: string | number; AssignCompareLastWeek: string | number };
+    }
   | {
-  id: "report_msg_assign_increase_3w";
-  description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompare3Week}% more assignments.`;
-  values: { Name: string | number; AssignCompare3Week: string | number };
-}
+      id: "report_msg_assign_increase_3w";
+      description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompare3Week}% more assignments.`;
+      values: { Name: string | number; AssignCompare3Week: string | number };
+    }
   | {
-  id: "report_msg_assign_decrease_3w";
-  description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompare3Week}% less assignments.`;
-  values: { Name: string | number; AssignCompare3Week: string | number };
-}
+      id: "report_msg_assign_decrease_3w";
+      description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompare3Week}% less assignments.`;
+      values: { Name: string | number; AssignCompare3Week: string | number };
+    }
   | {
-  id: "report_msg_assign_high_class_w";
-  description: `This week, {Name} has completed {AssignCompareClass}% more assignments than the class average.`;
-  values: { Name: string | number; AssignCompareClass: string | number };
-}
+      id: "report_msg_assign_high_class_w";
+      description: `This week, {Name} has completed {AssignCompareClass}% more assignments than the class average.`;
+      values: { Name: string | number; AssignCompareClass: string | number };
+    }
   | {
-  id: "report_msg_assign_low_class_w";
-  description: `This week, {Name} has completed {AssignCompareClass}% less assignments than the class average.`;
-  values: { Name: string | number; AssignCompareClass: string | number };
-}
+      id: "report_msg_assign_low_class_w";
+      description: `This week, {Name} has completed {AssignCompareClass}% less assignments than the class average.`;
+      values: { Name: string | number; AssignCompareClass: string | number };
+    }
   | {
-  id: "report_msg_assign_high_class_3w";
-  description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompareClass3week}% more assignments than the class average.`;
-  values: { Name: string | number; AssignCompareClass3week: string | number };
-}
+      id: "report_msg_assign_high_class_3w";
+      description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompareClass3week}% more assignments than the class average.`;
+      values: { Name: string | number; AssignCompareClass3week: string | number };
+    }
   | {
-  id: "report_msg_assign_low_class_3w";
-  description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompareClass3week}% less assignments than the class average.`;
-  values: { Name: string | number; AssignCompareClass3week: string | number };
-}
+      id: "report_msg_assign_low_class_3w";
+      description: `During these past 3 consecutive weeks, {Name} has completed {AssignCompareClass3week}% less assignments than the class average.`;
+      values: { Name: string | number; AssignCompareClass3week: string | number };
+    }
   | { id: "schedule_msg_one_assignment"; description: `Please upload at least one assignment.`; values: undefined }
   | { id: "report_label_learning_outcomes_achievement"; description: `Learning Outcomes Achievement`; values: undefined }
   | { id: "report_label_class_attendance"; description: `Class Attendance`; values: undefined }
@@ -1594,35 +1594,35 @@ type LangRecord =
   | { id: "report_label_total_newly_achieved_lo"; description: `Total Newly Achieved Learning Outcomes`; values: undefined }
   | { id: "report_label_total_reachieved_lo"; description: `Total Re-achieved Learning Outcomes`; values: undefined }
   | {
-  id: "report_label_total_achieved_lo_class_average";
-  description: `Total Achieved Learning Outcomes for Class Average`;
-  values: undefined;
-}
+      id: "report_label_total_achieved_lo_class_average";
+      description: `Total Achieved Learning Outcomes for Class Average`;
+      values: undefined;
+    }
   | {
-  id: "report_label_total_achieved_lo_subject_average";
-  description: `Total Achieved Learning Outcomes for Subject Average`;
-  values: undefined;
-}
+      id: "report_label_total_achieved_lo_subject_average";
+      description: `Total Achieved Learning Outcomes for Subject Average`;
+      values: undefined;
+    }
   | { id: "report_label_class_attendance_rate"; description: `Class Attendance Rate (Live only)`; values: undefined }
   | { id: "report_label_student_attendance_rate"; description: `Student Average Attendance Rate for Subjects`; values: undefined }
   | { id: "report_label_class_average_attendance_rate"; description: `Class Average Attendance Rate`; values: undefined }
   | { id: "report_label_subject_average_attendance_rate"; description: `Subject Average Attendance Rate`; values: undefined }
   | { id: "report_label_assignments_completion_rate"; description: `Assignments Completion Rate`; values: undefined }
   | {
-  id: "report_label_student_assignments_completion_rate";
-  description: `Student Average Assignments Completion Rate for Subjects`;
-  values: undefined;
-}
+      id: "report_label_student_assignments_completion_rate";
+      description: `Student Average Assignments Completion Rate for Subjects`;
+      values: undefined;
+    }
   | {
-  id: "report_label_class_average_assignments_completion_rate";
-  description: `Class Average Assignments Completion Rate`;
-  values: undefined;
-}
+      id: "report_label_class_average_assignments_completion_rate";
+      description: `Class Average Assignments Completion Rate`;
+      values: undefined;
+    }
   | {
-  id: "report_label_subject_average_assignments_completion_rate";
-  description: `Subject Average Assignments Completion Rate`;
-  values: undefined;
-}
+      id: "report_label_subject_average_assignments_completion_rate";
+      description: `Subject Average Assignments Completion Rate`;
+      values: undefined;
+    }
   | { id: "report_label_student_progress_report"; description: `Learner Monthly Report`; values: undefined }
   | { id: "report_label_overall_attendance"; description: `Overall Attendance`; values: undefined }
   | { id: "report_label_overall_completion"; description: `Overall Completion`; values: undefined }
@@ -1634,20 +1634,20 @@ type LangRecord =
   | { id: "schedule_conflict_popup"; description: `Schedule Conflict`; values: undefined }
   | { id: "schedule_further_action"; description: `Please select a further action`; values: undefined }
   | {
-  id: "schedule_msg_assignment_sumbit";
-  description: `Your assignment will be submitted for assessment. Do you want to continue?`;
-  values: undefined;
-}
+      id: "schedule_msg_assignment_sumbit";
+      description: `Your assignment will be submitted for assessment. Do you want to continue?`;
+      values: undefined;
+    }
   | { id: "report_label_skill_coverage"; description: `Skill Coverage`; values: undefined }
   | {
-  id: "report_label_skill_coverage_info";
-  description: `A breakdown of the learning outcomes covered by skill category as defined by your organization.`;
-  values: undefined;
-}
+      id: "report_label_skill_coverage_info";
+      description: `A breakdown of the learning outcomes covered by skill category as defined by your organization.`;
+      values: undefined;
+    }
   | { id: "report_label_learner_usage"; description: `Learner Usage`; values: undefined }
   | {
-  id: "report_label_learner_usage_info";
-  description: `Understand the level of usage of the learners over the last 7 days: 
+      id: "report_label_learner_usage_info";
+      description: `Understand the level of usage of the learners over the last 7 days: 
 <ul>
   <li>Material consumption metrics
 </li>
@@ -1656,8 +1656,8 @@ type LangRecord =
   <li>Assignments details
 </li>
 </ul>`;
-  values: undefined;
-}
+      values: undefined;
+    }
   | { id: "report_label_content_used"; description: `Content Used`; values: undefined }
   | { id: "report_label_5_types"; description: `5 types`; values: undefined }
   | { id: "report_label_class_scheduled"; description: `Class Scheduled`; values: undefined }
@@ -1679,16 +1679,16 @@ type LangRecord =
   | { id: "report_label_learning_outcome"; description: `Learning Outcome`; values: undefined }
   | { id: "report_label_learning_outcome_report"; description: `Learning Outcome Report`; values: undefined }
   | {
-  id: "report_label_learning_outcome_info";
-  description: `Based on the learning outcomes covered in the last 7 days:
+      id: "report_label_learning_outcome_info";
+      description: `Based on the learning outcomes covered in the last 7 days:
 <ul>
   <li>Highly Achieved: learners that have achieved more than 80% of the learning outcomes
 </li>
   <li>Low Achieved: learners that have achieved less than 50% of the learning outcomes
 </li>
 </ul>`;
-  values: undefined;
-}
+      values: undefined;
+    }
   | { id: "report_label_covered"; description: `Covered`; values: undefined }
   | { id: "report_label_above"; description: `Above`; values: undefined }
   | { id: "report_label_meets"; description: `Meets`; values: undefined }
@@ -1696,67 +1696,68 @@ type LangRecord =
   | { id: "schedule_study_due_on"; description: `Due on`; values: undefined }
   | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined }
   | {
-  id: "report_label_learner_weekly_report_info";
-  description: `Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
-  values: undefined;
-}
+      id: "report_label_learner_weekly_report_info";
+      description: `Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
+      values: undefined;
+    }
   | {
-  id: "report_label_learner_monthly_report_info";
-  description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
-  values: undefined;
-}
+      id: "report_label_learner_monthly_report_info";
+      description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
+      values: undefined;
+    }
   | { id: "app2web_badanamu_activities"; description: `Badanamu Activities`; values: undefined }
   | { id: "app2web_please_enter_the_link"; description: `Please enter the link`; values: undefined }
   | { id: "app2web_badanamu_activities_link"; description: `Badanamu Activities Link`; values: undefined }
   | { id: "schedule_lable_class_type_review"; description: `Review`; values: undefined }
   | {
-  id: "schedule_due_date_info";
-  description: `Due Date can only be set after +1 days from today to allow time for students to complete.`;
-  values: undefined;
-}
+      id: "schedule_due_date_info";
+      description: `Due Date can only be set after +1 days from today to allow time for students to complete.`;
+      values: undefined;
+    }
   | { id: "schedule_review_date_range_info"; description: `I would like content to be reviewed that was covered:`; values: undefined }
   | { id: "schedule_review_start_date"; description: `Start Date`; values: undefined }
   | { id: "schedule_review_end_date"; description: `End Date`; values: undefined }
   | { id: "schedule_review_dafault_date_range"; description: `Past 2 Weeks`; values: undefined }
   | { id: "schedule_review_review_area"; description: `Review Area`; values: undefined }
   | {
-  id: "schedule_review_pop_up_all_success";
-  description: `The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.`;
-  values: undefined;
-}
+      id: "schedule_review_pop_up_all_success";
+      description: `The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.`;
+      values: undefined;
+    }
   | {
-  id: "schedule_review_popup_partical_success";
-  description: `The following students will receive a random Lesson Plan as they have not enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:`;
-  values: undefined;
-}
+      id: "schedule_review_popup_partical_success";
+      description: `The following students will receive a random Lesson Plan as they have no enough data during the time range selected. To avoid this, let your student working on at least 10 activities before setting a review session:`;
+      values: undefined;
+    }
   | { id: "learning_outcome_lable_threshold"; description: `Score Threshold`; values: undefined }
   | { id: "assessment_summary_label_attendance_unknown"; description: `Unknown`; values: undefined }
   | { id: "learning_outcome_threshold_blank_alert"; description: `A score threshold must be entered`; values: undefined }
-  | { id: "learning_outcome_threshold_error_toast"; description: `Score threshold cannot be set as blank`; values: undefined }
+  | { id: "learning_outcome_threshold_error_toast"; description: `Please input an integer from 1 to 100`; values: undefined }
   | {
-  id: "schedule_review_group_fail_no_data";
-  description: `There were not enough content covered for this group of students during the date range specified to create a review session. Please try again with a different date range or student group.`;
-  values: undefined;
-}
+      id: "schedule_review_group_fail_no_data";
+      description: `There was not enough content covered for this group of students during the date range specified to create a review session. Please try again with a different date range or student group.`;
+      values: undefined;
+    }
   | { id: "schedule_review_popup_date_range"; description: `Date Range`; values: undefined }
   | { id: "schedule_review_popup_student_list"; description: `Students with Personalized Lesson Plans`; values: undefined }
   | {
-  id: "schedule_review_popup_random_student_list";
-  description: `Students who receive a random Lesson Plan due to no enough content to review`;
-  values: undefined;
-}
+      id: "schedule_review_popup_random_student_list";
+      description: `Students who receive a random Lesson Plan due to no enough content to review`;
+      values: undefined;
+    }
   | {
-  id: "schedule_review_popup_fail_notice";
-  description: `System failed to generate a review session on {value}. Please try again.`;
-  values: { value: string | number };
-}
+      id: "schedule_review_popup_fail_notice";
+      description: `System failed to generate a review session on {value}. Please try again.`;
+      values: { value: string | number };
+    }
   | {
-  id: "schedule_review_popup_pending_notice";
-  description: `System is generating adaptive learning lesson plan for each student.`;
-  values: undefined;
-}
+      id: "schedule_review_popup_pending_notice";
+      description: `System is generating adaptive learning lesson plan for each student.`;
+      values: undefined;
+    }
   | { id: "schedule_review_popup_confirm"; description: `Confirm`; values: undefined }
-  | { id: "schedule_review_class_name"; description: `Review: {value} Materials`; values: { value: string | number } };
+  | { id: "schedule_review_class_name"; description: `Review: {value} Materials`; values: { value: string | number } }
+  | { id: "schedule_repeat_end_on"; description: `On`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
@@ -1764,11 +1765,11 @@ export type LangRecordValues = LangRecord["values"];
 export type LangRecordIdByDescription<Desc extends LangRecord["description"]> = Extract<
   LangRecord,
   { id: any; description: Desc; values: any }
-  >["id"];
+>["id"];
 export type LangeRecordValuesByDesc<Desc extends LangRecord["description"]> = Extract<
   LangRecord,
   { id: any; description: Desc; values: any }
-  >["values"];
+>["values"];
 export type LangeRecordValuesById<Id extends LangRecord["id"]> = Extract<LangRecord, { id: Id; description: any; values: any }>["values"];
 
 export interface LangMessageDescriptor extends Omit<MessageDescriptor, "id"> {

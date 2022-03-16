@@ -17,6 +17,8 @@ const useStyles = makeStyles((theme) => ({
       [theme.breakpoints.down(600)]: {
         textAlign: "center",
         color: "#666666",
+        paddingLeft: "12px",
+        paddingRight: "16px"
       },
     },
   },

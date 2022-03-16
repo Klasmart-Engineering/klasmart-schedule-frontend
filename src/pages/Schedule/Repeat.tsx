@@ -552,7 +552,7 @@ function EndRepeat(props: ExtendsProps) {
             <FormControlLabel
               value="after_time"
               control={<Radio />}
-              label="on"
+              label={d("On").t("schedule_repeat_end_on")}
               className={classes.repeatItem}
             />
             <FormControlLabel value="after_count" control={<Radio />} label={d("After").t("schedule_repeat_after")} />

@@ -119,7 +119,9 @@ function RouterButton(props: ButtonProps) {
         autoFocus
         className={buttonClass[templateType]}
         style={{ display: (scheduleInfo.is_review && scheduleInfo.role_type !== "Student") ? "block" : "none", backgroundColor: "#0E78D5", color: "white" }}
-        onClick={() => handleClose && handleClose()}
+        onClick={() => {
+          handleClose && handleClose()
+        }}
       >
         {d("OK").t("general_button_OK")}
       </Button>
@@ -128,6 +130,6 @@ function RouterButton(props: ButtonProps) {
 }
 
 export default function ScheduleButton(props: ButtonProps) {
-  const { scheduleInfo, templateType, handleGoLive } = props;
-  return <RouterButton scheduleInfo={scheduleInfo} templateType={templateType} handleGoLive={handleGoLive} />;
+  const { scheduleInfo, templateType, handleGoLive, handleClose } = props;
+  return <RouterButton scheduleInfo={scheduleInfo} handleClose={handleClose} templateType={templateType} handleGoLive={handleGoLive} />;
 }
