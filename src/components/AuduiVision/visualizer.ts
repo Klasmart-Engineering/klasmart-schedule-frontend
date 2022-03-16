@@ -39,7 +39,7 @@ export default class Visualizer {
     xhr.send();
   };
 
-  play = (src: string | URL | ArrayBuffer) => {
+  play = (src: string | URL | ArrayBuffer, start: number) => {
     const n = ++this.count;
     this.source && this.source.stop();
     const decodeCallback = (buffer: AudioBuffer | null) => {
@@ -49,7 +49,7 @@ export default class Visualizer {
       bufferSource.buffer = buffer;
       bufferSource.connect(this.analyser);
       bufferSource.loop = true;
-      bufferSource.start();
+      bufferSource.start(this.ac.currentTime, start, (buffer?.duration as number) - start)
       this.source = bufferSource;
       this.visualize();
     };
