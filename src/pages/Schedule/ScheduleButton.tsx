@@ -30,10 +30,11 @@ interface ButtonProps {
   scheduleInfo: scheduleInfoViewProps | ScheduleEditExtend | EntityScheduleListViewExtend | EntityScheduleViewDetailExtend;
   templateType: "scheduleEdit" | "schedulePopup" | "scheduleAnyTime";
   handleGoLive: (scheduleDetial: ScheduleEditExtend) => void;
+  handleClose?: () => void;
 }
 
 function RouterButton(props: ButtonProps) {
-  const { scheduleInfo, templateType, handleGoLive } = props;
+  const { scheduleInfo, templateType, handleGoLive, handleClose } = props;
   const classes = useStyles();
   const buttonClass = {
     scheduleEdit: classes.editButton,
@@ -111,6 +112,16 @@ function RouterButton(props: ButtonProps) {
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
         {(scheduleInfo.is_review && scheduleInfo.review_status === "success") && "Go Review"}
+      </Button>
+      <Button
+        color="primary"
+        variant="outlined"
+        autoFocus
+        className={buttonClass[templateType]}
+        style={{ display: (scheduleInfo.is_review && scheduleInfo.role_type !== "Student") ? "block" : "none", backgroundColor: "#0E78D5", color: "white" }}
+        onClick={() => handleClose && handleClose()}
+      >
+        {d("OK").t("general_button_OK")}
       </Button>
     </>
   );

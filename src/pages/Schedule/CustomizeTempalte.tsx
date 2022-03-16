@@ -476,7 +476,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
       </div>
       {ScheduleViewInfo.class_type_label?.id !== "Task" && !ScheduleViewInfo.is_home_fun && (
         <div style={{ display: "flex", justifyContent: "space-around", paddingRight: "20px" }}>
-          <ScheduleButton scheduleInfo={ScheduleViewInfo} templateType="schedulePopup" handleGoLive={handleGoLive} />
+          <ScheduleButton handleClose={handleClose} scheduleInfo={ScheduleViewInfo} templateType="schedulePopup" handleGoLive={handleGoLive} />
         </div>
       )}
     </Box>
@@ -981,7 +981,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       </div>
       {ScheduleViewInfo.class_type_label?.id !== "Task" && !ScheduleViewInfo.is_home_fun && (
         <div className={classes.buttonPart}>
-          <ScheduleButton scheduleInfo={ScheduleViewInfo} templateType="schedulePopup" handleGoLive={handleGoLive} />
+          <ScheduleButton scheduleInfo={ScheduleViewInfo} handleClose={handleClose} templateType="schedulePopup" handleGoLive={handleGoLive} />
         </div>
       )}
     </Box>
