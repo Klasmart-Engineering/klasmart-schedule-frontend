@@ -293,7 +293,7 @@ export function MaterialView(props: MaterialViewProps) {
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
                                   )}
-                                  {item.file_type !== FileTypes.HasChildContainer && sItem.attempted && showAudioRecorder(item.content_subtype) && (
+                                  {false && item.file_type !== FileTypes.HasChildContainer && sItem.attempted && showAudioRecorder(item.content_subtype) && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
                                       onClick={(e) => handleClickAudioRecorder(roomId, item.h5p_id, item.h5p_sub_id, sItem.student_id, item.content_subtype)}

@@ -256,7 +256,7 @@ export function StudentView(props: StudentViewProps) {
                         {d("Click to add comments").t("assess_detail_click_to_add_comments")}
                       </span>
                     )}
-                    {!editable && sitem?.reviewer_comment && (
+                    {false && !editable && sitem?.reviewer_comment && (
                       <span
                         onClick={stopPropagation((e) => handleClickViewStudentComment(sitem.reviewer_comment ?? ""))}
                         style={{
