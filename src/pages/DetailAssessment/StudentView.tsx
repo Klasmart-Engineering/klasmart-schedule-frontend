@@ -256,7 +256,7 @@ export function StudentView(props: StudentViewProps) {
                         {d("Click to add comments").t("assess_detail_click_to_add_comments")}
                       </span>
                     )}
-                    {false && !editable && sitem?.reviewer_comment && (
+                    {!editable && sitem?.reviewer_comment && (
                       <span
                         onClick={stopPropagation((e) => handleClickViewStudentComment(sitem.reviewer_comment ?? ""))}
                         style={{
@@ -300,7 +300,7 @@ export function StudentView(props: StudentViewProps) {
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
                                   )}
-                                  {ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
+                                  {false && ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
                                       onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, ritem.h5p_sub_id, sitem.student_id, ritem.content_subtype)}
