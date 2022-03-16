@@ -2110,7 +2110,7 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
               {
-                !scheduleId && <FormControlLabel
+                !scheduleId && false && <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
                   label={d("Review").t("schedule_lable_class_type_review")}
