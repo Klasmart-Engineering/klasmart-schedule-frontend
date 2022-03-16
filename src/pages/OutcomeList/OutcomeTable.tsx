@@ -8,7 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
+  Tooltip
 } from "@material-ui/core";
 import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
@@ -177,7 +177,7 @@ function OutomeRow(props: OutcomeProps) {
     registerChange(e);
   };
   const isLocked = !!(outcome.locked_by && outcome.locked_by !== "-");
-  const score_threshold = outcome.score_threshold ? outcome.score_threshold * 100 : 0;
+  const score_threshold = outcome.score_threshold ? Math.floor(outcome.score_threshold * 100) : 0;
   return (
     <TableRow className={isLocked ? css.disableTableRow : ""} onClick={(e) => onClickOutcome(outcome.outcome_id)}>
       <TableCell className={isLocked ? css.disableTableCell : ""} style={{ width: 100 }} align="center" padding="checkbox">
@@ -401,7 +401,7 @@ export function OutcomeTable(props: OutcomeTableProps) {
                       {/* <TableCell className={clsx(css.tableCell)}>{d("Milestones").t("assess_label_milestone")}</TableCell> */}
                       {/* <TableCell className={clsx(css.tableCell)}>{d("Standard").t("assess_label_Standard")}</TableCell> */}
                       <TableCell className={clsx(css.tableCell)}>{d("Assumed").t("assess_label_assumed")}</TableCell>
-                      <TableCell className={css.tableCell}>{"Threshold"}</TableCell>
+                      <TableCell className={css.tableCell}>{d("Score Threshold").t("learning_outcome_lable_threshold")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Author").t("library_label_author")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>{d("Created On").t("library_label_created_on")}</TableCell>
                       <TableCell className={clsx(css.tableCell)}>
