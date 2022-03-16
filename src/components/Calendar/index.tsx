@@ -124,11 +124,12 @@ interface ScheduleListProps {
   scheduleTimeViewData: EntityScheduleTimeView[];
   timesTamp: timestampType;
   scheduleSelected: (event: scheduleInfoViewProps) => void;
+  timestampToTime: (timestamp: number) => string;
 }
 
 function ScheduleList(props: ScheduleListProps) {
   const css = useStyles();
-  const { scheduleTimeViewData, timesTamp, scheduleSelected } = props;
+  const { scheduleTimeViewData, timesTamp, scheduleSelected, timestampToTime } = props;
   const [checked, setChecked] = React.useState(false);
   const eventColor = [
     { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "16%" }} /> },
@@ -136,6 +137,7 @@ function ScheduleList(props: ScheduleListProps) {
     { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "16%" }} /> },
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "16%" }} /> },
   ];
+
   const reBytesStr = (str: string, len: number) => {
     let bytesNum = 0;
     let afterCutting = "";
@@ -175,7 +177,7 @@ function ScheduleList(props: ScheduleListProps) {
             schedule.start_at as number
           )})`
         : "";
-    return `${textEllipsis(schedule.title)}  ${fullDay}`;
+    return schedule.is_review ? textEllipsis(`${d("Review").t("schedule_lable_class_type_review")}: ${schedule.title} ${timestampToTime(schedule.content_start_at as number)} - ${timestampToTime(schedule.content_end_at as number)} ${d("Material").t("library_label_material")}`) : `${textEllipsis(schedule.title)}  ${fullDay}`;
   };
   const formatDate = (now: Data) => {
     return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
@@ -198,6 +200,8 @@ function ScheduleList(props: ScheduleListProps) {
 
   const height = isSameDay().length > 3 ? 3 * 43 : isSameDay().length * 43;
 
+  const reviewColor = {pending: "#13AAA999", success:"#13AAA9", failed:"#C02121"}
+
   return (
     <Box className={css.scheduleListBox}>
       <Collapse in={checked} style={{ height: height + "px" }} collapsedSize={height}>
@@ -205,7 +209,7 @@ function ScheduleList(props: ScheduleListProps) {
           return (
             <div
               className={css.scheduleListItem}
-              style={{ backgroundColor: eventTemplate(schedule)[0].color }}
+              style={{ backgroundColor: schedule.is_review ? reviewColor[schedule.review_status as "pending" | "success" | "failed"] : eventTemplate(schedule)[0].color }}
               onClick={() => {
                 scheduleViewInfo(schedule);
               }}
@@ -678,7 +682,7 @@ function MyCalendar(props: CalendarProps) {
   return (
     <>
       {modelView === "day" && mobile && (
-        <ScheduleList scheduleTimeViewData={scheduleTimeViewData} timesTamp={timesTamp} scheduleSelected={scheduleSelected} />
+        <ScheduleList timestampToTime={timestampToTime} scheduleTimeViewData={scheduleTimeViewData} timesTamp={timesTamp} scheduleSelected={scheduleSelected} />
       )}
       <Box className={css.calendarBox}>
         <Box className={css.calendarNav}>
