@@ -56,6 +56,7 @@ export interface ResultBaseProps {
   number?: string;
   parent_id?: string;
   h5p_id?: string;
+  h5p_sub_id?: string;
   status?: "Covered" | "NotCovered";
 }
 export interface StudenmtViewItemResultProps extends ResultBaseProps {

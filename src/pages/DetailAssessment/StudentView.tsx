@@ -102,6 +102,7 @@ export function StudentView(props: StudentViewProps) {
   const [room, setRoom] = useState<string | undefined>("");
   const [h5pId, setH5pId] = useState<string | undefined>("");
   const [userId, setUserId] = useState<string | undefined>("");
+  const [h5pSubId, setH5pSubId] = useState<string | undefined>("");
   const subDimensionIds = useMemo(() => {
     return subDimension.length ? subDimension.map((item) => item.id) : [];
   }, [subDimension]);
@@ -174,12 +175,13 @@ export function StudentView(props: StudentViewProps) {
     setResourceType("Essay");
     setAnswer(answer);
   };
-  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, userId?: string, content_subtype?: string) => {
+  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, h5pSubId?: string, userId?: string, content_subtype?: string) => {
     openResourceView();
     setResourceType(content_subtype as string);
     setRoom(roomId);
     setH5pId(h5pId);
     setUserId(userId);
+    setH5pSubId(h5pSubId);
   };
   const handleChangeScore = (score?: number, studentId?: string, contentId?: string) => {
     const _studentViewItems = studentViewItems?.map((sItem) => {
@@ -301,7 +303,7 @@ export function StudentView(props: StudentViewProps) {
                                   {ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
-                                      onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, sitem.student_id, ritem.content_subtype)}
+                                      onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, ritem.h5p_sub_id, sitem.student_id, ritem.content_subtype)}
                                     >
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
@@ -364,6 +366,7 @@ export function StudentView(props: StudentViewProps) {
         roomId={room}
         userId={userId}
         h5pId={h5pId}
+        h5pSubId={h5pSubId}
       />
     </>
   );

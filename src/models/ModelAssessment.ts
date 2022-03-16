@@ -453,7 +453,7 @@ export const ModelAssessment = {
           ?.filter((r) => !!contentObj[r.content_id!])
           .map((result) => {
             const { answer, attempted, content_id, score, outcomes } = result;
-            const { content_name, content_type, content_subtype, file_type, max_score, number, parent_id, h5p_id, status } =
+            const { content_name, content_type, content_subtype, file_type, max_score, number, parent_id, h5p_id, h5p_sub_id, status } =
               contentObj[content_id!];
             return {
               answer,
@@ -468,6 +468,7 @@ export const ModelAssessment = {
               number,
               parent_id,
               h5p_id,
+              h5p_sub_id,
               status,
               outcomes: outcomes?.map((item) => {
                 const { assumed, outcome_name, assigned_to } = outcomeObj[item.outcome_id!];
@@ -597,6 +598,7 @@ export const ModelAssessment = {
             status,
             attempted,
             h5p_id,
+            h5p_sub_id,
           } = rItem;
           if (!materialViewObj[content_id!]) {
             materialViewObj[content_id!] = {
@@ -610,6 +612,7 @@ export const ModelAssessment = {
               status,
               attempted,
               h5p_id,
+              h5p_sub_id,
               students: [
                 {
                   student_id,

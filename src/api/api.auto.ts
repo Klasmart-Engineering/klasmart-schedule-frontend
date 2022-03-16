@@ -2123,6 +2123,7 @@ export interface V2AssessmentContentReply {
   content_type?: "LessonPlan" | "LessonMaterial" | "Unknown";
   file_type?: "Unknown" | "HasChildContainer" | "NotChildContainer" | "SupportScoreStandAlone" | "NotSupportScoreStandAlone";
   h5p_id?: string;
+  h5p_sub_id?: string;
   max_score?: number;
   number?: string;
   outcome_ids?: string[];

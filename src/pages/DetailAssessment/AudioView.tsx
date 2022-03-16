@@ -16,7 +16,7 @@ export const AudioView = ({ userId, roomId, h5pId, h5pSubId, resourceType }: Aud
     userId,
     roomId,
     h5pId,
-    h5pSubId,
+    h5pSubId: h5pSubId ? h5pSubId : undefined,
   });
   if (error) {
     return <p>error: {JSON.stringify(error, null, 2)}</p>;
@@ -46,7 +46,7 @@ export const AudioPlayerV2 = ({ audioId, roomId, mimeType, client, resourceType,
   if (error) {
     return <p>error: {JSON.stringify(error, null, 2)}</p>;
   }
-  // const src2 = "https://golb-1256296192.cos.ap-shanghai.myqcloud.com/1.mp3";
+  // const audioSrc = "https://mdn.github.io/webaudio-examples/decode-audio-data/viper.mp3";
   return (
     <div>
       <AudioVision
