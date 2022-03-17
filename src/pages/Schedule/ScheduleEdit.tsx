@@ -1012,11 +1012,22 @@ function EditBox(props: CalendarStateProps) {
 
     addData["is_force"] = isForce ?? is_force;
 
+    const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+    const timestampToTimeReviewTitle = (timestamp: number): string => {
+      if (!timestamp) return "N/A";
+      const timestampDate = new Date(timestamp * 1000);
+      const [M, D] = [
+        (timestampDate as Date).getMonth(),
+        (timestampDate as Date).getDate(),
+      ];
+      return  `${monthArr[M]} ${D}`;
+    };
+
     if (checkedStatus.reviewCheck) {
       addData["content_start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000, "all_day_end");
       addData["content_end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000, "all_day_end");
       addData["due_at"] = dueDateTimestamp;
-      addData["title"] = classItem?.name ?? ""
+      addData["title"] = `${d("Review").t("schedule_lable_class_type_review")}: ${classItem?.name ?? "" } ${timestampToTimeReviewTitle(addData["content_start_at"] as number)} ~ ${timestampToTimeReviewTitle(addData["content_end_at"] as number)} ${d("Material").t("library_label_material")}`
     }
 
     if (scheduleList.class_type === "Homework") {
@@ -2110,7 +2121,7 @@ function EditBox(props: CalendarStateProps) {
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
               {
-                !scheduleId && false && <FormControlLabel
+                !scheduleId && <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
                   label={d("Review").t("schedule_lable_class_type_review")}
