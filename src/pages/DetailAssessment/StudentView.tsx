@@ -300,7 +300,7 @@ export function StudentView(props: StudentViewProps) {
                                       {d("Click to View").t("assess_detail_click_to_view")}
                                     </span>
                                   )}
-                                  {false && ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
+                                  {ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
                                     <span
                                       style={{ color: "#006CCF", cursor: "pointer" }}
                                       onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, ritem.h5p_sub_id, sitem.student_id, ritem.content_subtype)}

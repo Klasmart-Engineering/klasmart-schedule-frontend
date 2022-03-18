@@ -1,5 +1,6 @@
 import { ApolloClient } from "@apollo/client";
 import { AudioVision } from "@components/AuduiVision/AudioVision";
+import { useAudioMetadata, useDownloadMedia } from "kidsloop-media-ui";
 import React from "react";
 interface AudioViewProps {
   userId: string;
@@ -11,19 +12,19 @@ interface AudioViewProps {
 }
 
 export const AudioView = ({ userId, roomId, h5pId, h5pSubId, resourceType }: AudioViewProps) => {
-  // const { loading, error, mediaMetadata } = useAudioMetadata({
-  //   userId,
-  //   roomId,
-  //   h5pId,
-  //   h5pSubId: h5pSubId ? h5pSubId : undefined,
-  // });
-  // if (error) {
-  //   return <p>error: {JSON.stringify(error, null, 2)}</p>;
-  // }
-  // if (loading) return <p>Loading ...</p>;
-  // if (!mediaMetadata?.length) return <p>no data</p>;
+  const { loading, error, mediaMetadata } = useAudioMetadata({
+    userId,
+    roomId,
+    h5pId,
+    h5pSubId: h5pSubId ? h5pSubId : undefined,
+  });
+  if (error) {
+    return <p>error: {JSON.stringify(error, null, 2)}</p>;
+  }
+  if (loading) return <p>Loading ...</p>;
+  if (!mediaMetadata?.length) return <p>no data</p>;
   return (
-    <AudioPlayerV2 resourceType={resourceType} writtenText={""}  audioId={""} mimeType={"audio/webm"} roomId={roomId as string} />
+    <AudioPlayerV2 resourceType={resourceType} writtenText={mediaMetadata[0].description}  audioId={mediaMetadata[0].id} mimeType={mediaMetadata[0].mimeType ? mediaMetadata[0].mimeType : "audio/webm"} roomId={roomId as string} />
   );
 };
 
@@ -36,16 +37,15 @@ interface AudioPlayerProps {
   writtenText?: string
 }
 export const AudioPlayerV2 = ({ audioId, roomId, mimeType, client, resourceType, writtenText }: AudioPlayerProps) => {
-  // const { loading, error, src: audioSrc } = useDownloadMedia({
-  //   mediaId: audioId,
-  //   roomId,
-  //   mimeType,
-  // });
-  // if (loading) return <p>Loading...</p>;
-  // if (error) {
-  //   return <p>error: {JSON.stringify(error, null, 2)}</p>;
-  // }
-  const audioSrc = "https://mdn.github.io/webaudio-examples/decode-audio-data/viper.mp3";
+  const { loading, error, src: audioSrc } = useDownloadMedia({
+    mediaId: audioId,
+    roomId,
+    mimeType,
+  });
+  if (loading) return <p>Loading...</p>;
+  if (error) {
+    return <p>error: {JSON.stringify(error, null, 2)}</p>;
+  }
   return (
     <div>
       <AudioVision
