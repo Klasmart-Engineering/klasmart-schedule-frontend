@@ -186,26 +186,6 @@ export type ClassNodeQuery = { __typename?: "Query" } & {
   >;
 };
 
-export type ClassStudentsByOrganizationQueryVariables = Types.Exact<{
-  organization_id: Types.Scalars["ID"];
-}>;
-
-export type ClassStudentsByOrganizationQuery = { __typename?: "Query" } & {
-  organization?: Types.Maybe<
-    { __typename?: "Organization" } & {
-      classes?: Types.Maybe<
-        Array<
-          Types.Maybe<
-            { __typename?: "Class" } & Pick<Types.Class, "class_id" | "status"> & {
-                students?: Types.Maybe<Array<Types.Maybe<{ __typename?: "User" } & Pick<Types.User, "user_id" | "full_name">>>>;
-              }
-          >
-        >
-      >;
-    }
-  >;
-};
-
 export type SchoolsIdNameByOrganizationQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["ID"];
 }>;
@@ -1372,61 +1352,6 @@ export function useClassNodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ClassNodeQueryHookResult = ReturnType<typeof useClassNodeQuery>;
 export type ClassNodeLazyQueryHookResult = ReturnType<typeof useClassNodeLazyQuery>;
 export type ClassNodeQueryResult = Apollo.QueryResult<ClassNodeQuery, ClassNodeQueryVariables>;
-export const ClassStudentsByOrganizationDocument = gql`
-  query classStudentsByOrganization($organization_id: ID!) {
-    organization(organization_id: $organization_id) {
-      classes {
-        class_id
-        status
-        students {
-          user_id
-          full_name
-        }
-      }
-    }
-  }
-`;
-
-/**
- * __useClassStudentsByOrganizationQuery__
- *
- * To run a query within a React component, call `useClassStudentsByOrganizationQuery` and pass it any options that fit your needs.
- * When your component renders, `useClassStudentsByOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useClassStudentsByOrganizationQuery({
- *   variables: {
- *      organization_id: // value for 'organization_id'
- *   },
- * });
- */
-export function useClassStudentsByOrganizationQuery(
-  baseOptions: Apollo.QueryHookOptions<ClassStudentsByOrganizationQuery, ClassStudentsByOrganizationQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<ClassStudentsByOrganizationQuery, ClassStudentsByOrganizationQueryVariables>(
-    ClassStudentsByOrganizationDocument,
-    options
-  );
-}
-export function useClassStudentsByOrganizationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ClassStudentsByOrganizationQuery, ClassStudentsByOrganizationQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<ClassStudentsByOrganizationQuery, ClassStudentsByOrganizationQueryVariables>(
-    ClassStudentsByOrganizationDocument,
-    options
-  );
-}
-export type ClassStudentsByOrganizationQueryHookResult = ReturnType<typeof useClassStudentsByOrganizationQuery>;
-export type ClassStudentsByOrganizationLazyQueryHookResult = ReturnType<typeof useClassStudentsByOrganizationLazyQuery>;
-export type ClassStudentsByOrganizationQueryResult = Apollo.QueryResult<
-  ClassStudentsByOrganizationQuery,
-  ClassStudentsByOrganizationQueryVariables
->;
 export const SchoolsIdNameByOrganizationDocument = gql`
   query schoolsIdNameByOrganization($organization_id: ID!) {
     organization(organization_id: $organization_id) {
