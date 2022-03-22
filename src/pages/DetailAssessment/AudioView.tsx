@@ -24,7 +24,7 @@ export const AudioView = ({ userId, roomId, h5pId, h5pSubId, resourceType }: Aud
   if (loading) return <p>Loading ...</p>;
   if (!mediaMetadata?.length) return <p>no data</p>;
   return (
-    <AudioPlayerV2 resourceType={resourceType} writtenText={mediaMetadata?.[0].description}  audioId={mediaMetadata?.[0]?.id} mimeType={mediaMetadata?.[0]?.mimeType ?? "audio/webm"} roomId={roomId as string} />
+    <AudioPlayerV2 resourceType={resourceType} writtenText={mediaMetadata[0].description}  audioId={mediaMetadata[0].id} mimeType={mediaMetadata[0].mimeType ? mediaMetadata[0].mimeType : "audio/webm"} roomId={roomId as string} />
   );
 };
 
@@ -46,7 +46,6 @@ export const AudioPlayerV2 = ({ audioId, roomId, mimeType, client, resourceType,
   if (error) {
     return <p>error: {JSON.stringify(error, null, 2)}</p>;
   }
-  // const audioSrc = "https://mdn.github.io/webaudio-examples/decode-audio-data/viper.mp3";
   return (
     <div>
       <AudioVision

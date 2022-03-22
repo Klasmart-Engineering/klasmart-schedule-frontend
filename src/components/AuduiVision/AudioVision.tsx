@@ -1,7 +1,7 @@
 import { createStyles, makeStyles, Slider } from "@material-ui/core";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import PlayCircleFilledOutlinedIcon from "@material-ui/icons/PlayCircleFilledOutlined";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import getDrawMethod from "./draw";
 import Visualizer from "./visualizer";
 
@@ -37,28 +37,32 @@ export const AudioVision = (props: AudioVisionProps) => {
   const { src, bars, barColor, height, width, volume } = props;
   const [visualizer, setVisualize] = useState<Visualizer>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [duration, setDuration] = useState<number>(0);
   const [pauseTime, setPauseTime] = useState<number>(0);
+  const [loaded, dispatchLoaded] = useReducer(() => true, false);
+  const [value, setValue] = useState<number>(0);
+  const [isplay, setIsplay] = useState<boolean>(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  
   useEffect(() => {
-    const ctx = canvasRef.current?.getContext("2d");
-    const param = { ctx, height, width, bars, barColor };
-    const visu = new Visualizer({
-      size: bars,
-      draw: getDrawMethod(param),
-      volume,
-    });
-    setVisualize(visu);
-    const audio = audioRef.current;
-    if(audio) audio.volume = 0;
+    if(loaded) {
+      const ctx = canvasRef.current?.getContext("2d");
+      const param = { ctx, height, width, bars, barColor };
+      const visu = new Visualizer({
+        size: bars,
+        draw: getDrawMethod(param),
+        volume,
+      });
+      setVisualize(visu);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loaded]);
+  
   useEffect(() => {
     return () => {
       visualizer && visualizer.stop();
     };
   }, [visualizer]);
-  const [value, setValue] = useState<number>(0);
-  const [isplay, setIsplay] = useState<boolean>(false);
+
   const handleChange = (event: any, newValue: number | number[]) => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -94,29 +98,45 @@ export const AudioVision = (props: AudioVisionProps) => {
   
   const handleTimeUpdate = () => {
     const audio = audioRef.current;
-    if(audio?.currentTime) {
-      if((audio.currentTime - duration) >= 0) {
+    if(audio) {
+      if (!Number.isFinite(audio?.duration)) {
+        audio.currentTime = Number.MAX_SAFE_INTEGER;
+        audio.currentTime = 0;
+      } else {
+        setValue((audio.currentTime / audio.duration) * 100)
+      }
+      if(Number(audio?.currentTime) >= audio.duration) {
         setIsplay(false);
       }
-      setValue((audio.currentTime / duration) * 100)
     }
   }
+  
   const handleOnCanPlay = () => {
-    setDuration(audioRef.current?.duration as number)
+    const audio = audioRef.current;
+    if(audio) {
+      if (!Number.isFinite(audio?.duration)) {
+        audio.currentTime = Number.MAX_SAFE_INTEGER;
+        audio.currentTime = 0;
+      } else {
+        dispatchLoaded()
+      }
+    }
   }
-  const audioRef = useRef<HTMLAudioElement>(null);
   return (
     <div>
-      <canvas ref={canvasRef} width={width} height={height} />
-      <div className={css.tools}>
-        <Slider className={css.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
-        {isplay ? (
-          <PauseCircleFilledIcon className={css.itemTool} onClick={handlePlay} />
-        ) : (
-          <PlayCircleFilledOutlinedIcon className={css.itemTool} onClick={handlePlay} />
-        )}
-      </div>
-      <audio src={src} controlsList="nodownload" onCanPlay={handleOnCanPlay} onTimeUpdate={handleTimeUpdate} ref={audioRef} />
+      {!loaded && <p>Loading...</p>}
+      {loaded && <>
+        <canvas ref={canvasRef} width={width} height={height} />
+        <div className={css.tools}>
+          <Slider className={css.progress} value={value} onChange={handleChange} aria-labelledby="continuous-slider" />
+          {isplay ? (
+            <PauseCircleFilledIcon className={css.itemTool} onClick={handlePlay} />
+          ) : (
+            <PlayCircleFilledOutlinedIcon className={css.itemTool} onClick={handlePlay} />
+          )}
+        </div>
+      </>}
+      <audio id="audio" muted src={src} onCanPlay={handleOnCanPlay} onTimeUpdate={handleTimeUpdate} ref={audioRef} />
     </div>
   );
 };
