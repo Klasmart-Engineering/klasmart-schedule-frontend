@@ -136,6 +136,7 @@ function ScheduleList(props: ScheduleListProps) {
     { id: "Homework", color: "#13AAA9", icon: <LocalLibraryOutlinedIcon style={{ width: "16%" }} /> },
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon style={{ width: "16%" }} /> },
   ];
+
   const reBytesStr = (str: string, len: number) => {
     let bytesNum = 0;
     let afterCutting = "";
@@ -198,6 +199,8 @@ function ScheduleList(props: ScheduleListProps) {
 
   const height = isSameDay().length > 3 ? 3 * 43 : isSameDay().length * 43;
 
+  const reviewColor = {pending: "#13AAA999", success:"#13AAA9", failed:"#C02121"}
+
   return (
     <Box className={css.scheduleListBox}>
       <Collapse in={checked} style={{ height: height + "px" }} collapsedSize={height}>
@@ -205,7 +208,7 @@ function ScheduleList(props: ScheduleListProps) {
           return (
             <div
               className={css.scheduleListItem}
-              style={{ backgroundColor: eventTemplate(schedule)[0].color }}
+              style={{ backgroundColor: schedule.is_review ? reviewColor[schedule.review_status as "pending" | "success" | "failed"] : eventTemplate(schedule)[0].color }}
               onClick={() => {
                 scheduleViewInfo(schedule);
               }}
@@ -634,16 +637,6 @@ function MyCalendar(props: CalendarProps) {
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={css.classTypeMb} /> },
   ];
 
-  const timestampToTime = (timestamp: number): string => {
-    if (!timestamp) return "N/A";
-    const timestampDate = new Date(timestamp * 1000);
-    const [M, D] = [
-      (timestampDate as Date).getMonth(),
-      (timestampDate as Date).getDate(),
-    ];
-    return  `${monthArr[M]} ${D}`;
-  };
-
   const reviewColor = {pending: "#13AAA999", success:"#13AAA9", failed:"#C02121"}
 
   const CustomEventMonth = (event: any) => {
@@ -653,9 +646,6 @@ function MyCalendar(props: CalendarProps) {
       <div className={css.eventTemplateCalendar} style={{ backgroundColor: color }}>
         <div className={css.eventTemplateIcon}>{eventTemplate[0].icon}</div>
         <span>{event.event.title}</span>
-        {
-          event.event.is_review && <span>Review: {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} Materials</span>
-        }
       </div>
     );
   };
@@ -668,9 +658,6 @@ function MyCalendar(props: CalendarProps) {
       <div className={css.customerEventMb} style={{ backgroundColor: color, paddingTop: padding ? "8px" : "0px" }}>
         <div>{eventTemplate[0].icon}</div>
         <span>{event.event.title}</span>
-        {
-          event.event.is_review && <span>Review: {timestampToTime(event.event.start_at)} - {timestampToTime(event.event.end_at)} Materials</span>
-        }
       </div>
     );
   };

@@ -550,32 +550,16 @@ function EndRepeat(props: ExtendsProps) {
               className={classes.repeatItem}
             />
             <FormControlLabel
-              value="after_count"
+              value="after_time"
               control={<Radio />}
-              label={d("After").t("schedule_repeat_after")}
+              label={d("On").t("schedule_repeat_end_on")}
               className={classes.repeatItem}
             />
-            <FormControlLabel value="after_time" control={<Radio />} label={d("After").t("schedule_repeat_after")} />
+            <FormControlLabel value="after_count" control={<Radio />} label={d("After").t("schedule_repeat_after")} />
           </RadioGroup>
         </Grid>
         <Grid item xs={7} sm={7} md={7} lg={7} xl={7} className={`${classes.positionInput} ${classes.specialContainer}`}>
           <Grid container alignItems="flex-end">
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
-              <FormControl variant="outlined" style={{ width: "100%" }} size="small">
-                <OutlinedInput
-                  id="outlined-adornment-weight"
-                  value={end.after_count}
-                  aria-describedby="outlined-weight-helper-text"
-                  inputProps={{
-                    "aria-label": "weight",
-                  }}
-                  labelWidth={0}
-                  onChange={handleAfterCount}
-                  disabled={end.type !== "after_count"}
-                />
-              </FormControl>
-              <span className={classes.positionText}>{d("Occurrence(s)").t("schedule_repeat_occurrence(s)")}</span>
-            </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
               <TextField
                 fullWidth
@@ -590,6 +574,22 @@ function EndRepeat(props: ExtendsProps) {
                 onChange={handleAfterTime}
                 className={classes.after_time}
               />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
+              <FormControl variant="outlined" style={{ width: "100%" }} size="small">
+                <OutlinedInput
+                  id="outlined-adornment-weight"
+                  value={end.after_count}
+                  aria-describedby="outlined-weight-helper-text"
+                  inputProps={{
+                    "aria-label": "weight",
+                  }}
+                  labelWidth={0}
+                  onChange={handleAfterCount}
+                  disabled={end.type !== "after_count"}
+                />
+              </FormControl>
+              <span className={classes.positionText} style={{top: "75px"}}>{d("Occurrence(s)").t("schedule_repeat_occurrence(s)")}</span>
             </Grid>
           </Grid>
         </Grid>

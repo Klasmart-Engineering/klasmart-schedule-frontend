@@ -84,7 +84,7 @@ export function StudentEdit(props: StudentEditProps) {
       if (item.student_name) {
         return item.student_name
       } else {
-        return "unknown"
+        return d("Unknown").t("assessment_summary_label_attendance_unknown")
       }
     });
     return `${studentsNameArr?.join(",")}(${studentsNameArr?.length ?? 0})`;
@@ -176,7 +176,7 @@ export function StudentInput(props: StudentEditProps) {
               onChange={(e) => handleChange(e, index)}
             />
           }
-          label={item.student_name ? item.student_name : "unknown"}
+          label={item.student_name ? item.student_name : d("Unknown").t("assessment_summary_label_attendance_unknown")}
         />
       ))}
     </Box>

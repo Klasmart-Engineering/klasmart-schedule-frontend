@@ -145,14 +145,19 @@ export function OutcomeForm(props: OutcomeFormProps) {
     const re = /^(?:\d?\d|100)$/;
     if(!isAssumed) {
       if(value === "0") {
-        setThresholdErrorMsg("Score threshold cannot be set as blank")
+        setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
         return false;
-      }
+      } else 
       if(!value) {
-        setThresholdErrorMsg("A score threshold must be entered")
+        setThresholdErrorMsg(t("learning_outcome_threshold_blank_alert"))
         return false;
+      } else 
+      if(!re.test(value)) {
+        setThresholdErrorMsg(t("learning_outcome_threshold_error_toast"))
+        return false;
+      } else {
+        setThresholdErrorMsg("")
       }
-      if(!re.test(value)) return false;
     }
   };
   const handleDelete = (set_id: string) => {
@@ -231,7 +236,7 @@ export function OutcomeForm(props: OutcomeFormProps) {
                 variant="outlined"
                 defaultValue={outcome_id? outcomeDetail.score_threshold : (isAssumed ? 0 : 80)}
                 fullWidth
-                label={"Threshold"}
+                label={d("Score Threshold").t("learning_outcome_lable_threshold")}
                 disabled={isAssumed ? true : showEdit}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">%</InputAdornment>,

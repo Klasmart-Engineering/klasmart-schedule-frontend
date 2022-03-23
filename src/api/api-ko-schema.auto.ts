@@ -670,6 +670,11 @@ export type DeleteUsersFromOrganizationInput = {
   userIds: Array<Scalars["ID"]>;
 };
 
+export type DeleteUsersFromSchoolInput = {
+  schoolId: Scalars["ID"];
+  userIds: Array<Scalars["ID"]>;
+};
+
 export type EligibleMembersFilter = {
   AND?: Maybe<Array<EligibleMembersFilter>>;
   OR?: Maybe<Array<EligibleMembersFilter>>;
@@ -821,6 +826,12 @@ export type Mutation = {
    * Membership data may not be maintained.
    */
   deleteUsersFromOrganizations?: Maybe<OrganizationsMutationResult>;
+  /**
+   * Deletes users from a School. They will
+   * be treated as if they had never been part of the school.
+   * Membership data may not be maintained.
+   */
+  deleteUsersFromSchools?: Maybe<SchoolsMutationResult>;
   grade?: Maybe<Grade>;
   me?: Maybe<User>;
   /** @deprecated Use the inviteUser() method */
@@ -832,6 +843,11 @@ export type Mutation = {
    * They will have the same roles they had at the time of removal.
    */
   reactivateUsersFromOrganizations?: Maybe<OrganizationsMutationResult>;
+  /**
+   * Reactivates users in a school who were previously removed via removeUsersFromSchools.
+   * They will have the same roles they had at the time of removal.
+   */
+  reactivateUsersFromSchools?: Maybe<SchoolsMutationResult>;
   removeClassesFromSchools?: Maybe<SchoolsMutationResult>;
   removeOrganizationRolesFromUsers?: Maybe<UsersMutationResult>;
   removeProgramsFromClasses?: Maybe<ClassesMutationResult>;
@@ -845,6 +861,10 @@ export type Mutation = {
    * will be maintained and can be restored with reactivateUsersFromOrganizations.
    */
   removeUsersFromOrganizations?: Maybe<OrganizationsMutationResult>;
+  /**
+   * Inactivates users in a School. Their membership data
+   * will be maintained and can be restored with reactivateUsersFromSchools.
+   */
   removeUsersFromSchools?: Maybe<SchoolsMutationResult>;
   renameDuplicateGrades?: Maybe<Scalars["Boolean"]>;
   renameDuplicateOrganizations?: Maybe<Scalars["Boolean"]>;
@@ -1010,6 +1030,10 @@ export type MutationDeleteUsersFromOrganizationsArgs = {
   input: Array<DeleteUsersFromOrganizationInput>;
 };
 
+export type MutationDeleteUsersFromSchoolsArgs = {
+  input: Array<DeleteUsersFromSchoolInput>;
+};
+
 export type MutationGradeArgs = {
   id: Scalars["ID"];
 };
@@ -1040,6 +1064,10 @@ export type MutationProgramArgs = {
 
 export type MutationReactivateUsersFromOrganizationsArgs = {
   input: Array<ReactivateUsersFromOrganizationInput>;
+};
+
+export type MutationReactivateUsersFromSchoolsArgs = {
+  input: Array<ReactivateUsersFromSchoolInput>;
 };
 
 export type MutationRemoveClassesFromSchoolsArgs = {
@@ -2172,6 +2200,11 @@ export type ReactivateUsersFromOrganizationInput = {
   userIds: Array<Scalars["ID"]>;
 };
 
+export type ReactivateUsersFromSchoolInput = {
+  schoolId: Scalars["ID"];
+  userIds: Array<Scalars["ID"]>;
+};
+
 export type RemoveClassesFromSchoolInput = {
   classIds: Array<Scalars["ID"]>;
   schoolId: Scalars["ID"];
@@ -2608,7 +2641,7 @@ export type SubcategoriesMutationResult = {
 
 export type Subcategory = {
   __typename?: "Subcategory";
-  /** @deprecated Sunset Date: 10/02/2022 Details: https://bitbucket.org/calmisland/kidsloop-user-service/src/master/documents/rfc/mutations/050-Subcategory-toplevel-mutations.md */
+  /** @deprecated Sunset Date: 10/02/2022 Details: https://github.com/KL-Engineering/user-service/tree/main/documents/rfc/mutations/050-Subcategory-toplevel-mutations.md */
   delete?: Maybe<Scalars["Boolean"]>;
   id: Scalars["ID"];
   name: Scalars["String"];
