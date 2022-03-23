@@ -83,7 +83,6 @@ import {
   classTypeLabel,
   EntityLessonPlanShortInfo,
   EntityScheduleClassInfo,
-  EntityScheduleSchoolInfo,
   filterOptionItem,
   FilterQueryTypeProps,
   LearningComesFilterQuery,
@@ -331,7 +330,6 @@ function SmallCalendar(props: CalendarStateProps) {
     handleChangeOnlyMine,
     privilegedMembers,
     filterOption,
-    schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
@@ -393,7 +391,6 @@ function SmallCalendar(props: CalendarStateProps) {
           timesTamp={timesTamp}
           privilegedMembers={privilegedMembers}
           filterOption={filterOption}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
@@ -1322,7 +1319,7 @@ function EditBox(props: CalendarStateProps) {
     } else if (perm.create_my_schools_schedule_events_522) {
       lists = classOptions.classListSchool.school?.classes as EntityScheduleClassInfo[];
     } else {
-      lists = classOptions.classListTeacher.user?.classesTeaching as EntityScheduleClassInfo[];
+      lists = classOptions.classListTeacher.user?.membership as EntityScheduleClassInfo[];
     }
     const classResult: EntityScheduleShortInfo[] = [];
     lists?.forEach((item: EntityScheduleClassInfo) => {
@@ -2858,7 +2855,6 @@ interface CalendarStateProps {
   stateCurrentCid: string;
   stateMaterialArr: (EntityContentInfoWithDetails | undefined)[];
   filterOption: filterOptionItem;
-  schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
   schoolsConnection: GetSchoolsFilterListQuery;
   getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
@@ -2917,7 +2913,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     stateCurrentCid,
     stateMaterialArr,
     filterOption,
-    schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
@@ -2966,7 +2961,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
           filterOption={filterOption}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
@@ -3020,7 +3014,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
           filterOption={filterOption}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
