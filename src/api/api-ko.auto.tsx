@@ -604,21 +604,26 @@ export type StudentsByOrganizationQuery = { __typename?: "Query" } & {
 export type ClassesQueryVariables = Types.Exact<{
   cursor?: Types.Maybe<Types.Scalars["String"]>;
   filter?: Types.Maybe<Types.ClassFilter>;
+  schoolId: Types.Scalars["ID"];
 }>;
 
 export type ClassesQuery = { __typename?: "Query" } & {
-  classesConnection?: Types.Maybe<
-    { __typename?: "ClassesConnectionResponse" } & Pick<Types.ClassesConnectionResponse, "totalCount"> & {
-        edges?: Types.Maybe<
-          Array<
-            Types.Maybe<
-              { __typename?: "ClassesConnectionEdge" } & {
-                node?: Types.Maybe<{ __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name">>;
-              }
-            >
-          >
+  schoolNode?: Types.Maybe<
+    { __typename?: "SchoolConnectionNode" } & Pick<Types.SchoolConnectionNode, "organizationId"> & {
+        classesConnection?: Types.Maybe<
+          { __typename?: "ClassesConnectionResponse" } & Pick<Types.ClassesConnectionResponse, "totalCount"> & {
+              pageInfo?: Types.Maybe<{ __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "endCursor" | "hasNextPage">>;
+              edges?: Types.Maybe<
+                Array<
+                  Types.Maybe<
+                    { __typename?: "ClassesConnectionEdge" } & {
+                      node?: Types.Maybe<{ __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name">>;
+                    }
+                  >
+                >
+              >;
+            }
         >;
-        pageInfo?: Types.Maybe<{ __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "endCursor">>;
       }
   >;
 };
@@ -2304,18 +2309,21 @@ export type StudentsByOrganizationQueryHookResult = ReturnType<typeof useStudent
 export type StudentsByOrganizationLazyQueryHookResult = ReturnType<typeof useStudentsByOrganizationLazyQuery>;
 export type StudentsByOrganizationQueryResult = Apollo.QueryResult<StudentsByOrganizationQuery, StudentsByOrganizationQueryVariables>;
 export const ClassesDocument = gql`
-  query classes($cursor: String, $filter: ClassFilter) {
-    classesConnection(filter: $filter, directionArgs: { cursor: $cursor }, direction: FORWARD, sort: { order: ASC, field: name }) {
-      totalCount
-      edges {
-        node {
-          id
-          name
+  query classes($cursor: String, $filter: ClassFilter, $schoolId: ID!) {
+    schoolNode(id: $schoolId) {
+      organizationId
+      classesConnection(filter: $filter, cursor: $cursor, direction: FORWARD) {
+        totalCount
+        pageInfo {
+          endCursor
+          hasNextPage
         }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
+        edges {
+          node {
+            id
+            name
+          }
+        }
       }
     }
   }
@@ -2335,10 +2343,11 @@ export const ClassesDocument = gql`
  *   variables: {
  *      cursor: // value for 'cursor'
  *      filter: // value for 'filter'
+ *      schoolId: // value for 'schoolId'
  *   },
  * });
  */
-export function useClassesQuery(baseOptions?: Apollo.QueryHookOptions<ClassesQuery, ClassesQueryVariables>) {
+export function useClassesQuery(baseOptions: Apollo.QueryHookOptions<ClassesQuery, ClassesQueryVariables>) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ClassesQuery, ClassesQueryVariables>(ClassesDocument, options);
 }
@@ -2351,7 +2360,7 @@ export type ClassesLazyQueryHookResult = ReturnType<typeof useClassesLazyQuery>;
 export type ClassesQueryResult = Apollo.QueryResult<ClassesQuery, ClassesQueryVariables>;
 export const ClassesSchoolsDocument = gql`
   query classesSchools($cursor: String, $filter: ClassFilter) {
-    classesConnection(filter: $filter, directionArgs: { cursor: $cursor }, direction: FORWARD, sort: { order: ASC, field: name }) {
+    classesConnection(filter: $filter, directionArgs: { cursor: $cursor }, direction: FORWARD) {
       totalCount
       edges {
         node {

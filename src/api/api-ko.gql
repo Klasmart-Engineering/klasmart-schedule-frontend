@@ -652,30 +652,27 @@ query studentsByOrganization($organization_id: ID!) {
 query classes (
   $cursor: String,
   $filter: ClassFilter,
+  $schoolId:ID!,
   ) {
-classesConnection(
-    filter: $filter,
-    directionArgs: {
-    cursor: $cursor
-    },
-    direction: FORWARD
-    sort:{
-    order:ASC
-    field:name
-    }
-  ) {
-    totalCount
-     edges {
-      node {
-        id
-        name
-      }
-      }
-      pageInfo {
-        hasNextPage
+  schoolNode(id:$schoolId){
+    organizationId
+    classesConnection(filter: $filter,
+      cursor: $cursor
+      direction: FORWARD
+     ){
+      totalCount
+      pageInfo{
         endCursor
+        hasNextPage
+      }
+      edges{
+        node{
+          id
+          name
+        }
       }
     }
+  }
   }
 # schools | classes 2
 query classesSchools (
@@ -688,10 +685,6 @@ classesConnection(
     cursor: $cursor
     },
     direction: FORWARD
-    sort:{
-    order:ASC
-    field:name
-    }
   ) {
     totalCount
      edges {
