@@ -44,8 +44,6 @@ import { isUnpublish } from "./FirstSearchHeader";
 import { ContentListForm, ContentListFormKey, QueryCondition } from "./types";
 const calcGridWidth = (n: number, p: number) => (n === 1 ? "100%" : `calc(100% * ${n / (n - 1 + p)})`);
 
-const ASSETS_NAME = "Assets";
-
 const useStyles = makeStyles((theme) =>
   createStyles({
     gridContainer: {
@@ -337,11 +335,11 @@ function ContentCard(props: ContentProps) {
   }
   const { registerChange, hashValue } = selectedContentGroupContext;
   const DeleteIcon =
-    content?.publish_status === PublishStatus.published && content?.content_type_name !== ASSETS_NAME
+    content?.publish_status === PublishStatus.published && content?.content_type !== ContentType.assets
       ? RemoveCircleOutlineIcon
       : DeleteOutlineIcon;
   const type =
-    content?.publish_status === PublishStatus.published && content?.content_type_name !== ASSETS_NAME
+    content?.publish_status === PublishStatus.published && content?.content_type !== ContentType.assets
       ? DeleteText.remove
       : DeleteText.delete;
   return (
@@ -424,7 +422,7 @@ function ContentCard(props: ContentProps) {
               </LButton>
             )}
           {!queryCondition.program_group &&
-            (content?.publish_status === PublishStatus.published || content?.content_type_name === ASSETS_NAME) && (
+            (content?.publish_status === PublishStatus.published || content?.content_type === ContentType.assets) && (
               <Permission value={PermissionType.create_folder_289}>
                 <LButton
                   as={IconButton}
@@ -440,7 +438,7 @@ function ContentCard(props: ContentProps) {
           {!queryCondition.program_group &&
             queryCondition.publish_status === PublishStatus.published &&
             content?.content_type !== ContentType.folder &&
-            content?.content_type_name !== ASSETS_NAME &&
+            content?.content_type !== ContentType.assets &&
             content.permission?.allow_delete && (
               <LButton
                 as={IconButton}
@@ -464,7 +462,7 @@ function ContentCard(props: ContentProps) {
           {/* content archieved republish delete */}
           {!queryCondition.program_group &&
             content?.publish_status === PublishStatus.archive &&
-            content?.content_type_name !== ASSETS_NAME &&
+            content?.content_type !== ContentType.assets &&
             content.permission?.allow_republish && (
               <LButton
                 as={IconButton}
@@ -487,7 +485,7 @@ function ContentCard(props: ContentProps) {
             )}
           {!queryCondition.program_group &&
             content?.publish_status === PublishStatus.archive &&
-            content?.content_type_name !== ASSETS_NAME &&
+            content?.content_type !== ContentType.assets &&
             content.permission?.allow_delete && (
               <LButton
                 as={IconButton}
@@ -499,7 +497,7 @@ function ContentCard(props: ContentProps) {
               </LButton>
             )}
           {/* content unpublished delete */}
-          {!queryCondition.program_group && isUnpublish(queryCondition) && content?.content_type_name !== ASSETS_NAME && (
+          {!queryCondition.program_group && isUnpublish(queryCondition) && content?.content_type !== ContentType.assets && (
             <LButton
               as={IconButton}
               replace
@@ -510,7 +508,7 @@ function ContentCard(props: ContentProps) {
             </LButton>
           )}
           {/* assets delete */}
-          {!queryCondition.program_group && content?.content_type_name === ASSETS_NAME && content.permission?.allow_delete && (
+          {!queryCondition.program_group && content?.content_type === ContentType.assets && content.permission?.allow_delete && (
             <LButton
               as={IconButton}
               replace

@@ -199,7 +199,7 @@ export function ReportDashboard() {
     dispatch(getLearnerMonthlyReportOverview({ time_range: getSingleOfFourWeeks().join("-") }));
   }, [dispatch]);
 
-  const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending] = React.useMemo(() => {
+  const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList] = React.useMemo(() => {
     const hasSkillCoveragePerm = !!perm.report_learning_outcomes_in_categories_616;
     const hasLearnerUsagePerm = !!perm.student_usage_report_657;
     const reportList: ReportItem[] = [
@@ -210,11 +210,16 @@ export function ReportDashboard() {
       },
     ].filter((item) => item.hasPerm);
     const hasReportListPerm = reportList.length > 0;
-    const isPending = perm.report_learning_outcomes_in_categories_616 === undefined;
-    return [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList, isPending];
+    return [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList];
   }, [perm]);
 
-  const hasPerm = hasSkillCoveragePerm || hasLearnerUsagePerm || hasReportListPerm;
+  const hasPerm =
+    perm.student_progress_report_662 ||
+    perm.learning_summary_report_653 ||
+    perm.organization_class_achievements_report_626 ||
+    hasSkillCoveragePerm ||
+    hasLearnerUsagePerm ||
+    hasReportListPerm;
 
   const reportTip = (title: string, tip: string) => (
     <div className={css.reportTop}>
@@ -239,8 +244,8 @@ export function ReportDashboard() {
         </div>
       </LayoutBox>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517} className={css.layoutBoxMain}>
-        {!isPending && !hasPerm && noReportTip}
-        {!isPending && hasPerm && (
+        {!hasPerm && noReportTip}
+        {hasPerm && (
           <Grid container spacing={2}>
             {Boolean(perm.student_progress_report_662) && (
               <Grid item xs={12} md={4}>
