@@ -16,7 +16,6 @@ import {
   ClassesBySchoolDocument,
   ClassesBySchoolQuery,
   ClassesBySchoolQueryVariables,
-  ClassesByTeacherQuery,
   ClassesStudentQueryDocument,
   ClassesStudentQueryQuery,
   ClassesStudentQueryQueryVariables,
@@ -48,15 +47,6 @@ import {
   QueryMyUserDocument,
   QueryMyUserQuery,
   QueryMyUserQueryVariables,
-  SchoolByOrgQueryDocument,
-  SchoolByOrgQueryQuery,
-  SchoolByOrgQueryQueryVariables,
-  SchoolByUserQueryDocument,
-  SchoolByUserQueryQuery,
-  SchoolByUserQueryQueryVariables,
-  TeachersByOrgnizationDocument,
-  TeachersByOrgnizationQuery,
-  TeachersByOrgnizationQueryVariables
 } from "../api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
@@ -73,11 +63,9 @@ import {
   ModelPublishedOutcomeView,
 } from "../api/api.auto";
 import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions, recursiveGetSchoolMemberships } from "../api/extra";
-import teacherListByOrg from "../mocks/teacherListByOrg.json";
 import {
   ChangeParticipants,
   ClassesData,
-  EntityScheduleSchoolInfo,
   filterOptionItem,
   ParticipantRoleId,
   ParticipantsData,
@@ -90,11 +78,9 @@ import programsHandler, { LinkedMockOptionsItem } from "./contentEdit/programsHa
 import { LoadingMetaPayload } from "./middleware/loadingMiddleware";
 import { AsyncTrunkReturned } from "./type";
 
-const MOCK = false;
-
 interface classOptionsProp {
   classListOrg: ClassesByOrganizationQuery;
-  classListTeacher: ClassesByTeacherQuery;
+  classListTeacher: ClassesTeachingQueryQuery;
   classListSchool: ClassesBySchoolQuery;
   classListStudent: ClassesStudentQueryQuery;
 }
@@ -130,7 +116,6 @@ export interface ScheduleState {
   mySchoolId: string[];
   feedbackData: EntityScheduleFeedbackView;
   filterOption: filterOptionItem;
-  schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   mediaList: EntityQueryContentItem[];
   ScheduleViewInfo: EntityScheduleViewDetail;
   outcomeList: ModelPublishedOutcomeView[];
@@ -201,11 +186,6 @@ const initialState: ScheduleState = {
   },
   errorLable: "",
   scheduleMockOptions: {
-    teacherList: {
-      organization: {
-        teachers: [],
-      },
-    },
     subjectList: [],
     programList: [],
     classTypeList: [
@@ -244,7 +224,7 @@ const initialState: ScheduleState = {
     },
     classListTeacher: {
       user: {
-        classesTeaching: [],
+        membership: [],
       },
     },
     classListStudent: {
@@ -309,7 +289,6 @@ const initialState: ScheduleState = {
     programs: [],
     others: [],
   },
-  schoolByOrgOrUserData: [],
   mediaList: [],
   ScheduleViewInfo: {},
   outcomeList: [],
@@ -838,7 +817,6 @@ export interface EntityClassType {
 }
 
 export interface getScheduleMockOptionsResponse {
-  teacherList: TeachersByOrgnizationQuery;
   subjectList: LinkedMockOptionsItem[];
   programList: LinkedMockOptionsItem[];
   classTypeList: EntityClassType[];
@@ -849,7 +827,6 @@ interface GetScheduleMockOptionsPayLoad {
 }
 
 export interface getScheduleMockOptionsAllSettledResponse {
-  teacherList: TeachersByOrgnizationQuery;
   subjectList: LinkedMockOptionsItem[];
   programList: LinkedMockOptionsItem[];
 }
@@ -860,19 +837,9 @@ export interface getScheduleMockOptionsAllSettledResponse {
 export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsAllSettledResponse, GetScheduleMockOptionsPayLoad>(
   "getClassesList",
   async () => {
-    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-    const { data } = await gqlapi.query<TeachersByOrgnizationQuery, TeachersByOrgnizationQueryVariables>({
-      query: TeachersByOrgnizationDocument,
-      variables: {
-        organization_id,
-      },
-    });
-    const mockResult: TeachersByOrgnizationQuery = teacherListByOrg;
-    const teacherList = MOCK ? mockResult : data;
-
     const programList = await programsHandler.getProgramsOptions();
     const _subjectList = await programsHandler.getAllSubjects();
-    return { subjectList: uniqBy(_subjectList, "id"), programList, teacherList };
+    return { subjectList: uniqBy(_subjectList, "id"), programList};
   }
 );
 
@@ -973,21 +940,6 @@ export const getMockOptions = createAsyncThunk("mock/options", async () => {
   return apiGetMockOptions();
 });
 
-//没找到调接口的地方
-export const getSchoolByUser = createAsyncThunk("getSchoolByUser", async () => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const { data: meInfo } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
-    query: QueryMyUserDocument,
-  });
-  return gqlapi.query<SchoolByUserQueryQuery, SchoolByUserQueryQueryVariables>({
-    query: SchoolByUserQueryDocument,
-    variables: {
-      user_id: meInfo.myUser?.node?.id as string,
-      organization_id: organization_id,
-    },
-  });
-});
-
 export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables & LoadingMetaPayload>(
   "getSchoolsFilterList",
   // @ts-ignore
@@ -1017,16 +969,6 @@ export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetC
     });
   }
 );
-
-export const getSchoolByOrg = createAsyncThunk("getSchoolByOrg", async () => {
-  const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  return gqlapi.query<SchoolByOrgQueryQuery, SchoolByOrgQueryQueryVariables>({
-    query: SchoolByOrgQueryDocument,
-    variables: {
-      organization_id: organization_id,
-    },
-  });
-});
 
 interface GetScheduleViewInfoParams extends LoadingMetaPayload {
   schedule_id: Parameters<typeof api.schedulesView.getSchedulePopupById>[0];
@@ -1187,7 +1129,6 @@ const { actions, reducer } = createSlice({
     [getScheduleMockOptions.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleMockOptions>>) => {
       state.scheduleMockOptions.subjectList = payload.subjectList;
       state.scheduleMockOptions.programList = payload.programList;
-      state.scheduleMockOptions.teacherList = payload.teacherList;
     },
     [getScheduleParticipant.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getScheduleParticipant>>) => {
       state.participantMockOptions = payload;
@@ -1196,7 +1137,7 @@ const { actions, reducer } = createSlice({
       state.contentsAuthList = payload.list;
     },
     [getClassesByTeacher.fulfilled.type]: (state, { payload }: any) => {
-      state.classOptions.classListTeacher = { user: payload.data.user.membership };
+      state.classOptions.classListTeacher = payload.data;
     },
     [getClassesByStudent.fulfilled.type]: (state, { payload }: any) => {
       state.classOptions.classListStudent = { user: payload.data.user.membership };
@@ -1240,14 +1181,6 @@ const { actions, reducer } = createSlice({
     },
     [getScheduleAnyTimeViewData.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleAnyTimeViewData = payload.data;
-    },
-    [getSchoolByUser.fulfilled.type]: (state, { payload }: any) => {
-      state.schoolByOrgOrUserData = payload.data.user.membership?.schoolMemberships.map((item: any) => {
-        return item.school;
-      });
-    },
-    [getSchoolByOrg.fulfilled.type]: (state, { payload }: any) => {
-      state.schoolByOrgOrUserData = payload.data.organization?.schools;
     },
     [searchAuthContentLists.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.mediaList = payload.list;
