@@ -13,26 +13,6 @@
 #   }
 # }
 # 换成connection
-query teachersByOrgnization($organization_id: ID!) {
-  organization(organization_id: $organization_id) {
-    teachers {
-      user {
-        user_id
-        user_name
-      }
-    }
-  }
-}
-# 换成connection
-query classesByTeacher($user_id: ID!) {
-  user(user_id: $user_id) {
-    classesTeaching {
-      class_id
-      class_name
-    }
-  }
-}
-# 换成connection
 query classesByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
@@ -200,7 +180,8 @@ query schoolsByOrganization($organization_id: ID!) {
     }
   }
 }
-# 只用到了查询的类型，没调接口 应该可以删掉
+
+# 只用到了查询的类型，没调接口 适配器调整
 query participantsByClass($class_id: ID!) {
   class(class_id: $class_id) {
     teachers {
@@ -493,7 +474,7 @@ query classesTeachingQuery($user_id: ID!, $organization_id: ID!) {
     }
   }
 }
-# 代码中可能没有用到
+
 query classesStudentQuery($user_id: ID!, $organization_id: ID!) {
   user(user_id: $user_id) {
     membership(organization_id: $organization_id) {
@@ -982,35 +963,6 @@ classesConnection(
           }
         },
       }
-    }
-  }
-}
-
-query userWithoutClassAndSchool ($direction: ConnectionDirection) {
-  usersConnection (
-    direction: FORWARD,
-    directionArgs: {
-      count: 5
-      cursor: ""
-    }
-    filter: {
-      organizationId: {operator: eq, value: "de6e850a-cf97-4e0b-aa96-c0fedcda71be"},
-      classId: {operator: isNull},
-      organizationUserStatus: {operator: eq, value: "active"}
-  	}
-  ) {
-    edges {
-      node {
-        id,
-        givenName,
-        familyName
-      }
-    }
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
     }
   }
 }

@@ -104,7 +104,6 @@ function ScheduleContent() {
     scheduleAnyTimeViewData,
     ScheduleViewInfo,
     filterOption,
-    schoolByOrgOrUserData,
     schoolsConnection,
     classesConnection,
     userInUndefined,
@@ -396,7 +395,7 @@ function ScheduleContent() {
       } else if (privilegedMembers("Teacher")) {
         dispatch(getClassesByTeacher());
       } else if (privilegedMembers("Student")) {
-        dispatch(getClassesByStudent()); //可以删
+        dispatch(getClassesByStudent());
       }
       // get materials
       dispatch(
@@ -537,7 +536,6 @@ function ScheduleContent() {
               stateCurrentCid={stateCurrentCid}
               stateMaterialArr={stateMaterialArr}
               filterOption={filterOption}
-              schoolByOrgOrUserData={schoolByOrgOrUserData}
               viewSubjectPermission={viewSubjectPermission}
               schoolsConnection={schoolsConnection}
               filterOtherClasses={filterOtherClasses}
