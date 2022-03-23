@@ -1086,9 +1086,9 @@ function EditBox(props: CalendarStateProps) {
     if (checkedStatus.reviewCheck && is_check_review) {
       let reviewResultInfo: any;
       reviewResultInfo = (await dispatch(checkScheduleReview({
-        content_end_at: addData["end_at"],
-        content_start_at: addData["start_at"],
-        program_id: addData["program_id"],
+        content_end_at: addData["content_end_at"],
+        content_start_at: addData["content_start_at"],
+        program_id: scheduleList["program_id"],
         student_ids: addData["class_roster_student_ids"].concat(addData["participants_student_ids"]),
         subject_ids: addData["subject_ids"],
         time_zone_offset: addData["time_zone_offset"],
