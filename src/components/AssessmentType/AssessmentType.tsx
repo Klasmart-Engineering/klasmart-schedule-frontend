@@ -6,6 +6,7 @@ export enum AssessmentTypeValues {
   live = "OnlineClass",
   homeFun = "OfflineStudy",
   study = "OnlineStudy",
+  review="ReviewStudy",
 }
 export interface options {
   label?: string;
@@ -17,6 +18,7 @@ export const assessmentTypes = () => {
     { label: d("Live").t("schedule_detail_online_class"), value: AssessmentTypeValues.live },
     { label: d("Study").t("assess_study_list_study"), value: AssessmentTypeValues.study },
     { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentTypeValues.homeFun },
+    { label: "Study / Review", value: AssessmentTypeValues.review}
   ];
 };
 const menuItemList = (list: options[]) =>

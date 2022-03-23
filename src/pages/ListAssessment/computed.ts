@@ -153,6 +153,38 @@ export function assessmentHeader(type?: string): PLField[] {
       style: { backgroundColor: "#F2F5F7" },
     },
   ];
+  const reviewHeader: PLField[] = [
+    {
+      text: "Title",
+      value: "title",
+      align: "center",
+      style: { backgroundColor: "#F2F5F7" },
+    },
+    {
+      text: d("Teacher Name").t("schedule_label_teacher_name"),
+      value: "teacher",
+      align: "center",
+      style: { backgroundColor: "#F2F5F7" },
+    },
+    {
+      text: d("Class Name").t("assess_detail_class_name"),
+      value: "class",
+      align: "center",
+      style: { backgroundColor: "#F2F5F7" },
+    },
+    {
+      text: d("Due Date").t("assess_column_due_date"),
+      value: "duedate",
+      align: "center",
+      style: { backgroundColor: "#F2F5F7" },
+    },
+    {
+      text: d("Completion Rate").t("assess_list_completion_rate"),
+      value: "completetime",
+      align: "center",
+      style: { backgroundColor: "#F2F5F7" },
+    },
+  ]
   switch (type) {
     case AssessmentTypeValues.class:
     case AssessmentTypeValues.live:
@@ -161,6 +193,8 @@ export function assessmentHeader(type?: string): PLField[] {
       return studyHeader;
     case AssessmentTypeValues.homeFun:
       return homefunHeader;
+    case AssessmentTypeValues.review:
+      return reviewHeader;
     default:
       return classAndLiveHeader;
   }
