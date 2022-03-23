@@ -233,7 +233,6 @@ function CustomizeTempalteMb(props: InfoMbProps) {
     disableDelete,
     showDelete,
     deleteHandle,
-    textEllipsis,
     timestampToTime,
     multiStructure,
     handleGoLive,
@@ -260,6 +259,8 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+  const [stateFlag, setStateFlag] = React.useState<boolean>(true);
+
   const sameDay = (timestampStart: number, timestampEnd: number): string => {
     const timestampDate = new Date(timestampStart * 1000);
     const timestampDateEnd = new Date(timestampEnd * 1000);
@@ -282,27 +283,29 @@ function CustomizeTempalteMb(props: InfoMbProps) {
   };
 
   useEffect(() => {
-    if (
-      (!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
-      ScheduleViewInfo.class_type_label?.id !== "Task" &&
-      !ScheduleViewInfo.is_home_fun && !ScheduleViewInfo.is_review
-    ) {
-      dispatch(
-        actError(d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan"))
-      );
+    if (stateFlag) {
+      if (
+        (!ScheduleViewInfo.lesson_plan || !ScheduleViewInfo.lesson_plan?.is_auth) &&
+        ScheduleViewInfo.class_type_label?.id !== "Task" &&
+        !ScheduleViewInfo.is_home_fun && !ScheduleViewInfo.is_review
+      ) {
+        dispatch(
+          actError(d("Oops! The lesson plan included for this lesson has already been deleted!").t("schedule_msg_recall_lesson_plan"))
+        );
+      }
+      if (ScheduleViewInfo.review_status === "failed") {
+        dispatch(
+          actError(d("System failed to generate a review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {value: timestampToTime(ScheduleViewInfo.due_at as number, true)}))
+        );
+      }
+      if (ScheduleViewInfo.review_status === "pending") {
+        dispatch(
+          actError(d("System is generating adaptive learning lesson plan for each student.").t("schedule_review_popup_pending_notice"))
+        );
+      }
+      setStateFlag(false)
     }
-    if (ScheduleViewInfo.review_status === "failed") {
-      dispatch(
-        actError(d("System failed to generate a review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {value: timestampToTime(ScheduleViewInfo.due_at as number, true)}))
-      );
-    }
-    if (ScheduleViewInfo.review_status === "pending") {
-      dispatch(
-        actError(d("System is generating adaptive learning lesson plan for each student.").t("schedule_review_popup_pending_notice"))
-      );
-    }
-
-  }, [ScheduleViewInfo, timestampToTime, dispatch]);
+  }, [ScheduleViewInfo, timestampToTime, dispatch, stateFlag]);
 
   return (
     <Box className={classes.previewContainerMb} style={{ height: `${window.innerHeight}px` }}>
@@ -346,7 +349,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
         </div>
         <div>
           <Tooltip title={ScheduleViewInfo.title as string} placement="top-start">
-            <h2 style={{ margin: "16px 0 3px 0px" }}>{textEllipsis(20, ScheduleViewInfo.title)}</h2>
+            <h2 style={{ margin: "16px 0 3px 0px" }}>{ScheduleViewInfo.title}</h2>
           </Tooltip>
           <span
             className={classes.timeMb}
@@ -382,7 +385,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
         </div>
         <div className={classes.previewDetailMb} style={{ height: previewDetailMbHeight() }}>
           {
-            !ScheduleViewInfo.is_review && <div className={classes.previewDetailSubMb}>
+            ScheduleViewInfo.is_review && <div className={classes.previewDetailSubMb}>
               <span>{d("Class Type").t("schedule_detail_class_type")} </span>
               <span>{d("Review").t("schedule_lable_class_type_review")}</span>
             </div>
@@ -449,7 +452,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
             </>
           }
           {
-            ScheduleViewInfo.is_review && !privilegedMembers("Student") && <>
+            ScheduleViewInfo.is_review && <>
               {
                 ScheduleViewInfo.review_status === "success" && !privilegedMembers("Student") && (ScheduleViewInfo.personalized_review_students?.length !== ScheduleViewInfo.students?.length) && <>
                   <div className={classes.previewDetailSubMb}>
