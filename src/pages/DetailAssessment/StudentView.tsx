@@ -9,7 +9,7 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
@@ -237,123 +237,135 @@ export function StudentView(props: StudentViewProps) {
   return (
     <>
       <TableContainer style={{ marginBottom: "20px" }}>
-        {studentViewItems?.filter(student => student.status === StudentParticipate.Participate).map(
-          (sitem, index) =>
-            (isSelectAll ? true : subDimensionIds.indexOf(sitem.student_id!) >= 0) && (
-              <Fragment key={sitem.student_id}>
-                <Box className={css.tableBar} onClick={(e) => toggleCheck(index)}>
-                  <div style={{ color: checkedArr[index] ? "black" : "#666666" }}>
-                    <AccountCircleIcon />
-                    <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name ? sitem.student_name : "unknow"}</span>
-                    {editable && (
-                      <span
-                        onClick={stopPropagation((e) => handleOpenAddStudentComment(sitem.reviewer_comment ?? "", sitem.student_id))}
-                        style={{
-                          display: (checkedArr.length ? checkedArr[index] : initCheckArr[index]) ? "block" : "none",
-                          color: "rgb(0, 108, 207)",
-                        }}
-                      >
-                        {d("Click to add comments").t("assess_detail_click_to_add_comments")}
-                      </span>
-                    )}
-                    {!editable && sitem?.reviewer_comment && (
-                      <span
-                        onClick={stopPropagation((e) => handleClickViewStudentComment(sitem.reviewer_comment ?? ""))}
-                        style={{
-                          display: (checkedArr.length ? checkedArr[index] : initCheckArr[index]) ? "block" : "none",
-                          color: "rgb(0, 108, 207)",
-                        }}
-                      >
-                        {d("Click to view comments").t("assess_detail_click_to_view_comments")}
-                      </span>
-                    )}
-                  </div>
-                  {checkedArr[index] ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                </Box>
-                <Collapse in={checkedArr[index] === undefined ? true : checkedArr[index]}>
-                  <TableContainer style={{ maxHeight: 800 }}>
-                    <Table className={css.table} aria-label="simple table" stickyHeader>
-                      <PLTableHeader fields={StudentHeader} style={{ height: 35 }} />
-                      <TableBody>
-                        {sitem.result?.map(
-                          (ritem) =>
-                            (ritem.content_type === "LessonMaterial" || ritem.content_type === "Unknown") && (
-                              <TableRow key={ritem.content_id}>
-                                <TableCell align="center" style={{ width: "50px" }}>
-                                  {ritem.number}
-                                </TableCell>
-                                <TableCell align="center">
-                                  <Tooltip title={(ritem.content_name as string) ?? ""} placement="top-start">
-                                    <span>{textEllipsis(ritem.content_name)}</span>
-                                  </Tooltip>
-                                </TableCell>
-                                <TableCell align="center">
-                                  {ritem.content_subtype}
-                                  {/* todo 加字段 */}
-                                </TableCell>
-                                <TableCell align="center">
-                                  {ritem.attempted && ritem.content_subtype === "Essay" && (
-                                    <span
-                                      style={{ color: "#006CCF", cursor: "pointer" }}
-                                      onClick={(e) => handleClickView(ritem.answer ?? "")}
-                                    >
-                                      {d("Click to View").t("assess_detail_click_to_view")}
-                                    </span>
-                                  )}
-                                  {false && ritem.file_type !== FileTypes.HasChildContainer && ritem.attempted && showAudioRecorder(ritem.content_subtype) && (
-                                    <span
-                                      style={{ color: "#006CCF", cursor: "pointer" }}
-                                      onClick={(e) => handleClickAudioRecorder(roomId, ritem.h5p_id, ritem.h5p_sub_id, sitem.student_id, ritem.content_subtype)}
-                                    >
-                                      {d("Click to View").t("assess_detail_click_to_view")}
-                                    </span>
-                                  )}
-                                </TableCell>
-                                <TableCell align="center">
-                                  <EditScore
-                                    fileType={ritem.file_type}
-                                    score={ritem.score}
-                                    editable={editable}
-                                    maxScore={ritem.max_score}
-                                    attempted={ritem.attempted}
-                                    studentId={sitem.student_id}
-                                    contentId={ritem.content_id}
-                                    isSubjectiveActivity={true}
-                                    subType={ritem.content_subtype}
-                                    onChangeScore={handleChangeScore}
-                                  />
-                                </TableCell>
-                                <TableCell align="center">
-                                  <div className={css.student_lo}>
-                                    {ritem.outcomes?.map((outcome) => (
-                                      <FormControlLabel
-                                        key={outcome.outcome_id}
-                                        label={outcome.outcome_name}
-                                        disabled={ritem.parent_id ? true : !editable || outcome.status === OutcomeStatus.NotCovered}
-                                        control={
-                                          <Checkbox
-                                            value={outcome.outcome_id}
-                                            color="primary"
-                                            checked={outcome.status === OutcomeStatus.Achieved}
-                                            onChange={(e) =>
-                                              handleChangeLoStatus(e, sitem.student_id, ritem.content_id, outcome.outcome_id)
-                                            }
-                                          />
-                                        }
-                                      />
-                                    ))}
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            )
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Collapse>
-              </Fragment>
-            )
-        )}
+        {studentViewItems
+          ?.filter((student) => student.status === StudentParticipate.Participate)
+          .map(
+            (sitem, index) =>
+              (isSelectAll ? true : subDimensionIds.indexOf(sitem.student_id!) >= 0) && (
+                <Fragment key={sitem.student_id}>
+                  <Box className={css.tableBar} onClick={(e) => toggleCheck(index)}>
+                    <div style={{ color: checkedArr[index] ? "black" : "#666666" }}>
+                      <AccountCircleIcon />
+                      <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name ? sitem.student_name : "unknow"}</span>
+                      {editable && (
+                        <span
+                          onClick={stopPropagation((e) => handleOpenAddStudentComment(sitem.reviewer_comment ?? "", sitem.student_id))}
+                          style={{
+                            display: (checkedArr.length ? checkedArr[index] : initCheckArr[index]) ? "block" : "none",
+                            color: "rgb(0, 108, 207)",
+                          }}
+                        >
+                          {d("Click to add comments").t("assess_detail_click_to_add_comments")}
+                        </span>
+                      )}
+                      {!editable && sitem?.reviewer_comment && (
+                        <span
+                          onClick={stopPropagation((e) => handleClickViewStudentComment(sitem.reviewer_comment ?? ""))}
+                          style={{
+                            display: (checkedArr.length ? checkedArr[index] : initCheckArr[index]) ? "block" : "none",
+                            color: "rgb(0, 108, 207)",
+                          }}
+                        >
+                          {d("Click to view comments").t("assess_detail_click_to_view_comments")}
+                        </span>
+                      )}
+                    </div>
+                    {checkedArr[index] ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                  </Box>
+                  <Collapse in={checkedArr[index] === undefined ? true : checkedArr[index]}>
+                    <TableContainer style={{ maxHeight: 800 }}>
+                      <Table className={css.table} aria-label="simple table" stickyHeader>
+                        <PLTableHeader fields={StudentHeader} style={{ height: 35 }} />
+                        <TableBody>
+                          {sitem.result?.map(
+                            (ritem) =>
+                              (ritem.content_type === "LessonMaterial" || ritem.content_type === "Unknown") && (
+                                <TableRow key={ritem.content_id}>
+                                  <TableCell align="center" style={{ width: "50px" }}>
+                                    {ritem.number}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <Tooltip title={(ritem.content_name as string) ?? ""} placement="top-start">
+                                      <span>{textEllipsis(ritem.content_name)}</span>
+                                    </Tooltip>
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {ritem.content_subtype}
+                                    {/* todo 加字段 */}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {ritem.attempted && ritem.content_subtype === "Essay" && (
+                                      <span
+                                        style={{ color: "#006CCF", cursor: "pointer" }}
+                                        onClick={(e) => handleClickView(ritem.answer ?? "")}
+                                      >
+                                        {d("Click to View").t("assess_detail_click_to_view")}
+                                      </span>
+                                    )}
+                                    {ritem.file_type !== FileTypes.HasChildContainer &&
+                                      ritem.attempted &&
+                                      showAudioRecorder(ritem.content_subtype) && (
+                                        <span
+                                          style={{ color: "#006CCF", cursor: "pointer" }}
+                                          onClick={(e) =>
+                                            handleClickAudioRecorder(
+                                              roomId,
+                                              ritem.h5p_id,
+                                              ritem.h5p_sub_id,
+                                              sitem.student_id,
+                                              ritem.content_subtype
+                                            )
+                                          }
+                                        >
+                                          {d("Click to View").t("assess_detail_click_to_view")}
+                                        </span>
+                                      )}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <EditScore
+                                      fileType={ritem.file_type}
+                                      score={ritem.score}
+                                      editable={editable}
+                                      maxScore={ritem.max_score}
+                                      attempted={ritem.attempted}
+                                      studentId={sitem.student_id}
+                                      contentId={ritem.content_id}
+                                      isSubjectiveActivity={true}
+                                      subType={ritem.content_subtype}
+                                      onChangeScore={handleChangeScore}
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <div className={css.student_lo}>
+                                      {ritem.outcomes?.map((outcome) => (
+                                        <FormControlLabel
+                                          key={outcome.outcome_id}
+                                          label={outcome.outcome_name}
+                                          disabled={ritem.parent_id ? true : !editable || outcome.status === OutcomeStatus.NotCovered}
+                                          control={
+                                            <Checkbox
+                                              value={outcome.outcome_id}
+                                              color="primary"
+                                              checked={outcome.status === OutcomeStatus.Achieved}
+                                              onChange={(e) =>
+                                                handleChangeLoStatus(e, sitem.student_id, ritem.content_id, outcome.outcome_id)
+                                              }
+                                            />
+                                          }
+                                        />
+                                      ))}
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Collapse>
+                </Fragment>
+              )
+          )}
       </TableContainer>
       <ResourceView
         open={resourceViewActive}

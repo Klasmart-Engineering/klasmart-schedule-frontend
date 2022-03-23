@@ -78,11 +78,15 @@ export default function ContentPreview(props: EntityContentInfoWithDetails) {
   };
   const handleEdit = async () => {
     const lesson =
-      contentPreview.content_type_name === "Material" ? "material" : contentPreview.content_type_name === "Plan" ? "plan" : "material";
+      contentPreview.content_type === ContentType.material
+        ? "material"
+        : contentPreview.content_type === ContentType.plan
+        ? "plan"
+        : "material";
     const rightSide =
-      contentPreview.content_type_name === "Material"
+      contentPreview.content_type === ContentType.material
         ? "contentH5p"
-        : contentPreview.content_type_name === "Plan"
+        : contentPreview.content_type === ContentType.plan
         ? "planComposeGraphic"
         : "contentH5p";
     if (contentPreview.publish_status === "published") {
