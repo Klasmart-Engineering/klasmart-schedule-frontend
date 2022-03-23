@@ -648,6 +648,109 @@ query studentsByOrganization($organization_id: ID!) {
     }
   }
 }
+# schools | classes 1
+query classes (
+  $cursor: String,
+  $filter: ClassFilter,
+  ) {
+classesConnection(
+    filter: $filter,
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+    sort:{
+    order:ASC
+    field:name
+    }
+  ) {
+    totalCount
+     edges {
+      node {
+        id
+        name
+      }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+# schools | classes 2
+query classesSchools (
+  $cursor: String,
+  $filter: ClassFilter,
+  ) {
+classesConnection(
+    filter: $filter,
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+    sort:{
+    order:ASC
+    field:name
+    }
+  ) {
+    totalCount
+     edges {
+      node {
+        id
+        name
+        schoolsConnection( direction: FORWARD) {
+          totalCount
+        }
+      }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+  # schools | classes 3
+  query schoolsClasses (
+  $cursor: String,
+  $filter: SchoolFilter,
+  ) {
+schoolsConnection(
+    filter: $filter,
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+    sort:{
+    order:ASC
+    field:name
+    }
+  ) {
+    totalCount
+     edges {
+      node {
+        id
+        name
+        classesConnection( direction: FORWARD) {
+          totalCount
+           edges {
+            node {
+              id
+              name
+            }
+            }
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+        }
+      }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
 
 
 query getProgramsAndSubjects($count: PageSize!,  $cursor: String!, $filter: ProgramFilter!) {
