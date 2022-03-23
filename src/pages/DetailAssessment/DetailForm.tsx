@@ -50,7 +50,7 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
 export interface DetailFormProps {
   editable: boolean;
   assessmentDetail: DetailAssessmentResult;
-  students: DetailAssessmentResult["students"];
+  students: any[] | undefined;
   contents: DetailAssessmentResult["contents"];
   assessmentType: AssessmentTypeValues;
   formMethods: UseFormMethods<UpdateAssessmentDataOmitAction>;
@@ -65,6 +65,7 @@ export function DetailForm(props: DetailFormProps) {
   const { assessmentDetail, students, contents, assessmentType, formMethods, editable, onChangeStudent, onChangeContents } = props;
   const isClassAndLive = assessmentType === AssessmentTypeValues.class || assessmentType === AssessmentTypeValues.live;
   const isStudy = assessmentType === AssessmentTypeValues.study;
+  const isReview = assessmentType === AssessmentTypeValues.review;
   const teacherList = useMemo(() => {
     const list = assessmentDetail.teachers?.map((v) => v.name);
     const length = list && list.length ? list.length : "";
@@ -78,7 +79,7 @@ export function DetailForm(props: DetailFormProps) {
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
           <Typography variant="h6">
-            {isStudy ? d("Study Summary").t("assess_study_summary") : d("Class Summary").t("assess_class_summary")}
+            {(isStudy || isReview) ? d("Study Summary").t("assess_study_summary") : d("Class Summary").t("assess_class_summary")}
           </Typography>
           <div className={css.roomId}>
             {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.room_id}
@@ -90,7 +91,7 @@ export function DetailForm(props: DetailFormProps) {
             disabled
             value={assessmentDetail.title || d("N/A").t("assess_column_n_a")}
             className={css.fieldset}
-            label={d("Study Title").t("assess_list_study_title")}
+            label={isClassAndLive ? d("Assessment Title").t("assess_column_title") : d("Study Title").t("assess_list_study_title")}
             multiline
             maxRows={3}
           />
@@ -130,7 +131,7 @@ export function DetailForm(props: DetailFormProps) {
               />
             </>
           )}
-          {isStudy && (
+          {(isStudy || isReview) && (
             <TextField
               fullWidth
               disabled
@@ -155,7 +156,7 @@ export function DetailForm(props: DetailFormProps) {
               <Typography className={css.minutes}>{d("Minutes").t("assess_detail_minutes")}</Typography>
             </Box>
           )}
-          {assessmentDetail.contents && assessmentDetail.contents.length && (
+          {!isReview && assessmentDetail.contents && assessmentDetail.contents.length && (
             <>
               <TextField
                 fullWidth
@@ -203,7 +204,7 @@ export function DetailForm(props: DetailFormProps) {
               />
             </>
           )}
-          {isStudy && (
+          {(isStudy || isReview) && (
             <>
               <TextField
                 fullWidth
@@ -224,7 +225,11 @@ export function DetailForm(props: DetailFormProps) {
                 className={css.fieldset}
                 label={d("Completion Rate").t("assess_list_completion_rate")}
               />
-              <Box className={css.editBox}>
+            </>
+          )}
+          {
+            isStudy && 
+            <Box className={css.editBox}>
                 <TextField
                   fullWidth
                   disabled
@@ -235,16 +240,15 @@ export function DetailForm(props: DetailFormProps) {
                 />
                 <Typography className={css.minutes}>{d("Day(s)").t("assess_list_remaining_days")}</Typography>
               </Box>
-            </>
-          )}
-          <TextField
+          }
+          {(!isReview) && <TextField
             fullWidth
             disabled
             name="complete_time"
             value={formattedTime(assessmentDetail.complete_at) || 0}
             className={css.fieldset}
             label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
-          />
+          />}
         </Box>
       </Paper>
     </>

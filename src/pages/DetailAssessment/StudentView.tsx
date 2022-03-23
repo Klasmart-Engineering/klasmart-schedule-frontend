@@ -1,3 +1,4 @@
+import { AssessmentTypeValues } from "@components/AssessmentType";
 import {
   Box,
   Checkbox,
@@ -90,10 +91,12 @@ export interface StudentViewProps {
   onChangeComputedStudentViewItems: (studentViewItems?: StudentViewItemsProps[]) => void;
   studentViewItems?: StudentViewItemsProps[];
   roomId?: string;
+  assessment_type?: AssessmentTypeValues;
 }
 export function StudentView(props: StudentViewProps) {
   const css = useStyles();
-  const { studentViewItems, editable, subDimension, roomId, onChangeComputedStudentViewItems } = props;
+  const { studentViewItems, editable, subDimension, roomId, assessment_type, onChangeComputedStudentViewItems } = props;
+  const isReview = assessment_type === AssessmentTypeValues.review;
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
   const [resourceType, setResourceType] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
@@ -111,40 +114,63 @@ export function StudentView(props: StudentViewProps) {
   }, [subDimension]);
   const [checkedArr, setCheckedArr] = useState<boolean[]>(initCheckArr);
   const isSelectAll = subDimension.findIndex((item) => item.id === "all") >= 0 ? true : false;
-  const StudentHeader: PLField[] = [
-    { align: "center", style: { backgroundColor: "#fff" }, value: "idx", text: `${d("No").t("assess_detail_no")}.` },
-    {
-      align: "center",
-      style: { backgroundColor: "#fff" },
-      value: "name",
-      text: d("Lesson Material Name").t("assess_detail_lesson_material_name"),
-    },
-    {
-      align: "center",
-      style: { backgroundColor: "#fff" },
-      value: "type",
-      text: d("Lesson Material Type").t("assess_detail_lesson_material_type"),
-    },
-    { align: "center", style: { backgroundColor: "#fff", minWidth: 150 }, value: "answer", text: d("Answer").t("assess_detail_answer") },
-    {
-      align: "center",
-      style: { backgroundColor: "#fff", minWidth: 100 },
-      value: "score",
-      text: d("Score / Full Marks").t("assess_detail_score_full_marks"),
-    },
-    {
-      align: "center",
-      style: { backgroundColor: "#fff", maxWidth: 400 },
-      value: "LO",
-      text: d("Learning Outcomes").t("library_label_learning_outcomes"),
-    },
-  ];
+  const StudentHeader = () => {
+    let headers: PLField[] =  [
+      { align: "center", style: { backgroundColor: "#fff" }, value: "idx", text: `${d("No").t("assess_detail_no")}.` },
+      {
+        align: "center",
+        style: { backgroundColor: "#fff" },
+        value: "name",
+        text: d("Lesson Material Name").t("assess_detail_lesson_material_name"),
+      },
+      {
+        align: "center",
+        style: { backgroundColor: "#fff" },
+        value: "type",
+        text: d("Lesson Material Type").t("assess_detail_lesson_material_type"),
+      },
+      { align: "center", style: { backgroundColor: "#fff", minWidth: 150 }, value: "answer", text: d("Answer").t("assess_detail_answer") },
+      {
+        align: "center",
+        style: { backgroundColor: "#fff", minWidth: 100 },
+        value: "score",
+        text: d("Score / Full Marks").t("assess_detail_score_full_marks"),
+      },
+      // {
+      //   align: "center",
+      //   style: { backgroundColor: "#fff", maxWidth: 400 },
+      //   value: "LO",
+      //   text: d("Learning Outcomes").t("library_label_learning_outcomes"),
+      // },
+    ];
+    if(isReview) {
+      headers.push(
+        {
+          align: "center",
+          style: { backgroundColor: "#fff", maxWidth: 400 },
+          value: "percentage",
+          text: d("Percentage").t("assess_detail_percentage"),
+        }
+      )
+    } else {
+      headers.push(
+        {
+          align: "center",
+          style: { backgroundColor: "#fff", maxWidth: 400 },
+          value: "LO",
+          text: d("Learning Outcomes").t("library_label_learning_outcomes"),
+        }
+      )
+    }
+    return headers;
+  }
+  
   const handleChangeLoStatus = (event: ChangeEvent<HTMLInputElement>, sId?: string, rId?: string, oId?: string) => {
     const _studentViewItems = studentViewItems?.map((sItem) => {
       if (sItem.student_id === sId) {
         return {
           ...sItem,
-          result: sItem.result?.map((rItem) => {
+          result: sItem.results?.map((rItem) => {
             if (rItem.content_id === rId || rItem.parent_id === rId) {
               return {
                 ...rItem,
@@ -188,7 +214,7 @@ export function StudentView(props: StudentViewProps) {
       if (sItem.student_id === studentId) {
         return {
           ...sItem,
-          result: sItem.result?.map((rItem) => {
+          result: sItem.results?.map((rItem) => {
             if (rItem.content_id === contentId) {
               return {
                 ...rItem,
@@ -273,9 +299,9 @@ export function StudentView(props: StudentViewProps) {
                 <Collapse in={checkedArr[index] === undefined ? true : checkedArr[index]}>
                   <TableContainer style={{ maxHeight: 800 }}>
                     <Table className={css.table} aria-label="simple table" stickyHeader>
-                      <PLTableHeader fields={StudentHeader} style={{ height: 35 }} />
+                      <PLTableHeader fields={StudentHeader()} style={{ height: 35 }} />
                       <TableBody>
-                        {sitem.result?.map(
+                        {sitem.results?.map(
                           (ritem) =>
                             (ritem.content_type === "LessonMaterial" || ritem.content_type === "Unknown") && (
                               <TableRow key={ritem.content_id}>
@@ -323,7 +349,7 @@ export function StudentView(props: StudentViewProps) {
                                     onChangeScore={handleChangeScore}
                                   />
                                 </TableCell>
-                                <TableCell align="center">
+                                {!isReview && <TableCell align="center">
                                   <div className={css.student_lo}>
                                     {ritem.outcomes?.map((outcome) => (
                                       <FormControlLabel
@@ -343,7 +369,18 @@ export function StudentView(props: StudentViewProps) {
                                       />
                                     ))}
                                   </div>
+                                </TableCell>}
+                                {isReview &&
+                                  <TableCell align="center">
+                                  {ritem.attempted
+                                    ? ritem.parent_id === "" && ritem.file_type === FileTypes.HasChildContainer
+                                      ? "100%"
+                                      : ritem?.max_score! === 0
+                                      ? ""
+                                      : Math.ceil((ritem?.score! / ritem?.max_score!) * 100) + "%"
+                                    : ""}
                                 </TableCell>
+                                }
                               </TableRow>
                             )
                         )}

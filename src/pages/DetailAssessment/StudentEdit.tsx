@@ -19,7 +19,7 @@ import { useDispatch } from "react-redux";
 import PermissionType from "../../api/PermissionType";
 import { PermissionOr } from "../../components/Permission";
 import { d } from "../../locale/LocaleManager";
-import { DetailAssessmentResult } from "../ListAssessment/types";
+import { DetailFormProps } from "./DetailForm";
 import { StudentParticipate } from "./type";
 const useStyles = makeStyles(({ palette, spacing }) => ({
   editBox: {
@@ -71,16 +71,16 @@ const useStyles = makeStyles(({ palette, spacing }) => ({
 }));
 
 export interface StudentEditProps {
-  students: DetailAssessmentResult["students"];
+  students: DetailFormProps["students"];
   editable: boolean;
-  onChangeStudent: (students: DetailAssessmentResult["students"]) => void;
+  onChangeStudent: (students: DetailFormProps["students"]) => void;
 }
 export function StudentEdit(props: StudentEditProps) {
   const css = useStyles();
   const dispatch = useDispatch();
   const { students, editable, onChangeStudent } = props;
   const studentsnamelist = useMemo(() => {
-    const studentsNameArr = students?.filter((item) => item.status === StudentParticipate.Participate).map((item) => {
+    const studentsNameArr = students?.filter((item: { status: StudentParticipate; }) => item.status === StudentParticipate.Participate).map((item) => {
       if (item.student_name) {
         return item.student_name
       } else {
@@ -94,7 +94,7 @@ export function StudentEdit(props: StudentEditProps) {
     return !open;
   }, false);
   const handleOk = useCallback(() => {
-    const selectedStudents = changedStudentList?.filter((item) => item.status === "Participate");
+    const selectedStudents = changedStudentList?.filter((item: { status: string; }) => item.status === "Participate");
     if (selectedStudents?.length) {
       onChangeStudent(changedStudentList);
       toggle();
@@ -102,7 +102,7 @@ export function StudentEdit(props: StudentEditProps) {
       return Promise.reject(dispatch(actWarning(d("You must choose at least one student.").t("assess_msg_ one_student"))));
     }
   }, [changedStudentList, dispatch, onChangeStudent]);
-  const handleChangeStudent = (students: DetailAssessmentResult["students"]) => {
+  const handleChangeStudent = (students: DetailFormProps["students"]) => {
     setChangedStudentList(students);
   };
   return (

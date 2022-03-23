@@ -71,7 +71,7 @@ export interface StudentViewItemsProps {
   student_id?: string;
   student_name?: string;
   reviewer_comment?: string;
-  result?: StudenmtViewItemResultProps[];
+  results?: StudenmtViewItemResultProps[];
 }
 
 export type OverAllOutcomesItem = {

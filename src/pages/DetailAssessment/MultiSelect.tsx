@@ -1,3 +1,4 @@
+import { AssessmentTypeValues } from "@components/AssessmentType";
 import { makeStyles, MenuItem, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React, { ChangeEvent, useState } from "react";
@@ -20,13 +21,14 @@ export enum Dimension {
   material = "material",
 }
 export interface MultiSelectProps {
+  assessment_type: AssessmentTypeValues;
   dimension: Dimension;
   subDimension: SubDimensionOptions[];
   onChangeDimension: (value: Dimension) => void;
   onChangeSubdimension: (value: SubDimensionOptions[]) => void;
 }
 export function MultiSelect(props: MultiSelectProps) {
-  const { dimension, subDimension, onChangeDimension, onChangeSubdimension } = props;
+  const { assessment_type, dimension, subDimension, onChangeDimension, onChangeSubdimension } = props;
   const ViewDimension = () => {
     return [
       { label: d("View by Students").t("assess_detail_view_by_students"), value: Dimension.student },
@@ -34,6 +36,7 @@ export function MultiSelect(props: MultiSelectProps) {
     ];
   };
   const initOption = [{ id: "all", name: d("Select All").t("schedule_detail_select_all") }];
+  const isReview = assessment_type === AssessmentTypeValues.review;
   const [subValue, setSubValue] = useState(initOption);
   const list = ViewDimension();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +73,7 @@ export function MultiSelect(props: MultiSelectProps) {
   return (
     <>
       <div style={{ display: "flex", marginBottom: 24 }}>
-        <TextField
+        {!isReview && <TextField
           style={{ width: 266, marginRight: 10 }}
           value={dimension}
           onChange={handleChange}
@@ -83,7 +86,7 @@ export function MultiSelect(props: MultiSelectProps) {
               {item.label}
             </MenuItem>
           ))}
-        </TextField>
+        </TextField>}
         <Autocomplete
           style={{ width: 266 }}
           multiple
