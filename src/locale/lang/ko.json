@@ -1111,5 +1111,16 @@
   "schedule_review_popup_pending_notice": "System is generating adaptive learning lesson plan for each student.",
   "schedule_review_popup_confirm": "Confirm",
   "schedule_review_class_name": "Review: {value} Materials",
-  "schedule_repeat_end_on": "이후"
+  "schedule_repeat_end_on": "이후",
+  "assessment_list_study_review": "Study / Review",
+  "assessment_review_summary": "Review Summary",
+  "assessment_review_title": "Review Title",
+  "assessment_review_detail_student_name": "Student Name",
+  "report_label_teacher_usage_info": "Check teachers who have not attended the scheduled lessons in the last 7 days and show the number of missed lessons.",
+  "report_label_completed_all_lessons": "Completed all lessons",
+  "report_label_missed_some_lessons": "Missed some lessons",
+  "report_label_missed_all_lessons": "Missed all lessons",
+  "report_label_completed_all": "Completed all",
+  "report_label_missed_some": "Missed some",
+  "report_label_missed_frequently": "Missed frequently"
 }

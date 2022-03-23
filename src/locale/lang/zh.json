@@ -1111,5 +1111,16 @@
   "schedule_review_popup_pending_notice": "系统正在为每个学生生成自适应学习课件。",
   "schedule_review_popup_confirm": "确认",
   "schedule_review_class_name": "适应性复习: {value}教学素材",
-  "schedule_repeat_end_on": "于"
+  "schedule_repeat_end_on": "于",
+  "assessment_list_study_review": "Study / Review",
+  "assessment_review_summary": "Review Summary",
+  "assessment_review_title": "Review Title",
+  "assessment_review_detail_student_name": "Student Name",
+  "report_label_teacher_usage_info": "检查过去 7 天内未参加预定课程的教师，并显示缺课次数。",
+  "report_label_completed_all_lessons": "出席全部课程",
+  "report_label_missed_some_lessons": "缺席一些课程",
+  "report_label_missed_all_lessons": "缺席全部课程",
+  "report_label_completed_all": "全部出席",
+  "report_label_missed_some": "缺席一些",
+  "report_label_missed_frequently": "经常缺席"
 }
