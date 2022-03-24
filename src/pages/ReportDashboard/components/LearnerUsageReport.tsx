@@ -21,6 +21,7 @@ const useStyles = makeStyles(() => ({
     lineHeight: "47px",
     fontSize: "12px",
     color: "#6D8199",
+    fontWeight: 600,
   },
   reportList: {
     width: "100%",

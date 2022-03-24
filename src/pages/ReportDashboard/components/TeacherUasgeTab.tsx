@@ -22,12 +22,12 @@ const useStyles = makeStyles(() => ({
     lineHeight: "47px",
     fontSize: "12px",
     color: "#6D8199",
+    fontWeight: 600,
   },
   scoreContainer: {
-    width: "25%",
+    width: "35%",
     marginTop: "36px",
-    marginLeft: "25px",
-    marginRight: "15px",
+    marginLeft: "12px",
   },
   scoreName: {
     lineHeight: "14px",
@@ -37,6 +37,7 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     fontSize: "13px",
     color: "#A5A5A5",
+    fontWeight: "bold",
   },
   scoreValue: {
     fontSize: "30px",
@@ -64,7 +65,7 @@ export default function TeacherUsageTab() {
     (learningTeacherUsageOverview.num_of_teachers_missed_some || 0);
   let handleData = [
     {
-      name: t("report_label_missed_all_lessons" as any),
+      name: t("report_label_completed_all"),
       count: computeDatum(learningTeacherUsageOverview.num_of_teachers_completed_all, count),
     },
     {

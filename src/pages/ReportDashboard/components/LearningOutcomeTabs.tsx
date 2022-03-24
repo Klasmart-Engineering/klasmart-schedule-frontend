@@ -24,6 +24,7 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     fontSize: "13px",
     color: "#A5A5A5",
+    fontWeight: "bold",
   },
   scoreValue: {
     fontSize: "30px",
@@ -44,6 +45,7 @@ const useStyles = makeStyles(() => ({
     lineHeight: "47px",
     fontSize: "12px",
     color: "#6D8199",
+    fontWeight: 600,
   },
 }));
 
