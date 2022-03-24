@@ -8,6 +8,7 @@ import {
   getLearnerMonthlyReportOverview,
   getLearnerUsageOverview,
   getLearnerWeeklyReportOverview,
+  getTeacherLoadOverview,
 } from "@reducers/report";
 import { getAWeek, getSingleOfFourWeeks } from "@utilities/dateUtilities";
 import clsx from "clsx";
@@ -190,6 +191,7 @@ export function ReportDashboard() {
     dispatch(getAchievementOverview({ time_range: getAWeek().join("-") }));
     dispatch(getLearnerWeeklyReportOverview({ time_range: getAWeek().join("-") }));
     dispatch(getLearnerMonthlyReportOverview({ time_range: getSingleOfFourWeeks().join("-") }));
+    dispatch(getTeacherLoadOverview({ time_range: getAWeek().join("-") }));
   }, [dispatch]);
 
   const hasPerm =
@@ -262,7 +264,7 @@ export function ReportDashboard() {
             )}
             {Boolean(perm.teachers_classes_teaching_time_report_620) && (
               <Grid item xs={12} md={4}>
-                {reportTip(t("report_label_teaching_load"), t("report_label_learner_monthly_report_info"))}
+                {reportTip(t("report_label_teaching_load"), t("report_label_teacher_usage_info" as any))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <TeacherUsageTab />
                 </Box>
