@@ -55,10 +55,13 @@ function AssessmentRow(props: AssessmentProps) {
   const isStudy = useMemo(() => {
     return assessmentType === AssessmentTypeValues.study;
   }, [assessmentType]);
+  const isReview = useMemo(() => {
+    return assessmentType === AssessmentTypeValues.review;
+  }, [assessmentType])
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title ?? d("N/A").t("assess_column_n_a")}</TableCell>
-      <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>
+      {!isReview && <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>}
       {isClassAndLive && (
         <>
           <TableCell align="center">{assessment.subjects?.map((v) => v.name).join(", ")}</TableCell>
@@ -72,7 +75,7 @@ function AssessmentRow(props: AssessmentProps) {
       )}
       <TableCell align="center">{assessment.teachers?.map((v) => v.name)?.join(" ,") ?? d("N/A").t("assess_column_n_a")}</TableCell>
       {isClassAndLive && <TableCell align="center">{formattedTime(assessment.class_end_at)}</TableCell>}
-      {isStudy && (
+      {(isStudy || isReview) && (
         <>
           <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>
           <TableCell align="center">
@@ -81,14 +84,14 @@ function AssessmentRow(props: AssessmentProps) {
           <TableCell align="center">
             {assessment?.complete_rate ? `${Math.round(assessment?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")}
           </TableCell>
-          <TableCell align="center">
-            {assessment.remaining_time
-              ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s)").t("assess_list_remaining_days")}`
-              : 0}
-          </TableCell>
         </>
       )}
-      <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>
+      {isStudy && <TableCell align="center">
+        {assessment.remaining_time
+          ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s)").t("assess_list_remaining_days")}`
+          : 0}
+      </TableCell>}
+      {!isReview && <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>}
     </TableRow>
   );
 }

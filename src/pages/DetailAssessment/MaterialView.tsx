@@ -167,7 +167,7 @@ export function MaterialView(props: MaterialViewProps) {
       if (sItem.student_id === studentId) {
         return {
           ...sItem,
-          result: sItem.result?.map((rItem) => {
+          result: sItem.results?.map((rItem) => {
             if (rItem.content_id === contentId) {
               return {
                 ...rItem,
