@@ -65,7 +65,7 @@ export default function TeacherUsageTab() {
     (learningTeacherUsageOverview.num_of_teachers_missed_some || 0);
   let handleData = [
     {
-      name: t("report_label_completed_all"),
+      name: t("report_label_completed_all" as any),
       count: computeDatum(learningTeacherUsageOverview.num_of_teachers_completed_all, count),
     },
     {
