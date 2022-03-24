@@ -18,6 +18,7 @@ import {
   TextFieldProps,
   Theme,
   Tooltip,
+  Typography,
   withStyles,
 } from "@material-ui/core";
 import { InfoOutlined, Search } from "@material-ui/icons";
@@ -229,7 +230,9 @@ export function OrganizationList(props: OrganizationListProps) {
   return (
     <Dialog open={open} maxWidth="md" fullWidth>
       <DialogTitle className={css.dialogTitle}>
-        {d("Distribute").t("library_label_distribute")}: {folderName ?? ""}
+        <Typography component="div" variant="h6" noWrap>
+          {d("Distribute").t("library_label_distribute")}: {folderName ?? ""}
+        </Typography>
       </DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
