@@ -74,12 +74,30 @@ export function DetailForm(props: DetailFormProps) {
   const lessonPlan = assessmentDetail.contents
     ? assessmentDetail.contents.find((item) => item.content_type === "LessonPlan")?.content_name
     : "";
+  const summaryTitle = useMemo(() => {
+    if(isStudy) {
+      return {
+        summary: d("Study Summary").t("assess_study_summary"),
+        title: d("Assessment Title").t("assess_column_title")
+      }
+    } else if(isReview) {
+      return  {
+        summary: d("Review Summary").t("assessment_review_summary"),
+        title: d("Review Title").t("assessment_review_title")
+      }
+    } else {
+      return {
+        summary: d("Class Summary").t("assess_class_summary"),
+        title: d("Assessment Title").t("assess_column_title")
+      }
+    }
+  }, [isReview, isStudy])
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
           <Typography variant="h6">
-            {(isStudy || isReview) ? d("Study Summary").t("assess_study_summary") : d("Class Summary").t("assess_class_summary")}
+            {summaryTitle.summary}
           </Typography>
           <div className={css.roomId}>
             {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.room_id}
@@ -91,7 +109,7 @@ export function DetailForm(props: DetailFormProps) {
             disabled
             value={assessmentDetail.title || d("N/A").t("assess_column_n_a")}
             className={css.fieldset}
-            label={isClassAndLive ? d("Assessment Title").t("assess_column_title") : d("Study Title").t("assess_list_study_title")}
+            label={summaryTitle.title}
             multiline
             maxRows={3}
           />
