@@ -451,7 +451,7 @@ export const ModelAssessment = {
         student_name,
         reviewer_comment,
         status,
-        result: results
+        results: results
           ?.filter((r) => !!contentObj[r.content_id!])
           .map((result) => {
             const { answer, attempted, content_id, score, outcomes } = result;
@@ -686,8 +686,8 @@ export const ModelAssessment = {
         return { id: item.student_id!, name: item.student_name! };
       });
     } else {
-      if (studentViewItems && studentViewItems[0] && studentViewItems[0].result) {
-        return studentViewItems[0].result
+      if (studentViewItems && studentViewItems[0] && studentViewItems[0].results) {
+        return studentViewItems[0].results
           .filter((item: { content_type: string; status: string; parent_id: string; }) => item.content_type === "LessonMaterial" && item.status === "Covered" && item.parent_id === "")
           .map((item: { content_id: any; content_name: any; }) => {
             return { id: item.content_id!, name: item.content_name! };
@@ -695,7 +695,6 @@ export const ModelAssessment = {
       } else {
         return [];
       }
-
     }
   },
   getUpdateAssessmentData(assessment_type: AssessmentTypeValues ,contents?: V2AssessmentContentReply[], students?: StudentViewItemsProps[]) {
