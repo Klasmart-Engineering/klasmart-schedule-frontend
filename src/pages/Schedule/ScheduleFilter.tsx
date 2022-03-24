@@ -29,7 +29,6 @@ import { actError } from "../../reducers/notify";
 import { getScheduleMockOptionsResponse, ScheduleFilterSubject } from "../../reducers/schedule";
 import {
   classTypeLabel,
-  EntityScheduleSchoolInfo,
   FilterDataItemsProps,
   FilterItemInfo,
   filterOptionItem,
@@ -1059,7 +1058,6 @@ interface FilterProps extends SchoolTemplateProps {
   modelView: modeViewType;
   privilegedMembers: (member: memberType) => boolean;
   filterOption: filterOptionItem;
-  schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
   getUesrOfUndefined: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
   userInUndefined: GetUserQuery;
@@ -1079,7 +1077,6 @@ export default function ScheduleFilter(props: FilterProps) {
     timesTamp,
     privilegedMembers,
     filterOption,
-    schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
@@ -1106,7 +1103,6 @@ export default function ScheduleFilter(props: FilterProps) {
       timesTamp={timesTamp}
       privilegedMembers={privilegedMembers}
       filterOption={filterOption}
-      schoolByOrgOrUserData={schoolByOrgOrUserData}
       viewSubjectPermission={viewSubjectPermission}
       schoolsConnection={schoolsConnection}
       getSchoolsConnection={getSchoolsConnection}

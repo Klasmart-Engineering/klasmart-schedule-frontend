@@ -64,6 +64,9 @@ const useStyles = makeStyles({
       boxShadow: "0 0 2px #ababab",
     },
   },
+  tableCell: {
+    wordBreak: "break-all",
+  },
 });
 
 export interface MaterialViewProps {
@@ -167,7 +170,7 @@ export function MaterialView(props: MaterialViewProps) {
       if (sItem.student_id === studentId) {
         return {
           ...sItem,
-          result: sItem.result?.map((rItem) => {
+          result: sItem.results?.map((rItem) => {
             if (rItem.content_id === contentId) {
               return {
                 ...rItem,
@@ -215,7 +218,9 @@ export function MaterialView(props: MaterialViewProps) {
                               <TableBody>
                                 {item.outcomes.map((outcome: MaterialViewItemResultOutcomeProps) => (
                                   <TableRow key={outcome.outcome_id}>
-                                    <TableCell align="center">{outcome.outcome_name}</TableCell>
+                                    <TableCell align="center" className={css.tableCell}>
+                                      {outcome.outcome_name}
+                                    </TableCell>
                                     <TableCell align="center">{outcome.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
                                     <TableCell align="center">
                                       <Box display="flex" alignItems="center" p={2} pb={0}>

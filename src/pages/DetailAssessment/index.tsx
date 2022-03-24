@@ -43,12 +43,25 @@ export function DetailAssessment() {
   const history = useHistory();
   const { assessmentDetailV2, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const { assessment_type, editindex, id } = useQuery();
+  const isStudy = assessment_type === AssessmentTypeValues.study;
+  const isClass = assessment_type === AssessmentTypeValues.class;
+  const isReview = assessment_type === AssessmentTypeValues.review;
   const formMethods = useForm<UpdateAssessmentDataOmitAction>();
   const [students, setStudents] = useState<DetailAssessmentResult["students"]>();
   const [contents, setContents] = useState<DetailAssessmentResult["contents"]>();
   const initStudentViewItems = useMemo(() => {
-    return ModelAssessment.getStudentViewItems(assessmentDetailV2.students, assessmentDetailV2.contents, assessmentDetailV2.outcomes);
-  }, [assessmentDetailV2.contents, assessmentDetailV2.outcomes, assessmentDetailV2.students]);
+    if (isReview) {
+      return ModelAssessment.getReviewStudentsItems(assessmentDetailV2.diff_content_students);
+    } else {
+      return ModelAssessment.getStudentViewItems(assessmentDetailV2.students, assessmentDetailV2.contents, assessmentDetailV2.outcomes);
+    }
+  }, [
+    assessmentDetailV2.contents,
+    assessmentDetailV2.diff_content_students,
+    assessmentDetailV2.outcomes,
+    assessmentDetailV2.students,
+    isReview,
+  ]);
   const [computedStudentViewItems, setComputedStudentViewItems] = useState<StudentViewItemsProps[] | undefined>();
   const overallOutcomes = useMemo(() => {
     const outcomes = ModelAssessment.getOverallOutcomes(computedStudentViewItems ? computedStudentViewItems : initStudentViewItems);
@@ -69,8 +82,6 @@ export function DetailAssessment() {
   }, [computedStudentViewItems, dimension, initStudentViewItems]);
   const [subDimesion, setSubDimension] = useState<SubDimensionOptions[] | undefined>();
   const [selectedSubdimension, setSelectedSubdimension] = useState<SubDimensionOptions[] | undefined>();
-  const isStudy = assessment_type === AssessmentTypeValues.study;
-  const isClass = assessment_type === AssessmentTypeValues.class;
   const perm = usePermission([PermissionType.edit_in_progress_assessment_439]);
   const perm_439 = Boolean(perm.edit_in_progress_assessment_439);
   const isMyAssessmentlist = assessmentDetailV2.teachers?.filter((item) => item.id === my_id);
@@ -86,18 +97,30 @@ export function DetailAssessment() {
     if (attempt === 0) return "0";
     return `${Math.round((attempt / all) * 100)}%`;
   }, [computedStudentViewItems, initStudentViewItems]);
+
+  const defaultStudents = useMemo(() => {
+    if (students) {
+      return students;
+    } else if (isReview) {
+      return assessmentDetailV2.diff_content_students;
+    } else {
+      return assessmentDetailV2.students;
+    }
+  }, [assessmentDetailV2.diff_content_students, assessmentDetailV2.students, isReview, students]);
+
   const handleGoBack = () => {
     history.goBack();
   };
   const handleDetailSave = async () => {
     if (id) {
       const { _contents, _students } = ModelAssessment.getUpdateAssessmentData(
+        assessment_type,
         contents ? contents : assessmentDetailV2.contents,
         computedStudentViewItems ? computedStudentViewItems : initStudentViewItems
       );
       const data: V2AssessmentUpdateReq = {
         action: "Draft",
-        contents: [..._contents],
+        contents: isReview ? undefined : [..._contents],
         id: id,
         students: [..._students],
       };
@@ -134,12 +157,13 @@ export function DetailAssessment() {
     }
     if (id) {
       const { _contents, _students } = ModelAssessment.getUpdateAssessmentData(
+        assessment_type,
         contents ? contents : assessmentDetailV2.contents,
         computedStudentViewItems ? computedStudentViewItems : initStudentViewItems
       );
       const data: V2AssessmentUpdateReq = {
         action: "Complete",
-        contents: [..._contents],
+        contents: isReview ? undefined : [..._contents],
         id,
         students: [..._students],
       };
@@ -156,11 +180,16 @@ export function DetailAssessment() {
   };
   const handleChangeStudent = (students: DetailAssessmentResult["students"]) => {
     students && setStudents([...students]);
-    const selectedStudents = ModelAssessment.getStudentViewItems(
-      students,
-      contents ? contents : assessmentDetailV2.contents,
-      assessmentDetailV2.outcomes
-    );
+    let selectedStudents: StudentViewItemsProps[] | undefined;
+    if (isReview) {
+      selectedStudents = ModelAssessment.getReviewStudentsItems(students);
+    } else {
+      selectedStudents = ModelAssessment.getStudentViewItems(
+        students,
+        contents ? contents : assessmentDetailV2.contents,
+        assessmentDetailV2.outcomes
+      );
+    }
     setComputedStudentViewItems(selectedStudents);
     setSubDimension(ModelAssessment.getInitSubDimension(dimension, selectedStudents));
   };
@@ -180,7 +209,7 @@ export function DetailAssessment() {
   const handleChangeAllAchieved: OverallOutcomesProps["onChangeAllAchieved"] = (checked: boolean, outcome_id?: string) => {
     const _computedStudentViewItems = computedStudentViewItems ? cloneDeep(computedStudentViewItems) : cloneDeep(initStudentViewItems);
     _computedStudentViewItems?.forEach((sItem) => {
-      sItem?.result?.forEach((rItem) => {
+      sItem?.results?.forEach((rItem) => {
         rItem?.outcomes?.forEach((oItem) => {
           if (oItem.outcome_id === outcome_id) {
             oItem.status = checked ? OutcomeStatus.Achieved : OutcomeStatus.Unknown;
@@ -197,7 +226,7 @@ export function DetailAssessment() {
   ) => {
     const _computedStudentViewItems = computedStudentViewItems ? cloneDeep(computedStudentViewItems) : cloneDeep(initStudentViewItems);
     _computedStudentViewItems?.forEach((sItem) => {
-      sItem?.result?.forEach((rItem) => {
+      sItem?.results?.forEach((rItem) => {
         if (rItem.content_id === content_id) {
           rItem?.outcomes?.forEach((oItem) => {
             if (oItem.outcome_id === outcome_id) {
@@ -216,7 +245,7 @@ export function DetailAssessment() {
   ) => {
     const _computedStudentViewItems = computedStudentViewItems ? cloneDeep(computedStudentViewItems) : cloneDeep(initStudentViewItems);
     _computedStudentViewItems?.forEach((sItem) => {
-      sItem?.result?.forEach((rItem) => {
+      sItem?.results?.forEach((rItem) => {
         if (rItem.content_id === content_id) {
           rItem?.outcomes?.forEach((oItem) => {
             if (oItem.outcome_id === outcome_id) {
@@ -237,7 +266,7 @@ export function DetailAssessment() {
     const _computedStudentViewItems = computedStudentViewItems ? cloneDeep(computedStudentViewItems) : cloneDeep(initStudentViewItems);
     _computedStudentViewItems?.forEach((sItem) => {
       if (sItem.student_id === student_id) {
-        sItem?.result?.forEach((rItem) => {
+        sItem?.results?.forEach((rItem) => {
           if (rItem.content_id === content_id) {
             rItem?.outcomes?.forEach((oItem) => {
               if (oItem.outcome_id === outcome_id) {
@@ -253,7 +282,7 @@ export function DetailAssessment() {
   const handleChangeNoneAchieved: OverallOutcomesProps["onChangeNoneAchieved"] = (checked: boolean, outcome_id?: string) => {
     const _computedStudentViewItems = computedStudentViewItems ? cloneDeep(computedStudentViewItems) : cloneDeep(initStudentViewItems);
     _computedStudentViewItems?.forEach((sItem) => {
-      sItem?.result?.forEach((rItem) => {
+      sItem?.results?.forEach((rItem) => {
         rItem?.outcomes?.forEach((oItem) => {
           if (oItem.outcome_id === outcome_id) {
             oItem.status = checked ? OutcomeStatus.NotAchieved : OutcomeStatus.Unknown;
@@ -271,7 +300,7 @@ export function DetailAssessment() {
     const _computedStudentViewItems = computedStudentViewItems ? cloneDeep(computedStudentViewItems) : cloneDeep(initStudentViewItems);
     _computedStudentViewItems?.forEach((sItem) => {
       if (sItem.student_id === student_id) {
-        sItem?.result?.forEach((rItem) => {
+        sItem?.results?.forEach((rItem) => {
           rItem?.outcomes?.forEach((oItem) => {
             if (oItem.outcome_id === outcome_id) {
               oItem.status = checked ? OutcomeStatus.Achieved : OutcomeStatus.Unknown;
@@ -285,7 +314,7 @@ export function DetailAssessment() {
   const handleChangeNotCovered: OverallOutcomesProps["onChangeNotCovered"] = (checked: boolean, outcome_id?: string) => {
     const _computedStudentViewItems = computedStudentViewItems ? cloneDeep(computedStudentViewItems) : cloneDeep(initStudentViewItems);
     _computedStudentViewItems?.forEach((sItem) => {
-      sItem?.result?.forEach((rItem) => {
+      sItem?.results?.forEach((rItem) => {
         rItem?.outcomes?.forEach((oItem) => {
           if (oItem.outcome_id === outcome_id) {
             oItem.status = checked ? OutcomeStatus.NotCovered : OutcomeStatus.Unknown;
@@ -311,46 +340,52 @@ export function DetailAssessment() {
     <>
       {!isClass && (
         <MultiSelect
+          assessment_type={assessment_type}
           onChangeDimension={handleChangeDimension}
           dimension={dimension}
           subDimension={subDimesion ? subDimesion : initSubDimension || []}
           onChangeSubdimension={handleChangeSubdimension}
         />
       )}
-      <Subtitle
-        text={
-          dimension === Dimension.student
-            ? d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")
-            : d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")
-        }
-      />
-      {overallOutcomes && overallOutcomes.length ? (
-        <OverallOutcomes
-          attendanceList={attendanceList}
-          overallOutcomes={overallOutcomes}
-          editable={editable}
-          onChangeAllAchieved={handleChangeAllAchieved}
-          onChangeNoneAchieved={handleChangeNoneAchieved}
-          onChangeStudentStatus={handleChangeStudentStatus}
-          onChangeNotCovered={handleChangeNotCovered}
-        />
-      ) : (
-        <NoOutcome />
+      {!isReview && (
+        <>
+          <Subtitle
+            text={
+              dimension === Dimension.student
+                ? d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")
+                : d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")
+            }
+          />
+          {overallOutcomes && overallOutcomes.length ? (
+            <OverallOutcomes
+              attendanceList={attendanceList}
+              overallOutcomes={overallOutcomes}
+              editable={editable}
+              onChangeAllAchieved={handleChangeAllAchieved}
+              onChangeNoneAchieved={handleChangeNoneAchieved}
+              onChangeStudentStatus={handleChangeStudentStatus}
+              onChangeNotCovered={handleChangeNotCovered}
+            />
+          ) : (
+            <NoOutcome />
+          )}
+        </>
       )}
       {!isClass && dimension === Dimension.student && (
         <>
-          <Subtitle text={d("Score Assessment").t("assess_detail_score_assessment")} />
+          {!isReview && <Subtitle text={d("Score Assessment").t("assess_detail_score_assessment")} />}
           <StudentView
             dimension={dimension}
             subDimension={selectedSubdimension ? selectedSubdimension : initSubDimension || []}
             studentViewItems={computedStudentViewItems ? computedStudentViewItems : initStudentViewItems}
             editable={editable}
             roomId={assessmentDetailV2.room_id}
+            assessment_type={assessment_type}
             onChangeComputedStudentViewItems={handleChangeComputedStudentViewItems}
           />
         </>
       )}
-      {!isClass && dimension === Dimension.material && (
+      {!isClass && !isReview && dimension === Dimension.material && (
         <>
           <Subtitle text={d("Lesson Material Assessment").t("assessment_lesson_material_assessment")} />
           <MaterialView
@@ -385,7 +420,7 @@ export function DetailAssessment() {
       <LayoutPair breakpoint="md" leftWidth={603} rightWidth={1205} spacing={32} basePadding={0} padding={40}>
         <DetailForm
           assessmentDetail={assessmentDetailV2}
-          students={students ? students : assessmentDetailV2.students}
+          students={defaultStudents}
           contents={contents ? contents : assessmentDetailV2.contents}
           assessmentType={assessment_type}
           formMethods={formMethods}

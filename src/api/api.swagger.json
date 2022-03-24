@@ -8900,9 +8900,7 @@
               "$ref": "#/definitions/api.BadRequestResponse"
             }
           },
-          "409": {
-            "description": ""
-          },
+          "409": {},
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -8932,9 +8930,7 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
-          },
+          "200": {},
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -9070,9 +9066,7 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
-          },
+          "200": {},
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -9108,9 +9102,7 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
-          },
+          "200": {},
           "400": {
             "description": "Bad Request",
             "schema": {
@@ -15651,8 +15643,21 @@
         "number": {
           "type": "string"
         },
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "parent_id": {
           "type": "string"
+        },
+        "reviewer_comment": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Covered", "NotCovered"]
         }
       }
     },

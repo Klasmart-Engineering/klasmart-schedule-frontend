@@ -2178,7 +2178,10 @@ export interface V2AssessmentDiffContentReply {
   h5p_sub_id?: string;
   max_score?: number;
   number?: string;
+  outcome_ids?: string[];
   parent_id?: string;
+  reviewer_comment?: string;
+  status?: "Covered" | "NotCovered";
 }
 
 export interface V2AssessmentDiffContentStudentsReply {

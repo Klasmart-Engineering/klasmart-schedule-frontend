@@ -236,6 +236,7 @@ type LangRecord =
   | { id: "assess_button_complete"; description: `Complete`; values: undefined }
   | { id: "assess_assessment_details"; description: `Assessment Details`; values: undefined }
   | { id: "assess_class_summary"; description: `Class Summary`; values: undefined }
+  | { id: "assessment_review_summary"; description: `Review Summary`; values: undefined }
   | { id: "assess_detail_attendance"; description: `Attendance`; values: undefined }
   | { id: "assess_button_edit"; description: `Edit`; values: undefined }
   | { id: "assess_detail_class_length"; description: `Class Length`; values: undefined }
@@ -266,6 +267,7 @@ type LangRecord =
   | { id: "assess_class_type"; description: `Class Type`; values: undefined }
   | { id: "assess_class_type_class_live"; description: `Class / Live`; values: undefined }
   | { id: "assess_class_type_homefun"; description: `Study / Home Fun`; values: undefined }
+  | { id: "assessment_list_study_review"; description: `Study / Review`; values: undefined }
   | { id: "assess_column_due_date"; description: `Due Date`; values: undefined }
   | { id: "assess_column_submit_time"; description: `Submit Time`; values: undefined }
   | { id: "assess_column_assessment_score"; description: `Assessment Score`; values: undefined }
@@ -313,6 +315,7 @@ type LangRecord =
   | { id: "assess_study_list_study"; description: `Study`; values: undefined }
   | { id: "assess_study_teacher_name"; description: `Teacher Name`; values: undefined }
   | { id: "assess_list_study_title"; description: `Study Title`; values: undefined }
+  | { id: "assessment_review_title"; description: `Review Title`; values: undefined }
   | { id: "assess_list_completion_rate"; description: `Completion Rate`; values: undefined }
   | { id: "assess_list_assessment_remaining"; description: `Assessment Remaining`; values: undefined }
   | { id: "assess_list_remaining_days"; description: `Day(s)`; values: undefined }
