@@ -115,6 +115,7 @@ export interface OrganizationListProps {
   onClose: () => any;
   onShareFolder: (ids: string[]) => ReturnType<LButtonProps["onClick"]>;
   selectedOrg: string[];
+  folderName?: string;
 }
 export interface OrgsSortType {
   sortType: OrganizationSortBy;
@@ -123,7 +124,7 @@ export interface OrgsSortType {
 }
 export function OrganizationList(props: OrganizationListProps) {
   const css = useStyles();
-  const { open, orgList, selectedOrg, onClose, onShareFolder } = props;
+  const { open, orgList, selectedOrg, onClose, onShareFolder, folderName } = props;
   const { orgListPageInfo, orgListTotal } = useSelector<RootState, RootState["content"]>((state) => state.content);
   const { control, watch, getValues, reset } = useForm();
   const dispatch = useDispatch();
@@ -227,7 +228,9 @@ export function OrganizationList(props: OrganizationListProps) {
   };
   return (
     <Dialog open={open} maxWidth="md" fullWidth>
-      <DialogTitle className={css.dialogTitle}>{d("Distribute").t("library_label_distribute")}</DialogTitle>
+      <DialogTitle className={css.dialogTitle}>
+        {d("Distribute").t("library_label_distribute")}: {folderName ?? ""}
+      </DialogTitle>
       <DialogContent className={css.dialogContent} dividers>
         <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
           <RadioGroup value={radioValue} onChange={(e) => handleChange(e.target.value)}>
