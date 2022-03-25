@@ -1319,7 +1319,7 @@ function EditBox(props: CalendarStateProps) {
     } else if (perm.create_my_schools_schedule_events_522) {
       lists = classOptions.classListSchool.school?.classes as EntityScheduleClassInfo[];
     } else {
-      lists = classOptions.classListTeacher.user?.membership as EntityScheduleClassInfo[];
+      lists = classOptions.classListTeacher.user?.membership?.classesTeaching as EntityScheduleClassInfo[];
     }
     const classResult: EntityScheduleShortInfo[] = [];
     lists?.forEach((item: EntityScheduleClassInfo) => {
