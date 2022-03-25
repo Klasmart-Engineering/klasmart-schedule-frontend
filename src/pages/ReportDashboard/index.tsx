@@ -264,7 +264,7 @@ export function ReportDashboard() {
             )}
             {Boolean(perm.teachers_classes_teaching_time_report_620) && (
               <Grid item xs={12} md={4}>
-                {reportTip(t("report_label_teaching_load"), t("report_label_teacher_usage_info" as any))}
+                {reportTip(t("report_label_teaching_load"), t("report_label_teacher_usage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
                   <TeacherUsageTab />
                 </Box>
