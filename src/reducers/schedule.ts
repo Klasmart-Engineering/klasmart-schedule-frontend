@@ -224,7 +224,9 @@ const initialState: ScheduleState = {
     },
     classListTeacher: {
       user: {
-        membership: [],
+        membership: {
+          classesTeaching: []
+        },
       },
     },
     classListStudent: {
