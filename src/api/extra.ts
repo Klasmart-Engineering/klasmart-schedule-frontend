@@ -368,6 +368,36 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
     });
 }
 
+const IdToNameMap = new Map<string, string>();
+
+export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<string, string>> {
+  const fragmentStr = userIds
+    .filter((id) => !IdToNameMap.has(id))
+    .map((userId, index) => {
+      return `user_${index}: user(user_id: "${userId}"){
+        user_id,
+        given_name
+        family_name
+      }`;
+    })
+    .join(",");
+  if (!fragmentStr) return IdToNameMap;
+  const userQuery = await gqlapi.query({
+    query: gql`
+      query{
+        ${fragmentStr}
+      }
+    `,
+  });
+  for (const item in userQuery.data || {}) {
+    const user = userQuery.data[item];
+    if (user) {
+      IdToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
+    }
+  }
+  return IdToNameMap;
+}
+
 export async function getUserIdAndOrgId() {
   const organizationId = ((await apiWaitForOrganizationOfPage()) as string) || "";
 

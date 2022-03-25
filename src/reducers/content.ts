@@ -40,6 +40,7 @@ import {
 } from "../api/api.auto";
 import {
   apiDevelopmentalListIds,
+  apiGetUserNameByUserId,
   apiSkillsListByIds,
   apiWaitForOrganizationOfPage,
   RecursiveFolderItem,
@@ -517,7 +518,20 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
     if (!isExectSearch) delete params.content_name;
     if (publish_status === PublishStatus.published || content_type === String(SearchContentsRequestContentType.assetsandfolder)) {
       delete params.program_group;
-      const folderRes = await api.contentsFolders.queryFolderContent(params);
+      let folderRes = await api.contentsFolders.queryFolderContent(params);
+      const authorIds: string[] = [];
+
+      (folderRes?.list || []).forEach((item) => {
+        if (item.author && !authorIds.includes(item.author)) authorIds.push(item.author);
+      });
+
+      const data = await apiGetUserNameByUserId(authorIds);
+
+      folderRes.list = (folderRes?.list || []).map((item) => {
+        item.author_name = data.get(item.author as string);
+        return item;
+      });
+
       return { folderRes, organization_id };
     } else if (publish_status === PublishStatus.pending && author !== Author.self) {
       delete params.path;
