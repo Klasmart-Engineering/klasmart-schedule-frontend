@@ -82,6 +82,7 @@ import {
   EntityTeacherLoadLessonSummary,
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
+  EntityTeacherLoadOverview,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
@@ -216,6 +217,7 @@ interface IreportState {
   learnerUsageOverview: EntityLearnerUsageResponse;
   learningWeeklyOverview: EntityLearnerReportOverview;
   learningMonthlyOverview: EntityLearnerReportOverview;
+  teacherLoadOverview: EntityTeacherLoadOverview;
 }
 
 interface IObj {
@@ -253,6 +255,12 @@ const initialState: IreportState = {
     attendees: 0,
     num_below: 0,
     num_meet: 0,
+  },
+  teacherLoadOverview: {
+    num_of_missed_lessons: 0,
+    num_of_teachers_completed_all: 0,
+    num_of_teachers_missed_frequently: 0,
+    num_of_teachers_missed_some: 0,
   },
   reportMockOptions: {
     teacherList: [],
@@ -1274,6 +1282,14 @@ export const getLearnerMonthlyReportOverview = createAsyncThunk<
   return await api.reports.getLearnerMonthlyReportOverview(query);
 });
 
+export type IParamTeacherLoadOverview = Parameters<typeof api.reports.getTeacherLoadOverview>[0];
+export const getTeacherLoadOverview = createAsyncThunk<EntityTeacherLoadOverview, IParamTeacherLoadOverview & LoadingMetaPayload>(
+  "report/getTeacherLoadOverview",
+  async ({ metaLoading, ...query }) => {
+    return await api.reports.getTeacherLoadOverview(query);
+  }
+);
+
 export type IParamQueryTimeFilter = Parameters<typeof api.reports.queryLearningSummaryTimeFilter>[0];
 export type IResultQueryTimeFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryTimeFilter>;
 export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQueryTimeFilter & LoadingMetaPayload>(
@@ -2009,6 +2025,9 @@ const { actions, reducer } = createSlice({
     },
     [getStudentUsageMaterial.rejected.type]: (state) => {},
 
+    [getTeacherLoadOverview.fulfilled.type]: (state, { payload }) => {
+      state.teacherLoadOverview = payload;
+    },
     [getTeachersAndClasses.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersAndClasses>>) => {
       state.teacherList = payload.teacherList;
       state.classesConnection = payload.classesConnection;

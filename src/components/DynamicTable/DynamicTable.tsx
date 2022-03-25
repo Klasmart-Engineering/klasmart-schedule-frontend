@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import React from "react";
 import { EntityAssessmentStudentViewH5PItem } from "../../api/api.auto";
 import noDataIconUrl from "../../assets/icons/any_time_no_data.png";
-import { d } from "../../locale/LocaleManager";
+import { t } from "../../locale/LocaleManager";
 import { ElasticLayerControl } from "../../types/assessmentTypes";
 import ResourcesView from "./ResourcesView";
 import { EntityAssessmentStudentViewH5PItemExtend, tableProps } from "./types";
@@ -151,7 +151,7 @@ export function DynamicTable(props: tableProps) {
       {(!studentViewItems || !studentViewItems.length) && (
         <div className={classes.emptyBox}>
           <img alt="empty" src={noDataIconUrl} />
-          <span style={{ marginTop: "10px" }}>{d("There was no data to display in this week.").t("report_msg_no_data")}</span>
+          <span style={{ marginTop: "10px" }}>{t("report_msg_no_data")}</span>
         </div>
       )}
       <ResourcesView elasticLayerControlData={elasticLayerControlData} handleElasticLayerControl={handleElasticLayerControl} />

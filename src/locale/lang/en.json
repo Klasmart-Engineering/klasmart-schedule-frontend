@@ -853,7 +853,7 @@
   "h5p_label_link": "Link",
   "library_error_cannot_delete_lesson_plan": "This lesson plan cannot be deleted because it has already been used in Schedule.",
   "library_label_visibility_schools": "Schools",
-  "report_msg_no_data": "There was no data to display in this week.",
+  "report_msg_no_data": "No achievement data is available.",
   "report_navigation_class_view": "Class View",
   "report_msg_individual_infor": "This report offers insight into an individual student’s performance in a lesson in terms of learning outcomes.",
   "report_msg_overall_infor": "The Learning Outcome Report gives insight into the performance of a class in terms of learning outcomes, and comparisons between students. Click a student name for individual student details.\n<ul>\n  <li>The report shows results from Live, Class, and Study assessments.\n</li>\n  <li>Student absences seen in the Live and Class mean that learner wasn’t attended.\n</li>\n  <li>Student absences seen in the Study mean that the learner didn’t try at all.</li>\n</ul>",
@@ -1111,5 +1111,16 @@
   "schedule_review_popup_pending_notice": "System is generating adaptive learning lesson plan for each student.",
   "schedule_review_popup_confirm": "Confirm",
   "schedule_review_class_name": "Review: {value} Materials",
-  "schedule_repeat_end_on": "On"
+  "schedule_repeat_end_on": "On",
+  "assessment_list_study_review": "Study / Review",
+  "assessment_review_summary": "Review Summary",
+  "assessment_review_title": "Review Title",
+  "assessment_review_detail_student_name": "Student Name",
+  "report_label_teacher_usage_info": "Check teachers who have not attended the scheduled lessons in the last 7 days and show the number of missed lessons.",
+  "report_label_completed_all_lessons": "Completed all lessons",
+  "report_label_missed_some_lessons": "Missed some lessons",
+  "report_label_missed_all_lessons": "Missed all lessons",
+  "report_label_completed_all": "Completed all",
+  "report_label_missed_some": "Missed some",
+  "report_label_missed_frequently": "Missed frequently"
 }

@@ -520,9 +520,10 @@ export const getAssessmentListV2 = createAsyncThunk<IQueryAssessmentV2Result, IQ
   async ({ metaLoading, ...query }) => {
     const { status, assessment_type, order_by } = query;
     const isStudy = assessment_type === AssessmentTypeValues.study;
+    const isReview = assessment_type === AssessmentTypeValues.review;
     let _status: string = "";
     let _order_by: IQueryAssessmentV2Params["order_by"];
-    if (isStudy) {
+    if (isStudy || isReview) {
       _order_by = order_by ? order_by : OrderByAssessmentList._create_at;
       _status =
         status === AssessmentStatus.all

@@ -1194,7 +1194,7 @@ type LangRecord =
       values: undefined;
     }
   | { id: "library_label_visibility_schools"; description: `Schools`; values: undefined }
-  | { id: "report_msg_no_data"; description: `There was no data to display in this week.`; values: undefined }
+  | { id: "report_msg_no_data"; description: `No achievement data is available.`; values: undefined }
   | { id: "report_navigation_class_view"; description: `Class View`; values: undefined }
   | {
       id: "report_msg_individual_infor";
@@ -1757,7 +1757,22 @@ type LangRecord =
     }
   | { id: "schedule_review_popup_confirm"; description: `Confirm`; values: undefined }
   | { id: "schedule_review_class_name"; description: `Review: {value} Materials`; values: { value: string | number } }
-  | { id: "schedule_repeat_end_on"; description: `On`; values: undefined };
+  | { id: "schedule_repeat_end_on"; description: `On`; values: undefined }
+  | { id: "assessment_list_study_review"; description: `Study / Review`; values: undefined }
+  | { id: "assessment_review_summary"; description: `Review Summary`; values: undefined }
+  | { id: "assessment_review_title"; description: `Review Title`; values: undefined }
+  | { id: "assessment_review_detail_student_name"; description: `Student Name`; values: undefined }
+  | {
+      id: "report_label_teacher_usage_info";
+      description: `Check teachers who have not attended the scheduled lessons in the last 7 days and show the number of missed lessons.`;
+      values: undefined;
+    }
+  | { id: "report_label_completed_all_lessons"; description: `Completed all lessons`; values: undefined }
+  | { id: "report_label_missed_some_lessons"; description: `Missed some lessons`; values: undefined }
+  | { id: "report_label_missed_all_lessons"; description: `Missed all lessons`; values: undefined }
+  | { id: "report_label_completed_all"; description: `Completed all`; values: undefined }
+  | { id: "report_label_missed_some"; description: `Missed some`; values: undefined }
+  | { id: "report_label_missed_frequently"; description: `Missed frequently`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

@@ -93,9 +93,10 @@ function LOChecklist({
   let [list, setList] = useState(cloneDeep(outcomes));
 
   /** 根据 outcome 得到（用户通过点击 not attempted 而得到的）禁用列表 **/
-  const outcomeDisableList = useMemo(() => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [], [
-    formValue.outcomes,
-  ]);
+  const outcomeDisableList = useMemo(
+    () => formValue.outcomes?.filter((o) => o.skip && o.outcome_id)?.map((o) => o.outcome_id) ?? [],
+    [formValue.outcomes]
+  );
 
   useEffect(() => {
     setList(cloneDeep(outcomes));

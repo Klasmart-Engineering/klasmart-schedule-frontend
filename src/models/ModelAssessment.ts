@@ -1,3 +1,4 @@
+import { AssessmentTypeValues } from "@components/AssessmentType";
 import { Dimension } from "@pages/DetailAssessment/MultiSelect";
 import { cloneDeep, uniq } from "lodash";
 import {
@@ -5,22 +6,23 @@ import {
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
-  V2AssessmentContentReply
+  V2AssessmentContentReply,
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
   UpdataStudyAssessmentRequestData,
   UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials
+  UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import {
   MaterialViewItemResultProps,
   OutcomeStatus,
   OverAllOutcomesItem,
+  StudentParticipate,
   StudentViewItemsProps,
-  SubDimensionOptions
+  SubDimensionOptions,
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 
@@ -449,7 +451,7 @@ export const ModelAssessment = {
         student_name,
         reviewer_comment,
         status,
-        result: results
+        results: results
           ?.filter((r) => !!contentObj[r.content_id!])
           .map((result) => {
             const { answer, attempted, content_id, score, outcomes } = result;
@@ -471,13 +473,19 @@ export const ModelAssessment = {
               h5p_sub_id,
               status,
               outcomes: outcomes?.map((item) => {
-                const { assumed, outcome_name, assigned_to } = outcomeObj[item.outcome_id!];
-                return {
-                  ...item,
-                  assumed,
-                  outcome_name,
-                  assigned_to,
-                };
+                if (outcomeObj[item.outcome_id!]) {
+                  const { assumed, outcome_name, assigned_to } = outcomeObj[item.outcome_id!];
+                  return {
+                    ...item,
+                    assumed,
+                    outcome_name,
+                    assigned_to,
+                  };
+                } else {
+                  return {
+                    ...item,
+                  };
+                }
               }),
             };
           }),
@@ -485,12 +493,33 @@ export const ModelAssessment = {
     });
     return studentViewItems;
   },
+  getReviewStudentsItems(students: DetailAssessmentResult["diff_content_students"]): StudentViewItemsProps[] | undefined {
+    const reviewStudentsItems: StudentViewItemsProps[] | undefined = students?.map((item) => {
+      const { status, student_id, student_name, reviewer_comment, results } = item;
+      return {
+        status,
+        student_id,
+        student_name,
+        reviewer_comment,
+        results: results?.map((rItem) => {
+          const { answer, attempted, score, content } = rItem;
+          return {
+            answer,
+            attempted,
+            score,
+            ...content,
+          };
+        }),
+      };
+    });
+    return reviewStudentsItems;
+  },
   getOverallOutcomes(studentViewItems: StudentViewItemsProps[] | undefined): OverAllOutcomesItem[] {
     let outcomeView: Record<string, OverAllOutcomesItem> = {};
     let overAllOutcomes: OverAllOutcomesItem[] = [];
     studentViewItems?.forEach((sItem) => {
       const { student_id } = sItem;
-      sItem.result?.forEach((rItem) => {
+      sItem.results?.forEach((rItem) => {
         if (rItem.content_type === "LessonMaterial") {
           rItem.outcomes?.forEach((oItem) => {
             const { outcome_id, status, outcome_name, assumed, assigned_to } = oItem;
@@ -581,7 +610,7 @@ export const ModelAssessment = {
     let materialViewItems: MaterialViewItemResultProps[] = [];
     studentViewItems?.forEach((sItem) => {
       const { student_id, student_name } = sItem;
-      sItem.result
+      sItem.results
         ?.filter((r) => r.content_type === "LessonMaterial" || r.content_type === "Unknown")
         .forEach((rItem) => {
           const {
@@ -654,16 +683,21 @@ export const ModelAssessment = {
     materialViewItems = Object.values(materialViewObj);
     return materialViewItems;
   },
-  getInitSubDimension(dimension: Dimension, studentViewItems: StudentViewItemsProps[] | undefined): SubDimensionOptions[] | undefined {
+  getInitSubDimension(dimension: Dimension, studentViewItems: any[] | undefined): SubDimensionOptions[] | undefined {
     if (dimension === Dimension.student) {
-      return studentViewItems?.map((item) => {
-        return { id: item.student_id!, name: item.student_name! };
-      });
+      return studentViewItems
+        ?.filter((student) => student.status === StudentParticipate.Participate)
+        .map((item) => {
+          return { id: item.student_id!, name: item.student_name! };
+        });
     } else {
-      if (studentViewItems && studentViewItems[0] && studentViewItems[0].result) {
-        return studentViewItems[0].result
-          .filter((item) => item.content_type === "LessonMaterial" && item.status === "Covered" && item.parent_id === "")
-          .map((item) => {
+      if (studentViewItems && studentViewItems[0] && studentViewItems[0].results) {
+        return studentViewItems[0].results
+          .filter(
+            (item: { content_type: string; status: string; parent_id: string }) =>
+              item.content_type === "LessonMaterial" && item.status === "Covered" && item.parent_id === ""
+          )
+          .map((item: { content_id: any; content_name: any }) => {
             return { id: item.content_id!, name: item.content_name! };
           });
       } else {
@@ -671,7 +705,12 @@ export const ModelAssessment = {
       }
     }
   },
-  getUpdateAssessmentData(contents?: V2AssessmentContentReply[], students?: StudentViewItemsProps[]) {
+  getUpdateAssessmentData(
+    assessment_type: AssessmentTypeValues,
+    contents?: V2AssessmentContentReply[],
+    students?: StudentViewItemsProps[]
+  ) {
+    const isReivew = assessment_type === AssessmentTypeValues.review;
     const _contents =
       contents?.map((item) => {
         const { content_id, content_subtype, content_type, parent_id, status, reviewer_comment } = item;
@@ -686,24 +725,26 @@ export const ModelAssessment = {
       }) ?? [];
     const _students =
       students?.map((item) => {
-        const { student_id, status, reviewer_comment, result } = item;
+        const { student_id, status, reviewer_comment, results } = item;
         return {
           student_id,
           reviewer_comment,
           status,
-          results: result?.map((rItem) => {
+          results: results?.map((rItem) => {
             const { content_id, parent_id, score, outcomes } = rItem;
             return {
               content_id,
               parent_id,
               score,
-              outcomes: outcomes?.map((oItem) => {
-                const { outcome_id, status } = oItem;
-                return {
-                  outcome_id,
-                  status,
-                };
-              }),
+              outcomes: isReivew
+                ? undefined
+                : outcomes?.map((oItem) => {
+                    const { outcome_id, status } = oItem;
+                    return {
+                      outcome_id,
+                      status,
+                    };
+                  }),
             };
           }),
         };
@@ -716,8 +757,8 @@ export const ModelAssessment = {
       hasNotAttemptArr = studentViewItems.map((item) => {
         let all: number = 0;
         let attempt: number = 0;
-        if (item.result && item.result[0]) {
-          item.result.forEach((v) => {
+        if (item.results && item.results[0]) {
+          item.results.forEach((v) => {
             if (v.content_type === "LessonMaterial") {
               if (v.h5p_id) {
                 all += 1;
@@ -739,8 +780,8 @@ export const ModelAssessment = {
     let attempt: number = 0;
     if (studentViewItems && studentViewItems[0]) {
       studentViewItems.forEach((item) => {
-        if (item.result && item.result[0]) {
-          item.result.forEach((v) => {
+        if (item.results && item.results[0]) {
+          item.results.forEach((v) => {
             if (v.h5p_id) {
               all += 1;
               if (v.attempted) {

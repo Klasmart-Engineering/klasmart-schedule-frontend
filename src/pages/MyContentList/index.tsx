@@ -589,6 +589,7 @@ export default function MyContentList() {
             open={organizationListActive}
             onShareFolder={handleShareFolder}
             key={organizationListShowIndex}
+            folderName={shareFolder?.name}
           />
         )}
         <FolderForm
