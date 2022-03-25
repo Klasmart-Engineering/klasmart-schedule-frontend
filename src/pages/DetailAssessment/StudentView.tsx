@@ -15,6 +15,7 @@ import {
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import { DetailAssessmentResult } from "@pages/ListAssessment/types";
 import { cloneDeep } from "lodash";
 import React, { ChangeEvent, Fragment, useMemo, useState } from "react";
 import { PLField, PLTableHeader } from "../../components/PLTable";
@@ -92,10 +93,11 @@ export interface StudentViewProps {
   studentViewItems?: StudentViewItemsProps[];
   roomId?: string;
   assessment_type?: AssessmentTypeValues;
+  status?: DetailAssessmentResult["status"];
 }
 export function StudentView(props: StudentViewProps) {
   const css = useStyles();
-  const { studentViewItems, editable, subDimension, roomId, assessment_type, onChangeComputedStudentViewItems } = props;
+  const { studentViewItems, editable, subDimension, roomId, assessment_type, status, onChangeComputedStudentViewItems } = props;
   const isReview = assessment_type === AssessmentTypeValues.review;
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
   const [resourceType, setResourceType] = useState<string>("");
@@ -269,7 +271,7 @@ export function StudentView(props: StudentViewProps) {
                     <div style={{ color: checkedArr[index] ? "black" : "#666666" }}>
                       <AccountCircleIcon />
                       <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name ? sitem.student_name : "unknow"}</span>
-                      {editable && (
+                      {editable && status !== "NotStarted" && (
                         <span
                           onClick={stopPropagation((e) => handleOpenAddStudentComment(sitem.reviewer_comment ?? "", sitem.student_id))}
                           style={{

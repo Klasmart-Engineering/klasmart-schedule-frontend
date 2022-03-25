@@ -381,6 +381,7 @@ export function DetailAssessment() {
             editable={editable}
             roomId={assessmentDetailV2.room_id}
             assessment_type={assessment_type}
+            status={assessmentDetailV2.status}
             onChangeComputedStudentViewItems={handleChangeComputedStudentViewItems}
           />
         </>
