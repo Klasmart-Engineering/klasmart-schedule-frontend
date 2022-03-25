@@ -672,9 +672,6 @@ classesConnection(
       node {
         id
         name
-        schoolsConnection( direction: FORWARD) {
-          totalCount
-        }
       }
       }
       pageInfo {

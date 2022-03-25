@@ -1245,9 +1245,17 @@ export type MyUser = {
   node?: Maybe<UserConnectionNode>;
   /** 'operator' default = 'AND' */
   organizationsWithPermissions?: Maybe<OrganizationsConnectionResponse>;
-  /** Returns a paginated response of the permissions the user has in a given organization. */
+  /**
+   * Returns a paginated response of the permissions the user has in a given organization.
+   *
+   * If `count` is omitted, the max page size is ignored and ALL permissions are returned.
+   */
   permissionsInOrganization?: Maybe<PermissionsConnectionResponse>;
-  /** Returns a paginated response of the permissions the user has in a given school. */
+  /**
+   * Returns a paginated response of the permissions the user has in a given school.
+   *
+   * If `count` is omitted, the max page size is ignored and ALL permissions are returned.
+   */
   permissionsInSchool?: Maybe<PermissionsConnectionResponse>;
   /**
    * Finds user profiles matching the username/email/phone provided in the token.

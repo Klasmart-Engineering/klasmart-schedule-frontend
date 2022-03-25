@@ -608,13 +608,7 @@ export type ClassesSchoolsQuery = { __typename?: "Query" } & {
           Array<
             Types.Maybe<
               { __typename?: "ClassesConnectionEdge" } & {
-                node?: Types.Maybe<
-                  { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name"> & {
-                      schoolsConnection?: Types.Maybe<
-                        { __typename?: "SchoolsConnectionResponse" } & Pick<Types.SchoolsConnectionResponse, "totalCount">
-                      >;
-                    }
-                >;
+                node?: Types.Maybe<{ __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name">>;
               }
             >
           >
@@ -2224,9 +2218,6 @@ export const ClassesSchoolsDocument = gql`
         node {
           id
           name
-          schoolsConnection(direction: FORWARD) {
-            totalCount
-          }
         }
       }
       pageInfo {

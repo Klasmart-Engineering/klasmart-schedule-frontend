@@ -602,9 +602,7 @@ export const recursiveGetNoSchoolclasses = async (variables: ClassesSchoolsQuery
     variables,
   });
   classes = classes.concat(
-    classesConnection?.edges
-      ?.filter((classNode) => classNode?.node?.schoolsConnection?.totalCount === 0)
-      .map((node) => ({ class_id: node?.node?.id, class_name: node?.node?.name } as UserClass)) || []
+    classesConnection?.edges?.map((node) => ({ class_id: node?.node?.id, class_name: node?.node?.name } as UserClass)) || []
   );
 
   if (classesConnection?.pageInfo?.hasNextPage) {
