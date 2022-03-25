@@ -6,8 +6,8 @@ set -Eeuo pipefail
 trap cleanup SIGINT SIGTERM ERR EXIT
 
 # CHANGE ALLOWED TARGETS to deploy to a new region/environment combination
-allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding")
-allowed_target_region=("in" "pk" "global" "uk" "lk" "th")
+allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding" "nextgen" "research" "showroom" "uat")
+allowed_target_region=("in" "pk" "global" "uk" "lk" "th" "mb")
 
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
@@ -90,8 +90,8 @@ parse_params() {
 setup_colors
 parse_params "$@"
 
-allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding")
-allowed_target_region=("in" "pk" "global" "uk" "lk" "th")
+allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding" "nextgen" "research" "showroom" "uat")
+allowed_target_region=("in" "pk" "global" "uk" "lk" "th" "mb")
 
 if [ $env == "prod" ] && [ $region == "in" ]
 then
@@ -137,6 +137,18 @@ elif [ $env == "nextgen" ] && [ $region == "global"  ]
 then
   S3_ENDPOINT=s3://klglobal-nextgen-cms
   CLOUDFRONT_ID=EX9FMZD08DAH6
+elif [ $env == "uat" ] && [ $region == "mb"  ]
+then
+  S3_ENDPOINT=s3://klmumbai-uat-cms
+  CLOUDFRONT_ID=E2U8SDIRD49RSG
+elif [ $env == "showroom" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-showroom-cms
+  CLOUDFRONT_ID=ELXLEE1SIJWPJ
+elif [ $env == "loadtest" ] && [ $region == "global"  ]
+then
+  S3_ENDPOINT=s3://klglobal-loadtest-cms
+  CLOUDFRONT_ID=EP5PZQIP6TGO3
 fi
 
 # script logic here
@@ -148,15 +160,15 @@ msg "- region: ${region}"
 msg "copy config file to .env.production"
 cp ./deploy/config/${region}/.env.${env} ./.env.production
 msg "npm install and audit"
-docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target=/app -w /app node:14 npm ci
+npm ci
 msg "----------------------"
 msg "npm build for ${env} in region ${region}"
-docker  run  -it --name cmsBuilder --rm --mount type=bind,source="$(pwd)",target=/app -w /app node:14 npm run build
+npm run build
 msg "${GREEN}adding version file${NOFORMAT}"
 Version="$(git describe --tags)" Tag="$(git rev-parse HEAD | cut -c1-7)"; jq --arg version "$Version" --arg tag "$Tag" "{\"Version\":\"$Version\",\"Commit\":\"$Tag\"}" --raw-output --null-input > build/version.txt
 msg "----------------------"
 msg "${GREEN}syncing current latest to backup${NOFORMAT}"
-aws s3 sync ${S3_ENDPOINT}/latest ${S3_ENDPOINT}/$(date "+%Y%m%d")
+aws s3 sync ${S3_ENDPOINT}/latest ${S3_ENDPOINT}/$Version
 msg "----------------------"
 msg "${GREEN}syncing build to s3${NOFORMAT}"
 aws s3 sync build ${S3_ENDPOINT}/latest --delete
