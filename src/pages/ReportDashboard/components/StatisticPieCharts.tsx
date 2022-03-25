@@ -48,7 +48,7 @@ export default function StatisticPieCharts(props: Props) {
     <canvas
       width={width}
       height={height}
-      style={{ zoom: 0.5 }}
+      style={{ transform: "scale(0.5)", transformOrigin: "0 0" }}
       ref={(node) => {
         ref.current = node;
         draw();
