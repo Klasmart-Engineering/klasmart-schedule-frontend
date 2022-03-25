@@ -8,7 +8,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableRow
+  TableRow,
 } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
@@ -29,7 +29,7 @@ import {
   OutcomeStatus,
   StudentParticipate,
   StudentViewItemsProps,
-  SubDimensionOptions
+  SubDimensionOptions,
 } from "./type";
 const useStyles = makeStyles({
   tableBar: {
@@ -66,7 +66,7 @@ const useStyles = makeStyles({
   },
   tableCell: {
     wordBreak: "break-all",
-  }
+  },
 });
 
 export interface MaterialViewProps {
@@ -157,7 +157,7 @@ export function MaterialView(props: MaterialViewProps) {
     setResourceType("Essay");
     setAnswer(answer);
   };
-  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, h5pSubId?: string,  userId?: string, content_subtype?: string) => {
+  const handleClickAudioRecorder = (roomId?: string, h5pId?: string, h5pSubId?: string, userId?: string, content_subtype?: string) => {
     openResourceView();
     setResourceType(content_subtype as string);
     setRoom(roomId);
@@ -218,7 +218,9 @@ export function MaterialView(props: MaterialViewProps) {
                               <TableBody>
                                 {item.outcomes.map((outcome: MaterialViewItemResultOutcomeProps) => (
                                   <TableRow key={outcome.outcome_id}>
-                                    <TableCell align="center" className={css.tableCell}>{outcome.outcome_name}</TableCell>
+                                    <TableCell align="center" className={css.tableCell}>
+                                      {outcome.outcome_name}
+                                    </TableCell>
                                     <TableCell align="center">{outcome.assumed ? d("Yes").t("assess_label_yes") : ""}</TableCell>
                                     <TableCell align="center">
                                       <Box display="flex" alignItems="center" p={2} pb={0}>
@@ -284,52 +286,64 @@ export function MaterialView(props: MaterialViewProps) {
                         <Table className={css.table}>
                           <PLTableHeader fields={MaterialDefaultHeader} style={{ backgroundColor: "#F7F2F3", height: 35 }} />
                           <TableBody>
-                            {item.students?.filter(student => student.status === StudentParticipate.Participate)?.map((sItem: MaterialViewItemStudentProps) => (
-                              <TableRow key={sItem.student_id}>
-                                <TableCell align="center">{sItem.student_name ? sItem.student_name : "unknow"}</TableCell>
-                                <TableCell align="center">
-                                  {sItem.attempted && item.content_subtype === "Essay" && (
-                                    <span
-                                      style={{ color: "#006CCF", cursor: "pointer" }}
-                                      onClick={(e) => handleClickView(sItem.answer ?? "")}
-                                    >
-                                      {d("Click to View").t("assess_detail_click_to_view")}
-                                    </span>
-                                  )}
-                                  {item.file_type !== FileTypes.HasChildContainer && sItem.attempted && showAudioRecorder(item.content_subtype) && (
-                                    <span
-                                      style={{ color: "#006CCF", cursor: "pointer" }}
-                                      onClick={(e) => handleClickAudioRecorder(roomId, item.h5p_id, item.h5p_sub_id, sItem.student_id, item.content_subtype)}
-                                    >
-                                      {d("Click to View").t("assess_detail_click_to_view")}
-                                    </span>
-                                  )}
-                                </TableCell>
-                                <TableCell>
-                                  <EditScore
-                                    fileType={item.file_type}
-                                    score={sItem.score}
-                                    editable={editable}
-                                    maxScore={item.max_score}
-                                    attempted={sItem.attempted}
-                                    studentId={sItem.student_id}
-                                    contentId={item.content_id}
-                                    isSubjectiveActivity={true}
-                                    subType={item.content_subtype}
-                                    onChangeScore={handleChangeScore}
-                                  />
-                                </TableCell>
-                                <TableCell align="center">
-                                  {sItem.attempted
-                                    ? item.parent_id === "" && item.file_type === FileTypes.HasChildContainer
-                                      ? "100%"
-                                      : item?.max_score! === 0
-                                      ? ""
-                                      : Math.ceil((sItem?.score! / item?.max_score!) * 100) + "%"
-                                    : ""}
-                                </TableCell>
-                              </TableRow>
-                            ))}
+                            {item.students
+                              ?.filter((student) => student.status === StudentParticipate.Participate)
+                              ?.map((sItem: MaterialViewItemStudentProps) => (
+                                <TableRow key={sItem.student_id}>
+                                  <TableCell align="center">{sItem.student_name ? sItem.student_name : "unknow"}</TableCell>
+                                  <TableCell align="center">
+                                    {sItem.attempted && item.content_subtype === "Essay" && (
+                                      <span
+                                        style={{ color: "#006CCF", cursor: "pointer" }}
+                                        onClick={(e) => handleClickView(sItem.answer ?? "")}
+                                      >
+                                        {d("Click to View").t("assess_detail_click_to_view")}
+                                      </span>
+                                    )}
+                                    {item.file_type !== FileTypes.HasChildContainer &&
+                                      sItem.attempted &&
+                                      showAudioRecorder(item.content_subtype) && (
+                                        <span
+                                          style={{ color: "#006CCF", cursor: "pointer" }}
+                                          onClick={(e) =>
+                                            handleClickAudioRecorder(
+                                              roomId,
+                                              item.h5p_id,
+                                              item.h5p_sub_id,
+                                              sItem.student_id,
+                                              item.content_subtype
+                                            )
+                                          }
+                                        >
+                                          {d("Click to View").t("assess_detail_click_to_view")}
+                                        </span>
+                                      )}
+                                  </TableCell>
+                                  <TableCell>
+                                    <EditScore
+                                      fileType={item.file_type}
+                                      score={sItem.score}
+                                      editable={editable}
+                                      maxScore={item.max_score}
+                                      attempted={sItem.attempted}
+                                      studentId={sItem.student_id}
+                                      contentId={item.content_id}
+                                      isSubjectiveActivity={true}
+                                      subType={item.content_subtype}
+                                      onChangeScore={handleChangeScore}
+                                    />
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {sItem.attempted
+                                      ? item.parent_id === "" && item.file_type === FileTypes.HasChildContainer
+                                        ? "100%"
+                                        : item?.max_score! === 0
+                                        ? ""
+                                        : Math.ceil((sItem?.score! / item?.max_score!) * 100) + "%"
+                                      : ""}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
                           </TableBody>
                         </Table>
                       </div>

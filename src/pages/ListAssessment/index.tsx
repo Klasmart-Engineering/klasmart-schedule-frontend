@@ -34,7 +34,7 @@ const useQuery = (): AssessmentQueryCondition => {
     const query_type = (querys.get("query_type") as ExectSeachType) || ExectSeachType.all;
     const page = Number(querys.get("page")) || 1;
     const assessment_type = querys.get("assessment_type") || AssessmentTypeValues.live;
-    const isStudy = (assessment_type === AssessmentTypeValues.study) || (assessment_type === AssessmentTypeValues.review);
+    const isStudy = assessment_type === AssessmentTypeValues.study || assessment_type === AssessmentTypeValues.review;
     const defaultOrderBy = isStudy ? OrderByAssessmentList._create_at : OrderByAssessmentList._class_end_time;
     const order_by = (querys.get("order_by") as OrderByAssessmentList) || defaultOrderBy;
     const status = (querys.get("status") as AssessmentStatus) || AssessmentStatus.all;

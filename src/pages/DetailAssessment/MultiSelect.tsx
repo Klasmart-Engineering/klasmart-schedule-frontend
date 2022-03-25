@@ -73,20 +73,22 @@ export function MultiSelect(props: MultiSelectProps) {
   return (
     <>
       <div style={{ display: "flex", marginBottom: 24 }}>
-        {!isReview && <TextField
-          style={{ width: 266, marginRight: 10 }}
-          value={dimension}
-          onChange={handleChange}
-          size="medium"
-          select
-          SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
-        >
-          {list.map((item) => (
-            <MenuItem key={item.label} value={item.value}>
-              {item.label}
-            </MenuItem>
-          ))}
-        </TextField>}
+        {!isReview && (
+          <TextField
+            style={{ width: 266, marginRight: 10 }}
+            value={dimension}
+            onChange={handleChange}
+            size="medium"
+            select
+            SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
+          >
+            {list.map((item) => (
+              <MenuItem key={item.label} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
         <Autocomplete
           style={{ width: 266 }}
           multiple

@@ -1,7 +1,7 @@
-import { EntityLearnerReportOverview } from "@api/api.auto";
+import { EntityTeacherLoadOverview } from "@api/api.auto";
 import { t } from "@locale/LocaleManager";
 import { Box, Grid, makeStyles } from "@material-ui/core";
-import ReportStudentProgress from "@pages/ReportStudentProgress";
+import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import { RootState } from "@reducers/index";
 import { ParentSize } from "@visx/responsive";
 import { sumBy } from "lodash";
@@ -25,10 +25,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: 600,
   },
   scoreContainer: {
-    width: "25%",
+    width: "35%",
     marginTop: "36px",
-    marginLeft: "25px",
-    marginRight: "15px",
+    marginLeft: "12px",
   },
   scoreName: {
     lineHeight: "14px",
@@ -55,25 +54,27 @@ const COLORS = ["#3ab8f3", "#ffd038", "#e80861"];
 const computeDatum = (value: number | undefined, count: number) => {
   return count === 0 ? 0 : Math.floor(((value || 0) / count) * 100);
 };
-export default function LearningWeeklyTabs() {
+export default function TeacherUsageTab() {
   const css = useStyles();
-  const learningMonthlyOverview: EntityLearnerReportOverview = useSelector<RootState, RootState["report"]>(
+  const learningTeacherUsageOverview: EntityTeacherLoadOverview = useSelector<RootState, RootState["report"]>(
     (state) => state.report
-  ).learningMonthlyOverview;
+  ).teacherLoadOverview;
   const count =
-    (learningMonthlyOverview.num_above || 0) + (learningMonthlyOverview.num_meet || 0) + (learningMonthlyOverview.num_below || 0);
+    (learningTeacherUsageOverview.num_of_teachers_completed_all || 0) +
+    (learningTeacherUsageOverview.num_of_teachers_missed_frequently || 0) +
+    (learningTeacherUsageOverview.num_of_teachers_missed_some || 0);
   let handleData = [
     {
-      name: t("report_label_above"),
-      count: computeDatum(learningMonthlyOverview.num_above, count),
+      name: t("report_label_completed_all" as any),
+      count: computeDatum(learningTeacherUsageOverview.num_of_teachers_completed_all, count),
     },
     {
-      name: t("report_label_meets"),
-      count: computeDatum(learningMonthlyOverview.num_meet, count),
+      name: t("report_label_missed_some" as any),
+      count: computeDatum(learningTeacherUsageOverview.num_of_teachers_missed_some, count),
     },
     {
-      name: t("report_label_below"),
-      count: computeDatum(learningMonthlyOverview.num_below, count),
+      name: t("report_label_missed_frequently" as any),
+      count: computeDatum(learningTeacherUsageOverview.num_of_teachers_missed_frequently, count),
     },
   ];
 
@@ -81,7 +82,7 @@ export default function LearningWeeklyTabs() {
   if (filterData.length === 2) {
     filterData[1].count = 100 - filterData[0].count;
   } else if (filterData.length === 3) {
-    filterData[2].count = 100 - filterData[0].count - filterData[1].count;
+    filterData[1].count = 100 - filterData[0].count - filterData[2].count;
   }
 
   const renderScore = (name: string, number: number, color: string, i: number) => {
@@ -100,9 +101,9 @@ export default function LearningWeeklyTabs() {
   const renderCountNumber = () => {
     return (
       <Box display={"flex"} flexDirection={"column"} alignItems={"center"} position={"absolute"}>
-        <Box color={"#777"}>{t("assess_detail_attendance")}</Box>
+        <Box color={"#777"}>{t("report_label_missed_lessons")}</Box>
         <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
-          {learningMonthlyOverview.attendees}
+          {learningTeacherUsageOverview.num_of_missed_lessons}
         </Box>
       </Box>
     );
@@ -111,7 +112,7 @@ export default function LearningWeeklyTabs() {
   return (
     <Grid container direction="column">
       <Grid wrap="nowrap" container direction="column" className={css.container}>
-        <Box className={css.titleTip}>{t("report_label_4_weeks")}</Box>
+        <Box className={css.titleTip}>{t("report_label_past_7_days")}</Box>
         <Box flex={1} display={"flex"}>
           <Box
             flex={1}
@@ -143,7 +144,7 @@ export default function LearningWeeklyTabs() {
           </Grid>
         </Box>
         <Grid container justifyContent="center" alignItems="center">
-          <BottomButton text={t("report_label_student_progress_report")} to={ReportStudentProgress.routeBasePath} marginTop={20} />
+          <BottomButton text={t("report_label_teaching_load")} to={ReportTeachingLoad.routeBasePath} marginTop={20} />
         </Grid>
       </Grid>
     </Grid>

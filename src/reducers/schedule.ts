@@ -7,7 +7,7 @@ import {
   StringOperator,
   UserFilter,
   UuidExclusiveOperator,
-  UuidOperator
+  UuidOperator,
 } from "../api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
@@ -308,7 +308,7 @@ const initialState: ScheduleState = {
     cursor: "",
     hasNextPage: false,
   },
-  userNameData: {}
+  userNameData: {},
 };
 
 type AsyncReturnType<T extends (...args: any) => any> = T extends (...args: any) => Promise<infer U>
@@ -363,14 +363,13 @@ export const saveScheduleDataReview = createAsyncThunk<
   EntityScheduleAddView,
   SaveStatusResourseParams & LoadingMetaPayload,
   { state: Rootstate }
-  >(
+>(
   "scheduleReview/save",
   // @ts-ignore
   async ({ payload, is_new_schedule }, { getState }) => {
-     return await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
+    return await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
   }
 );
-
 
 type viewSchedulesParams = Parameters<typeof api.schedulesTimeView.getScheduleTimeViewList>[0] & LoadingMetaPayload;
 type viewSchedulesResultResponse = AsyncReturnType<typeof api.schedulesTimeView.getScheduleTimeViewList>;
@@ -839,7 +838,7 @@ export const getScheduleMockOptions = createAsyncThunk<getScheduleMockOptionsAll
   async () => {
     const programList = await programsHandler.getProgramsOptions();
     const _subjectList = await programsHandler.getAllSubjects();
-    return { subjectList: uniqBy(_subjectList, "id"), programList};
+    return { subjectList: uniqBy(_subjectList, "id"), programList };
   }
 );
 
@@ -986,7 +985,7 @@ type checkScheduleReviewResult = AsyncReturnType<typeof api.schedules.checkSched
 export const checkScheduleReview = createAsyncThunk<checkScheduleReviewResult, checkScheduleReviewParams>(
   "schedules/checkScheduleReviewData",
   async ({ metaLoading, ...query }) => {
-    return api.schedules.checkScheduleReviewData(query)
+    return api.schedules.checkScheduleReviewData(query);
   }
 );
 
@@ -1018,12 +1017,13 @@ export const getLinkedMockOptions = createAsyncThunk<LinkedMockOptions, LoadingM
 });
 
 export const getStudentUserNamesById = createAsyncThunk(
-  "getStudentUserNamesById", async (data: {userIds: string[]} & LoadingMetaPayload) => {
+  "getStudentUserNamesById",
+  async (data: { userIds: string[] } & LoadingMetaPayload) => {
     const filter = {
       OR: data.userIds.map((id) => ({
         userId: {
           operator: UuidOperator.Eq,
-          value: id
+          value: id,
         },
       })),
     } as UserFilter;
@@ -1033,7 +1033,8 @@ export const getStudentUserNamesById = createAsyncThunk(
         filter,
       },
     });
-  });
+  }
+);
 
 const { actions, reducer } = createSlice({
   name: "schedule",

@@ -50,12 +50,18 @@ export function DetailAssessment() {
   const [students, setStudents] = useState<DetailAssessmentResult["students"]>();
   const [contents, setContents] = useState<DetailAssessmentResult["contents"]>();
   const initStudentViewItems = useMemo(() => {
-    if(isReview) {
-      return ModelAssessment.getReviewStudentsItems(assessmentDetailV2.diff_content_students)
+    if (isReview) {
+      return ModelAssessment.getReviewStudentsItems(assessmentDetailV2.diff_content_students);
     } else {
       return ModelAssessment.getStudentViewItems(assessmentDetailV2.students, assessmentDetailV2.contents, assessmentDetailV2.outcomes);
     }
-  }, [assessmentDetailV2.contents, assessmentDetailV2.diff_content_students, assessmentDetailV2.outcomes, assessmentDetailV2.students, isReview]);
+  }, [
+    assessmentDetailV2.contents,
+    assessmentDetailV2.diff_content_students,
+    assessmentDetailV2.outcomes,
+    assessmentDetailV2.students,
+    isReview,
+  ]);
   const [computedStudentViewItems, setComputedStudentViewItems] = useState<StudentViewItemsProps[] | undefined>();
   const overallOutcomes = useMemo(() => {
     const outcomes = ModelAssessment.getOverallOutcomes(computedStudentViewItems ? computedStudentViewItems : initStudentViewItems);
@@ -91,14 +97,14 @@ export function DetailAssessment() {
     if (attempt === 0) return "0";
     return `${Math.round((attempt / all) * 100)}%`;
   }, [computedStudentViewItems, initStudentViewItems]);
-  
+
   const defaultStudents = useMemo(() => {
-    if(students) {
-      return students
-    } else if(isReview) {
-      return assessmentDetailV2.diff_content_students
+    if (students) {
+      return students;
+    } else if (isReview) {
+      return assessmentDetailV2.diff_content_students;
     } else {
-      return assessmentDetailV2.students
+      return assessmentDetailV2.students;
     }
   }, [assessmentDetailV2.diff_content_students, assessmentDetailV2.students, isReview, students]);
 
@@ -176,7 +182,7 @@ export function DetailAssessment() {
     students && setStudents([...students]);
     let selectedStudents: StudentViewItemsProps[] | undefined;
     if (isReview) {
-      selectedStudents = ModelAssessment.getReviewStudentsItems(students)
+      selectedStudents = ModelAssessment.getReviewStudentsItems(students);
     } else {
       selectedStudents = ModelAssessment.getStudentViewItems(
         students,
@@ -341,28 +347,30 @@ export function DetailAssessment() {
           onChangeSubdimension={handleChangeSubdimension}
         />
       )}
-      {!isReview && <>
-        <Subtitle
-          text={
-            dimension === Dimension.student
-              ? d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")
-              : d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")
-          }
-        />
-        {(overallOutcomes && overallOutcomes.length) ? (
-          <OverallOutcomes
-            attendanceList={attendanceList}
-            overallOutcomes={overallOutcomes}
-            editable={editable}
-            onChangeAllAchieved={handleChangeAllAchieved}
-            onChangeNoneAchieved={handleChangeNoneAchieved}
-            onChangeStudentStatus={handleChangeStudentStatus}
-            onChangeNotCovered={handleChangeNotCovered}
+      {!isReview && (
+        <>
+          <Subtitle
+            text={
+              dimension === Dimension.student
+                ? d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")
+                : d("Lesson Plan Assessment").t("assess_detail_lesson_plan_assessment")
+            }
           />
-        ) : (
-          <NoOutcome />
-        )}
-      </>}
+          {overallOutcomes && overallOutcomes.length ? (
+            <OverallOutcomes
+              attendanceList={attendanceList}
+              overallOutcomes={overallOutcomes}
+              editable={editable}
+              onChangeAllAchieved={handleChangeAllAchieved}
+              onChangeNoneAchieved={handleChangeNoneAchieved}
+              onChangeStudentStatus={handleChangeStudentStatus}
+              onChangeNotCovered={handleChangeNotCovered}
+            />
+          ) : (
+            <NoOutcome />
+          )}
+        </>
+      )}
       {!isClass && dimension === Dimension.student && (
         <>
           {!isReview && <Subtitle text={d("Score Assessment").t("assess_detail_score_assessment")} />}

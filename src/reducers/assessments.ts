@@ -12,7 +12,7 @@ import {
   ListAssessmentResult,
   ListAssessmentResultItem,
   OrderByAssessmentList,
-  UpdateAssessmentRequestData
+  UpdateAssessmentRequestData,
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { ModelAssessment } from "../models/ModelAssessment";

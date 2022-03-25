@@ -6680,6 +6680,50 @@
         }
       }
     },
+    "/reports/teacher_load_overview": {
+      "get": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["reports/teacherLoad"],
+        "summary": "get teacher load overview",
+        "operationId": "getTeacherLoadOverview",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "time_range",
+            "name": "time_range",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entity.TeacherLoadOverview"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/api.BadRequestResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/api.ForbiddenResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.InternalServerErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/reports/teachers": {
       "get": {
         "description": "get teacher sreport",
@@ -13989,6 +14033,23 @@
         }
       }
     },
+    "entity.TeacherLoadOverview": {
+      "type": "object",
+      "properties": {
+        "num_of_missed_lessons": {
+          "type": "integer"
+        },
+        "num_of_teachers_completed_all": {
+          "type": "integer"
+        },
+        "num_of_teachers_missed_frequently": {
+          "type": "integer"
+        },
+        "num_of_teachers_missed_some": {
+          "type": "integer"
+        }
+      }
+    },
     "entity.TeacherManualFile": {
       "type": "object",
       "properties": {
@@ -15662,6 +15723,9 @@
         },
         "outcome_name": {
           "type": "string"
+        },
+        "score_threshold": {
+          "type": "number"
         }
       }
     },

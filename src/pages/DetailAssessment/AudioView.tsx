@@ -24,7 +24,13 @@ export const AudioView = ({ userId, roomId, h5pId, h5pSubId, resourceType }: Aud
   if (loading) return <p>Loading ...</p>;
   if (!mediaMetadata?.length) return <p>no data</p>;
   return (
-    <AudioPlayerV2 resourceType={resourceType} writtenText={mediaMetadata[0].description}  audioId={mediaMetadata[0].id} mimeType={mediaMetadata[0].mimeType ? mediaMetadata[0].mimeType : "audio/webm"} roomId={roomId as string} />
+    <AudioPlayerV2
+      resourceType={resourceType}
+      writtenText={mediaMetadata[0].description}
+      audioId={mediaMetadata[0].id}
+      mimeType={mediaMetadata[0].mimeType ? mediaMetadata[0].mimeType : "audio/webm"}
+      roomId={roomId as string}
+    />
   );
 };
 
@@ -34,10 +40,14 @@ interface AudioPlayerProps {
   mimeType: string;
   client?: ApolloClient<unknown>;
   resourceType: string;
-  writtenText?: string
+  writtenText?: string;
 }
 export const AudioPlayerV2 = ({ audioId, roomId, mimeType, client, resourceType, writtenText }: AudioPlayerProps) => {
-  const { loading, error, src: audioSrc } = useDownloadMedia({
+  const {
+    loading,
+    error,
+    src: audioSrc,
+  } = useDownloadMedia({
     mediaId: audioId,
     roomId,
     mimeType,
@@ -56,12 +66,7 @@ export const AudioPlayerV2 = ({ audioId, roomId, mimeType, client, resourceType,
         width={350}
         volume={0.6}
       />
-      {
-        resourceType !== "AudioRecorder" && writtenText &&
-          (<div>
-            {writtenText}
-          </div>)
-      }
+      {resourceType !== "AudioRecorder" && writtenText && <div>{writtenText}</div>}
     </div>
   );
 };

@@ -1,22 +1,20 @@
-import rightArrow from "@assets/icons/rightArrow.svg";
 import { noReportTip } from "@components/TipImages";
-import { Box, Button, Grid, Icon, Link, makeStyles, Tooltip, Typography } from "@material-ui/core";
+import { Box, Button, Grid, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import { InfoOutlined, KeyboardBackspace } from "@material-ui/icons";
-import ReportTeachingLoad from "@pages/ReportTeachingLoad";
 import { RootState } from "@reducers/index";
 import {
   getAchievementOverview,
   getLearnerMonthlyReportOverview,
   getLearnerUsageOverview,
   getLearnerWeeklyReportOverview,
+  getTeacherLoadOverview,
 } from "@reducers/report";
 import { getAWeek, getSingleOfFourWeeks } from "@utilities/dateUtilities";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { Link as RouterLink } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
 import LayoutBox from "../../components/LayoutBox";
 import { usePermission } from "../../hooks/usePermission";
@@ -28,6 +26,7 @@ import LearningMonthlyTabs from "./components/LearningMonthlyTabs";
 import LearningOutcomeTabs from "./components/LearningOutcomeTabs";
 import LearningWeeklyTabs from "./components/LearningWeeklyTabs";
 import SkillCoverageTab from "./components/SkillCoverageTab";
+import TeacherUsageTab from "./components/TeacherUasgeTab";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   layoutBoxWrapper: {
@@ -132,11 +131,6 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   },
   rightIconImg: {},
 }));
-interface ReportItem {
-  hasPerm: boolean;
-  label: string;
-  url: string;
-}
 
 const DiyTooltip = withStyles((theme: Theme) => ({
   tooltip: {
@@ -197,29 +191,18 @@ export function ReportDashboard() {
     dispatch(getAchievementOverview({ time_range: getAWeek().join("-") }));
     dispatch(getLearnerWeeklyReportOverview({ time_range: getAWeek().join("-") }));
     dispatch(getLearnerMonthlyReportOverview({ time_range: getSingleOfFourWeeks().join("-") }));
+    dispatch(getTeacherLoadOverview({ time_range: getAWeek().join("-") }));
   }, [dispatch]);
 
-  const [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList] = React.useMemo(() => {
-    const hasSkillCoveragePerm = !!perm.report_learning_outcomes_in_categories_616;
-    const hasLearnerUsagePerm = !!perm.student_usage_report_657;
-    const reportList: ReportItem[] = [
-      {
-        hasPerm: !!perm.teachers_classes_teaching_time_report_620,
-        label: t("report_label_teaching_load"),
-        url: ReportTeachingLoad.routeBasePath,
-      },
-    ].filter((item) => item.hasPerm);
-    const hasReportListPerm = reportList.length > 0;
-    return [hasSkillCoveragePerm, hasLearnerUsagePerm, hasReportListPerm, reportList];
-  }, [perm]);
-
   const hasPerm =
+    perm.report_learning_outcomes_in_categories_616 ||
+    perm.student_usage_report_657 ||
     perm.student_progress_report_662 ||
     perm.learning_summary_report_653 ||
     perm.organization_class_achievements_report_626 ||
-    hasSkillCoveragePerm ||
-    hasLearnerUsagePerm ||
-    hasReportListPerm;
+    perm.teachers_classes_teaching_time_report_620;
+
+  const pending = hasPerm === undefined;
 
   const reportTip = (title: string, tip: string) => (
     <div className={css.reportTop}>
@@ -244,8 +227,8 @@ export function ReportDashboard() {
         </div>
       </LayoutBox>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517} className={css.layoutBoxMain}>
-        {!hasPerm && noReportTip}
-        {hasPerm && (
+        {!pending && !Boolean(hasPerm) && noReportTip}
+        {!pending && Boolean(hasPerm) && (
           <Grid container spacing={2}>
             {Boolean(perm.student_progress_report_662) && (
               <Grid item xs={12} md={4}>
@@ -271,7 +254,7 @@ export function ReportDashboard() {
                 </Box>
               </Grid>
             )}
-            {hasSkillCoveragePerm && (
+            {Boolean(perm.report_learning_outcomes_in_categories_616) && (
               <Grid item xs={12} md={4}>
                 {reportTip(t("report_label_skill_coverage"), t("report_label_skill_coverage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
@@ -279,7 +262,15 @@ export function ReportDashboard() {
                 </Box>
               </Grid>
             )}
-            {hasLearnerUsagePerm && (
+            {Boolean(perm.teachers_classes_teaching_time_report_620) && (
+              <Grid item xs={12} md={4}>
+                {reportTip(t("report_label_teaching_load"), t("report_label_teacher_usage_info" as any))}
+                <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
+                  <TeacherUsageTab />
+                </Box>
+              </Grid>
+            )}
+            {Boolean(perm.student_usage_report_657) && (
               <Grid item xs={12} md={4}>
                 {reportTip(t("report_label_learner_usage"), t("report_label_learner_usage_info"))}
                 <Box className={clsx(css.gridItem, css.gridItemWithBg)}>
@@ -287,28 +278,6 @@ export function ReportDashboard() {
                 </Box>
               </Grid>
             )}
-            <>
-              {hasReportListPerm && (
-                <Grid item xs={12} md={4}>
-                  <Box className={clsx(css.gridItem, css.navContainer)}>
-                    <ul>
-                      {reportList.map((item, index) => {
-                        return (
-                          <li key={index}>
-                            <Link component={RouterLink} to={item.url}>
-                              {item.label}
-                              <Icon classes={{ root: css.rightIcon }}>
-                                <img alt="" className={css.rightIconImg} src={rightArrow} />
-                              </Icon>
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </Box>
-                </Grid>
-              )}
-            </>
           </Grid>
         )}
       </LayoutBox>

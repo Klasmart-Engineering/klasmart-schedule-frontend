@@ -6,14 +6,14 @@ import {
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
-  V2AssessmentContentReply
+  V2AssessmentContentReply,
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
   UpdataStudyAssessmentRequestData,
   UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials
+  UpdateAssessmentRequestDataLessonMaterials,
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import {
@@ -22,7 +22,7 @@ import {
   OverAllOutcomesItem,
   StudentParticipate,
   StudentViewItemsProps,
-  SubDimensionOptions
+  SubDimensionOptions,
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 
@@ -473,7 +473,7 @@ export const ModelAssessment = {
               h5p_sub_id,
               status,
               outcomes: outcomes?.map((item) => {
-                if(outcomeObj[item.outcome_id!]) {
+                if (outcomeObj[item.outcome_id!]) {
                   const { assumed, outcome_name, assigned_to } = outcomeObj[item.outcome_id!];
                   return {
                     ...item,
@@ -483,8 +483,8 @@ export const ModelAssessment = {
                   };
                 } else {
                   return {
-                    ...item
-                  }
+                    ...item,
+                  };
                 }
               }),
             };
@@ -494,21 +494,24 @@ export const ModelAssessment = {
     return studentViewItems;
   },
   getReviewStudentsItems(students: DetailAssessmentResult["diff_content_students"]): StudentViewItemsProps[] | undefined {
-    const reviewStudentsItems:StudentViewItemsProps[] | undefined = students?.map(item => {
-      const  { status, student_id, student_name, reviewer_comment, results } = item;
+    const reviewStudentsItems: StudentViewItemsProps[] | undefined = students?.map((item) => {
+      const { status, student_id, student_name, reviewer_comment, results } = item;
       return {
-        status, student_id, student_name, reviewer_comment, 
-        results: results?.map(rItem => {
+        status,
+        student_id,
+        student_name,
+        reviewer_comment,
+        results: results?.map((rItem) => {
           const { answer, attempted, score, content } = rItem;
           return {
             answer,
             attempted,
             score,
             ...content,
-          }
-        })
-      }
-    })
+          };
+        }),
+      };
+    });
     return reviewStudentsItems;
   },
   getOverallOutcomes(studentViewItems: StudentViewItemsProps[] | undefined): OverAllOutcomesItem[] {
@@ -682,14 +685,19 @@ export const ModelAssessment = {
   },
   getInitSubDimension(dimension: Dimension, studentViewItems: any[] | undefined): SubDimensionOptions[] | undefined {
     if (dimension === Dimension.student) {
-      return studentViewItems?.filter(student => student.status === StudentParticipate.Participate).map((item) => {
-        return { id: item.student_id!, name: item.student_name! };
-      });
+      return studentViewItems
+        ?.filter((student) => student.status === StudentParticipate.Participate)
+        .map((item) => {
+          return { id: item.student_id!, name: item.student_name! };
+        });
     } else {
       if (studentViewItems && studentViewItems[0] && studentViewItems[0].results) {
         return studentViewItems[0].results
-          .filter((item: { content_type: string; status: string; parent_id: string; }) => item.content_type === "LessonMaterial" && item.status === "Covered" && item.parent_id === "")
-          .map((item: { content_id: any; content_name: any; }) => {
+          .filter(
+            (item: { content_type: string; status: string; parent_id: string }) =>
+              item.content_type === "LessonMaterial" && item.status === "Covered" && item.parent_id === ""
+          )
+          .map((item: { content_id: any; content_name: any }) => {
             return { id: item.content_id!, name: item.content_name! };
           });
       } else {
@@ -697,7 +705,11 @@ export const ModelAssessment = {
       }
     }
   },
-  getUpdateAssessmentData(assessment_type: AssessmentTypeValues ,contents?: V2AssessmentContentReply[], students?: StudentViewItemsProps[]) {
+  getUpdateAssessmentData(
+    assessment_type: AssessmentTypeValues,
+    contents?: V2AssessmentContentReply[],
+    students?: StudentViewItemsProps[]
+  ) {
     const isReivew = assessment_type === AssessmentTypeValues.review;
     const _contents =
       contents?.map((item) => {
@@ -724,13 +736,15 @@ export const ModelAssessment = {
               content_id,
               parent_id,
               score,
-              outcomes: isReivew ? undefined : outcomes?.map((oItem) => {
-                const { outcome_id, status } = oItem;
-                return {
-                  outcome_id,
-                  status,
-                };
-              }),
+              outcomes: isReivew
+                ? undefined
+                : outcomes?.map((oItem) => {
+                    const { outcome_id, status } = oItem;
+                    return {
+                      outcome_id,
+                      status,
+                    };
+                  }),
             };
           }),
         };

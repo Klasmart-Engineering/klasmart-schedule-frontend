@@ -9,7 +9,7 @@ import {
   IconButton,
   InputAdornment,
   makeStyles,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
@@ -107,7 +107,14 @@ export function ResourceView(props: ResourceViewProps) {
           {showAudioRecorder(resourceType) && (
             <div className={css.detailView}>
               <ApolloProvider client={client}>
-                <AudioView resourceType={resourceType} userId={userId as string} roomId={roomId as string} h5pId={h5pId as string} h5pSubId={h5pSubId} client={client} />
+                <AudioView
+                  resourceType={resourceType}
+                  userId={userId as string}
+                  roomId={roomId as string}
+                  h5pId={h5pId as string}
+                  h5pSubId={h5pSubId}
+                  client={client}
+                />
               </ApolloProvider>
             </div>
           )}

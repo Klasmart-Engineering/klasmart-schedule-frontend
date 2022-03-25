@@ -1245,8 +1245,8 @@ export interface EntityScheduleLessonPlanMaterial {
 }
 
 export interface EntityScheduleListView {
-  assessment_status?: "in_progress" | "complete";
   class_id?: string;
+  assessment_status?: "in_progress" | "complete";
   class_type?: "OnlineClass" | "OfflineClass" | "Homework" | "Task";
   class_type_label?: EntityScheduleShortInfo;
   complete_assessment?: boolean;
@@ -1660,6 +1660,13 @@ export interface EntityTeacherLoadMissedLessonsRequest {
 export interface EntityTeacherLoadMissedLessonsResponse {
   list?: EntityTeacherLoadMissedLesson[];
   total?: number;
+}
+
+export interface EntityTeacherLoadOverview {
+  num_of_missed_lessons?: number;
+  num_of_teachers_completed_all?: number;
+  num_of_teachers_missed_frequently?: number;
+  num_of_teachers_missed_some?: number;
 }
 
 export interface EntityTeacherManualFile {
@@ -2197,6 +2204,7 @@ export interface V2AssessmentOutcomeReply {
   assumed?: boolean;
   outcome_id?: string;
   outcome_name?: string;
+  score_threshold?: number;
 }
 
 export interface V2AssessmentPageReply {
@@ -4486,6 +4494,19 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         "POST",
         params,
         overview
+      ),
+
+    /**
+     * @tags reports/teacherLoad
+     * @name getTeacherLoadOverview
+     * @summary get teacher load overview
+     * @request GET:/reports/teacher_load_overview
+     */
+    getTeacherLoadOverview: (query: { time_range: string }, params?: RequestParams) =>
+      this.request<EntityTeacherLoadOverview, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/teacher_load_overview${this.addQueryParams(query)}`,
+        "GET",
+        params
       ),
 
     /**

@@ -9,7 +9,7 @@ import {
   FormControlLabel,
   makeStyles,
   TextField,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { actWarning } from "@reducers/notify";
 import clsx from "clsx";
@@ -80,13 +80,15 @@ export function StudentEdit(props: StudentEditProps) {
   const dispatch = useDispatch();
   const { students, editable, onChangeStudent } = props;
   const studentsnamelist = useMemo(() => {
-    const studentsNameArr = students?.filter((item: { status: StudentParticipate; }) => item.status === StudentParticipate.Participate).map((item) => {
-      if (item.student_name) {
-        return item.student_name
-      } else {
-        return d("Unknown").t("assessment_summary_label_attendance_unknown")
-      }
-    });
+    const studentsNameArr = students
+      ?.filter((item: { status: StudentParticipate }) => item.status === StudentParticipate.Participate)
+      .map((item) => {
+        if (item.student_name) {
+          return item.student_name;
+        } else {
+          return d("Unknown").t("assessment_summary_label_attendance_unknown");
+        }
+      });
     return `${studentsNameArr?.join(",")}(${studentsNameArr?.length ?? 0})`;
   }, [students]);
   const [changedStudentList, setChangedStudentList] = useState(students);
@@ -94,7 +96,7 @@ export function StudentEdit(props: StudentEditProps) {
     return !open;
   }, false);
   const handleOk = useCallback(() => {
-    const selectedStudents = changedStudentList?.filter((item: { status: string; }) => item.status === "Participate");
+    const selectedStudents = changedStudentList?.filter((item: { status: string }) => item.status === "Participate");
     if (selectedStudents?.length) {
       onChangeStudent(changedStudentList);
       toggle();

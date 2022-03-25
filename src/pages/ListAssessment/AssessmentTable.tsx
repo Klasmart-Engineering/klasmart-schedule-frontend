@@ -57,7 +57,7 @@ function AssessmentRow(props: AssessmentProps) {
   }, [assessmentType]);
   const isReview = useMemo(() => {
     return assessmentType === AssessmentTypeValues.review;
-  }, [assessmentType])
+  }, [assessmentType]);
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title ?? d("N/A").t("assess_column_n_a")}</TableCell>
@@ -86,11 +86,13 @@ function AssessmentRow(props: AssessmentProps) {
           </TableCell>
         </>
       )}
-      {isStudy && <TableCell align="center">
-        {assessment.remaining_time
-          ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s)").t("assess_list_remaining_days")}`
-          : 0}
-      </TableCell>}
+      {isStudy && (
+        <TableCell align="center">
+          {assessment.remaining_time
+            ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s)").t("assess_list_remaining_days")}`
+            : 0}
+        </TableCell>
+      )}
       {!isReview && <TableCell align="center">{formattedTime(assessment.complete_at)}</TableCell>}
     </TableRow>
   );

@@ -184,7 +184,7 @@ export function assessmentHeader(type?: string): PLField[] {
       align: "center",
       style: { backgroundColor: "#F2F5F7" },
     },
-  ]
+  ];
   switch (type) {
     case AssessmentTypeValues.class:
     case AssessmentTypeValues.live:

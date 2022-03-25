@@ -28,6 +28,7 @@ const useStyles = makeStyles(() => ({
     textOverflow: "ellipsis",
     width: "100%",
     color: "#A5A5A5",
+    fontWeight: "bold",
   },
   scoreValue: {
     fontSize: "30px",

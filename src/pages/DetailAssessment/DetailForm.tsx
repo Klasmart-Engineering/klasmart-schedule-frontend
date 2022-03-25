@@ -75,30 +75,28 @@ export function DetailForm(props: DetailFormProps) {
     ? assessmentDetail.contents.find((item) => item.content_type === "LessonPlan")?.content_name
     : "";
   const summaryTitle = useMemo(() => {
-    if(isStudy) {
+    if (isStudy) {
       return {
         summary: d("Study Summary").t("assess_study_summary"),
-        title: d("Assessment Title").t("assess_column_title")
-      }
-    } else if(isReview) {
-      return  {
+        title: d("Assessment Title").t("assess_column_title"),
+      };
+    } else if (isReview) {
+      return {
         summary: d("Review Summary").t("assessment_review_summary"),
-        title: d("Review Title").t("assessment_review_title")
-      }
+        title: d("Review Title").t("assessment_review_title"),
+      };
     } else {
       return {
         summary: d("Class Summary").t("assess_class_summary"),
-        title: d("Assessment Title").t("assess_column_title")
-      }
+        title: d("Assessment Title").t("assess_column_title"),
+      };
     }
-  }, [isReview, isStudy])
+  }, [isReview, isStudy]);
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
-          <Typography variant="h6">
-            {summaryTitle.summary}
-          </Typography>
+          <Typography variant="h6">{summaryTitle.summary}</Typography>
           <div className={css.roomId}>
             {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.room_id}
           </div>
@@ -245,28 +243,29 @@ export function DetailForm(props: DetailFormProps) {
               />
             </>
           )}
-          {
-            isStudy && 
+          {isStudy && (
             <Box className={css.editBox}>
-                <TextField
-                  fullWidth
-                  disabled
-                  name="remaining_time"
-                  value={assessmentDetail?.remaining_time ? Math.ceil(assessmentDetail?.remaining_time / 60 / 60 / 24) : 0}
-                  className={css.fieldset}
-                  label={d("Assessment Remaining").t("assess_list_assessment_remaining")}
-                />
-                <Typography className={css.minutes}>{d("Day(s)").t("assess_list_remaining_days")}</Typography>
-              </Box>
-          }
-          {(!isReview) && <TextField
-            fullWidth
-            disabled
-            name="complete_time"
-            value={formattedTime(assessmentDetail.complete_at) || 0}
-            className={css.fieldset}
-            label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
-          />}
+              <TextField
+                fullWidth
+                disabled
+                name="remaining_time"
+                value={assessmentDetail?.remaining_time ? Math.ceil(assessmentDetail?.remaining_time / 60 / 60 / 24) : 0}
+                className={css.fieldset}
+                label={d("Assessment Remaining").t("assess_list_assessment_remaining")}
+              />
+              <Typography className={css.minutes}>{d("Day(s)").t("assess_list_remaining_days")}</Typography>
+            </Box>
+          )}
+          {!isReview && (
+            <TextField
+              fullWidth
+              disabled
+              name="complete_time"
+              value={formattedTime(assessmentDetail.complete_at) || 0}
+              className={css.fieldset}
+              label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
+            />
+          )}
         </Box>
       </Paper>
     </>
