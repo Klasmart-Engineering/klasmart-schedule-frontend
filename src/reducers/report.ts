@@ -7,6 +7,7 @@ import {
   Subject,
   User,
   UserFilter,
+  UuidExclusiveOperator,
   UuidFilter,
   UuidOperator,
 } from "@api/api-ko-schema.auto";
@@ -38,6 +39,7 @@ import {
   QueryMyUserDocument,
   QueryMyUserQuery,
   QueryMyUserQueryVariables,
+  SchoolsByOrganizationQuery,
   SchoolsIdNameByOrganizationDocument,
   SchoolsIdNameByOrganizationQuery,
   SchoolsIdNameByOrganizationQueryVariables,
@@ -92,9 +94,7 @@ import {
   recursiveGetNoSchoolclasses,
   recursiveGetSchoolMemberships,
   recursiveGetSchoolsClasses,
-  SchoolClassesNode,
   SchoolIdProps,
-  UserClass,
 } from "../api/extra";
 import PermissionType from "../api/PermissionType";
 import { IParamQueryRemainFilter } from "../api/type";
@@ -413,9 +413,9 @@ export const getSchoolsByOrg = createAsyncThunk<
   [
     ICacheData,
     // ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
-    // ApolloQueryResult<SchoolsByOrganizationQuery>,
-    UserClass[],
-    SchoolClassesNode[],
+    ApolloQueryResult<SchoolsByOrganizationQuery>,
+    // UserClass[],
+    // SchoolClassesNode[],
     SchoolIdProps[],
     ClassesTeachingProps[],
     string
@@ -433,16 +433,16 @@ export const getSchoolsByOrg = createAsyncThunk<
     // dispatch(getMyPermissionClassAndTeaching())
     //   .unwrap()
     //   .then((res) => res.res),
-    // dispatch(getStudentOrganizationDocument())
-    //   .unwrap()
-    //   .then((res) => res.res),
+    dispatch(getStudentOrganizationDocument())
+      .unwrap()
+      .then((res) => res.res),
 
-    dispatch(getNoSchoolclasses())
-      .unwrap()
-      .then((res) => res),
-    dispatch(getSchoolclasses())
-      .unwrap()
-      .then((res) => res),
+    // dispatch(getNoSchoolclasses())
+    //   .unwrap()
+    //   .then((res) => res),
+    // dispatch(getSchoolclasses())
+    //   .unwrap()
+    //   .then((res) => res),
 
     dispatch(getMembershipSchool())
       .unwrap()
@@ -683,6 +683,9 @@ export const getNoSchoolclasses = createAsyncThunk<AsyncReturnType<typeof recurs
     organizationId: {
       operator: UuidOperator.Eq,
       value: organization_id,
+    },
+    schoolId: {
+      operator: UuidExclusiveOperator.IsNull,
     },
   };
   return recursiveGetNoSchoolclasses({ filter }, []);
@@ -1716,13 +1719,13 @@ const { actions, reducer } = createSlice({
       }
     },
     [getSchoolsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
-      // const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
-      // const schools = payload[1].data.organization?.schools as Pick<School, "school_id" | "school_name" | "classes">[];
+      const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
+      const schools = payload[1].data.organization?.schools as Pick<School, "school_id" | "school_name" | "classes">[];
       // const membership = payload[1].data.me?.membership;
 
-      // const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
-      const noneSchoolClasses = payload[1];
-      const schools = payload[2];
+      const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
+      // const noneSchoolClasses = payload[1];
+      // const schools = payload[2];
 
       // const schoolIDs =
       //   membership?.schoolMemberships?.map((item) => {
@@ -1732,15 +1735,15 @@ const { actions, reducer } = createSlice({
       //   membership?.classesTeaching?.map((item) => {
       //     return item?.class_id;
       //   }) || [];
-      const schoolIDs = payload[3].map((item) => {
+      const schoolIDs = payload[2].map((item) => {
         return item.school_id;
       });
-      const classIDs = payload[4].map((item) => {
+      const classIDs = payload[3].map((item) => {
         return item.class_id;
       });
       const permissions = payload[0];
       // state.studentUsage.organization_id = membership?.organization_id || "";
-      state.studentUsage.organization_id = payload[5];
+      state.studentUsage.organization_id = payload[4];
       if (permissions[PermissionType.report_organization_student_usage_654]) {
         state.studentUsage.schoolList = schools;
         state.studentUsage.noneSchoolClasses = noneSchoolClasses;
