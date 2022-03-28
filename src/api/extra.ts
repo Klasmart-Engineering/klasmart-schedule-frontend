@@ -247,30 +247,6 @@ export const subscribeLocaleInCookie = (handler: { (locale: string): any }) => {
   }, 1000);
 };
 
-//  const apiCreateContentTypeLibrary = (id: string) => {
-//   return requireContentType("asset", id);
-// };
-
-//  async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string, locale: string) {
-//   const schema = {} as T;
-//   const schemaLanguages = {} as T;
-//   for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
-//     schema[name as keyof T] = cloneDeep((await value()).default);
-//   }
-//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-//   }
-//   return merge(schema, schemaLanguages);
-// }
-
-//  async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {
-//   const schemaLanguages = {} as T;
-//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-//   }
-//   return schemaLanguages;
-// }
-
 export function domainSwitch() {
   return window.location.host.includes("kidsloop.live");
 }
