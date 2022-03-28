@@ -368,11 +368,11 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
     });
 }
 
-const IdToNameMap = new Map<string, string>();
+const idToNameMap = new Map<string, string>();
 
 export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<string, string>> {
   const fragmentStr = userIds
-    .filter((id) => !IdToNameMap.has(id))
+    .filter((id) => !idToNameMap.has(id))
     .map((userId, index) => {
       return `user_${index}: user(user_id: "${userId}"){
         user_id,
@@ -381,21 +381,26 @@ export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<str
       }`;
     })
     .join(",");
-  if (!fragmentStr) return IdToNameMap;
-  const userQuery = await gqlapi.query({
-    query: gql`
-      query{
-        ${fragmentStr}
+  if (!fragmentStr) return idToNameMap;
+  try {
+    const userQuery = await gqlapi.query({
+      query: gql`
+        query userNameByUserIdQuery{
+          ${fragmentStr}
+        },
+        
+      `,
+    });
+    for (const item in userQuery.data || {}) {
+      const user = userQuery.data[item];
+      if (user) {
+        idToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
       }
-    `,
-  });
-  for (const item in userQuery.data || {}) {
-    const user = userQuery.data[item];
-    if (user) {
-      IdToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
     }
+  } catch (e) {
+    console.log(e);
   }
-  return IdToNameMap;
+  return idToNameMap;
 }
 
 export async function getUserIdAndOrgId() {
