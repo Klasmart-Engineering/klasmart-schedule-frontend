@@ -12,17 +12,19 @@ interface AudioViewProps {
 }
 
 export const AudioView = ({ userId, roomId, h5pId, h5pSubId, resourceType }: AudioViewProps) => {
+  const isSafari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0;
   const { loading, error, mediaMetadata } = useAudioMetadata({
     userId,
     roomId,
     h5pId,
     h5pSubId: h5pSubId ? h5pSubId : undefined,
   });
+  if (isSafari) return <p>{"Please use another browser (Chrome) for a better experience."}</p>
   if (error) {
     return <p>error: {JSON.stringify(error, null, 2)}</p>;
   }
   if (loading) return <p>Loading ...</p>;
-  if (!mediaMetadata?.length) return <p>no data</p>;
+  if (!mediaMetadata?.length) return <p>{"No data available.Audio data is not successfully stored by student."}</p>;
   return (
     <AudioPlayerV2
       resourceType={resourceType}
