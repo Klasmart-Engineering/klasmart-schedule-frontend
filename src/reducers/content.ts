@@ -526,7 +526,6 @@ export const onLoadContentList = createAsyncThunk<IQyertOnLoadContentListResult,
       });
 
       const data = await apiGetUserNameByUserId(authorIds);
-
       folderRes.list = (folderRes?.list || []).map((item) => {
         item.author_name = data.get(item.author as string);
         return item;
