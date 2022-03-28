@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: "70px",
       fontSize: "12px",
       textAlign: "center",
-      wordBreak: "break-word",
+      wordBreak: "normal",
     },
   })
 );
