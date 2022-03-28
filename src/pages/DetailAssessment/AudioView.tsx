@@ -1,5 +1,6 @@
 import { ApolloClient } from "@apollo/client";
 import { AudioVision } from "@components/AuduiVision/AudioVision";
+import { d } from "@locale/LocaleManager";
 import { useAudioMetadata, useDownloadMedia } from "kidsloop-media-ui";
 import React from "react";
 interface AudioViewProps {
@@ -19,12 +20,12 @@ export const AudioView = ({ userId, roomId, h5pId, h5pSubId, resourceType }: Aud
     h5pId,
     h5pSubId: h5pSubId ? h5pSubId : undefined,
   });
-  if (isSafari) return <p>{"Please use another browser (Chrome) for a better experience."}</p>
+  if (isSafari) return <p>{d("Please use another browser (Chrome) for a better experience.").t("assessment_audio_suggest_browser")}</p>
   if (error) {
     return <p>error: {JSON.stringify(error, null, 2)}</p>;
   }
   if (loading) return <p>Loading ...</p>;
-  if (!mediaMetadata?.length) return <p>{"No data available.Audio data is not successfully stored by student."}</p>;
+  if (!mediaMetadata?.length) return <p>{d("Audio data is not successfully stored by student.").t("assessment_audio_no_data")}</p>;
   return (
     <AudioPlayerV2
       resourceType={resourceType}

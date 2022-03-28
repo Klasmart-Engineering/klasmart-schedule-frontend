@@ -1249,6 +1249,8 @@ type LangRecord =
   | { id: "report_no_feedback"; description: `No feedback is available`; values: undefined }
   | { id: "report_no_data_available"; description: `No Data Available`; values: undefined }
   | { id: "assessment_assignment_assessment"; description: `Assignment Assessment`; values: undefined }
+  | { id: "assessment_audio_suggest_browser"; description: `Please use another browser (Chrome) for a better experience.`; values: undefined}
+  | { id: "assessment_audio_no_data"; description: `Audio data is not successfully stored by student.`; values: undefined }
   | { id: "assessment_learning_outcomes_assessment"; description: `Learning Outcomes Assessment`; values: undefined }
   | {
       id: "assessment_learning_outcomes_achievement";

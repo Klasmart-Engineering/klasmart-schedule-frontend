@@ -2155,6 +2155,7 @@ export interface V2AssessmentDetailReply {
   contents?: V2AssessmentContentReply[];
   diff_content_students?: V2AssessmentDiffContentStudentsReply[];
   id?: string;
+  is_anyone_attempted?: boolean;
   outcomes?: V2AssessmentOutcomeReply[];
   program?: EntityIDName;
   remaining_time?: number;
