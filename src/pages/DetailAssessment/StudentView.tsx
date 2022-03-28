@@ -93,11 +93,11 @@ export interface StudentViewProps {
   studentViewItems?: StudentViewItemsProps[];
   roomId?: string;
   assessment_type?: AssessmentTypeValues;
-  status?: DetailAssessmentResult["status"];
+  is_anyone_attempted?: DetailAssessmentResult["is_anyone_attempted"];
 }
 export function StudentView(props: StudentViewProps) {
   const css = useStyles();
-  const { studentViewItems, editable, subDimension, roomId, assessment_type, status, onChangeComputedStudentViewItems } = props;
+  const { studentViewItems, editable, subDimension, roomId, assessment_type, is_anyone_attempted, onChangeComputedStudentViewItems } = props;
   const isReview = assessment_type === AssessmentTypeValues.review;
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
   const [resourceType, setResourceType] = useState<string>("");
@@ -271,7 +271,7 @@ export function StudentView(props: StudentViewProps) {
                     <div style={{ color: checkedArr[index] ? "black" : "#666666" }}>
                       <AccountCircleIcon />
                       <span style={{ padding: "0 18px 0 18px" }}>{sitem.student_name ? sitem.student_name : "unknow"}</span>
-                      {editable && status !== "NotStarted" && (
+                      {editable && is_anyone_attempted && (
                         <span
                           onClick={stopPropagation((e) => handleOpenAddStudentComment(sitem.reviewer_comment ?? "", sitem.student_id))}
                           style={{
