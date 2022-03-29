@@ -853,7 +853,7 @@
   "h5p_label_link": "ลิงค์",
   "library_error_cannot_delete_lesson_plan": "แผนการสอนนี้ไม่สามารถลบได้เนื่องจากมีการใช้งานในกำหนดการแล้ว",
   "library_label_visibility_schools": "โรงเรียน",
-  "report_msg_no_data": "ไม่มีข้อมูลความสำเร็จ",
+  "report_msg_no_data": "ไม่มีข้อมูลที่จะแสดงในสัปดาห์นี้",
   "report_navigation_class_view": "ดูคลาส",
   "report_msg_individual_infor": "รายงานนี้นำเสนอข้อมูลเชิงลึกเกี่ยวกับประสิทธิภาพของนักเรียนแต่ละคนในบทเรียนในแง่ของผลการเรียนรู้",
   "report_msg_overall_infor": "รายงานผลสัมฤทธิ์ของนักเรียนโดยรวมให้ข้อมูลเชิงลึกเกี่ยวกับประสิทธิภาพของชั้นเรียนในแง่ของผลการเรียนรู้ และการเปรียบเทียบระหว่างนักเรียน คลิกชื่อนักเรียนเพื่อดูรายละเอียดนักเรียนแต่ละคน",
@@ -1111,5 +1111,18 @@
   "schedule_review_popup_pending_notice": "ระบบกำลังจัดทำแผนการสอนการเรียนรู้แบบปรับตัวสำหรับนักเรียนแต่ละคน",
   "schedule_review_popup_confirm": "ยืนยัน",
   "schedule_review_class_name": "รีวิว: {value} วัสดุ",
-  "schedule_repeat_end_on": "บน"
+  "schedule_repeat_end_on": "บน",
+  "assessment_list_study_review": "ศึกษา / ทบทวน",
+  "assessment_review_summary": "สรุปรีวิว",
+  "assessment_review_title": "หัวข้อรีวิว",
+  "assessment_review_detail_student_name": "ชื่อนักเรียน",
+  "report_label_teacher_usage_info": "ตรวจสอบครูที่ไม่ได้เข้าเรียนตามตารางเรียนในช่วง 7 วันที่ผ่านมา และแสดงจำนวนบทเรียนที่ขาดเรียน",
+  "report_label_completed_all_lessons": "จบทุกบทเรียน",
+  "report_label_missed_some_lessons": "พลาดบทเรียน",
+  "report_label_missed_all_lessons": "พลาดทุกบทเรียน",
+  "report_label_completed_all": "เสร็จสิ้นทั้งหมด",
+  "report_label_missed_some": "พลาดบ้าง",
+  "report_label_missed_frequently": "พลาดบ่อย",
+  "assessment_audio_suggest_browser": "Please use another browser (Chrome) for a better experience.",
+  "assessment_audio_no_data": "Audio data is not successfully stored by student."
 }
