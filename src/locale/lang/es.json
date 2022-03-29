@@ -853,7 +853,7 @@
   "h5p_label_link": "Enlace",
   "library_error_cannot_delete_lesson_plan": "Este plan de lección no se puede eliminar porque ya se usó en el Programa.",
   "library_label_visibility_schools": "Escuelas",
-  "report_msg_no_data": "No hay datos de logros disponibles.",
+  "report_msg_no_data": "No hubo datos para mostrar en esta semana.",
   "report_navigation_class_view": "Vista de clase",
   "report_msg_individual_infor": "Este informe ofrece una visión del rendimiento de un estudiante individual en una lección en términos de resultados de aprendizaje.",
   "report_msg_overall_infor": "El informe de rendimiento global de los estudiantes ofrece una visión del rendimiento de una clase en términos de resultados de aprendizaje, así como comparaciones entre los estudiantes. Haga clic en el nombre de un estudiante para ver los detalles de cada uno de ellos.",
@@ -1111,5 +1111,18 @@
   "schedule_review_popup_pending_notice": "System is generating adaptive learning lesson plan for each student.",
   "schedule_review_popup_confirm": "Confirm",
   "schedule_review_class_name": "Review: {value} Materials",
-  "schedule_repeat_end_on": "En"
+  "schedule_repeat_end_on": "En",
+  "assessment_list_study_review": "Study / Review",
+  "assessment_review_summary": "Review Summary",
+  "assessment_review_title": "Review Title",
+  "assessment_review_detail_student_name": "Student Name",
+  "report_label_teacher_usage_info": "View teachers that have not missed the scheduled sessions in the last 7 days, including the number of missed sessions and lesson details.",
+  "report_label_completed_all_lessons": "Completed All Lessons",
+  "report_label_missed_some_lessons": "Missed Some Lessons",
+  "report_label_missed_all_lessons": "Missed All Lessons",
+  "report_label_completed_all": "Completed All",
+  "report_label_missed_some": "Missed Some",
+  "report_label_missed_frequently": "Missed Frequently",
+  "assessment_audio_suggest_browser": "Please use another browser (Chrome) for a better experience.",
+  "assessment_audio_no_data": "Audio data is not successfully stored by student."
 }
