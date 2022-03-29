@@ -168,7 +168,7 @@ export function StudentView(props: StudentViewProps) {
       if (sItem.student_id === sId) {
         return {
           ...sItem,
-          result: sItem.results?.map((rItem) => {
+          results: sItem.results?.map((rItem) => {
             if (rItem.content_id === rId || rItem.parent_id === rId) {
               return {
                 ...rItem,
@@ -212,7 +212,7 @@ export function StudentView(props: StudentViewProps) {
       if (sItem.student_id === studentId) {
         return {
           ...sItem,
-          result: sItem.results?.map((rItem) => {
+          results: sItem.results?.map((rItem) => {
             if (rItem.content_id === contentId) {
               return {
                 ...rItem,

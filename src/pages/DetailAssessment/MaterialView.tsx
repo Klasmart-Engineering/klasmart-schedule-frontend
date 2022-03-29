@@ -8,7 +8,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableRow,
+  TableRow
 } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
@@ -29,7 +29,7 @@ import {
   OutcomeStatus,
   StudentParticipate,
   StudentViewItemsProps,
-  SubDimensionOptions,
+  SubDimensionOptions
 } from "./type";
 const useStyles = makeStyles({
   tableBar: {
@@ -170,7 +170,7 @@ export function MaterialView(props: MaterialViewProps) {
       if (sItem.student_id === studentId) {
         return {
           ...sItem,
-          result: sItem.results?.map((rItem) => {
+          results: sItem.results?.map((rItem) => {
             if (rItem.content_id === contentId) {
               return {
                 ...rItem,
