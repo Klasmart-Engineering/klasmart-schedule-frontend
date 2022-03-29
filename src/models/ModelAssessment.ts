@@ -6,14 +6,14 @@ import {
   EntityAssessmentStudent,
   EntityAssessmentStudentViewH5PItem,
   EntityUpdateAssessmentContentOutcomeArgs,
-  V2AssessmentContentReply,
+  V2AssessmentContentReply
 } from "../api/api.auto";
 import {
   DetailStudyAssessment,
   GetAssessmentResult,
   UpdataStudyAssessmentRequestData,
   UpdateAssessmentRequestData,
-  UpdateAssessmentRequestDataLessonMaterials,
+  UpdateAssessmentRequestDataLessonMaterials
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import {
@@ -22,7 +22,7 @@ import {
   OverAllOutcomesItem,
   StudentParticipate,
   StudentViewItemsProps,
-  SubDimensionOptions,
+  SubDimensionOptions
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
 
@@ -492,6 +492,23 @@ export const ModelAssessment = {
       };
     });
     return studentViewItems;
+  },
+  getStudentViewItemsByContent(students :StudentViewItemsProps[] | undefined, contents: DetailAssessmentResult["contents"]): StudentViewItemsProps[] | undefined {
+    const contentObj: Record<string, DetailAssessmentResultContent> = {};
+    contents
+      ?.filter((item) => item.status === "Covered")
+      .forEach((item) => {
+        if (!contentObj[item.content_id!]) {
+          contentObj[item.content_id!] = { ...item };
+        }
+      });
+    const studentViewItems: StudentViewItemsProps[] | undefined = students?.map(item => {
+      return {
+        ...item,
+        results: item.results?.filter(r => !!contentObj[r.content_id!])
+      }
+    })
+    return studentViewItems
   },
   getReviewStudentsItems(students: DetailAssessmentResult["diff_content_students"]): StudentViewItemsProps[] | undefined {
     const reviewStudentsItems: StudentViewItemsProps[] | undefined = students?.map((item) => {
