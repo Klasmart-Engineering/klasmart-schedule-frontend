@@ -195,11 +195,10 @@ export function DetailAssessment() {
   };
   const handleChangeContents = (contents: DetailAssessmentResult["contents"]) => {
     contents && setContents([...contents]);
-    const selectedContents = ModelAssessment.getStudentViewItems(
-      students ? students : assessmentDetailV2.students,
-      contents,
-      assessmentDetailV2.outcomes
-    );
+    const selectedContents = ModelAssessment.getStudentViewItemsByContent(
+      computedStudentViewItems ? computedStudentViewItems : initStudentViewItems,
+      contents
+    )
     setComputedStudentViewItems(selectedContents);
     setSubDimension(ModelAssessment.getInitSubDimension(dimension, selectedContents));
   };
