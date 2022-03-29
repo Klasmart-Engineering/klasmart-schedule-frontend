@@ -100,6 +100,7 @@ const errorLink = onError(({ /*graphQLErrors, networkError,*/ response, operatio
   if (networkError) console.log(`[Network error]: ${networkError}`);
   */
   if (operation.operationName === "userNameByUserIdQuery") {
+    // @ts-ignore
     response.errors = null;
   }
 });
