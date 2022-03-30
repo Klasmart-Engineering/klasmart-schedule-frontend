@@ -182,12 +182,15 @@ export function DetailAssessment() {
     students && setStudents([...students]);
     let selectedStudents: StudentViewItemsProps[] | undefined;
     if (isReview) {
-      selectedStudents = ModelAssessment.getReviewStudentsItems(students);
+      const newStudent = ModelAssessment.getReviewStudentsItems(students);
+      selectedStudents = ModelAssessment.getStudentViewItemByStudent(
+        newStudent,
+        computedStudentViewItems ? computedStudentViewItems : initStudentViewItems,
+      )
     } else {
-      selectedStudents = ModelAssessment.getStudentViewItems(
+      selectedStudents = ModelAssessment.getStudentViewItemByStudent(
         students,
-        contents ? contents : assessmentDetailV2.contents,
-        assessmentDetailV2.outcomes
+        computedStudentViewItems ? computedStudentViewItems : initStudentViewItems
       );
     }
     setComputedStudentViewItems(selectedStudents);

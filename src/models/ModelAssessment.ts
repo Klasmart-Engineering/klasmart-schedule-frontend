@@ -24,7 +24,7 @@ import {
   StudentViewItemsProps,
   SubDimensionOptions
 } from "../pages/DetailAssessment/type";
-import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome } from "../pages/ListAssessment/types";
+import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome, DetailAssessmentResultStudent } from "../pages/ListAssessment/types";
 
 interface ObjContainId {
   id?: string;
@@ -493,7 +493,7 @@ export const ModelAssessment = {
     });
     return studentViewItems;
   },
-  getStudentViewItemsByContent(students :StudentViewItemsProps[] | undefined, contents: DetailAssessmentResult["contents"]): StudentViewItemsProps[] | undefined {
+  getStudentViewItemsByContent(students: StudentViewItemsProps[] | undefined, contents: DetailAssessmentResult["contents"]): StudentViewItemsProps[] | undefined {
     const contentObj: Record<string, DetailAssessmentResultContent> = {};
     contents
       ?.filter((item) => item.status === "Covered")
@@ -509,6 +509,22 @@ export const ModelAssessment = {
       }
     })
     return studentViewItems
+  },
+  getStudentViewItemByStudent(students: DetailAssessmentResult["students"], studentViewItems: StudentViewItemsProps[] | undefined): StudentViewItemsProps[] | undefined {
+    const studentObj: Record<string, DetailAssessmentResultStudent> = {};
+    students?.forEach(item => {
+      if(!studentObj[item.student_id!]) {
+        studentObj[item.student_id!] = { ...item };
+      }
+    })
+    const new_studentViewItems: StudentViewItemsProps[] | undefined = studentViewItems?.map(item => {
+      const { status } = studentObj[item.student_id!]
+      return {
+        ...item,
+        status,
+      }
+    })
+    return new_studentViewItems;
   },
   getReviewStudentsItems(students: DetailAssessmentResult["diff_content_students"]): StudentViewItemsProps[] | undefined {
     const reviewStudentsItems: StudentViewItemsProps[] | undefined = students?.map((item) => {
