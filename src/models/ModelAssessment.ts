@@ -25,7 +25,6 @@ import {
   SubDimensionOptions
 } from "../pages/DetailAssessment/type";
 import { DetailAssessmentResult, DetailAssessmentResultContent, DetailAssessmentResultOutcome, DetailAssessmentResultStudent } from "../pages/ListAssessment/types";
-
 interface ObjContainId {
   id?: string;
 }
@@ -768,7 +767,7 @@ export const ModelAssessment = {
             return {
               content_id,
               parent_id,
-              score,
+              score: Number(score),
               outcomes: isReivew
                 ? undefined
                 : outcomes?.map((oItem) => {
