@@ -40,7 +40,7 @@ export function EditScore(props: EditScoreProps) {
     }
   };
   const subjectiveActivity = (type?: string) => {
-    return ["Essay", "AudioRecorder", "SpeakTheWords"].includes(type ?? "");
+    return ["Essay", "SpeakTheWords"].includes(type ?? "");
   };
   const showNotApplicable =
     fileType === FileTypes.Unknown || fileType === FileTypes.NotChildContainer || fileType === FileTypes.NotSupportScoreStandAlone;
