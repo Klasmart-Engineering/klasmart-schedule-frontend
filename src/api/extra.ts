@@ -6,14 +6,29 @@ import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
-import { UuidFilter } from "./api-ko-schema.auto";
+import { UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
 import {
+  ClassesDocument,
+  ClassesQuery,
+  ClassesQueryVariables,
+  ClassesSchoolsDocument,
+  ClassesSchoolsQuery,
+  ClassesSchoolsQueryVariables,
+  ClassesTeachersConnectionDocument,
+  ClassesTeachersConnectionQuery,
+  ClassesTeachersConnectionQueryVariables,
+  ClassNodeDocument,
+  ClassNodeQuery,
+  ClassNodeQueryVariables,
   GetClassesTeachingDocument,
   GetClassesTeachingQuery,
   GetClassesTeachingQueryVariables,
   GetSchoolMembershipsDocument,
   GetSchoolMembershipsQuery,
   GetSchoolMembershipsQueryVariables,
+  SchoolsClassesDocument,
+  SchoolsClassesQuery,
+  SchoolsClassesQueryVariables,
 } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -241,30 +256,6 @@ export const subscribeLocaleInCookie = (handler: { (locale: string): any }) => {
   }, 1000);
 };
 
-//  const apiCreateContentTypeLibrary = (id: string) => {
-//   return requireContentType("asset", id);
-// };
-
-//  async function apiCreateContentTypeSchema<T extends Record<string, unknown>>(id: string, locale: string) {
-//   const schema = {} as T;
-//   const schemaLanguages = {} as T;
-//   for (const [name, value] of Object.entries(requireContentType<T>("schema", id))) {
-//     schema[name as keyof T] = cloneDeep((await value()).default);
-//   }
-//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-//   }
-//   return merge(schema, schemaLanguages);
-// }
-
-//  async function apiCreateContentTypeSchemaLanguage<T extends Record<string, unknown>>(id: string, locale: string) {
-//   const schemaLanguages = {} as T;
-//   for (const [name, value] of Object.entries(requireContentType<T>("language", id, shouldBeLangName(locale)))) {
-//     schemaLanguages[name as keyof T] = cloneDeep((await value()).default?.semantics);
-//   }
-//   return schemaLanguages;
-// }
-
 export function domainSwitch() {
   return window.location.host.includes("kidsloop.live");
 }
@@ -353,6 +344,41 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
     });
 }
 
+const idToNameMap = new Map<string, string>();
+
+export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<string, string>> {
+  const fragmentStr = userIds
+    .filter((id) => !idToNameMap.has(id))
+    .map((userId, index) => {
+      return `user_${index}: user(user_id: "${userId}"){
+        user_id,
+        given_name
+        family_name
+      }`;
+    })
+    .join(",");
+  if (!fragmentStr) return idToNameMap;
+  try {
+    const userQuery = await gqlapi.query({
+      query: gql`
+        query userNameByUserIdQuery{
+          ${fragmentStr}
+        },
+        
+      `,
+    });
+    for (const item in userQuery.data || {}) {
+      const user = userQuery.data[item];
+      if (user) {
+        idToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  return idToNameMap;
+}
+
 export async function getUserIdAndOrgId() {
   const organizationId = ((await apiWaitForOrganizationOfPage()) as string) || "";
 
@@ -439,4 +465,185 @@ export const recursiveGetClassTeaching = async (
   return new Promise((resolve) => {
     resolve(classes);
   });
+};
+
+export interface IClassTeachers {
+  class_id: string;
+  teachers: ITeacher[];
+}
+interface ITeacher {
+  user_id: string;
+  user_name?: string;
+}
+
+export const recursiveGetClassTeachers = async (
+  variables: ClassesTeachersConnectionQueryVariables,
+  arr: IClassTeachers[]
+): Promise<IClassTeachers[]> => {
+  let classes: IClassTeachers[] = [...arr];
+
+  const {
+    data: { classesConnection },
+  } = await gqlapi.query<ClassesTeachersConnectionQuery, ClassesTeachersConnectionQueryVariables>({
+    query: ClassesTeachersConnectionDocument,
+    variables: { ...variables },
+  });
+
+  let classTeachers: IClassTeachers[] = [];
+  for (const index in classesConnection?.edges) {
+    const i = Number(index);
+    let teachers: ITeacher[] = [];
+    const haveNextPage = classesConnection?.edges[i]?.node?.teachersConnection?.pageInfo?.hasNextPage;
+    const teacherCursor = classesConnection?.edges[i]?.node?.teachersConnection?.pageInfo?.endCursor || "";
+    let teacherNodeEdgs = classesConnection?.edges[i]?.node?.teachersConnection?.edges || [];
+    const id = classesConnection?.edges[i]?.node?.id;
+    if (haveNextPage && id) {
+      teacherNodeEdgs = await recursiveGetClassNodeTeachers(id, teacherCursor, [...teacherNodeEdgs]);
+    }
+    teacherNodeEdgs?.forEach((teacherNode) => {
+      const teacher: ITeacher = {
+        user_id: teacherNode?.node?.id + "",
+        user_name: teacherNode?.node?.givenName + " " + teacherNode?.node?.familyName,
+      };
+      teachers = teachers.concat([teacher]);
+    });
+    classTeachers = classTeachers.concat([{ class_id: classesConnection?.edges[i]?.node?.id ?? "", teachers }]);
+  }
+  classes = [...classes, ...classTeachers];
+
+  if (classesConnection?.pageInfo?.hasNextPage) {
+    const cursor = classesConnection?.pageInfo?.endCursor as string;
+    return recursiveGetClassTeachers({ ...variables, cursor }, [...classes]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(classes);
+    });
+  }
+};
+
+export const recursiveGetClassNodeTeachers = async (
+  id: string,
+  teacherCursor: string,
+  arr: NonNullable<UsersConnectionResponse["edges"]>
+): Promise<NonNullable<UsersConnectionResponse["edges"]>> => {
+  let teacherNodeEdgs: NonNullable<UsersConnectionResponse["edges"]> = [...arr];
+  const {
+    data: { classNode },
+  } = await gqlapi.query<ClassNodeQuery, ClassNodeQueryVariables>({
+    query: ClassNodeDocument,
+    variables: { classId: id, teacherCursor },
+  });
+  teacherNodeEdgs = teacherNodeEdgs.concat(classNode?.teachersConnection?.edges || []);
+
+  if (classNode?.teachersConnection?.pageInfo?.hasNextPage) {
+    teacherCursor = classNode?.teachersConnection?.pageInfo?.endCursor as string;
+    return recursiveGetClassNodeTeachers(id, teacherCursor, [...teacherNodeEdgs]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(teacherNodeEdgs);
+    });
+  }
+};
+
+export interface SchoolClassesNode {
+  school_id: string;
+  school_name?: string;
+  classes: UserClass[];
+}
+export const recursiveGetSchoolsClasses = async (
+  variables: SchoolsClassesQueryVariables,
+  arr: SchoolClassesNode[]
+): Promise<SchoolClassesNode[]> => {
+  let schools: SchoolClassesNode[] = [...arr];
+
+  const {
+    data: { schoolsConnection },
+  } = await gqlapi.query<SchoolsClassesQuery, SchoolsClassesQueryVariables>({
+    query: SchoolsClassesDocument,
+    variables: { ...variables },
+  });
+
+  let schoolClasses: SchoolClassesNode[] = [];
+  for (const index in schoolsConnection?.edges) {
+    const i = Number(index);
+    const haveNextPage = schoolsConnection?.edges[i]?.node?.classesConnection?.pageInfo?.hasNextPage;
+    const cursor = schoolsConnection?.edges[i]?.node?.classesConnection?.pageInfo?.endCursor || "";
+    let classes =
+      schoolsConnection?.edges[i]?.node?.classesConnection?.edges?.map(
+        (node) => ({ class_id: node?.node?.id, class_name: node?.node?.name } as UserClass)
+      ) || [];
+    const schoolId = schoolsConnection?.edges[i]?.node?.id;
+    const school_name = schoolsConnection?.edges[i]?.node?.name;
+    if (haveNextPage && schoolId) {
+      const classvar: ClassesQueryVariables = {
+        filter: {
+          // organizationId: variables.filter?.organizationId,
+          // schoolId: { value: schoolNode.node.id, operator: UuidExclusiveOperator.Eq },
+        },
+        schoolId: schoolId,
+        cursor,
+      };
+      classes = await recursiveGetClasses({ ...classvar }, [...classes]);
+    }
+    schoolClasses = schoolClasses.concat([{ school_id: schoolId || "", school_name, classes }]);
+  }
+
+  schools = [...schools, ...schoolClasses];
+
+  if (schoolsConnection?.pageInfo?.hasNextPage) {
+    const cursor = schoolsConnection?.pageInfo?.endCursor as string;
+    return recursiveGetSchoolsClasses({ ...variables, cursor }, [...schools]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(schools);
+    });
+  }
+};
+
+export interface UserClass {
+  class_id: string;
+  class_name?: string;
+}
+export const recursiveGetNoSchoolclasses = async (variables: ClassesSchoolsQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
+  let classes: UserClass[] = [...arr];
+  const {
+    data: { classesConnection },
+  } = await gqlapi.query<ClassesSchoolsQuery, ClassesSchoolsQueryVariables>({
+    query: ClassesSchoolsDocument,
+    variables,
+  });
+  classes = classes.concat(
+    classesConnection?.edges?.map((node) => ({ class_id: node?.node?.id, class_name: node?.node?.name } as UserClass)) || []
+  );
+
+  if (classesConnection?.pageInfo?.hasNextPage) {
+    const cursor = classesConnection?.pageInfo?.endCursor as string;
+    return recursiveGetNoSchoolclasses({ ...variables, cursor }, [...classes]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(classes);
+    });
+  }
+};
+export const recursiveGetClasses = async (variables: ClassesQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
+  let classes: UserClass[] = [...arr];
+  const {
+    data: { schoolNode },
+  } = await gqlapi.query<ClassesQuery, ClassesQueryVariables>({
+    query: ClassesDocument,
+    variables,
+  });
+
+  classes = classes.concat(
+    schoolNode?.classesConnection?.edges?.map((node) => ({ class_id: node?.node?.id, class_name: node?.node?.name } as UserClass)) || []
+  );
+
+  if (schoolNode?.classesConnection?.pageInfo?.hasNextPage) {
+    const cursor = schoolNode?.classesConnection?.pageInfo?.endCursor as string;
+    return recursiveGetClasses({ ...variables, cursor }, [...classes]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(classes);
+    });
+  }
 };

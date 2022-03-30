@@ -1,4 +1,5 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
+import { ErrorResponse, onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchIntercept from "fetch-intercept";
 import { GraphQLError } from "graphql";
@@ -15,7 +16,7 @@ fetchIntercept.register({
     try {
       const organization = apiOrganizationOfPage() || "";
       if (!organization) return [originUrl, config];
-      const URL_REPLACE = "https://_u_r_l_r_e_p_l_a_c_e_"; 
+      const URL_REPLACE = "https://_u_r_l_r_e_p_l_a_c_e_";
       const url = new URL(originUrl, URL_REPLACE);
       if (originUrl.indexOf(process.env.REACT_APP_BASE_API as string) >= 0) {
         // 这样改一下：获取s3资源的时候不需要传orgid,不然会报403
@@ -88,6 +89,22 @@ const retry = async (count: number, operation: Operation, error: ServerError): P
   }
 };
 
+const errorLink = onError(({ /*graphQLErrors, networkError,*/ response, operation }: ErrorResponse) => {
+  /*
+  if (graphQLErrors)
+    graphQLErrors.forEach(({ message, locations, path }) =>
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+      ),
+  );
+  if (networkError) console.log(`[Network error]: ${networkError}`);
+  */
+  if (operation.operationName === "userNameByUserIdQuery") {
+    // @ts-ignore
+    response.errors = null;
+  }
+});
+
 const retryLink = new RetryLink({
   attempts: (count, operation, error) => {
     return retry(count, operation, error);
@@ -95,6 +112,6 @@ const retryLink = new RetryLink({
 });
 const httpLink = new HttpLink({ uri: `${process.env.REACT_APP_KO_BASE_API}/user/`, credentials: "include" });
 export const gqlapi = new ApolloClient({
-  link: ApolloLink.from([retryLink, httpLink]),
+  link: ApolloLink.from([errorLink, retryLink, httpLink]),
   cache: new InMemoryCache(),
 });

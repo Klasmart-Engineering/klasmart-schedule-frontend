@@ -35,7 +35,7 @@ const sortOptions = (assessment_type: AssessmentQueryCondition["assessment_type"
       { label: d("Class End Time (Old -New)").t("assess_class_end_time_old_new"), value: OrderByAssessmentList.class_end_time },
     ];
   }
-  if (assessment_type === AssessmentTypeValues.study) {
+  if (assessment_type === AssessmentTypeValues.study || assessment_type === AssessmentTypeValues.review) {
     changeingOptions = [
       { label: d("Created On (New-Old)").t("assess_label_created_on_newtoold"), value: OrderByAssessmentList._create_at },
       { label: d("Created On (Old-New)").t("assess_label_created_on_oldtonew"), value: OrderByAssessmentList.create_at },

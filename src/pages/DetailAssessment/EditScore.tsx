@@ -32,7 +32,8 @@ export function EditScore(props: EditScoreProps) {
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value as unknown as number;
+    const val = event.target.value.replace(/^(.*\..{1}).*$/, "$1");
+    const value = val as unknown as number;
     if (value! > maxScore!) {
       dispatch(actWarning(d("The score you entered cannot exceed the maximum score.").t("assess_msg_exceed_maximum")));
     } else if (Number(value) + "" !== NaN + "") {
@@ -40,7 +41,7 @@ export function EditScore(props: EditScoreProps) {
     }
   };
   const subjectiveActivity = (type?: string) => {
-    return ["Essay"].includes(type ?? "");
+    return ["Essay", "AudioRecorder", "SpeakTheWordsSet", "SpeakTheWords"].includes(type ?? "");
   };
   const showNotApplicable =
     fileType === FileTypes.Unknown || fileType === FileTypes.NotChildContainer || fileType === FileTypes.NotSupportScoreStandAlone;

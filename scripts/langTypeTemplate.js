@@ -1,12 +1,14 @@
-const union = require("lodash/union")
+const fs = require('fs');
+const union = require("lodash/union");
+const langList = readLangList("./src/locale/lang/")
 const header = `
 import { MessageDescriptor } from "react-intl";
 
 
-export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
+export type LangName = ${langList.langType};
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id" , "es" , "th"].includes(name)) throw new TypeError();
+  if (!name || ![${langList.langName}].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -59,6 +61,20 @@ function genLangTypeFileContentSyncLocal (enData) {
     .join('\n')
 
   return `${header}${body}${footer}`;
+}
+
+function readLangList(path) {
+  const files = fs.readdirSync(path);
+  let langType = '';
+  let langName = ''
+  files.forEach(function (itm, index) {
+    const [lang, suffix] = itm.split(".")
+    if (suffix === 'json') {
+      langType += `"${lang}" |`
+      langName += `"${lang}", `
+    }
+  })
+  return {langType: langType.substr(0, langType.length - 2), langName:  langName.substr(0, langName.length - 2)};
 }
 
 exports.genLangTypeFileContent = genLangTypeFileContent;

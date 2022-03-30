@@ -75,7 +75,8 @@ import {
   ScheduleFilterPrograms,
   scheduleShowOption,
   getLessonPlansBySchedule,
-  getLessonPlansByScheduleLoadingPage, checkScheduleReview
+  getLessonPlansByScheduleLoadingPage,
+  checkScheduleReview,
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -83,7 +84,6 @@ import {
   classTypeLabel,
   EntityLessonPlanShortInfo,
   EntityScheduleClassInfo,
-  EntityScheduleSchoolInfo,
   filterOptionItem,
   FilterQueryTypeProps,
   LearningComesFilterQuery,
@@ -108,7 +108,7 @@ import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
 import TimeConflictsTemplate from "./TimeConflictsTemplate";
 import CloseIcon from "@material-ui/icons/Close";
-import ScheduleReviewTemplate from "./ScheduleReviewTemplate"
+import ScheduleReviewTemplate from "./ScheduleReviewTemplate";
 import { getStudentUserNamesById } from "@reducers/schedule";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
@@ -331,7 +331,6 @@ function SmallCalendar(props: CalendarStateProps) {
     handleChangeOnlyMine,
     privilegedMembers,
     filterOption,
-    schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
@@ -369,7 +368,7 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
-  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th };
+  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th, zh_CN: zhCN };
 
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down(320));
@@ -393,7 +392,6 @@ function SmallCalendar(props: CalendarStateProps) {
           timesTamp={timesTamp}
           privilegedMembers={privilegedMembers}
           filterOption={filterOption}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
@@ -1012,11 +1010,27 @@ function EditBox(props: CalendarStateProps) {
 
     addData["is_force"] = isForce ?? is_force;
 
+    const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
+    const timestampToTimeReviewTitle = (timestamp: number): string => {
+      if (!timestamp) return "N/A";
+      const timestampDate = new Date(timestamp * 1000);
+      const [M, D] = [(timestampDate as Date).getMonth(), (timestampDate as Date).getDate()];
+      return `${monthArr[M]} ${D}`;
+    };
+
     if (checkedStatus.reviewCheck) {
-      addData["content_start_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000, "all_day_end");
-      addData["content_end_at"] = timestampToTime(new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000, "all_day_end");
+      addData["content_start_at"] = timestampToTime(
+        new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000,
+        "all_day_end"
+      );
+      addData["content_end_at"] = timestampToTime(
+        new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000,
+        "all_day_end"
+      );
       addData["due_at"] = dueDateTimestamp;
-      addData["title"] = classItem?.name ?? ""
+      addData["title"] = `${d("Review").t("schedule_lable_class_type_review")}: ${classItem?.name ?? ""} ${timestampToTimeReviewTitle(
+        addData["content_start_at"] as number
+      )} ~ ${timestampToTimeReviewTitle(addData["content_end_at"] as number)} ${d("Material").t("library_label_material")}`;
     }
 
     if (scheduleList.class_type === "Homework") {
@@ -1073,25 +1087,28 @@ function EditBox(props: CalendarStateProps) {
       if (!addData["class_roster_teacher_ids"].includes(item.id)) addData["participants_teacher_ids"].push(item.id);
     });
 
-    addData['is_review'] = checkedStatus.reviewCheck;
+    addData["is_review"] = checkedStatus.reviewCheck;
 
     if (checkedStatus.reviewCheck && is_check_review) {
       let reviewResultInfo: any;
-      reviewResultInfo = (await dispatch(checkScheduleReview({
-        content_end_at: addData["end_at"],
-        content_start_at: addData["start_at"],
-        program_id: addData["program_id"],
-        student_ids: addData["class_roster_student_ids"].concat(addData["participants_student_ids"]),
-        subject_ids: addData["subject_ids"],
-        time_zone_offset: addData["time_zone_offset"],
-        metaLoading: true,
-      }))) as unknown as PayloadAction<AsyncTrunkReturned<typeof checkScheduleReview>>;
-      const studentInfo = reviewResultInfo.payload.results.filter((item: any)=> !item.status).map((student: any)=> student.student_id)
+      reviewResultInfo = (await dispatch(
+        checkScheduleReview({
+          content_end_at: addData["content_end_at"],
+          content_start_at: addData["content_start_at"],
+          program_id: scheduleList["program_id"],
+          student_ids: addData["class_roster_student_ids"].concat(addData["participants_student_ids"]),
+          subject_ids: addData["subject_ids"],
+          time_zone_offset: addData["time_zone_offset"],
+          metaLoading: true,
+        })
+      )) as unknown as PayloadAction<AsyncTrunkReturned<typeof checkScheduleReview>>;
+      const studentInfo = reviewResultInfo.payload.results.filter((item: any) => !item.status).map((student: any) => student.student_id);
 
       if (studentInfo.length) {
         let reviewStudentInfo: any;
-        reviewStudentInfo = (await dispatch(getStudentUserNamesById({metaLoading: true, userIds:studentInfo}))
-        ) as unknown as PayloadAction<AsyncTrunkReturned<typeof getStudentUserNamesById>>;
+        reviewStudentInfo = (await dispatch(
+          getStudentUserNamesById({ metaLoading: true, userIds: studentInfo })
+        )) as unknown as PayloadAction<AsyncTrunkReturned<typeof getStudentUserNamesById>>;
         changeModalDate({
           openStatus: true,
           enableCustomization: true,
@@ -1104,21 +1121,26 @@ function EditBox(props: CalendarStateProps) {
                 });
               }}
               checkScheduleReviewData={reviewStudentInfo.payload.data}
-              disabledConfirm={reviewStudentInfo.payload.data?.usersConnection?.edges?.length === (addData["class_roster_student_ids"].concat(addData["participants_student_ids"])).length}
+              disabledConfirm={
+                reviewStudentInfo.payload.data?.usersConnection?.edges?.length ===
+                addData["class_roster_student_ids"].concat(addData["participants_student_ids"]).length
+              }
             />
           ),
         });
-      }else {
+      } else {
         changeModalDate({
           title: "",
-          text: d("The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student.").t("schedule_review_pop_up_all_success"),
+          text: d(
+            "The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student."
+          ).t("schedule_review_pop_up_all_success"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
             {
               label: d("OK").t("schedule_button_ok"),
               event: () => {
-                saveSchedule("only_current", true, false, false)
+                saveSchedule("only_current", true, false, false);
                 changeModalDate({ openStatus: false, enableCustomization: false });
               },
             },
@@ -1140,7 +1162,7 @@ function EditBox(props: CalendarStateProps) {
           metaLoading: true,
         })
       )) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleData>>;
-    }else {
+    } else {
       resultInfo = (await dispatch(
         saveScheduleData({
           payload: { ...scheduleList, ...addData },
@@ -1194,9 +1216,9 @@ function EditBox(props: CalendarStateProps) {
       changeTimesTamp(timesTampCallback);
       setIsForce(false);
       if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetial.class?.name as string, stateCurrentCid as string);
-      if(checkedStatus.reviewCheck) {
+      if (checkedStatus.reviewCheck) {
         history.push(`/schedule/calendar/rightside/scheduleTable/model/preview`);
-      }else {
+      } else {
         history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
       }
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
@@ -1311,7 +1333,7 @@ function EditBox(props: CalendarStateProps) {
     } else if (perm.create_my_schools_schedule_events_522) {
       lists = classOptions.classListSchool.school?.classes as EntityScheduleClassInfo[];
     } else {
-      lists = classOptions.classListTeacher.user?.classesTeaching as EntityScheduleClassInfo[];
+      lists = classOptions.classListTeacher.user?.membership?.classesTeaching as EntityScheduleClassInfo[];
     }
     const classResult: EntityScheduleShortInfo[] = [];
     lists?.forEach((item: EntityScheduleClassInfo) => {
@@ -1468,11 +1490,11 @@ function EditBox(props: CalendarStateProps) {
     let studyCheck = {};
 
     if (event.target.name === "homeFunCheck" && event.target.checked) studyCheck = { reviewCheck: false };
-    if (event.target.name === "reviewCheck" && event.target.checked){
+    if (event.target.name === "reviewCheck" && event.target.checked) {
       studyCheck = { homeFunCheck: false };
-      setSelectedDate(new Date(new Date().setHours(new Date().getHours() + 24)))
-    }else {
-      setSelectedDate(new Date(new Date().setHours(new Date().getHours())))
+      setSelectedDate(new Date(new Date().setHours(new Date().getHours() + 24)));
+    } else {
+      setSelectedDate(new Date(new Date().setHours(new Date().getHours())));
     }
 
     setStatus({ ...checkedStatus, [event.target.name]: event.target.checked, ...studyCheck });
@@ -1481,7 +1503,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const handleDueDateChange = (date: Date | null) => {
-    if (date?.getMonth()! < new Date().getMonth() || date?.getDate()! <= new Date().getDate()) return;
+    if ((timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000 < new Date().getTime()) return;
     setSelectedDate(date);
   };
 
@@ -1578,7 +1600,7 @@ function EditBox(props: CalendarStateProps) {
         changeModalDate({
           title: "",
           // text: reportMiss("You can not edit a class 15 minutes before the start time.", "schedule_msg_edit_minutes"),
-          text: d("You can only edit a class at least 5 minutes before the start time.").t("schedule_msg_edit_minutes"),
+          text: d("You can only delete a class at least 5 minutes before the start time.").t("schedule_msg_delete_minutes"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
@@ -1804,10 +1826,10 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
 
-    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 5 * 60) {
+    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
-        text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),
+        text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
@@ -2109,13 +2131,13 @@ function EditBox(props: CalendarStateProps) {
                 control={<Checkbox name="homeFunCheck" color="primary" checked={checkedStatus.homeFunCheck} onChange={handleCheck} />}
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
-              {
-                !scheduleId && false && <FormControlLabel
+              {!scheduleId && process.env.REACT_APP_BASE_DOMAIN === "https://cms.alpha.kidsloop.net" && (
+                <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
                   label={d("Review").t("schedule_lable_class_type_review")}
                 />
-              }
+              )}
             </FormGroup>
             {checkedStatus.reviewCheck && (
               <span style={{ color: "#666666", fontSize: "16px", fontWeight: 400 }}>
@@ -2564,7 +2586,9 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           )}
         {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
-          <span style={{ fontSize: "16px", fontWeight: 400, paddingLeft: "8px", marginTop: "30px", display: "block" }}>{d("Review Area").t("schedule_review_review_area")}</span>
+          <span style={{ fontSize: "16px", fontWeight: 400, paddingLeft: "8px", marginTop: "30px", display: "block" }}>
+            {d("Review Area").t("schedule_review_review_area")}
+          </span>
         )}
         {scheduleList.class_type !== "Task" && (
           <>
@@ -2847,7 +2871,6 @@ interface CalendarStateProps {
   stateCurrentCid: string;
   stateMaterialArr: (EntityContentInfoWithDetails | undefined)[];
   filterOption: filterOptionItem;
-  schoolByOrgOrUserData: EntityScheduleSchoolInfo[];
   viewSubjectPermission?: boolean;
   schoolsConnection: GetSchoolsFilterListQuery;
   getSchoolsConnection: (cursor: string, value: string, loading: boolean) => any;
@@ -2906,7 +2929,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     stateCurrentCid,
     stateMaterialArr,
     filterOption,
-    schoolByOrgOrUserData,
     viewSubjectPermission,
     schoolsConnection,
     getSchoolsConnection,
@@ -2955,7 +2977,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
           filterOption={filterOption}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}
@@ -3009,7 +3030,6 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           stateCurrentCid={stateCurrentCid}
           stateMaterialArr={stateMaterialArr}
           filterOption={filterOption}
-          schoolByOrgOrUserData={schoolByOrgOrUserData}
           viewSubjectPermission={viewSubjectPermission}
           schoolsConnection={schoolsConnection}
           getSchoolsConnection={getSchoolsConnection}

@@ -7,6 +7,7 @@ import {
   Subject,
   User,
   UserFilter,
+  UuidExclusiveOperator,
   UuidFilter,
   UuidOperator,
 } from "@api/api-ko-schema.auto";
@@ -26,7 +27,6 @@ import {
   ClassesTeachersByOrganizationDocument,
   ClassesTeachersByOrganizationQuery,
   ClassesTeachersByOrganizationQueryVariables,
-  ClassStudentsByOrganizationQuery,
   GetMyIdDocument,
   GetMyIdQuery,
   GetMyIdQueryVariables,
@@ -82,14 +82,18 @@ import {
   EntityTeacherLoadLessonSummary,
   EntityTeacherLoadMissedLessonsRequest,
   EntityTeacherLoadMissedLessonsResponse,
+  EntityTeacherLoadOverview,
   // EntityStudentsPerformanceH5PReportItem,
   EntityTeacherReportCategory,
 } from "../api/api.auto";
 import {
   apiWaitForOrganizationOfPage,
   ClassesTeachingProps,
+  recursiveGetClassTeachers,
   recursiveGetClassTeaching,
+  recursiveGetNoSchoolclasses,
   recursiveGetSchoolMemberships,
+  recursiveGetSchoolsClasses,
   SchoolIdProps,
 } from "../api/extra";
 import PermissionType from "../api/PermissionType";
@@ -136,7 +140,7 @@ interface IreportState {
   studentList: Pick<User, "user_id" | "user_name">[];
   studentUsage: {
     organization_id: string;
-    schoolList: Pick<School, "classes" | "school_id" | "school_name" | "status">[];
+    schoolList: Pick<School, "classes" | "school_id" | "school_name">[];
     noneSchoolClasses: Pick<Class, "class_id" | "class_name">[];
   };
   learningSummary: {
@@ -212,6 +216,7 @@ interface IreportState {
   learnerUsageOverview: EntityLearnerUsageResponse;
   learningWeeklyOverview: EntityLearnerReportOverview;
   learningMonthlyOverview: EntityLearnerReportOverview;
+  teacherLoadOverview: EntityTeacherLoadOverview;
 }
 
 interface IObj {
@@ -249,6 +254,12 @@ const initialState: IreportState = {
     attendees: 0,
     num_below: 0,
     num_meet: 0,
+  },
+  teacherLoadOverview: {
+    num_of_missed_lessons: 0,
+    num_of_teachers_completed_all: 0,
+    num_of_teachers_missed_frequently: 0,
+    num_of_teachers_missed_some: 0,
   },
   reportMockOptions: {
     teacherList: [],
@@ -410,6 +421,8 @@ export const getSchoolsByOrg = createAsyncThunk<
     ICacheData,
     // ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<SchoolsByOrganizationQuery>,
+    // UserClass[],
+    // SchoolClassesNode[],
     SchoolIdProps[],
     ClassesTeachingProps[],
     string
@@ -430,6 +443,14 @@ export const getSchoolsByOrg = createAsyncThunk<
     dispatch(getStudentOrganizationDocument())
       .unwrap()
       .then((res) => res.res),
+
+    // dispatch(getNoSchoolclasses())
+    //   .unwrap()
+    //   .then((res) => res),
+    // dispatch(getSchoolclasses())
+    //   .unwrap()
+    //   .then((res) => res),
+
     dispatch(getMembershipSchool())
       .unwrap()
       .then((res) => res),
@@ -663,6 +684,40 @@ export const getClassTeaching = createAsyncThunk<AsyncReturnType<typeof recursiv
   };
   return recursiveGetClassTeaching(filter, []);
 });
+export const getNoSchoolclasses = createAsyncThunk<AsyncReturnType<typeof recursiveGetNoSchoolclasses>>("getNoSchoolclasses", async () => {
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const filter = {
+    organizationId: {
+      operator: UuidOperator.Eq,
+      value: organization_id,
+    },
+    schoolId: {
+      operator: UuidExclusiveOperator.IsNull,
+    },
+  };
+  return recursiveGetNoSchoolclasses({ filter }, []);
+});
+
+export const getSchoolclasses = createAsyncThunk<AsyncReturnType<typeof recursiveGetSchoolsClasses>>("getNoSchoolclasses", async () => {
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const filter = {
+    organizationId: {
+      operator: UuidOperator.Eq,
+      value: organization_id,
+    },
+  };
+  return recursiveGetSchoolsClasses({ filter }, []);
+});
+export const getClassTeachers = createAsyncThunk<AsyncReturnType<typeof recursiveGetClassTeachers>>("getClassTeachers", async () => {
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const filter = {
+    organizationId: {
+      operator: UuidOperator.Eq,
+      value: organization_id,
+    },
+  };
+  return recursiveGetClassTeachers({ filter }, []);
+});
 
 export const getMyInfo = createAsyncThunk<ApolloQueryResult<GetMyIdQuery>["data"]>("getMyInfo", async () => {
   const res = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
@@ -710,6 +765,7 @@ export const getTeachersByOrg = createAsyncThunk<
     dispatch(getClassesTeachersByOrganizationDocument())
       .unwrap()
       .then((res) => res.res),
+
     // 代替getMyPermissionClassAndTeaching()函数
     dispatch(getMyInfo())
       .unwrap()
@@ -735,7 +791,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
     // ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
-    ApolloQueryResult<ClassStudentsByOrganizationQuery>,
+    ApolloQueryResult<StudentsByOrganizationQuery>,
     Pick<Program, "id" | "name" | "subjects">[] | Pick<Program, "id" | "name">[],
     ApolloQueryResult<GetMyIdQuery>["data"],
     SchoolIdProps[],
@@ -1222,6 +1278,14 @@ export const getLearnerMonthlyReportOverview = createAsyncThunk<
   return await api.reports.getLearnerMonthlyReportOverview(query);
 });
 
+export type IParamTeacherLoadOverview = Parameters<typeof api.reports.getTeacherLoadOverview>[0];
+export const getTeacherLoadOverview = createAsyncThunk<EntityTeacherLoadOverview, IParamTeacherLoadOverview & LoadingMetaPayload>(
+  "report/getTeacherLoadOverview",
+  async ({ metaLoading, ...query }) => {
+    return await api.reports.getTeacherLoadOverview(query);
+  }
+);
+
 export type IParamQueryTimeFilter = Parameters<typeof api.reports.queryLearningSummaryTimeFilter>[0];
 export type IResultQueryTimeFilter = AsyncReturnType<typeof api.reports.queryLearningSummaryTimeFilter>;
 export const getTimeFilter = createAsyncThunk<IResultQueryTimeFilter, IParamQueryTimeFilter & LoadingMetaPayload>(
@@ -1615,7 +1679,7 @@ const { actions, reducer } = createSlice({
     },
     [getStudentsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentsByOrg>>) => {
       const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools" | "students">[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
+      const schools = payload[1].data.organization?.schools as Pick<School, "school_id" | "school_name" | "classes">[];
       // const membership = payload[1].data.me?.membership;
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
       // const schoolIDs =
@@ -1667,10 +1731,14 @@ const { actions, reducer } = createSlice({
       }
     },
     [getSchoolsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrg>>) => {
-      const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools" | "status">[];
-      const schools = payload[1].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name" | "status">[];
+      const classes = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
+      const schools = payload[1].data.organization?.schools as Pick<School, "school_id" | "school_name" | "classes">[];
       // const membership = payload[1].data.me?.membership;
+
       const noneSchoolClasses = classes.filter((item) => (item?.schools || []).length === 0);
+      // const noneSchoolClasses = payload[1];
+      // const schools = payload[2];
+
       // const schoolIDs =
       //   membership?.schoolMemberships?.map((item) => {
       //     return item?.school_id;
@@ -1952,6 +2020,9 @@ const { actions, reducer } = createSlice({
     },
     [getStudentUsageMaterial.rejected.type]: (state) => {},
 
+    [getTeacherLoadOverview.fulfilled.type]: (state, { payload }) => {
+      state.teacherLoadOverview = payload;
+    },
     [getTeachersAndClasses.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersAndClasses>>) => {
       state.teacherList = payload.teacherList;
       state.classesConnection = payload.classesConnection;

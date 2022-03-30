@@ -142,7 +142,7 @@ export default function AssetsDetails(props: AssetDetailsProps) {
                     transformFile={crop}
                     {...props}
                     render={({ uploady, item, btnRef, value, isUploading }) => (
-                      <Box display="flex" className={css.fieldset}>
+                      <Box display="flex" className={css.fieldset} style={{ display: !value && isIdExist() ? "none" : "flex" }}>
                         <Button
                           className={css.thumbnailButton}
                           ref={btnRef}

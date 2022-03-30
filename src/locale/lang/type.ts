@@ -1,9 +1,9 @@
 import { MessageDescriptor } from "react-intl";
 
-export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
+export type LangName = "en" | "es" | "id" | "ko" | "th" | "vi" | "zh" | "zh_CN";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id", "es", "th"].includes(name)) throw new TypeError();
+  if (!name || !["en", "es", "id", "ko", "th", "vi", "zh", "zh_CN"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -627,7 +627,7 @@ type LangRecord =
       description: `You can only edit a class at least 5 minutes before the start time.`;
       values: undefined;
     }
-  | { id: "schedule_msg_start_minutes"; description: `You can only start a class 5 minutes before the start time.`; values: undefined }
+  | { id: "schedule_msg_start_minutes"; description: `You can only start a class 15 minutes before the start time.`; values: undefined }
   | { id: "schedule_button_click_to schedule"; description: `Click to Schedule`; values: undefined }
   | { id: "schedule_msg_time_expired"; description: `Time Expired`; values: undefined }
   | {
@@ -1334,7 +1334,7 @@ type LangRecord =
   | { id: "report_label_live_lessons_missed"; description: `Live Lessons Missed`; values: undefined }
   | { id: "report_label_in_class_lessons_Missed"; description: `In Class Lessons Missed`; values: undefined }
   | { id: "report_label_total_scheduled"; description: `Total Scheduled`; values: undefined }
-  | { id: "report_label_missed_lessons"; description: `Details of Missed Lessons`; values: undefined }
+  | { id: "report_label_missed_lessons"; description: `Missed Lessons`; values: undefined }
   | { id: "report_label_lesson_type"; description: `Lesson Type`; values: undefined }
   | { id: "report_label_lesson_name"; description: `Lesson Name`; values: undefined }
   | { id: "report_label_class_name"; description: `Class Name`; values: undefined }
@@ -1697,12 +1697,16 @@ type LangRecord =
   | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined }
   | {
       id: "report_label_learner_weekly_report_info";
-      description: `Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
+      description: `Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 7 days:
+-Above Expectations: learners that have achieved more than 80%, on average, of the learning outcomes
+-Below Expectations: learners that have achieved less than 50%, on average, of the learning outcomes`;
       values: undefined;
     }
   | {
       id: "report_label_learner_monthly_report_info";
-      description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
+      description: `Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 4 weeks:
+-Above Expectations: learners that have achieved more than 80% of the learning outcomes
+-Below Expectations: learners that have achieved less than 50% of the learning outcomes`;
       values: undefined;
     }
   | { id: "app2web_badanamu_activities"; description: `Badanamu Activities`; values: undefined }
@@ -1757,7 +1761,28 @@ type LangRecord =
     }
   | { id: "schedule_review_popup_confirm"; description: `Confirm`; values: undefined }
   | { id: "schedule_review_class_name"; description: `Review: {value} Materials`; values: { value: string | number } }
-  | { id: "schedule_repeat_end_on"; description: `On`; values: undefined };
+  | { id: "schedule_repeat_end_on"; description: `On`; values: undefined }
+  | { id: "assessment_list_study_review"; description: `Study / Review`; values: undefined }
+  | { id: "assessment_review_summary"; description: `Review Summary`; values: undefined }
+  | { id: "assessment_review_title"; description: `Review Title`; values: undefined }
+  | { id: "assessment_review_detail_student_name"; description: `Student Name`; values: undefined }
+  | {
+      id: "report_label_teacher_usage_info";
+      description: `View teachers that have not missed the scheduled sessions in the last 7 days, including the number of missed sessions and lesson details.`;
+      values: undefined;
+    }
+  | { id: "report_label_completed_all_lessons"; description: `Completed All Lessons`; values: undefined }
+  | { id: "report_label_missed_some_lessons"; description: `Missed Some Lessons`; values: undefined }
+  | { id: "report_label_missed_all_lessons"; description: `Missed All Lessons`; values: undefined }
+  | { id: "report_label_completed_all"; description: `Completed All`; values: undefined }
+  | { id: "report_label_missed_some"; description: `Missed Some`; values: undefined }
+  | { id: "report_label_missed_frequently"; description: `Missed Frequently`; values: undefined }
+  | {
+      id: "assessment_audio_suggest_browser";
+      description: `Please use another browser (Chrome) for a better experience.`;
+      values: undefined;
+    }
+  | { id: "assessment_audio_no_data"; description: `Audio data is not successfully stored by student.`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

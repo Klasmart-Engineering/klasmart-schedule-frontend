@@ -124,12 +124,11 @@ interface ScheduleListProps {
   scheduleTimeViewData: EntityScheduleTimeView[];
   timesTamp: timestampType;
   scheduleSelected: (event: scheduleInfoViewProps) => void;
-  timestampToTime: (timestamp: number) => string;
 }
 
 function ScheduleList(props: ScheduleListProps) {
   const css = useStyles();
-  const { scheduleTimeViewData, timesTamp, scheduleSelected, timestampToTime } = props;
+  const { scheduleTimeViewData, timesTamp, scheduleSelected } = props;
   const [checked, setChecked] = React.useState(false);
   const eventColor = [
     { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon style={{ width: "16%" }} /> },
@@ -177,7 +176,7 @@ function ScheduleList(props: ScheduleListProps) {
             schedule.start_at as number
           )})`
         : "";
-    return schedule.is_review ? textEllipsis(`${d("Review").t("schedule_lable_class_type_review")}: ${schedule.title} ${timestampToTime(schedule.content_start_at as number)} - ${timestampToTime(schedule.content_end_at as number)} ${d("Material").t("library_label_material")}`) : `${textEllipsis(schedule.title)}  ${fullDay}`;
+    return `${textEllipsis(schedule.title)}  ${fullDay}`;
   };
   const formatDate = (now: Data) => {
     return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
@@ -200,7 +199,7 @@ function ScheduleList(props: ScheduleListProps) {
 
   const height = isSameDay().length > 3 ? 3 * 43 : isSameDay().length * 43;
 
-  const reviewColor = {pending: "#13AAA999", success:"#13AAA9", failed:"#C02121"}
+  const reviewColor = { pending: "#13AAA999", success: "#13AAA9", failed: "#C02121" };
 
   return (
     <Box className={css.scheduleListBox}>
@@ -209,7 +208,11 @@ function ScheduleList(props: ScheduleListProps) {
           return (
             <div
               className={css.scheduleListItem}
-              style={{ backgroundColor: schedule.is_review ? reviewColor[schedule.review_status as "pending" | "success" | "failed"] : eventTemplate(schedule)[0].color }}
+              style={{
+                backgroundColor: schedule.is_review
+                  ? reviewColor[schedule.review_status as "pending" | "success" | "failed"]
+                  : eventTemplate(schedule)[0].color,
+              }}
               onClick={() => {
                 scheduleViewInfo(schedule);
               }}
@@ -273,7 +276,7 @@ function MyCalendar(props: CalendarProps) {
 
   const views = { work_week: true, day: true, agenda: true, month: true, week: true };
 
-  const lang = { en: "en-au", zh: "zh-cn", vi: "vi", ko: "ko", id: "id", es: "es", th: "th" };
+  const lang = { en: "en-au", zh: "zh-cn", vi: "vi", ko: "ko", id: "id", es: "es", th: "th", zh_CN: "zh-cn" };
 
   // Setup the localizer by providing the moment (or globalize) Object
   // to the correct localizer.
@@ -638,28 +641,17 @@ function MyCalendar(props: CalendarProps) {
     { id: "Task", color: "#AFBA0A", icon: <AssignmentOutlinedIcon className={css.classTypeMb} /> },
   ];
 
-  const timestampToTime = (timestamp: number): string => {
-    if (!timestamp) return "N/A";
-    const timestampDate = new Date(timestamp * 1000);
-    const [M, D] = [
-      (timestampDate as Date).getMonth(),
-      (timestampDate as Date).getDate(),
-    ];
-    return  `${monthArr[M]} ${D}`;
-  };
-
-  const reviewColor = {pending: "#13AAA999", success:"#13AAA9", failed:"#C02121"}
+  const reviewColor = { pending: "#13AAA999", success: "#13AAA9", failed: "#C02121" };
 
   const CustomEventMonth = (event: any) => {
     const eventTemplate = eventColor.filter((item) => item.id === event.event.class_type);
-    const color =  event.event.is_review ? reviewColor[event.event.review_status as "pending" | "success" | "failed"] : eventTemplate[0].color
+    const color = event.event.is_review
+      ? reviewColor[event.event.review_status as "pending" | "success" | "failed"]
+      : eventTemplate[0].color;
     return (
       <div className={css.eventTemplateCalendar} style={{ backgroundColor: color }}>
         <div className={css.eventTemplateIcon}>{eventTemplate[0].icon}</div>
-        {!event.event.is_review && <span>{event.event.title}</span>}
-        {
-          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.content_start_at)} - {timestampToTime(event.event.content_end_at)} {d("Material").t("library_label_material")}</span>
-        }
+        <span>{event.event.title}</span>
       </div>
     );
   };
@@ -667,14 +659,13 @@ function MyCalendar(props: CalendarProps) {
   const CustomEventDay = (event: any) => {
     const padding = event.event.end_at - event.event.start_at > 3600;
     const eventTemplate = eventColorMb.filter((item) => item.id === event.event.class_type);
-    const color =  event.event.is_review ? reviewColor[event.event.review_status as "pending" | "success" | "failed"] : eventTemplate[0].color
+    const color = event.event.is_review
+      ? reviewColor[event.event.review_status as "pending" | "success" | "failed"]
+      : eventTemplate[0].color;
     return (
       <div className={css.customerEventMb} style={{ backgroundColor: color, paddingTop: padding ? "8px" : "0px" }}>
         <div>{eventTemplate[0].icon}</div>
-        {!event.event.is_review && <span>{event.event.title}</span>}
-        {
-          event.event.is_review && <span>{d("Review").t("schedule_lable_class_type_review")}: {event.event.title} {timestampToTime(event.event.content_start_at)} - {timestampToTime(event.event.content_end_at)} {d("Material").t("library_label_material")}</span>
-        }
+        <span>{event.event.title}</span>
       </div>
     );
   };
@@ -682,7 +673,7 @@ function MyCalendar(props: CalendarProps) {
   return (
     <>
       {modelView === "day" && mobile && (
-        <ScheduleList timestampToTime={timestampToTime} scheduleTimeViewData={scheduleTimeViewData} timesTamp={timesTamp} scheduleSelected={scheduleSelected} />
+        <ScheduleList scheduleTimeViewData={scheduleTimeViewData} timesTamp={timesTamp} scheduleSelected={scheduleSelected} />
       )}
       <Box className={css.calendarBox}>
         <Box className={css.calendarNav}>

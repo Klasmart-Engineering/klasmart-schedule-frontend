@@ -13,26 +13,6 @@
 #   }
 # }
 # 换成connection
-query teachersByOrgnization($organization_id: ID!) {
-  organization(organization_id: $organization_id) {
-    teachers {
-      user {
-        user_id
-        user_name
-      }
-    }
-  }
-}
-# 换成connection
-query classesByTeacher($user_id: ID!) {
-  user(user_id: $user_id) {
-    classesTeaching {
-      class_id
-      class_name
-    }
-  }
-}
-# 换成connection
 query classesByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
@@ -66,7 +46,7 @@ query classesSchoolsByOrganization($organization_id: ID!) {
     }
   }
 }
-# 换成connection
+# 换成connection => classesTeachersConnection
 query classesTeachersByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
     classes {
@@ -74,28 +54,100 @@ query classesTeachersByOrganization($organization_id: ID!) {
       status
       teachers {
         ...userIdName
-        school_memberships {
-          school_id
+      }
+    }
+  }
+}
+query classesTeachersConnection(
+  $cursor: String,
+  $filter: ClassFilter,
+  $teacherFilter: UserFilter,
+  $teacherCursor: String,
+  ) {
+classesConnection(
+    filter: $filter
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+    sort:{
+    order:ASC
+    field:name
+    }
+    ) {
+     totalCount
+     edges {
+      node {
+        id
+        name
+        teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: FORWARD) {
+          totalCount
+          edges {
+            cursor
+            node {
+              id
+              givenName
+              familyName
+              status
+            }
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        },
+      }
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+
+    }
+  }
+}
+query classNode($classId:ID!,$teacherCursor:String){
+  classNode(id:$classId){
+    name
+    teachersConnection(cursor:$teacherCursor){
+      totalCount
+      edges{
+        node{
+          id
+          familyName
+          givenName
           status
         }
       }
+      pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+      }
+      
     }
   }
+
 }
+ 
 
 # 只用到了查询的类型，没调这个接口 应该可以删掉
-query classStudentsByOrganization($organization_id: ID!) {
-  organization(organization_id: $organization_id) {
-    classes {
-      class_id
-      status
-      students{
-        user_id
-        full_name
-      }
-    }
-  }
-}
+# query classStudentsByOrganization($organization_id: ID!) {
+#   organization(organization_id: $organization_id) {
+#     classes {
+#       class_id
+#       status
+#       students{
+#         user_id
+#         full_name
+#       }
+#     }
+#   }
+# }
 # 换成connection
 query schoolsIdNameByOrganization($organization_id: ID!) {
   organization(organization_id: $organization_id) {
@@ -128,7 +180,8 @@ query schoolsByOrganization($organization_id: ID!) {
     }
   }
 }
-# 只用到了查询的类型，没调接口 应该可以删掉
+
+# 只用到了查询的类型，没调接口 适配器调整
 query participantsByClass($class_id: ID!) {
   class(class_id: $class_id) {
     teachers {
@@ -421,7 +474,7 @@ query classesTeachingQuery($user_id: ID!, $organization_id: ID!) {
     }
   }
 }
-# 代码中可能没有用到
+
 query classesStudentQuery($user_id: ID!, $organization_id: ID!) {
   user(user_id: $user_id) {
     membership(organization_id: $organization_id) {
@@ -576,6 +629,99 @@ query studentsByOrganization($organization_id: ID!) {
     }
   }
 }
+# schools | classes 1
+query classes (
+  $cursor: String,
+  $filter: ClassFilter,
+  $schoolId:ID!,
+  ) {
+  schoolNode(id:$schoolId){
+    organizationId
+    classesConnection(filter: $filter,
+      cursor: $cursor
+      direction: FORWARD
+     ){
+      totalCount
+      pageInfo{
+        endCursor
+        hasNextPage
+      }
+      edges{
+        node{
+          id
+          name
+        }
+      }
+    }
+  }
+  }
+# schools | classes 2
+query classesSchools (
+  $cursor: String,
+  $filter: ClassFilter,
+  ) {
+classesConnection(
+    filter: $filter,
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+  ) {
+    totalCount
+     edges {
+      node {
+        id
+        name
+      }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+  # schools | classes 3
+  query schoolsClasses (
+  $cursor: String,
+  $filter: SchoolFilter,
+  ) {
+schoolsConnection(
+    filter: $filter,
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+    sort:{
+    order:ASC
+    field:name
+    }
+  ) {
+    totalCount
+     edges {
+      node {
+        id
+        name
+        classesConnection( direction: FORWARD) {
+          totalCount
+           edges {
+            node {
+              id
+              name
+            }
+            }
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+        }
+      }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
 
 
 query getProgramsAndSubjects($count: PageSize!,  $cursor: String!, $filter: ProgramFilter!) {
@@ -814,35 +960,6 @@ classesConnection(
           }
         },
       }
-    }
-  }
-}
-
-query userWithoutClassAndSchool ($direction: ConnectionDirection) {
-  usersConnection (
-    direction: FORWARD,
-    directionArgs: {
-      count: 5
-      cursor: ""
-    }
-    filter: {
-      organizationId: {operator: eq, value: "de6e850a-cf97-4e0b-aa96-c0fedcda71be"},
-      classId: {operator: isNull},
-      organizationUserStatus: {operator: eq, value: "active"}
-  	}
-  ) {
-    edges {
-      node {
-        id,
-        givenName,
-        familyName
-      }
-    }
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
     }
   }
 }
