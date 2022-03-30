@@ -1,10 +1,10 @@
 import { Box, Checkbox, FormControlLabel, makeStyles, Table, TableBody, TableCell, TableContainer, TableRow } from "@material-ui/core";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useMemo } from "react";
 import { AchievedTooltips } from "../../components/DynamicTable";
 import { PLField, PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
 import { DetailAssessmentResult } from "../ListAssessment/types";
-import { OverAllOutcomesItem } from "./type";
+import { OverAllOutcomesItem, StudentParticipate } from "./type";
 
 const useStyles = makeStyles({
   tableContainer: {
@@ -108,6 +108,9 @@ export function OverallOutcomes(props: OverallOutcomesProps) {
   const handleChangeNotCovered = (event: ChangeEvent<HTMLInputElement>, id?: string) => {
     onChangeNotCovered(event.target.checked, id);
   };
+  const selectedAttendanceList = useMemo(() => {
+    return attendanceList?.filter(item => item.status === StudentParticipate.Participate)
+  }, [attendanceList])
   const rows = overallOutcomes.map((outcome, index) => (
     <TableRow
       key={outcome.outcome_id}
@@ -140,7 +143,7 @@ export function OverallOutcomes(props: OverallOutcomesProps) {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={outcome.skip ? false : outcome.attendance_ids && outcome.attendance_ids?.length === attendanceList?.length}
+                  checked={outcome.skip ? false : outcome.attendance_ids && outcome.attendance_ids?.length === selectedAttendanceList?.length}
                   onChange={(e) => handleChangeAllAchieved(e, outcome.outcome_id)}
                   name="award"
                   color="primary"
