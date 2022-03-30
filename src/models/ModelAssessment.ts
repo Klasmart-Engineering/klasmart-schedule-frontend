@@ -549,7 +549,7 @@ export const ModelAssessment = {
   getOverallOutcomes(studentViewItems: StudentViewItemsProps[] | undefined): OverAllOutcomesItem[] {
     let outcomeView: Record<string, OverAllOutcomesItem> = {};
     let overAllOutcomes: OverAllOutcomesItem[] = [];
-    studentViewItems?.forEach((sItem) => {
+    studentViewItems?.filter(item => item.status === StudentParticipate.Participate)?.forEach((sItem) => {
       const { student_id } = sItem;
       sItem.results?.forEach((rItem) => {
         if (rItem.content_type === "LessonMaterial") {
