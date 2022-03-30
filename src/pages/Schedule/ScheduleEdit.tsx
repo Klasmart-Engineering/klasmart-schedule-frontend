@@ -368,7 +368,7 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
-  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th };
+  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th, zh_CN: zhCN };
 
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down(320));
@@ -1826,7 +1826,7 @@ function EditBox(props: CalendarStateProps) {
       return;
     }
 
-    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 5 * 60) {
+    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
         text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),

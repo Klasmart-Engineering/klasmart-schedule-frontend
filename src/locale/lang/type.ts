@@ -1,9 +1,9 @@
 import { MessageDescriptor } from "react-intl";
 
-export type LangName = "en" | "ko" | "zh" | "vi" | "id" | "es" | "th";
+export type LangName = "en" | "es" | "id" | "ko" | "th" | "vi" | "zh" | "zh_CN";
 
 export function assertLangName(name?: string): asserts name is LangName {
-  if (!name || !["en", "ko", "zh", "vi", "id", "es", "th"].includes(name)) throw new TypeError();
+  if (!name || !["en", "es", "id", "ko", "th", "vi", "zh", "zh_CN"].includes(name)) throw new TypeError();
 }
 
 export function shouldBeLangName(name?: string): LangName {
@@ -1194,7 +1194,7 @@ type LangRecord =
       values: undefined;
     }
   | { id: "library_label_visibility_schools"; description: `Schools`; values: undefined }
-  | { id: "report_msg_no_data"; description: `No achievement data is available.`; values: undefined }
+  | { id: "report_msg_no_data"; description: `There was no data to display in this week.`; values: undefined }
   | { id: "report_navigation_class_view"; description: `Class View`; values: undefined }
   | {
       id: "report_msg_individual_infor";
@@ -1249,8 +1249,6 @@ type LangRecord =
   | { id: "report_no_feedback"; description: `No feedback is available`; values: undefined }
   | { id: "report_no_data_available"; description: `No Data Available`; values: undefined }
   | { id: "assessment_assignment_assessment"; description: `Assignment Assessment`; values: undefined }
-  | { id: "assessment_audio_suggest_browser"; description: `Please use another browser (Chrome) for a better experience.`; values: undefined}
-  | { id: "assessment_audio_no_data"; description: `Audio data is not successfully stored by student.`; values: undefined }
   | { id: "assessment_learning_outcomes_assessment"; description: `Learning Outcomes Assessment`; values: undefined }
   | {
       id: "assessment_learning_outcomes_achievement";
@@ -1336,7 +1334,7 @@ type LangRecord =
   | { id: "report_label_live_lessons_missed"; description: `Live Lessons Missed`; values: undefined }
   | { id: "report_label_in_class_lessons_Missed"; description: `In Class Lessons Missed`; values: undefined }
   | { id: "report_label_total_scheduled"; description: `Total Scheduled`; values: undefined }
-  | { id: "report_label_missed_lessons"; description: `Details of Missed Lessons`; values: undefined }
+  | { id: "report_label_missed_lessons"; description: `Missed Lessons`; values: undefined }
   | { id: "report_label_lesson_type"; description: `Lesson Type`; values: undefined }
   | { id: "report_label_lesson_name"; description: `Lesson Name`; values: undefined }
   | { id: "report_label_class_name"; description: `Class Name`; values: undefined }
@@ -1699,12 +1697,16 @@ type LangRecord =
   | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined }
   | {
       id: "report_label_learner_weekly_report_info";
-      description: `Among the learners who have studied data in the last 7 days, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
+      description: `Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 7 days:
+-Above Expectations: learners that have achieved more than 80%, on average, of the learning outcomes
+-Below Expectations: learners that have achieved less than 50%, on average, of the learning outcomes`;
       values: undefined;
     }
   | {
       id: "report_label_learner_monthly_report_info";
-      description: `Among the learners who have studied data in the last 4 weeks, by calculating the attendance and assignment completion rate, if both rates are above 80% then categorized as 'Above expectation' and if both rates are below 50% then categorized as 'Below expectation'`;
+      description: `Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 4 weeks:
+-Above Expectations: learners that have achieved more than 80% of the learning outcomes
+-Below Expectations: learners that have achieved less than 50% of the learning outcomes`;
       values: undefined;
     }
   | { id: "app2web_badanamu_activities"; description: `Badanamu Activities`; values: undefined }
@@ -1766,15 +1768,21 @@ type LangRecord =
   | { id: "assessment_review_detail_student_name"; description: `Student Name`; values: undefined }
   | {
       id: "report_label_teacher_usage_info";
-      description: `Check teachers who have not attended the scheduled lessons in the last 7 days and show the number of missed lessons.`;
+      description: `View teachers that have not missed the scheduled sessions in the last 7 days, including the number of missed sessions and lesson details.`;
       values: undefined;
     }
-  | { id: "report_label_completed_all_lessons"; description: `Completed all lessons`; values: undefined }
-  | { id: "report_label_missed_some_lessons"; description: `Missed some lessons`; values: undefined }
-  | { id: "report_label_missed_all_lessons"; description: `Missed all lessons`; values: undefined }
-  | { id: "report_label_completed_all"; description: `Completed all`; values: undefined }
-  | { id: "report_label_missed_some"; description: `Missed some`; values: undefined }
-  | { id: "report_label_missed_frequently"; description: `Missed frequently`; values: undefined };
+  | { id: "report_label_completed_all_lessons"; description: `Completed All Lessons`; values: undefined }
+  | { id: "report_label_missed_some_lessons"; description: `Missed Some Lessons`; values: undefined }
+  | { id: "report_label_missed_all_lessons"; description: `Missed All Lessons`; values: undefined }
+  | { id: "report_label_completed_all"; description: `Completed All`; values: undefined }
+  | { id: "report_label_missed_some"; description: `Missed Some`; values: undefined }
+  | { id: "report_label_missed_frequently"; description: `Missed Frequently`; values: undefined }
+  | {
+      id: "assessment_audio_suggest_browser";
+      description: `Please use another browser (Chrome) for a better experience.`;
+      values: undefined;
+    }
+  | { id: "assessment_audio_no_data"; description: `Audio data is not successfully stored by student.`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
