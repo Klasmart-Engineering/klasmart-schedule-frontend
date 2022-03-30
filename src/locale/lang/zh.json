@@ -534,7 +534,7 @@
   "schedule_msg_no_student": "您选择的班级里面没有学生",
   "schedule_msg_delete_minutes": "您只能于开课时间5分钟之前删除该课程",
   "schedule_msg_edit_minutes": "您只能于开课时间5分钟之前编辑该课程",
-  "schedule_msg_start_minutes": "您只能于开课时间5分钟之内开始上课",
+  "schedule_msg_start_minutes": "您只能于开课时间15分钟之内开始上课",
   "schedule_button_click_to schedule": "确认",
   "schedule_msg_time_expired": "时间过期",
   "schedule_msg_recall_lesson_plan": "这节课的教学课件已被删除！",

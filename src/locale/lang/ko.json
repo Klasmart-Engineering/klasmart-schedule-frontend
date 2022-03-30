@@ -534,7 +534,7 @@
   "schedule_msg_no_student": "수업에 학생이 없습니다",
   "schedule_msg_delete_minutes": "수업 삭제는 수업 시간 5분 전까지만 가능합니다",
   "schedule_msg_edit_minutes": "수업 편집은 수업 시간 5분 전까지만 가능합니다",
-  "schedule_msg_start_minutes": "수업 시작은 수업 시간 5분 전부터 가능합니다",
+  "schedule_msg_start_minutes": "수업 시작은 수업 시간 15분 전부터 가능합니다",
   "schedule_button_click_to schedule": "수업 스케줄 하기",
   "schedule_msg_time_expired": "시간 만료",
   "schedule_msg_recall_lesson_plan": "이런! 이 수업에 포함된 수업계획이 이미 삭제되었어요!",

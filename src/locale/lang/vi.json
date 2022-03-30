@@ -534,7 +534,7 @@
   "schedule_msg_no_student": "Không có học sinh trong lớp học này",
   "schedule_msg_delete_minutes": "Bạn chỉ có thể xóa 1 lớp học trong vòng 5 phút trước thời gian bắt đầu.",
   "schedule_msg_edit_minutes": "Bạn chỉ có thể chỉnh sửa 1 lớp học trong vòng 5 phút trước thời gian bắt đầu.",
-  "schedule_msg_start_minutes": "Bạn chỉ có thể bắt đầu 1 lớp học trong vòng 5 phút trước thời gian bắt đầu.",
+  "schedule_msg_start_minutes": "Bạn chỉ có thể bắt đầu 1 lớp học trong vòng 15 phút trước thời gian bắt đầu.",
   "schedule_button_click_to schedule": "Tạo thời khóa biểu",
   "schedule_msg_time_expired": "Thời gian hết hiệu lực.",
   "schedule_msg_recall_lesson_plan": "Xin lỗi, Giáo án đính kèm bài học này đã bị xóa!",
