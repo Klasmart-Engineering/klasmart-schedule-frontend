@@ -585,10 +585,10 @@ export default function CustomizeTempalte(props: InfoProps) {
     const isSafari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") < 0;
     let winRef: Window | null = window;
     if (isSafari) {
-      if (ScheduleViewInfo.start_at! * 1000 - currentTime > 5 * 60 * 1000) {
+      if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
         changeModalDate({
           title: "",
-          text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),
+          text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
           openStatus: true,
           enableCustomization: false,
           buttons: [
@@ -645,10 +645,10 @@ export default function CustomizeTempalte(props: InfoProps) {
       }
       return;
     }
-    if (ScheduleViewInfo.start_at! * 1000 - currentTime > 5 * 60 * 1000) {
+    if (ScheduleViewInfo.start_at! * 1000 - currentTime > 15 * 60 * 1000) {
       changeModalDate({
         title: "",
-        text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),
+        text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [

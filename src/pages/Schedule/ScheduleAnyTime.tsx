@@ -191,10 +191,10 @@ function AnyTimeSchedule(props: SearchListProps) {
 
   const handleGoLive = async (scheduleDetial: EntityScheduleListView) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
-    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 5 * 60) {
+    if (scheduleDetial && scheduleDetial.start_at && scheduleDetial.start_at - currentTime > 15 * 60) {
       changeModalDate({
         title: "",
-        text: d("You can only start a class 5 minutes before the start time.").t("schedule_msg_start_minutes"),
+        text: d("You can only start a class 15 minutes before the start time.").t("schedule_msg_start_minutes"),
         openStatus: true,
         enableCustomization: false,
         buttons: [
