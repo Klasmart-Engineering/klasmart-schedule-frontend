@@ -534,7 +534,7 @@
   "schedule_msg_no_student": "ไม่มีนักเรียนในชั้นเรียนนี้",
   "schedule_msg_delete_minutes": "คุณลบชั้นเรียนได้ก่อนเวลาเริ่มต้นอย่างน้อย 5 นาทีเท่านั้น",
   "schedule_msg_edit_minutes": "คุณแก้ไขชั้นเรียนได้ก่อนเวลาเริ่มต้นอย่างน้อย 5 นาทีเท่านั้น",
-  "schedule_msg_start_minutes": "คุณสามารถเริ่มชั้นเรียนได้ก่อนเวลาเริ่มต้น 5 นาทีเท่านั้น",
+  "schedule_msg_start_minutes": "คุณสามารถเริ่มชั้นเรียนได้ก่อนเวลาเริ่มต้น 15 นาทีเท่านั้น",
   "schedule_button_click_to schedule": "คลิกเพื่อกำหนดเวลา",
   "schedule_msg_time_expired": "เวลาหมดอายุ",
   "schedule_msg_recall_lesson_plan": "อ๊ะ! แผนการสอนที่รวมอยู่ในบทเรียนนี้ได้ถูกลบไปแล้ว!",

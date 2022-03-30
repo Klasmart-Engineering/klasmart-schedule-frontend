@@ -534,7 +534,7 @@
   "schedule_msg_no_student": "Tidak ada murid di kelas ini",
   "schedule_msg_delete_minutes": "Anda hanya dapat menghapus kelas anda 5 menit sebelum kelas dimulai",
   "schedule_msg_edit_minutes": "Anda hanya dapat mengedit kelas anda 5 menit sebelum kelas dimulai",
-  "schedule_msg_start_minutes": "Anda hanya dapat memulai kelas anda 5 menit sebelum kelas dimulai",
+  "schedule_msg_start_minutes": "Anda hanya dapat memulai kelas anda 15 menit sebelum kelas dimulai",
   "schedule_button_click_to schedule": "Klik untuk menjadwalkan",
   "schedule_msg_time_expired": "Waktu anda sudah habis",
   "schedule_msg_recall_lesson_plan": "Ups! Rencana pelajaran yang disertakan untuk pelajaran ini telah dihapus!",
