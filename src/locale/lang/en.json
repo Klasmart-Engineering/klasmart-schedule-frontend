@@ -534,7 +534,7 @@
   "schedule_msg_no_student": "There is no student in this class",
   "schedule_msg_delete_minutes": "You can only delete a class at least 5 minutes before the start time.",
   "schedule_msg_edit_minutes": "You can only edit a class at least 5 minutes before the start time.",
-  "schedule_msg_start_minutes": "You can only start a class 5 minutes before the start time.",
+  "schedule_msg_start_minutes": "You can only start a class 15 minutes before the start time.",
   "schedule_button_click_to schedule": "Click to Schedule",
   "schedule_msg_time_expired": "Time Expired",
   "schedule_msg_recall_lesson_plan": "Oops! The lesson plan included for this lesson has already been deleted!",
