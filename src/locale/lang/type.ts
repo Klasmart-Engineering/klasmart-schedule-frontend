@@ -627,7 +627,7 @@ type LangRecord =
       description: `You can only edit a class at least 5 minutes before the start time.`;
       values: undefined;
     }
-  | { id: "schedule_msg_start_minutes"; description: `You can only start a class 5 minutes before the start time.`; values: undefined }
+  | { id: "schedule_msg_start_minutes"; description: `You can only start a class 15 minutes before the start time.`; values: undefined }
   | { id: "schedule_button_click_to schedule"; description: `Click to Schedule`; values: undefined }
   | { id: "schedule_msg_time_expired"; description: `Time Expired`; values: undefined }
   | {
