@@ -1503,7 +1503,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   const handleDueDateChange = (date: Date | null) => {
-    if (date?.getMonth()! < new Date().getMonth() || date?.getDate()! <= new Date().getDate()) return;
+    if ((timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000 < new Date().getTime()) return;
     setSelectedDate(date);
   };
 
@@ -2131,7 +2131,7 @@ function EditBox(props: CalendarStateProps) {
                 control={<Checkbox name="homeFunCheck" color="primary" checked={checkedStatus.homeFunCheck} onChange={handleCheck} />}
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
-              {!scheduleId && (
+              {!scheduleId && process.env.REACT_APP_BASE_DOMAIN === "https://cms.alpha.kidsloop.net" && (
                 <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
