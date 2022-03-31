@@ -314,7 +314,9 @@ function FeedbackTemplate(props: FeedbackProps) {
       schedule_id: schedule_id,
     };
     let resultInfo: any;
-    resultInfo = (await dispatch(saveScheduleFeedback(data))) as unknown as PayloadAction<AsyncTrunkReturned<typeof saveScheduleFeedback>>;
+    resultInfo = (await dispatch(saveScheduleFeedback({ ...data, metaLoading: true }))) as unknown as PayloadAction<
+      AsyncTrunkReturned<typeof saveScheduleFeedback>
+    >;
     if (resultInfo.payload) {
       dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
       history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
