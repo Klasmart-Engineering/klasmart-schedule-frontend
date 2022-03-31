@@ -1,0 +1,11 @@
+query getStudentNameById($filter: UserFilter) {
+  usersConnection(filter: $filter, direction: FORWARD) {
+    edges {
+      node {
+        id
+        givenName
+        familyName
+      }
+    }
+  }
+}
