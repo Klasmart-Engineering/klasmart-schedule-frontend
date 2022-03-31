@@ -104,21 +104,21 @@ pipelines:
             - infra/**
 
       - step:
-        name: 'Build NPM Landing Zone'
-        size: 2x
-        image: node:lts-alpine
-        script:
-          - export KIDSLOOP_REGION=uk
-          - export KIDSLOOP_ENV=landing-zone
-          - apk update && apk add git openssh --no-cache
-          - npm ci --legacy-peer-deps
-          - mv deploy/config/${KIDSLOOP_REGION}/.env.${KIDSLOOP_ENV} ./.env.production
-          - npm run build
-          - mv build build_${KIDSLOOP_REGION}_${KIDSLOOP_ENV}
-        caches:
-          - nodemodules
-        artifacts:
-          - build_uk_landing-zone/**
+          name: 'Build NPM Landing Zone'
+          size: 2x
+          image: node:lts-alpine
+          script:
+            - export KIDSLOOP_REGION=uk
+            - export KIDSLOOP_ENV=landing-zone
+            - apk update && apk add git openssh --no-cache
+            - npm ci --legacy-peer-deps
+            - mv deploy/config/${KIDSLOOP_REGION}/.env.${KIDSLOOP_ENV} ./.env.production
+            - npm run build
+            - mv build build_${KIDSLOOP_REGION}_${KIDSLOOP_ENV}
+          caches:
+            - nodemodules
+          artifacts:
+            - build_uk_landing-zone/**
     - step:
         name: "Build Infra & Push Image"
         image: python:3.9-alpine
