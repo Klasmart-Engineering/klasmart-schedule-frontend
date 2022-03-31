@@ -1,3 +1,59 @@
+definitions:
+  caches:
+    nodemodules: ./node_modules
+  steps:
+    - step: &deploy-built-image-to-kidskube
+        name: "Deploy built image to KidsKube"
+        image: argoproj/argocd:v2.3.1
+        # See details here: https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/
+        deployment: replace-with-environment
+        script:
+          # What are we deploying?
+          - export ENVIRONMENT_TAG=${KIDSLOOP_REGION}-${KIDSLOOP_ENV}
+          - export BRANCH_TAG=$([[ ! -z "$BITBUCKET_BRANCH" ]] && echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}' || echo "main")
+          - export REPO=$DOCKER_REPO_URL/kidsloop-cms-frontend # DOCKER_REPO_URL is workspace wide variable
+          - export COMMIT_TAG=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+          - printf '"Git tag":"%s", "Git branch":"%s", "Environment":"%s", "Git commit":"%s" "ECR repo":"%s"' $BITBUCKET_TAG $BRANCH_TAG $ENVIRONMENT_TAG $COMMIT_TAG $REPO
+          - export DEPLOY_TAG=$BRANCH_TAG-$ENVIRONMENT_TAG-$COMMIT_TAG
+          - echo "Tag to deploy - $DEPLOY_TAG"
+
+          # Set up port forwarding
+          - echo $TOOLS_KUBECONFIG_CONTENT_B64 | base64 -d > $BITBUCKET_CLONE_DIR/kubeconfig.yml
+          - >
+            PORTFORWARD_CONTAINER=$(
+            docker run
+            --volume $BITBUCKET_CLONE_DIR/kubeconfig.yml:/mnt/kubeconfig.yml
+            --env KUBECONFIG=/mnt/kubeconfig.yml
+            --publish 8080:8080
+            --hostname kubeproxy
+            --detach bitnami/kubectl:1.21
+            port-forward -n argocd svc/argocd-server
+            --address 0.0.0.0 8080:80
+            )
+          - sleep 5
+          # Deploy tag to environment with ArgoCD
+          - >
+            export
+            ARGOCD_SERVER=localhost:8080
+            ARGOCD_OPTS='--grpc-web --insecure --plaintext'
+          - >
+            argocd login $ARGOCD_SERVER
+            --username $ARGOCD_AUTH_USERNAME
+            --password $ARGOCD_AUTH_PASSWORD
+            $ARGOCD_OPTS
+          - argocd app get $ARGOCD_APP
+          - argocd app set $ARGOCD_APP -p $ARGOCD_APP_CHART_TAG_PATH=$DEPLOY_TAG
+          - argocd app sync $ARGOCD_APP --timeout 300
+
+          # Clean up tasks
+          - docker logs $PORTFORWARD_CONTAINER
+          - docker kill $PORTFORWARD_CONTAINER
+          - docker rm $PORTFORWARD_CONTAINER
+        services:
+          - docker
+        caches:
+          - docker
+
 pipelines:
   branches:
     '{dev/global/alpha,main,hotfix/**}':
@@ -46,7 +102,23 @@ pipelines:
             - nodemodules
           artifacts:
             - infra/**
-    
+
+      - step:
+          name: 'Build NPM Landing Zone'
+          size: 2x
+          image: node:lts-alpine
+          script:
+            - export KIDSLOOP_REGION=uk
+            - export KIDSLOOP_ENV=landing-zone
+            - apk update && apk add git openssh --no-cache
+            - npm ci --legacy-peer-deps
+            - mv deploy/config/${KIDSLOOP_REGION}/.env.${KIDSLOOP_ENV} ./.env.production
+            - npm run build
+            - mv build build_${KIDSLOOP_REGION}_${KIDSLOOP_ENV}
+          caches:
+            - nodemodules
+          artifacts:
+            - build_uk_landing-zone/**
     - step:
         name: "Build Infra & Push Image"
         image: python:3.9-alpine
@@ -78,7 +150,7 @@ pipelines:
             MESSAGE: 'Infra image push has exited with [$BUILD_STATUS] status'
         services:
           - docker
-    
+
     - step:
         name: "Sync & Invalidate Alpha"
         image: python:3.9-alpine
@@ -93,7 +165,7 @@ pipelines:
           - aws s3 sync build s3://$S3_BUCKET/alpha/latest
 
           - aws cloudfront create-invalidation --paths "/*" --distribution-id $CDN_DIST 
-          
+
         after-script:
           - BUILD_STATUS="success"
           - if [[ $BITBUCKET_EXIT_CODE -ne 0 ]]; then BUILD_STATUS="failure"; fi
@@ -102,7 +174,41 @@ pipelines:
               WEBHOOK_URL: $WEBHOOK_URL
               PRETEXT: '"[Alpha] $BITBUCKET_REPO_SLUG - Pipeline ${BITBUCKET_GIT_HTTP_ORIGIN}/addon/pipelines/home#!/results/${BITBUCKET_BUILD_NUMBER}"'
               MESSAGE: 'S3 sync CDN Invalidation has exited with [$BUILD_STATUS] status'
-        
+
+    - step:
+        name: "Build cms-frontend & Push Image - landing-zone"
+        image: python:3.9-alpine
+        services:
+          - docker
+        script:
+          - pip3 install -U awscli
+          - export KIDSLOOP_REGION=uk
+          - export KIDSLOOP_ENV=landing-zone
+
+          - mv build_${KIDSLOOP_REGION}_${KIDSLOOP_ENV} deploy/build
+
+          - export BRANCH_TAG=$(echo "$BITBUCKET_BRANCH" | sed -E 's/([^0-9a-zA-Z]+)/-/g' | awk '{print tolower($0)}')
+          - export REPO=$DOCKER_REPO_URL/kidsloop-cms-frontend      # DOCKER_REPO_URL is workspace wide variable
+          - export COMMIT_TAG=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+          - if test -z "$BRANCH_TAG"; then export TAG=commit-${KIDSLOOP_REGION}-${KIDSLOOP_ENV}; else export TAG=$BRANCH_TAG-${KIDSLOOP_REGION}-${KIDSLOOP_ENV}; fi
+
+          - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $DOCKER_REPO_URL
+          - docker build -t cms-frontend deploy/
+
+          - docker tag cms-frontend:latest $REPO:$TAG
+          - docker tag cms-frontend:latest $REPO:$TAG-latest
+          - docker tag cms-frontend:latest $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          - docker tag cms-frontend:latest $REPO:$TAG-$COMMIT_TAG
+          - if test -n "$BRANCH_TAG"; then docker push $REPO:$TAG; fi
+          - if test -n "$BRANCH_TAG"; then docker push $REPO:$TAG-latest; fi
+          - docker push $REPO:$TAG-$BITBUCKET_BUILD_NUMBER
+          - docker push $REPO:$TAG-$COMMIT_TAG
+    # This step will deploy an image to the new "landing zone" environment via ArgoCD.
+    - step:
+        <<: *deploy-built-image-to-kidskube
+        deployment: uk-landing-zone
+        name: "Deploy built image to uk-landing-zone"
+
   custom:
     deploy:
     - variables:
@@ -166,7 +272,3 @@ pipelines:
 
         services:
           - docker
-
-definitions:
-  caches:
-    nodemodules: ./node_modules
