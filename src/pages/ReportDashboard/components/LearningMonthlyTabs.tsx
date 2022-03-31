@@ -48,6 +48,14 @@ const useStyles = makeStyles(() => ({
   scoreItem: {
     marginBottom: "12px",
   },
+  countNumber: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+  },
 }));
 
 const COLORS = ["#3ab8f3", "#ffd038", "#e80861"];
@@ -99,12 +107,28 @@ export default function LearningWeeklyTabs() {
 
   const renderCountNumber = () => {
     return (
-      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} position={"absolute"}>
-        <Box color={"#777"}>{t("assess_detail_attendance")}</Box>
-        <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
-          {learningMonthlyOverview.attendees}
-        </Box>
-      </Box>
+      <ParentSize className={css.countNumber}>
+        {(info) => {
+          return (
+            <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
+              <Box
+                title={t("assess_detail_attendance")}
+                color={"#777"}
+                width={Math.min(info.width, info.height) - 70}
+                textOverflow={"ellipsis"}
+                whiteSpace={"nowrap"}
+                textAlign={"center"}
+                overflow={"hidden"}
+              >
+                {t("assess_detail_attendance")}
+              </Box>
+              <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
+                {learningMonthlyOverview.attendees}
+              </Box>
+            </Box>
+          );
+        }}
+      </ParentSize>
     );
   };
 

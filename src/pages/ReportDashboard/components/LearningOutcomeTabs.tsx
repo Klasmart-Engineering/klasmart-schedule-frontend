@@ -47,6 +47,14 @@ const useStyles = makeStyles(() => ({
     color: "#6D8199",
     fontWeight: 600,
   },
+  countNumber: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+  },
 }));
 
 const COLORS = ["#3ab8f3", "#ffd038", "#e80861"];
@@ -94,12 +102,28 @@ export default function LearningOutcomeTabs() {
 
   const renderCountNumber = () => {
     return (
-      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} position={"absolute"}>
-        <Box color={"#777"}>{t("report_label_covered")}</Box>
-        <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
-          {achievementCounts.covered_learn_outcome_count}
-        </Box>
-      </Box>
+      <ParentSize className={css.countNumber}>
+        {(info) => {
+          return (
+            <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
+              <Box
+                title={t("report_label_covered")}
+                color={"#777"}
+                width={Math.min(info.width, info.height) - 70}
+                textOverflow={"ellipsis"}
+                whiteSpace={"nowrap"}
+                textAlign={"center"}
+                overflow={"hidden"}
+              >
+                {t("report_label_covered")}
+              </Box>
+              <Box color={"#14b799"} fontSize={42} fontWeight={"bold"}>
+                {achievementCounts.covered_learn_outcome_count}
+              </Box>
+            </Box>
+          );
+        }}
+      </ParentSize>
     );
   };
 
