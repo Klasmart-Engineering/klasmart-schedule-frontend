@@ -1021,7 +1021,7 @@ function EditBox(props: CalendarStateProps) {
     if (checkedStatus.reviewCheck) {
       addData["content_start_at"] = timestampToTime(
         new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000,
-        "all_day_end"
+        "all_day_start"
       );
       addData["content_end_at"] = timestampToTime(
         new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000,
