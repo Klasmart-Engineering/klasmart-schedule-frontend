@@ -9,7 +9,7 @@ import {
   IconButton,
   InputAdornment,
   makeStyles,
-  TextField,
+  TextField
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
@@ -83,7 +83,7 @@ export function ResourceView(props: ResourceViewProps) {
     onClose();
   };
   const link = createHttpLink({
-    uri: `${process.env.REACT_APP_KO_BASE_API}/audio-storage/graphql`,
+    uri: `${process.env.REACT_APP_KO_BASE_API}/media-storage/graphql`,
     credentials: "include",
   });
   const client = new ApolloClient({
