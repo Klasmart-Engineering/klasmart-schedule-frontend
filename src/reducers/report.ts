@@ -94,7 +94,9 @@ import {
   recursiveGetNoSchoolclasses,
   recursiveGetSchoolMemberships,
   recursiveGetSchoolsClasses,
+  SchoolClassesNode,
   SchoolIdProps,
+  UserClass,
 } from "../api/extra";
 import PermissionType from "../api/PermissionType";
 import { IParamQueryRemainFilter } from "../api/type";
@@ -451,6 +453,35 @@ export const getSchoolsByOrg = createAsyncThunk<
     //   .unwrap()
     //   .then((res) => res),
 
+    dispatch(getMembershipSchool())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getClassTeaching())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getOrganizationId())
+      .unwrap()
+      .then((res) => res),
+  ]);
+});
+export const getSchoolsByOrgNew = createAsyncThunk<
+  [ICacheData, UserClass[], SchoolClassesNode[], SchoolIdProps[], ClassesTeachingProps[], string],
+  LoadingMetaPayload,
+  { state: RootState }
+>("getSchoolsByOrgNew", async ({ metaLoading }, { dispatch }) => {
+  return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.student_usage_report_657,
+      PermissionType.report_organization_student_usage_654,
+      PermissionType.report_school_student_usage_655,
+      PermissionType.report_teacher_student_usage_656,
+    ]),
+    dispatch(getNoSchoolclasses())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getSchoolclasses())
+      .unwrap()
+      .then((res) => res),
     dispatch(getMembershipSchool())
       .unwrap()
       .then((res) => res),
@@ -1780,6 +1811,7 @@ const { actions, reducer } = createSlice({
         });
       }
     },
+
     [getSchoolsByOrg.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
@@ -1973,6 +2005,37 @@ const { actions, reducer } = createSlice({
         programs,
         canSelectStudent,
       };
+    },
+    [getSchoolsByOrgNew.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getSchoolsByOrgNew>>) => {
+      const permissions = payload[0];
+      const noneSchoolClasses = payload[1];
+      const schools = payload[2];
+      const schoolIDs = payload[3].map((item) => item.school_id);
+      const classIDs = payload[4].map((item) => item.class_id);
+      state.studentUsage.organization_id = payload[5];
+      if (permissions[PermissionType.report_organization_student_usage_654]) {
+        state.studentUsage.schoolList = schools;
+        state.studentUsage.noneSchoolClasses = noneSchoolClasses;
+      } else if (permissions[PermissionType.report_school_student_usage_655]) {
+        state.studentUsage.schoolList = schools.filter((school) => {
+          return schoolIDs.indexOf(school.school_id) >= 0;
+        });
+      } else if (permissions[PermissionType.report_teacher_student_usage_656]) {
+        state.studentUsage.schoolList = schools.reduce((prev, cur) => {
+          const classes = cur.classes?.filter((item) => classIDs.indexOf(item?.class_id) >= 0);
+          if (classes && classes.length > 0) {
+            prev.push({
+              school_id: cur.school_id,
+              school_name: cur.school_name,
+              classes,
+            } as never);
+          }
+          return prev;
+        }, []);
+        state.studentUsage.noneSchoolClasses = noneSchoolClasses.filter((item) => {
+          return classIDs.indexOf(item.class_id) >= 0;
+        });
+      }
     },
 
     [getLessonPlan.fulfilled.type]: (state, action: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {

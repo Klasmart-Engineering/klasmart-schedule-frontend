@@ -8,28 +8,30 @@ import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
 import { UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
 import {
-  ClassesDocument,
-  ClassesQuery,
-  ClassesQueryVariables,
-  ClassesSchoolsDocument,
-  ClassesSchoolsQuery,
-  ClassesSchoolsQueryVariables,
-  ClassesTeachersConnectionDocument,
-  ClassesTeachersConnectionQuery,
-  ClassesTeachersConnectionQueryVariables,
-  ClassNodeDocument,
-  ClassNodeQuery,
-  ClassNodeQueryVariables,
   GetClassesTeachingDocument,
   GetClassesTeachingQuery,
   GetClassesTeachingQueryVariables,
   GetSchoolMembershipsDocument,
   GetSchoolMembershipsQuery,
   GetSchoolMembershipsQueryVariables,
+} from "./api-ko.auto";
+import {
+  ClassesBySchoolIdDocument,
+  ClassesBySchoolIdQuery,
+  ClassesBySchoolIdQueryVariables,
+  ClassesListDocument,
+  ClassesListQuery,
+  ClassesListQueryVariables,
+  ClassesTeachersConnectionDocument,
+  ClassesTeachersConnectionQuery,
+  ClassesTeachersConnectionQueryVariables,
+  ClassNodeDocument,
+  ClassNodeQuery,
+  ClassNodeQueryVariables,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
-} from "./api-ko.auto";
+} from "./api-ko.legacy.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
@@ -500,7 +502,7 @@ export const recursiveGetClassTeachers = async (
     if (haveNextPage && id) {
       teacherNodeEdgs = await recursiveGetClassNodeTeachers(id, teacherCursor, [...teacherNodeEdgs]);
     }
-    teacherNodeEdgs?.forEach((teacherNode) => {
+    teacherNodeEdgs?.forEach((teacherNode: any) => {
       const teacher: ITeacher = {
         user_id: teacherNode?.node?.id + "",
         user_name: teacherNode?.node?.givenName + " " + teacherNode?.node?.familyName,
@@ -575,7 +577,7 @@ export const recursiveGetSchoolsClasses = async (
     const schoolId = schoolsConnection?.edges[i]?.node?.id;
     const school_name = schoolsConnection?.edges[i]?.node?.name;
     if (haveNextPage && schoolId) {
-      const classvar: ClassesQueryVariables = {
+      const classvar: ClassesBySchoolIdQueryVariables = {
         filter: {
           // organizationId: variables.filter?.organizationId,
           // schoolId: { value: schoolNode.node.id, operator: UuidExclusiveOperator.Eq },
@@ -604,12 +606,12 @@ export interface UserClass {
   class_id: string;
   class_name?: string;
 }
-export const recursiveGetNoSchoolclasses = async (variables: ClassesSchoolsQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
+export const recursiveGetNoSchoolclasses = async (variables: ClassesListQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
   let classes: UserClass[] = [...arr];
   const {
     data: { classesConnection },
-  } = await gqlapi.query<ClassesSchoolsQuery, ClassesSchoolsQueryVariables>({
-    query: ClassesSchoolsDocument,
+  } = await gqlapi.query<ClassesListQuery, ClassesListQueryVariables>({
+    query: ClassesListDocument,
     variables,
   });
   classes = classes.concat(
@@ -625,12 +627,12 @@ export const recursiveGetNoSchoolclasses = async (variables: ClassesSchoolsQuery
     });
   }
 };
-export const recursiveGetClasses = async (variables: ClassesQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
+export const recursiveGetClasses = async (variables: ClassesBySchoolIdQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
   let classes: UserClass[] = [...arr];
   const {
     data: { schoolNode },
-  } = await gqlapi.query<ClassesQuery, ClassesQueryVariables>({
-    query: ClassesDocument,
+  } = await gqlapi.query<ClassesBySchoolIdQuery, ClassesBySchoolIdQueryVariables>({
+    query: ClassesBySchoolIdDocument,
     variables,
   });
 

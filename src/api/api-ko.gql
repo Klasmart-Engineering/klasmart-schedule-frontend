@@ -58,82 +58,6 @@ query classesTeachersByOrganization($organization_id: ID!) {
     }
   }
 }
-query classesTeachersConnection(
-  $cursor: String,
-  $filter: ClassFilter,
-  $teacherFilter: UserFilter,
-  $teacherCursor: String,
-  ) {
-classesConnection(
-    filter: $filter
-    directionArgs: {
-    cursor: $cursor
-    },
-    direction: FORWARD
-    sort:{
-    order:ASC
-    field:name
-    }
-    ) {
-     totalCount
-     edges {
-      node {
-        id
-        name
-        teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: FORWARD) {
-          totalCount
-          edges {
-            cursor
-            node {
-              id
-              givenName
-              familyName
-              status
-            }
-          }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-        },
-      }
-    }
-    pageInfo{
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-
-    }
-  }
-}
-query classNode($classId:ID!,$teacherCursor:String){
-  classNode(id:$classId){
-    name
-    teachersConnection(cursor:$teacherCursor){
-      totalCount
-      edges{
-        node{
-          id
-          familyName
-          givenName
-          status
-        }
-      }
-      pageInfo{
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-      }
-      
-    }
-  }
-
-}
- 
 
 # 只用到了查询的类型，没调这个接口 应该可以删掉
 # query classStudentsByOrganization($organization_id: ID!) {
@@ -305,12 +229,7 @@ query getStudentNameById($filter: UserFilter) {
   }
 }
 
-# query organizations {
-#   organizations {
-#     organization_id
-#     organization_name
-#   }
-# }
+
 query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count: PageSize,$sort: OrganizationSortInput!,$filter:OrganizationFilter!) {
     organizationsConnection(
       direction: $direction
@@ -336,27 +255,7 @@ query getOrganizations($direction: ConnectionDirection!, $cursor: String, $count
       }
     }
   }
-# 没用到 删掉试试
-# query getSchoolTeacher($user_id: ID!) {
-#   user(user_id: $user_id) {
-#     school_memberships {
-#       school {
-#         status
-#         school_id
-#         school_name
-#         organization {
-#           organization_id
-#         }
-#         classes {
-#           status
-#           teachers {
-#             ...userIdName
-#           }
-#         }
-#       }
-#     }
-#   }
-# }
+
 # 换成connection
 query teacherByOrgId($organization_id: ID!) {
   organization(organization_id: $organization_id) {
@@ -629,99 +528,7 @@ query studentsByOrganization($organization_id: ID!) {
     }
   }
 }
-# schools | classes 1
-query classes (
-  $cursor: String,
-  $filter: ClassFilter,
-  $schoolId:ID!,
-  ) {
-  schoolNode(id:$schoolId){
-    organizationId
-    classesConnection(filter: $filter,
-      cursor: $cursor
-      direction: FORWARD
-     ){
-      totalCount
-      pageInfo{
-        endCursor
-        hasNextPage
-      }
-      edges{
-        node{
-          id
-          name
-        }
-      }
-    }
-  }
-  }
-# schools | classes 2
-query classesSchools (
-  $cursor: String,
-  $filter: ClassFilter,
-  ) {
-classesConnection(
-    filter: $filter,
-    directionArgs: {
-    cursor: $cursor
-    },
-    direction: FORWARD
-  ) {
-    totalCount
-     edges {
-      node {
-        id
-        name
-      }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-  # schools | classes 3
-  query schoolsClasses (
-  $cursor: String,
-  $filter: SchoolFilter,
-  ) {
-schoolsConnection(
-    filter: $filter,
-    directionArgs: {
-    cursor: $cursor
-    },
-    direction: FORWARD
-    sort:{
-    order:ASC
-    field:name
-    }
-  ) {
-    totalCount
-     edges {
-      node {
-        id
-        name
-        classesConnection( direction: FORWARD) {
-          totalCount
-           edges {
-            node {
-              id
-              name
-            }
-            }
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
-        }
-      }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
+
 
 
 query getProgramsAndSubjects($count: PageSize!,  $cursor: String!, $filter: ProgramFilter!) {

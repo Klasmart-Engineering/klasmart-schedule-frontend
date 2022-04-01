@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
 import TabPages from "../../components/TabPages";
 import { d, t } from "../../locale/LocaleManager";
-import { getSchoolsByOrg } from "../../reducers/report";
+import { getSchoolsByOrg, getSchoolsByOrgNew } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 
 const Registration = React.lazy(() => import("./Tabs/Registration"));
@@ -33,7 +33,11 @@ export default function ReportStudentUsage() {
     },
   ];
   React.useEffect(() => {
-    dispatch(getSchoolsByOrg({ metaLoading: true }));
+    if (process.env.REACT_APP_USE_LEGACY_GQL) {
+      dispatch(getSchoolsByOrgNew({ metaLoading: true }));
+    } else {
+      dispatch(getSchoolsByOrg({ metaLoading: true }));
+    }
   }, [dispatch]);
   return (
     <>
