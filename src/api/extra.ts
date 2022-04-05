@@ -265,6 +265,10 @@ export function domainSwitch() {
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
+export function getIsEnableLegacyGql() {
+  return process.env.REACT_APP_USE_LEGACY_GQL === "1";
+}
+export const enableLegacyGql = getIsEnableLegacyGql();
 
 export async function apiSkillsListByIds(skillIds: string[]) {
   const skillsQuery = skillIds
@@ -471,7 +475,13 @@ export const recursiveGetClassTeaching = async (
 
 export interface IClassTeachers {
   class_id: string;
-  teachers: ITeacher[];
+  class_name: string;
+  teachers?: ITeacher[];
+  schools?: ISchool[];
+}
+interface ISchool {
+  school_id: string;
+  school_name: string;
 }
 interface ITeacher {
   user_id: string;
@@ -499,6 +509,7 @@ export const recursiveGetClassTeachers = async (
     const teacherCursor = classesConnection?.edges[i]?.node?.teachersConnection?.pageInfo?.endCursor || "";
     let teacherNodeEdgs = classesConnection?.edges[i]?.node?.teachersConnection?.edges || [];
     const id = classesConnection?.edges[i]?.node?.id;
+    const name = classesConnection?.edges[i]?.node?.name;
     if (haveNextPage && id) {
       teacherNodeEdgs = await recursiveGetClassNodeTeachers(id, teacherCursor, [...teacherNodeEdgs]);
     }
@@ -509,7 +520,7 @@ export const recursiveGetClassTeachers = async (
       };
       teachers = teachers.concat([teacher]);
     });
-    classTeachers = classTeachers.concat([{ class_id: classesConnection?.edges[i]?.node?.id ?? "", teachers }]);
+    classTeachers = classTeachers.concat([{ class_id: id ?? "", class_name: name ?? "", teachers }]);
   }
   classes = [...classes, ...classTeachers];
 
@@ -606,7 +617,7 @@ export interface UserClass {
   class_id: string;
   class_name?: string;
 }
-export const recursiveGetNoSchoolclasses = async (variables: ClassesListQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
+export const recursiveGetClassList = async (variables: ClassesListQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
   let classes: UserClass[] = [...arr];
   const {
     data: { classesConnection },
@@ -620,7 +631,7 @@ export const recursiveGetNoSchoolclasses = async (variables: ClassesListQueryVar
 
   if (classesConnection?.pageInfo?.hasNextPage) {
     const cursor = classesConnection?.pageInfo?.endCursor as string;
-    return recursiveGetNoSchoolclasses({ ...variables, cursor }, [...classes]);
+    return recursiveGetClassList({ ...variables, cursor }, [...classes]);
   } else {
     return new Promise((resolve) => {
       resolve(classes);

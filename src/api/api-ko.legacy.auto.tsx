@@ -204,6 +204,38 @@ export type SchoolsClassesQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type GetMyClassesTeachingQueryVariables = Types.Exact<{
+  organizationId?: Types.Maybe<Types.UuidFilter>;
+  cursor?: Types.Maybe<Types.Scalars["String"]>;
+}>;
+
+export type GetMyClassesTeachingQuery = { __typename?: "Query" } & {
+  myUser?: Types.Maybe<
+    { __typename?: "MyUser" } & {
+      node?: Types.Maybe<
+        { __typename?: "UserConnectionNode" } & {
+          classesTeachingConnection?: Types.Maybe<
+            { __typename?: "ClassesConnectionResponse" } & Pick<Types.ClassesConnectionResponse, "totalCount"> & {
+                pageInfo?: Types.Maybe<{ __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "endCursor">>;
+                edges?: Types.Maybe<
+                  Array<
+                    Types.Maybe<
+                      { __typename?: "ClassesConnectionEdge" } & {
+                        node?: Types.Maybe<
+                          { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name" | "status">
+                        >;
+                      }
+                    >
+                  >
+                >;
+              }
+          >;
+        }
+      >;
+    }
+  >;
+};
+
 export const GetStudentNameByIdDocument = gql`
   query getStudentNameById($filter: UserFilter) {
     usersConnection(filter: $filter, direction: FORWARD) {
@@ -540,3 +572,58 @@ export function useSchoolsClassesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type SchoolsClassesQueryHookResult = ReturnType<typeof useSchoolsClassesQuery>;
 export type SchoolsClassesLazyQueryHookResult = ReturnType<typeof useSchoolsClassesLazyQuery>;
 export type SchoolsClassesQueryResult = Apollo.QueryResult<SchoolsClassesQuery, SchoolsClassesQueryVariables>;
+export const GetMyClassesTeachingDocument = gql`
+  query getMyClassesTeaching($organizationId: UUIDFilter, $cursor: String) {
+    myUser {
+      node {
+        classesTeachingConnection(filter: { organizationId: $organizationId }, cursor: $cursor) {
+          totalCount
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          edges {
+            node {
+              id
+              name
+              status
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetMyClassesTeachingQuery__
+ *
+ * To run a query within a React component, call `useGetMyClassesTeachingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyClassesTeachingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyClassesTeachingQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useGetMyClassesTeachingQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetMyClassesTeachingQuery, GetMyClassesTeachingQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetMyClassesTeachingQuery, GetMyClassesTeachingQueryVariables>(GetMyClassesTeachingDocument, options);
+}
+export function useGetMyClassesTeachingLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetMyClassesTeachingQuery, GetMyClassesTeachingQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetMyClassesTeachingQuery, GetMyClassesTeachingQueryVariables>(GetMyClassesTeachingDocument, options);
+}
+export type GetMyClassesTeachingQueryHookResult = ReturnType<typeof useGetMyClassesTeachingQuery>;
+export type GetMyClassesTeachingLazyQueryHookResult = ReturnType<typeof useGetMyClassesTeachingLazyQuery>;
+export type GetMyClassesTeachingQueryResult = Apollo.QueryResult<GetMyClassesTeachingQuery, GetMyClassesTeachingQueryVariables>;

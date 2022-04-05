@@ -1,16 +1,4 @@
-import {
-  Class,
-  ClassesConnectionResponse,
-  ClassFilter,
-  Program,
-  School,
-  Subject,
-  User,
-  UserFilter,
-  UuidExclusiveOperator,
-  UuidFilter,
-  UuidOperator,
-} from "@api/api-ko-schema.auto";
+import { Class, Program, School, Subject, User, UserFilter, UuidExclusiveOperator, UuidOperator } from "@api/api-ko-schema.auto";
 import api, { gqlapi } from "@api/index";
 import { ApolloQueryResult } from "@apollo/client";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -18,9 +6,6 @@ import { orderByASC } from "@utilities/dataUtilities";
 import { WritableDraft } from "immer/dist/types/types-external";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
-  ClassesConnectionDocument,
-  ClassesConnectionQuery,
-  ClassesConnectionQueryVariables,
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
   ClassesSchoolsByOrganizationQueryVariables,
@@ -89,9 +74,11 @@ import {
 import {
   apiWaitForOrganizationOfPage,
   ClassesTeachingProps,
+  enableLegacyGql,
+  IClassTeachers,
+  recursiveGetClassList,
   recursiveGetClassTeachers,
   recursiveGetClassTeaching,
-  recursiveGetNoSchoolclasses,
   recursiveGetSchoolMemberships,
   recursiveGetSchoolsClasses,
   SchoolClassesNode,
@@ -133,8 +120,7 @@ interface IreportState {
   categories: EntityTeacherReportCategory[];
   categoriesAll: EntityTeacherReportCategory[];
   achievementCounts: EntityStudentsAchievementOverviewReportResponse;
-  classesConnection: ClassesConnectionQuery["classesConnection"];
-  classes: TeacherByOrgIdQuery["organization"];
+  classes: IClassTeachers[];
   teacherList: Item[];
   stuReportList?: EntityStudentPerformanceReportItem[];
   stuReportDetail?: EntityStudentPerformanceReportItem[];
@@ -279,8 +265,7 @@ const initialState: IreportState = {
     achieved_meet_count: 0,
     covered_learn_outcome_count: 0,
   },
-  classesConnection: {},
-  classes: {},
+  classes: [],
   teacherList: [],
   teacherLoadLesson: {
     list: [],
@@ -423,8 +408,6 @@ export const getSchoolsByOrg = createAsyncThunk<
     ICacheData,
     // ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
     ApolloQueryResult<SchoolsByOrganizationQuery>,
-    // UserClass[],
-    // SchoolClassesNode[],
     SchoolIdProps[],
     ClassesTeachingProps[],
     string
@@ -445,14 +428,6 @@ export const getSchoolsByOrg = createAsyncThunk<
     dispatch(getStudentOrganizationDocument())
       .unwrap()
       .then((res) => res.res),
-
-    // dispatch(getNoSchoolclasses())
-    //   .unwrap()
-    //   .then((res) => res),
-    // dispatch(getSchoolclasses())
-    //   .unwrap()
-    //   .then((res) => res),
-
     dispatch(getMembershipSchool())
       .unwrap()
       .then((res) => res),
@@ -715,7 +690,7 @@ export const getClassTeaching = createAsyncThunk<AsyncReturnType<typeof recursiv
   };
   return recursiveGetClassTeaching(filter, []);
 });
-export const getNoSchoolclasses = createAsyncThunk<AsyncReturnType<typeof recursiveGetNoSchoolclasses>>("getNoSchoolclasses", async () => {
+export const getNoSchoolclasses = createAsyncThunk<AsyncReturnType<typeof recursiveGetClassList>>("getNoSchoolclasses", async () => {
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
   const filter = {
     organizationId: {
@@ -726,7 +701,7 @@ export const getNoSchoolclasses = createAsyncThunk<AsyncReturnType<typeof recurs
       operator: UuidExclusiveOperator.IsNull,
     },
   };
-  return recursiveGetNoSchoolclasses({ filter }, []);
+  return recursiveGetClassList({ filter }, []);
 });
 
 export const getSchoolclasses = createAsyncThunk<AsyncReturnType<typeof recursiveGetSchoolsClasses>>("getNoSchoolclasses", async () => {
@@ -927,8 +902,6 @@ export const reportOnload = createAsyncThunk<
   let reportList: EntityStudentAchievementReportItem[] = [];
   let lessonPlanList: EntityScheduleShortInfo[] = [];
   let finalTearchId: string = "";
-  // await dispatch(getTeachersAndClasses({}));
-
   const reportPermission = await permissionCache.usePermission([
     PermissionType.report_my_class_achievments_648,
     PermissionType.report_organizations_class_achievements_646,
@@ -939,7 +912,11 @@ export const reportOnload = createAsyncThunk<
     hasSchoolPerm: reportPermission.report_schools_class_achievements_647,
     hasMyPerm: reportPermission.report_my_class_achievments_648,
   };
-  await dispatch(getTeacherAndClassOld({ perm }));
+  if (enableLegacyGql) {
+    await dispatch(getTeacherAndClassNew({ perm }));
+  } else {
+    await dispatch(getTeacherAndClassOld({ perm }));
+  }
   const {
     report: { teacherList, classes },
   } = getState();
@@ -955,18 +932,13 @@ export const reportOnload = createAsyncThunk<
   }
   finalTearchId = teacher_id || (teacherList && teacherList[0]?.id) || "";
   let classList: Item[] = [];
-  // classesConnection?.edges?.forEach((item) => {
-  //   if (!!item?.node?.teachersConnection?.edges?.find((teacherItem) => teacherItem?.node?.id === teacherList[0].id)) {
-  //     classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
-  //   }
-  // });
-  classes?.classes?.forEach((item) => {
+  classes?.forEach((item) => {
     if (!!item?.teachers?.find((teacherItem) => teacherItem?.user_id === (teacher_id || teacherList[0].id))) {
       classList = classList.concat([{ id: item.class_id, name: item.class_name || "" }]);
     }
   });
   classList = orderByASC(uniqBy(classList, "id"), "name");
-  const firstClassId = classList.length ? classList[0]?.id : "";
+  const firstClassId = classList.length ? classList[0]?.id : classes[0]?.class_id || "";
   const finalClassId = class_id ? class_id : firstClassId;
 
   //获取plan_id
@@ -1006,98 +978,72 @@ export interface Item {
   id: string;
   name?: string;
 }
-export interface getTeachersAndClassesReturnType {
-  teacherList: Item[];
-  classesConnection: ClassesConnectionQuery["classesConnection"];
-}
-export const getTeachersAndClasses = createAsyncThunk<getTeachersAndClassesReturnType, LoadingMetaPayload>(
-  "report/getTeachersAndClasses",
-  async () => {
-    const organization_id = (await apiWaitForOrganizationOfPage()) as string;
-    const {
-      data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
-    });
-    const my_id = myUser?.node?.id || "";
-    const mySchoolIDs =
-      myUser?.node?.schoolMembershipsConnection?.edges?.map((item) => item?.node?.school?.id || "").filter((item) => !!item) || [];
-    const perm = await permissionCache.usePermission([
-      PermissionType.report_my_class_achievments_648,
-      PermissionType.view_reports_610,
-      PermissionType.report_schools_class_achievements_647,
-      PermissionType.report_organizations_class_achievements_646,
-    ]);
-    let teacherList: Item[] = [];
-    const organizationId: UuidFilter = { operator: UuidOperator.Eq, value: organization_id };
-    const classFilter: ClassFilter = { organizationId };
-    let classesData: ClassesConnectionQuery["classesConnection"] = { edges: [] };
-    let end = false;
-    let classCursor = "";
-    while (!end) {
-      const {
-        data: { classesConnection },
-      } = await gqlapi.query<ClassesConnectionQuery, ClassesConnectionQueryVariables>({
-        query: ClassesConnectionDocument,
-        variables: { classFilter, classCursor },
-      });
-      const edges = classesData?.edges?.concat(classesConnection?.edges || []) as ClassesConnectionResponse["edges"];
-      classesData = { edges };
-      if (!classesConnection?.pageInfo?.hasNextPage) {
-        end = true;
-      } else {
-        classCursor = classesConnection?.pageInfo?.endCursor as string;
-      }
-    }
-
-    if (perm.view_reports_610 || perm.report_schools_class_achievements_647 || perm.report_organizations_class_achievements_646) {
-      if (perm.report_organizations_class_achievements_646 || perm.view_reports_610) {
-        classesData?.edges?.forEach((item) => {
-          teacherList = teacherList.concat(
-            item?.node?.teachersConnection?.edges?.map((teacherItem) => ({
-              id: teacherItem?.node?.id || "",
-              name: teacherItem?.node?.givenName + "" + teacherItem?.node?.familyName,
-            })) || []
-          );
-        });
-      }
-      if ((!perm.report_organizations_class_achievements_646 && perm.report_schools_class_achievements_647) || perm.view_reports_610) {
-        classesData?.edges
-          ?.filter((item) => {
-            return mySchoolIDs.find((mySchoolId) => item?.node?.schools?.find((schoolItem) => schoolItem.id === mySchoolId));
-          })
-          .forEach((item) => {
-            teacherList = teacherList.concat(
-              item?.node?.teachersConnection?.edges?.map((teacherItem) => ({
-                id: teacherItem?.node?.id || "",
-                name: teacherItem?.node?.givenName + "" + teacherItem?.node?.familyName,
-              })) || []
-            );
-          });
-      }
-    } else if (perm.view_my_reports_614) {
-      teacherList = [{ id: my_id, name: myUser?.node?.givenName + " " + myUser?.node?.familyName || "" }];
-    }
-    teacherList = orderByASC(uniqBy(teacherList, "id"), "name");
-    return { teacherList, classesConnection: classesData };
-  }
-);
-interface GetTeacherAndClassOld {
-  teacherList: Item[];
-  classes: TeacherByOrgIdQuery["organization"];
-}
 interface MyPermissonReport {
   hasOrganizationPerm?: boolean;
   hasSchoolPerm?: boolean;
   hasMyPerm?: boolean;
 }
-export const getTeacherAndClassOld = createAsyncThunk<
-  GetTeacherAndClassOld,
+interface GetTeacherAndClassNew {
+  teacherList: Item[];
+  classes: IClassTeachers[];
+}
+export const getTeacherAndClassNew = createAsyncThunk<
+  GetTeacherAndClassNew,
   LoadingMetaPayload & { perm: MyPermissonReport; teacher_id?: string }
->("report/getTeacherAndClassOld", async ({ perm, teacher_id, metaLoading }) => {
+>("report/getTeacherAndClassNew", async ({ perm, teacher_id, metaLoading }) => {
+  let teacherList: Item[] = [];
+  let classes: IClassTeachers[] = [];
+  if (!perm.hasMyPerm && !perm.hasSchoolPerm && !perm.hasOrganizationPerm) return { teacherList, classes: [] };
+  const organization_id = (await apiWaitForOrganizationOfPage()) as string;
+  const {
+    data: { myUser },
+  } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
+  });
+  const filter = {
+    organizationId: {
+      operator: UuidOperator.Eq,
+      value: organization_id,
+    },
+  };
+  const myId = myUser?.node?.id;
+  if (perm.hasMyPerm && myId && !perm.hasSchoolPerm && !perm.hasOrganizationPerm) {
+    teacherList = [{ id: myId, name: myUser?.node?.givenName + " " + myUser?.node?.familyName || "" }];
+    const myClasses = await recursiveGetClassList(
+      {
+        filter: {
+          ...filter,
+          teacherId: {
+            operator: UuidOperator.Eq,
+            value: myId,
+          },
+        },
+      },
+      []
+    );
+    classes = myClasses as IClassTeachers[];
+  } else {
+    classes = await recursiveGetClassTeachers({ filter }, []);
+    classes?.forEach((classItem) => {
+      teacherList = teacherList?.concat(
+        classItem?.teachers?.map((teacherItem) => ({
+          id: teacherItem?.user_id || "",
+          name: teacherItem?.user_name || "",
+        })) || []
+      );
+    });
+  }
+
+  teacherList = orderByASC(uniqBy(teacherList, "id"), "name");
+  return { teacherList, classes };
+});
+export const getTeacherAndClassOld = createAsyncThunk<
+  GetTeacherAndClassNew,
+  LoadingMetaPayload & { perm: MyPermissonReport; teacher_id?: string }
+>("report/getTeacherAndClassOld", async ({ perm, metaLoading }) => {
   let teacherList: Item[] = [];
   let classes: TeacherByOrgIdQuery["organization"];
-  if (!perm.hasMyPerm && !perm.hasSchoolPerm && !perm.hasOrganizationPerm) return { teacherList, classes };
+  if (!perm.hasMyPerm && !perm.hasSchoolPerm && !perm.hasOrganizationPerm) return { teacherList, classes: [] };
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
   const {
     data: { myUser },
@@ -1155,13 +1101,12 @@ export const getTeacherAndClassOld = createAsyncThunk<
     };
   }
   teacherList = orderByASC(uniqBy(teacherList, "id"), "name");
-  return { teacherList, classes };
+  return { teacherList, classes: classes?.classes as IClassTeachers[] };
 });
 
 export const categoryReportOnLoad = createAsyncThunk<EntityTeacherReportCategory[], getSkillCoverageReportPayload, { state: RootState }>(
   "report/categoryReportOnload",
   async ({ teacher_id, metaLoading }, { dispatch, getState }) => {
-    // await dispatch(getTeachersAndClasses({}));
     const skillsPermission = await permissionCache.usePermission([
       PermissionType.report_organizations_skills_taught_640,
       PermissionType.report_schools_skills_taught_641,
@@ -1172,8 +1117,11 @@ export const categoryReportOnLoad = createAsyncThunk<EntityTeacherReportCategory
       hasSchoolPerm: skillsPermission.report_schools_skills_taught_641,
       hasMyPerm: skillsPermission.report_my_skills_taught_642,
     };
-
-    await dispatch(getTeacherAndClassOld({ perm }));
+    if (enableLegacyGql) {
+      await dispatch(getTeacherAndClassNew({ perm }));
+    } else {
+      await dispatch(getTeacherAndClassOld({ perm }));
+    }
     const {
       report: { teacherList },
     } = getState();
@@ -2043,6 +1991,10 @@ const { actions, reducer } = createSlice({
       state.reportMockOptions.lessonPlanList = payload;
       state.reportMockOptions.lesson_plan_id = payload[0] && (payload[0]?.id || "");
     },
+    [getLessonPlan.pending.type]: (state, action: PayloadAction<AsyncTrunkReturned<typeof getLessonPlan>>) => {
+      state.reportMockOptions.lessonPlanList = [];
+      state.reportMockOptions.lesson_plan_id = "";
+    },
     [getLessonPlan.rejected.type]: (state, { error }: any) => {
       // alert(JSON.stringify(error));
     },
@@ -2086,11 +2038,11 @@ const { actions, reducer } = createSlice({
     [getTeacherLoadOverview.fulfilled.type]: (state, { payload }) => {
       state.teacherLoadOverview = payload;
     },
-    [getTeachersAndClasses.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersAndClasses>>) => {
-      state.teacherList = payload.teacherList;
-      state.classesConnection = payload.classesConnection;
-    },
     [getTeacherAndClassOld.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeacherAndClassOld>>) => {
+      state.teacherList = payload.teacherList;
+      state.classes = payload.classes;
+    },
+    [getTeacherAndClassNew.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeacherAndClassNew>>) => {
       state.teacherList = payload.teacherList;
       state.classes = payload.classes;
     },

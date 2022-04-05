@@ -781,6 +781,18 @@ export type MembershipUpdate = {
   user?: Maybe<User>;
 };
 
+export type MoveUsersToClassInput = {
+  fromClassId: Scalars["ID"];
+  toClassId: Scalars["ID"];
+  userIds: Array<Scalars["ID"]>;
+};
+
+export type MoveUsersToClassMutationResult = {
+  __typename?: "MoveUsersToClassMutationResult";
+  fromClass: ClassConnectionNode;
+  toClass: ClassConnectionNode;
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   addClassesToSchools?: Maybe<SchoolsMutationResult>;
@@ -834,6 +846,8 @@ export type Mutation = {
   deleteUsersFromSchools?: Maybe<SchoolsMutationResult>;
   grade?: Maybe<Grade>;
   me?: Maybe<User>;
+  moveStudentsToClass?: Maybe<MoveUsersToClassMutationResult>;
+  moveTeachersToClass?: Maybe<MoveUsersToClassMutationResult>;
   /** @deprecated Use the inviteUser() method */
   newUser?: Maybe<User>;
   organization?: Maybe<Organization>;
@@ -873,6 +887,8 @@ export type Mutation = {
   role?: Maybe<Role>;
   roles?: Maybe<Array<Maybe<Role>>>;
   school?: Maybe<School>;
+  /** Note: A null or undefined academicTermId will remove the AcademicTerm from the class */
+  setAcademicTermsOfClasses?: Maybe<ClassesMutationResult>;
   setBranding?: Maybe<Branding>;
   /** @deprecated Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2457174175 */
   subcategory?: Maybe<Subcategory>;
@@ -1038,6 +1054,14 @@ export type MutationGradeArgs = {
   id: Scalars["ID"];
 };
 
+export type MutationMoveStudentsToClassArgs = {
+  input?: Maybe<MoveUsersToClassInput>;
+};
+
+export type MutationMoveTeachersToClassArgs = {
+  input?: Maybe<MoveUsersToClassInput>;
+};
+
 export type MutationNewUserArgs = {
   avatar?: Maybe<Scalars["String"]>;
   date_of_birth?: Maybe<Scalars["String"]>;
@@ -1122,6 +1146,10 @@ export type MutationRoleArgs = {
 
 export type MutationSchoolArgs = {
   school_id: Scalars["ID"];
+};
+
+export type MutationSetAcademicTermsOfClassesArgs = {
+  input: Array<SetAcademicTermOfClassInput>;
 };
 
 export type MutationSetBrandingArgs = {
@@ -1245,17 +1273,9 @@ export type MyUser = {
   node?: Maybe<UserConnectionNode>;
   /** 'operator' default = 'AND' */
   organizationsWithPermissions?: Maybe<OrganizationsConnectionResponse>;
-  /**
-   * Returns a paginated response of the permissions the user has in a given organization.
-   *
-   * If `count` is omitted, the max page size is ignored and ALL permissions are returned.
-   */
+  /** Returns a paginated response of the permissions the user has in a given organization. */
   permissionsInOrganization?: Maybe<PermissionsConnectionResponse>;
-  /**
-   * Returns a paginated response of the permissions the user has in a given school.
-   *
-   * If `count` is omitted, the max page size is ignored and ALL permissions are returned.
-   */
+  /** Returns a paginated response of the permissions the user has in a given school. */
   permissionsInSchool?: Maybe<PermissionsConnectionResponse>;
   /**
    * Finds user profiles matching the username/email/phone provided in the token.
@@ -2604,6 +2624,11 @@ export type SchoolsConnectionResponse = IConnectionResponse & {
 export type SchoolsMutationResult = {
   __typename?: "SchoolsMutationResult";
   schools: Array<SchoolConnectionNode>;
+};
+
+export type SetAcademicTermOfClassInput = {
+  academicTermId?: Maybe<Scalars["ID"]>;
+  classId: Scalars["ID"];
 };
 
 export enum SortOrder {
