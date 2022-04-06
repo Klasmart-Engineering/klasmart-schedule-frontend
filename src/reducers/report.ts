@@ -170,6 +170,7 @@ interface IreportState {
     classTeacherList: Pick<Class, "class_id" | "teachers">[];
     hasNoneSchoolClasses: boolean;
     canSelectTeacher: boolean;
+    noSchoolClasses?: Pick<Class, "class_id" | "class_name">[];
   };
 
   schoolClassesStudentsSubjects: {
@@ -326,6 +327,7 @@ const initialState: IreportState = {
     classTeacherList: [],
     hasNoneSchoolClasses: false,
     canSelectTeacher: true,
+    noSchoolClasses: [],
   },
   schoolClassesStudentsSubjects: {
     schoolList: [],
@@ -780,6 +782,45 @@ export const getTeachersByOrg = createAsyncThunk<
       .unwrap()
       .then((res) => res),
     dispatch(getClassTeaching())
+      .unwrap()
+      .then((res) => res),
+  ]);
+});
+export const getTeachersByOrgNew = createAsyncThunk<
+  [
+    ICacheData,
+    UserClass[],
+    SchoolClassesNode[],
+    IClassTeachers[],
+    SchoolIdProps[],
+    ClassesTeachingProps[],
+    ApolloQueryResult<GetMyIdQuery>["data"]
+  ],
+  LoadingMetaPayload,
+  { state: RootState }
+>("getTeachersByOrgNew", async ({ metaLoading }, { dispatch }) => {
+  return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_organization_teaching_load_617,
+      PermissionType.report_school_teaching_load_618,
+      PermissionType.report_my_teaching_load_619,
+    ]),
+    dispatch(getNoSchoolclasses())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getSchoolclasses())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getClassTeachers())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getMembershipSchool())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getClassTeaching())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getMyInfo())
       .unwrap()
       .then((res) => res),
   ]);
@@ -1859,7 +1900,89 @@ const { actions, reducer } = createSlice({
         canSelectTeacher,
       };
     },
+    [getTeachersByOrgNew.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersByOrgNew>>) => {
+      let noSchoolClasses = payload[1];
+      const schools = payload[2];
+      const permissions = payload[0];
+      const classesTeachers = payload[3];
+      const schoolIDs = payload[4].map((item) => {
+        return item.school_id;
+      });
+      const classIDs = payload[5].map((item) => {
+        return item.class_id;
+      });
+      const myId = payload[6].myUser?.node?.id;
+      let classList: Pick<Class, "class_id" | "schools" | "class_name">[] = [];
+      let schoolList: Pick<School, "classes" | "school_id" | "school_name">[] = [];
+      let teacherList: Pick<Class, "class_id" | "teachers">[] = [];
+      let canSelectTeacher: boolean = true;
 
+      if (permissions[PermissionType.report_organization_teaching_load_617]) {
+        schoolList = schools;
+        // classList = classesSchools;
+        teacherList = classesTeachers;
+      } else if (permissions[PermissionType.report_school_teaching_load_618]) {
+        schoolList = schools.filter((school) => {
+          return schoolIDs.indexOf(school.school_id) >= 0;
+        });
+
+        // classList = classesSchools.filter((classItem) => {
+        //   return (
+        //     (classItem.schools || []).filter((school) => {
+        //       return schoolIDs.indexOf(school?.school_id) >= 0;
+        //     }).length > 0
+        //   );
+        // });
+        // const schoolClassIds = classList.map((classItem) => classItem.class_id);
+        // teacherList = classesTeachers.filter((classTeacherItem) => {
+        //   return schoolClassIds.indexOf(classTeacherItem.class_id) >= 0;
+        // });
+        teacherList = classesTeachers;
+        noSchoolClasses = [];
+      } else if (permissions[PermissionType.report_my_teaching_load_619]) {
+        schoolList = schools.filter((school) => {
+          return schoolIDs.indexOf(school.school_id) >= 0;
+        });
+        // classList = classesSchools.filter((classItem) => {
+        //   return classIDs.indexOf(classItem.class_id) >= 0;
+        // });
+        teacherList = classesTeachers
+          .filter((classTeacherItem) => {
+            return classIDs.indexOf(classTeacherItem.class_id) >= 0;
+          })
+          .map((classTeacherItem) => {
+            const teachers = (classTeacherItem.teachers || []).filter((teacherItem) => {
+              return teacherItem?.user_id === myId;
+            });
+            return {
+              ...classTeacherItem,
+              teachers,
+            };
+          });
+        canSelectTeacher = false;
+        schoolList = schoolList.filter((item) => {
+          return teacherList.some((classe) => {
+            return item?.classes?.find((claseItem) => claseItem?.class_id === classe.class_id);
+          });
+        });
+        noSchoolClasses = noSchoolClasses?.filter((item) => {
+          return teacherList.some((classe) => item?.class_id === classe.class_id);
+        });
+      }
+      // schoolList = schoolList.filter((item) => {
+      //   return classList.some((classe) => {
+      //     return classe.schools?.find((school) => school?.school_id === item.school_id);
+      //   });
+      // });
+      state.schoolClassesTeachers = {
+        classList: orderByASC(classList, "class_name"),
+        schoolList: orderByASC(schoolList, "school_name"),
+        classTeacherList: teacherList,
+        hasNoneSchoolClasses: noSchoolClasses.length > 0,
+        canSelectTeacher,
+        noSchoolClasses,
+      };
+    },
     [getStudentSubjectsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentSubjectsByOrg>>) => {
       let classesSchools = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
       let schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];

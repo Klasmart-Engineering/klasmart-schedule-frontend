@@ -1,9 +1,10 @@
+import { enableLegacyGql } from "@api/extra";
 import React from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
 import TabPages from "../../components/TabPages";
 import { d } from "../../locale/LocaleManager";
-import { getTeachersByOrg } from "../../reducers/report";
+import { getTeachersByOrg, getTeachersByOrgNew } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import TeacherFilter from "./components/TeacherFilter";
 import { Assignments, Lessons, NextSevenDaysLessonLoad } from "./Tabs";
@@ -46,11 +47,15 @@ export default function ReportTeachingLoad() {
     },
   ];
   React.useEffect(() => {
-    dispatch(
-      getTeachersByOrg({
-        metaLoading: true,
-      })
-    );
+    if (enableLegacyGql) {
+      dispatch(getTeachersByOrgNew({ metaLoading: true }));
+    } else {
+      dispatch(
+        getTeachersByOrg({
+          metaLoading: true,
+        })
+      );
+    }
   }, [dispatch]);
   return (
     <>
