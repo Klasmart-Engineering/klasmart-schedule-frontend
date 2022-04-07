@@ -476,25 +476,7 @@ fragment classIdNameStatus on Class {
   class_name
   status
 }
-query getMyId{
-  myUser{
-    node{
-     id
-     familyName
-     givenName
-      schoolMembershipsConnection(direction: FORWARD){
-        edges{
-          node{
-          school{
-            id
-            name
-          }
-          }
-        }
-      }
-    }
-  }
-}
+
 
 query getClassByInfo(
   $filter: ClassFilter,

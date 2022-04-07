@@ -20,15 +20,9 @@ import { orderByASC } from "@utilities/dataUtilities";
 import { WritableDraft } from "immer/dist/types/types-external";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
-  GetMyIdDocument,
-  GetMyIdQuery,
-  GetMyIdQueryVariables,
   GetStudentNameByIdDocument,
   GetStudentNameByIdQuery,
   GetStudentNameByIdQueryVariables,
-  // MyPermissionsAndClassesTeachingQueryDocument,
-  // MyPermissionsAndClassesTeachingQueryQuery,
-  // MyPermissionsAndClassesTeachingQueryQueryVariables,
   QueryMyUserDocument,
   QueryMyUserQuery,
   QueryMyUserQueryVariables,
@@ -443,7 +437,7 @@ export const getSchoolsByOrg = createAsyncThunk<
   ]);
 });
 export const getSchoolsByOrgNew = createAsyncThunk<
-  [ICacheData, UserClass[], SchoolClassesNode[], SchoolIdProps[], ClassesTeachingProps[], string],
+  [ICacheData, UserClass[], SchoolClassesNode[], ClassesTeachingProps[], string],
   LoadingMetaPayload,
   { state: RootState }
 >("getSchoolsByOrgNew", async ({ metaLoading }, { dispatch }) => {
@@ -458,9 +452,6 @@ export const getSchoolsByOrgNew = createAsyncThunk<
       .unwrap()
       .then((res) => res),
     dispatch(getSchoolclasses())
-      .unwrap()
-      .then((res) => res),
-    dispatch(getMembershipSchool())
       .unwrap()
       .then((res) => res),
     dispatch(getClassTeaching())
@@ -728,9 +719,9 @@ export const getClassTeachers = createAsyncThunk<AsyncReturnType<typeof recursiv
   return recursiveGetClassTeachers({ filter }, []);
 });
 
-export const getMyInfo = createAsyncThunk<ApolloQueryResult<GetMyIdQuery>["data"]>("getMyInfo", async () => {
-  const res = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-    query: GetMyIdDocument,
+export const getMyInfo = createAsyncThunk<ApolloQueryResult<QueryMyUserQuery>["data"]>("getMyInfo", async () => {
+  const res = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
   // const myUserId = myUser?.node?.id || "";
   return res.data;
@@ -749,7 +740,7 @@ export const getTeachersByOrg = createAsyncThunk<
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
     ApolloQueryResult<ClassesTeachersByOrganizationQuery>,
-    ApolloQueryResult<GetMyIdQuery>["data"],
+    ApolloQueryResult<QueryMyUserQuery>["data"],
     SchoolIdProps[],
     ClassesTeachingProps[]
   ],
@@ -788,15 +779,7 @@ export const getTeachersByOrg = createAsyncThunk<
   ]);
 });
 export const getTeachersByOrgNew = createAsyncThunk<
-  [
-    ICacheData,
-    UserClass[],
-    SchoolClassesNode[],
-    IClassTeachers[],
-    SchoolIdProps[],
-    ClassesTeachingProps[],
-    ApolloQueryResult<GetMyIdQuery>["data"]
-  ],
+  [ICacheData, UserClass[], SchoolClassesNode[], IClassTeachers[], ClassesTeachingProps[], ApolloQueryResult<QueryMyUserQuery>["data"]],
   LoadingMetaPayload,
   { state: RootState }
 >("getTeachersByOrgNew", async ({ metaLoading }, { dispatch }) => {
@@ -813,9 +796,6 @@ export const getTeachersByOrgNew = createAsyncThunk<
       .unwrap()
       .then((res) => res),
     dispatch(getClassTeachers())
-      .unwrap()
-      .then((res) => res),
-    dispatch(getMembershipSchool())
       .unwrap()
       .then((res) => res),
     dispatch(getClassTeaching())
@@ -841,7 +821,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
     ApolloQueryResult<StudentsByOrganizationQuery>,
     Pick<Program, "id" | "name" | "subjects">[] | Pick<Program, "id" | "name">[],
-    ApolloQueryResult<GetMyIdQuery>["data"],
+    ApolloQueryResult<QueryMyUserQuery>["data"],
     SchoolIdProps[],
     ClassesTeachingProps[]
   ],
@@ -1089,11 +1069,22 @@ export const getTeacherAndClassOld = createAsyncThunk<
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
   const {
     data: { myUser },
-  } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-    query: GetMyIdDocument,
+  } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
-  const mySchoolIDs =
-    myUser?.node?.schoolMembershipsConnection?.edges?.map((item) => item?.node?.school?.id || "").filter((item) => !!item) || [];
+  const filter = {
+    userId: {
+      operator: UuidOperator.Eq,
+      value: myUser?.node?.id,
+    },
+    organizationId: {
+      operator: UuidOperator.Eq,
+      value: organization_id,
+    },
+    cursor: "",
+  };
+  const schoolIDs = await recursiveGetSchoolMemberships(filter, []);
+  const mySchoolIDs = schoolIDs.map((item) => item.school_id);
   const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
     query: TeacherByOrgIdDocument,
     variables: {
@@ -1364,8 +1355,8 @@ export const onLoadLearningSummary = createAsyncThunk<
   let params: IParamsQueryLiveClassSummary = {};
   const {
     data: { myUser },
-  } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-    query: GetMyIdDocument,
+  } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
   const myUserId = myUser?.node?.id || "";
   const perm = await permissionCache.usePermission([
@@ -1906,13 +1897,10 @@ const { actions, reducer } = createSlice({
       const schools = payload[2];
       const permissions = payload[0];
       const classesTeachers = payload[3];
-      const schoolIDs = payload[4].map((item) => {
-        return item.school_id;
-      });
-      const classIDs = payload[5].map((item) => {
+      const classIDs = payload[4].map((item) => {
         return item.class_id;
       });
-      const myId = payload[6].myUser?.node?.id;
+      const myId = payload[5].myUser?.node?.id;
       let classList: Pick<Class, "class_id" | "schools" | "class_name">[] = [];
       let schoolList: Pick<School, "classes" | "school_id" | "school_name">[] = [];
       let teacherList: Pick<Class, "class_id" | "teachers">[] = [];
@@ -1920,33 +1908,12 @@ const { actions, reducer } = createSlice({
 
       if (permissions[PermissionType.report_organization_teaching_load_617]) {
         schoolList = schools;
-        // classList = classesSchools;
         teacherList = classesTeachers;
       } else if (permissions[PermissionType.report_school_teaching_load_618]) {
-        schoolList = schools.filter((school) => {
-          return schoolIDs.indexOf(school.school_id) >= 0;
-        });
-
-        // classList = classesSchools.filter((classItem) => {
-        //   return (
-        //     (classItem.schools || []).filter((school) => {
-        //       return schoolIDs.indexOf(school?.school_id) >= 0;
-        //     }).length > 0
-        //   );
-        // });
-        // const schoolClassIds = classList.map((classItem) => classItem.class_id);
-        // teacherList = classesTeachers.filter((classTeacherItem) => {
-        //   return schoolClassIds.indexOf(classTeacherItem.class_id) >= 0;
-        // });
+        schoolList = schools;
         teacherList = classesTeachers;
         noSchoolClasses = [];
       } else if (permissions[PermissionType.report_my_teaching_load_619]) {
-        schoolList = schools.filter((school) => {
-          return schoolIDs.indexOf(school.school_id) >= 0;
-        });
-        // classList = classesSchools.filter((classItem) => {
-        //   return classIDs.indexOf(classItem.class_id) >= 0;
-        // });
         teacherList = classesTeachers
           .filter((classTeacherItem) => {
             return classIDs.indexOf(classTeacherItem.class_id) >= 0;
@@ -1961,7 +1928,7 @@ const { actions, reducer } = createSlice({
             };
           });
         canSelectTeacher = false;
-        schoolList = schoolList.filter((item) => {
+        schoolList = schools.filter((item) => {
           return teacherList.some((classe) => {
             return item?.classes?.find((claseItem) => claseItem?.class_id === classe.class_id);
           });
@@ -1970,11 +1937,6 @@ const { actions, reducer } = createSlice({
           return teacherList.some((classe) => item?.class_id === classe.class_id);
         });
       }
-      // schoolList = schoolList.filter((item) => {
-      //   return classList.some((classe) => {
-      //     return classe.schools?.find((school) => school?.school_id === item.school_id);
-      //   });
-      // });
       state.schoolClassesTeachers = {
         classList: orderByASC(classList, "class_name"),
         schoolList: orderByASC(schoolList, "school_name"),
@@ -2082,16 +2044,13 @@ const { actions, reducer } = createSlice({
       const permissions = payload[0];
       const noneSchoolClasses = payload[1];
       const schools = payload[2];
-      const schoolIDs = payload[3].map((item) => item.school_id);
-      const classIDs = payload[4].map((item) => item.class_id);
-      state.studentUsage.organization_id = payload[5];
+      const classIDs = payload[3].map((item) => item.class_id);
+      state.studentUsage.organization_id = payload[4];
       if (permissions[PermissionType.report_organization_student_usage_654]) {
         state.studentUsage.schoolList = schools;
         state.studentUsage.noneSchoolClasses = noneSchoolClasses;
       } else if (permissions[PermissionType.report_school_student_usage_655]) {
-        state.studentUsage.schoolList = schools.filter((school) => {
-          return schoolIDs.indexOf(school.school_id) >= 0;
-        });
+        state.studentUsage.schoolList = schools;
       } else if (permissions[PermissionType.report_teacher_student_usage_656]) {
         state.studentUsage.schoolList = schools.reduce((prev, cur) => {
           const classes = cur.classes?.filter((item) => classIDs.indexOf(item?.class_id) >= 0);
