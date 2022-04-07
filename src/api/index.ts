@@ -89,17 +89,14 @@ const retry = async (count: number, operation: Operation, error: ServerError): P
   }
 };
 
-const errorLink = onError(({ /*graphQLErrors, networkError,*/ response, operation }: ErrorResponse) => {
-  /*
+const errorLink = onError(({ graphQLErrors, networkError, response, operation }: ErrorResponse) => {
   if (graphQLErrors)
     graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-      ),
-  );
+      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+    );
   if (networkError) console.log(`[Network error]: ${networkError}`);
-  */
-  if (operation.operationName === "userNameByUserIdQuery") {
+
+  if (operation.operationName === "userNameByUserIdQuery" && response) {
     // @ts-ignore
     response.errors = null;
   }
