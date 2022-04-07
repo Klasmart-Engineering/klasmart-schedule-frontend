@@ -1,10 +1,4 @@
 import { Class, Program, School, Subject, User, UserFilter, UuidExclusiveOperator, UuidOperator } from "@api/api-ko-schema.auto";
-import api, { gqlapi } from "@api/index";
-import { ApolloQueryResult } from "@apollo/client";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { orderByASC } from "@utilities/dataUtilities";
-import { WritableDraft } from "immer/dist/types/types-external";
-import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
@@ -12,28 +6,29 @@ import {
   ClassesTeachersByOrganizationDocument,
   ClassesTeachersByOrganizationQuery,
   ClassesTeachersByOrganizationQueryVariables,
-  GetMyIdDocument,
-  GetMyIdQuery,
-  GetMyIdQueryVariables,
-  GetStudentNameByIdDocument,
-  GetStudentNameByIdQuery,
-  GetStudentNameByIdQueryVariables,
-  // MyPermissionsAndClassesTeachingQueryDocument,
-  // MyPermissionsAndClassesTeachingQueryQuery,
-  // MyPermissionsAndClassesTeachingQueryQueryVariables,
-  QueryMyUserDocument,
-  QueryMyUserQuery,
-  QueryMyUserQueryVariables,
-  SchoolsByOrganizationQuery,
   SchoolsIdNameByOrganizationDocument,
   SchoolsIdNameByOrganizationQuery,
   SchoolsIdNameByOrganizationQueryVariables,
-  StudentsByOrganizationDocument,
-  StudentsByOrganizationQuery,
-  StudentsByOrganizationQueryVariables,
   TeacherByOrgIdDocument,
   TeacherByOrgIdQuery,
   TeacherByOrgIdQueryVariables,
+} from "@api/api-ko.legacy.auto";
+import api, { gqlapi } from "@api/index";
+import { ApolloQueryResult } from "@apollo/client";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { orderByASC } from "@utilities/dataUtilities";
+import { WritableDraft } from "immer/dist/types/types-external";
+import { cloneDeep, pick, uniq, uniqBy } from "lodash";
+import {
+  GetStudentNameByIdDocument,
+  GetStudentNameByIdQuery,
+  GetStudentNameByIdQueryVariables,
+  QueryMyUserDocument,
+  QueryMyUserQuery,
+  QueryMyUserQueryVariables,
+  StudentsByOrganizationDocument,
+  StudentsByOrganizationQuery,
+  StudentsByOrganizationQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityAssignmentCompletionRate,
@@ -74,7 +69,7 @@ import {
 import {
   apiWaitForOrganizationOfPage,
   ClassesTeachingProps,
-  enableLegacyGql,
+  enableNewGql,
   IClassTeachers,
   recursiveGetClassList,
   recursiveGetClassTeachers,
@@ -170,6 +165,7 @@ interface IreportState {
     classTeacherList: Pick<Class, "class_id" | "teachers">[];
     hasNoneSchoolClasses: boolean;
     canSelectTeacher: boolean;
+    noSchoolClasses?: Pick<Class, "class_id" | "class_name">[];
   };
 
   schoolClassesStudentsSubjects: {
@@ -326,6 +322,7 @@ const initialState: IreportState = {
     classTeacherList: [],
     hasNoneSchoolClasses: false,
     canSelectTeacher: true,
+    noSchoolClasses: [],
   },
   schoolClassesStudentsSubjects: {
     schoolList: [],
@@ -407,7 +404,7 @@ export const getSchoolsByOrg = createAsyncThunk<
   [
     ICacheData,
     // ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
-    ApolloQueryResult<SchoolsByOrganizationQuery>,
+    ApolloQueryResult<StudentsByOrganizationQuery>,
     SchoolIdProps[],
     ClassesTeachingProps[],
     string
@@ -440,7 +437,7 @@ export const getSchoolsByOrg = createAsyncThunk<
   ]);
 });
 export const getSchoolsByOrgNew = createAsyncThunk<
-  [ICacheData, UserClass[], SchoolClassesNode[], SchoolIdProps[], ClassesTeachingProps[], string],
+  [ICacheData, UserClass[], SchoolClassesNode[], ClassesTeachingProps[], string],
   LoadingMetaPayload,
   { state: RootState }
 >("getSchoolsByOrgNew", async ({ metaLoading }, { dispatch }) => {
@@ -455,9 +452,6 @@ export const getSchoolsByOrgNew = createAsyncThunk<
       .unwrap()
       .then((res) => res),
     dispatch(getSchoolclasses())
-      .unwrap()
-      .then((res) => res),
-    dispatch(getMembershipSchool())
       .unwrap()
       .then((res) => res),
     dispatch(getClassTeaching())
@@ -725,9 +719,9 @@ export const getClassTeachers = createAsyncThunk<AsyncReturnType<typeof recursiv
   return recursiveGetClassTeachers({ filter }, []);
 });
 
-export const getMyInfo = createAsyncThunk<ApolloQueryResult<GetMyIdQuery>["data"]>("getMyInfo", async () => {
-  const res = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-    query: GetMyIdDocument,
+export const getMyInfo = createAsyncThunk<ApolloQueryResult<QueryMyUserQuery>["data"]>("getMyInfo", async () => {
+  const res = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
   // const myUserId = myUser?.node?.id || "";
   return res.data;
@@ -746,7 +740,7 @@ export const getTeachersByOrg = createAsyncThunk<
     ApolloQueryResult<ClassesSchoolsByOrganizationQuery>,
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
     ApolloQueryResult<ClassesTeachersByOrganizationQuery>,
-    ApolloQueryResult<GetMyIdQuery>["data"],
+    ApolloQueryResult<QueryMyUserQuery>["data"],
     SchoolIdProps[],
     ClassesTeachingProps[]
   ],
@@ -784,6 +778,34 @@ export const getTeachersByOrg = createAsyncThunk<
       .then((res) => res),
   ]);
 });
+export const getTeachersByOrgNew = createAsyncThunk<
+  [ICacheData, UserClass[], SchoolClassesNode[], IClassTeachers[], ClassesTeachingProps[], ApolloQueryResult<QueryMyUserQuery>["data"]],
+  LoadingMetaPayload,
+  { state: RootState }
+>("getTeachersByOrgNew", async ({ metaLoading }, { dispatch }) => {
+  return await Promise.all([
+    permissionCache.usePermission([
+      PermissionType.report_organization_teaching_load_617,
+      PermissionType.report_school_teaching_load_618,
+      PermissionType.report_my_teaching_load_619,
+    ]),
+    dispatch(getNoSchoolclasses())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getSchoolclasses())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getClassTeachers())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getClassTeaching())
+      .unwrap()
+      .then((res) => res),
+    dispatch(getMyInfo())
+      .unwrap()
+      .then((res) => res),
+  ]);
+});
 
 /**
  *
@@ -799,7 +821,7 @@ export const getStudentSubjectsByOrg = createAsyncThunk<
     ApolloQueryResult<SchoolsIdNameByOrganizationQuery>,
     ApolloQueryResult<StudentsByOrganizationQuery>,
     Pick<Program, "id" | "name" | "subjects">[] | Pick<Program, "id" | "name">[],
-    ApolloQueryResult<GetMyIdQuery>["data"],
+    ApolloQueryResult<QueryMyUserQuery>["data"],
     SchoolIdProps[],
     ClassesTeachingProps[]
   ],
@@ -912,7 +934,7 @@ export const reportOnload = createAsyncThunk<
     hasSchoolPerm: reportPermission.report_schools_class_achievements_647,
     hasMyPerm: reportPermission.report_my_class_achievments_648,
   };
-  if (enableLegacyGql) {
+  if (enableNewGql) {
     await dispatch(getTeacherAndClassNew({ perm }));
   } else {
     await dispatch(getTeacherAndClassOld({ perm }));
@@ -1047,11 +1069,22 @@ export const getTeacherAndClassOld = createAsyncThunk<
   const organization_id = (await apiWaitForOrganizationOfPage()) as string;
   const {
     data: { myUser },
-  } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-    query: GetMyIdDocument,
+  } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
-  const mySchoolIDs =
-    myUser?.node?.schoolMembershipsConnection?.edges?.map((item) => item?.node?.school?.id || "").filter((item) => !!item) || [];
+  const filter = {
+    userId: {
+      operator: UuidOperator.Eq,
+      value: myUser?.node?.id,
+    },
+    organizationId: {
+      operator: UuidOperator.Eq,
+      value: organization_id,
+    },
+    cursor: "",
+  };
+  const schoolIDs = await recursiveGetSchoolMemberships(filter, []);
+  const mySchoolIDs = schoolIDs.map((item) => item.school_id);
   const { data } = await gqlapi.query<TeacherByOrgIdQuery, TeacherByOrgIdQueryVariables>({
     query: TeacherByOrgIdDocument,
     variables: {
@@ -1117,7 +1150,7 @@ export const categoryReportOnLoad = createAsyncThunk<EntityTeacherReportCategory
       hasSchoolPerm: skillsPermission.report_schools_skills_taught_641,
       hasMyPerm: skillsPermission.report_my_skills_taught_642,
     };
-    if (enableLegacyGql) {
+    if (enableNewGql) {
       await dispatch(getTeacherAndClassNew({ perm }));
     } else {
       await dispatch(getTeacherAndClassOld({ perm }));
@@ -1322,8 +1355,8 @@ export const onLoadLearningSummary = createAsyncThunk<
   let params: IParamsQueryLiveClassSummary = {};
   const {
     data: { myUser },
-  } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-    query: GetMyIdDocument,
+  } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+    query: QueryMyUserDocument,
   });
   const myUserId = myUser?.node?.id || "";
   const perm = await permissionCache.usePermission([
@@ -1859,7 +1892,60 @@ const { actions, reducer } = createSlice({
         canSelectTeacher,
       };
     },
+    [getTeachersByOrgNew.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTeachersByOrgNew>>) => {
+      let noSchoolClasses = payload[1];
+      const schools = payload[2];
+      const permissions = payload[0];
+      const classesTeachers = payload[3];
+      const classIDs = payload[4].map((item) => {
+        return item.class_id;
+      });
+      const myId = payload[5].myUser?.node?.id;
+      let classList: Pick<Class, "class_id" | "schools" | "class_name">[] = [];
+      let schoolList: Pick<School, "classes" | "school_id" | "school_name">[] = [];
+      let teacherList: Pick<Class, "class_id" | "teachers">[] = [];
+      let canSelectTeacher: boolean = true;
 
+      if (permissions[PermissionType.report_organization_teaching_load_617]) {
+        schoolList = schools;
+        teacherList = classesTeachers;
+      } else if (permissions[PermissionType.report_school_teaching_load_618]) {
+        schoolList = schools;
+        teacherList = classesTeachers;
+        noSchoolClasses = [];
+      } else if (permissions[PermissionType.report_my_teaching_load_619]) {
+        teacherList = classesTeachers
+          .filter((classTeacherItem) => {
+            return classIDs.indexOf(classTeacherItem.class_id) >= 0;
+          })
+          .map((classTeacherItem) => {
+            const teachers = (classTeacherItem.teachers || []).filter((teacherItem) => {
+              return teacherItem?.user_id === myId;
+            });
+            return {
+              ...classTeacherItem,
+              teachers,
+            };
+          });
+        canSelectTeacher = false;
+        schoolList = schools.filter((item) => {
+          return teacherList.some((classe) => {
+            return item?.classes?.find((claseItem) => claseItem?.class_id === classe.class_id);
+          });
+        });
+        noSchoolClasses = noSchoolClasses?.filter((item) => {
+          return teacherList.some((classe) => item?.class_id === classe.class_id);
+        });
+      }
+      state.schoolClassesTeachers = {
+        classList: orderByASC(classList, "class_name"),
+        schoolList: orderByASC(schoolList, "school_name"),
+        classTeacherList: teacherList,
+        hasNoneSchoolClasses: noSchoolClasses.length > 0,
+        canSelectTeacher,
+        noSchoolClasses,
+      };
+    },
     [getStudentSubjectsByOrg.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudentSubjectsByOrg>>) => {
       let classesSchools = payload[1].data.organization?.classes as Pick<Class, "class_id" | "class_name" | "schools">[];
       let schools = payload[2].data.organization?.schools as Pick<School, "classes" | "school_id" | "school_name">[];
@@ -1958,16 +2044,13 @@ const { actions, reducer } = createSlice({
       const permissions = payload[0];
       const noneSchoolClasses = payload[1];
       const schools = payload[2];
-      const schoolIDs = payload[3].map((item) => item.school_id);
-      const classIDs = payload[4].map((item) => item.class_id);
-      state.studentUsage.organization_id = payload[5];
+      const classIDs = payload[3].map((item) => item.class_id);
+      state.studentUsage.organization_id = payload[4];
       if (permissions[PermissionType.report_organization_student_usage_654]) {
         state.studentUsage.schoolList = schools;
         state.studentUsage.noneSchoolClasses = noneSchoolClasses;
       } else if (permissions[PermissionType.report_school_student_usage_655]) {
-        state.studentUsage.schoolList = schools.filter((school) => {
-          return schoolIDs.indexOf(school.school_id) >= 0;
-        });
+        state.studentUsage.schoolList = schools;
       } else if (permissions[PermissionType.report_teacher_student_usage_656]) {
         state.studentUsage.schoolList = schools.reduce((prev, cur) => {
           const classes = cur.classes?.filter((item) => classIDs.indexOf(item?.class_id) >= 0);

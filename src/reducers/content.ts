@@ -17,12 +17,12 @@ import { UseFormMethods } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import api, { gqlapi } from "../api";
 import {
-  GetMyIdDocument,
-  GetMyIdQuery,
-  GetMyIdQueryVariables,
   GetOrganizationsDocument,
   GetOrganizationsQuery,
   GetOrganizationsQueryVariables,
+  QueryMyUserDocument,
+  QueryMyUserQuery,
+  QueryMyUserQueryVariables,
 } from "../api/api-ko.auto";
 import {
   ApiContentBulkOperateRequest,
@@ -619,8 +619,8 @@ export const onLoadContentPreview = createAsyncThunk<IQyeryOnLoadCotnentPreviewR
     const contentDetail = await api.contents.getContentById(content_id);
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const user_id = myUser?.node?.id || "";
     return { contentDetail, user_id };

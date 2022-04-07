@@ -8,16 +8,6 @@ import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
 import { UsersConnectionResponse, UuidFilter, UuidOperator } from "./api-ko-schema.auto";
 import {
-  GetClassesTeachingDocument,
-  GetClassesTeachingQuery,
-  GetClassesTeachingQueryVariables,
-  GetSchoolMembershipsDocument,
-  GetSchoolMembershipsQuery,
-  GetSchoolMembershipsQueryVariables,
-  GetUserQuery,
-  UserNameByUserIdQueryDocument,
-} from "./api-ko.auto";
-import {
   ClassesBySchoolIdDocument,
   ClassesBySchoolIdQuery,
   ClassesBySchoolIdQueryVariables,
@@ -30,10 +20,19 @@ import {
   ClassNodeDocument,
   ClassNodeQuery,
   ClassNodeQueryVariables,
+  GetClassesTeachingDocument,
+  GetClassesTeachingQuery,
+  GetClassesTeachingQueryVariables,
+  GetSchoolMembershipsDocument,
+  GetSchoolMembershipsQuery,
+  GetSchoolMembershipsQueryVariables,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
-} from "./api-ko.legacy.auto";
+  GetUserQuery,
+  UserNameByUserIdQueryDocument,
+} from "./api-ko.auto";
+import {} from "./api-ko.legacy.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
@@ -267,10 +266,10 @@ export function domainSwitch() {
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
-export function getIsEnableLegacyGql() {
-  return process.env.REACT_APP_USE_LEGACY_GQL === "1";
+export function getIsEnableNewGql() {
+  return process.env.REACT_APP_USE_LEGACY_GQL === "0";
 }
-export const enableLegacyGql = getIsEnableLegacyGql();
+export const enableNewGql = getIsEnableNewGql();
 
 export async function apiSkillsListByIds(skillIds: string[]) {
   const skillsQuery = skillIds

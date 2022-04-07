@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { enableNewGql, IClassTeachers } from "@api/extra";
 import { Box, MenuItem, TextField, Theme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/styles";
 import { orderByASC } from "@utilities/dataUtilities";
@@ -57,7 +58,9 @@ export default function TeacherFilter({ onChange }: IProps) {
 
   const { schoolClassesTeachers } = useSelector<RootState, RootState["report"]>((state) => state.report);
 
-  const { classList, schoolList, classTeacherList, hasNoneSchoolClasses, canSelectTeacher } = schoolClassesTeachers;
+  const { classList, schoolList, classTeacherList, hasNoneSchoolClasses, canSelectTeacher, noSchoolClasses } = schoolClassesTeachers;
+
+  console.log("schoolClassesTeachers=", schoolClassesTeachers);
 
   const getAllSchoolList = (): MutiSelect.ISelect[] => {
     return schoolList
@@ -70,17 +73,36 @@ export default function TeacherFilter({ onChange }: IProps) {
 
   const getCurrentSchoolClassIdList = (): string[] => {
     const curSchoolId = state.schoolId;
-    return classList
-      .filter((classItem) => {
-        if (curSchoolId === allValue) {
-          return true;
-        } else if (curSchoolId === noneValue) {
-          return (classItem.schools || []).length === 0;
-        } else {
-          return (classItem.schools || []).filter((schoolItem) => schoolItem?.school_id === curSchoolId).length > 0;
-        }
-      })
-      .map((classItem) => classItem.class_id);
+    if (enableNewGql) {
+      let class_ids: string[] = [];
+      if (curSchoolId === allValue) {
+        schoolList.forEach((schoolItem) => {
+          class_ids = class_ids.concat(schoolItem.classes?.map((classItem) => classItem?.class_id || "") || []);
+          class_ids = class_ids.concat(noSchoolClasses?.map((classItem) => classItem?.class_id || "") || []);
+        });
+      } else if (curSchoolId === noneValue) {
+        class_ids = class_ids.concat(noSchoolClasses?.map((classItem) => classItem?.class_id || "") || []);
+      } else {
+        schoolList
+          .filter((item) => item.school_id === curSchoolId)
+          .forEach((schoolItem) => {
+            class_ids = class_ids.concat(schoolItem.classes?.map((classItem) => classItem?.class_id || "") || []);
+          });
+      }
+      return class_ids;
+    } else {
+      return classList
+        .filter((classItem) => {
+          if (curSchoolId === allValue) {
+            return true;
+          } else if (curSchoolId === noneValue) {
+            return (classItem.schools || []).length === 0;
+          } else {
+            return (classItem.schools || []).filter((schoolItem) => schoolItem?.school_id === curSchoolId).length > 0;
+          }
+        })
+        .map((classItem) => classItem.class_id);
+    }
   };
 
   const currentSchoolClassIds = React.useMemo<string[]>(getCurrentSchoolClassIdList, [state.schoolId]);
@@ -116,26 +138,57 @@ export default function TeacherFilter({ onChange }: IProps) {
         }
         return prev;
       }, []);
-      let temp = classList
-        .filter((classItem) => {
-          let condition: boolean = true;
-          if (curSchoolId === noneValue) {
-            condition = (classItem.schools || []).length === 0;
-          } else if (curSchoolId === allValue) {
-            condition = true;
-          } else {
-            condition =
-              (classItem.schools || []).filter((schoolItem) => {
-                return schoolItem?.school_id === curSchoolId;
-              }).length > 0;
-          }
-          return condition && classIds.indexOf(classItem.class_id as never) >= 0;
-        })
-        .map((item) => ({
+      if (enableNewGql) {
+        let classes: IClassTeachers[] = [];
+        if (curSchoolId === allValue) {
+          schoolList.forEach((schoolItem) => {
+            classes = classes?.concat(
+              schoolItem?.classes?.filter((classItem) => classIds.indexOf(classItem?.class_id as never) >= 0) as IClassTeachers[]
+            );
+            classes = classes?.concat(
+              noSchoolClasses?.filter((classItem) => classIds.indexOf(classItem.class_id as never) >= 0) as IClassTeachers[]
+            );
+          });
+        } else if (curSchoolId === noneValue) {
+          classes = classes?.concat(
+            noSchoolClasses?.filter((classItem) => classIds.indexOf(classItem.class_id as never) >= 0) as IClassTeachers[]
+          );
+        } else {
+          schoolList
+            .filter((item) => item.school_id === curSchoolId)
+            .forEach((schoolItem) => {
+              classes = classes?.concat(
+                schoolItem?.classes?.filter((classItem) => classIds.indexOf(classItem?.class_id as never) >= 0) as IClassTeachers[]
+              );
+            });
+        }
+        let temp = classes?.map((item) => ({
           value: item.class_id!,
           label: item.class_name!,
         }));
-      classOptions = classOptions.concat(temp);
+        classOptions = classOptions.concat(temp);
+      } else {
+        let temp = classList
+          .filter((classItem) => {
+            let condition: boolean = true;
+            if (curSchoolId === noneValue) {
+              condition = (classItem.schools || []).length === 0;
+            } else if (curSchoolId === allValue) {
+              condition = true;
+            } else {
+              condition =
+                (classItem.schools || []).filter((schoolItem) => {
+                  return schoolItem?.school_id === curSchoolId;
+                }).length > 0;
+            }
+            return condition && classIds.indexOf(classItem.class_id as never) >= 0;
+          })
+          .map((item) => ({
+            value: item.class_id!,
+            label: item.class_name!,
+          }));
+        classOptions = classOptions.concat(temp);
+      }
     }
     return uniqBy(classOptions, "value");
   };

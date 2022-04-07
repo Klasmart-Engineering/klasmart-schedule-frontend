@@ -1,4 +1,4 @@
-import { enableLegacyGql, getDocumentUrl } from "@api/extra";
+import { enableNewGql, getDocumentUrl } from "@api/extra";
 import PermissionType from "@api/PermissionType";
 import { usePermission } from "@hooks/usePermission";
 import { Box, Button } from "@material-ui/core";
@@ -135,7 +135,7 @@ export function ReportAchievementList() {
   }, [condition.sort_by, condition.status, dispatch]);
   useEffect(() => {
     if (reportMockOptions.teacherList.length > 0) {
-      if (enableLegacyGql && perm.report_my_class_achievments_648) {
+      if (enableNewGql && perm.report_my_class_achievments_648) {
         setClassList(classes.map((item) => ({ id: item.class_id, name: item.class_name || "" })));
       } else {
         let initClassesList: Item[] = [];
