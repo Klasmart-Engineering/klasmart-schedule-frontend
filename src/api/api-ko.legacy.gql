@@ -1,179 +1,53 @@
-query getStudentNameById($filter: UserFilter) {
-  usersConnection(filter: $filter, direction: FORWARD) {
-    edges {
-      node {
-        id
-        givenName
-        familyName
+# 换成connection
+query teacherByOrgId($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes {
+      ...classIdNameStatus
+      teachers {
+        ...userIdName
+        school_memberships {
+          school_id
+        }
+      }
+      schools{
+        school_id
       }
     }
   }
 }
-query classesTeachersConnection(
-  $cursor: String,
-  $filter: ClassFilter,
-  $teacherFilter: UserFilter,
-  $teacherCursor: String,
-  ) {
-classesConnection(
-    filter: $filter
-    directionArgs: {
-    cursor: $cursor
-    },
-    direction: FORWARD
-    sort:{
-    order:ASC
-    field:name
-    }
-    ) {
-     totalCount
-     edges {
-      node {
-        id
-        name
-        teachersConnection(filter: $teacherFilter, cursor: $teacherCursor, direction: FORWARD) {
-          totalCount
-          edges {
-            cursor
-            node {
-              id
-              givenName
-              familyName
-              status
-            }
-          }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-        },
+# 换成connection
+query classesSchoolsByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes {
+      ...classIdNameStatus
+      schools {
+        school_id
+        status
       }
     }
-    pageInfo{
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
+  }
+}
+# 换成connection => classesTeachersConnection
+query classesTeachersByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes {
+      class_id
+      status
+      teachers {
+        ...userIdName
+      }
+    }
+  }
+}
 
-    }
-  }
-}
-query classNode($classId:ID!,$teacherCursor:String){
-  classNode(id:$classId){
-    name
-    teachersConnection(cursor:$teacherCursor){
-      totalCount
-      edges{
-        node{
-          id
-          familyName
-          givenName
-          status
-        }
-      }
-      pageInfo{
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-      }
-      
-    }
-  }
 
+# 换成connection
+query schoolsIdNameByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    schools {
+      school_id
+      school_name
+      status
+    }
+  }
 }
-# schools | classes 1
-query classesBySchoolId (
-  $cursor: String,
-  $filter: ClassFilter,
-  $schoolId:ID!,
-  ) {
-  schoolNode(id:$schoolId){
-    organizationId
-    classesConnection(filter: $filter,
-      cursor: $cursor
-      direction: FORWARD
-     ){
-      totalCount
-      pageInfo{
-        endCursor
-        hasNextPage
-      }
-      edges{
-        node{
-          id
-          name
-        }
-      }
-    }
-  }
-  }
-# schools | classes 2
-query classesList(
-  $cursor: String,
-  $filter: ClassFilter,
-  ) {
-classesConnection(
-    filter: $filter,
-    directionArgs: {
-    cursor: $cursor
-    },
-    direction: FORWARD
-  ) {
-    totalCount
-     edges {
-      node {
-        id
-        name
-      }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-  # schools | classes 3
-  query schoolsClasses (
-  $cursor: String,
-  $filter: SchoolFilter,
-  ) {
-schoolsConnection(
-    filter: $filter,
-    directionArgs: {
-    cursor: $cursor
-    },
-    direction: FORWARD
-    sort:{
-    order:ASC
-    field:name
-    }
-  ) {
-    totalCount
-     edges {
-      node {
-        id
-        name
-        classesConnection( direction: FORWARD) {
-          totalCount
-           edges {
-            node {
-              id
-              name
-            }
-            }
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
-        }
-      }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }

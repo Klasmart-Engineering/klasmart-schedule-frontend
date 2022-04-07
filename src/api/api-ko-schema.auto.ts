@@ -9,6 +9,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Datetime following the ISO-8601 format */
   Date: any;
   HexColor: any;
   /** The number of results to return per page */
@@ -18,6 +19,20 @@ export type Scalars = {
   Upload: any;
   Url: any;
   _Any: any;
+};
+
+export type AcademicTermConnectionNode = {
+  __typename?: "AcademicTermConnectionNode";
+  endDate: Scalars["Date"];
+  id: Scalars["ID"];
+  name: Scalars["String"];
+  startDate: Scalars["Date"];
+  status: Status;
+};
+
+export type AcademicTermsMutationResult = {
+  __typename?: "AcademicTermsMutationResult";
+  academicTerms: Array<AcademicTermConnectionNode>;
 };
 
 export type AddClassesToSchoolInput = {
@@ -469,6 +484,7 @@ export type ClassConnectionNodeTeachersConnectionArgs = {
 export type ClassFilter = {
   AND?: Maybe<Array<ClassFilter>>;
   OR?: Maybe<Array<ClassFilter>>;
+  academicTermId?: Maybe<UuidExclusiveFilter>;
   ageRangeUnitFrom?: Maybe<AgeRangeUnitFilter>;
   ageRangeUnitTo?: Maybe<AgeRangeUnitFilter>;
   ageRangeValueFrom?: Maybe<AgeRangeValueFilter>;
@@ -563,6 +579,13 @@ export type CoreSubjectConnectionNode = {
   name?: Maybe<Scalars["String"]>;
   status: Status;
   system: Scalars["Boolean"];
+};
+
+export type CreateAcademicTermInput = {
+  endDate: Scalars["Date"];
+  name: Scalars["String"];
+  schoolId: Scalars["ID"];
+  startDate: Scalars["Date"];
 };
 
 export type CreateCategoryInput = {
@@ -810,6 +833,7 @@ export type Mutation = {
   category?: Maybe<Category>;
   class?: Maybe<Class>;
   classes?: Maybe<Array<Maybe<Class>>>;
+  createAcademicTerms?: Maybe<AcademicTermsMutationResult>;
   createCategories?: Maybe<CategoriesMutationResult>;
   createClasses?: Maybe<ClassesMutationResult>;
   /**
@@ -967,6 +991,10 @@ export type MutationCategoryArgs = {
 
 export type MutationClassArgs = {
   class_id: Scalars["ID"];
+};
+
+export type MutationCreateAcademicTermsArgs = {
+  input: Array<CreateAcademicTermInput>;
 };
 
 export type MutationCreateCategoriesArgs = {

@@ -1,10 +1,4 @@
 import { Class, Program, School, Subject, User, UserFilter, UuidExclusiveOperator, UuidOperator } from "@api/api-ko-schema.auto";
-import api, { gqlapi } from "@api/index";
-import { ApolloQueryResult } from "@apollo/client";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { orderByASC } from "@utilities/dataUtilities";
-import { WritableDraft } from "immer/dist/types/types-external";
-import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
   ClassesSchoolsByOrganizationDocument,
   ClassesSchoolsByOrganizationQuery,
@@ -12,6 +6,20 @@ import {
   ClassesTeachersByOrganizationDocument,
   ClassesTeachersByOrganizationQuery,
   ClassesTeachersByOrganizationQueryVariables,
+  SchoolsIdNameByOrganizationDocument,
+  SchoolsIdNameByOrganizationQuery,
+  SchoolsIdNameByOrganizationQueryVariables,
+  TeacherByOrgIdDocument,
+  TeacherByOrgIdQuery,
+  TeacherByOrgIdQueryVariables,
+} from "@api/api-ko.legacy.auto";
+import api, { gqlapi } from "@api/index";
+import { ApolloQueryResult } from "@apollo/client";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { orderByASC } from "@utilities/dataUtilities";
+import { WritableDraft } from "immer/dist/types/types-external";
+import { cloneDeep, pick, uniq, uniqBy } from "lodash";
+import {
   GetMyIdDocument,
   GetMyIdQuery,
   GetMyIdQueryVariables,
@@ -24,16 +32,9 @@ import {
   QueryMyUserDocument,
   QueryMyUserQuery,
   QueryMyUserQueryVariables,
-  SchoolsByOrganizationQuery,
-  SchoolsIdNameByOrganizationDocument,
-  SchoolsIdNameByOrganizationQuery,
-  SchoolsIdNameByOrganizationQueryVariables,
   StudentsByOrganizationDocument,
   StudentsByOrganizationQuery,
   StudentsByOrganizationQueryVariables,
-  TeacherByOrgIdDocument,
-  TeacherByOrgIdQuery,
-  TeacherByOrgIdQueryVariables,
 } from "../api/api-ko.auto";
 import {
   EntityAssignmentCompletionRate,
@@ -74,7 +75,7 @@ import {
 import {
   apiWaitForOrganizationOfPage,
   ClassesTeachingProps,
-  enableLegacyGql,
+  enableNewGql,
   IClassTeachers,
   recursiveGetClassList,
   recursiveGetClassTeachers,
@@ -409,7 +410,7 @@ export const getSchoolsByOrg = createAsyncThunk<
   [
     ICacheData,
     // ApolloQueryResult<MyPermissionsAndClassesTeachingQueryQuery>,
-    ApolloQueryResult<SchoolsByOrganizationQuery>,
+    ApolloQueryResult<StudentsByOrganizationQuery>,
     SchoolIdProps[],
     ClassesTeachingProps[],
     string
@@ -953,7 +954,7 @@ export const reportOnload = createAsyncThunk<
     hasSchoolPerm: reportPermission.report_schools_class_achievements_647,
     hasMyPerm: reportPermission.report_my_class_achievments_648,
   };
-  if (enableLegacyGql) {
+  if (enableNewGql) {
     await dispatch(getTeacherAndClassNew({ perm }));
   } else {
     await dispatch(getTeacherAndClassOld({ perm }));
@@ -1158,7 +1159,7 @@ export const categoryReportOnLoad = createAsyncThunk<EntityTeacherReportCategory
       hasSchoolPerm: skillsPermission.report_schools_skills_taught_641,
       hasMyPerm: skillsPermission.report_my_skills_taught_642,
     };
-    if (enableLegacyGql) {
+    if (enableNewGql) {
       await dispatch(getTeacherAndClassNew({ perm }));
     } else {
       await dispatch(getTeacherAndClassOld({ perm }));

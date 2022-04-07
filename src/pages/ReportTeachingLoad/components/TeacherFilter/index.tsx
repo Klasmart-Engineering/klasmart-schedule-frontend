@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { enableLegacyGql, IClassTeachers } from "@api/extra";
+import { enableNewGql, IClassTeachers } from "@api/extra";
 import { Box, MenuItem, TextField, Theme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/styles";
 import { orderByASC } from "@utilities/dataUtilities";
@@ -73,7 +73,7 @@ export default function TeacherFilter({ onChange }: IProps) {
 
   const getCurrentSchoolClassIdList = (): string[] => {
     const curSchoolId = state.schoolId;
-    if (enableLegacyGql) {
+    if (enableNewGql) {
       let class_ids: string[] = [];
       if (curSchoolId === allValue) {
         schoolList.forEach((schoolItem) => {
@@ -138,7 +138,7 @@ export default function TeacherFilter({ onChange }: IProps) {
         }
         return prev;
       }, []);
-      if (enableLegacyGql) {
+      if (enableNewGql) {
         let classes: IClassTeachers[] = [];
         if (curSchoolId === allValue) {
           schoolList.forEach((schoolItem) => {
