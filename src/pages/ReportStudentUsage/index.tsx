@@ -1,4 +1,4 @@
-import { enableLegacyGql } from "@api/extra";
+import { enableNewGql } from "@api/extra";
 import React from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
@@ -34,7 +34,7 @@ export default function ReportStudentUsage() {
     },
   ];
   React.useEffect(() => {
-    if (enableLegacyGql) {
+    if (enableNewGql) {
       dispatch(getSchoolsByOrgNew({ metaLoading: true }));
     } else {
       dispatch(getSchoolsByOrg({ metaLoading: true }));
