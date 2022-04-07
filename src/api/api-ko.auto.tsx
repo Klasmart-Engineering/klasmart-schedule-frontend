@@ -608,6 +608,26 @@ export type GetRolesIdQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type UserNameByUserIdQueryQueryVariables = Types.Exact<{
+  filter?: Types.Maybe<Types.UserFilter>;
+}>;
+
+export type UserNameByUserIdQueryQuery = { __typename?: "Query" } & {
+  usersConnection?: Types.Maybe<
+    { __typename?: "UsersConnectionResponse" } & {
+      edges?: Types.Maybe<
+        Array<
+          Types.Maybe<
+            { __typename?: "UsersConnectionEdge" } & {
+              node?: Types.Maybe<{ __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "givenName" | "familyName">>;
+            }
+          >
+        >
+      >;
+    }
+  >;
+};
+
 export type ClassesTeachersConnectionQueryVariables = Types.Exact<{
   cursor?: Types.Maybe<Types.Scalars["String"]>;
   filter?: Types.Maybe<Types.ClassFilter>;
@@ -1934,6 +1954,51 @@ export function useGetRolesIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetRolesIdQueryHookResult = ReturnType<typeof useGetRolesIdQuery>;
 export type GetRolesIdLazyQueryHookResult = ReturnType<typeof useGetRolesIdLazyQuery>;
 export type GetRolesIdQueryResult = Apollo.QueryResult<GetRolesIdQuery, GetRolesIdQueryVariables>;
+export const UserNameByUserIdQueryDocument = gql`
+  query userNameByUserIdQuery($filter: UserFilter) {
+    usersConnection(filter: $filter, direction: FORWARD) {
+      edges {
+        node {
+          id
+          givenName
+          familyName
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useUserNameByUserIdQueryQuery__
+ *
+ * To run a query within a React component, call `useUserNameByUserIdQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserNameByUserIdQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserNameByUserIdQueryQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useUserNameByUserIdQueryQuery(
+  baseOptions?: Apollo.QueryHookOptions<UserNameByUserIdQueryQuery, UserNameByUserIdQueryQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<UserNameByUserIdQueryQuery, UserNameByUserIdQueryQueryVariables>(UserNameByUserIdQueryDocument, options);
+}
+export function useUserNameByUserIdQueryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<UserNameByUserIdQueryQuery, UserNameByUserIdQueryQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<UserNameByUserIdQueryQuery, UserNameByUserIdQueryQueryVariables>(UserNameByUserIdQueryDocument, options);
+}
+export type UserNameByUserIdQueryQueryHookResult = ReturnType<typeof useUserNameByUserIdQueryQuery>;
+export type UserNameByUserIdQueryLazyQueryHookResult = ReturnType<typeof useUserNameByUserIdQueryLazyQuery>;
+export type UserNameByUserIdQueryQueryResult = Apollo.QueryResult<UserNameByUserIdQueryQuery, UserNameByUserIdQueryQueryVariables>;
 export const ClassesTeachersConnectionDocument = gql`
   query classesTeachersConnection($cursor: String, $filter: ClassFilter, $teacherFilter: UserFilter, $teacherCursor: String) {
     classesConnection(filter: $filter, directionArgs: { cursor: $cursor }, direction: FORWARD, sort: { order: ASC, field: name }) {
