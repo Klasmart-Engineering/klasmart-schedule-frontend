@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { ApolloQueryResult, gql } from "@apollo/client";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { FileLike } from "@rpldy/shared";
 import Cookies from "js-cookie";
@@ -6,7 +6,7 @@ import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
-import { UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
+import { UsersConnectionResponse, UuidFilter, UuidOperator } from "./api-ko-schema.auto";
 import {
   GetClassesTeachingDocument,
   GetClassesTeachingQuery,
@@ -14,6 +14,8 @@ import {
   GetSchoolMembershipsDocument,
   GetSchoolMembershipsQuery,
   GetSchoolMembershipsQueryVariables,
+  GetUserQuery,
+  UserNameByUserIdQueryDocument,
 } from "./api-ko.auto";
 import {
   ClassesBySchoolIdDocument,
@@ -352,33 +354,35 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
 
 const idToNameMap = new Map<string, string>();
 
+// The maximum number of user queries is 50. If the number exceeds 50, batch requests are made
 export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<string, string>> {
-  const fragmentStr = userIds
+  const fragmentUserIds = userIds
     .filter((id) => !idToNameMap.has(id))
-    .map((userId, index) => {
-      return `user_${index}: user(user_id: "${userId}"){
-        user_id,
-        given_name
-        family_name
-      }`;
-    })
-    .join(",");
-  if (!fragmentStr) return idToNameMap;
-  try {
-    const userQuery = await gqlapi.query({
-      query: gql`
-        query userNameByUserIdQuery{
-          ${fragmentStr}
-        },
-        
-      `,
+    .map((userId) => {
+      return { userId: { operator: UuidOperator.Eq, value: userId } };
     });
-    for (const item in userQuery.data || {}) {
-      const user = userQuery.data[item];
-      if (user) {
-        idToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
-      }
+  if (!fragmentUserIds.length) return idToNameMap;
+  try {
+    const queries: ApolloQueryResult<GetUserQuery>[] = [];
+    for (let i = 0; i < Math.ceil(fragmentUserIds.length / 50); i++) {
+      queries.push(
+        await gqlapi.query<GetUserQuery>({
+          query: UserNameByUserIdQueryDocument,
+          variables: {
+            filter: {
+              OR: fragmentUserIds.slice(i * 50, i * 50 + 50),
+            },
+          },
+        })
+      );
     }
+    queries.forEach((item) => {
+      item.data.usersConnection?.edges?.forEach((node) => {
+        if (node?.node) {
+          idToNameMap.set(node?.node.id, `${node?.node.givenName} ${node?.node.familyName}`);
+        }
+      });
+    });
   } catch (e) {
     console.log(e);
   }
