@@ -3,7 +3,7 @@ import { AssessmentTypeValues } from "@components/AssessmentType";
 import { GetHomeFunAssessmentList } from "@pages/HomeFunAssessmentList/types";
 import { AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { ExtendedRequestParams, gqlapi } from "../api";
-import { GetMyIdDocument, GetMyIdQuery, GetMyIdQueryVariables } from "../api/api-ko.auto";
+import { QueryMyUserDocument, QueryMyUserQuery, QueryMyUserQueryVariables } from "../api/api-ko.auto";
 import { EntityScheduleFeedbackView, V2GetOfflineStudyUserResultDetailReply, V2OfflineStudyUserResultUpdateReq } from "../api/api.auto";
 import PermissionType from "../api/PermissionType";
 import {
@@ -456,8 +456,8 @@ export const getAssessment = createAsyncThunk<getAssessmentResponce, { id: strin
     // 拉取我的user_id
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const my_id = myUser?.node?.id || "";
     const detail = await api.assessments.getAssessment(id);
@@ -475,8 +475,8 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
   async ({ id }, { dispatch }) => {
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const myUserId = myUser?.node?.id || "";
     const detail = await api.userOfflineStudy.getUserOfflineStudyById(id);
@@ -555,8 +555,8 @@ export const getDetailAssessmentV2 = createAsyncThunk<IQueryDetailAssessmentResu
     // 拉取我的user_id
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const my_id = myUser?.node?.id || "";
     const detail = await api.assessmentsV2.getAssessmentDetailV2(id);
@@ -582,8 +582,8 @@ export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDe
   async ({ id }) => {
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const my_id = myUser?.node?.id || "";
     const detail = await api.studyAssessments.getStudyAssessmentDetail(id);

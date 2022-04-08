@@ -1,0 +1,53 @@
+# 换成connection
+query teacherByOrgId($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes {
+      ...classIdNameStatus
+      teachers {
+        ...userIdName
+        school_memberships {
+          school_id
+        }
+      }
+      schools{
+        school_id
+      }
+    }
+  }
+}
+# 换成connection
+query classesSchoolsByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes {
+      ...classIdNameStatus
+      schools {
+        school_id
+        status
+      }
+    }
+  }
+}
+# 换成connection => classesTeachersConnection
+query classesTeachersByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    classes {
+      class_id
+      status
+      teachers {
+        ...userIdName
+      }
+    }
+  }
+}
+
+
+# 换成connection
+query schoolsIdNameByOrganization($organization_id: ID!) {
+  organization(organization_id: $organization_id) {
+    schools {
+      school_id
+      school_name
+      status
+    }
+  }
+}

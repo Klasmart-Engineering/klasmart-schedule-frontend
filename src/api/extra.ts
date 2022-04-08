@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { ApolloQueryResult, gql } from "@apollo/client";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { FileLike } from "@rpldy/shared";
 import Cookies from "js-cookie";
@@ -6,14 +6,14 @@ import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
-import { UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
+import { UsersConnectionResponse, UuidFilter, UuidOperator } from "./api-ko-schema.auto";
 import {
-  ClassesDocument,
-  ClassesQuery,
-  ClassesQueryVariables,
-  ClassesSchoolsDocument,
-  ClassesSchoolsQuery,
-  ClassesSchoolsQueryVariables,
+  ClassesBySchoolIdDocument,
+  ClassesBySchoolIdQuery,
+  ClassesBySchoolIdQueryVariables,
+  ClassesListDocument,
+  ClassesListQuery,
+  ClassesListQueryVariables,
   ClassesTeachersConnectionDocument,
   ClassesTeachersConnectionQuery,
   ClassesTeachersConnectionQueryVariables,
@@ -26,9 +26,11 @@ import {
   GetSchoolMembershipsDocument,
   GetSchoolMembershipsQuery,
   GetSchoolMembershipsQueryVariables,
+  GetUserQuery,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
+  UserNameByUserIdQueryDocument,
 } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -263,12 +265,16 @@ export function domainSwitch() {
 export function apiIsEnableReport() {
   return process.env.REACT_APP_ENABLE_REPORT === "1";
 }
+export function getIsEnableNewGql() {
+  return process.env.REACT_APP_USE_LEGACY_GQL === "0";
+}
+export const enableNewGql = getIsEnableNewGql();
 
 export async function apiSkillsListByIds(skillIds: string[]) {
   const skillsQuery = skillIds
     .map(
       (id, index) => `
-    skill${index}: subcategory(id: "${id}") {
+    skill${index}: subcategoryNode(id: "${id}") {
       id
       name
       status
@@ -292,7 +298,7 @@ export async function apiDevelopmentalListIds(developmental: string[]) {
   const developmentalQuery = developmental
     .map(
       (id, index) => `
-    developmental${index}: category(id: "${id}") {
+    developmental${index}: categoryNode(id: "${id}") {
       id
       name
       status
@@ -318,15 +324,52 @@ export interface IApiGetPartPermissionResp {
 
 export async function apiGetPartPermission(permissions: string[]): Promise<IApiGetPartPermissionResp> {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const fragmentStr = permissions
-    .map((permission) => {
-      return `${permission}: checkAllowed(permission_name: "${permission}")`;
-    })
-    .join(",");
 
-  return await gqlapi
-    .query({
-      query: gql`
+  if (enableNewGql) {
+    const permissionIds = permissions
+      .map((item) => {
+        return `"${item}"`;
+      })
+      .join(",");
+    return await gqlapi
+      .query({
+        query: gql`
+        query{
+          myUser{
+            hasPermissionsInOrganization(
+              organizationId: "${organization_id}",
+              permissionIds: [
+                ${permissionIds}
+              ]
+            ){
+              permissionId
+              allowed
+            }
+          }
+        }
+      `,
+      })
+      .then((resp) => {
+        return {
+          error: (resp.errors || []).length > 0 || resp.data?.myUser?.hasPermissionsInOrganization === null,
+          data: (resp.data?.myUser?.hasPermissionsInOrganization || []).reduce(
+            (prev: { [x: string]: any }, cur: { permissionId: string | number; allowed: any }) => {
+              prev[cur.permissionId] = cur.allowed;
+              return prev;
+            },
+            {}
+          ),
+        };
+      });
+  } else {
+    const fragmentStr = permissions
+      .map((permission) => {
+        return `${permission}: checkAllowed(permission_name: "${permission}")`;
+      })
+      .join(",");
+    return await gqlapi
+      .query({
+        query: gql`
       query{
         meMembership: me{
           membership(organization_id: "${organization_id}"){
@@ -335,44 +378,47 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
         }
       }
     `,
-    })
-    .then((resp) => {
-      return {
-        error: (resp.errors || []).length > 0 || resp.data?.meMembership?.membership === null,
-        data: resp.data?.meMembership?.membership || {},
-      };
-    });
+      })
+      .then((resp) => {
+        return {
+          error: (resp.errors || []).length > 0 || resp.data?.meMembership?.membership === null,
+          data: resp.data?.meMembership?.membership || {},
+        };
+      });
+  }
 }
 
 const idToNameMap = new Map<string, string>();
 
+// The maximum number of user queries is 50. If the number exceeds 50, batch requests are made
 export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<string, string>> {
-  const fragmentStr = userIds
+  const fragmentUserIds = userIds
     .filter((id) => !idToNameMap.has(id))
-    .map((userId, index) => {
-      return `user_${index}: user(user_id: "${userId}"){
-        user_id,
-        given_name
-        family_name
-      }`;
-    })
-    .join(",");
-  if (!fragmentStr) return idToNameMap;
-  try {
-    const userQuery = await gqlapi.query({
-      query: gql`
-        query userNameByUserIdQuery{
-          ${fragmentStr}
-        },
-        
-      `,
+    .map((userId) => {
+      return { userId: { operator: UuidOperator.Eq, value: userId } };
     });
-    for (const item in userQuery.data || {}) {
-      const user = userQuery.data[item];
-      if (user) {
-        idToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
-      }
+  if (!fragmentUserIds.length) return idToNameMap;
+  try {
+    const queries: ApolloQueryResult<GetUserQuery>[] = [];
+    for (let i = 0; i < Math.ceil(fragmentUserIds.length / 50); i++) {
+      queries.push(
+        await gqlapi.query<GetUserQuery>({
+          query: UserNameByUserIdQueryDocument,
+          variables: {
+            filter: {
+              OR: fragmentUserIds.slice(i * 50, i * 50 + 50),
+            },
+          },
+        })
+      );
     }
+    queries.forEach((item) => {
+      item.data.usersConnection?.edges?.forEach((node) => {
+        if (node?.node) {
+          idToNameMap.set(node?.node.id, `${node?.node.givenName} ${node?.node.familyName}`);
+        }
+      });
+    });
   } catch (e) {
     console.log(e);
   }
@@ -469,7 +515,13 @@ export const recursiveGetClassTeaching = async (
 
 export interface IClassTeachers {
   class_id: string;
-  teachers: ITeacher[];
+  class_name: string;
+  teachers?: ITeacher[];
+  schools?: ISchool[];
+}
+interface ISchool {
+  school_id: string;
+  school_name: string;
 }
 interface ITeacher {
   user_id: string;
@@ -497,17 +549,18 @@ export const recursiveGetClassTeachers = async (
     const teacherCursor = classesConnection?.edges[i]?.node?.teachersConnection?.pageInfo?.endCursor || "";
     let teacherNodeEdgs = classesConnection?.edges[i]?.node?.teachersConnection?.edges || [];
     const id = classesConnection?.edges[i]?.node?.id;
+    const name = classesConnection?.edges[i]?.node?.name;
     if (haveNextPage && id) {
       teacherNodeEdgs = await recursiveGetClassNodeTeachers(id, teacherCursor, [...teacherNodeEdgs]);
     }
-    teacherNodeEdgs?.forEach((teacherNode) => {
+    teacherNodeEdgs?.forEach((teacherNode: any) => {
       const teacher: ITeacher = {
         user_id: teacherNode?.node?.id + "",
         user_name: teacherNode?.node?.givenName + " " + teacherNode?.node?.familyName,
       };
       teachers = teachers.concat([teacher]);
     });
-    classTeachers = classTeachers.concat([{ class_id: classesConnection?.edges[i]?.node?.id ?? "", teachers }]);
+    classTeachers = classTeachers.concat([{ class_id: id ?? "", class_name: name ?? "", teachers }]);
   }
   classes = [...classes, ...classTeachers];
 
@@ -575,7 +628,7 @@ export const recursiveGetSchoolsClasses = async (
     const schoolId = schoolsConnection?.edges[i]?.node?.id;
     const school_name = schoolsConnection?.edges[i]?.node?.name;
     if (haveNextPage && schoolId) {
-      const classvar: ClassesQueryVariables = {
+      const classvar: ClassesBySchoolIdQueryVariables = {
         filter: {
           // organizationId: variables.filter?.organizationId,
           // schoolId: { value: schoolNode.node.id, operator: UuidExclusiveOperator.Eq },
@@ -604,12 +657,12 @@ export interface UserClass {
   class_id: string;
   class_name?: string;
 }
-export const recursiveGetNoSchoolclasses = async (variables: ClassesSchoolsQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
+export const recursiveGetClassList = async (variables: ClassesListQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
   let classes: UserClass[] = [...arr];
   const {
     data: { classesConnection },
-  } = await gqlapi.query<ClassesSchoolsQuery, ClassesSchoolsQueryVariables>({
-    query: ClassesSchoolsDocument,
+  } = await gqlapi.query<ClassesListQuery, ClassesListQueryVariables>({
+    query: ClassesListDocument,
     variables,
   });
   classes = classes.concat(
@@ -618,19 +671,19 @@ export const recursiveGetNoSchoolclasses = async (variables: ClassesSchoolsQuery
 
   if (classesConnection?.pageInfo?.hasNextPage) {
     const cursor = classesConnection?.pageInfo?.endCursor as string;
-    return recursiveGetNoSchoolclasses({ ...variables, cursor }, [...classes]);
+    return recursiveGetClassList({ ...variables, cursor }, [...classes]);
   } else {
     return new Promise((resolve) => {
       resolve(classes);
     });
   }
 };
-export const recursiveGetClasses = async (variables: ClassesQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
+export const recursiveGetClasses = async (variables: ClassesBySchoolIdQueryVariables, arr: UserClass[]): Promise<UserClass[]> => {
   let classes: UserClass[] = [...arr];
   const {
     data: { schoolNode },
-  } = await gqlapi.query<ClassesQuery, ClassesQueryVariables>({
-    query: ClassesDocument,
+  } = await gqlapi.query<ClassesBySchoolIdQuery, ClassesBySchoolIdQueryVariables>({
+    query: ClassesBySchoolIdDocument,
     variables,
   });
 

@@ -1,4 +1,4 @@
-import { getDocumentUrl } from "@api/extra";
+import { enableNewGql, getDocumentUrl } from "@api/extra";
 import PermissionType from "@api/PermissionType";
 import { usePermission } from "@hooks/usePermission";
 import { Box, Button } from "@material-ui/core";
@@ -93,18 +93,12 @@ export function ReportAchievementList() {
           search: setQuery(history.location.search, { teacher_id: value, class_id: "", lesson_plan_id: "" }),
         });
         let classList: Item[] = [];
-        // classesConnection?.edges?.forEach((item) => {
-        //   if (!!item?.node?.teachersConnection?.edges?.find((teacherItem) => teacherItem?.node?.id === value)) {
-        //     classList = classList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
-        //   }
-        // });
-        classes?.classes?.forEach((item) => {
+        classes?.forEach((item) => {
           if (!!item?.teachers?.find((teacherItem) => teacherItem?.user_id === value)) {
             classList = classList.concat([{ id: item.class_id, name: item.class_name || "" }]);
           }
         });
         classList = orderByASC(uniqBy(classList, "id"), "name");
-        // setClassList(classList);
         getFirstLessonPlanId(value, classList[0].id);
       }
       if (tab === "class_id") {
@@ -123,7 +117,7 @@ export function ReportAchievementList() {
         }
       }
     },
-    [history, classes?.classes, getFirstLessonPlanId, condition.teacher_id, condition.class_id, dispatch]
+    [history, classes, getFirstLessonPlanId, condition.teacher_id, condition.class_id, dispatch]
   );
   useEffect(() => {
     dispatch(
@@ -141,27 +135,22 @@ export function ReportAchievementList() {
   }, [condition.sort_by, condition.status, dispatch]);
   useEffect(() => {
     if (reportMockOptions.teacherList.length > 0) {
-      let initClassesList: Item[] = [];
-      // classesConnection?.edges?.forEach((item) => {
-      //   if (
-      //     !!item?.node?.teachersConnection?.edges?.find(
-      //       (teacherItem) => teacherItem?.node?.id === (condition.teacher_id || reportMockOptions.teacherList[0].id)
-      //     )
-      //   ) {
-      //     initClassesList = initClassesList.concat([{ id: item?.node?.id, name: item?.node?.name || "" }]);
-      //   }
-      // });
-      classes?.classes?.forEach((item) => {
-        if (
-          !!item?.teachers?.find((teacherItem) => teacherItem?.user_id === (condition.teacher_id || reportMockOptions.teacherList[0].id))
-        ) {
-          initClassesList = initClassesList.concat([{ id: item.class_id, name: item.class_name || "" }]);
-        }
-      });
-      initClassesList = orderByASC(uniqBy(initClassesList, "id"), "name");
-      setClassList(initClassesList);
+      if (enableNewGql && perm.report_my_class_achievments_648) {
+        setClassList(classes.map((item) => ({ id: item.class_id, name: item.class_name || "" })));
+      } else {
+        let initClassesList: Item[] = [];
+        classes?.forEach((item) => {
+          if (
+            !!item?.teachers?.find((teacherItem) => teacherItem?.user_id === (condition.teacher_id || reportMockOptions.teacherList[0].id))
+          ) {
+            initClassesList = initClassesList.concat([{ id: item.class_id, name: item.class_name || "" }]);
+          }
+        });
+        initClassesList = orderByASC(uniqBy(initClassesList, "id"), "name");
+        setClassList(initClassesList);
+      }
     }
-  }, [classes?.classes, condition.teacher_id, reportMockOptions.teacherList]);
+  }, [classes, condition.teacher_id, reportMockOptions.teacherList, perm.report_my_class_achievments_648]);
 
   useEffect(() => {
     if (reportMockOptions) {
