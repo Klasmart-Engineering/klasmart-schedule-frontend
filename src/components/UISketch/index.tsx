@@ -66,6 +66,7 @@ const useStyles = makeStyles(({ shadows }) => ({
 export interface UiSketchProps {
   width: number;
   height: number;
+  pictureUrl?: string;
 }
 
 const Operations: {
@@ -81,11 +82,11 @@ const Operations: {
 };
 
 function valuetext(value: number) {
-  return `${value}°C`;
+  return `${value}`;
 }
 
 export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) => {
-  const { width, height } = props;
+  const { width, height, pictureUrl } = props;
   const css = useStyles();
   const sketchRef = useRef<any>(null);
   const [color, setColor] = React.useState<string>("#E60313");
@@ -109,6 +110,10 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
     dataURLtoBlob: dataURLtoBlob,
     chooseImage: chooseImage,
   }));
+
+  React.useEffect(() => {
+    if (pictureUrl) chooseImage(pictureUrl);
+  }, [pictureUrl]);
 
   const dataURLtoBlob = (imageName: string) => {
     const base64Data = sketchRef.current.toDataURL();
@@ -141,9 +146,11 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
             <div
               className={css.fieldItem}
               onClick={() => {
-                setTool(Tools.Select);
-                setTool(tool);
                 setColor(c);
+                setTool(Tools.DefaultTool);
+                setTimeout(() => {
+                  setTool(tool);
+                });
               }}
               style={{ border: `1px solid ${c}` }}
             >
