@@ -26,13 +26,12 @@ import {
   GetSchoolMembershipsDocument,
   GetSchoolMembershipsQuery,
   GetSchoolMembershipsQueryVariables,
+  GetUserQuery,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
-  GetUserQuery,
   UserNameByUserIdQueryDocument,
 } from "./api-ko.auto";
-import {} from "./api-ko.legacy.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
@@ -275,7 +274,7 @@ export async function apiSkillsListByIds(skillIds: string[]) {
   const skillsQuery = skillIds
     .map(
       (id, index) => `
-    skill${index}: subcategory(id: "${id}") {
+    skill${index}: subcategoryNode(id: "${id}") {
       id
       name
       status
@@ -299,7 +298,7 @@ export async function apiDevelopmentalListIds(developmental: string[]) {
   const developmentalQuery = developmental
     .map(
       (id, index) => `
-    developmental${index}: category(id: "${id}") {
+    developmental${index}: categoryNode(id: "${id}") {
       id
       name
       status
@@ -325,15 +324,52 @@ export interface IApiGetPartPermissionResp {
 
 export async function apiGetPartPermission(permissions: string[]): Promise<IApiGetPartPermissionResp> {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-  const fragmentStr = permissions
-    .map((permission) => {
-      return `${permission}: checkAllowed(permission_name: "${permission}")`;
-    })
-    .join(",");
 
-  return await gqlapi
-    .query({
-      query: gql`
+  if (enableNewGql) {
+    const permissionIds = permissions
+      .map((item) => {
+        return `"${item}"`;
+      })
+      .join(",");
+    return await gqlapi
+      .query({
+        query: gql`
+        query{
+          myUser{
+            hasPermissionsInOrganization(
+              organizationId: "${organization_id}",
+              permissionIds: [
+                ${permissionIds}
+              ]
+            ){
+              permissionId
+              allowed
+            }
+          }
+        }
+      `,
+      })
+      .then((resp) => {
+        return {
+          error: (resp.errors || []).length > 0 || resp.data?.myUser?.hasPermissionsInOrganization === null,
+          data: (resp.data?.myUser?.hasPermissionsInOrganization || []).reduce(
+            (prev: { [x: string]: any }, cur: { permissionId: string | number; allowed: any }) => {
+              prev[cur.permissionId] = cur.allowed;
+              return prev;
+            },
+            {}
+          ),
+        };
+      });
+  } else {
+    const fragmentStr = permissions
+      .map((permission) => {
+        return `${permission}: checkAllowed(permission_name: "${permission}")`;
+      })
+      .join(",");
+    return await gqlapi
+      .query({
+        query: gql`
       query{
         meMembership: me{
           membership(organization_id: "${organization_id}"){
@@ -342,13 +378,14 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
         }
       }
     `,
-    })
-    .then((resp) => {
-      return {
-        error: (resp.errors || []).length > 0 || resp.data?.meMembership?.membership === null,
-        data: resp.data?.meMembership?.membership || {},
-      };
-    });
+      })
+      .then((resp) => {
+        return {
+          error: (resp.errors || []).length > 0 || resp.data?.meMembership?.membership === null,
+          data: resp.data?.meMembership?.membership || {},
+        };
+      });
+  }
 }
 
 const idToNameMap = new Map<string, string>();
