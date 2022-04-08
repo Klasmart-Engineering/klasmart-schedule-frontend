@@ -30,7 +30,6 @@ import {
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
 } from "./api-ko.auto";
-import {} from "./api-ko.legacy.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
 
@@ -324,7 +323,7 @@ export interface IApiGetPartPermissionResp {
 export async function apiGetPartPermission(permissions: string[]): Promise<IApiGetPartPermissionResp> {
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
 
-  if (enableLegacyGql) {
+  if (enableNewGql) {
     const permissionIds = permissions
       .map((item) => {
         return `"${item}"`;
@@ -390,7 +389,7 @@ export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<str
   const fragmentStr = userIds
     .filter((id) => !idToNameMap.has(id))
     .map((userId, index) => {
-      return enableLegacyGql
+      return enableNewGql
         ? `
           user_${index}: userNode(id: "${userId}"){
             id,
@@ -420,7 +419,7 @@ export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<str
     for (const item in userQuery.data || {}) {
       const user = userQuery.data[item];
       if (user) {
-        enableLegacyGql
+        enableNewGql
           ? idToNameMap.set(user.id, `${user.givenName} ${user.familyName}`)
           : idToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
       }
