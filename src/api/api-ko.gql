@@ -563,6 +563,18 @@ query getRolesId (
     }
   }
 }
+
+query userNameByUserIdQuery($filter: UserFilter) {
+  usersConnection(filter: $filter, direction: FORWARD) {
+    edges {
+      node {
+        id
+        givenName
+        familyName
+      }
+    }
+  }
+}
 query classesTeachersConnection(
   $cursor: String,
   $filter: ClassFilter,
