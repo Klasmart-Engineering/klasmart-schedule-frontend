@@ -29,20 +29,20 @@ const useStyles = makeStyles(({ shadows }) => ({
     border: "1px solid black",
     borderRadius: "20px",
     alignItems: "center",
-    height: "80px",
+    height: "70px",
   },
   fieldItem: {
-    width: "30px",
-    height: "30px",
-    borderRadius: "30px",
+    width: "25px",
+    height: "25px",
+    borderRadius: "25px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
     "& div": {
-      width: "20px",
-      height: "20px",
-      borderRadius: "20px",
+      width: "16px",
+      height: "16px",
+      borderRadius: "16px",
     },
   },
   toolSelected: {
@@ -95,7 +95,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   const [currentOperation, setCurrentOperation] = React.useState<string>(Operations.Pencil);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [text, SetText] = React.useState<string>("");
-  const fieldItemColor = ["#E60313", "#F5A101", "#FED900", "#3DB135", "#02FCFC", "#0068B7", "#A6569D", "#A6569D", "#9F4500", "#000000"];
+  const fieldItemColor = ["#E60313", "#F5A101", "#FED900", "#3DB135", "#02FCFC", "#0068B7", "#A6569D", "#A6368D", "#9F4500", "#000000"];
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -107,7 +107,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   // @ts-ignore
   useImperativeHandle(ref, () => ({
     isTraces: isTraces,
-    dataURLtoBlob: dataURLtoBlob,
+    dataURLtoObject: dataURLtoObject,
     chooseImage: chooseImage,
   }));
 
@@ -115,7 +115,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
     if (pictureUrl) chooseImage(pictureUrl);
   }, [pictureUrl]);
 
-  const dataURLtoBlob = (imageName: string) => {
+  const dataURLtoObject = (imageName: string, type: "obj" | "blob") => {
     const base64Data = sketchRef.current.toDataURL();
     const byteString = atob(base64Data.split(",")[1]);
     const mimeString = base64Data.split(",")[0].split(":")[1].split(";")[0];
@@ -124,10 +124,15 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
     for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i);
     }
-    const BlobModel = new Blob([ab], { type: mimeString });
-    const fd = new FormData();
-    fd.append("upfile", BlobModel, imageName + ".png");
-    return fd;
+
+    if (type === "obj") {
+      return new File([ia], imageName, { type: mimeString });
+    } else {
+      const BlobModel = new Blob([ab], { type: mimeString });
+      const fd = new FormData();
+      fd.append("upfile", BlobModel, imageName + ".png");
+      return fd;
+    }
   };
 
   const chooseImage = (url: string) => {
@@ -145,6 +150,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
           return (
             <div
               className={css.fieldItem}
+              key={c}
               onClick={() => {
                 setColor(c);
                 setTool(Tools.DefaultTool);
