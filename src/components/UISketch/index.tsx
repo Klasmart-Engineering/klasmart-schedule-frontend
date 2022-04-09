@@ -199,8 +199,8 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
     <Box style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <SketchField
         ref={sketchRef}
-        onChange={() => {
-          onChange && onChange({ isTraces: sketchRef.current.canUndo() });
+        onChange={(e: any) => {
+          onChange && e.type === "mouseup" && onChange({ isTraces: sketchRef.current.canUndo() });
           setTraces({ undo: sketchRef.current.canUndo(), redo: sketchRef.current.canRedo() });
         }}
         lineColor={color}
