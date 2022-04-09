@@ -88,7 +88,7 @@
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "start": "sudo PORT=443 HTTPS=true react-app-rewired  --max_old_space_size=8192 start",
+    "start": "react-app-rewired  --max_old_space_size=8192 start",
     "build": "react-app-rewired  build && node ./scripts/publishSourcemap.js",
     "test": "react-app-rewired  test",
     "syncapi": "node ./scripts/syncapi.js",
