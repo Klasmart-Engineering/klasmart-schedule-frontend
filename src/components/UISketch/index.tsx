@@ -63,11 +63,17 @@ const useStyles = makeStyles(({ shadows }) => ({
     borderRadius: "10px",
   },
 }));
+
+export interface SketchChangeProps {
+  isTraces: boolean;
+}
+
 export interface UiSketchProps {
   width: number;
   height: number;
   pictureUrl?: string;
   pictureInitUrl?: string;
+  onChange?: (value: SketchChangeProps) => void;
 }
 
 const Operations: {
@@ -87,7 +93,7 @@ function valuetext(value: number) {
 }
 
 export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) => {
-  const { width, height, pictureUrl, pictureInitUrl } = props;
+  const { width, height, pictureUrl, pictureInitUrl, onChange } = props;
   const css = useStyles();
   const sketchRef = useRef<any>(null);
   const [color, setColor] = React.useState<string>("#E60313");
@@ -151,7 +157,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   };
 
   const chooseImage = (url: string) => {
-    sketchRef.current.setBackgroundFromDataUrl(url, {
+    sketchRef.current.setBackgroundFromDataUrl(url + `?timestamp= ${Date.now()}`, {
       stretchedY: true,
     });
   };
@@ -194,6 +200,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
       <SketchField
         ref={sketchRef}
         onChange={() => {
+          onChange && traces.undo !== sketchRef.current.canUndo() && onChange({ isTraces: sketchRef.current.canUndo() });
           setTraces({ undo: sketchRef.current.canUndo(), redo: sketchRef.current.canRedo() });
         }}
         lineColor={color}
@@ -313,6 +320,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
             onClick={() => {
               setTraces({ undo: false, redo: false });
               sketchRef.current.clear();
+              onChange && onChange({ isTraces: false });
               chooseImage((pictureInitUrl ?? pictureUrl) as string);
             }}
           />
