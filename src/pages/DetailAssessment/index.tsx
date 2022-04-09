@@ -1,9 +1,10 @@
 import { V2AssessmentUpdateReq } from "@api/api.auto";
+import { uploadFile } from "@api/extra";
 import PermissionType from "@api/PermissionType";
 import { NoOutcome } from "@components/TipImages";
 import { usePermission } from "@hooks/usePermission";
 import { setQuery } from "@models/ModelContentDetailForm";
-import { getDetailAssessmentV2, updateAssessmentV2 } from "@reducers/assessments";
+import { getContentResourceUploadPath, getDetailAssessmentV2, updateAssessmentV2 } from "@reducers/assessments";
 import { actAsyncConfirm } from "@reducers/confirm";
 import { actSuccess, actWarning } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
@@ -21,6 +22,7 @@ import LayoutPair from "../ContentEdit/Layout";
 import { AssessmentStatus, DetailAssessmentResult, DetailAssessmentResultStudent } from "../ListAssessment/types";
 import { DetailForm } from "./DetailForm";
 import { DetailHeader } from "./DetailHeader";
+import { Homefun } from "./HomefunView";
 import { MaterialView, MaterialViewProps } from "./MaterialView";
 import { Dimension, MultiSelect, MultiSelectProps, Subtitle } from "./MultiSelect";
 import { OverallOutcomes, OverallOutcomesProps } from "./OverallOutcomes";
@@ -46,6 +48,7 @@ export function DetailAssessment() {
   const isStudy = assessment_type === AssessmentTypeValues.study;
   const isClass = assessment_type === AssessmentTypeValues.class;
   const isReview = assessment_type === AssessmentTypeValues.review;
+  const isHomefun = assessment_type === AssessmentTypeValues.homeFun;
   const formMethods = useForm<UpdateAssessmentDataOmitAction>();
   const [students, setStudents] = useState<DetailAssessmentResult["students"]>();
   const [contents, setContents] = useState<DetailAssessmentResult["contents"]>();
@@ -53,15 +56,9 @@ export function DetailAssessment() {
     if (isReview) {
       return ModelAssessment.getReviewStudentsItems(assessmentDetailV2.diff_content_students);
     } else {
-      return ModelAssessment.getStudentViewItems(assessmentDetailV2.students, assessmentDetailV2.contents, assessmentDetailV2.outcomes);
+      return ModelAssessment.getStudentViewItems(assessmentDetailV2.students, assessmentDetailV2.contents, assessmentDetailV2.outcomes, assessment_type);
     }
-  }, [
-    assessmentDetailV2.contents,
-    assessmentDetailV2.diff_content_students,
-    assessmentDetailV2.outcomes,
-    assessmentDetailV2.students,
-    isReview,
-  ]);
+  }, [assessmentDetailV2.contents, assessmentDetailV2.diff_content_students, assessmentDetailV2.outcomes, assessmentDetailV2.students, assessment_type, isReview]);
   const [computedStudentViewItems, setComputedStudentViewItems] = useState<StudentViewItemsProps[] | undefined>();
   const overallOutcomes = useMemo(() => {
     const outcomes = ModelAssessment.getOverallOutcomes(computedStudentViewItems ? computedStudentViewItems : initStudentViewItems);
@@ -76,7 +73,21 @@ export function DetailAssessment() {
       );
     }
   }, [assessmentDetailV2.students, students]);
-  const [dimension, setDimension] = useState<Dimension>(Dimension.student);
+  const [dimension, setDimension] = useState<Dimension>(isHomefun ? Dimension.submitted : Dimension.student);
+  const ViewDimension = () => {
+    if(isHomefun) {
+      return [
+        { label: "Submitted", value: Dimension.submitted },
+        { label: "Not Submitted", value: Dimension.notSubmitted },
+        { label: "All", value: Dimension.all}
+      ]
+    } else {
+      return [
+        { label: d("View by Students").t("assess_detail_view_by_students"), value: Dimension.student },
+        { label: d("View by Lesson Material").t("assess_detail_view_by_lesson_material"), value: Dimension.material },
+      ];
+    }
+  };
   const initSubDimension = useMemo(() => {
     return ModelAssessment.getInitSubDimension(dimension, computedStudentViewItems ? computedStudentViewItems : initStudentViewItems);
   }, [computedStudentViewItems, dimension, initStudentViewItems]);
@@ -88,7 +99,7 @@ export function DetailAssessment() {
   const isMyAssessment = Boolean(isMyAssessmentlist && isMyAssessmentlist.length > 0);
   const hasRemainTime = assessmentDetailV2.remaining_time ? assessmentDetailV2.remaining_time > 0 : false;
   const isComplete = assessmentDetailV2.status === AssessmentStatus.complete;
-  const editable = isStudy
+  const editable = (isStudy || isReview || isHomefun)
     ? isMyAssessment && perm_439 && !hasRemainTime && !isComplete
     : isMyAssessment && perm_439 && !isComplete && !hasRemainTime;
   const completeRate = useMemo(() => {
@@ -120,7 +131,7 @@ export function DetailAssessment() {
       );
       const data: V2AssessmentUpdateReq = {
         action: "Draft",
-        contents: isReview ? undefined : [..._contents],
+        contents: (isReview || isHomefun) ? undefined : [..._contents],
         id: id,
         students: [..._students],
       };
@@ -338,10 +349,44 @@ export function DetailAssessment() {
   const handleChangeSubdimension: MultiSelectProps["onChangeSubdimension"] = (value: SubDimensionOptions[]) => {
     setSelectedSubdimension(value);
   };
+  const handleChangeHomefunStudnet = (students?: StudentViewItemsProps[]) => {
+    setComputedStudentViewItems(students);
+  }
+  const handleSaveDrawFeedback = async (studentId?: string, assignment_id?: string, imgObj?: any) => {
+    const extension = imgObj.name.split(".").pop();
+    const { payload } = (await dispatch(getContentResourceUploadPath({ partition: "drawing_feedback", extension}))) as unknown as PayloadAction<
+              AsyncTrunkReturned<typeof getContentResourceUploadPath>
+            >;
+    const { path, resource_id } = payload;
+    if(resource_id) {
+      uploadFile(path, imgObj)
+      const newStudents = cloneDeep(computedStudentViewItems ? computedStudentViewItems : initStudentViewItems);
+      newStudents?.forEach(sItem => {
+        if(sItem.student_id === studentId) {
+          const { results } = sItem;
+          if(results && results[0] && results[0].student_feed_backs && results[0].student_feed_backs[0]) {
+            const student_feed_back = results[0].student_feed_backs[0];
+            if(student_feed_back && student_feed_back?.assignments) {
+              student_feed_back.assignments.forEach(item => {
+                if(item.id === assignment_id) {
+                  item.review_attachment_id = resource_id
+                }
+              })
+            }
+          }
+        }
+      });
+      setComputedStudentViewItems(newStudents)
+    }
+  }
   const rightside = (
     <>
+      {
+        isHomefun && <Subtitle text={d("Learning Outcome Assessment").t("assessment_learning_outcome_assessment")} />
+      }
       {!isClass && (
         <MultiSelect
+          mainDimension={ViewDimension()}
           assessment_type={assessment_type}
           onChangeDimension={handleChangeDimension}
           dimension={dimension}
@@ -349,7 +394,7 @@ export function DetailAssessment() {
           onChangeSubdimension={handleChangeSubdimension}
         />
       )}
-      {!isReview && (
+      {(!isReview && !isHomefun) && (
         <>
           <Subtitle
             text={
@@ -373,7 +418,7 @@ export function DetailAssessment() {
           )}
         </>
       )}
-      {!isClass && dimension === Dimension.student && (
+      {!isClass && !isHomefun && dimension === Dimension.student && (
         <>
           {!isReview && <Subtitle text={d("Score Assessment").t("assess_detail_score_assessment")} />}
           <StudentView
@@ -388,7 +433,7 @@ export function DetailAssessment() {
           />
         </>
       )}
-      {!isClass && !isReview && dimension === Dimension.material && (
+      {!isClass && !isHomefun && !isReview && dimension === Dimension.material && (
         <>
           <Subtitle text={d("Lesson Material Assessment").t("assessment_lesson_material_assessment")} />
           <MaterialView
@@ -406,6 +451,21 @@ export function DetailAssessment() {
           />
         </>
       )}
+      {
+        isHomefun && (
+          <>
+            <Subtitle text={"Comments && Rating"} />
+            <Homefun 
+              editable={editable}
+              dimension={dimension} 
+              subDimension={selectedSubdimension ? selectedSubdimension : initSubDimension || []}
+              students={computedStudentViewItems ? computedStudentViewItems : initStudentViewItems}
+              onChangeHomefunStudent={handleChangeHomefunStudnet}
+              onSaveDrawFeedback={handleSaveDrawFeedback}
+            />
+          </>
+        )
+      }
     </>
   );
   useEffect(() => {

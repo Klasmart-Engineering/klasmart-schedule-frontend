@@ -42,6 +42,9 @@ export enum ContentType {
 export type DetailAssessmentResultContent = NonNullable<DetailAssessmentResult["contents"]>[0];
 export type DetailAssessmentResultOutcome = NonNullable<DetailAssessmentResult["outcomes"]>[0];
 export type DetailAssessmentResultStudent = NonNullable<DetailAssessmentResult["students"]>[0];
+export type DetailAssessmentStudentResult = NonNullable<DetailAssessmentResultStudent["results"]>[0];
+export type DetailAssessmentResultFeedback = NonNullable<DetailAssessmentStudentResult["student_feed_backs"]>[0];
+export type DetailAssessmentResultAssignment = NonNullable<DetailAssessmentResultFeedback["assignments"]>[0];
 
 export enum AssessmentStatus {
   all = "all",

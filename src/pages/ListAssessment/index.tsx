@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
-import { AssessmentStatus, ExectSeachType, HomeFunAssessmentOrderBy, HomeFunAssessmentStatus, OrderByAssessmentList } from "../../api/type";
+import { AssessmentStatus, ExectSeachType, OrderByAssessmentList } from "../../api/type";
 import { FirstSearchHeader, FirstSearchHeaderMb } from "../../components/AssessmentFirsetHearder/FirstSearchHeader";
 import { AssessmentTypeValues } from "../../components/AssessmentType";
 import { emptyTip, permissionTip } from "../../components/TipImages";
@@ -34,7 +34,7 @@ const useQuery = (): AssessmentQueryCondition => {
     const query_type = (querys.get("query_type") as ExectSeachType) || ExectSeachType.all;
     const page = Number(querys.get("page")) || 1;
     const assessment_type = querys.get("assessment_type") || AssessmentTypeValues.live;
-    const isStudy = assessment_type === AssessmentTypeValues.study || assessment_type === AssessmentTypeValues.review;
+    const isStudy = assessment_type === AssessmentTypeValues.study || assessment_type === AssessmentTypeValues.review || assessment_type === AssessmentTypeValues.homeFun;
     const defaultOrderBy = isStudy ? OrderByAssessmentList._create_at : OrderByAssessmentList._class_end_time;
     const order_by = (querys.get("order_by") as OrderByAssessmentList) || defaultOrderBy;
     const status = (querys.get("status") as AssessmentStatus) || AssessmentStatus.all;
@@ -71,14 +71,14 @@ export function ListAssessment() {
     }
   };
   const handleChangeAssessmentType: SecondSearchHeaderProps["onChangeAssessmentType"] = (assessment_type) => {
-    if (assessment_type === AssessmentTypeValues.homeFun) {
-      history.push(
-        `/assessments/homefunlist?assessment_type=${AssessmentTypeValues.homeFun}order_by=${HomeFunAssessmentOrderBy._submit_at}&status=${HomeFunAssessmentStatus.all}&page=1`
-      );
-    } else {
+    // if (assessment_type === AssessmentTypeValues.homeFun) {
+    //   history.push(
+    //     `/assessments/homefunlist?assessment_type=${AssessmentTypeValues.homeFun}order_by=${HomeFunAssessmentOrderBy._submit_at}&status=${HomeFunAssessmentStatus.all}&page=1`
+    //   );
+    // } else {
       reset();
       history.push(`/assessments/assessment-list?assessment_type=${assessment_type}&status=${AssessmentStatus.all}&page=1`);
-    }
+    // }
   };
   const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
   const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) => {

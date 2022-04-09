@@ -426,9 +426,11 @@ export const ModelAssessment = {
   getStudentViewItems(
     students: DetailAssessmentResult["students"],
     contents: DetailAssessmentResult["contents"],
-    outcomes: DetailAssessmentResult["outcomes"]
+    outcomes: DetailAssessmentResult["outcomes"],
+    assessment_type: AssessmentTypeValues,
   ): StudentViewItemsProps[] | undefined {
     // const participateStudent = students?.filter((item) => item.status === StudentParticipate.Participate);
+    const isHomefun = assessment_type === AssessmentTypeValues.homeFun;
     const contentObj: Record<string, DetailAssessmentResultContent> = {};
     const outcomeObj: Record<string, DetailAssessmentResultOutcome> = {};
     contents
@@ -450,7 +452,27 @@ export const ModelAssessment = {
         student_name,
         reviewer_comment,
         status,
-        results: results
+        results: isHomefun 
+          ?
+          results?.map(result => {
+            const { outcomes } = result;
+            return {
+              ...result,
+              outcomes: outcomes?.map((oItem) => {
+                if(outcomeObj[oItem.outcome_id!]) {
+                  const { assumed, outcome_name } = outcomeObj[oItem.outcome_id!];
+                  return {
+                    ...oItem,
+                    assumed,
+                    outcome_name
+                  }
+                } else {
+                  return { ...oItem }
+                }
+              }),
+            }
+          }) 
+          : results
           ?.filter((r) => !!contentObj[r.content_id!])
           .map((result) => {
             const { answer, attempted, content_id, score, outcomes } = result;
@@ -716,12 +738,28 @@ export const ModelAssessment = {
     return materialViewItems;
   },
   getInitSubDimension(dimension: Dimension, studentViewItems: any[] | undefined): SubDimensionOptions[] | undefined {
-    if (dimension === Dimension.student) {
-      return studentViewItems
-        ?.filter((student) => student.status === StudentParticipate.Participate)
-        .map((item) => {
-          return { id: item.student_id!, name: item.student_name! };
-        });
+    if (dimension !== Dimension.material) {
+      const participateStudent = studentViewItems?.filter(student => student.status === StudentParticipate.Participate)
+      if(dimension === Dimension.student || dimension === Dimension.all) {
+        return participateStudent
+          ?.map((item) => {
+            return { id: item.student_id!, name: item.student_name! };
+          });
+      }
+      if(dimension === Dimension.submitted) {
+        return participateStudent
+          ?.filter(student => student.results.length && !!student.results[0].student_feed_backs)
+          .map((item) => {
+            return { id: item.student_id!, name: item.student_name! };
+          });
+      }
+      if(dimension === Dimension.notSubmitted) {
+        return participateStudent
+          ?.filter(student => (!student.results.length || (student.results.length && !student.results[0].student_feed_backs)))
+          .map((item) => {
+            return { id: item.student_id!, name: item.student_name! };
+          });
+      }
     } else {
       if (studentViewItems && studentViewItems[0] && studentViewItems[0].results) {
         return studentViewItems[0].results
@@ -740,9 +778,10 @@ export const ModelAssessment = {
   getUpdateAssessmentData(
     assessment_type: AssessmentTypeValues,
     contents?: V2AssessmentContentReply[],
-    students?: StudentViewItemsProps[]
+    students?: StudentViewItemsProps[],
   ) {
     const isReivew = assessment_type === AssessmentTypeValues.review;
+    const isHomefun = assessment_type === AssessmentTypeValues.homeFun;
     const _contents =
       contents?.map((item) => {
         const { content_id, content_subtype, content_type, parent_id, status, reviewer_comment } = item;
@@ -762,7 +801,26 @@ export const ModelAssessment = {
           student_id,
           reviewer_comment,
           status,
-          results: results?.map((rItem) => {
+          results: isHomefun ? results?.map(rItem => {
+            const { assess_score, outcomes, student_feed_backs } = rItem;
+            return {
+              assess_score,
+              assess_feedback_id: student_feed_backs ? student_feed_backs[0].id : "",
+              assignments: student_feed_backs ? student_feed_backs[0].assignments?.map(aItem => {
+                return {
+                  id: aItem.id,
+                  review_attachment_id: aItem.review_attachment_id,
+                }
+              }) : [],
+              outcomes: outcomes?.map(oItem => {
+                const { outcome_id, status } = oItem
+                return {
+                  outcome_id,
+                  status,
+                }
+              })
+            }
+          }) : results?.map((rItem) => {
             const { content_id, parent_id, score, outcomes } = rItem;
             return {
               content_id,

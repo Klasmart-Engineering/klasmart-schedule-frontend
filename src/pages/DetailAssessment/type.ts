@@ -1,4 +1,4 @@
-import { UpdataAssessmentData } from "../ListAssessment/types";
+import { DetailAssessmentStudentResult, UpdataAssessmentData } from "../ListAssessment/types";
 
 export type UpdateAssessmentDataOmitAction = Omit<UpdataAssessmentData, "action">;
 
@@ -61,6 +61,8 @@ export interface ResultBaseProps {
 }
 export interface StudenmtViewItemResultProps extends ResultBaseProps {
   outcomes?: StudenmtViewItemResultOutcomeProps[];
+  assess_score?: DetailAssessmentStudentResult["assess_score"];
+  student_feed_backs?: DetailAssessmentStudentResult["student_feed_backs"];
 }
 export interface MaterialViewItemResultProps extends ResultBaseProps {
   outcomes?: MaterialViewItemResultOutcomeProps[];
@@ -112,4 +114,20 @@ export enum FileTypes {
 export interface SubDimensionOptions {
   id: string;
   name: string;
+}
+export interface MainDimensionOptions {
+  label: string;
+  value: string;
+}
+
+export enum ResourceViewTypeValues {
+  editScore = "EditScore",
+  viewComment = "ViewComment",
+  editComment = "EditComment",
+  drawFeedback = "DrawFeedback",
+  selectImg = "SelectImg",
+  essay = "Essay",
+  audioRecorder = "AudioRecorder", 
+  speakTheWordsSet = "SpeakTheWordsSet", 
+  speakTheWords = "SpeakTheWords"
 }
