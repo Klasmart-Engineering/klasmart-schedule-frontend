@@ -200,7 +200,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
       <SketchField
         ref={sketchRef}
         onChange={() => {
-          onChange && traces.undo !== sketchRef.current.canUndo() && onChange({ isTraces: sketchRef.current.canUndo() });
+          onChange && onChange({ isTraces: sketchRef.current.canUndo() });
           setTraces({ undo: sketchRef.current.canUndo(), redo: sketchRef.current.canRedo() });
         }}
         lineColor={color}
