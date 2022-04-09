@@ -72,6 +72,7 @@ export interface SingleUploaderProps extends BaseUploaderProps, UploadyProps {
 }
 export const SingleUploader = forwardRef<HTMLDivElement, SingleUploaderProps>((props, ref) => {
   const { value, onChange, render, partition, transformFile, onChangeFile, beforeUpload, ...uploadyProps } = props;
+  console.log(value)
   const dispatch = useDispatch();
   const [rid, setRid] = useState<string>();
   const [file, setFile] = useState<FileLike>();

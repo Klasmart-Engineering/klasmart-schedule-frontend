@@ -504,7 +504,7 @@
           },
           {
             "type": "string",
-            "description": "assessment type, value:OnlineClass,OfflineClass,OnlineStudy,ReviewStudy",
+            "description": "assessment type, value:OnlineClass,OfflineClass,OnlineStudy,ReviewStudy,OfflineStudy",
             "name": "assessment_type",
             "in": "query",
             "required": true
@@ -3452,6 +3452,18 @@
             "type": "integer",
             "description": "search content type, 1 for materials \u0026 2 for plans",
             "name": "content_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search content create_at less",
+            "name": "create_at_le",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "search content create_at greater",
+            "name": "create_at_ge",
             "in": "query"
           },
           {
@@ -10720,7 +10732,7 @@
         "student_content_map": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.ScheduleReviewStudentContent"
+            "$ref": "#/definitions/entity.ScheduleStudentContent"
           }
         },
         "total": {
@@ -10890,8 +10902,14 @@
         "attachment_name": {
           "type": "string"
         },
+        "id": {
+          "type": "string"
+        },
         "number": {
           "type": "integer"
+        },
+        "review_attachment_id": {
+          "type": "string"
         }
       }
     },
@@ -12917,20 +12935,6 @@
         }
       }
     },
-    "entity.ScheduleReviewStudentContent": {
-      "type": "object",
-      "properties": {
-        "content_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "student_id": {
-          "type": "string"
-        }
-      }
-    },
     "entity.ScheduleReviewSucceededResult": {
       "type": "object",
       "properties": {
@@ -13035,6 +13039,20 @@
         },
         "total": {
           "type": "integer"
+        }
+      }
+    },
+    "entity.ScheduleStudentContent": {
+      "type": "object",
+      "properties": {
+        "content_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "student_id": {
+          "type": "string"
         }
       }
     },
@@ -15555,6 +15573,9 @@
             "$ref": "#/definitions/v2.AssessmentContentReply"
           }
         },
+        "description": {
+          "type": "string"
+        },
         "diff_content_students": {
           "type": "array",
           "items": {
@@ -15563,6 +15584,9 @@
         },
         "id": {
           "type": "string"
+        },
+        "is_anyone_attempted": {
+          "type": "boolean"
         },
         "outcomes": {
           "type": "array",
@@ -15643,21 +15667,8 @@
         "number": {
           "type": "string"
         },
-        "outcome_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "parent_id": {
           "type": "string"
-        },
-        "reviewer_comment": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string",
-          "enum": ["Covered", "NotCovered"]
         }
       }
     },
@@ -15854,6 +15865,10 @@
         "answer": {
           "type": "string"
         },
+        "assess_score": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5]
+        },
         "attempted": {
           "type": "boolean"
         },
@@ -15868,12 +15883,31 @@
         },
         "score": {
           "type": "number"
+        },
+        "student_feed_backs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v2.StudentResultFeedBacksReply"
+          }
         }
       }
     },
     "v2.AssessmentStudentResultReq": {
       "type": "object",
       "properties": {
+        "assess_feedback_id": {
+          "type": "string"
+        },
+        "assess_score": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5]
+        },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v2.FeedbackAssignmentsReq"
+          }
+        },
         "content_id": {
           "type": "string"
         },
@@ -15979,6 +16013,17 @@
         },
         "score": {
           "type": "number"
+        }
+      }
+    },
+    "v2.FeedbackAssignmentsReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "reviewer_assignment_id": {
+          "type": "string"
         }
       }
     },
@@ -16288,6 +16333,32 @@
           "type": "string"
         },
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v2.StudentResultFeedBacksReply": {
+      "type": "object",
+      "properties": {
+        "assignments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.FeedbackAssignmentView"
+          }
+        },
+        "comment": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "schedule_id": {
+          "type": "string"
+        },
+        "user_id": {
           "type": "string"
         }
       }

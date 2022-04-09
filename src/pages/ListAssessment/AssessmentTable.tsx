@@ -58,10 +58,13 @@ function AssessmentRow(props: AssessmentProps) {
   const isReview = useMemo(() => {
     return assessmentType === AssessmentTypeValues.review;
   }, [assessmentType]);
+  const isHomefun = useMemo(() => {
+    return assessmentType === AssessmentTypeValues.homeFun;
+  }, [assessmentType]);
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
       <TableCell align="center">{assessment.title ?? d("N/A").t("assess_column_n_a")}</TableCell>
-      {!isReview && <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>}
+      {!isReview && !isHomefun  && <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>}
       {isClassAndLive && (
         <>
           <TableCell align="center">{assessment.subjects?.map((v) => v.name).join(", ")}</TableCell>
@@ -75,9 +78,16 @@ function AssessmentRow(props: AssessmentProps) {
       )}
       <TableCell align="center">{assessment.teachers?.map((v) => v.name)?.join(" ,") ?? d("N/A").t("assess_column_n_a")}</TableCell>
       {isClassAndLive && <TableCell align="center">{formattedTime(assessment.class_end_at)}</TableCell>}
-      {(isStudy || isReview) && (
+      {!isClassAndLive && <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>}
+      {isHomefun && 
+        <TableCell align="center" className={css.tableCell}>
+          <div className={clsx(css.statusCon, isComplete ? css.completeColor : css.inCompleteColor)}>
+            {isComplete ? d("Complete").t("assess_filter_complete") : d("Incomplete").t("assess_filter_in_progress")}
+          </div>
+        </TableCell>}
+      {!isClassAndLive && (
         <>
-          <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>
+          {/* <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell> */}
           <TableCell align="center">
             {formattedTime(assessment.due_at) ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}
           </TableCell>
@@ -86,7 +96,7 @@ function AssessmentRow(props: AssessmentProps) {
           </TableCell>
         </>
       )}
-      {isStudy && (
+      {(isStudy || isHomefun) && (
         <TableCell align="center">
           {assessment.remaining_time
             ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s)").t("assess_list_remaining_days")}`

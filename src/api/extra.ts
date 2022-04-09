@@ -30,7 +30,7 @@ import {
   SchoolsClassesDocument,
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
-  UserNameByUserIdQueryDocument,
+  UserNameByUserIdQueryDocument
 } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -437,6 +437,11 @@ export const refreshToken = async () => {
     .then((data) => data);
   return resp;
 };
+
+export const uploadFile = async (path: string, body: any) => {
+  const resp = await fetch(path, { method: "PUT", body }).then(resp => resp.json)
+  return resp
+}
 
 export interface GetSchoolMembershipProps {
   userId?: UuidFilter;

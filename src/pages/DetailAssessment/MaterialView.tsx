@@ -27,6 +27,7 @@ import {
   MaterialViewItemResultOutcomeProps,
   MaterialViewItemStudentProps,
   OutcomeStatus,
+  ResourceViewTypeValues,
   StudentParticipate,
   StudentViewItemsProps,
   SubDimensionOptions
@@ -105,7 +106,7 @@ export function MaterialView(props: MaterialViewProps) {
     { align: "center", width: "25%", value: "Score_FullMarks", text: d("Score / Full Marks").t("assess_detail_score_full_marks") },
     { align: "center", width: "25%", value: "Percentage", text: d("Percentage").t("assess_detail_percentage") },
   ];
-  const [resourceType, setResourceType] = useState<string>("");
+  const [resourceType, setResourceType] = useState<ResourceViewTypeValues>(ResourceViewTypeValues.essay);
   const [answer, setAnswer] = useState<string>("");
   const [room, setRoom] = useState<string | undefined>("");
   const [h5pId, setH5pId] = useState<string | undefined>("");
@@ -154,12 +155,12 @@ export function MaterialView(props: MaterialViewProps) {
   };
   const handleClickView = (answer: string) => {
     openResourceView();
-    setResourceType("Essay");
+    setResourceType(ResourceViewTypeValues.essay);
     setAnswer(answer);
   };
   const handleClickAudioRecorder = (roomId?: string, h5pId?: string, h5pSubId?: string, userId?: string, content_subtype?: string) => {
     openResourceView();
-    setResourceType(content_subtype as string);
+    setResourceType(content_subtype as ResourceViewTypeValues);
     setRoom(roomId);
     setH5pId(h5pId);
     setUserId(userId);

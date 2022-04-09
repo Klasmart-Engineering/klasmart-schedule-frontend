@@ -10,7 +10,7 @@ import { PLTableHeaderProps } from "./PLTableTypes";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     tableRow: {
-      background: "#f5f5f5",
+      background: "#F3F3F3",
     },
     tableProgress: {
       "& th": { padding: "0" },

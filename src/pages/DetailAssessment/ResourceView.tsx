@@ -1,4 +1,7 @@
-import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from "@apollo/client";
+import { apiResourcePathById } from "@api/extra";
+import { audioClient } from "@api/index";
+import { ApolloProvider } from "@apollo/client";
+import { SketchChangeProps, UiSketch } from "@components/UISketch";
 import {
   Button,
   createStyles,
@@ -11,12 +14,15 @@ import {
   makeStyles,
   TextField
 } from "@material-ui/core";
-import { Close } from "@material-ui/icons";
+import { Close, ExitToAppOutlined, ImageOutlined, SaveOutlined, SentimentSatisfied, SentimentSatisfiedOutlined, SentimentVeryDissatisfiedOutlined, SentimentVerySatisfiedOutlined } from "@material-ui/icons";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
-import React, { useMemo, useState } from "react";
+import { DetailAssessmentResultAssignment, DetailAssessmentResultFeedback } from "@pages/ListAssessment/types";
+import React, { useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
 import AudioView from "./AudioView";
+import { ImgSelect, ScoreInput } from "./HomefunView";
+import { ResourceViewTypeValues, StudenmtViewItemResultProps } from "./type";
 const useStyles = makeStyles((theme) =>
   createStyles({
     closeBtn: {
@@ -52,6 +58,11 @@ const useStyles = makeStyles((theme) =>
     okBtn: {
       marginLeft: "40px !important",
     },
+    titleBar: {
+      fontWeight: 600,
+      display: "flex",
+      justifyContent: "space-between"
+    }
   })
 );
 
@@ -61,64 +72,77 @@ export const showAudioRecorder = (type?: string) => {
 };
 export interface ResourceViewProps {
   open: boolean;
-  resourceType: string;
-  onClose: () => void;
+  resourceType: ResourceViewTypeValues;
   answer?: string;
   comment?: string;
-  onChangeComment?: (studentId?: string, comment?: string) => void;
   studentId?: string;
   roomId?: string;
   h5pId?: string;
   userId?: string;
   h5pSubId?: string;
+  score?: StudenmtViewItemResultProps["assess_score"];
+  assignments?: DetailAssessmentResultFeedback["assignments"];
+  hasSaved?: boolean;
+  onClose: () => void;
+  onChangeComment?: (studentId?: string, comment?: string) => void;
+  onChangeScore?: (studentId?: string, score?: StudenmtViewItemResultProps["assess_score"]) => void;
+  onOpenDrawFeedback?: (studentId?: string, assignment?: DetailAssessmentResultAssignment) => void;
 }
 export function ResourceView(props: ResourceViewProps) {
   const css = useStyles();
-  const { resourceType, open, answer, comment, studentId, h5pId, roomId, userId, h5pSubId, onChangeComment, onClose } = props;
+  const { resourceType, open, answer, comment, studentId, h5pId, roomId, userId, h5pSubId, score, assignments, 
+    onChangeComment, onClose, onChangeScore, onOpenDrawFeedback } = props;
+  const showClose = resourceType !== ResourceViewTypeValues.editScore && resourceType !== ResourceViewTypeValues.selectImg;
+  const showActionBtn = resourceType === ResourceViewTypeValues.editComment || resourceType === ResourceViewTypeValues.editScore || resourceType === ResourceViewTypeValues.selectImg;
   const formMethods = useForm();
   const { control, getValues } = formMethods;
   const handleOk = () => {
-    const comment = getValues()["comment"];
-    onChangeComment && onChangeComment(studentId, comment);
     onClose();
+    if(resourceType === ResourceViewTypeValues.editComment) {
+      const comment = getValues()["comment"];
+      onChangeComment && onChangeComment(studentId, comment);
+    }
+    if(resourceType === ResourceViewTypeValues.editScore) {
+      const score = getValues()["assess_score"] as StudenmtViewItemResultProps["assess_score"];
+      onChangeScore && onChangeScore(studentId, score);
+    }
+    if(resourceType === ResourceViewTypeValues.selectImg) {
+      const selectedAssignmentId = getValues()["assignments"];
+      const selectedAssignment = assignments?.find(item => item.attachment_id === selectedAssignmentId)
+      onOpenDrawFeedback && onOpenDrawFeedback(studentId, selectedAssignment)
+    }
   };
-  const link = createHttpLink({
-    uri: `${process.env.REACT_APP_KO_BASE_API}/media-storage/graphql`,
-    credentials: "include",
-  });
-  const client = new ApolloClient({
-    link,
-    cache: new InMemoryCache(),
-  });
   return (
     <>
-      <Dialog open={open}>
-        <DialogTitle className={css.title}>
-          {(resourceType === "Essay" || showAudioRecorder(resourceType)) && d("Detailed Answer").t("assess_popup_detailed_answer")}
-          {resourceType === "ViewComment" && d("View Comments").t("assess_popup_view_comments")}
-          {resourceType === "EditComment" && d("Add Comments").t("assess_popup_add_comments")}
-          <IconButton onClick={onClose} className={css.closeBtn}>
-            <Close />
-          </IconButton>
+      <Dialog open={open} fullWidth maxWidth={"sm"}>
+        <DialogTitle className={resourceType === ResourceViewTypeValues.editScore ? "" : css.title}>
+          {(resourceType === ResourceViewTypeValues.essay || showAudioRecorder(resourceType)) && d("Detailed Answer").t("assess_popup_detailed_answer")}
+          {resourceType === ResourceViewTypeValues.viewComment && d("View Comments").t("assess_popup_view_comments")}
+          {resourceType === ResourceViewTypeValues.editComment && d("Add Comments").t("assess_popup_add_comments")}
+          {resourceType === ResourceViewTypeValues.selectImg && "Select File to Provide Feedback"}
+          {showClose && 
+            <IconButton onClick={onClose} className={css.closeBtn}>
+              <Close />
+          </IconButton>}
         </DialogTitle>
         <DialogContent>
-          {resourceType === "Essay" && <div className={css.detailView}>{answer}</div>}
-          {resourceType === "ViewComment" && <div className={css.detailView}>{comment}</div>}
+          {resourceType === ResourceViewTypeValues.essay && <div className={css.detailView}>{answer}</div>}
+          {resourceType === ResourceViewTypeValues.viewComment && <div className={css.detailView}>{comment}</div>}
           {showAudioRecorder(resourceType) && (
             <div className={css.detailView}>
-              <ApolloProvider client={client}>
+              <ApolloProvider client={audioClient}>
                 <AudioView
                   resourceType={resourceType}
                   userId={userId as string}
                   roomId={roomId as string}
                   h5pId={h5pId as string}
                   h5pSubId={h5pSubId}
-                  client={client}
+                  client={audioClient}
                 />
               </ApolloProvider>
             </div>
           )}
-          {resourceType === "EditComment" && (
+          {resourceType === ResourceViewTypeValues.editComment&& (
             <div className={css.detailView}>
               <Controller
                 style={{ width: "100%" }}
@@ -142,8 +166,55 @@ export function ResourceView(props: ResourceViewProps) {
               />
             </div>
           )}
+          {resourceType === ResourceViewTypeValues.editScore && (
+            <Controller
+              name="assess_score"
+              control={control}
+              defaultValue={score}
+              key={`assess_score:${score}`}
+              render={({ value, onChange }) => (
+              <ScoreInput
+                disabled={false}
+                optionNames={[
+                  d("Poor").t("assess_score_poor"),
+                  d("Fair").t("assess_score_fair"),
+                  d("Average").t("assess_score_average"),
+                  d("Good").t("assess_score_good"),
+                  d("Excellent").t("assess_score_excellent"),
+                ]}
+                optionValues={[1, 2, 3, 4, 5]}
+                optionColors={["#d32f2f", "#DC6F17", "#FFC107", "#A1CC41", "#4CAF50"]}
+                optionIcons={[
+                  SentimentVeryDissatisfiedOutlined,
+                  SentimentVeryDissatisfiedOutlined,
+                  SentimentSatisfied,
+                  SentimentSatisfiedOutlined,
+                  SentimentVerySatisfiedOutlined,
+                ]}
+                value={value}
+                onChange={(e) => onChange(Number(e.target.value))}
+              />
+              )}
+            />
+          )}
+          {resourceType === ResourceViewTypeValues.selectImg &&
+            <>
+              <Controller
+                name="assignments"
+                control={control}
+                defaultValue={assignments ? assignments[0].attachment_id : ""}
+                render={({ value, onChange }) => (
+                  <ImgSelect 
+                    assignments={assignments}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                  />
+                )}
+              />
+            </>
+          }
         </DialogContent>
-        {resourceType === "EditComment" && (
+        {showActionBtn && (
           <DialogActions>
             <Button autoFocus onClick={onClose} color="primary" variant="outlined">
               {d("CANCEL").t("general_button_CANCEL")}
@@ -160,13 +231,92 @@ export function ResourceView(props: ResourceViewProps) {
 
 export function useResourceView() {
   const [active, setActive] = useState(false);
+  const [resourceViewShowIndex, setResoutceViewShowIndex] = useState(0);
   return useMemo(
     () => ({
+      resourceViewShowIndex,
       resourceViewActive: active,
       openResourceView: () => {
+        setResoutceViewShowIndex(resourceViewShowIndex + 1);
         setActive(true);
       },
       closeResourceView: () => setActive(false),
+    }),
+    [active, resourceViewShowIndex]
+  );
+}
+
+export interface DrawingFeedbackProps {
+  open: boolean;
+  attachment?: DetailAssessmentResultAssignment;
+  studentId?: string;
+  onClose: () => any;
+  onOpenSelectImage?: (studentId?: string, hasSaved?: boolean) => void;
+  onSaveDrawFeedback?: (studentId?: string, imgObj?: string) => void;
+}
+export function DrawingFeedback(props: DrawingFeedbackProps) {
+  const css = useStyles();
+  const { open, attachment, studentId, onClose, onOpenSelectImage, onSaveDrawFeedback } = props;
+  const sketchRef = useRef<any>(null);
+  const [hasTraces, setHasTraces] = useState<boolean>(false);
+  const [hasSaved, setHasSaved] = useState<boolean>(false);
+  const pictureUrl = apiResourcePathById(attachment?.review_attachment_id ? attachment.review_attachment_id : attachment?.attachment_id);
+  const pictureInitUrl = apiResourcePathById(attachment?.attachment_id);
+  const handleClickSelectImage = () => {
+    onOpenSelectImage && onOpenSelectImage(studentId, hasTraces)
+  }
+  const handleClickSave = () => {
+    setHasSaved(true)
+    const current = sketchRef.current;
+    const imgObj = current.dataURLtoObject(attachment?.attachment_name, "obj");
+    onSaveDrawFeedback && onSaveDrawFeedback(studentId, imgObj)
+  }
+  const handleChangePic = (value: SketchChangeProps) => {
+    const hasTraces = value.isTraces;
+    setHasSaved(false);
+    setHasTraces(hasTraces);
+  }
+  return (
+    <Dialog open={open} fullWidth maxWidth={"md"}>
+      <DialogTitle>
+        <div className={css.titleBar}>
+          <span>{attachment?.attachment_name}</span>
+          <div>
+          <Button startIcon={<ImageOutlined />} onClick={handleClickSelectImage}>
+            {"Select Image"}
+          </Button>
+          <Button disabled={hasSaved ? true : !hasTraces} startIcon={<SaveOutlined />} onClick={handleClickSave}>
+            {"Save"}
+          </Button>
+          <Button startIcon={<ExitToAppOutlined/>} onClick={onClose} >
+            {"Exit"}
+          </Button>
+          </div>
+        </div>
+    </DialogTitle>
+    <DialogContent>
+      <UiSketch 
+        ref={sketchRef} 
+        width={912} 
+        height={400} 
+        pictureUrl={pictureUrl}
+        pictureInitUrl={pictureInitUrl}
+        onChange={handleChangePic}
+      />
+    </DialogContent>
+  </Dialog>
+  )
+}
+
+export function useDrawingFeedback() {
+  const [active, setActive] = useState(false);
+  return useMemo(
+    () => ({
+      drawingFeedbackActive: active,
+      openDrawingFeedback: () => {
+        setActive(true);
+      },
+      closeDrawingFeedback: () => setActive(false),
     }),
     [active]
   );

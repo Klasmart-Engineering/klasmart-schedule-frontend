@@ -550,7 +550,7 @@ export interface EntityContentSimplified {
 
 export interface EntityContentSimplifiedList {
   list?: EntityContentSimplified[];
-  student_content_map?: EntityScheduleReviewStudentContent[];
+  student_content_map?: EntityScheduleStudentContent[];
   total?: number;
 }
 
@@ -608,7 +608,9 @@ export interface EntityCreateFolderRequest {
 export interface EntityFeedbackAssignmentView {
   attachment_id?: string;
   attachment_name?: string;
+  id?: string;
   number?: number;
+  review_attachment_id?: string;
 }
 
 export interface EntityFolderContentData {
@@ -1304,11 +1306,6 @@ export interface EntityScheduleReviewFailedResult {
   student_id?: string;
 }
 
-export interface EntityScheduleReviewStudentContent {
-  content_ids?: string[];
-  student_id?: string;
-}
-
 export interface EntityScheduleReviewSucceededResult {
   content_ids?: string[];
   student_id?: string;
@@ -1344,6 +1341,11 @@ export interface EntityScheduleSimplified {
 export interface EntityScheduleSimplifiedPageView {
   data?: EntityScheduleSimplified[];
   total?: number;
+}
+
+export interface EntityScheduleStudentContent {
+  content_ids?: string[];
+  student_id?: string;
 }
 
 export interface EntityScheduleTimeView {
@@ -2153,6 +2155,7 @@ export interface V2AssessmentDetailReply {
   complete_at?: number;
   complete_rate?: number;
   contents?: V2AssessmentContentReply[];
+  description?: string;
   diff_content_students?: V2AssessmentDiffContentStudentsReply[];
   id?: string;
   is_anyone_attempted?: boolean;
@@ -2179,10 +2182,7 @@ export interface V2AssessmentDiffContentReply {
   h5p_sub_id?: string;
   max_score?: number;
   number?: string;
-  outcome_ids?: string[];
   parent_id?: string;
-  reviewer_comment?: string;
-  status?: "Covered" | "NotCovered";
 }
 
 export interface V2AssessmentDiffContentStudentsReply {
@@ -2263,13 +2263,18 @@ export interface V2AssessmentStudentResultOutcomeReq {
 
 export interface V2AssessmentStudentResultReply {
   answer?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
   attempted?: boolean;
   content_id?: string;
   outcomes?: V2AssessmentStudentResultOutcomeReply[];
   score?: number;
+  student_feed_backs?: V2StudentResultFeedBacksReply[];
 }
 
 export interface V2AssessmentStudentResultReq {
+  assess_feedback_id?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
+  assignments?: V2FeedbackAssignmentsReq[];
   content_id?: string;
   outcomes?: V2AssessmentStudentResultOutcomeReq[];
   parent_id?: string;
@@ -2307,6 +2312,11 @@ export interface V2DiffContentStudentResultReply {
   attempted?: boolean;
   content?: V2AssessmentDiffContentReply;
   score?: number;
+}
+
+export interface V2FeedbackAssignmentsReq {
+  id?: string;
+  review_attachment_id?: string;
 }
 
 export interface V2GetOfflineStudyUserResultDetailReply {
@@ -2418,6 +2428,15 @@ export interface V2StudentAssessmentTeacherInfo {
   family_name?: string;
   given_name?: string;
   id?: string;
+}
+
+export interface V2StudentResultFeedBacksReply {
+  assignments?: EntityFeedbackAssignmentView[];
+  comment?: string;
+  create_at?: number;
+  id?: string;
+  schedule_id?: string;
+  user_id?: string;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -3561,6 +3580,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         org_id?: string;
         content_ids?: string;
         content_type?: number;
+        create_at_le?: number;
+        create_at_ge?: number;
         plan_id?: string;
         schedule_id?: string;
         source_id?: string;

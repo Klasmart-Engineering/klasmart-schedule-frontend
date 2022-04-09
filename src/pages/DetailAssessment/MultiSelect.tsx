@@ -3,7 +3,7 @@ import { makeStyles, MenuItem, TextField, Typography, useMediaQuery, useTheme } 
 import { Autocomplete } from "@material-ui/lab";
 import React, { ChangeEvent, useState } from "react";
 import { d } from "../../locale/LocaleManager";
-import { SubDimensionOptions } from "./type";
+import { MainDimensionOptions, SubDimensionOptions } from "./type";
 const useStyles = makeStyles(({ palette, breakpoints }) => ({
   lps_title: {
     fontWeight: "bolder",
@@ -19,26 +19,23 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 export enum Dimension {
   student = "student",
   material = "material",
+  all = "all",
+  submitted = "submitted",
+  notSubmitted = "notSubmitted",
 }
 export interface MultiSelectProps {
   assessment_type: AssessmentTypeValues;
   dimension: Dimension;
+  mainDimension: MainDimensionOptions[];
   subDimension: SubDimensionOptions[];
   onChangeDimension: (value: Dimension) => void;
   onChangeSubdimension: (value: SubDimensionOptions[]) => void;
 }
 export function MultiSelect(props: MultiSelectProps) {
-  const { assessment_type, dimension, subDimension, onChangeDimension, onChangeSubdimension } = props;
-  const ViewDimension = () => {
-    return [
-      { label: d("View by Students").t("assess_detail_view_by_students"), value: Dimension.student },
-      { label: d("View by Lesson Material").t("assess_detail_view_by_lesson_material"), value: Dimension.material },
-    ];
-  };
+  const { assessment_type, dimension, mainDimension, subDimension, onChangeDimension, onChangeSubdimension } = props;
   const initOption = [{ id: "all", name: d("Select All").t("schedule_detail_select_all") }];
   const isReview = assessment_type === AssessmentTypeValues.review;
   const [subValue, setSubValue] = useState(initOption);
-  const list = ViewDimension();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChangeDimension(e.target.value as Dimension);
     setSubValue(initOption);
@@ -82,7 +79,7 @@ export function MultiSelect(props: MultiSelectProps) {
             select
             SelectProps={{ MenuProps: { transformOrigin: { vertical: -40, horizontal: "left" } } }}
           >
-            {list.map((item) => (
+            {mainDimension.map((item) => (
               <MenuItem key={item.label} value={item.value}>
                 {item.label}
               </MenuItem>

@@ -23,7 +23,7 @@ import { d } from "../../locale/LocaleManager";
 import { EditScore } from "./EditScore";
 import { Dimension } from "./MultiSelect";
 import { ResourceView, showAudioRecorder, useResourceView } from "./ResourceView";
-import { FileTypes, OutcomeStatus, StudentParticipate, StudentViewItemsProps, SubDimensionOptions } from "./type";
+import { FileTypes, OutcomeStatus, ResourceViewTypeValues, StudentParticipate, StudentViewItemsProps, SubDimensionOptions } from "./type";
 const useStyles = makeStyles({
   tableBar: {
     display: "flex",
@@ -100,7 +100,7 @@ export function StudentView(props: StudentViewProps) {
   const { studentViewItems, editable, subDimension, roomId, assessment_type, is_anyone_attempted, onChangeComputedStudentViewItems } = props;
   const isReview = assessment_type === AssessmentTypeValues.review;
   const { resourceViewActive, openResourceView, closeResourceView } = useResourceView();
-  const [resourceType, setResourceType] = useState<string>("");
+  const [resourceType, setResourceType] = useState<ResourceViewTypeValues>(ResourceViewTypeValues.essay);
   const [answer, setAnswer] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [studentId, setStudentId] = useState<string | undefined>("");
@@ -196,12 +196,12 @@ export function StudentView(props: StudentViewProps) {
   };
   const handleClickView = (answer: string) => {
     openResourceView();
-    setResourceType("Essay");
+    setResourceType(ResourceViewTypeValues.essay);
     setAnswer(answer);
   };
   const handleClickAudioRecorder = (roomId?: string, h5pId?: string, h5pSubId?: string, userId?: string, content_subtype?: string) => {
     openResourceView();
-    setResourceType(content_subtype as string);
+    setResourceType(content_subtype as ResourceViewTypeValues);
     setRoom(roomId);
     setH5pId(h5pId);
     setUserId(userId);
@@ -231,12 +231,12 @@ export function StudentView(props: StudentViewProps) {
   };
   const handleClickViewStudentComment = (comment: string) => {
     openResourceView();
-    setResourceType("ViewComment");
+    setResourceType(ResourceViewTypeValues.viewComment);
     setComment(comment);
   };
   const handleOpenAddStudentComment = (comment: string, sId?: string) => {
     openResourceView();
-    setResourceType("EditComment");
+    setResourceType(ResourceViewTypeValues.editComment);
     setComment(comment);
     setStudentId(sId);
   };

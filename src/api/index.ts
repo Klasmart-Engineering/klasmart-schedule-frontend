@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
+import { ApolloClient, ApolloLink, createHttpLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
 import { ErrorResponse, onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchIntercept from "fetch-intercept";
@@ -110,5 +110,14 @@ const retryLink = new RetryLink({
 const httpLink = new HttpLink({ uri: `${process.env.REACT_APP_KO_BASE_API}/user/`, credentials: "include" });
 export const gqlapi = new ApolloClient({
   link: ApolloLink.from([errorLink, retryLink, httpLink]),
+  cache: new InMemoryCache(),
+});
+
+const link = createHttpLink({
+  uri: `${process.env.REACT_APP_KO_BASE_API}/audio-storage/graphql`,
+  credentials: "include",
+});
+export const audioClient = new ApolloClient({
+  link,
   cache: new InMemoryCache(),
 });
