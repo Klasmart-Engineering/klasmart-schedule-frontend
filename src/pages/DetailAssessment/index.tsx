@@ -43,7 +43,7 @@ const useQuery = () => {
 export function DetailAssessment() {
   const dispatch = useDispatch<AppDispatch>();
   const history = useHistory();
-  const { assessmentDetailV2, my_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
+  const { assessmentDetailV2, my_id, attachment_id } = useSelector<RootState, RootState["assessments"]>((state) => state.assessments);
   const { assessment_type, editindex, id } = useQuery();
   const isStudy = assessment_type === AssessmentTypeValues.study;
   const isClass = assessment_type === AssessmentTypeValues.class;
@@ -458,6 +458,7 @@ export function DetailAssessment() {
             <Homefun 
               editable={editable}
               dimension={dimension} 
+              attachment_id={attachment_id}
               subDimension={selectedSubdimension ? selectedSubdimension : initSubDimension || []}
               students={computedStudentViewItems ? computedStudentViewItems : initStudentViewItems}
               onChangeHomefunStudent={handleChangeHomefunStudnet}

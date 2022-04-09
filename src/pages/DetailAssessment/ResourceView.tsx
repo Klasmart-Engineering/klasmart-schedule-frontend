@@ -250,18 +250,26 @@ export interface DrawingFeedbackProps {
   open: boolean;
   attachment?: DetailAssessmentResultAssignment;
   studentId?: string;
+  attachmentId?: string;
   onClose: () => any;
   onOpenSelectImage?: (studentId?: string, hasSaved?: boolean) => void;
   onSaveDrawFeedback?: (studentId?: string, imgObj?: string) => void;
 }
 export function DrawingFeedback(props: DrawingFeedbackProps) {
   const css = useStyles();
-  const { open, attachment, studentId, onClose, onOpenSelectImage, onSaveDrawFeedback } = props;
+  const { open, attachment, studentId, attachmentId, onClose, onOpenSelectImage, onSaveDrawFeedback } = props;
   const sketchRef = useRef<any>(null);
   const [hasTraces, setHasTraces] = useState<boolean>(false);
   const [hasSaved, setHasSaved] = useState<boolean>(false);
   const pictureUrl = apiResourcePathById(attachment?.review_attachment_id ? attachment.review_attachment_id : attachment?.attachment_id);
   const pictureInitUrl = apiResourcePathById(attachment?.attachment_id);
+  const newPictrueUrl = useMemo(() => {
+    if(hasSaved) {
+      return apiResourcePathById(attachmentId)
+    } else {
+      return pictureUrl
+    }
+  }, [attachmentId, hasSaved, pictureUrl])
   const handleClickSelectImage = () => {
     onOpenSelectImage && onOpenSelectImage(studentId, hasTraces)
   }
@@ -299,7 +307,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
         ref={sketchRef} 
         width={912} 
         height={400} 
-        pictureUrl={pictureUrl}
+        pictureUrl={newPictrueUrl}
         pictureInitUrl={pictureInitUrl}
         onChange={handleChangePic}
       />
