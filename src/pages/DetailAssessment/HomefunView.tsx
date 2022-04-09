@@ -156,7 +156,7 @@ export interface HomefunProps {
 export function Homefun(props: HomefunProps) {
   const css = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { editable, students, subDimension, attachment_id, onChangeHomefunStudent, onSaveDrawFeedback } = props;
+  const { editable, students, subDimension, onChangeHomefunStudent, onSaveDrawFeedback } = props;
   const { resourceViewActive, resourceViewShowIndex, openResourceView, closeResourceView } = useResourceView();
   const { drawingFeedbackActive, openDrawingFeedback, closeDrawingFeedback } = useDrawingFeedback()
   const [studentId, setStudentId] = useState<string | undefined>();
@@ -239,15 +239,23 @@ export function Homefun(props: HomefunProps) {
       const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, cancelText: d("Cancel").t("assess_button_cancel"), confirmText: d("Discard").t("assess_button_discard") })));
       if (!isConfirmed) return Promise.reject();
     }
-      closeDrawingFeedback();
-      openResourceView();
-      setResoutceType(ResourceViewTypeValues.selectImg);
-      setStudentId(sId);
-      setAssignments(assignments);
+    
+    closeDrawingFeedback();
+    openResourceView();
+    setResoutceType(ResourceViewTypeValues.selectImg);
+    setStudentId(sId);
+    const student = students?.find(item => item.student_id === sId);
+    const results = student && student.results;
+    if(results && results.length) {
+      const student_feed_backs = results[0].student_feed_backs;
+      if(student_feed_backs && student_feed_backs.length) {
+        const newassignments = student_feed_backs[0].assignments;
+        setAssignments(newassignments)
+      }
+    }
   }
   const handleOpenDrawingFeedback = (sId?: string, assignment?: DetailAssessmentResultAssignment) => {
     openDrawingFeedback();
-    // setResoutceType(ResourceViewTypeValues.drawFeedback);
     setStudentId(sId);
     setAssignment(assignment);
   }
@@ -317,7 +325,6 @@ export function Homefun(props: HomefunProps) {
       open={drawingFeedbackActive}
       studentId={studentId} 
       attachment={assignment}
-      attachmentId={attachment_id}
       onClose={closeDrawingFeedback}
       onOpenSelectImage={handleOpenSelectImageFromDrawing}
       onSaveDrawFeedback={handleSaveDrawFeedback}
