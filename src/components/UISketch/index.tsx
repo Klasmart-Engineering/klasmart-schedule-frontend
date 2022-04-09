@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, useImperativeHandle } from "react";
+import React, { useRef, forwardRef, useImperativeHandle, useMemo } from "react";
 import { SketchField, Tools } from "react-sketch-master";
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -63,10 +63,17 @@ const useStyles = makeStyles(({ shadows }) => ({
     borderRadius: "10px",
   },
 }));
+
+export interface SketchChangeProps {
+  isTraces: boolean;
+}
+
 export interface UiSketchProps {
   width: number;
   height: number;
   pictureUrl?: string;
+  pictureInitUrl?: string;
+  onChange?: (value: SketchChangeProps) => void;
 }
 
 const Operations: {
@@ -86,7 +93,7 @@ function valuetext(value: number) {
 }
 
 export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) => {
-  const { width, height, pictureUrl } = props;
+  const { width, height, pictureUrl, pictureInitUrl, onChange } = props;
   const css = useStyles();
   const sketchRef = useRef<any>(null);
   const [color, setColor] = React.useState<string>("#E60313");
@@ -94,12 +101,26 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   const [tool, setTool] = React.useState<string>(Tools.Pencil);
   const [currentOperation, setCurrentOperation] = React.useState<string>(Operations.Pencil);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [traces, setTraces] = React.useState<{ undo: boolean; redo: boolean }>({ undo: false, redo: false });
   const [text, SetText] = React.useState<string>("");
   const fieldItemColor = ["#E60313", "#F5A101", "#FED900", "#3DB135", "#02FCFC", "#0068B7", "#A6569D", "#A6368D", "#9F4500", "#000000"];
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
+
+  const getCanvasWidth = useMemo(() => {
+    const img = new Image();
+    img.src = pictureUrl as string;
+    let widthImg = 0;
+    return (img.onload = () => {
+      const coefficient = height / img.height;
+      widthImg = img.width * coefficient;
+      return widthImg;
+    });
+  }, [pictureUrl, height]);
+
+  const canvasWidth = getCanvasWidth();
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popper" : undefined;
@@ -112,8 +133,8 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   }));
 
   React.useEffect(() => {
-    if (pictureUrl) chooseImage(pictureUrl);
-  }, [pictureUrl]);
+    if (pictureUrl && canvasWidth) chooseImage(pictureUrl);
+  }, [pictureUrl, canvasWidth]);
 
   const dataURLtoObject = (imageName: string, type: "obj" | "blob") => {
     const base64Data = sketchRef.current.toDataURL();
@@ -136,12 +157,14 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   };
 
   const chooseImage = (url: string) => {
-    sketchRef.current.addImg(url);
+    sketchRef.current.setBackgroundFromDataUrl(url + `?timestamp= ${Date.now()}`, {
+      stretchedY: true,
+    });
   };
 
-  const isTraces = () => {
-    return sketchRef.current.canUndo();
-  };
+  const isTraces = useMemo(() => {
+    return traces.undo;
+  }, [traces]);
 
   const fieldItem = () => {
     return (
@@ -173,8 +196,19 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
     setTool(tool);
   };
   return (
-    <Box>
-      <SketchField ref={sketchRef} lineColor={color} tool={tool} width={width} height={height} lineWidth={lineWidth} />
+    <Box style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <SketchField
+        ref={sketchRef}
+        onChange={() => {
+          onChange && traces.undo !== sketchRef.current.canUndo() && onChange({ isTraces: sketchRef.current.canUndo() });
+          setTraces({ undo: sketchRef.current.canUndo(), redo: sketchRef.current.canRedo() });
+        }}
+        lineColor={color}
+        tool={tool}
+        width={canvasWidth ? canvasWidth : width}
+        height={height}
+        lineWidth={lineWidth}
+      />
       <div className={css.toolsBar} style={{ width: width }}>
         {fieldItem()}
         <Divider orientation="vertical" flexItem />
@@ -265,16 +299,18 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
 
         <Tooltip title="Undo">
           <UndoIcon
+            style={{ color: traces.undo ? "black" : "darkgray" }}
             onClick={() => {
-              sketchRef.current.undo();
+              if (sketchRef.current.canUndo()) sketchRef.current.undo();
             }}
           />
         </Tooltip>
 
         <Tooltip title="Redo">
           <RedoIcon
+            style={{ color: traces.redo ? "black" : "darkgray" }}
             onClick={() => {
-              sketchRef.current.redo();
+              if (sketchRef.current.canRedo()) sketchRef.current.redo();
             }}
           />
         </Tooltip>
@@ -282,7 +318,10 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
         <Tooltip title="Clean">
           <DeleteIcon
             onClick={() => {
+              setTraces({ undo: false, redo: false });
               sketchRef.current.clear();
+              onChange && onChange({ isTraces: false });
+              chooseImage((pictureInitUrl ?? pictureUrl) as string);
             }}
           />
         </Tooltip>
