@@ -268,7 +268,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
   const mobile = useMediaQuery(breakpoints.down(900));
 
   const handleClickSelectImage = () => {
-    onOpenSelectImage && onOpenSelectImage(studentId, hasTraces)
+    onOpenSelectImage && onOpenSelectImage(studentId, hasSaved ? false : hasTraces)
   }
 
   const handleClickSave = () => {
