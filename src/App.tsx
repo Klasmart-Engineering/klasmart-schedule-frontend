@@ -10,7 +10,6 @@ import { Loading } from "./components/Loading";
 import { Locale } from "./components/Locale";
 import { Notification } from "./components/Notification";
 import { AssessmentDetail } from "./pages/AssesmentDetail";
-import { AssessmentList } from "./pages/AssesmentList";
 import { AssessmentsEdit } from "./pages/AssessmentEdit";
 import ContentEdit from "./pages/ContentEdit/index";
 import ContentPreview from "./pages/ContentPreview";
@@ -71,9 +70,6 @@ function App() {
                   </Route>
                   <Route path={OutcomeList.routeBasePath}>
                     <OutcomeList />
-                  </Route>
-                  <Route path={AssessmentList.routeBasePath}>
-                    <AssessmentList />
                   </Route>
                   <Route path={HomeFunAssessmentList.routeBasePath}>
                     <HomeFunAssessmentList />

@@ -156,7 +156,7 @@ export interface HomefunProps {
 export function Homefun(props: HomefunProps) {
   const css = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { editable, students, subDimension, onChangeHomefunStudent, onSaveDrawFeedback } = props;
+  const { editable, students, subDimension, attachment_id, onChangeHomefunStudent, onSaveDrawFeedback } = props;
   const { resourceViewActive, resourceViewShowIndex, openResourceView, closeResourceView } = useResourceView();
   const { drawingFeedbackActive, openDrawingFeedback, closeDrawingFeedback } = useDrawingFeedback()
   const [studentId, setStudentId] = useState<string | undefined>();
@@ -224,7 +224,7 @@ export function Homefun(props: HomefunProps) {
         }
       }
     });
-    onChangeHomefunStudent(newStudents)
+    onChangeHomefunStudent(newStudents);
   }
   const handleOpenSelectImg = (sId?: string, assignments?: DetailAssessmentResultFeedback["assignments"]) => {
     openResourceView();
@@ -317,6 +317,7 @@ export function Homefun(props: HomefunProps) {
       open={drawingFeedbackActive}
       studentId={studentId} 
       attachment={assignment}
+      attachmentId={attachment_id}
       onClose={closeDrawingFeedback}
       onOpenSelectImage={handleOpenSelectImageFromDrawing}
       onSaveDrawFeedback={handleSaveDrawFeedback}
