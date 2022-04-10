@@ -1,10 +1,11 @@
+import { enableNewGql } from "@api/extra";
 import { uniq } from "lodash";
 import React from "react";
 import { useDispatch } from "react-redux";
 import LayoutBox from "../../components/LayoutBox";
 import TabPages from "../../components/TabPages";
 import { d, t } from "../../locale/LocaleManager";
-import { getStudentSubjectsByOrg } from "../../reducers/report";
+import { getStudentSubjectsByOrg, getStudentSubjectsByOrgNew } from "../../reducers/report";
 import { ReportTitle } from "../ReportDashboard";
 import StudentSubjectFilter from "./components/StudentSubjectFilter";
 import { AssignmentCompletion, ClassAttendance, LearningOutcomesAchievement } from "./Tabs";
@@ -52,11 +53,11 @@ export default function ReportStudentProgress() {
     },
   ];
   React.useEffect(() => {
-    dispatch(
-      getStudentSubjectsByOrg({
-        metaLoading: true,
-      })
-    );
+    if (enableNewGql) {
+      dispatch(getStudentSubjectsByOrgNew({ metaLoading: true }));
+    } else {
+      dispatch(getStudentSubjectsByOrg({ metaLoading: true }));
+    }
   }, [dispatch]);
   return (
     <>

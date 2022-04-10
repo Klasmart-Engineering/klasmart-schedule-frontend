@@ -14,12 +14,18 @@ import {
   ClassesListDocument,
   ClassesListQuery,
   ClassesListQueryVariables,
+  ClassesStudentsConnectionDocument,
+  ClassesStudentsConnectionQuery,
+  ClassesStudentsConnectionQueryVariables,
   ClassesTeachersConnectionDocument,
   ClassesTeachersConnectionQuery,
   ClassesTeachersConnectionQueryVariables,
   ClassNodeDocument,
   ClassNodeQuery,
   ClassNodeQueryVariables,
+  ClassNodeStudentsDocument,
+  ClassNodeStudentsQuery,
+  ClassNodeStudentsQueryVariables,
   GetClassesTeachingDocument,
   GetClassesTeachingQuery,
   GetClassesTeachingQueryVariables,
@@ -519,14 +525,23 @@ export interface IClassTeachers {
   teachers?: ITeacher[];
   schools?: ISchool[];
 }
+export interface IClassStudents {
+  class_id: string;
+  class_name: string;
+  students?: IStudent[];
+  schools?: ISchool[];
+}
+
 interface ISchool {
   school_id: string;
   school_name: string;
 }
-interface ITeacher {
+interface IUser {
   user_id: string;
   user_name?: string;
 }
+type ITeacher = IUser;
+type IStudent = IUser;
 
 export const recursiveGetClassTeachers = async (
   variables: ClassesTeachersConnectionQueryVariables,
@@ -697,6 +712,75 @@ export const recursiveGetClasses = async (variables: ClassesBySchoolIdQueryVaria
   } else {
     return new Promise((resolve) => {
       resolve(classes);
+    });
+  }
+};
+export const recursiveGetClassStudents = async (
+  variables: ClassesStudentsConnectionQueryVariables,
+  arr: IClassStudents[]
+): Promise<IClassStudents[]> => {
+  let classes: IClassStudents[] = [...arr];
+
+  const {
+    data: { classesConnection },
+  } = await gqlapi.query<ClassesStudentsConnectionQuery, ClassesStudentsConnectionQueryVariables>({
+    query: ClassesStudentsConnectionDocument,
+    variables: { ...variables },
+  });
+
+  let classstudents: IClassStudents[] = [];
+  for (const index in classesConnection?.edges) {
+    const i = Number(index);
+    let students: IStudent[] = [];
+    const haveNextPage = classesConnection?.edges[i]?.node?.studentsConnection?.pageInfo?.hasNextPage;
+    const studentCursor = classesConnection?.edges[i]?.node?.studentsConnection?.pageInfo?.endCursor || "";
+    let studentNodeEdgs = classesConnection?.edges[i]?.node?.studentsConnection?.edges || [];
+    const id = classesConnection?.edges[i]?.node?.id;
+    const name = classesConnection?.edges[i]?.node?.name;
+    if (haveNextPage && id) {
+      studentNodeEdgs = await recursiveGetClassNodeStudents(id, studentCursor, [...studentNodeEdgs]);
+    }
+    studentNodeEdgs?.forEach((studentNode: any) => {
+      const student: IStudent = {
+        user_id: studentNode?.node?.id + "",
+        user_name: studentNode?.node?.givenName + " " + studentNode?.node?.familyName,
+      };
+      students = students.concat([student]);
+    });
+    classstudents = classstudents.concat([{ class_id: id ?? "", class_name: name ?? "", students }]);
+  }
+  classes = [...classes, ...classstudents];
+
+  if (classesConnection?.pageInfo?.hasNextPage) {
+    const cursor = classesConnection?.pageInfo?.endCursor as string;
+    return recursiveGetClassStudents({ ...variables, cursor }, [...classes]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(classes);
+    });
+  }
+};
+
+export const recursiveGetClassNodeStudents = async (
+  id: string,
+  studentsCursor: string,
+  arr: NonNullable<UsersConnectionResponse["edges"]>
+): Promise<NonNullable<UsersConnectionResponse["edges"]>> => {
+  let studentNodeEdgs: NonNullable<UsersConnectionResponse["edges"]> = [...arr];
+  const {
+    data: { classNode },
+  } = await gqlapi.query<ClassNodeStudentsQuery, ClassNodeStudentsQueryVariables>({
+    query: ClassNodeStudentsDocument,
+    variables: { classId: id, studentsCursor },
+  });
+  studentNodeEdgs = studentNodeEdgs.concat(classNode?.studentsConnection?.edges || []);
+
+  if (classNode?.studentsConnection?.pageInfo?.hasNextPage) {
+    studentsCursor = classNode?.studentsConnection?.pageInfo?.endCursor as string;
+    return recursiveGetClassNodeStudents(id, studentsCursor, [...studentNodeEdgs]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(studentNodeEdgs);
     });
   }
 };

@@ -1,7 +1,7 @@
+import * as Apollo from "@apollo/client";
+import { gql } from "@apollo/client";
 import * as Types from "./api-ko-schema.auto";
 
-import { gql } from "@apollo/client";
-import * as Apollo from "@apollo/client";
 const defaultOptions = {};
 export type ClassesByOrganizationQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["ID"];
@@ -693,6 +693,92 @@ export type ClassNodeQuery = { __typename?: "Query" } & {
   classNode?: Types.Maybe<
     { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "name"> & {
         teachersConnection?: Types.Maybe<
+          { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
+              edges?: Types.Maybe<
+                Array<
+                  Types.Maybe<
+                    { __typename?: "UsersConnectionEdge" } & {
+                      node?: Types.Maybe<
+                        { __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "familyName" | "givenName" | "status">
+                      >;
+                    }
+                  >
+                >
+              >;
+              pageInfo?: Types.Maybe<
+                { __typename?: "ConnectionPageInfo" } & Pick<
+                  Types.ConnectionPageInfo,
+                  "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+                >
+              >;
+            }
+        >;
+      }
+  >;
+};
+export type ClassesStudentsConnectionQueryVariables = Types.Exact<{
+  cursor?: Types.Maybe<Types.Scalars["String"]>;
+  filter?: Types.Maybe<Types.ClassFilter>;
+}>;
+
+export type ClassesStudentsConnectionQuery = { __typename?: "Query" } & {
+  classesConnection?: Types.Maybe<
+    { __typename?: "ClassesConnectionResponse" } & Pick<Types.ClassesConnectionResponse, "totalCount"> & {
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "ClassesConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name"> & {
+                      studentsConnection?: Types.Maybe<
+                        { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
+                            edges?: Types.Maybe<
+                              Array<
+                                Types.Maybe<
+                                  { __typename?: "UsersConnectionEdge" } & Pick<Types.UsersConnectionEdge, "cursor"> & {
+                                      node?: Types.Maybe<
+                                        { __typename?: "UserConnectionNode" } & Pick<
+                                          Types.UserConnectionNode,
+                                          "id" | "givenName" | "familyName" | "status"
+                                        >
+                                      >;
+                                    }
+                                >
+                              >
+                            >;
+                            pageInfo?: Types.Maybe<
+                              { __typename?: "ConnectionPageInfo" } & Pick<
+                                Types.ConnectionPageInfo,
+                                "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+                              >
+                            >;
+                          }
+                      >;
+                    }
+                >;
+              }
+            >
+          >
+        >;
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
+      }
+  >;
+};
+
+export type ClassNodeStudentsQueryVariables = Types.Exact<{
+  classId: Types.Scalars["ID"];
+  studentsCursor?: Types.Maybe<Types.Scalars["String"]>;
+}>;
+
+export type ClassNodeStudentsQuery = { __typename?: "Query" } & {
+  classNode?: Types.Maybe<
+    { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "name"> & {
+        studentsConnection?: Types.Maybe<
           { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
               edges?: Types.Maybe<
                 Array<
@@ -2080,6 +2166,67 @@ export type ClassesTeachersConnectionQueryResult = Apollo.QueryResult<
   ClassesTeachersConnectionQuery,
   ClassesTeachersConnectionQueryVariables
 >;
+export const ClassesStudentsConnectionDocument = gql`
+  query classesStudentsConnection($cursor: String, $filter: ClassFilter) {
+    classesConnection(filter: $filter, directionArgs: { cursor: $cursor }, direction: FORWARD, sort: { order: ASC, field: name }) {
+      totalCount
+      edges {
+        node {
+          id
+          name
+          studentsConnection(direction: FORWARD) {
+            totalCount
+            edges {
+              cursor
+              node {
+                id
+                givenName
+                familyName
+                status
+              }
+            }
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+              startCursor
+              endCursor
+            }
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
+export const ClassNodeStudentsDocument = gql`
+  query classNode($classId: ID!, $studentsCursor: String) {
+    classNode(id: $classId) {
+      name
+      studentsConnection(cursor: $studentsCursor) {
+        totalCount
+        edges {
+          node {
+            id
+            familyName
+            givenName
+            status
+          }
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+      }
+    }
+  }
+`;
 export const ClassNodeDocument = gql`
   query classNode($classId: ID!, $teacherCursor: String) {
     classNode(id: $classId) {
