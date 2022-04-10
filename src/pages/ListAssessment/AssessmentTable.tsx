@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) =>
 
 interface AssessmentProps {
   assessment: AssessmentListResult[0];
-  onClickAssessment: AssessmentTableprops["onClickAssessment"];
+  onClickAssessment: AssessmentTableProps["onClickAssessment"];
   assessmentType: AssessmentQueryCondition["assessment_type"];
 }
 function AssessmentRow(props: AssessmentProps) {
@@ -108,14 +108,14 @@ function AssessmentRow(props: AssessmentProps) {
   );
 }
 
-interface AssessmentTableprops {
+export interface AssessmentTableProps {
   total: number;
   list: AssessmentListResult;
   queryCondition: AssessmentQueryCondition;
   onChangePage: (page: number) => void;
   onClickAssessment: (id: string | undefined) => any;
 }
-export function AssessmentTable(props: AssessmentTableprops) {
+export function AssessmentTable(props: AssessmentTableProps) {
   const css = useStyles();
   const {
     queryCondition: { assessment_type, page },

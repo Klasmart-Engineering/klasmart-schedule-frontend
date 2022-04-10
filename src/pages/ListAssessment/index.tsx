@@ -1,3 +1,4 @@
+import { DetailAssessment } from "@pages/DetailAssessment";
 import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,9 +11,7 @@ import { emptyTip, permissionTip } from "../../components/TipImages";
 import { usePermission } from "../../hooks/usePermission";
 import { AppDispatch, RootState } from "../../reducers";
 import { getAssessmentListV2 } from "../../reducers/assessments";
-import { AssessmentTableProps } from "../AssesmentList/AssessmentTable";
-import { DetailAssessment } from "../DetailAssessment";
-import { AssessmentTable } from "./AssessmentTable";
+import { AssessmentTable, AssessmentTableProps } from "./AssessmentTable";
 import { SecondSearchHeader, SecondSearchHeaderProps } from "./SecondSearchHeader";
 import { ThirdSearchHeader, ThirdSearchHeaderMb } from "./ThirdSearchHeader";
 import { AssessmentQueryCondition, SearchListForm } from "./types";
@@ -65,23 +64,14 @@ export function ListAssessment() {
   const history = useHistory();
   const dispatch = useDispatch<AppDispatch>();
   const handleChange: SecondSearchHeaderProps["onChange"] = (value) => {
-    if (value.assessment_type === AssessmentTypeValues.homeFun) {
-    } else {
-      history.push({ search: toQueryString(value) });
-    }
+    history.push({ search: toQueryString(value) });
   };
   const handleChangeAssessmentType: SecondSearchHeaderProps["onChangeAssessmentType"] = (assessment_type) => {
-    // if (assessment_type === AssessmentTypeValues.homeFun) {
-    //   history.push(
-    //     `/assessments/homefunlist?assessment_type=${AssessmentTypeValues.homeFun}order_by=${HomeFunAssessmentOrderBy._submit_at}&status=${HomeFunAssessmentStatus.all}&page=1`
-    //   );
-    // } else {
-      reset();
-      history.push(`/assessments/assessment-list?assessment_type=${assessment_type}&status=${AssessmentStatus.all}&page=1`);
-    // }
+    reset();
+    history.push(`/assessments/assessment-list?assessment_type=${assessment_type}&status=${AssessmentStatus.all}&page=1`);
   };
-  const handleChangePage: AssessmentTableProps["onChangePage"] = (page) => history.push({ search: toQueryString({ ...condition, page }) });
-  const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id) => {
+  const handleChangePage: AssessmentTableProps["onChangePage"] = (page?: number) => history.push({ search: toQueryString({ ...condition, page }) });
+  const handleClickAssessment: AssessmentTableProps["onClickAssessment"] = (id?: string) => {
     history.push({ pathname: DetailAssessment.routeBasePath, search: toQueryString({ id, assessment_type: condition.assessment_type }) });
   };
   useEffect(() => {
