@@ -63,6 +63,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     position: "absolute",
     right: 0,
     bottom: "80px",
+    background: "white",
   },
 }));
 
@@ -158,7 +159,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
 
   React.useEffect(() => {
     if (pictureUrl && height) {
-      getImageDimension(pictureUrl + `?timestamp= ${Date.now()}`, height).then((value) => {
+      getImageDimension(pictureUrl, height).then((value) => {
         setWidthImg(value.widthImg);
         chooseImage(value.bases64);
       });
@@ -222,7 +223,9 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   const handleChangeSetLineWidth = (event: any, value: number | number[]) => {
     setLineWidth(value);
     setTool(Tools.DefaultTool);
-    setTool(tool);
+    setTimeout(() => {
+      setTool(tool);
+    });
   };
   return (
     <Box style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -353,7 +356,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
               setTraces({ undo: false, redo: false });
               sketchRef.current.clear();
               onChange && onChange({ isTraces: false });
-              getImageDimension(((pictureInitUrl ?? pictureUrl) as string) + `?timestamp= ${Date.now()}`, height).then((value) => {
+              getImageDimension((pictureInitUrl ?? pictureUrl) as string, height).then((value) => {
                 setWidthImg(value.widthImg);
                 chooseImage(value.bases64);
               });
