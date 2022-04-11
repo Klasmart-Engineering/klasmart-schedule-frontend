@@ -11,6 +11,7 @@ import { DetailAssessmentResultAssignment, DetailAssessmentResultFeedback } from
 import { actAsyncConfirm } from "@reducers/confirm";
 import { AppDispatch } from "@reducers/index";
 import { unwrapResult } from "@reduxjs/toolkit";
+import clsx from "clsx";
 import { cloneDeep } from "lodash";
 import { createElement, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -83,6 +84,7 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
     fontSize: 16,
     fontFamily: "Helvetica",
+    alignItems: "center"
   },
   scoreInput: {
     marginTop: 30,
@@ -142,6 +144,9 @@ const useStyles = makeStyles({
   },
   svgicon: {
     marginRight: "5px",
+  },
+  imgName: {
+    wordBreak: "break-all"
   }
 });
 export interface HomefunProps {
@@ -157,9 +162,8 @@ export function Homefun(props: HomefunProps) {
   const css = useStyles();
   const dispatch = useDispatch<AppDispatch>();
   const { editable, students, subDimension, onChangeHomefunStudent, onSaveDrawFeedback } = props;
-  console.log(students)
   const { resourceViewActive, resourceViewShowIndex, openResourceView, closeResourceView } = useResourceView();
-  const { drawingFeedbackActive, openDrawingFeedback, closeDrawingFeedback } = useDrawingFeedback()
+  const { drawingFeedbackActive, drawingFeedbackIndex, openDrawingFeedback, closeDrawingFeedback } = useDrawingFeedback()
   const [studentId, setStudentId] = useState<string | undefined>();
   const [score, setScore] = useState<StudenmtViewItemResultProps["assess_score"]>();
   const [comment, setComment] = useState<string | undefined>();
@@ -167,6 +171,7 @@ export function Homefun(props: HomefunProps) {
   const [assignments, setAssignments] = useState<DetailAssessmentResultFeedback["assignments"]>();
   const [assignment, setAssignment] = useState<DetailAssessmentResultAssignment>();
   const [hasSaved, setHasSaved] = useState<boolean>(true);
+  const [dialogType, setDialogType] = useState<string>("edit");
   const subDimensionIds = useMemo(() => {
     return subDimension.length ? subDimension.map((item) => item.id) : [];
   }, [subDimension]);
@@ -177,7 +182,11 @@ export function Homefun(props: HomefunProps) {
   const isSelectAll = subDimension.findIndex((item) => item.id === "all") >= 0 ? true : false;
   const toggleCheck = (index: number) => {
     const arr = cloneDeep(checkedArr);
-    arr[index] = !checkedArr[index];
+    if(arr[index] === undefined) {
+      arr[index] = false
+    } else {
+      arr[index] = !checkedArr[index];
+    }
     setCheckedArr([...arr]);
   };
   const handleOpenEditScore = (sId?: string, score?: StudenmtViewItemResultProps["assess_score"]) => {
@@ -197,9 +206,15 @@ export function Homefun(props: HomefunProps) {
     });
     onChangeHomefunStudent(newStudents)
   }
-  const handleOpenWringFeedback = (sId?: string, comment?: string) => {
+  const handleOpenWritingFeedback = (sId?: string, comment?: string) => {
     openResourceView();
     setResoutceType(ResourceViewTypeValues.editComment);
+    setStudentId(sId);
+    setComment(comment);
+  }
+  const handleOpenViewWritingFeedback = (sId?: string, comment?: string) => {
+    openResourceView();
+    setResoutceType(ResourceViewTypeValues.viewWritingFeedback);
     setStudentId(sId);
     setComment(comment);
   }
@@ -227,20 +242,19 @@ export function Homefun(props: HomefunProps) {
     });
     onChangeHomefunStudent(newStudents);
   }
-  const handleOpenSelectImg = (sId?: string, assignments?: DetailAssessmentResultFeedback["assignments"]) => {
+  const handleOpenSelectImg = (type: string, sId?: string, assignments?: DetailAssessmentResultFeedback["assignments"]) => {
     openResourceView();
     setResoutceType(ResourceViewTypeValues.selectImg);
     setStudentId(sId);
     setAssignments(assignments);
+    setDialogType(type)
   }
   const handleOpenSelectImageFromDrawing = async (sId?: string, hasTraces?: boolean) => {
     if(hasTraces) {
-      // setHasSaved(false);
       const content = d("Discard unsaved changes?").t("assess_msg_discard");
       const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, cancelText: d("Cancel").t("assess_button_cancel"), confirmText: d("Discard").t("assess_button_discard") })));
       if (!isConfirmed) return Promise.reject();
-    }
-    
+    } 
     closeDrawingFeedback();
     openResourceView();
     setResoutceType(ResourceViewTypeValues.selectImg);
@@ -255,10 +269,11 @@ export function Homefun(props: HomefunProps) {
       }
     }
   }
-  const handleOpenDrawingFeedback = (sId?: string, assignment?: DetailAssessmentResultAssignment) => {
+  const handleOpenDrawingFeedback = (dialogType: string, sId?: string, assignment?: DetailAssessmentResultAssignment) => {
     openDrawingFeedback();
     setStudentId(sId);
     setAssignment(assignment);
+    setDialogType(dialogType);
   }
   const handleSaveDrawFeedback = (sId?: string, imgObj?: any) => {
     setHasSaved(true);
@@ -271,6 +286,7 @@ export function Homefun(props: HomefunProps) {
       if (!isConfirmed) return Promise.reject();
     }
     closeDrawingFeedback();
+    handleOpenSelectImg("edit", studentId, assignments)
   }
   return (
     <>
@@ -285,7 +301,7 @@ export function Homefun(props: HomefunProps) {
             }
             <span style={{ padding: "0 18px 0 18px" }}>{sItem.student_name}</span>
           </div>
-          {checkedArr[index] ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+          {checkedArr[index] === undefined ? <ArrowDropUpIcon /> : checkedArr[index] ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
         </Box>
         <Collapse in={checkedArr[index] === undefined ? true : checkedArr[index]}>
           <Outcomes 
@@ -303,8 +319,9 @@ export function Homefun(props: HomefunProps) {
             assess_score={sItem.results && sItem?.results[0]?.assess_score}
             studentId={sItem.student_id}
             onOpenEditScore={handleOpenEditScore}
-            onOpenWritingFeedback={handleOpenWringFeedback}
+            onOpenWritingFeedback={handleOpenWritingFeedback}
             onOpenSelectImg={handleOpenSelectImg}
+            onOpenViewWritingFeedback={handleOpenViewWritingFeedback}
           />
           <AssessmentTable 
             editable={editable}
@@ -325,15 +342,18 @@ export function Homefun(props: HomefunProps) {
       comment={comment}
       assignments={assignments}
       hasSaved={hasSaved}
+      dialogType={dialogType}
       onChangeScore={handleChangeScore}
       onClose={closeResourceView}
       onChangeComment={handleChangeComment}
       onOpenDrawFeedback={handleOpenDrawingFeedback}
     />
     <DrawingFeedback 
+      key={drawingFeedbackIndex}
       open={drawingFeedbackActive}
       studentId={studentId} 
       attachment={assignment}
+      dialogType={dialogType}
       onClose={closeDrawingFeedback}
       onOpenSelectImage={handleOpenSelectImageFromDrawing}
       onSaveDrawFeedback={handleSaveDrawFeedback}
@@ -447,10 +467,23 @@ export interface AssessmentProps {
   studentReviewerComment?: string;
   onOpenEditScore?: (id?: string, score?: AssessmentProps["assess_score"]) => void;
   onOpenWritingFeedback?: (id?: string, comment?: string) => void;
-  onOpenSelectImg?: (id?: string, assignments?: DetailAssessmentResultFeedback["assignments"]) => void
+  onOpenSelectImg?: (type: string, id?: string, assignments?: DetailAssessmentResultFeedback["assignments"]) => void;
+  onOpenViewWritingFeedback?: (id?: string, comment?: string) => void;
 }
 export function AssessmentTable(props: AssessmentProps) {
-  const { editable, feedbacks, title, studentName, assess_score, studentId, studentReviewerComment, onOpenEditScore, onOpenWritingFeedback, onOpenSelectImg } = props;
+  const { 
+    editable, 
+    feedbacks, 
+    title, 
+    studentName, 
+    assess_score, 
+    studentId, 
+    studentReviewerComment, 
+    onOpenEditScore, 
+    onOpenWritingFeedback, 
+    onOpenSelectImg, 
+    onOpenViewWritingFeedback,
+   } = props;
   
   const css = useStyles();
   const mapScore = (score: number | undefined) => {
@@ -511,10 +544,8 @@ export function AssessmentTable(props: AssessmentProps) {
           />
         ))}
       </TableCell>
-      <TableCell align="center" className={css.assignmentTableBodyItem}>
-        <Typography align="justify" variant="body1">
-          {comment}
-        </Typography>
+      <TableCell align="center" className={clsx(css.assignmentTableBodyItem, css.tableCellLine)}>
+        {comment}
       </TableCell>
       <TableCell align="center" className={css.assignmentTableBodyItem}>
         {formattedTime(create_at)}
@@ -523,12 +554,22 @@ export function AssessmentTable(props: AssessmentProps) {
         <>
           <TableCell align="center" className={css.assignmentTableBodyItem}>
             {mapScore(assess_score)}
-            <span className={editable ? css.actionWords : css.disableClick} onClick={e => onOpenEditScore && onOpenEditScore(studentId, assess_score)}>({"Click to edit"})</span>
+            <span className={editable ? css.actionWords : css.disableClick} onClick={e => onOpenEditScore && onOpenEditScore(studentId, assess_score)}>({d("Click to Edit").t("assessment_hfs_score_edit")})</span>
           </TableCell>
           <TableCell align="center" className={css.assignmentTableBodyItem}>
-            <p className={editable ? css.actionWords : css.disableClick} onClick={e => onOpenWritingFeedback && onOpenWritingFeedback(studentId, studentReviewerComment)}>{"Writing Feedback"}</p>
-            <p className={editable ? css.actionWords : css.disableClick} onClick={e => onOpenSelectImg && onOpenSelectImg(studentId, assignments)}>{"Drawing Feedback"}</p>
-          </TableCell>
+            {editable 
+            ?
+            <p className={css.actionWords} onClick={e => onOpenWritingFeedback && onOpenWritingFeedback(studentId, studentReviewerComment)}>{d("Writing Feedback").t("assessment_hfs_writing_feedback")}</p>
+            :
+            <p className={css.actionWords} onClick={e => onOpenViewWritingFeedback && onOpenViewWritingFeedback(studentId, studentReviewerComment)}>{d("View Writing Feedback").t("assessment_hfs_view_writing_feedback")}</p>
+            }
+            {editable
+            ?
+            (hasImgType(assignments) && <p className={css.actionWords} onClick={e => onOpenSelectImg && onOpenSelectImg("edit", studentId, assignments)}>{d("Drawing Feedback").t("assessment_hfs_drawing_feedback")}</p>)
+            :
+            (hasImgType(assignments) && <p className={css.actionWords} onClick={e => onOpenSelectImg && onOpenSelectImg("view" ,studentId, assignments)}>{d("View Drawing Feedback").t("assessment_hfs_view_drawing_feedback")}</p>)
+            }
+            </TableCell>
         </>
       }
     </TableRow>
@@ -554,7 +595,7 @@ function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
   const css = useStyles();
   return (
     <div className={css.assignmentDownloadRow}>
-      <span>{name}</span>
+      <span className={css.imgName}>{name}</span>
       <DownloadButton resourceId={resourceId} fileName={downloadName}>
         <IconButton size="small">
           <GetApp fontSize="inherit" />
@@ -605,6 +646,13 @@ function isImageType(name: string | undefined) {
   const ext = name.substr(index + 1);
   const types = ["jpg", "jpeg", "png", "gif", "bmp"];
   return types.indexOf(ext.toLowerCase()) > -1;
+}
+function hasImgType(assignments: DetailAssessmentResultFeedback["assignments"]) {
+  if(assignments) {
+    return assignments.some(item => isImageType(item.attachment_name))
+  } else {
+    return false;
+  }
 }
 export interface ImgSelectProps {
   assignments: DetailAssessmentResultFeedback["assignments"];

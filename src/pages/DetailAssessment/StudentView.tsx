@@ -255,7 +255,11 @@ export function StudentView(props: StudentViewProps) {
   };
   const toggleCheck = (index: number) => {
     const arr = cloneDeep(checkedArr);
-    arr[index] = !checkedArr[index];
+    if(arr[index] === undefined) {
+      arr[index] = false
+    } else {
+      arr[index] = !checkedArr[index];
+    }
     setCheckedArr([...arr]);
   };
   return (
@@ -294,7 +298,7 @@ export function StudentView(props: StudentViewProps) {
                         </span>
                       )}
                     </div>
-                    {checkedArr[index] ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                    {checkedArr[index] === undefined ? <ArrowDropUpIcon /> : checkedArr[index] ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
                   </Box>
                   <Collapse in={checkedArr[index] === undefined ? true : checkedArr[index]}>
                     <TableContainer style={{ maxHeight: 800 }}>
