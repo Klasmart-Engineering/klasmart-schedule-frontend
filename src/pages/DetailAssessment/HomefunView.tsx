@@ -157,6 +157,7 @@ export function Homefun(props: HomefunProps) {
   const css = useStyles();
   const dispatch = useDispatch<AppDispatch>();
   const { editable, students, subDimension, onChangeHomefunStudent, onSaveDrawFeedback } = props;
+  console.log(students)
   const { resourceViewActive, resourceViewShowIndex, openResourceView, closeResourceView } = useResourceView();
   const { drawingFeedbackActive, openDrawingFeedback, closeDrawingFeedback } = useDrawingFeedback()
   const [studentId, setStudentId] = useState<string | undefined>();
@@ -263,6 +264,14 @@ export function Homefun(props: HomefunProps) {
     setHasSaved(true);
     onSaveDrawFeedback( sId, assignment?.id, imgObj);
   }
+  const handleClickExit = async (hasTraces?: boolean) => {
+    if(hasTraces) {
+      const content = d("Discard unsaved changes?").t("assess_msg_discard");
+      const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, cancelText: d("Cancel").t("assess_button_cancel"), confirmText: d("Discard").t("assess_button_discard") })));
+      if (!isConfirmed) return Promise.reject();
+    }
+    closeDrawingFeedback();
+  }
   return (
     <>
     {students?.filter(item => item.status === StudentParticipate.Participate).map((sItem, index) => (
@@ -328,6 +337,7 @@ export function Homefun(props: HomefunProps) {
       onClose={closeDrawingFeedback}
       onOpenSelectImage={handleOpenSelectImageFromDrawing}
       onSaveDrawFeedback={handleSaveDrawFeedback}
+      onClickExit={handleClickExit}
     />
     </>
   )

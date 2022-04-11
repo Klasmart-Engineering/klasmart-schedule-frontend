@@ -454,7 +454,7 @@ export function DetailAssessment() {
       {
         isHomefun && (
           <>
-            <Subtitle text={"Comments && Rating"} />
+            <Subtitle text={"Comments & Ratings"} />
             <Homefun 
               editable={editable}
               dimension={dimension} 
