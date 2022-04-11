@@ -31,7 +31,7 @@ export default function Lessons() {
       setPage(page);
       const class_ids = classes.map((item) => item.value);
       const teacher_id = state.id ? state.id : "";
-      if (!teacher_id) return;
+      if (!teacher_id || class_ids.length === 0) return;
       dispatch(
         getListTeacherMissedLessons({
           metaLoading: true,
@@ -49,7 +49,7 @@ export default function Lessons() {
   React.useEffect(() => {
     const class_ids = classes.map((item) => item.value);
     const teacher_id = state.id ? state.id : "";
-    if (!teacher_id) return;
+    if (!teacher_id || class_ids.length === 0) return;
     setPage(1);
     dispatch(
       getListTeacherMissedLessons({

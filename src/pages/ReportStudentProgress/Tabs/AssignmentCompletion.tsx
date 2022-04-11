@@ -89,16 +89,18 @@ export default function AssignmentCompletion() {
   const handleChange = useMemo(
     () => (value: number) => {
       setDurationTime(value);
-      dispatch(
-        getAssignmentsCompletion({
-          metaLoading: true,
-          class_id: classId,
-          durations: value === 4 ? getFourWeeks() : getLastedMonths(6),
-          selected_subject_id_list: selectedSubjectId,
-          student_id: studentId,
-          un_selected_subject_id_list: unselectedSubjectId,
-        })
-      );
+      if (classId && studentId) {
+        dispatch(
+          getAssignmentsCompletion({
+            metaLoading: true,
+            class_id: classId,
+            durations: value === 4 ? getFourWeeks() : getLastedMonths(6),
+            selected_subject_id_list: selectedSubjectId,
+            student_id: studentId,
+            un_selected_subject_id_list: unselectedSubjectId,
+          })
+        );
+      }
     },
     // eslint-disable-next-line
     [dispatch, classId, selectedSubjectID, studentId]

@@ -135,7 +135,12 @@ export function ReportAchievementList() {
   }, [condition.sort_by, condition.status, dispatch]);
   useEffect(() => {
     if (reportMockOptions.teacherList.length > 0) {
-      if (enableNewGql && perm.report_my_class_achievments_648) {
+      if (
+        enableNewGql &&
+        perm.report_my_class_achievments_648 &&
+        !perm.report_schools_class_achievements_647 &&
+        !perm.report_organizations_class_achievements_646
+      ) {
         setClassList(classes.map((item) => ({ id: item.class_id, name: item.class_name || "" })));
       } else {
         let initClassesList: Item[] = [];
@@ -150,7 +155,14 @@ export function ReportAchievementList() {
         setClassList(initClassesList);
       }
     }
-  }, [classes, condition.teacher_id, reportMockOptions.teacherList, perm.report_my_class_achievments_648]);
+  }, [
+    classes,
+    condition.teacher_id,
+    reportMockOptions.teacherList,
+    perm.report_my_class_achievments_648,
+    perm.report_schools_class_achievements_647,
+    perm.report_organizations_class_achievements_646,
+  ]);
 
   useEffect(() => {
     if (reportMockOptions) {
