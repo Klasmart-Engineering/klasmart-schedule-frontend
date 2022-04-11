@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { FileLike } from "@rpldy/shared";
 import Cookies from "js-cookie";
+import uniq from "lodash/uniq";
 import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
@@ -330,7 +331,7 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
   const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
 
   if (enableNewGql) {
-    const permissionIds = permissions
+    const permissionIds = uniq(permissions)
       .map((item) => {
         return `"${item}"`;
       })
