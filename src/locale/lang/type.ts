@@ -1782,7 +1782,18 @@ type LangRecord =
       description: `Please use another browser (Chrome) for a better experience.`;
       values: undefined;
     }
-  | { id: "assessment_audio_no_data"; description: `Audio data is not successfully stored by student.`; values: undefined };
+  | { id: "assessment_audio_no_data"; description: `Audio data is not successfully stored by student.`; values: undefined }
+  | { id: "assessment_hfs_submitted"; description: `Submitted`; values: undefined }
+  | { id: "assessment_hfs_all"; description: `All`; values: undefined }
+  | { id: "assessment_hfs_not_submitted"; description: `Not Submitted`; values: undefined }
+  | { id: "assessment_hfs_score_edit"; description: `Click to Edit`; values: undefined }
+  | { id: "assessment_hfs_writing_feedback"; description: `Writing Feedback`; values: undefined }
+  | { id: "assessment_hfs_drawing_feedback"; description: `Drawing Feedback`; values: undefined }
+  | { id: "assessment_hfs_comment_rating"; description: `Comments & Ratings`; values: undefined }
+  | { id: "assessment_hfs_select_file"; description: `Select a file to provide feedback`; values: undefined }
+  | { id: "assessmeng_hfs_select_image"; description: `Select Image`; values: undefined }
+  | { id: "schedule_msg_file_not_ready_to_download"; description: `This file is not ready, please try again later.`; values: undefined }
+  | { id: "assessment_hfs_drawing_feedback_exit"; description: `Exit`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
