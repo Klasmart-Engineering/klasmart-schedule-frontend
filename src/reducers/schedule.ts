@@ -225,7 +225,7 @@ const initialState: ScheduleState = {
     classListTeacher: {
       user: {
         membership: {
-          classesTeaching: []
+          classesTeaching: [],
         },
       },
     },
@@ -710,6 +710,17 @@ export const getScheduleNewetFeedback = createAsyncThunk<feedbackSchedulesResult
   "schedule/feedback",
   (schedule_id) => {
     return api.schedules.getScheduleNewestFeedbackByOperator(schedule_id);
+  }
+);
+
+interface checkResourceExistParams extends LoadingMetaPayload {
+  resource_id: string;
+}
+type checkResourceExistResult = ReturnType<typeof api.contentsResources.checkResourceExist>;
+export const checkResourceExist = createAsyncThunk<checkResourceExistResult, checkResourceExistParams>(
+  "content/checkResourceExist",
+  ({ resource_id }) => {
+    return api.contentsResources.checkResourceExist(resource_id);
   }
 );
 

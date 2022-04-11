@@ -14,7 +14,7 @@ import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorTy
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { actError, actSuccess, actWarning } from "../../reducers/notify";
-import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
+import { checkResourceExist, getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
 import { HtmlTooltip } from "./ScheduleAttachment";
 
 const useStyles = makeStyles(({ shadows }) =>
@@ -55,7 +55,7 @@ const useStyles = makeStyles(({ shadows }) =>
       wordBreak: "break-all",
       padding: "8px 8px 8px 8px",
       display: "flex",
-      "& a": {
+      "& div": {
         color: "#B6B6B6",
         marginRight: "10px",
         textDecoration: "none",
@@ -111,19 +111,38 @@ interface FileDataProps {
 function FileDataTemplate(props: FileDataProps) {
   const { fileName, handleFileData, batch, isUploading } = props;
   const css = useStyles();
+  const dispatch = useDispatch();
   const sourceDownload = (attachmentId?: string) => {
     return apiResourcePathById(attachmentId);
   };
   const textEllipsis = (value: string | undefined) => {
     return value && value.length > 30 ? `${value.substring(0, 30)} ....` : value;
   };
+  const checkFileExist = async (source_id?: string) => {
+    if (!source_id) return;
+    const resultInfo = (await dispatch(checkResourceExist({ resource_id: source_id, metaLoading: true }))) as unknown as PayloadAction<
+      AsyncTrunkReturned<typeof checkResourceExist>
+    >;
+    return await resultInfo.payload;
+  };
   return (
     <Box className={css.participantSaveBox}>
       {fileName?.map((item) => (
         <div className={css.pathBox}>
-          <a href={sourceDownload(item.id)} target="_blank" rel="noopener noreferrer">
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              checkFileExist(item.id).then((r) => {
+                if (r) {
+                  window.open(sourceDownload(item.id));
+                } else {
+                  dispatch(actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download")));
+                }
+              });
+            }}
+          >
             {textEllipsis(item.name)}
-          </a>{" "}
+          </div>{" "}
           <CancelIcon
             style={{ color: "#666666" }}
             onClick={() => {

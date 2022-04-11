@@ -15,9 +15,8 @@ import Divider from "@material-ui/core/Divider";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import Tooltip from "@material-ui/core/Tooltip";
-import Popper from "@material-ui/core/Popper";
-import Fade from "@material-ui/core/Fade";
 import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(({ shadows }) => ({
   sliderBox: {
@@ -30,6 +29,7 @@ const useStyles = makeStyles(({ shadows }) => ({
     borderRadius: "20px",
     alignItems: "center",
     height: "70px",
+    transform: "scale(0.9)",
   },
   fieldItem: {
     width: "25px",
@@ -55,12 +55,14 @@ const useStyles = makeStyles(({ shadows }) => ({
     padding: "6px",
   },
   textField: {
-    marginTop: "-90px",
     padding: "6px",
     border: "1px solid",
     display: "flex",
     alignItems: "center",
     borderRadius: "10px",
+    position: "absolute",
+    right: 0,
+    bottom: "80px",
   },
 }));
 
@@ -74,6 +76,11 @@ export interface UiSketchProps {
   pictureUrl?: string;
   pictureInitUrl?: string;
   onChange?: (value: SketchChangeProps) => void;
+}
+
+export interface ImageDimesion {
+  widthImg: number;
+  bases64: string;
 }
 
 const Operations: {
@@ -92,6 +99,26 @@ function valuetext(value: number) {
   return `${value}`;
 }
 
+export function getImageDimension(pictureUrl: string, initHeight: number): Promise<ImageDimesion> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = (pictureUrl + `?timestamp= ${Date.now()}`) as string;
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const coefficient = initHeight / img.height;
+      const widthImg = img.width * coefficient;
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx!.drawImage(img, 0, 0, img.width, img.height);
+      const bases64 = canvas.toDataURL("image/png");
+      resolve({ widthImg, bases64 });
+    };
+    img.onerror = reject;
+  });
+}
+
 export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) => {
   const { width, height, pictureUrl, pictureInitUrl, onChange } = props;
   const css = useStyles();
@@ -100,30 +127,27 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   const [lineWidth, setLineWidth] = React.useState<number | number[]>(10);
   const [tool, setTool] = React.useState<string>(Tools.Pencil);
   const [currentOperation, setCurrentOperation] = React.useState<string>(Operations.Pencil);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [openText, setOpenText] = React.useState<boolean>(false);
   const [traces, setTraces] = React.useState<{ undo: boolean; redo: boolean }>({ undo: false, redo: false });
   const [text, SetText] = React.useState<string>("");
-  const fieldItemColor = ["#E60313", "#F5A101", "#FED900", "#3DB135", "#02FCFC", "#0068B7", "#A6569D", "#A6368D", "#9F4500", "#000000"];
+  const [widthImg, setWidthImg] = React.useState<number>(0);
+  const fieldItemColor = [
+    "#E60313",
+    "#F5A101",
+    "#FED900",
+    "#3DB135",
+    "#02FCFC",
+    "#0068B7",
+    "#A6569D",
+    "#E73C8D",
+    "#9F4500",
+    "#000000",
+    "#BAC769",
+  ];
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
+  const handleClick = (open: boolean) => {
+    setOpenText(open);
   };
-
-  const getCanvasWidth = useMemo(() => {
-    const img = new Image();
-    img.src = pictureUrl as string;
-    let widthImg = 0;
-    return (img.onload = () => {
-      const coefficient = height / img.height;
-      widthImg = img.width * coefficient;
-      return widthImg;
-    });
-  }, [pictureUrl, height]);
-
-  const canvasWidth = getCanvasWidth();
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popper" : undefined;
 
   // @ts-ignore
   useImperativeHandle(ref, () => ({
@@ -133,8 +157,13 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   }));
 
   React.useEffect(() => {
-    if (pictureUrl && canvasWidth) chooseImage(pictureUrl);
-  }, [pictureUrl, canvasWidth]);
+    if (pictureUrl && height) {
+      getImageDimension(pictureUrl + `?timestamp= ${Date.now()}`, height).then((value) => {
+        setWidthImg(value.widthImg);
+        chooseImage(value.bases64);
+      });
+    }
+  }, [pictureUrl, height]);
 
   const dataURLtoObject = (imageName: string, type: "obj" | "blob") => {
     const base64Data = sketchRef.current.toDataURL();
@@ -156,8 +185,8 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
     }
   };
 
-  const chooseImage = (url: string) => {
-    sketchRef.current.setBackgroundFromDataUrl(url + `?timestamp= ${Date.now()}`, {
+  const chooseImage = (bases64: string) => {
+    sketchRef.current.setBackgroundFromDataUrl(bases64, {
       stretchedY: true,
     });
   };
@@ -197,15 +226,21 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
   };
   return (
     <Box style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      {!widthImg && (
+        <div style={{ height: height, display: "flex", alignItems: "center" }}>
+          <CircularProgress />
+        </div>
+      )}
       <SketchField
         ref={sketchRef}
+        style={{ display: widthImg ? "block" : "none" }}
         onChange={(e: any) => {
           onChange && e.type === "mouseup" && onChange({ isTraces: sketchRef.current.canUndo() });
           setTraces({ undo: sketchRef.current.canUndo(), redo: sketchRef.current.canRedo() });
         }}
         lineColor={color}
         tool={tool}
-        width={canvasWidth ? canvasWidth : width}
+        width={widthImg ? widthImg : width}
         height={height}
         lineWidth={lineWidth}
       />
@@ -243,6 +278,7 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
             onClick={() => {
               setCurrentOperation(Operations.Select);
               setTool(Tools.Select);
+              handleClick(false);
             }}
           />
         </Tooltip>
@@ -253,50 +289,45 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
             onClick={() => {
               setCurrentOperation(Operations.Pan);
               setTool(Tools.Pan);
+              handleClick(false);
             }}
           />
         </Tooltip>
 
         <Tooltip title="Text">
-          <div aria-describedby={id} onClick={handleClick}>
-            <TextFieldsIcon
-              style={{ border: currentOperation === Operations.Text ? "1px dashed black" : "none" }}
+          <TextFieldsIcon
+            style={{ border: currentOperation === Operations.Text ? "1px dashed black" : "none" }}
+            onClick={() => {
+              setCurrentOperation(Operations.Text);
+              setTool(Tools.Select);
+              handleClick(true);
+            }}
+          />
+        </Tooltip>
+        {openText && (
+          <div className={css.textField}>
+            <TextField
+              id="standard-basic"
+              size="small"
+              label="Text"
+              onChange={(e) => {
+                SetText(e.target.value);
+              }}
+            />
+            <CheckIcon
+              style={{ color: "blue", marginLeft: "10px" }}
               onClick={() => {
-                setCurrentOperation(Operations.Text);
-                setTool(Tools.Select);
+                sketchRef.current.addText(text);
+              }}
+            />
+            <CloseIcon
+              style={{ color: "red", marginLeft: "10px" }}
+              onClick={() => {
+                handleClick(false);
               }}
             />
           </div>
-        </Tooltip>
-        <Popper id={id} open={open} placement={"top"} anchorEl={anchorEl} transition>
-          {({ TransitionProps }) => (
-            <Fade {...TransitionProps} timeout={350}>
-              <div className={css.textField}>
-                <TextField
-                  id="standard-basic"
-                  size="small"
-                  label="Text"
-                  onChange={(e) => {
-                    SetText(e.target.value);
-                  }}
-                />
-                <CheckIcon
-                  style={{ color: "blue", marginLeft: "10px" }}
-                  onClick={() => {
-                    sketchRef.current.addText(text);
-                  }}
-                />
-                <CloseIcon
-                  style={{ color: "red", marginLeft: "10px" }}
-                  onClick={() => {
-                    setAnchorEl(null);
-                  }}
-                />
-              </div>
-            </Fade>
-          )}
-        </Popper>
-
+        )}
         <Tooltip title="Undo">
           <UndoIcon
             style={{ color: traces.undo ? "black" : "darkgray" }}
@@ -318,10 +349,14 @@ export const UiSketch = forwardRef<HTMLDivElement, UiSketchProps>((props, ref) =
         <Tooltip title="Clean">
           <DeleteIcon
             onClick={() => {
+              setWidthImg(0);
               setTraces({ undo: false, redo: false });
               sketchRef.current.clear();
               onChange && onChange({ isTraces: false });
-              chooseImage((pictureInitUrl ?? pictureUrl) as string);
+              getImageDimension(((pictureInitUrl ?? pictureUrl) as string) + `?timestamp= ${Date.now()}`, height).then((value) => {
+                setWidthImg(value.widthImg);
+                chooseImage(value.bases64);
+              });
             }}
           />
         </Tooltip>
