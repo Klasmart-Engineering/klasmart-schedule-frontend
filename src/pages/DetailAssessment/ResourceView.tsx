@@ -1,6 +1,7 @@
 import { apiResourcePathById } from "@api/extra";
 import { audioClient } from "@api/index";
 import { ApolloProvider } from "@apollo/client";
+import AssetImg from "@components/UIAssetPreview/AssetPreview/AssetImg";
 import { SketchChangeProps, UiSketch } from "@components/UISketch";
 import {
   Button,
@@ -42,6 +43,7 @@ const useStyles = makeStyles((theme) =>
       minWidth: "400px",
       overflow: "auto",
       textAlign: "center",
+      wordBreak: "break-all",
       "&::-webkit-scrollbar": {
         width: "3px",
       },
@@ -85,14 +87,15 @@ export interface ResourceViewProps {
   score?: StudenmtViewItemResultProps["assess_score"];
   assignments?: DetailAssessmentResultFeedback["assignments"];
   hasSaved?: boolean;
+  dialogType?: string;
   onClose: () => void;
   onChangeComment?: (studentId?: string, comment?: string) => void;
   onChangeScore?: (studentId?: string, score?: StudenmtViewItemResultProps["assess_score"]) => void;
-  onOpenDrawFeedback?: (studentId?: string, assignment?: DetailAssessmentResultAssignment) => void;
+  onOpenDrawFeedback?: (dialogType: string, studentId?: string, assignment?: DetailAssessmentResultAssignment) => void;
 }
 export function ResourceView(props: ResourceViewProps) {
   const css = useStyles();
-  const { resourceType, open, answer, comment, studentId, h5pId, roomId, userId, h5pSubId, score, assignments, 
+  const { resourceType, open, answer, comment, studentId, h5pId, roomId, userId, h5pSubId, score, assignments, dialogType,
     onChangeComment, onClose, onChangeScore, onOpenDrawFeedback } = props;
   const showClose = resourceType !== ResourceViewTypeValues.editScore && resourceType !== ResourceViewTypeValues.selectImg;
   const showActionBtn = resourceType === ResourceViewTypeValues.editComment || resourceType === ResourceViewTypeValues.editScore || resourceType === ResourceViewTypeValues.selectImg;
@@ -111,7 +114,7 @@ export function ResourceView(props: ResourceViewProps) {
     if(resourceType === ResourceViewTypeValues.selectImg) {
       const selectedAssignmentId = getValues()["assignments"];
       const selectedAssignment = assignments?.find(item => item.attachment_id === selectedAssignmentId)
-      onOpenDrawFeedback && onOpenDrawFeedback(studentId, selectedAssignment)
+      onOpenDrawFeedback && onOpenDrawFeedback(dialogType as string, studentId, selectedAssignment)
     }
   };
   return (
@@ -121,7 +124,8 @@ export function ResourceView(props: ResourceViewProps) {
           {(resourceType === ResourceViewTypeValues.essay || showAudioRecorder(resourceType)) && d("Detailed Answer").t("assess_popup_detailed_answer")}
           {resourceType === ResourceViewTypeValues.viewComment && d("View Comments").t("assess_popup_view_comments")}
           {resourceType === ResourceViewTypeValues.editComment && d("Add Comments").t("assess_popup_add_comments")}
-          {resourceType === ResourceViewTypeValues.selectImg && "Select File to Provide Feedback"}
+          {resourceType === ResourceViewTypeValues.viewWritingFeedback && "View Feedback"}
+          {resourceType === ResourceViewTypeValues.selectImg && d("Select a file to provide feedback").t("assessment_hfs_select_file")}
           {showClose && 
             <IconButton onClick={onClose} className={css.closeBtn}>
               <Close />
@@ -130,6 +134,11 @@ export function ResourceView(props: ResourceViewProps) {
         <DialogContent>
           {resourceType === ResourceViewTypeValues.essay && <div className={css.detailView}>{answer}</div>}
           {resourceType === ResourceViewTypeValues.viewComment && <div className={css.detailView}>{comment}</div>}
+          {resourceType === ResourceViewTypeValues.viewWritingFeedback && 
+            <div className={css.detailView}>
+              {comment ? comment : "No feedback yet"}
+            </div>
+          }
           {showAudioRecorder(resourceType) && (
             <div className={css.detailView}>
               <ApolloProvider client={audioClient}>
@@ -250,6 +259,7 @@ export function useResourceView() {
 
 export interface DrawingFeedbackProps {
   open: boolean;
+  dialogType: string;
   attachment?: DetailAssessmentResultAssignment;
   studentId?: string;
   onClose: () => any;
@@ -259,7 +269,7 @@ export interface DrawingFeedbackProps {
 }
 export function DrawingFeedback(props: DrawingFeedbackProps) {
   const css = useStyles();
-  const { open, attachment, studentId, onOpenSelectImage, onSaveDrawFeedback, onClickExit } = props;
+  const { open, attachment, studentId, dialogType, onClose, onOpenSelectImage, onSaveDrawFeedback, onClickExit } = props;
   const sketchRef = useRef<any>(null);
   const [hasTraces, setHasTraces] = useState<boolean>(false);
   const [hasSaved, setHasSaved] = useState<boolean>(false);
@@ -292,23 +302,28 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
   return (
     <Dialog open={open} fullWidth maxWidth={"md"}>
       <DialogTitle>
-        <div className={css.titleBar}>
+       <div className={css.titleBar}>
           <span>{attachment?.attachment_name}</span>
-          <div>
-          <Button startIcon={<ImageOutlined />} onClick={handleClickSelectImage}>
-            {"Select Image"}
-          </Button>
-          <Button disabled={hasSaved ? true : !hasTraces} startIcon={<SaveOutlined />} onClick={handleClickSave}>
-            {"Save"}
-          </Button>
-          <Button startIcon={<ExitToAppOutlined/>} onClick={handleClickExit} >
-            {"Exit"}
-          </Button>
+          {dialogType === "edit" ? <div>
+            <Button startIcon={<ImageOutlined />} onClick={handleClickSelectImage}>
+              {d("Select Image").t("assessmeng_hfs_select_image")}
+            </Button>
+            <Button disabled={hasSaved ? true : !hasTraces} startIcon={<SaveOutlined />} onClick={handleClickSave}>
+              {"Save"}
+            </Button>
+            <Button startIcon={<ExitToAppOutlined/>} onClick={handleClickExit} >
+              {d("Exit").t("assessment_hfs_drawing_feedback_exit")}
+            </Button>
           </div>
+          :
+          <IconButton onClick={onClose} className={css.closeBtn}>
+            <Close />
+          </IconButton>
+          }
         </div>
     </DialogTitle>
     <DialogContent>
-      <UiSketch 
+      {dialogType === "edit" ? <UiSketch 
         ref={sketchRef} 
         width={mobile ? 600 : 912} 
         height={400} 
@@ -316,6 +331,15 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
         pictureInitUrl={pictureInitUrl}
         onChange={handleChangePic}
       />
+      :
+      <>
+        {attachment?.review_attachment_id ? 
+        <AssetImg src={pictureUrl} />
+        : <div className={css.detailView}>
+            "No feedback yet"
+          </div>}
+      </>
+    }
     </DialogContent>
   </Dialog>
   )
@@ -323,14 +347,17 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
 
 export function useDrawingFeedback() {
   const [active, setActive] = useState(false);
+  const [drawingFeedbackIndex, setDrawingFeedbackIndex] = useState(0);
   return useMemo(
     () => ({
+      drawingFeedbackIndex,
       drawingFeedbackActive: active,
       openDrawingFeedback: () => {
+        setDrawingFeedbackIndex(drawingFeedbackIndex + 1);
         setActive(true);
       },
       closeDrawingFeedback: () => setActive(false),
     }),
-    [active]
+    [active, drawingFeedbackIndex]
   );
 }

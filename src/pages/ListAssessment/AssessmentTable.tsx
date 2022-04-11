@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) =>
     tableCell: {
       width: 115,
       minWidth: 104,
+      maxWidth: 200,
     },
     statusCon: {
       color: "#fff",
@@ -63,7 +64,7 @@ function AssessmentRow(props: AssessmentProps) {
   }, [assessmentType]);
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
-      <TableCell align="center">{assessment.title ?? d("N/A").t("assess_column_n_a")}</TableCell>
+      <TableCell className={css.tableCell} align="center">{assessment.title ?? d("N/A").t("assess_column_n_a")}</TableCell>
       {!isReview && !isHomefun  && <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>}
       {isClassAndLive && (
         <>

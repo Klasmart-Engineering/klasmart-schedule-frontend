@@ -77,9 +77,9 @@ export function DetailAssessment() {
   const ViewDimension = () => {
     if(isHomefun) {
       return [
-        { label: "Submitted", value: Dimension.submitted },
-        { label: "Not Submitted", value: Dimension.notSubmitted },
-        { label: "All", value: Dimension.all}
+        { label: d("Submitted").t("assessment_hfs_submitted"), value: Dimension.submitted },
+        { label: d("Not Submitted").t("assessment_hfs_not_submitted"), value: Dimension.notSubmitted },
+        { label: d("All").t("assessment_hfs_all"), value: Dimension.all}
       ]
     } else {
       return [
@@ -164,6 +164,15 @@ export function DetailAssessment() {
         const content = d("You cannot change the assessment after clicking Complete.").t("assess_msg_cannot_delete");
         const { isConfirmed } = unwrapResult(await dispatch(actAsyncConfirm({ content, hideCancel: false })));
         if (!isConfirmed) return Promise.reject();
+      }
+    }
+    if (isHomefun) {
+      const students = computedStudentViewItems ? computedStudentViewItems : initStudentViewItems;
+      const hasNotFillItem = students?.some(sItem => {
+        return sItem.results && sItem.results[0] && sItem.results[0].outcomes && sItem.results[0].outcomes.some(oItem => oItem.status === OutcomeStatus.Unknown)
+      })
+      if(hasNotFillItem) {
+        return Promise.reject(dispatch(actWarning(d("Please fill in all the information.").t("assess_msg_missing_infor"))));
       }
     }
     if (id) {
@@ -454,7 +463,7 @@ export function DetailAssessment() {
       {
         isHomefun && (
           <>
-            <Subtitle text={"Comments & Ratings"} />
+            <Subtitle text={d("Comments & Ratings").t("assessment_hfs_comment_rating")} />
             <Homefun 
               editable={editable}
               dimension={dimension} 

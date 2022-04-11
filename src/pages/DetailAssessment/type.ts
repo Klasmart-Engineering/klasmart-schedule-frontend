@@ -129,5 +129,7 @@ export enum ResourceViewTypeValues {
   essay = "Essay",
   audioRecorder = "AudioRecorder", 
   speakTheWordsSet = "SpeakTheWordsSet", 
-  speakTheWords = "SpeakTheWords"
+  speakTheWords = "SpeakTheWords",
+  viewWritingFeedback = "ViewWritingFeedback",
+  viewDrawingFeedback = "ViewDrawingFeedback",
 }
