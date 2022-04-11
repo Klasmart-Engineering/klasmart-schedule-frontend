@@ -194,7 +194,7 @@ export function ResourceView(props: ResourceViewProps) {
                   SentimentVerySatisfiedOutlined,
                 ]}
                 value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
+                onChange={(e: { target: { value: any; }; }) => onChange(Number(e.target.value))}
               />
               )}
             />
@@ -209,7 +209,7 @@ export function ResourceView(props: ResourceViewProps) {
                   <ImgSelect 
                     assignments={assignments}
                     value={value}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e: { target: { value: any; }; }) => onChange(e.target.value)}
                   />
                 )}
               />
@@ -255,10 +255,11 @@ export interface DrawingFeedbackProps {
   onClose: () => any;
   onOpenSelectImage?: (studentId?: string, hasSaved?: boolean) => void;
   onSaveDrawFeedback?: (studentId?: string, imgObj?: string) => void;
+  onClickExit?: (hasSaved?: boolean) => void;
 }
 export function DrawingFeedback(props: DrawingFeedbackProps) {
   const css = useStyles();
-  const { open, attachment, studentId, onClose, onOpenSelectImage, onSaveDrawFeedback } = props;
+  const { open, attachment, studentId, onOpenSelectImage, onSaveDrawFeedback, onClickExit } = props;
   const sketchRef = useRef<any>(null);
   const [hasTraces, setHasTraces] = useState<boolean>(false);
   const [hasSaved, setHasSaved] = useState<boolean>(false);
@@ -284,6 +285,10 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
     setHasTraces(hasTraces);
   }
 
+  const handleClickExit = () => {
+    onClickExit && onClickExit(hasSaved ? false : hasTraces)
+  }
+
   return (
     <Dialog open={open} fullWidth maxWidth={"md"}>
       <DialogTitle>
@@ -296,7 +301,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
           <Button disabled={hasSaved ? true : !hasTraces} startIcon={<SaveOutlined />} onClick={handleClickSave}>
             {"Save"}
           </Button>
-          <Button startIcon={<ExitToAppOutlined/>} onClick={onClose} >
+          <Button startIcon={<ExitToAppOutlined/>} onClick={handleClickExit} >
             {"Exit"}
           </Button>
           </div>
