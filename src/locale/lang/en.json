@@ -1124,5 +1124,16 @@
   "report_label_missed_some": "Missed Some",
   "report_label_missed_frequently": "Missed Frequently",
   "assessment_audio_suggest_browser": "Please use another browser (Chrome) for a better experience.",
-  "assessment_audio_no_data": "Audio data is not successfully stored by student."
+  "assessment_audio_no_data": "Audio data is not successfully stored by student.",
+  "assessment_hfs_submitted": "Submitted",
+  "assessment_hfs_all": "All",
+  "assessment_hfs_not_submitted": "Not Submitted",
+  "assessment_hfs_score_edit": "Click to Edit",
+  "assessment_hfs_writing_feedback": "Writing Feedback",
+  "assessment_hfs_drawing_feedback": "Drawing Feedback",
+  "assessment_hfs_comment_rating": "Comments & Ratings",
+  "assessment_hfs_select_file": "Select a file to provide feedback",
+  "assessmeng_hfs_select_image": "Select Image",
+  "schedule_msg_file_not_ready_to_download": "This file is not ready, please try again later.",
+  "assessment_hfs_drawing_feedback_exit": "Exit"
 }

@@ -1124,5 +1124,16 @@
   "report_label_missed_some": "Se ha perdido algo",
   "report_label_missed_frequently": "Se pierde con frecuencia",
   "assessment_audio_suggest_browser": "Utilice otro navegador (Chrome) para una mejor experiencia.",
-  "assessment_audio_no_data": "Los datos de audio no son almacenados con éxito por el estudiante."
+  "assessment_audio_no_data": "Los datos de audio no son almacenados con éxito por el estudiante.",
+  "assessment_hfs_submitted": "Submitted",
+  "assessment_hfs_all": "All",
+  "assessment_hfs_not_submitted": "Not Submitted",
+  "assessment_hfs_score_edit": "Click to Edit",
+  "assessment_hfs_writing_feedback": "Writing Feedback",
+  "assessment_hfs_drawing_feedback": "Drawing Feedback",
+  "assessment_hfs_comment_rating": "Comments & Ratings",
+  "assessment_hfs_select_file": "Select a file to provide feedback",
+  "assessmeng_hfs_select_image": "Select Image",
+  "schedule_msg_file_not_ready_to_download": "This file is not ready, please try again later.",
+  "assessment_hfs_drawing_feedback_exit": "Exit"
 }

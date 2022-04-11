@@ -958,7 +958,7 @@
   "report_label_live_lessons_missed": "Pelajaran Live yang Terlewat",
   "report_label_in_class_lessons_Missed": "Pelajaran Kelas yang Terlewat",
   "report_label_total_scheduled": "Jumlah Terjadwal",
-  "report_label_missed_lessons": "Detail Pelajaran yang Terlewat",
+  "report_label_missed_lessons": "Kelas Terlewat",
   "report_label_lesson_type": "Jenis Pelajaran",
   "report_label_lesson_name": "Nama Pelajaran",
   "report_label_class_name": "Nama Kelas",
@@ -1124,5 +1124,16 @@
   "report_label_missed_some": "Jarang Terlewat",
   "report_label_missed_frequently": "Sering Terlewat",
   "assessment_audio_suggest_browser": "Silakan gunakan browser lain (Chrome) untuk pengalaman yang lebih baik.",
-  "assessment_audio_no_data": "Data audio gagal disimpan oleh siswa."
+  "assessment_audio_no_data": "Data audio gagal disimpan oleh siswa.",
+  "assessment_hfs_submitted": "Submitted",
+  "assessment_hfs_all": "All",
+  "assessment_hfs_not_submitted": "Not Submitted",
+  "assessment_hfs_score_edit": "Click to Edit",
+  "assessment_hfs_writing_feedback": "Writing Feedback",
+  "assessment_hfs_drawing_feedback": "Drawing Feedback",
+  "assessment_hfs_comment_rating": "Comments & Ratings",
+  "assessment_hfs_select_file": "Select a file to provide feedback",
+  "assessmeng_hfs_select_image": "Select Image",
+  "schedule_msg_file_not_ready_to_download": "This file is not ready, please try again later.",
+  "assessment_hfs_drawing_feedback_exit": "Exit"
 }
