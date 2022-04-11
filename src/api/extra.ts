@@ -1,4 +1,4 @@
-import { ApolloQueryResult, gql } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { FileLike } from "@rpldy/shared";
 import Cookies from "js-cookie";
@@ -6,7 +6,7 @@ import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
-import { UsersConnectionResponse, UuidFilter, UuidOperator } from "./api-ko-schema.auto";
+import { UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
 import {
   ClassesBySchoolIdDocument,
   ClassesBySchoolIdQuery,
@@ -32,11 +32,9 @@ import {
   GetSchoolMembershipsDocument,
   GetSchoolMembershipsQuery,
   GetSchoolMembershipsQueryVariables,
-  GetUserQuery,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
-  UserNameByUserIdQueryDocument
 } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -396,35 +394,45 @@ export async function apiGetPartPermission(permissions: string[]): Promise<IApiG
 
 const idToNameMap = new Map<string, string>();
 
-// The maximum number of user queries is 50. If the number exceeds 50, batch requests are made
 export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<string, string>> {
-  const fragmentUserIds = userIds
+  const fragmentStr = userIds
     .filter((id) => !idToNameMap.has(id))
-    .map((userId) => {
-      return { userId: { operator: UuidOperator.Eq, value: userId } };
-    });
-  if (!fragmentUserIds.length) return idToNameMap;
+    .map((userId, index) => {
+      return enableNewGql
+        ? `
+          user_${index}: userNode(id: "${userId}"){
+            id,
+            givenName 
+            familyName
+          }
+        `
+        : `
+          user_${index}: user(user_id: "${userId}"){
+            user_id,
+            given_name
+            family_name
+          }
+        `;
+    })
+    .join(",");
+  if (!fragmentStr) return idToNameMap;
   try {
-    const queries: ApolloQueryResult<GetUserQuery>[] = [];
-    for (let i = 0; i < Math.ceil(fragmentUserIds.length / 50); i++) {
-      queries.push(
-        await gqlapi.query<GetUserQuery>({
-          query: UserNameByUserIdQueryDocument,
-          variables: {
-            filter: {
-              OR: fragmentUserIds.slice(i * 50, i * 50 + 50),
-            },
-          },
-        })
-      );
-    }
-    queries.forEach((item) => {
-      item.data.usersConnection?.edges?.forEach((node) => {
-        if (node?.node) {
-          idToNameMap.set(node?.node.id, `${node?.node.givenName} ${node?.node.familyName}`);
-        }
-      });
+    const userQuery = await gqlapi.query({
+      query: gql`
+        query userNameByUserIdQuery{
+          ${fragmentStr}
+        },
+        
+      `,
     });
+    for (const item in userQuery.data || {}) {
+      const user = userQuery.data[item];
+      if (user) {
+        enableNewGql
+          ? idToNameMap.set(user.id, `${user.givenName} ${user.familyName}`)
+          : idToNameMap.set(user.user_id, `${user.given_name} ${user.family_name}`);
+      }
+    }
   } catch (e) {
     console.log(e);
   }
@@ -445,9 +453,9 @@ export const refreshToken = async () => {
 };
 
 export const uploadFile = async (path: string, body: any) => {
-  const resp = await fetch(path, { method: "PUT", body }).then(resp => resp.json)
-  return resp
-}
+  const resp = await fetch(path, { method: "PUT", body }).then((resp) => resp.json);
+  return resp;
+};
 
 export interface GetSchoolMembershipProps {
   userId?: UuidFilter;
@@ -565,12 +573,12 @@ export const recursiveGetClassTeachers = async (
   for (const index in classesConnection?.edges) {
     const i = Number(index);
     let teachers: ITeacher[] = [];
-    const haveNextPage = classesConnection?.edges[i]?.node?.teachersConnection?.pageInfo?.hasNextPage;
+    const hasNextPage = classesConnection?.edges[i]?.node?.teachersConnection?.pageInfo?.hasNextPage;
     const teacherCursor = classesConnection?.edges[i]?.node?.teachersConnection?.pageInfo?.endCursor || "";
     let teacherNodeEdgs = classesConnection?.edges[i]?.node?.teachersConnection?.edges || [];
     const id = classesConnection?.edges[i]?.node?.id;
     const name = classesConnection?.edges[i]?.node?.name;
-    if (haveNextPage && id) {
+    if (hasNextPage && id) {
       teacherNodeEdgs = await recursiveGetClassNodeTeachers(id, teacherCursor, [...teacherNodeEdgs]);
     }
     teacherNodeEdgs?.forEach((teacherNode: any) => {
@@ -639,7 +647,7 @@ export const recursiveGetSchoolsClasses = async (
   let schoolClasses: SchoolClassesNode[] = [];
   for (const index in schoolsConnection?.edges) {
     const i = Number(index);
-    const haveNextPage = schoolsConnection?.edges[i]?.node?.classesConnection?.pageInfo?.hasNextPage;
+    const hasNextPage = schoolsConnection?.edges[i]?.node?.classesConnection?.pageInfo?.hasNextPage;
     const cursor = schoolsConnection?.edges[i]?.node?.classesConnection?.pageInfo?.endCursor || "";
     let classes =
       schoolsConnection?.edges[i]?.node?.classesConnection?.edges?.map(
@@ -647,7 +655,7 @@ export const recursiveGetSchoolsClasses = async (
       ) || [];
     const schoolId = schoolsConnection?.edges[i]?.node?.id;
     const school_name = schoolsConnection?.edges[i]?.node?.name;
-    if (haveNextPage && schoolId) {
+    if (hasNextPage && schoolId) {
       const classvar: ClassesBySchoolIdQueryVariables = {
         filter: {
           // organizationId: variables.filter?.organizationId,
@@ -737,12 +745,12 @@ export const recursiveGetClassStudents = async (
   for (const index in classesConnection?.edges) {
     const i = Number(index);
     let students: IStudent[] = [];
-    const haveNextPage = classesConnection?.edges[i]?.node?.studentsConnection?.pageInfo?.hasNextPage;
+    const hasNextPage = classesConnection?.edges[i]?.node?.studentsConnection?.pageInfo?.hasNextPage;
     const studentCursor = classesConnection?.edges[i]?.node?.studentsConnection?.pageInfo?.endCursor || "";
     let studentNodeEdgs = classesConnection?.edges[i]?.node?.studentsConnection?.edges || [];
     const id = classesConnection?.edges[i]?.node?.id;
     const name = classesConnection?.edges[i]?.node?.name;
-    if (haveNextPage && id) {
+    if (hasNextPage && id) {
       studentNodeEdgs = await recursiveGetClassNodeStudents(id, studentCursor, [...studentNodeEdgs]);
     }
     studentNodeEdgs?.forEach((studentNode: any) => {
