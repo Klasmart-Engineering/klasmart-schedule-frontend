@@ -59,6 +59,14 @@ const useStyles = makeStyles((theme) =>
         backgroundColor: "rgba(220,220,220,0.4)",
       },
     },
+    imgCon: {
+      maxHeight: "400px",
+      minWidth: "400px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      margin: "20px 0"
+    },
     okBtn: {
       marginLeft: "40px !important",
     },
@@ -124,7 +132,7 @@ export function ResourceView(props: ResourceViewProps) {
           {(resourceType === ResourceViewTypeValues.essay || showAudioRecorder(resourceType)) && d("Detailed Answer").t("assess_popup_detailed_answer")}
           {resourceType === ResourceViewTypeValues.viewComment && d("View Comments").t("assess_popup_view_comments")}
           {resourceType === ResourceViewTypeValues.editComment && d("Add Comments").t("assess_popup_add_comments")}
-          {resourceType === ResourceViewTypeValues.viewWritingFeedback && "View Feedback"}
+          {resourceType === ResourceViewTypeValues.viewWritingFeedback && d("View Writing Feedback").t("assessment_hfs_view_writing_feedback")}
           {resourceType === ResourceViewTypeValues.selectImg && d("Select a file to provide feedback").t("assessment_hfs_select_file")}
           {showClose && 
             <IconButton onClick={onClose} className={css.closeBtn}>
@@ -136,7 +144,7 @@ export function ResourceView(props: ResourceViewProps) {
           {resourceType === ResourceViewTypeValues.viewComment && <div className={css.detailView}>{comment}</div>}
           {resourceType === ResourceViewTypeValues.viewWritingFeedback && 
             <div className={css.detailView}>
-              {comment ? comment : "No feedback yet"}
+              {comment ? comment : d("No feedback has been provided to this file.").t("assessment_hfs_no_teacher_feedback")}
             </div>
           }
           {showAudioRecorder(resourceType) && (
@@ -309,7 +317,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
               {d("Select Image").t("assessmeng_hfs_select_image")}
             </Button>
             <Button disabled={hasSaved ? true : !hasTraces} startIcon={<SaveOutlined />} onClick={handleClickSave}>
-              {"Save"}
+              {d("Done").t("assessment_hfs_drawing_feedback_done")}
             </Button>
             <Button startIcon={<ExitToAppOutlined/>} onClick={handleClickExit} >
               {d("Exit").t("assessment_hfs_drawing_feedback_exit")}
@@ -332,13 +340,11 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
         onChange={handleChangePic}
       />
       :
-      <>
+      <div className={css.imgCon}>
         {attachment?.review_attachment_id ? 
         <AssetImg src={pictureUrl} />
-        : <div className={css.detailView}>
-            "No feedback yet"
-          </div>}
-      </>
+        : d("No feedback has been provided to this file.").t("assessment_hfs_no_teacher_feedback")}
+      </div>
     }
     </DialogContent>
   </Dialog>

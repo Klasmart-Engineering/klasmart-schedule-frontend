@@ -1793,7 +1793,11 @@ type LangRecord =
   | { id: "assessment_hfs_select_file"; description: `Select a file to provide feedback`; values: undefined }
   | { id: "assessmeng_hfs_select_image"; description: `Select Image`; values: undefined }
   | { id: "schedule_msg_file_not_ready_to_download"; description: `This file is not ready, please try again later.`; values: undefined }
-  | { id: "assessment_hfs_drawing_feedback_exit"; description: `Exit`; values: undefined };
+  | { id: "assessment_hfs_drawing_feedback_exit"; description: `Exit`; values: undefined }
+  | { id: "assessment_hfs_drawing_feedback_done"; description: `Done`; values: undefined }
+  | { id: "assessment_hfs_view_writing_feedback"; description: `View Writing Feedback`; values: undefined }
+  | { id: "assessment_hfs_view_drawing_feedback"; description: `View Drawing Feedback`; values: undefined }
+  | { id: "assessment_hfs_no_teacher_feedback"; description: `No feedback has been provided to this file.`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
