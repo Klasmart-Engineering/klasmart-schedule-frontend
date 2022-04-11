@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { enableNewGql } from "@api/extra";
 import { Box, createStyles, makeStyles, MenuItem, TextField, Theme } from "@material-ui/core";
 import { orderByASC } from "@utilities/dataUtilities";
 import clsx from "clsx";
@@ -68,15 +69,24 @@ export default function StudentSubjectFilter({ onInitial, onChange }: IProps) {
     let data = [] as typeof classList;
 
     if (state.schoolId === allValue) {
-      data = data.concat(classList, noneSchoolClassList);
+      if (enableNewGql) {
+        data = data.concat(classList);
+      } else {
+        data = data.concat(classList, noneSchoolClassList);
+      }
     } else if (state.schoolId === noneValue) {
       data = noneSchoolClassList;
     } else {
-      data = classList.filter((item) => {
-        return (item.schools || []).find((school) => {
-          return school?.school_id === state.schoolId;
+      if (enableNewGql) {
+        const classesByOrg = (schoolList.filter((school) => school.school_id === state.schoolId)[0]?.classes || []) as typeof classList;
+        data = classesByOrg?.filter((item) => classList.find((classItem) => item?.class_id === classItem.class_id));
+      } else {
+        data = classList.filter((item) => {
+          return (item.schools || []).find((school) => {
+            return school?.school_id === state.schoolId;
+          });
         });
-      });
+      }
     }
     data = orderByASC(data, "class_name");
     return data.map((item) => ({

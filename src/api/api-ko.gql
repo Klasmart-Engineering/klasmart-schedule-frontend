@@ -650,7 +650,7 @@ query classNode($classId:ID!,$teacherCursor:String){
   }
 
 }
-# schools | classes 1
+
 query classesBySchoolId (
   $cursor: String,
   $filter: ClassFilter,
@@ -676,7 +676,7 @@ query classesBySchoolId (
     }
   }
   }
-# schools | classes 2
+
 query classesList(
   $cursor: String,
   $filter: ClassFilter,
@@ -701,7 +701,7 @@ classesConnection(
       }
     }
   }
-  # schools | classes 3
+  
   query schoolsClasses (
   $cursor: String,
   $filter: SchoolFilter,
@@ -743,3 +743,76 @@ schoolsConnection(
       }
     }
   }
+ query classesStudentsConnection(
+  $cursor: String,
+  $filter: ClassFilter,
+  ) {
+classesConnection(
+    filter: $filter
+    directionArgs: {
+    cursor: $cursor
+    },
+    direction: FORWARD
+    sort:{
+    order:ASC
+    field:name
+    }
+    ) {
+     totalCount
+     edges {
+      node {
+        id
+        name
+        studentsConnection( direction: FORWARD) {
+          totalCount
+          edges {
+            cursor
+            node {
+              id
+              givenName
+              familyName
+              status
+            }
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        },
+      }
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+
+    }
+  }
+}
+query classNodeStudents($classId:ID!,$studentsCursor:String){
+  classNode(id:$classId){
+    name
+    studentsConnection(cursor:$studentsCursor){
+      totalCount
+      edges{
+        node{
+          id
+          familyName
+          givenName
+          status
+        }
+      }
+      pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+      }
+      
+    }
+  }
+
+}
