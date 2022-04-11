@@ -78,16 +78,18 @@ export default function LearningOutcomesAchievement() {
   const handleChange = React.useMemo(
     () => (value: number) => {
       setDurationTime(value);
-      dispatch(
-        getLearnOutcomeAchievement({
-          metaLoading: true,
-          class_id: classId,
-          durations: value === 4 ? getFourWeeks() : getLastedMonths(6),
-          selected_subject_id_list: selectedSubjectId,
-          student_id: studentId,
-          un_selected_subject_id_list: unselectedSubjectId,
-        })
-      );
+      if (classId && studentId) {
+        dispatch(
+          getLearnOutcomeAchievement({
+            metaLoading: true,
+            class_id: classId,
+            durations: value === 4 ? getFourWeeks() : getLastedMonths(6),
+            selected_subject_id_list: selectedSubjectId,
+            student_id: studentId,
+            un_selected_subject_id_list: unselectedSubjectId,
+          })
+        );
+      }
     },
     // eslint-disable-next-line
     [classId, selectedSubjectID, studentId]
