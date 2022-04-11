@@ -78,7 +78,7 @@ export default new Api({
 
 const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
   if (count > 1) return false;
-  const isAuthError = error.result?.errors.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
+  const isAuthError = error.result?.errors?.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
   if (!isAuthError) return false;
   try {
     await refreshToken();
