@@ -89,6 +89,7 @@ export default function Assignments() {
       const class_type_list = classType === "all" ? ["study", "home_fun"] : [classType];
       const class_id_list = classes?.map((item) => item.value);
       const teacher_id_list = teachers?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE).map((item) => item.value);
+      if (!class_id_list.length || !teacher_id_list.length) return;
       dispatch(
         getTeacherLoadAssignment({
           metaLoading: true,
