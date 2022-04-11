@@ -182,7 +182,11 @@ export function Homefun(props: HomefunProps) {
   const isSelectAll = subDimension.findIndex((item) => item.id === "all") >= 0 ? true : false;
   const toggleCheck = (index: number) => {
     const arr = cloneDeep(checkedArr);
-    arr[index] = !checkedArr[index];
+    if(arr[index] === undefined) {
+      arr[index] = false
+    } else {
+      arr[index] = !checkedArr[index];
+    }
     setCheckedArr([...arr]);
   };
   const handleOpenEditScore = (sId?: string, score?: StudenmtViewItemResultProps["assess_score"]) => {
@@ -557,13 +561,13 @@ export function AssessmentTable(props: AssessmentProps) {
             ?
             <p className={css.actionWords} onClick={e => onOpenWritingFeedback && onOpenWritingFeedback(studentId, studentReviewerComment)}>{d("Writing Feedback").t("assessment_hfs_writing_feedback")}</p>
             :
-            <p className={css.actionWords} onClick={e => onOpenViewWritingFeedback && onOpenViewWritingFeedback(studentId, studentReviewerComment)}>{"View Writing Feedback"}</p>
+            <p className={css.actionWords} onClick={e => onOpenViewWritingFeedback && onOpenViewWritingFeedback(studentId, studentReviewerComment)}>{d("View Writing Feedback").t("assessment_hfs_view_writing_feedback")}</p>
             }
             {editable
             ?
             (hasImgType(assignments) && <p className={css.actionWords} onClick={e => onOpenSelectImg && onOpenSelectImg("edit", studentId, assignments)}>{d("Drawing Feedback").t("assessment_hfs_drawing_feedback")}</p>)
             :
-            (hasImgType(assignments) && <p className={css.actionWords} onClick={e => onOpenSelectImg && onOpenSelectImg("view" ,studentId, assignments)}>{"View Drawing Feedback"}</p>)
+            (hasImgType(assignments) && <p className={css.actionWords} onClick={e => onOpenSelectImg && onOpenSelectImg("view" ,studentId, assignments)}>{d("View Drawing Feedback").t("assessment_hfs_view_drawing_feedback")}</p>)
             }
             </TableCell>
         </>
