@@ -958,7 +958,7 @@
   "report_label_live_lessons_missed": "놓친 라이브 수업",
   "report_label_in_class_lessons_Missed": "놓친 교실 수업",
   "report_label_total_scheduled": "일정에 등록된 수업",
-  "report_label_missed_lessons": "놓친 수업의 세부 사항",
+  "report_label_missed_lessons": "불참한 수업",
   "report_label_lesson_type": "수업 유형",
   "report_label_lesson_name": "수업 이름",
   "report_label_class_name": "학급 이름",
@@ -1124,5 +1124,16 @@
   "report_label_missed_some": "일부 결석함",
   "report_label_missed_frequently": "자주 결석함",
   "assessment_audio_suggest_browser": "더 나은 사용 경험을 위해 다른 브라우저 (크롬)를 사용하십시오.",
-  "assessment_audio_no_data": "오디오 데이터 저장이 성공적으로 이루어지지 않았습니다."
+  "assessment_audio_no_data": "오디오 데이터 저장이 성공적으로 이루어지지 않았습니다.",
+  "assessment_hfs_submitted": "Submitted",
+  "assessment_hfs_all": "All",
+  "assessment_hfs_not_submitted": "Not Submitted",
+  "assessment_hfs_score_edit": "Click to Edit",
+  "assessment_hfs_writing_feedback": "Writing Feedback",
+  "assessment_hfs_drawing_feedback": "Drawing Feedback",
+  "assessment_hfs_comment_rating": "Comments & Ratings",
+  "assessment_hfs_select_file": "Select a file to provide feedback",
+  "assessmeng_hfs_select_image": "Select Image",
+  "schedule_msg_file_not_ready_to_download": "This file is not ready, please try again later.",
+  "assessment_hfs_drawing_feedback_exit": "Exit"
 }
