@@ -321,22 +321,32 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
   const liveitems = liveClassSummary.items;
   const assessmentitems = assignmentSummary.items;
   const isLive = reportType === ReportType.live;
-  const key = isLive
-    ? liveitems?.length && lessonIndex >= 0
-      ? liveitems[lessonIndex].schedule_id
-      : "liveitems"
-    : assessmentitems?.length && lessonIndex >= 0
-    ? assessmentitems[lessonIndex].assessment_id
-    : "assessmentitems";
+
   const outcomes = lessonIndex === -1 ? [] : reportWeeklyOutcomes;
+
+  const key = useMemo(() => {
+    if (isLive) {
+      if (liveitems?.length && lessonIndex >= 0) {
+        return liveitems[lessonIndex].schedule_id;
+      } else {
+        return "liveitems";
+      }
+    } else {
+      if (assessmentitems?.length && lessonIndex >= 0) {
+        return assessmentitems[lessonIndex].assessment_id;
+      } else {
+        return "assessmentitems";
+      }
+    }
+  }, [lessonIndex, isLive, liveitems, assessmentitems]);
 
   const feedback = useMemo(() => {
     if (isLive) {
-      if (liveitems?.length && lessonIndex !== -1 && lessonIndex >= 0) {
+      if (liveitems?.length && lessonIndex >= 0) {
         return liveitems[lessonIndex].teacher_feedback;
       }
     } else {
-      if (assessmentitems?.length && lessonIndex !== -1 && lessonIndex >= 0) {
+      if (assessmentitems?.length && lessonIndex >= 0) {
         return assessmentitems[lessonIndex].teacher_feedback;
       }
     }
@@ -344,7 +354,7 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
   const handleClickLessonPlan = (item: EntityAssignmentsSummaryItemV2 | EntityLiveClassSummaryItemV2, index: number) => {
     onChangeLessonIndex(index);
 
-    dispatch(queryOutcomesByAssessmentId({ assessment_id: item.assessment_id, student_id }));
+    dispatch(queryOutcomesByAssessmentId({ assessment_id: item.assessment_id, student_id, metaLoading: true }));
   };
   return (
     <div className={css.liveClassWrap}>

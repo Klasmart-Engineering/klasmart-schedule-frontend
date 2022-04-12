@@ -2305,6 +2305,12 @@ const { actions, reducer } = createSlice({
     [getAssignmentSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentSummary>>) => {
       state.assignmentSummary = payload;
     },
+    [queryOutcomesByAssessmentId.pending.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof queryOutcomesByAssessmentId>>
+    ) => {
+      state.reportWeeklyOutcomes = [];
+    },
     [queryOutcomesByAssessmentId.fulfilled.type]: (
       state,
       { payload }: PayloadAction<AsyncTrunkReturned<typeof queryOutcomesByAssessmentId>>
