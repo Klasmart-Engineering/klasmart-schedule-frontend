@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) =>
     detailView: {
       padding: "12px",
       lineHeight: "30px",
-      maxHeight: "400px",
-      minWidth: "400px",
+      // maxHeight: "900px",
+      // minWidth: "400px",
       overflow: "auto",
       textAlign: "center",
       wordBreak: "break-all",
@@ -308,7 +308,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
   }
 
   return (
-    <Dialog open={open} fullWidth maxWidth={"md"}>
+    <Dialog open={open} fullWidth maxWidth={"lg"}>
       <DialogTitle>
        <div className={css.titleBar}>
           <span>{attachment?.attachment_name}</span>
@@ -333,8 +333,8 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
     <DialogContent>
       {dialogType === "edit" ? <UiSketch 
         ref={sketchRef} 
-        width={mobile ? 600 : 912} 
-        height={400} 
+        width={mobile ? 1000 : 1000} 
+        height={650} 
         pictureUrl={pictureUrl}
         pictureInitUrl={pictureInitUrl}
         onChange={handleChangePic}
