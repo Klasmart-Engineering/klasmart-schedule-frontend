@@ -286,7 +286,15 @@ export function Homefun(props: HomefunProps) {
       if (!isConfirmed) return Promise.reject();
     }
     closeDrawingFeedback();
-    handleOpenSelectImg("edit", studentId, assignments)
+    const student = students?.find(item => item.student_id === studentId);
+    const results = student && student.results;
+    if(results && results.length) {
+      const student_feed_backs = results[0].student_feed_backs;
+      if(student_feed_backs && student_feed_backs.length) {
+        const newassignments = student_feed_backs[0].assignments;
+        handleOpenSelectImg("edit", studentId, newassignments)
+      }
+    }
   }
   return (
     <>
