@@ -207,6 +207,7 @@ interface InfoProps {
   refreshView: (template: string) => void;
   ScheduleViewInfo: EntityScheduleViewDetail;
   privilegedMembers: (member: memberType) => boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 interface InfoMbProps extends InfoProps {
@@ -219,6 +220,7 @@ interface InfoMbProps extends InfoProps {
   timestampToTime: (timestamp: number, is_yaer: boolean, is_month?: boolean) => string;
   multiStructure: (item?: EntityScheduleShortInfo[]) => string[] | undefined;
   handleGoLive: (scheduleInfos: ScheduleEditExtend) => void;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 function CustomizeTempalteMb(props: InfoMbProps) {
@@ -236,6 +238,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
     timestampToTime,
     multiStructure,
     handleGoLive,
+    checkFileExist,
   } = props;
   const eventColor = [
     { id: "OnlineClass", color: "#0E78D5", icon: <LiveTvOutlinedIcon className={classes.eventIcon} />, title: "LIVE" },
@@ -453,7 +456,15 @@ function CustomizeTempalteMb(props: InfoMbProps) {
                       {ScheduleViewInfo.attachment?.name}{" "}
                       <GetAppIcon
                         onClick={() => {
-                          window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
+                          checkFileExist(ScheduleViewInfo.attachment?.id).then((r) => {
+                            if (r) {
+                              window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
+                            } else {
+                              dispatch(
+                                actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download"))
+                              );
+                            }
+                          });
                         }}
                         style={{ color: "#0E78D5", cursor: "pointer", fontSize: "20px", marginLeft: "10px" }}
                       />
@@ -527,6 +538,7 @@ export default function CustomizeTempalte(props: InfoProps) {
     refreshView,
     ScheduleViewInfo,
     privilegedMembers,
+    checkFileExist,
   } = props;
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
   const weekArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -614,6 +626,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                       refreshView={refreshView}
                       ScheduleViewInfo={ScheduleViewInfo}
                       privilegedMembers={privilegedMembers}
+                      checkFileExist={checkFileExist}
                     />
                   ),
                   openStatus: true,
@@ -674,6 +687,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                     refreshView={refreshView}
                     ScheduleViewInfo={ScheduleViewInfo}
                     privilegedMembers={privilegedMembers}
+                    checkFileExist={checkFileExist}
                   />
                 ),
                 openStatus: true,
@@ -837,6 +851,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       timestampToTime={timestampToTime}
       handleGoLive={handleGoLive}
       toLive={toLive}
+      checkFileExist={checkFileExist}
     />
   ) : (
     <Box className={classes.previewContainer}>
@@ -980,7 +995,15 @@ export default function CustomizeTempalte(props: InfoProps) {
                     {ScheduleViewInfo.attachment?.name}{" "}
                     <GetAppIcon
                       onClick={() => {
-                        window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
+                        checkFileExist(ScheduleViewInfo.attachment?.id).then((r) => {
+                          if (r) {
+                            window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
+                          } else {
+                            dispatch(
+                              actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download"))
+                            );
+                          }
+                        });
                       }}
                       style={{ color: "#0E78D5", cursor: "pointer", fontSize: "20px", marginLeft: "10px" }}
                     />
