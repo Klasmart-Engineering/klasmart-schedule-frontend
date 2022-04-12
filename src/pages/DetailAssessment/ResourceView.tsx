@@ -308,7 +308,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
   }
 
   return (
-    <Dialog open={open} fullWidth maxWidth={"xl"}>
+    <Dialog open={open} fullWidth maxWidth={"lg"}>
       <DialogTitle>
        <div className={css.titleBar}>
           <span>{attachment?.attachment_name}</span>
@@ -334,7 +334,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
       {dialogType === "edit" ? <UiSketch 
         ref={sketchRef} 
         width={mobile ? 1000 : 1000} 
-        height={800} 
+        height={650} 
         pictureUrl={pictureUrl}
         pictureInitUrl={pictureInitUrl}
         onChange={handleChangePic}
