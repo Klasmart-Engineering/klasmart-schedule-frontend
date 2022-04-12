@@ -4343,7 +4343,7 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
      * @request GET:/reports/learning_summary/outcomes
      * @description query outcomes for  live classes summary
      */
-    queryOutcomesByAssessmentId: (query?: { assessment_id?: string }, params?: RequestParams) =>
+    queryOutcomesByAssessmentId: (query?: { assessment_id?: string; student_id?: string }, params?: RequestParams) =>
       this.request<EntityLearningSummaryOutcome[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learning_summary/outcomes${this.addQueryParams(query)}`,
         "GET",
@@ -4593,12 +4593,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports
-     * @name listStudentsAchievementOverviewReport
+     * @name getLearningOutcomeOverView
      * @summary list student report overview
      * @request GET:/reports/students_achievement_overview
      * @description list student report overview
      */
-    listStudentsAchievementOverviewReport: (query: { time_range: string }, params?: RequestParams) =>
+    getLearningOutcomeOverView: (query: { time_range: string }, params?: RequestParams) =>
       this.request<
         EntityStudentsAchievementOverviewReportResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse

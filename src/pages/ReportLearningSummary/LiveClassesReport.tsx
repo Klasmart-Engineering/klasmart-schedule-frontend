@@ -11,9 +11,13 @@ import {
   withStyles,
 } from "@material-ui/core";
 import { ChangeHistoryOutlined, CheckOutlined, ClearOutlined, InfoOutlined } from "@material-ui/icons";
+import { RootState } from "@reducers/index";
+import { queryOutcomesByAssessmentId } from "@reducers/report";
 import clsx from "clsx";
 import React, { useMemo, useState } from "react";
-import { EntityLiveClassSummaryItem } from "../../api/api.auto";
+import { useDispatch, useSelector } from "react-redux";
+import { useQuery } from ".";
+import { EntityAssignmentsSummaryItemV2, EntityLiveClassSummaryItem, EntityLiveClassSummaryItemV2 } from "../../api/api.auto";
 import liveBackUrl from "../../assets/icons/report_reca.svg";
 import assessmentBackUrl from "../../assets/icons/report_recl.svg";
 import { d } from "../../locale/LocaleManager";
@@ -310,41 +314,47 @@ export interface LiveClassesReportProps extends ReportInfoBaseProps {
 }
 export function LiveClassesReport(props: LiveClassesReportProps) {
   const css = useStyles();
+  const dispatch = useDispatch();
+  const { reportWeeklyOutcomes } = useSelector<RootState, RootState["report"]>((state) => state.report);
+  const { student_id } = useQuery();
   const { lessonIndex, reportType, liveClassSummary, assignmentSummary, onChangeLessonIndex } = props;
   const liveitems = liveClassSummary.items;
   const assessmentitems = assignmentSummary.items;
   const isLive = reportType === ReportType.live;
-  const key = isLive
-    ? liveitems && lessonIndex >= 0
-      ? liveitems[lessonIndex].schedule_id
-      : "liveitems"
-    : assessmentitems && lessonIndex >= 0
-    ? assessmentitems[lessonIndex].assessment_id
-    : "assessmentitems";
-  const outcomes = useMemo(() => {
+
+  const outcomes = lessonIndex === -1 ? [] : reportWeeklyOutcomes;
+
+  const key = useMemo(() => {
     if (isLive) {
-      if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
-        return liveitems[lessonIndex].outcomes;
+      if (liveitems?.length && lessonIndex >= 0) {
+        return liveitems[lessonIndex].schedule_id;
+      } else {
+        return "liveitems";
       }
     } else {
-      if (assessmentitems && lessonIndex !== -1 && lessonIndex >= 0) {
-        return assessmentitems[lessonIndex].outcomes;
+      if (assessmentitems?.length && lessonIndex >= 0) {
+        return assessmentitems[lessonIndex].assessment_id;
+      } else {
+        return "assessmentitems";
       }
     }
-  }, [assessmentitems, lessonIndex, isLive, liveitems]);
+  }, [lessonIndex, isLive, liveitems, assessmentitems]);
+
   const feedback = useMemo(() => {
     if (isLive) {
-      if (liveitems && lessonIndex !== -1 && lessonIndex >= 0) {
+      if (liveitems?.length && lessonIndex >= 0) {
         return liveitems[lessonIndex].teacher_feedback;
       }
     } else {
-      if (assessmentitems && lessonIndex !== -1 && lessonIndex >= 0) {
+      if (assessmentitems?.length && lessonIndex >= 0) {
         return assessmentitems[lessonIndex].teacher_feedback;
       }
     }
   }, [assessmentitems, isLive, lessonIndex, liveitems]);
-  const handleClickLessonPlan = (index: number) => {
+  const handleClickLessonPlan = (item: EntityAssignmentsSummaryItemV2 | EntityLiveClassSummaryItemV2, index: number) => {
     onChangeLessonIndex(index);
+
+    dispatch(queryOutcomesByAssessmentId({ assessment_id: item.assessment_id, student_id, metaLoading: true }));
   };
   return (
     <div className={css.liveClassWrap}>
@@ -363,7 +373,7 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
                   showArrow={index === lessonIndex}
                   liveItem={item}
                   showTime={showTime}
-                  onClickLessonPlan={() => handleClickLessonPlan(index)}
+                  onClickLessonPlan={() => handleClickLessonPlan(item, index)}
                 />
               );
             })
@@ -385,7 +395,7 @@ export function LiveClassesReport(props: LiveClassesReportProps) {
                 showArrow={index === lessonIndex}
                 assignmentItem={item}
                 showTime={showTime}
-                onClickLessonPlan={() => handleClickLessonPlan(index)}
+                onClickLessonPlan={() => handleClickLessonPlan(item, index)}
               />
             );
           })
