@@ -78,7 +78,7 @@ export default new Api({
 
 const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
   if (count > 1) return false;
-  const isAuthError = error.result?.errors.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
+  const isAuthError = error.result?.errors?.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
   if (!isAuthError) return false;
   try {
     await refreshToken();
@@ -114,7 +114,7 @@ export const gqlapi = new ApolloClient({
 });
 
 const link = createHttpLink({
-  uri: `${process.env.REACT_APP_KO_BASE_API}/audio-storage/graphql`,
+  uri: `${process.env.REACT_APP_KO_BASE_API}/media-storage/graphql`,
   credentials: "include",
 });
 export const audioClient = new ApolloClient({

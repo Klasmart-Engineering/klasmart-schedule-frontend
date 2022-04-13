@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) =>
     detailView: {
       padding: "12px",
       lineHeight: "30px",
-      maxHeight: "400px",
-      minWidth: "400px",
+      // maxHeight: "900px",
+      // minWidth: "400px",
       overflow: "auto",
       textAlign: "center",
       wordBreak: "break-all",
@@ -58,6 +58,14 @@ const useStyles = makeStyles((theme) =>
       "&::-webkit-scrollbar-thumb:window-inactive": {
         backgroundColor: "rgba(220,220,220,0.4)",
       },
+    },
+    imgCon: {
+      maxHeight: "400px",
+      minWidth: "400px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      margin: "20px 0"
     },
     okBtn: {
       marginLeft: "40px !important",
@@ -124,7 +132,7 @@ export function ResourceView(props: ResourceViewProps) {
           {(resourceType === ResourceViewTypeValues.essay || showAudioRecorder(resourceType)) && d("Detailed Answer").t("assess_popup_detailed_answer")}
           {resourceType === ResourceViewTypeValues.viewComment && d("View Comments").t("assess_popup_view_comments")}
           {resourceType === ResourceViewTypeValues.editComment && d("Add Comments").t("assess_popup_add_comments")}
-          {resourceType === ResourceViewTypeValues.viewWritingFeedback && "View Feedback"}
+          {resourceType === ResourceViewTypeValues.viewWritingFeedback && d("View Writing Feedback").t("assessment_hfs_view_writing_feedback")}
           {resourceType === ResourceViewTypeValues.selectImg && d("Select a file to provide feedback").t("assessment_hfs_select_file")}
           {showClose && 
             <IconButton onClick={onClose} className={css.closeBtn}>
@@ -136,7 +144,7 @@ export function ResourceView(props: ResourceViewProps) {
           {resourceType === ResourceViewTypeValues.viewComment && <div className={css.detailView}>{comment}</div>}
           {resourceType === ResourceViewTypeValues.viewWritingFeedback && 
             <div className={css.detailView}>
-              {comment ? comment : "No feedback yet"}
+              {comment ? comment : d("No feedback has been provided to this file.").t("assessment_hfs_no_teacher_feedback")}
             </div>
           }
           {showAudioRecorder(resourceType) && (
@@ -300,7 +308,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
   }
 
   return (
-    <Dialog open={open} fullWidth maxWidth={"md"}>
+    <Dialog open={open} fullWidth maxWidth={"lg"}>
       <DialogTitle>
        <div className={css.titleBar}>
           <span>{attachment?.attachment_name}</span>
@@ -309,7 +317,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
               {d("Select Image").t("assessmeng_hfs_select_image")}
             </Button>
             <Button disabled={hasSaved ? true : !hasTraces} startIcon={<SaveOutlined />} onClick={handleClickSave}>
-              {"Save"}
+              {d("Done").t("assessment_hfs_drawing_feedback_done")}
             </Button>
             <Button startIcon={<ExitToAppOutlined/>} onClick={handleClickExit} >
               {d("Exit").t("assessment_hfs_drawing_feedback_exit")}
@@ -325,20 +333,18 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
     <DialogContent>
       {dialogType === "edit" ? <UiSketch 
         ref={sketchRef} 
-        width={mobile ? 600 : 912} 
-        height={400} 
+        width={mobile ? 1000 : 1000} 
+        height={650} 
         pictureUrl={pictureUrl}
         pictureInitUrl={pictureInitUrl}
         onChange={handleChangePic}
       />
       :
-      <>
+      <div className={css.imgCon}>
         {attachment?.review_attachment_id ? 
         <AssetImg src={pictureUrl} />
-        : <div className={css.detailView}>
-            "No feedback yet"
-          </div>}
-      </>
+        : d("No feedback has been provided to this file.").t("assessment_hfs_no_teacher_feedback")}
+      </div>
     }
     </DialogContent>
   </Dialog>

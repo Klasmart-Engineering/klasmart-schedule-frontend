@@ -1085,8 +1085,8 @@
   "report_label_below": "Below",
   "schedule_study_due_on": "Due on",
   "library_label_organization_id": "Organization ID",
-  "report_label_learner_weekly_report_info": "Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 7 days:\n-Above Expectations: learners that have achieved more than 80%, on average, of the learning outcomes\n-Below Expectations: learners that have achieved less than 50%, on average, of the learning outcomes",
-  "report_label_learner_monthly_report_info": "Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 4 weeks:\n-Above Expectations: learners that have achieved more than 80% of the learning outcomes\n-Below Expectations: learners that have achieved less than 50% of the learning outcomes",
+  "report_label_learner_weekly_report_info": "\"Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 7 days:\n-Above Expectations: learners that have achieved more than 80%, on average, of the attendance and assignment completion.\n-Below Expectations: learners that have achieved less than 50%, on average, of the attendance and assignment completion.\"",
+  "report_label_learner_monthly_report_info": "\"Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 4 weeks:\n-Above Expectations: learners that have achieved more than 80% of the learning outcomes\n-Below Expectations: learners that have achieved less than 50% of the learning outcomes\"",
   "app2web_badanamu_activities": "Badanamu Activities",
   "app2web_please_enter_the_link": "Please enter the link",
   "app2web_badanamu_activities_link": "Badanamu Activities Link",
@@ -1134,6 +1134,12 @@
   "assessment_hfs_comment_rating": "Comments & Ratings",
   "assessment_hfs_select_file": "Select a file to provide feedback",
   "assessmeng_hfs_select_image": "Select Image",
-  "schedule_msg_file_not_ready_to_download": "This file is not ready, please try again later.",
-  "assessment_hfs_drawing_feedback_exit": "Exit"
+  "schedule_msg_file_not_ready_to_download": "This file is not ready. Please try again later.",
+  "assessment_hfs_drawing_feedback_exit": "Exit",
+  "assessment_hfs_drawing_feedback_done": "Done",
+  "assessment_hfs_view_writing_feedback": "View Writing Feedback",
+  "assessment_hfs_view_drawing_feedback": "View Drawing Feedback",
+  "assessment_hfs_no_teacher_feedback": "No feedback has been provided to this file.",
+  "assessment_hfs_student_assessment": "Assessment",
+  "assessment_hfs_student_feedback": "Feedback"
 }

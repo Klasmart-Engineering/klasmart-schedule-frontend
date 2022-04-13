@@ -1,13 +1,13 @@
+import { d } from "@locale/LocaleManager";
+import { actError } from "@reducers/notify";
+import { checkResourceExist } from "@reducers/schedule";
+import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import React, { DOMAttributes, ReactNode, RefObject, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { apiDownloadPageUrl } from "../../api/extra";
 import { AppDispatch } from "../../reducers";
 import { actCreateDownload } from "../../reducers/content";
-import { checkResourceExist } from "@reducers/schedule";
-import { AsyncTrunkReturned } from "@reducers/type";
-import { actError } from "@reducers/notify";
-import { d } from "@locale/LocaleManager";
 
 interface DownloadButtonProps {
   resourceId?: string;
@@ -34,7 +34,7 @@ export function DownloadButton(props: DownloadButtonProps) {
       AsyncTrunkReturned<typeof checkResourceExist>
     >;
     if (!payload) {
-      dispatch(actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download")));
+      dispatch(actError(d("This file is not ready. Please try again later.").t("schedule_msg_file_not_ready_to_download")));
       return;
     }
     const { path } = await dispatch(actCreateDownload({ resourceId, metaLoading: true })).then(unwrapResult);

@@ -14,7 +14,7 @@ import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorTy
 import { d } from "../../locale/LocaleManager";
 import { RootState } from "../../reducers";
 import { actError, actSuccess, actWarning } from "../../reducers/notify";
-import { checkResourceExist, getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
+import { getScheduleNewetFeedback, saveScheduleFeedback } from "../../reducers/schedule";
 import { HtmlTooltip } from "./ScheduleAttachment";
 
 const useStyles = makeStyles(({ shadows }) =>
@@ -106,10 +106,11 @@ interface FileDataProps {
   fileName?: Pick<FileLikeWithId, "id" | "name">[] | undefined;
   batch?: BatchItem[];
   isUploading?: boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 function FileDataTemplate(props: FileDataProps) {
-  const { fileName, handleFileData, batch, isUploading } = props;
+  const { fileName, handleFileData, batch, isUploading, checkFileExist } = props;
   const css = useStyles();
   const dispatch = useDispatch();
   const sourceDownload = (attachmentId?: string) => {
@@ -117,13 +118,6 @@ function FileDataTemplate(props: FileDataProps) {
   };
   const textEllipsis = (value: string | undefined) => {
     return value && value.length > 30 ? `${value.substring(0, 30)} ....` : value;
-  };
-  const checkFileExist = async (source_id?: string) => {
-    if (!source_id) return;
-    const resultInfo = (await dispatch(checkResourceExist({ resource_id: source_id, metaLoading: true }))) as unknown as PayloadAction<
-      AsyncTrunkReturned<typeof checkResourceExist>
-    >;
-    return await resultInfo.payload;
   };
   return (
     <Box className={css.participantSaveBox}>
@@ -136,7 +130,7 @@ function FileDataTemplate(props: FileDataProps) {
                 if (r) {
                   window.open(sourceDownload(item.id));
                 } else {
-                  dispatch(actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download")));
+                  dispatch(actError(d("This file is not ready. Please try again later.").t("schedule_msg_file_not_ready_to_download")));
                 }
               });
             }}
@@ -242,7 +236,7 @@ function SubmitTemplate(props: SubmitProps) {
 
 function FeedbackTemplate(props: FeedbackProps) {
   const css = useStyles();
-  const { schedule_id, changeModalDate, teacher, className, due_date, includeTable, due_time, is_hidden } = props;
+  const { schedule_id, changeModalDate, teacher, className, due_date, includeTable, due_time, is_hidden, checkFileExist } = props;
   const [comment, seComment] = React.useState("");
   const [fileName, setFileName] = React.useState<Pick<FileLikeWithId, "id" | "name">[] | undefined>([]);
   const dispatch = useDispatch();
@@ -392,7 +386,13 @@ function FeedbackTemplate(props: FeedbackProps) {
         render={({ btnRef, value, isUploading, batch }) => (
           <>
             {(value!.length > 0 || isUploading) && (
-              <FileDataTemplate fileName={fileName} batch={batch?.items} isUploading={isUploading} handleFileData={handleFileData} />
+              <FileDataTemplate
+                fileName={fileName}
+                batch={batch?.items}
+                isUploading={isUploading}
+                handleFileData={handleFileData}
+                checkFileExist={checkFileExist}
+              />
             )}
             {!isUploading && value!.length < 1 && (
               <Box style={{ position: "relative" }}>
@@ -447,10 +447,11 @@ interface FeedbackProps {
   includeTable?: boolean;
   due_time?: string;
   is_hidden?: boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 export default function ScheduleFeedback(props: FeedbackProps) {
-  const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time, is_hidden } = props;
+  const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time, is_hidden, checkFileExist } = props;
   return (
     <FeedbackTemplate
       schedule_id={schedule_id}
@@ -461,6 +462,7 @@ export default function ScheduleFeedback(props: FeedbackProps) {
       teacher={teacher}
       includeTable={includeTable}
       is_hidden={is_hidden}
+      checkFileExist={checkFileExist}
     />
   );
 }
