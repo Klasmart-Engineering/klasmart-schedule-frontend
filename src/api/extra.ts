@@ -7,7 +7,7 @@ import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
 import { LangRecordId } from "../locale/lang/type";
 import { ICacheData } from "../services/permissionCahceService";
-import { UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
+import { UsersConnectionEdge, UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
 import {
   ClassesBySchoolIdDocument,
   ClassesBySchoolIdQuery,
@@ -33,6 +33,9 @@ import {
   GetSchoolMembershipsDocument,
   GetSchoolMembershipsQuery,
   GetSchoolMembershipsQueryVariables,
+  GetStudentNameByIdDocument,
+  GetStudentNameByIdQuery,
+  GetStudentNameByIdQueryVariables,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
   SchoolsClassesQueryVariables,
@@ -792,6 +795,29 @@ export const recursiveGetClassNodeStudents = async (
   if (classNode?.studentsConnection?.pageInfo?.hasNextPage) {
     studentsCursor = classNode?.studentsConnection?.pageInfo?.endCursor as string;
     return recursiveGetClassNodeStudents(id, studentsCursor, [...studentNodeEdgs]);
+  } else {
+    return new Promise((resolve) => {
+      resolve(studentNodeEdgs);
+    });
+  }
+};
+
+export const recursiveGetStudentsName = async (
+  variables: GetStudentNameByIdQueryVariables,
+  arr: UsersConnectionEdge[]
+): Promise<UsersConnectionEdge[]> => {
+  let studentNodeEdgs: UsersConnectionEdge[] = [...arr];
+  const {
+    data: { usersConnection },
+  } = await gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
+    query: GetStudentNameByIdDocument,
+    variables,
+  });
+  studentNodeEdgs = studentNodeEdgs.concat((usersConnection?.edges || []) as UsersConnectionEdge[]);
+
+  if (usersConnection?.pageInfo?.hasNextPage) {
+    const studentsCursor = usersConnection?.pageInfo?.endCursor as string;
+    return recursiveGetStudentsName({ ...variables, directionArgs: { cursor: studentsCursor } }, [...studentNodeEdgs]);
   } else {
     return new Promise((resolve) => {
       resolve(studentNodeEdgs);
