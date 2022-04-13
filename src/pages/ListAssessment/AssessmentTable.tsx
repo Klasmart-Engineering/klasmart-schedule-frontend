@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) =>
       minWidth: 104,
       maxWidth: 200,
     },
+    nameListCell: {
+      maxWidth: 300,
+    },
     statusCon: {
       color: "#fff",
       borderRadius: "15px",
@@ -77,7 +80,7 @@ function AssessmentRow(props: AssessmentProps) {
           </TableCell>
         </>
       )}
-      <TableCell align="center">{assessment.teachers?.map((v) => v.name)?.join(" ,") ?? d("N/A").t("assess_column_n_a")}</TableCell>
+      <TableCell align="center" className={css.nameListCell}>{assessment.teachers?.map((v) => v.name)?.join(" ,") ?? d("N/A").t("assess_column_n_a")}</TableCell>
       {isClassAndLive && <TableCell align="center">{formattedTime(assessment.class_end_at)}</TableCell>}
       {!isClassAndLive && <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>}
       {isHomefun && 
