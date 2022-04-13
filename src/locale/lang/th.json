@@ -1140,6 +1140,6 @@
   "assessment_hfs_view_writing_feedback": "ดูคำติชมการเขียน",
   "assessment_hfs_view_drawing_feedback": "ดูคำติชมการวาดภาพ",
   "assessment_hfs_no_teacher_feedback": "No feedback has been provided to this file.",
-  "assessment-hfs-student-assessment": "Assessment",
-  "assessment-hfs-student-feedback": "Feedback"
+  "assessment_hfs_student_assessment": "การประเมิน",
+  "assessment_hfs_student_feedback": "ข้อเสนอแนะ"
 }

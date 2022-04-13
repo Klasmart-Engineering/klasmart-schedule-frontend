@@ -1140,6 +1140,6 @@
   "assessment_hfs_view_writing_feedback": "View Writing Feedback",
   "assessment_hfs_view_drawing_feedback": "View Drawing Feedback",
   "assessment_hfs_no_teacher_feedback": "No feedback has been provided to this file.",
-  "assessment-hfs-student-assessment": "Assessment",
-  "assessment-hfs-student-feedback": "Feedback"
+  "assessment_hfs_student_assessment": "Evaluación",
+  "assessment_hfs_student_feedback": "Comentarios"
 }

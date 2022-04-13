@@ -1140,6 +1140,6 @@
   "assessment_hfs_view_writing_feedback": "Xem văn bản phản hồi",
   "assessment_hfs_view_drawing_feedback": "Xem bản vẽ phản hồi",
   "assessment_hfs_no_teacher_feedback": "Không có phản hồi nào được cung cấp cho tệp này.",
-  "assessment-hfs-student-assessment": "Assessment",
-  "assessment-hfs-student-feedback": "Feedback"
+  "assessment_hfs_student_assessment": "Đánh giá",
+  "assessment_hfs_student_feedback": "Nhận xét"
 }
