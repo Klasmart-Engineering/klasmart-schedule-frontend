@@ -450,6 +450,7 @@ function EditBox(props: CalendarStateProps) {
     viewSubjectPermission,
     lessonPlans,
     mobile,
+    checkFileExist,
   } = props;
   const { classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
@@ -2739,6 +2740,7 @@ function EditBox(props: CalendarStateProps) {
               specificStatus={specificStatus}
               isStudent={privilegedMembers("Student")}
               isDisabled={isScheduleExpired() || isLimit()}
+              checkFileExist={checkFileExist}
             />
           </>
         )}
@@ -2752,6 +2754,7 @@ function EditBox(props: CalendarStateProps) {
             includeTable={includeTable}
             due_time={timestampToTime(scheduleDetial.due_at, "feedback") as string}
             is_hidden={isHidden}
+            checkFileExist={checkFileExist}
           />
         )}
         {!isScheduleExpired() &&
@@ -2887,6 +2890,7 @@ interface CalendarStateProps {
   filterOtherClasses: GetClassFilterListQuery;
   getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
   mobile?: boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -2940,6 +2944,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     filterOtherClasses,
     getClassesWithoutSchool,
     mobile,
+    checkFileExist,
   } = props;
 
   const template = (
@@ -2986,6 +2991,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           userInUndefined={userInUndefined}
           getUesrOfUndefined={getUesrOfUndefined}
           mobile={mobile}
+          checkFileExist={checkFileExist}
         />
       </Box>
       <Box
@@ -3037,6 +3043,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           classesConnection={classesConnection}
           lessonPlans={lessonPlans}
           mobile={mobile}
+          checkFileExist={checkFileExist}
         />
       </Box>
     </>

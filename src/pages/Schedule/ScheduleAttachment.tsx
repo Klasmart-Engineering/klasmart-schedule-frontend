@@ -84,6 +84,7 @@ interface ScheduleAttachmentProps {
   setSpecificStatus?: (value: boolean) => void;
   isStudent: boolean;
   isDisabled: boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 const useQuery = () => {
@@ -94,7 +95,7 @@ const useQuery = () => {
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent, isDisabled } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent, isDisabled, checkFileExist } = props;
   const css = useStyles();
   const { schedule_id, pathname } = useQuery();
   const dispatch = useDispatch();
@@ -191,9 +192,20 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
             {attachmentName && !isStudent && !isDisabled && (
               <CancelIcon className={css.iconField} style={{ right: "50px", color: "#666666" }} onClick={deleteItem} />
             )}
-            <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                checkFileExist(attachmentId).then((r) => {
+                  if (r) {
+                    window.open(downloadUrl);
+                  } else {
+                    dispatch(actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download")));
+                  }
+                });
+              }}
+            >
               {attachmentName && !isDisabled && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} />}
-            </a>
+            </div>
           </Box>
         )}
       />
