@@ -1140,6 +1140,6 @@
   "assessment_hfs_view_writing_feedback": "查看文字反馈",
   "assessment_hfs_view_drawing_feedback": "查看绘图反馈",
   "assessment_hfs_no_teacher_feedback": "老师未对此文件提供任何反馈。",
-  "assessment-hfs-student-assessment": "Assessment",
-  "assessment-hfs-student-feedback": "Feedback"
+  "assessment_hfs_student_assessment": "评估",
+  "assessment_hfs_student_feedback": "反馈"
 }
