@@ -103,6 +103,7 @@ export type GetClassesTeachingQuery = { __typename?: "Query" } & {
 
 export type GetStudentNameByIdQueryVariables = Types.Exact<{
   filter?: Types.Maybe<Types.UserFilter>;
+  directionArgs?: Types.Maybe<Types.ConnectionsDirectionArgs>;
 }>;
 
 export type GetStudentNameByIdQuery = { __typename?: "Query" } & {
@@ -117,6 +118,7 @@ export type GetStudentNameByIdQuery = { __typename?: "Query" } & {
           >
         >
       >;
+      pageInfo?: Types.Maybe<{ __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "endCursor">>;
     }
   >;
 };
@@ -1156,14 +1158,18 @@ export type GetClassesTeachingQueryHookResult = ReturnType<typeof useGetClassesT
 export type GetClassesTeachingLazyQueryHookResult = ReturnType<typeof useGetClassesTeachingLazyQuery>;
 export type GetClassesTeachingQueryResult = Apollo.QueryResult<GetClassesTeachingQuery, GetClassesTeachingQueryVariables>;
 export const GetStudentNameByIdDocument = gql`
-  query getStudentNameById($filter: UserFilter) {
-    usersConnection(filter: $filter, direction: FORWARD) {
+  query getStudentNameById($filter: UserFilter, $directionArgs: ConnectionsDirectionArgs) {
+    usersConnection(filter: $filter, directionArgs: $directionArgs, direction: FORWARD) {
       edges {
         node {
           id
           givenName
           familyName
         }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }

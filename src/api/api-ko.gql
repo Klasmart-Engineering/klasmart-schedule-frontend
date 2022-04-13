@@ -135,14 +135,18 @@ query getClassesTeaching($organizationId: UUIDFilter, $cursor: String) {
   }
 }
 
-query getStudentNameById($filter: UserFilter) {
-  usersConnection(filter: $filter, direction: FORWARD) {
+query getStudentNameById($filter: UserFilter,$directionArgs:ConnectionsDirectionArgs) {
+  usersConnection(filter: $filter, direction: FORWARD,directionArgs: $directionArgs) {
     edges {
       node {
         id
         givenName
         familyName
       }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }

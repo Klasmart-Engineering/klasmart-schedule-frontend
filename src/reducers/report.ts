@@ -20,9 +20,6 @@ import { orderByASC } from "@utilities/dataUtilities";
 import { WritableDraft } from "immer/dist/types/types-external";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
-  GetStudentNameByIdDocument,
-  GetStudentNameByIdQuery,
-  GetStudentNameByIdQueryVariables,
   QueryMyUserDocument,
   QueryMyUserQuery,
   QueryMyUserQueryVariables,
@@ -78,6 +75,7 @@ import {
   recursiveGetClassTeaching,
   recursiveGetSchoolMemberships,
   recursiveGetSchoolsClasses,
+  recursiveGetStudentsName,
   SchoolClassesNode,
   SchoolIdProps,
   UserClass,
@@ -911,23 +909,6 @@ export const getStudentSubjectsByOrgNew = createAsyncThunk<
   ]);
 });
 
-export const getStudentUserNamesById = createAsyncThunk("getStudentUserNamesById", async (userIds: string[]) => {
-  const filter = {
-    OR: userIds.map((id) => ({
-      userId: {
-        operator: UuidOperator.Eq,
-        value: id,
-      },
-    })),
-  } as UserFilter;
-  return gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
-    query: GetStudentNameByIdDocument,
-    variables: {
-      filter,
-    },
-  });
-});
-
 interface getStudentUsageMaterialParams extends EntityStudentUsageMaterialReportRequest {
   allClasses: string[];
   time_range_count: string[];
@@ -1622,23 +1603,18 @@ export const getClassesAssignmentsUnattended = createAsyncThunk<
   { class_id: string; query: GetClassesAssignmentsUnattendedPayloadQuery } & LoadingMetaPayload
 >("getClassesAssignmentsUnattended", async ({ metaLoading, class_id, query }) => {
   const data = await api.reports.getClassesAssignmentsUnattended(class_id, query);
-  const userIds = data.map((d) => d.student_id);
-
+  const userIds = uniq(data.map((d) => d.student_id));
+  if (!userIds.length) return [];
   const filter = {
-    OR: uniq(userIds).map((id) => ({
+    OR: userIds.map((id) => ({
       userId: {
         operator: UuidOperator.Eq,
         value: id,
       },
     })),
   } as UserFilter;
-  const resp = await gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
-    query: GetStudentNameByIdDocument,
-    variables: {
-      filter,
-    },
-  });
-  const userNames = resp.data.usersConnection?.edges?.reduce((prev: IObj, cur) => {
+  const studentsName = await recursiveGetStudentsName({ filter }, []);
+  const userNames = studentsName?.reduce((prev: IObj, cur) => {
     if (cur?.node?.id) {
       prev[cur?.node?.id] = `${cur.node?.givenName || ""} ${cur.node?.familyName || ""}`;
     }
