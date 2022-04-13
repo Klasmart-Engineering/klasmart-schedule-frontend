@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     imgCon: {
-      maxHeight: "400px",
+      maxHeight: "650px",
       minWidth: "400px",
       display: "flex",
       alignItems: "center",
@@ -308,7 +308,7 @@ export function DrawingFeedback(props: DrawingFeedbackProps) {
   }
 
   return (
-    <Dialog open={open} fullWidth maxWidth={"lg"}>
+    <Dialog open={open} fullWidth maxWidth={dialogType === "edit" ? "lg" : (attachment?.review_attachment_id ? "lg" : "sm")}>
       <DialogTitle>
        <div className={css.titleBar}>
           <span>{attachment?.attachment_name}</span>

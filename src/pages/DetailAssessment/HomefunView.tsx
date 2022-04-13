@@ -141,12 +141,17 @@ const useStyles = makeStyles({
   imgLable: {
     display: "flex",
     alignItems: "center",
+    wordBreak: "break-all",
   },
   svgicon: {
     marginRight: "5px",
   },
   imgName: {
     wordBreak: "break-all"
+  },
+  nameCon: {
+    display: "flex",
+    alignItems: "center",
   }
 });
 export interface HomefunProps {
@@ -549,6 +554,7 @@ export function AssessmentTable(props: AssessmentProps) {
             name={assignment.attachment_name}
             resourceId={assignment.attachment_id}
             key={assignment.attachment_id}
+            reviewId={assignment.review_attachment_id}
           />
         ))}
       </TableCell>
@@ -597,13 +603,17 @@ interface AssignmentDownloadRowProps {
   name?: string;
   downloadName?: string;
   resourceId?: string;
+  reviewId?: string;
 }
 function AssignmentDownloadRow(props: AssignmentDownloadRowProps) {
-  const { name, downloadName, resourceId } = props;
+  const { name, downloadName, resourceId, reviewId } = props;
   const css = useStyles();
   return (
     <div className={css.assignmentDownloadRow}>
-      <span className={css.imgName}>{name}</span>
+      <div className={css.nameCon}>
+        {reviewId && <SvgIcon className={css.svgicon} component={GetFeedbackIcon}/>}
+        <span className={css.imgName}>{name}</span>
+      </div>
       <DownloadButton resourceId={resourceId} fileName={downloadName}>
         <IconButton size="small">
           <GetApp fontSize="inherit" />
