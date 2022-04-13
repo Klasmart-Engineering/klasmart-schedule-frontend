@@ -529,14 +529,14 @@ export function AssessmentTable(props: AssessmentProps) {
       style: { backgroundColor: "#F3F3F3" },
       width: "20%",
       value: "assessment",
-      text: "Assessment",
+      text: d("Assessment").t("assessment_hfs_student_assessment"),
     },
     {
       align: "center",
       style: { backgroundColor: "#F3F3F3" },
       width: "15%",
       value: "feedback",
-      text: "Feedback",
+      text: d("Feedback").t("assessment_hfs_student_feedback"),
     },
     
   ];

@@ -130,7 +130,7 @@ function FileDataTemplate(props: FileDataProps) {
                 if (r) {
                   window.open(sourceDownload(item.id));
                 } else {
-                  dispatch(actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download")));
+                  dispatch(actError(d("This file is not ready. Please try again later.").t("schedule_msg_file_not_ready_to_download")));
                 }
               });
             }}

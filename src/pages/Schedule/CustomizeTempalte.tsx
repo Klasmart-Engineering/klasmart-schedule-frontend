@@ -461,7 +461,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
                               window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
                             } else {
                               dispatch(
-                                actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download"))
+                                actError(d("This file is not ready. Please try again later.").t("schedule_msg_file_not_ready_to_download"))
                               );
                             }
                           });
@@ -1000,7 +1000,7 @@ export default function CustomizeTempalte(props: InfoProps) {
                             window.open(`${apiResourcePathById(ScheduleViewInfo.attachment?.id)}`, "_blank");
                           } else {
                             dispatch(
-                              actError(d("This file is not ready, please try again later.").t("schedule_msg_file_not_ready_to_download"))
+                              actError(d("This file is not ready. Please try again later.").t("schedule_msg_file_not_ready_to_download"))
                             );
                           }
                         });

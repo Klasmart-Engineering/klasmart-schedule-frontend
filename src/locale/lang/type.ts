@@ -1697,16 +1697,16 @@ type LangRecord =
   | { id: "library_label_organization_id"; description: `Organization ID`; values: undefined }
   | {
       id: "report_label_learner_weekly_report_info";
-      description: `Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 7 days:
--Above Expectations: learners that have achieved more than 80%, on average, of the learning outcomes
--Below Expectations: learners that have achieved less than 50%, on average, of the learning outcomes`;
+      description: `"Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 7 days:
+-Above Expectations: learners that have achieved more than 80%, on average, of the attendance and assignment completion.
+-Below Expectations: learners that have achieved less than 50%, on average, of the attendance and assignment completion."`;
       values: undefined;
     }
   | {
       id: "report_label_learner_monthly_report_info";
-      description: `Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 4 weeks:
+      description: `"Attendance and assignment completion rates are calculated among the learners who have generated Study data in the last 4 weeks:
 -Above Expectations: learners that have achieved more than 80% of the learning outcomes
--Below Expectations: learners that have achieved less than 50% of the learning outcomes`;
+-Below Expectations: learners that have achieved less than 50% of the learning outcomes"`;
       values: undefined;
     }
   | { id: "app2web_badanamu_activities"; description: `Badanamu Activities`; values: undefined }
@@ -1792,12 +1792,14 @@ type LangRecord =
   | { id: "assessment_hfs_comment_rating"; description: `Comments & Ratings`; values: undefined }
   | { id: "assessment_hfs_select_file"; description: `Select a file to provide feedback`; values: undefined }
   | { id: "assessmeng_hfs_select_image"; description: `Select Image`; values: undefined }
-  | { id: "schedule_msg_file_not_ready_to_download"; description: `This file is not ready, please try again later.`; values: undefined }
+  | { id: "schedule_msg_file_not_ready_to_download"; description: `This file is not ready. Please try again later.`; values: undefined }
   | { id: "assessment_hfs_drawing_feedback_exit"; description: `Exit`; values: undefined }
   | { id: "assessment_hfs_drawing_feedback_done"; description: `Done`; values: undefined }
   | { id: "assessment_hfs_view_writing_feedback"; description: `View Writing Feedback`; values: undefined }
   | { id: "assessment_hfs_view_drawing_feedback"; description: `View Drawing Feedback`; values: undefined }
-  | { id: "assessment_hfs_no_teacher_feedback"; description: `No feedback has been provided to this file.`; values: undefined };
+  | { id: "assessment_hfs_no_teacher_feedback"; description: `No feedback has been provided to this file.`; values: undefined }
+  | { id: "assessment_hfs_student_assessment"; description: `Assessment`; values: undefined }
+  | { id: "assessment_hfs_student_feedback"; description: `Feedback`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];
