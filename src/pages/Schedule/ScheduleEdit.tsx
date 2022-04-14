@@ -1031,7 +1031,7 @@ function EditBox(props: CalendarStateProps) {
       addData["due_at"] = dueDateTimestamp;
       addData["title"] = `${d("Review").t("schedule_lable_class_type_review")}: ${classItem?.name ?? ""} ${timestampToTimeReviewTitle(
         addData["content_start_at"] as number
-      )} ~ ${timestampToTimeReviewTitle(addData["content_end_at"] as number)} ${d("Material").t("library_label_material")}`;
+      )} - ${timestampToTimeReviewTitle(addData["content_end_at"] as number)} ${d("Material").t("library_label_material")}`;
     }
 
     if (scheduleList.class_type === "Homework") {
