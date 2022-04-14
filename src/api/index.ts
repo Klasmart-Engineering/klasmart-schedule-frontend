@@ -114,7 +114,7 @@ export const gqlapi = new ApolloClient({
 });
 
 const link = createHttpLink({
-  uri: `${process.env.REACT_APP_KO_BASE_API}/audio-storage/graphql`,
+  uri: `${process.env.REACT_APP_KO_BASE_API}/media-storage/graphql`,
   credentials: "include",
 });
 export const audioClient = new ApolloClient({

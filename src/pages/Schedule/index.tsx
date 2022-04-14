@@ -25,6 +25,7 @@ import { modelSchedule } from "../../models/ModelSchedule";
 import {
   actOutcomeListLoading,
   changeParticipants,
+  checkResourceExist,
   classesWithoutSchool,
   getClassesByOrg,
   getClassesBySchool,
@@ -369,6 +370,14 @@ function ScheduleContent() {
     return resultInfo.payload ? resultInfo.payload.data.schoolsConnection.edges : [];
   };
 
+  const checkFileExist = async (source_id?: string) => {
+    if (!source_id) return;
+    const resultInfo = (await dispatch(checkResourceExist({ resource_id: source_id, metaLoading: true }))) as unknown as PayloadAction<
+      AsyncTrunkReturned<typeof checkResourceExist>
+    >;
+    return await resultInfo.payload;
+  };
+
   const getClassesWithoutSchool = async (cursor: string, value: string, loading: boolean) => {
     let resultInfo: any;
     resultInfo = await dispatch(
@@ -545,6 +554,7 @@ function ScheduleContent() {
               userInUndefined={userInUndefined}
               lessonPlans={lessonPlans}
               mobile={mobile}
+              checkFileExist={checkFileExist}
             />
           </Grid>
           {mobile && (
@@ -593,6 +603,7 @@ function ScheduleContent() {
                 getHandleScheduleViewInfo={getHandleScheduleViewInfo}
                 ScheduleViewInfo={ScheduleViewInfo}
                 privilegedMembers={privilegedMembers}
+                checkFileExist={checkFileExist}
               />
             )}
             {includeList && <SearchList timesTamp={timesTamp} />}

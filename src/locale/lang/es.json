@@ -1134,10 +1134,12 @@
   "assessment_hfs_comment_rating": "Comments & Ratings",
   "assessment_hfs_select_file": "Select a file to provide feedback",
   "assessmeng_hfs_select_image": "Select Image",
-  "schedule_msg_file_not_ready_to_download": "This file is not ready, please try again later.",
+  "schedule_msg_file_not_ready_to_download": "This file is not ready. Please try again later.",
   "assessment_hfs_drawing_feedback_exit": "Exit",
   "assessment_hfs_drawing_feedback_done": "Done",
   "assessment_hfs_view_writing_feedback": "View Writing Feedback",
   "assessment_hfs_view_drawing_feedback": "View Drawing Feedback",
-  "assessment_hfs_no_teacher_feedback": "No feedback has been provided to this file."
+  "assessment_hfs_no_teacher_feedback": "No feedback has been provided to this file.",
+  "assessment_hfs_student_assessment": "Evaluación",
+  "assessment_hfs_student_feedback": "Comentarios"
 }

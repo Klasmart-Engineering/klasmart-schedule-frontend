@@ -60,19 +60,6 @@
             "in": "query"
           },
           {
-            "type": "string",
-            "description": "teacher name fuzzy search",
-            "name": "teacher_name",
-            "in": "query"
-          },
-          {
-            "enum": ["OnlineClass", "OfflineClass"],
-            "type": "string",
-            "description": "class type",
-            "name": "class_type",
-            "in": "query"
-          },
-          {
             "type": "integer",
             "default": 1,
             "description": "page number",
@@ -100,7 +87,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/entity.ListAssessmentsResult"
+              "$ref": "#/definitions/v2.ListAssessmentsResultForHomePage"
             }
           },
           "400": {
@@ -2409,9 +2396,9 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "true/false",
             "schema": {
-              "type": "bool"
+              "type": "boolean"
             }
           },
           "400": {
@@ -5890,6 +5877,12 @@
             "description": "assessment_id",
             "name": "assessment_id",
             "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "student_id",
+            "name": "student_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -6766,7 +6759,7 @@
         "produces": ["application/json"],
         "tags": ["reports"],
         "summary": "list student report overview",
-        "operationId": "listStudentsAchievementOverviewReport",
+        "operationId": "getLearningOutcomeOverView",
         "parameters": [
           {
             "type": "string",

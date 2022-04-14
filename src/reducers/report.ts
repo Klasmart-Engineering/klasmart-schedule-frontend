@@ -20,9 +20,6 @@ import { orderByASC } from "@utilities/dataUtilities";
 import { WritableDraft } from "immer/dist/types/types-external";
 import { cloneDeep, pick, uniq, uniqBy } from "lodash";
 import {
-  GetStudentNameByIdDocument,
-  GetStudentNameByIdQuery,
-  GetStudentNameByIdQueryVariables,
   QueryMyUserDocument,
   QueryMyUserQuery,
   QueryMyUserQueryVariables,
@@ -40,6 +37,7 @@ import {
   EntityClassesAssignmentsView,
   EntityLearnerReportOverview,
   EntityLearnerUsageResponse,
+  EntityLearningSummaryOutcome,
   EntityLearnOutcomeAchievementRequest,
   EntityLearnOutcomeAchievementResponse,
   EntityQueryAssignmentsSummaryResult,
@@ -78,6 +76,7 @@ import {
   recursiveGetClassTeaching,
   recursiveGetSchoolMemberships,
   recursiveGetSchoolsClasses,
+  recursiveGetStudentsName,
   SchoolClassesNode,
   SchoolIdProps,
   UserClass,
@@ -203,6 +202,7 @@ interface IreportState {
   learningWeeklyOverview: EntityLearnerReportOverview;
   learningMonthlyOverview: EntityLearnerReportOverview;
   teacherLoadOverview: EntityTeacherLoadOverview;
+  reportWeeklyOutcomes: EntityLearningSummaryOutcome[];
 }
 
 interface IObj {
@@ -228,6 +228,7 @@ const initialState: IreportState = {
   reportList: [],
   achievementDetail: [],
   student_name: "",
+  reportWeeklyOutcomes: [],
   learningWeeklyOverview: {
     num_above: 0,
     attendees: 0,
@@ -911,23 +912,6 @@ export const getStudentSubjectsByOrgNew = createAsyncThunk<
   ]);
 });
 
-export const getStudentUserNamesById = createAsyncThunk("getStudentUserNamesById", async (userIds: string[]) => {
-  const filter = {
-    OR: userIds.map((id) => ({
-      userId: {
-        operator: UuidOperator.Eq,
-        value: id,
-      },
-    })),
-  } as UserFilter;
-  return gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
-    query: GetStudentNameByIdDocument,
-    variables: {
-      filter,
-    },
-  });
-});
-
 interface getStudentUsageMaterialParams extends EntityStudentUsageMaterialReportRequest {
   allClasses: string[];
   time_range_count: string[];
@@ -1240,7 +1224,7 @@ interface GetAchievementOverviewProps extends LoadingMetaPayload {
 export const getAchievementOverview = createAsyncThunk<EntityStudentsAchievementOverviewReportResponse, GetAchievementOverviewProps>(
   "report/students_achievement_overview",
   async ({ time_range }) => {
-    return await api.reports.listStudentsAchievementOverviewReport({ time_range });
+    return await api.reports.getLearningOutcomeOverView({ time_range });
   }
 );
 export const getTeachingLoadList = createAsyncThunk<
@@ -1285,13 +1269,13 @@ export const getLessonTeacherLoad = createAsyncThunk<listTeacherLoadLessonsRespo
     };
   }
 );
-export type IParamsQueryLiveClassSummary = Parameters<typeof api.reports.queryLiveClassesSummary>[0];
-export type IResultQueryLiveClassSummary = AsyncReturnType<typeof api.reports.queryLiveClassesSummary>;
+export type IParamsQueryLiveClassSummary = Parameters<typeof api.reports.queryLiveClassesSummaryV2>[0];
+export type IResultQueryLiveClassSummary = AsyncReturnType<typeof api.reports.queryLiveClassesSummaryV2>;
 export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSummary, IParamsQueryLiveClassSummary & LoadingMetaPayload>(
   "getLiveClassesSummary",
   async (query) => {
     const { subject_id, school_id, class_id } = query;
-    const res = await api.reports.queryLiveClassesSummary({
+    const res = await api.reports.queryLiveClassesSummaryV2({
       ...query,
       school_id: school_id === "all" || school_id === "none" ? "" : school_id,
       class_id: class_id === "all" ? "" : class_id,
@@ -1301,13 +1285,13 @@ export const getLiveClassesSummary = createAsyncThunk<IResultQueryLiveClassSumma
   }
 );
 
-export type IParamsQueryAssignmentSummary = Parameters<typeof api.reports.queryAssignmentsSummary>[0];
-export type IResultQueryAssignmentSummary = AsyncReturnType<typeof api.reports.queryAssignmentsSummary>;
+export type IParamsQueryAssignmentSummary = Parameters<typeof api.reports.queryAssignmentsSummaryV2>[0];
+export type IResultQueryAssignmentSummary = AsyncReturnType<typeof api.reports.queryAssignmentsSummaryV2>;
 export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSummary, IParamsQueryAssignmentSummary & LoadingMetaPayload>(
   "getAssingmentSummary",
   async (query) => {
     const { subject_id, school_id, class_id } = query;
-    const res = await api.reports.queryAssignmentsSummary({
+    const res = await api.reports.queryAssignmentsSummaryV2({
       ...query,
       school_id: school_id === "all" || school_id === "none" ? "" : school_id,
       class_id: class_id === "all" ? "" : class_id,
@@ -1316,6 +1300,16 @@ export const getAssignmentSummary = createAsyncThunk<IResultQueryAssignmentSumma
     return res;
   }
 );
+
+export type IParamsQueryOutcomesByAssessmentId = Parameters<typeof api.reports.queryOutcomesByAssessmentId>[0];
+export type IResultQueryOutcomesByAssessmentId = AsyncReturnType<typeof api.reports.queryOutcomesByAssessmentId>;
+export const queryOutcomesByAssessmentId = createAsyncThunk<
+  IResultQueryOutcomesByAssessmentId,
+  IParamsQueryOutcomesByAssessmentId & LoadingMetaPayload
+>("queryOutcomesByAssessmentId", async (query) => {
+  const { assessment_id, student_id } = query;
+  return await api.reports.queryOutcomesByAssessmentId({ assessment_id, student_id });
+});
 
 export type IParamLearnerUsageOverview = Parameters<typeof api.reports.getLearnerUsageOverview>[0];
 export const getLearnerUsageOverview = createAsyncThunk<EntityLearnerUsageResponse, IParamLearnerUsageOverview & LoadingMetaPayload>(
@@ -1622,23 +1616,18 @@ export const getClassesAssignmentsUnattended = createAsyncThunk<
   { class_id: string; query: GetClassesAssignmentsUnattendedPayloadQuery } & LoadingMetaPayload
 >("getClassesAssignmentsUnattended", async ({ metaLoading, class_id, query }) => {
   const data = await api.reports.getClassesAssignmentsUnattended(class_id, query);
-  const userIds = data.map((d) => d.student_id);
-
+  const userIds = uniq(data.map((d) => d.student_id));
+  if (!userIds.length) return [];
   const filter = {
-    OR: uniq(userIds).map((id) => ({
+    OR: userIds.map((id) => ({
       userId: {
         operator: UuidOperator.Eq,
         value: id,
       },
     })),
   } as UserFilter;
-  const resp = await gqlapi.query<GetStudentNameByIdQuery, GetStudentNameByIdQueryVariables>({
-    query: GetStudentNameByIdDocument,
-    variables: {
-      filter,
-    },
-  });
-  const userNames = resp.data.usersConnection?.edges?.reduce((prev: IObj, cur) => {
+  const studentsName = await recursiveGetStudentsName({ filter }, []);
+  const userNames = studentsName?.reduce((prev: IObj, cur) => {
     if (cur?.node?.id) {
       prev[cur?.node?.id] = `${cur.node?.givenName || ""} ${cur.node?.familyName || ""}`;
     }
@@ -2291,6 +2280,18 @@ const { actions, reducer } = createSlice({
     },
     [getAssignmentSummary.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getAssignmentSummary>>) => {
       state.assignmentSummary = payload;
+    },
+    [queryOutcomesByAssessmentId.pending.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof queryOutcomesByAssessmentId>>
+    ) => {
+      state.reportWeeklyOutcomes = [];
+    },
+    [queryOutcomesByAssessmentId.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<AsyncTrunkReturned<typeof queryOutcomesByAssessmentId>>
+    ) => {
+      state.reportWeeklyOutcomes = payload;
     },
     [getTimeFilter.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getTimeFilter>>) => {
       const years = payload.map((item) => item.year as number);

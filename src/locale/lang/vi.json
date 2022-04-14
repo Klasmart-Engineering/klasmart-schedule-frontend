@@ -1129,15 +1129,17 @@
   "assessment_hfs_all": "Tất cả",
   "assessment_hfs_not_submitted": "Chưa gửi",
   "assessment_hfs_score_edit": "Bấm để Sửa",
-  "assessment_hfs_writing_feedback": "Phản hồi bằng văn bản",
-  "assessment_hfs_drawing_feedback": "Phản hồi bằng bản vẽ",
+  "assessment_hfs_writing_feedback": "Văn bản phản hồi",
+  "assessment_hfs_drawing_feedback": "Bản vẽ phản hồi",
   "assessment_hfs_comment_rating": "Nhận xét & Xếp hạng",
   "assessment_hfs_select_file": "Chọn một tệp để cung cấp phản hồi",
   "assessmeng_hfs_select_image": "Chọn hình ảnh",
   "schedule_msg_file_not_ready_to_download": "Tệp này chưa sẵn sàng, vui lòng thử lại sau.",
   "assessment_hfs_drawing_feedback_exit": "Thoát",
   "assessment_hfs_drawing_feedback_done": "Hoàn thành",
-  "assessment_hfs_view_writing_feedback": "Xem phản hồi bằng văn bản",
-  "assessment_hfs_view_drawing_feedback": "Xem phản hồi bằng bản vẽ",
-  "assessment_hfs_no_teacher_feedback": "Không có phản hồi nào được cung cấp cho tệp này."
+  "assessment_hfs_view_writing_feedback": "Xem văn bản phản hồi",
+  "assessment_hfs_view_drawing_feedback": "Xem bản vẽ phản hồi",
+  "assessment_hfs_no_teacher_feedback": "Không có phản hồi nào được cung cấp cho tệp này.",
+  "assessment_hfs_student_assessment": "Đánh giá",
+  "assessment_hfs_student_feedback": "Nhận xét"
 }
