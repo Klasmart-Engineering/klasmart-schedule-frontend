@@ -5,10 +5,10 @@ import produce from "immer";
 import React from "react";
 import { HomeFunAssessmentStatus, OrderByAssessmentList } from "../../api/type";
 import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
-import { AssessmentTypeValues } from "../../components/AssessmentType";
+import { assessmentTypes, AssessmentTypeValues } from "../../components/AssessmentType";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { assessmentTypes, DropdownList, options } from "./SecondSearchHeader";
+import { DropdownList, options } from "./SecondSearchHeader";
 import { AssessmentQueryCondition, AssessmentQueryConditionBaseProps, AssessmentStatus } from "./types";
 
 const useStyles = makeStyles((theme) => ({

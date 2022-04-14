@@ -7,14 +7,6 @@ import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
 import { ListSearch, SearchComProps } from "./ListSearch";
 import { AssessmentQueryCondition, AssessmentQueryConditionBaseProps, SearchListForm } from "./types";
-export const assessmentTypes = () => {
-  return [
-    { label: d("Class").t("schedule_detail_offline_class"), value: AssessmentTypeValues.class },
-    { label: d("Live").t("schedule_detail_online_class"), value: AssessmentTypeValues.live },
-    { label: d("Study").t("assess_study_list_study"), value: AssessmentTypeValues.study },
-    { label: d("Study / Home Fun").t("assess_class_type_homefun"), value: AssessmentTypeValues.homeFun },
-  ];
-};
 const searchFieldList = () => {
   return [
     { label: d("All").t("assess_search_all"), value: ExectSeachType.all },
@@ -71,13 +63,6 @@ export function SecondSearchHeader(props: SecondSearchHeaderProps) {
             </Grid>
           </Grid>
         </Hidden>
-        {/* <DropdownList
-          label={d("Class Type").t("assess_class_type")}
-          value={value.assessment_type || AssessmentTypeValues.live}
-          list={assessmentTypes()}
-          style={{ marginLeft: 10, width: 160 }}
-          onChange={handleChangeAssessmentType}
-        /> */}
       </LayoutBox>
     </div>
   );
