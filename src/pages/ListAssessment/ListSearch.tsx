@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: "top",
   },
   searchBtn: {
-    width: "111px",
+    width: "120px",
     height: "40px",
     backgroundColor: "#0E78D5",
     marginLeft: "20px",
