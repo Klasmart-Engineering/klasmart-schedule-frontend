@@ -1108,7 +1108,7 @@
   "schedule_review_popup_student_list": "Học sinh có kế hoạch bài giảng được cá nhân hóa",
   "schedule_review_popup_random_student_list": "Học sinh nhận được kế hoạch bài giảng ngẫu nhiên do không có đủ nội dung để ôn tập",
   "schedule_review_popup_fail_notice": "Đã xảy ra sự cố khi tạo ôn tập tự động trên {value} . Vui lòng thử lại.",
-  "schedule_review_popup_pending_notice": "Chúng tôi vẫn đang phân tích dữ liệu để tạo kế hoạch bài giảng 'ôn tập tự động'  cho mỗi học sinh. Học sinh sẽ có thể xem phần 'ôn tập tự động' mới trên lịch sau khi quá trình này hoàn tất.",
+  "schedule_review_popup_pending_notice": "Chúng tôi vẫn đang phân tích dữ liệu để tạo bài 'ôn tập tự động'  cho mỗi học sinh. Học sinh sẽ có thể xem phần 'ôn tập tự động' mới trên lịch sau khi quá trình này hoàn tất.",
   "schedule_review_popup_confirm": "Xác nhận",
   "schedule_review_class_name": "Ôn tập: {value} Học liệu",
   "schedule_repeat_end_on": "Trên",
