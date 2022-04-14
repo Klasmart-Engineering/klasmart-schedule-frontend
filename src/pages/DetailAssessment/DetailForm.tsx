@@ -83,8 +83,8 @@ export function DetailForm(props: DetailFormProps) {
       };
     } else if (isReview) {
       return {
-        summary: d("Review Summary").t("assessment_review_summary"),
-        title: d("Review Title").t("assessment_review_title"),
+        summary: d("Auto Review Summary").t("assessment_review_summary"),
+        title: d("Auto Review Title").t("assessment_review_title"),
       };
     } else if (isHomefun) {
       return {
@@ -103,11 +103,10 @@ export function DetailForm(props: DetailFormProps) {
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
           <Typography variant="h6">{summaryTitle.summary}</Typography>
-          {
-            !isHomefun && (
-              <div className={css.roomId}>
-                {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.room_id}
-              </div>
+          {!isHomefun && (
+            <div className={css.roomId}>
+              {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.room_id}
+            </div>
           )}
         </Box>
         <Box px={5} py={5}>
@@ -275,19 +274,17 @@ export function DetailForm(props: DetailFormProps) {
               label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
             />
           )}
-          {
-            isHomefun && (
-              <TextField
-                fullWidth
-                disabled
-                multiline
-                name="description"
-                value={assessmentDetail.description}
-                className={css.fieldset}
-                label={d("Description").t("assess_label_description")}
-              />
-            )
-          }
+          {isHomefun && (
+            <TextField
+              fullWidth
+              disabled
+              multiline
+              name="description"
+              value={assessmentDetail.description}
+              className={css.fieldset}
+              label={d("Description").t("assess_label_description")}
+            />
+          )}
         </Box>
       </Paper>
     </>
