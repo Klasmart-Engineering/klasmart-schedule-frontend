@@ -140,7 +140,7 @@ export default function ClassesAndAssignments() {
 
   const handleChangePage = React.useMemo(
     () => (page: number) => {
-      if (!classList) return;
+      if (!classList?.length) return;
       setPage(page);
       const class_ids = classIds?.slice((page - 1) * PAGESIZE, (page - 1) * PAGESIZE + PAGESIZE);
       dispatch(getClassesAssignments({ metaLoading: true, class_ids, type, durations }));
@@ -151,12 +151,12 @@ export default function ClassesAndAssignments() {
 
   useEffect(() => {
     setPage(1);
-    classList && dispatch(getClassesAssignments({ metaLoading: true, class_ids: classIds?.slice(0, PAGESIZE), type, durations }));
+    !!classList?.length && dispatch(getClassesAssignments({ metaLoading: true, class_ids: classIds?.slice(0, PAGESIZE), type, durations }));
     // eslint-disable-next-line
   }, [dispatch, classList, type]);
 
   useEffect(() => {
-    classList && dispatch(getClassesAssignmentsOverview({ metaLoading: true, class_ids: classIds, durations }));
+    !!classList?.length && dispatch(getClassesAssignmentsOverview({ metaLoading: true, class_ids: classIds, durations }));
     // eslint-disable-next-line
   }, [dispatch, classList]);
 

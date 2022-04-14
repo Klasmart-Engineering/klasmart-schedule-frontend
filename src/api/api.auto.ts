@@ -349,6 +349,22 @@ export interface EntityAssignmentsSummaryItem {
   teacher_feedback?: string;
 }
 
+export interface EntityAssignmentsSummaryItemV2 {
+  assessment_id?: string;
+  assessment_title?: string;
+  assessment_type?: "class" | "live" | "study" | "home_fun_study";
+
+  /** for sorting */
+  complete_at?: number;
+  create_at?: number;
+  lesson_plan_name?: string;
+
+  /** for debug */
+  schedule_id?: string;
+  status?: "in_progress" | "complete";
+  teacher_feedback?: string;
+}
+
 export interface EntityCheckScheduleReviewDataRequest {
   content_end_at?: number;
   content_start_at?: number;
@@ -550,7 +566,7 @@ export interface EntityContentSimplified {
 
 export interface EntityContentSimplifiedList {
   list?: EntityContentSimplified[];
-  student_content_map?: EntityScheduleReviewStudentContent[];
+  student_content_map?: EntityScheduleStudentContent[];
   total?: number;
 }
 
@@ -608,7 +624,9 @@ export interface EntityCreateFolderRequest {
 export interface EntityFeedbackAssignmentView {
   attachment_id?: string;
   attachment_name?: string;
+  id?: string;
   number?: number;
+  review_attachment_id?: string;
 }
 
 export interface EntityFolderContentData {
@@ -873,6 +891,22 @@ export interface EntityLiveClassSummaryItem {
   teacher_feedback?: string;
 }
 
+export interface EntityLiveClassSummaryItemV2 {
+  absent?: boolean;
+  assessment_id?: string;
+  class_start_time?: number;
+
+  /** for sorting */
+  complete_at?: number;
+  create_at?: number;
+  lesson_plan_name?: string;
+
+  /** for debug */
+  schedule_id?: string;
+  schedule_title?: string;
+  teacher_feedback?: string;
+}
+
 export interface EntityLiveTokenView {
   token?: string;
 }
@@ -1000,6 +1034,12 @@ export interface EntityQueryAssignmentsSummaryResult {
   study_count?: number;
 }
 
+export interface EntityQueryAssignmentsSummaryResultV2 {
+  home_fun_study_count?: number;
+  items?: EntityAssignmentsSummaryItemV2[];
+  study_count?: number;
+}
+
 export interface EntityQueryContentItem {
   author?: string;
   author_name?: string;
@@ -1022,6 +1062,11 @@ export interface EntityQueryContentResponse {
 export interface EntityQueryLiveClassesSummaryResult {
   attend?: number;
   items?: EntityLiveClassSummaryItem[];
+}
+
+export interface EntityQueryLiveClassesSummaryResultV2 {
+  attend?: number;
+  items?: EntityLiveClassSummaryItemV2[];
 }
 
 export interface EntityRegionOrganizationInfo {
@@ -1177,6 +1222,11 @@ export interface EntityScheduleAddView {
   version?: number;
 }
 
+export interface EntityScheduleAttendance {
+  number_of_students?: number;
+  number_of_teachers?: number;
+}
+
 export interface EntityScheduleDetailsView {
   attachment?: EntityScheduleShortInfo;
   class?: EntityScheduleAccessibleUserView;
@@ -1304,11 +1354,6 @@ export interface EntityScheduleReviewFailedResult {
   student_id?: string;
 }
 
-export interface EntityScheduleReviewStudentContent {
-  content_ids?: string[];
-  student_id?: string;
-}
-
 export interface EntityScheduleReviewSucceededResult {
   content_ids?: string[];
   student_id?: string;
@@ -1344,6 +1389,11 @@ export interface EntityScheduleSimplified {
 export interface EntityScheduleSimplifiedPageView {
   data?: EntityScheduleSimplified[];
   total?: number;
+}
+
+export interface EntityScheduleStudentContent {
+  content_ids?: string[];
+  student_id?: string;
 }
 
 export interface EntityScheduleTimeView {
@@ -2147,12 +2197,14 @@ export interface V2AssessmentContentReply {
 }
 
 export interface V2AssessmentDetailReply {
+  assessment_type?: string;
   class?: EntityIDName;
   class_end_at?: number;
   class_length?: number;
   complete_at?: number;
   complete_rate?: number;
   contents?: V2AssessmentContentReply[];
+  description?: string;
   diff_content_students?: V2AssessmentDiffContentStudentsReply[];
   id?: string;
   is_anyone_attempted?: boolean;
@@ -2179,10 +2231,7 @@ export interface V2AssessmentDiffContentReply {
   h5p_sub_id?: string;
   max_score?: number;
   number?: string;
-  outcome_ids?: string[];
   parent_id?: string;
-  reviewer_comment?: string;
-  status?: "Covered" | "NotCovered";
 }
 
 export interface V2AssessmentDiffContentStudentsReply {
@@ -2214,6 +2263,7 @@ export interface V2AssessmentPageReply {
 }
 
 export interface V2AssessmentQueryReply {
+  assessment_type?: string;
   class_end_at?: number;
 
   /** OnlineStudy,ReviewStudy */
@@ -2263,13 +2313,18 @@ export interface V2AssessmentStudentResultOutcomeReq {
 
 export interface V2AssessmentStudentResultReply {
   answer?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
   attempted?: boolean;
   content_id?: string;
   outcomes?: V2AssessmentStudentResultOutcomeReply[];
   score?: number;
+  student_feed_backs?: V2StudentResultFeedBacksReply[];
 }
 
 export interface V2AssessmentStudentResultReq {
+  assess_feedback_id?: string;
+  assess_score?: 1 | 2 | 3 | 4 | 5;
+  assignments?: V2FeedbackAssignmentsReq[];
   content_id?: string;
   outcomes?: V2AssessmentStudentResultOutcomeReq[];
   parent_id?: string;
@@ -2307,6 +2362,11 @@ export interface V2DiffContentStudentResultReply {
   attempted?: boolean;
   content?: V2AssessmentDiffContentReply;
   score?: number;
+}
+
+export interface V2FeedbackAssignmentsReq {
+  id?: string;
+  review_attachment_id?: string;
 }
 
 export interface V2GetOfflineStudyUserResultDetailReply {
@@ -2418,6 +2478,15 @@ export interface V2StudentAssessmentTeacherInfo {
   family_name?: string;
   given_name?: string;
   id?: string;
+}
+
+export interface V2StudentResultFeedBacksReply {
+  assignments?: EntityFeedbackAssignmentView[];
+  comment?: string;
+  create_at?: number;
+  id?: string;
+  schedule_id?: string;
+  user_id?: string;
 }
 
 export type RequestParams = Omit<RequestInit, "body" | "method"> & {
@@ -3234,6 +3303,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags content
+     * @name checkResourceExist
+     * @summary checkResourceExist
+     * @request GET:/contents_resources/{resource_id}/check
+     * @description check resource exist
+     */
+    checkResourceExist: (resource_id: string, params?: RequestParams) =>
+      this.request<boolean, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
+        `/contents_resources/${resource_id}/check`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags content
      * @name getDownloadPath
      * @summary getDownloadPath
      * @request GET:/contents_resources/{resource_id}/download
@@ -3561,6 +3644,8 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
         org_id?: string;
         content_ids?: string;
         content_type?: number;
+        create_at_le?: number;
+        create_at_ge?: number;
         plan_id?: string;
         schedule_id?: string;
         source_id?: string;
@@ -3572,6 +3657,20 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityContentSimplifiedList, ApiBadRequestResponse | ApiInternalServerErrorResponse>(
         `/internal/contents${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags internal
+     * @name getScheduleAttendance
+     * @summary getScheduleAttendance
+     * @request GET:/internal/schedule_counts
+     * @description get schedule attendance
+     */
+    getScheduleAttendance: (query: { timeframe_from: number; timeframe_to: number }, params?: RequestParams) =>
+      this.request<EntityScheduleAttendance[], ApiUnAuthorizedResponse | ApiInternalServerErrorResponse>(
+        `/internal/schedule_counts${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -4161,6 +4260,32 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports/learningSummary
+     * @name queryAssignmentsSummaryV2
+     * @summary query live classes summary
+     * @request GET:/reports/learning_summary/assignments_v2
+     * @description query live classes summary
+     */
+    queryAssignmentsSummaryV2: (
+      query?: {
+        year?: number;
+        week_start?: number;
+        week_end?: number;
+        school_id?: string;
+        class_id?: string;
+        teacher_id?: string;
+        student_id?: string;
+        subject_id?: string;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityQueryAssignmentsSummaryResultV2, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learning_summary/assignments_v2${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags reports/learningSummary
      * @name queryLiveClassesSummary
      * @summary query live classes summary
      * @request GET:/reports/learning_summary/live_classes
@@ -4181,6 +4306,46 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
     ) =>
       this.request<EntityQueryLiveClassesSummaryResult, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
         `/reports/learning_summary/live_classes${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags reports/learningSummary
+     * @name queryLiveClassesSummaryV2
+     * @summary query live classes summary
+     * @request GET:/reports/learning_summary/live_classes_v2
+     * @description query live classes summary
+     */
+    queryLiveClassesSummaryV2: (
+      query?: {
+        year?: number;
+        week_start?: number;
+        week_end?: number;
+        school_id?: string;
+        class_id?: string;
+        teacher_id?: string;
+        student_id?: string;
+        subject_id?: string;
+      },
+      params?: RequestParams
+    ) =>
+      this.request<EntityQueryLiveClassesSummaryResultV2, ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learning_summary/live_classes_v2${this.addQueryParams(query)}`,
+        "GET",
+        params
+      ),
+
+    /**
+     * @tags reports/learningSummary
+     * @name queryOutcomesByAssessmentID
+     * @summary query outcomes for  live classes summary
+     * @request GET:/reports/learning_summary/outcomes
+     * @description query outcomes for  live classes summary
+     */
+    queryOutcomesByAssessmentId: (query?: { assessment_id?: string; student_id?: string }, params?: RequestParams) =>
+      this.request<EntityLearningSummaryOutcome[], ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse>(
+        `/reports/learning_summary/outcomes${this.addQueryParams(query)}`,
         "GET",
         params
       ),
@@ -4428,12 +4593,12 @@ export class Api<SecurityDataType = any> extends HttpClient<SecurityDataType> {
 
     /**
      * @tags reports
-     * @name listStudentsAchievementOverviewReport
+     * @name getLearningOutcomeOverView
      * @summary list student report overview
      * @request GET:/reports/students_achievement_overview
      * @description list student report overview
      */
-    listStudentsAchievementOverviewReport: (query: { time_range: string }, params?: RequestParams) =>
+    getLearningOutcomeOverView: (query: { time_range: string }, params?: RequestParams) =>
       this.request<
         EntityStudentsAchievementOverviewReportResponse,
         ApiBadRequestResponse | ApiForbiddenResponse | ApiInternalServerErrorResponse

@@ -38,13 +38,20 @@ const useStyle = makeStyles((theme) =>
       alignItems: "center",
       borderTop: "1px dashed #db9292",
       zIndex: 0,
-      "&:before": {
-        content: "'100%'",
-        position: "absolute",
-        top: 0,
-        color: "#666",
-        left: "10px",
-      },
+    },
+    standard: {
+      position: "absolute",
+      top: 0,
+      color: "#666",
+      left: "10px",
+      zIndex: 2,
+    },
+    standard50: {
+      color: "#666",
+      position: "absolute",
+      top: "calc(50% - 20px)",
+      left: "10px",
+      zIndex: 2,
     },
     line: {
       width: "100%",
@@ -52,13 +59,6 @@ const useStyle = makeStyles((theme) =>
       borderTop: "1px dashed #db9292",
       pointerEvents: "none",
       paddingLeft: "10px",
-      "&:before": {
-        content: "'50%'",
-        color: "#666",
-        position: "absolute",
-        top: 0,
-        left: "10px",
-      },
     },
     svg: {
       position: "relative",
@@ -202,6 +202,8 @@ function Chart({ width, height, margin = defaultMargin, ...props }: BarGroupProp
       <div className={style.background}>
         <div className={style.line}></div>
       </div>
+      <span className={style.standard}>100%</span>
+      <span className={style.standard50}>50%</span>
     </div>
   );
 }

@@ -3,12 +3,12 @@ import FilterListOutlinedIcon from "@material-ui/icons/FilterListOutlined";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import produce from "immer";
 import React from "react";
-import { HomeFunAssessmentOrderBy, HomeFunAssessmentStatus, OrderByAssessmentList } from "../../api/type";
+import { HomeFunAssessmentStatus, OrderByAssessmentList } from "../../api/type";
 import { ReactComponent as StatusIcon } from "../../assets/icons/assessments-status.svg";
-import { AssessmentTypeValues } from "../../components/AssessmentType";
+import { assessmentTypes, AssessmentTypeValues } from "../../components/AssessmentType";
 import LayoutBox from "../../components/LayoutBox";
 import { d } from "../../locale/LocaleManager";
-import { assessmentTypes, DropdownList, options } from "./SecondSearchHeader";
+import { DropdownList, options } from "./SecondSearchHeader";
 import { AssessmentQueryCondition, AssessmentQueryConditionBaseProps, AssessmentStatus } from "./types";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,18 +35,18 @@ const sortOptions = (assessment_type: AssessmentQueryCondition["assessment_type"
       { label: d("Class End Time (Old -New)").t("assess_class_end_time_old_new"), value: OrderByAssessmentList.class_end_time },
     ];
   }
-  if (assessment_type === AssessmentTypeValues.study || assessment_type === AssessmentTypeValues.review) {
+  if (assessment_type === AssessmentTypeValues.study || assessment_type === AssessmentTypeValues.review || assessment_type === AssessmentTypeValues.homeFun) {
     changeingOptions = [
       { label: d("Created On (New-Old)").t("assess_label_created_on_newtoold"), value: OrderByAssessmentList._create_at },
       { label: d("Created On (Old-New)").t("assess_label_created_on_oldtonew"), value: OrderByAssessmentList.create_at },
     ];
   }
-  if (assessment_type === AssessmentTypeValues.homeFun) {
-    changeingOptions = [
-      { label: d("Submit Time (New-Old)").t("assess_submit_new_old"), value: HomeFunAssessmentOrderBy.submit_at },
-      { label: d("Submit Time (Old-New)").t("assess_submit_old_new"), value: HomeFunAssessmentOrderBy._submit_at },
-    ];
-  }
+  // if (assessment_type === AssessmentTypeValues.homeFun) {
+  //   changeingOptions = [
+  //     { label: d("Submit Time (New-Old)").t("assess_submit_new_old"), value: OrderByAssessmentList._submit_at },
+  //     { label: d("Submit Time (Old-New)").t("assess_submit_old_new"), value: OrderByAssessmentList.submit_at },
+  //   ];
+  // }
   return [...changeingOptions, ...unchangedOptions];
 };
 
@@ -69,7 +69,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
     });
     onChange({ ...newValue, page: 1 });
   };
-  const defaultOrderby = sortOptions(value.assessment_type)[0].value!;
+  // const defaultOrderby = sortOptions(value.assessment_type)[0].value!;
   return (
     <div style={{ marginBottom: 20 }}>
       <LayoutBox holderMin={40} holderBase={202} mainBase={1517}>
@@ -88,7 +88,7 @@ export function ThirdSearchHeader(props: ThirdSearchHeaderProps) {
             <Grid container direction="row" justifyContent="flex-end" alignItems="center" item md={6} lg={6}>
               <DropdownList
                 label={d("Sort By").t("assess_label_sort_by")}
-                value={value.order_by ? value.order_by : defaultOrderby}
+                value={value.order_by as OrderByAssessmentList}
                 list={sortOptions(value.assessment_type)}
                 onChange={handleChangeOrder}
               />

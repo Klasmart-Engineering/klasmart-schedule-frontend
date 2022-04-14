@@ -66,6 +66,7 @@ export function DetailForm(props: DetailFormProps) {
   const isClassAndLive = assessmentType === AssessmentTypeValues.class || assessmentType === AssessmentTypeValues.live;
   const isStudy = assessmentType === AssessmentTypeValues.study;
   const isReview = assessmentType === AssessmentTypeValues.review;
+  const isHomefun = assessmentType === AssessmentTypeValues.homeFun;
   const teacherList = useMemo(() => {
     const list = assessmentDetail.teachers?.map((v) => v.name);
     const length = list && list.length ? list.length : "";
@@ -78,12 +79,17 @@ export function DetailForm(props: DetailFormProps) {
     if (isStudy) {
       return {
         summary: d("Study Summary").t("assess_study_summary"),
-        title: d("Assessment Title").t("assess_column_title"),
+        title: d("Study Title").t("assess_list_study_title"),
       };
     } else if (isReview) {
       return {
-        summary: d("Review Summary").t("assessment_review_summary"),
-        title: d("Review Title").t("assessment_review_title"),
+        summary: d("Auto Review Summary").t("assessment_review_summary"),
+        title: d("Auto Review Title").t("assessment_review_title"),
+      };
+    } else if (isHomefun) {
+      return {
+        summary: d("Study / Home Fun Summary").t("assess_detail_study_homefun_summary"),
+        title: d("Study Title").t("assess_list_study_title"),
       };
     } else {
       return {
@@ -91,15 +97,17 @@ export function DetailForm(props: DetailFormProps) {
         title: d("Assessment Title").t("assess_column_title"),
       };
     }
-  }, [isReview, isStudy]);
+  }, [isHomefun, isReview, isStudy]);
   return (
     <>
       <Paper elevation={sm ? 0 : 3}>
         <Box className={css.classSummaryHeader} boxShadow={3}>
           <Typography variant="h6">{summaryTitle.summary}</Typography>
-          <div className={css.roomId}>
-            {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.room_id}
-          </div>
+          {!isHomefun && (
+            <div className={css.roomId}>
+              {d("Room ID").t("assess_detail_room_id")}:{assessmentDetail.room_id}
+            </div>
+          )}
         </Box>
         <Box px={5} py={5}>
           <TextField
@@ -147,7 +155,7 @@ export function DetailForm(props: DetailFormProps) {
               />
             </>
           )}
-          {(isStudy || isReview) && (
+          {(isStudy || isReview || isHomefun) && (
             <TextField
               fullWidth
               disabled
@@ -172,7 +180,7 @@ export function DetailForm(props: DetailFormProps) {
               <Typography className={css.minutes}>{d("Minutes").t("assess_detail_minutes")}</Typography>
             </Box>
           )}
-          {!isReview && assessmentDetail.contents && assessmentDetail.contents.length && (
+          {!isReview && !isHomefun && assessmentDetail.contents && assessmentDetail.contents.length && (
             <>
               <TextField
                 fullWidth
@@ -220,7 +228,7 @@ export function DetailForm(props: DetailFormProps) {
               />
             </>
           )}
-          {(isStudy || isReview) && (
+          {(isStudy || isReview || isHomefun) && (
             <>
               <TextField
                 fullWidth
@@ -243,7 +251,7 @@ export function DetailForm(props: DetailFormProps) {
               />
             </>
           )}
-          {isStudy && (
+          {(isStudy || isHomefun) && (
             <Box className={css.editBox}>
               <TextField
                 fullWidth
@@ -264,6 +272,17 @@ export function DetailForm(props: DetailFormProps) {
               value={formattedTime(assessmentDetail.complete_at) || 0}
               className={css.fieldset}
               label={d("Assessment Complete Time").t("assess_detail_assessment_complete_time")}
+            />
+          )}
+          {isHomefun && (
+            <TextField
+              fullWidth
+              disabled
+              multiline
+              name="description"
+              value={assessmentDetail.description}
+              className={css.fieldset}
+              label={d("Description").t("assess_label_description")}
             />
           )}
         </Box>

@@ -254,6 +254,7 @@ function MyCalendar(props: CalendarProps) {
     handleChangeHidden,
     getHandleScheduleViewInfo,
     privilegedMembers,
+    checkFileExist,
   } = props;
   const history = useHistory();
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
@@ -291,7 +292,7 @@ function MyCalendar(props: CalendarProps) {
       )) as unknown as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
       if (await payload) {
-        dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
+        dispatch(actSuccess(d("Deleted successfully").t("schedule_msg_delete_success")));
         dispatch(
           getScheduleTimeViewData({
             view_type: modelView,
@@ -593,6 +594,7 @@ function MyCalendar(props: CalendarProps) {
           refreshView={refreshView}
           ScheduleViewInfo={scheduleInfoView}
           privilegedMembers={privilegedMembers}
+          checkFileExist={checkFileExist}
         />
       ),
       openStatus: true,
@@ -736,6 +738,7 @@ interface CalendarProps {
   getHandleScheduleViewInfo: (schedule_id: string) => Promise<EntityScheduleViewDetail>;
   ScheduleViewInfo: EntityScheduleViewDetail;
   privilegedMembers: (member: memberType) => boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 export default function KidsCalendar(props: CalendarProps) {
@@ -753,6 +756,7 @@ export default function KidsCalendar(props: CalendarProps) {
     getHandleScheduleViewInfo,
     ScheduleViewInfo,
     privilegedMembers,
+    checkFileExist,
   } = props;
 
   return (
@@ -770,6 +774,7 @@ export default function KidsCalendar(props: CalendarProps) {
       getHandleScheduleViewInfo={getHandleScheduleViewInfo}
       ScheduleViewInfo={ScheduleViewInfo}
       privilegedMembers={privilegedMembers}
+      checkFileExist={checkFileExist}
     />
   );
 }

@@ -22,7 +22,7 @@ export const AudioView = ({ userId, roomId, h5pId, h5pSubId, resourceType }: Aud
   });
   if (isSafari) return <p>{d("Please use another browser (Chrome) for a better experience.").t("assessment_audio_suggest_browser")}</p>
   if (error) {
-    return <p>error: {JSON.stringify(error, null, 2)}</p>;
+    return <p>{d("Server request failed").t("general_error_unknown")}</p>;
   }
   if (loading) return <p>Loading ...</p>;
   if (!mediaMetadata?.length) return <p>{d("Audio data is not successfully stored by student.").t("assessment_audio_no_data")}</p>;
@@ -57,7 +57,7 @@ export const AudioPlayerV2 = ({ audioId, roomId, mimeType, client, resourceType,
   });
   if (loading) return <p>Loading...</p>;
   if (error) {
-    return <p>error: {JSON.stringify(error, null, 2)}</p>;
+    return <p>{d("Server request failed").t("general_error_unknown")}</p>;
   }
   return (
     <div>

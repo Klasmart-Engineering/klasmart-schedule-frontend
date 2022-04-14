@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
+import { ApolloClient, ApolloLink, createHttpLink, HttpLink, InMemoryCache, Operation, ServerError } from "@apollo/client";
 import { ErrorResponse, onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchIntercept from "fetch-intercept";
@@ -78,7 +78,7 @@ export default new Api({
 
 const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
   if (count > 1) return false;
-  const isAuthError = error.result?.errors.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
+  const isAuthError = error.result?.errors?.find((error: GraphQLError) => error.extensions?.code === `UNAUTHENTICATED`);
   if (!isAuthError) return false;
   try {
     await refreshToken();
@@ -89,17 +89,14 @@ const retry = async (count: number, operation: Operation, error: ServerError): P
   }
 };
 
-const errorLink = onError(({ /*graphQLErrors, networkError,*/ response, operation }: ErrorResponse) => {
-  /*
+const errorLink = onError(({ graphQLErrors, networkError, response, operation }: ErrorResponse) => {
   if (graphQLErrors)
     graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-      ),
-  );
+      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+    );
   if (networkError) console.log(`[Network error]: ${networkError}`);
-  */
-  if (operation.operationName === "userNameByUserIdQuery") {
+
+  if (operation.operationName === "userNameByUserIdQuery" && response) {
     // @ts-ignore
     response.errors = null;
   }
@@ -113,5 +110,14 @@ const retryLink = new RetryLink({
 const httpLink = new HttpLink({ uri: `${process.env.REACT_APP_KO_BASE_API}/user/`, credentials: "include" });
 export const gqlapi = new ApolloClient({
   link: ApolloLink.from([errorLink, retryLink, httpLink]),
+  cache: new InMemoryCache(),
+});
+
+const link = createHttpLink({
+  uri: `${process.env.REACT_APP_KO_BASE_API}/media-storage/graphql`,
+  credentials: "include",
+});
+export const audioClient = new ApolloClient({
+  link,
   cache: new InMemoryCache(),
 });

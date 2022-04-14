@@ -65,7 +65,7 @@ function RouterButton(props: ButtonProps) {
           display:
             (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
             (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass") ||
-            (scheduleInfo.is_review)
+            scheduleInfo.is_review
               ? "none"
               : "block",
           backgroundColor: "#E4F1FF",
@@ -91,7 +91,7 @@ function RouterButton(props: ButtonProps) {
           display:
             (scheduleInfo.role_type !== "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "Homework") ||
             (scheduleInfo.role_type === "Student" && (scheduleInfo.class_type_label?.id ?? scheduleInfo.class_type) === "OfflineClass") ||
-            (scheduleInfo.is_review)
+            scheduleInfo.is_review
               ? "none"
               : "block",
         }}
@@ -107,20 +107,25 @@ function RouterButton(props: ButtonProps) {
         color="primary"
         variant="outlined"
         autoFocus
+        disabled={new Date().getTime() / 1000 > (scheduleInfo.due_at ?? 0) || scheduleInfo.complete_assessment}
         className={buttonClass[templateType]}
-        style={{ display: (scheduleInfo.is_review && scheduleInfo.role_type === "Student") ? "block" : "none" }}
+        style={{ display: scheduleInfo.is_review && scheduleInfo.role_type === "Student" ? "block" : "none" }}
         onClick={() => handleGoLive(scheduleInfo as ScheduleEditExtend)}
       >
-        {(scheduleInfo.is_review && scheduleInfo.review_status === "success") && "Go Review"}
+        {scheduleInfo.is_review && scheduleInfo.review_status === "success" && "Go Review"}
       </Button>
       <Button
         color="primary"
         variant="outlined"
         autoFocus
         className={buttonClass[templateType]}
-        style={{ display: (scheduleInfo.is_review && scheduleInfo.role_type !== "Student") ? "block" : "none", backgroundColor: "#0E78D5", color: "white" }}
+        style={{
+          display: scheduleInfo.is_review && scheduleInfo.role_type !== "Student" ? "block" : "none",
+          backgroundColor: "#0E78D5",
+          color: "white",
+        }}
         onClick={() => {
-          handleClose && handleClose()
+          handleClose && handleClose();
         }}
       >
         {d("OK").t("general_button_OK")}

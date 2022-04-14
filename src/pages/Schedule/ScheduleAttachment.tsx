@@ -1,17 +1,17 @@
 import { Box, TextField } from "@material-ui/core";
+import CircularProgress, { CircularProgressProps } from "@material-ui/core/CircularProgress";
 import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
 import { CloudDownloadOutlined, CloudUploadOutlined, InfoOutlined } from "@material-ui/icons";
+import CancelIcon from "@material-ui/icons/Cancel";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { apiResourcePathById } from "../../api/extra";
-import { d } from "../../locale/LocaleManager";
-import CancelIcon from "@material-ui/icons/Cancel";
 import { FileLikeWithId, FileSizeUnit, MultipleUploader, MultipleUploaderErrorType } from "../../components/MultipleUploader";
+import { d } from "../../locale/LocaleManager";
 import { actError } from "../../reducers/notify";
-import { useDispatch } from "react-redux";
-import CircularProgress, { CircularProgressProps } from "@material-ui/core/CircularProgress";
-import Typography from "@material-ui/core/Typography";
 
 function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
   return (
@@ -84,6 +84,7 @@ interface ScheduleAttachmentProps {
   setSpecificStatus?: (value: boolean) => void;
   isStudent: boolean;
   isDisabled: boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 const useQuery = () => {
@@ -94,7 +95,7 @@ const useQuery = () => {
 };
 
 export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
-  const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent, isDisabled } = props;
+  const { setAttachmentId, attachmentName, setAttachmentName, attachmentId, isStudent, isDisabled, checkFileExist } = props;
   const css = useStyles();
   const { schedule_id, pathname } = useQuery();
   const dispatch = useDispatch();
@@ -191,9 +192,20 @@ export default function ScheduleAttachment(props: ScheduleAttachmentProps) {
             {attachmentName && !isStudent && !isDisabled && (
               <CancelIcon className={css.iconField} style={{ right: "50px", color: "#666666" }} onClick={deleteItem} />
             )}
-            <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                checkFileExist(attachmentId).then((r) => {
+                  if (r) {
+                    window.open(downloadUrl);
+                  } else {
+                    dispatch(actError(d("This file is not ready. Please try again later.").t("schedule_msg_file_not_ready_to_download")));
+                  }
+                });
+              }}
+            >
               {attachmentName && !isDisabled && <CloudDownloadOutlined className={css.iconField} style={{ right: "10px" }} />}
-            </a>
+            </div>
           </Box>
         )}
       />

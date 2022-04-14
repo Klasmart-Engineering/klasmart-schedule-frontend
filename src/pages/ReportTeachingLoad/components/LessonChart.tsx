@@ -198,6 +198,7 @@ export default function LessonChart(props: Props) {
       allTeacher_ids: queryParams.current.teacher_ids,
       teacher_ids: queryParams.current.teacher_ids?.slice(pageRef.current * PAGE_SIZE, pageRef.current * PAGE_SIZE + PAGE_SIZE),
     };
+    if (!params.teacher_ids?.length) return;
     await dispatch(getLessonTeacherLoad(params));
     props.teacherChange();
     currentOpenedTeacher.current = "";

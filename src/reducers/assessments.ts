@@ -3,7 +3,7 @@ import { AssessmentTypeValues } from "@components/AssessmentType";
 import { GetHomeFunAssessmentList } from "@pages/HomeFunAssessmentList/types";
 import { AsyncThunkAction, createAsyncThunk, createSlice, PayloadAction, unwrapResult } from "@reduxjs/toolkit";
 import api, { ExtendedRequestParams, gqlapi } from "../api";
-import { GetMyIdDocument, GetMyIdQuery, GetMyIdQueryVariables } from "../api/api-ko.auto";
+import { QueryMyUserDocument, QueryMyUserQuery, QueryMyUserQueryVariables } from "../api/api-ko.auto";
 import { EntityScheduleFeedbackView, V2GetOfflineStudyUserResultDetailReply, V2OfflineStudyUserResultUpdateReq } from "../api/api.auto";
 import PermissionType from "../api/PermissionType";
 import {
@@ -12,7 +12,7 @@ import {
   ListAssessmentResult,
   ListAssessmentResultItem,
   OrderByAssessmentList,
-  UpdateAssessmentRequestData,
+  UpdateAssessmentRequestData
 } from "../api/type";
 import { d } from "../locale/LocaleManager";
 import { ModelAssessment } from "../models/ModelAssessment";
@@ -37,7 +37,8 @@ export interface IAssessmentState {
   contentOutcomes?: UpdateAssessmentRequestData["content_outcomes"] /** https://calmisland.atlassian.net/browse/NKL-1199 **/;
   assessmentListV2: AssessmentListResult;
   assessmentDetailV2: DetailAssessmentResult;
-  assessmentDetailV3: DetailAssessmentResult;
+  attachment_path: string;
+  attachment_id: string;
 }
 
 interface RootState {
@@ -67,356 +68,12 @@ const initialState: IAssessmentState = {
   hasPermissionOfHomefun: false,
   studyAssessmentList: [],
   studyAssessmentDetail: {},
-  my_id: "ed43b8c3-d5c0-52af-ae10-402f1fe2ea46",
+  my_id: "",
   contentOutcomes: [],
   assessmentListV2: [],
-  assessmentDetailV3: {
-    class: {},
-    class_end_at: 0,
-    class_length: 0,
-    complete_at: 0,
-    contents: [
-      {
-        reviewer_comment: "",
-        content_id: "lpid",
-        content_name: "lp",
-        content_type: "LessonPlan",
-        content_subtype: "",
-        max_score: 10,
-        number: "1",
-        outcome_ids: ["l_o_1", "l_o_2", "l_o_5"],
-        status: "Covered",
-        parent_id: "",
-      },
-      {
-        reviewer_comment: "contentscomment1",
-        content_id: "l_m_1",
-        content_name: "l_m_n_1",
-        content_type: "LessonMaterial",
-        content_subtype: "Audio Recorder",
-        max_score: 10,
-        number: "2",
-        outcome_ids: ["l_o_1", "l_o_2", "l_o_3"],
-        status: "Covered",
-        parent_id: "",
-      },
-      {
-        reviewer_comment: "contentscomment2",
-        content_id: "l_m_2",
-        content_name: "l_m_n_2",
-        content_type: "LessonMaterial",
-        content_subtype: "Essay",
-        max_score: 10,
-        number: "3",
-        outcome_ids: ["l_o_3", "l_o_4"],
-        status: "Covered",
-        parent_id: "",
-      },
-      {
-        reviewer_comment: "contentscomment3",
-        content_id: "l_m_3",
-        content_name: "l_m_n_3",
-        content_type: "LessonMaterial",
-        content_subtype: "Essay",
-        max_score: 10,
-        number: "3-1",
-        outcome_ids: ["l_o_3", "l_o_4"],
-        status: "Covered",
-        parent_id: "l_m_2",
-      },
-    ],
-    id: "",
-    outcomes: [
-      {
-        assigned_to: ["LessonPlan", "LessonMaterial"],
-        assumed: true,
-        outcome_id: "l_o_1",
-        outcome_name: "l_o_n_1",
-      },
-      {
-        assigned_to: ["LessonPlan", "LessonMaterial"],
-        assumed: true,
-        outcome_id: "l_o_2",
-        outcome_name: "l_o_n_2",
-      },
-      {
-        assigned_to: ["LessonPlan", "LessonMaterial"],
-        assumed: true,
-        outcome_id: "l_o_3",
-        outcome_name: "l_o_n_3",
-      },
-      {
-        assigned_to: ["LessonMaterial"],
-        assumed: true,
-        outcome_id: "l_o_4",
-        outcome_name: "l_o_n_4",
-      },
-      {
-        assigned_to: ["LessonPlan"],
-        assumed: true,
-        outcome_id: "l_o_5",
-        outcome_name: "l_o_n_5",
-      },
-      // {
-      //   assigned_to: ["LessonPlan"],
-      //   assumed: true,
-      //   outcome_id: "l_o_6",
-      //   outcome_name: "l_o_n_6",
-      // },
-    ],
-    program: {},
-    remaining_time: 0,
-    room_id: "",
-    status: "",
-    schedule_due_at: 0,
-    schedule_title: "lesson name",
-    students: [
-      {
-        reviewer_comment: "teacher_comment1",
-        student_id: "student_id1",
-        student_name: "student_name1",
-        results: [
-          {
-            answer: "",
-            attempted: false,
-            content_id: "lpid",
-            outcomes: [
-              {
-                outcome_id: "l_o_1",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_2",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_5",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "1answer1",
-            attempted: true,
-            content_id: "l_m_1",
-            outcomes: [
-              {
-                outcome_id: "l_o_1",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_2",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "1answer2",
-            attempted: true,
-            content_id: "l_m_2",
-            outcomes: [
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_4",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "1answer3",
-            attempted: true,
-            content_id: "l_m_3",
-            outcomes: [
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_4",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-        ],
-        status: "Participate",
-      },
-      {
-        reviewer_comment: "comment2",
-        student_id: "student_id2",
-        student_name: "student_name2",
-        results: [
-          {
-            answer: "",
-            attempted: false,
-            content_id: "lpid",
-            outcomes: [
-              {
-                outcome_id: "l_o_1",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_2",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_5",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "2answer1",
-            attempted: true,
-            content_id: "l_m_1",
-            outcomes: [
-              {
-                outcome_id: "l_o_1",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_2",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "2answer2",
-            attempted: true,
-            content_id: "l_m_2",
-            outcomes: [
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_4",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "2answer3",
-            attempted: true,
-            content_id: "l_m_3",
-            outcomes: [
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_4",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-        ],
-        status: "Participate",
-      },
-      {
-        reviewer_comment: "comment3",
-        student_id: "student_id3",
-        student_name: "student_name3",
-        results: [
-          {
-            answer: "",
-            attempted: false,
-            content_id: "lpid",
-            outcomes: [
-              {
-                outcome_id: "l_o_1",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_2",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_5",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "3answer1",
-            attempted: true,
-            content_id: "l_m_1",
-            outcomes: [
-              {
-                outcome_id: "l_o_1",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_2",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "3answer2",
-            attempted: true,
-            content_id: "l_m_2",
-            outcomes: [
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_4",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-          {
-            answer: "3answer3",
-            attempted: true,
-            content_id: "l_m_3",
-            outcomes: [
-              {
-                outcome_id: "l_o_3",
-                status: "Achieved",
-              },
-              {
-                outcome_id: "l_o_4",
-                status: "Achieved",
-              },
-            ],
-            score: 0,
-          },
-        ],
-        status: "NotParticipate",
-      },
-    ],
-    subjects: [],
-    teachers: [],
-    title: "",
-  },
   assessmentDetailV2: {},
+  attachment_path: "",
+  attachment_id: "",
 };
 
 type IQueryAssessmentListParams = ListAssessmentRequest & LoadingMetaPayload;
@@ -456,8 +113,8 @@ export const getAssessment = createAsyncThunk<getAssessmentResponce, { id: strin
     // 拉取我的user_id
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const my_id = myUser?.node?.id || "";
     const detail = await api.assessments.getAssessment(id);
@@ -475,8 +132,8 @@ export const onLoadHomefunDetail = createAsyncThunk<onLoadHomefunDetailResult, {
   async ({ id }, { dispatch }) => {
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const myUserId = myUser?.node?.id || "";
     const detail = await api.userOfflineStudy.getUserOfflineStudyById(id);
@@ -521,9 +178,10 @@ export const getAssessmentListV2 = createAsyncThunk<IQueryAssessmentV2Result, IQ
     const { status, assessment_type, order_by } = query;
     const isStudy = assessment_type === AssessmentTypeValues.study;
     const isReview = assessment_type === AssessmentTypeValues.review;
+    const isHomefun = assessment_type === AssessmentTypeValues.homeFun;
     let _status: string = "";
     let _order_by: IQueryAssessmentV2Params["order_by"];
-    if (isStudy || isReview) {
+    if (isStudy || isReview || isHomefun) {
       _order_by = order_by ? order_by : OrderByAssessmentList._create_at;
       _status =
         status === AssessmentStatus.all
@@ -555,8 +213,8 @@ export const getDetailAssessmentV2 = createAsyncThunk<IQueryDetailAssessmentResu
     // 拉取我的user_id
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const my_id = myUser?.node?.id || "";
     const detail = await api.assessmentsV2.getAssessmentDetailV2(id);
@@ -582,8 +240,8 @@ export const getStudyAssessmentDetail = createAsyncThunk<IQueryStudyAssessmentDe
   async ({ id }) => {
     const {
       data: { myUser },
-    } = await gqlapi.query<GetMyIdQuery, GetMyIdQueryVariables>({
-      query: GetMyIdDocument,
+    } = await gqlapi.query<QueryMyUserQuery, QueryMyUserQueryVariables>({
+      query: QueryMyUserDocument,
     });
     const my_id = myUser?.node?.id || "";
     const detail = await api.studyAssessments.getStudyAssessmentDetail(id);
@@ -644,7 +302,14 @@ export const completeStudyAssessment = createAsyncThunk<string, IQueryUpdateStud
     return res;
   }
 );
-
+type IGetContentsResourseParams = Parameters<typeof api.contentsResources.getContentResourceUploadPath>[0];
+type IGetContentsResourseResult = AsyncReturnType<typeof api.contentsResources.getContentResourceUploadPath>;
+export const getContentResourceUploadPath = createAsyncThunk<IGetContentsResourseResult, IGetContentsResourseParams>(
+  "content/getContentResourceUploadPath",
+  (query) => {
+    return api.contentsResources.getContentResourceUploadPath(query);
+  }
+);
 const { reducer } = createSlice({
   name: "assessments",
   initialState,
@@ -702,6 +367,7 @@ const { reducer } = createSlice({
     },
     [getDetailAssessmentV2.fulfilled.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getDetailAssessmentV2>>) => {
       state.assessmentDetailV2 = payload.detail;
+      
       state.my_id = payload.my_id;
     },
     [getDetailAssessmentV2.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getDetailAssessmentV2>>) => {
@@ -734,6 +400,10 @@ const { reducer } = createSlice({
     },
     [getStudyAssessmentDetail.pending.type]: (state, { payload }: PayloadAction<AsyncTrunkReturned<typeof getStudyAssessmentDetail>>) => {
       state.studyAssessmentDetail = initialState.studyAssessmentDetail;
+    },
+    [getContentResourceUploadPath.fulfilled.type]: (state, { payload }: any) => {
+      state.attachment_path = payload.path;
+      state.attachment_id = payload.resource_id;
     },
   },
 });

@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme) =>
     tableCell: {
       width: 115,
       minWidth: 104,
+      maxWidth: 200,
+    },
+    nameListCell: {
+      maxWidth: 300,
     },
     statusCon: {
       color: "#fff",
@@ -42,7 +46,7 @@ const useStyles = makeStyles((theme) =>
 
 interface AssessmentProps {
   assessment: AssessmentListResult[0];
-  onClickAssessment: AssessmentTableprops["onClickAssessment"];
+  onClickAssessment: AssessmentTableProps["onClickAssessment"];
   assessmentType: AssessmentQueryCondition["assessment_type"];
 }
 function AssessmentRow(props: AssessmentProps) {
@@ -58,10 +62,13 @@ function AssessmentRow(props: AssessmentProps) {
   const isReview = useMemo(() => {
     return assessmentType === AssessmentTypeValues.review;
   }, [assessmentType]);
+  const isHomefun = useMemo(() => {
+    return assessmentType === AssessmentTypeValues.homeFun;
+  }, [assessmentType]);
   return (
     <TableRow onClick={(e) => onClickAssessment(assessment.id)}>
-      <TableCell align="center">{assessment.title ?? d("N/A").t("assess_column_n_a")}</TableCell>
-      {!isReview && <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>}
+      <TableCell className={css.tableCell} align="center">{assessment.title ?? d("N/A").t("assess_column_n_a")}</TableCell>
+      {!isReview && !isHomefun  && <TableCell align="center">{assessment.lesson_plan?.name}</TableCell>}
       {isClassAndLive && (
         <>
           <TableCell align="center">{assessment.subjects?.map((v) => v.name).join(", ")}</TableCell>
@@ -73,11 +80,18 @@ function AssessmentRow(props: AssessmentProps) {
           </TableCell>
         </>
       )}
-      <TableCell align="center">{assessment.teachers?.map((v) => v.name)?.join(" ,") ?? d("N/A").t("assess_column_n_a")}</TableCell>
+      <TableCell align="center" className={css.nameListCell}>{assessment.teachers?.map((v) => v.name)?.join(" ,") ?? d("N/A").t("assess_column_n_a")}</TableCell>
       {isClassAndLive && <TableCell align="center">{formattedTime(assessment.class_end_at)}</TableCell>}
-      {(isStudy || isReview) && (
+      {!isClassAndLive && <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>}
+      {isHomefun && 
+        <TableCell align="center" className={css.tableCell}>
+          <div className={clsx(css.statusCon, isComplete ? css.completeColor : css.inCompleteColor)}>
+            {isComplete ? d("Complete").t("assess_filter_complete") : d("Incomplete").t("assess_filter_in_progress")}
+          </div>
+        </TableCell>}
+      {!isClassAndLive && (
         <>
-          <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>
+          {/* <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell> */}
           <TableCell align="center">
             {formattedTime(assessment.due_at) ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}
           </TableCell>
@@ -86,7 +100,7 @@ function AssessmentRow(props: AssessmentProps) {
           </TableCell>
         </>
       )}
-      {isStudy && (
+      {(isStudy || isHomefun) && (
         <TableCell align="center">
           {assessment.remaining_time
             ? `${Math.ceil(assessment.remaining_time / 60 / 60 / 24)} ${d("Day(s)").t("assess_list_remaining_days")}`
@@ -98,14 +112,14 @@ function AssessmentRow(props: AssessmentProps) {
   );
 }
 
-interface AssessmentTableprops {
+export interface AssessmentTableProps {
   total: number;
   list: AssessmentListResult;
   queryCondition: AssessmentQueryCondition;
   onChangePage: (page: number) => void;
   onClickAssessment: (id: string | undefined) => any;
 }
-export function AssessmentTable(props: AssessmentTableprops) {
+export function AssessmentTable(props: AssessmentTableProps) {
   const css = useStyles();
   const {
     queryCondition: { assessment_type, page },

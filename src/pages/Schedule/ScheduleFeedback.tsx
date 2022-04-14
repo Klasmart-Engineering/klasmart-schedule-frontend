@@ -55,7 +55,7 @@ const useStyles = makeStyles(({ shadows }) =>
       wordBreak: "break-all",
       padding: "8px 8px 8px 8px",
       display: "flex",
-      "& a": {
+      "& div": {
         color: "#B6B6B6",
         marginRight: "10px",
         textDecoration: "none",
@@ -106,11 +106,13 @@ interface FileDataProps {
   fileName?: Pick<FileLikeWithId, "id" | "name">[] | undefined;
   batch?: BatchItem[];
   isUploading?: boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 function FileDataTemplate(props: FileDataProps) {
-  const { fileName, handleFileData, batch, isUploading } = props;
+  const { fileName, handleFileData, batch, isUploading, checkFileExist } = props;
   const css = useStyles();
+  const dispatch = useDispatch();
   const sourceDownload = (attachmentId?: string) => {
     return apiResourcePathById(attachmentId);
   };
@@ -121,9 +123,20 @@ function FileDataTemplate(props: FileDataProps) {
     <Box className={css.participantSaveBox}>
       {fileName?.map((item) => (
         <div className={css.pathBox}>
-          <a href={sourceDownload(item.id)} target="_blank" rel="noopener noreferrer">
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              checkFileExist(item.id).then((r) => {
+                if (r) {
+                  window.open(sourceDownload(item.id));
+                } else {
+                  dispatch(actError(d("This file is not ready. Please try again later.").t("schedule_msg_file_not_ready_to_download")));
+                }
+              });
+            }}
+          >
             {textEllipsis(item.name)}
-          </a>{" "}
+          </div>{" "}
           <CancelIcon
             style={{ color: "#666666" }}
             onClick={() => {
@@ -223,7 +236,7 @@ function SubmitTemplate(props: SubmitProps) {
 
 function FeedbackTemplate(props: FeedbackProps) {
   const css = useStyles();
-  const { schedule_id, changeModalDate, teacher, className, due_date, includeTable, due_time, is_hidden } = props;
+  const { schedule_id, changeModalDate, teacher, className, due_date, includeTable, due_time, is_hidden, checkFileExist } = props;
   const [comment, seComment] = React.useState("");
   const [fileName, setFileName] = React.useState<Pick<FileLikeWithId, "id" | "name">[] | undefined>([]);
   const dispatch = useDispatch();
@@ -373,7 +386,13 @@ function FeedbackTemplate(props: FeedbackProps) {
         render={({ btnRef, value, isUploading, batch }) => (
           <>
             {(value!.length > 0 || isUploading) && (
-              <FileDataTemplate fileName={fileName} batch={batch?.items} isUploading={isUploading} handleFileData={handleFileData} />
+              <FileDataTemplate
+                fileName={fileName}
+                batch={batch?.items}
+                isUploading={isUploading}
+                handleFileData={handleFileData}
+                checkFileExist={checkFileExist}
+              />
             )}
             {!isUploading && value!.length < 1 && (
               <Box style={{ position: "relative" }}>
@@ -428,10 +447,11 @@ interface FeedbackProps {
   includeTable?: boolean;
   due_time?: string;
   is_hidden?: boolean;
+  checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
 }
 
 export default function ScheduleFeedback(props: FeedbackProps) {
-  const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time, is_hidden } = props;
+  const { schedule_id, changeModalDate, due_date, className, teacher, includeTable, due_time, is_hidden, checkFileExist } = props;
   return (
     <FeedbackTemplate
       schedule_id={schedule_id}
@@ -442,6 +462,7 @@ export default function ScheduleFeedback(props: FeedbackProps) {
       teacher={teacher}
       includeTable={includeTable}
       is_hidden={is_hidden}
+      checkFileExist={checkFileExist}
     />
   );
 }

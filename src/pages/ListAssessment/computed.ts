@@ -117,8 +117,8 @@ export function assessmentHeader(type?: string): PLField[] {
       style: { backgroundColor: "#F2F5F7" },
     },
     {
-      text: d("Student").t("schedule_time_conflict_student"),
-      value: "student",
+      text: d("Class Name").t("assess_detail_class_name"),
+      value: "class",
       align: "center",
       style: { backgroundColor: "#F2F5F7" },
     },
@@ -135,14 +135,14 @@ export function assessmentHeader(type?: string): PLField[] {
       style: { backgroundColor: "#F2F5F7" },
     },
     {
-      text: d("Submit Time").t("assess_column_submit_time"),
-      value: "submittime",
+      text: d("Completion Rate").t("assess_list_completion_rate"),
+      value: "completeionrate",
       align: "center",
       style: { backgroundColor: "#F2F5F7" },
     },
     {
-      text: d("Assessment Score").t("assess_column_assessment_score"),
-      value: "assessmentscore",
+      text: d("Assessment Remaining").t("assess_list_assessment_remaining"),
+      value: "assessmentremaining",
       align: "center",
       style: { backgroundColor: "#F2F5F7" },
     },
@@ -151,7 +151,7 @@ export function assessmentHeader(type?: string): PLField[] {
       value: "completetime",
       align: "center",
       style: { backgroundColor: "#F2F5F7" },
-    },
+    }
   ];
   const reviewHeader: PLField[] = [
     {

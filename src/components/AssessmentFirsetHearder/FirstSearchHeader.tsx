@@ -14,7 +14,7 @@ import { useHistory } from "react-router-dom";
 import PermissionType from "../../api/PermissionType";
 import { usePermission } from "../../hooks/usePermission";
 import { d } from "../../locale/LocaleManager";
-import { AssessmentList } from "../../pages/AssesmentList";
+// import { AssessmentList } from "../../pages/AssesmentList";
 import { HomeFunAssessmentList } from "../../pages/HomeFunAssessmentList";
 import { ListAssessment } from "../../pages/ListAssessment";
 import MilestoneEdit from "../../pages/MilestoneEdit";
@@ -100,7 +100,6 @@ export function FirstSearchHeader() {
   const pathname = history.location.pathname;
   const hightLightAssessment =
     pathname.indexOf(ListAssessment.routeBasePath) >= 0 ||
-    pathname.indexOf(AssessmentList.routeBasePath) >= 0 ||
     pathname.indexOf(HomeFunAssessmentList.routeBasePath) >= 0 ||
     pathname.indexOf(StudyAssessmentList.routeBasePath) >= 0;
   return (

@@ -11,7 +11,7 @@ import {
   makeStyles,
   Typography,
   useMediaQuery,
-  useTheme,
+  useTheme
 } from "@material-ui/core";
 import { Palette, PaletteColor } from "@material-ui/core/styles/createPalette";
 import { ArrowBack, Cancel, CancelOutlined, Check, Save } from "@material-ui/icons";
@@ -142,7 +142,7 @@ export function DetailHeader(props: AssessmentHeaderProps) {
             <LButton as={IconButton} className={clsx(css.iconButton, css.primaryIconButton)} color="primary" onClick={onSave} replace>
               <Save fontSize="small" />
             </LButton>
-            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={toggle as any}>
+            <IconButton className={clsx(css.iconButton, css.greenButton)} color="primary" onClick={onComplete}>
               <Check fontSize="small" />
             </IconButton>
           </Box>

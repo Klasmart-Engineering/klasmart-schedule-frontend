@@ -243,7 +243,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       )) as unknown as PayloadAction<AsyncTrunkReturned<typeof removeSchedule>>;
       changeModalDate({ openStatus: false, enableCustomization: false });
       if (await payload) {
-        dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
+        dispatch(actSuccess(d("Deleted successfully").t("schedule_msg_delete_success")));
         dispatch(
           getScheduleTimeViewData({
             view_type: modelView,
@@ -431,7 +431,7 @@ function AnyTimeSchedule(props: SearchListProps) {
       changeModalDate({
         title: "",
         // text: "You cannot edit this event after the due date",
-        text: d("This event cannot be deleted because some students already made progress for Study activities.").t(
+        text: d("This event cannot be deleted because some students already made progress for this activity.").t(
           "schedule_msg_cannot_delete_study"
         ),
         openStatus: true,
