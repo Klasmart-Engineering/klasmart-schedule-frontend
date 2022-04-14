@@ -1029,7 +1029,7 @@ function EditBox(props: CalendarStateProps) {
         "all_day_end"
       );
       addData["due_at"] = dueDateTimestamp;
-      addData["title"] = `${d("Review").t("schedule_lable_class_type_review")}: ${classItem?.name ?? ""} ${timestampToTimeReviewTitle(
+      addData["title"] = `${d("Auto Review").t("schedule_lable_class_type_review")}: ${classItem?.name ?? ""} ${timestampToTimeReviewTitle(
         addData["content_start_at"] as number
       )} - ${timestampToTimeReviewTitle(addData["content_end_at"] as number)} ${d("Material").t("library_label_material")}`;
     }
@@ -1133,7 +1133,7 @@ function EditBox(props: CalendarStateProps) {
         changeModalDate({
           title: "",
           text: d(
-            "The schedule will appear on the calendar once the system completes publishing a personalized Lesson Plan for each student."
+            "Publishing your auto review\n\nA new ‘Auto review’ lesson will appear on students’ calendar once our platform has finished an analysis for each student."
           ).t("schedule_review_pop_up_all_success"),
           openStatus: true,
           enableCustomization: false,
@@ -1518,7 +1518,7 @@ function EditBox(props: CalendarStateProps) {
       })
     );
     if (res.payload === "OK") {
-      dispatch(actSuccess(d("Deleted sucessfully").t("schedule_msg_delete_success")));
+      dispatch(actSuccess(d("Deleted successfully").t("schedule_msg_delete_success")));
       dispatch(
         getScheduleTimeViewData({
           view_type: modelView,
@@ -2136,7 +2136,7 @@ function EditBox(props: CalendarStateProps) {
                 <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}
-                  label={d("Review").t("schedule_lable_class_type_review")}
+                  label={d("Auto Review").t("schedule_lable_class_type_review")}
                 />
               )}
             </FormGroup>

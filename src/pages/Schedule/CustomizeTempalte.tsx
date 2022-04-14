@@ -300,15 +300,22 @@ function CustomizeTempalteMb(props: InfoMbProps) {
       if (ScheduleViewInfo.review_status === "failed") {
         dispatch(
           actError(
-            d("System failed to generate a review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {
-              value: timestampToTime(ScheduleViewInfo.due_at as number, true),
-            })
+            d("There was a problem generating an auto review session on {value}. Please try again.").t(
+              "schedule_review_popup_fail_notice",
+              {
+                value: timestampToTime(ScheduleViewInfo.due_at as number, true),
+              }
+            )
           )
         );
       }
       if (ScheduleViewInfo.review_status === "pending") {
         dispatch(
-          actError(d("System is generating adaptive learning lesson plan for each student.").t("schedule_review_popup_pending_notice"))
+          actError(
+            d(
+              "We are still analyzing data to generate the ‘auto review’ lesson plan for each student. Students will be able to see the new ‘auto review’ session on the calendar once this process is complete."
+            ).t("schedule_review_popup_pending_notice")
+          )
         );
       }
       setStateFlag(false);
@@ -395,7 +402,7 @@ function CustomizeTempalteMb(props: InfoMbProps) {
           {ScheduleViewInfo.is_review && (
             <div className={classes.previewDetailSubMb}>
               <span>{d("Class Type").t("schedule_detail_class_type")} </span>
-              <span>{d("Review").t("schedule_lable_class_type_review")}</span>
+              <span>{d("Auto Review").t("schedule_lable_class_type_review")}</span>
             </div>
           )}
           {!ScheduleViewInfo.is_review && (
@@ -721,7 +728,7 @@ export default function CustomizeTempalte(props: InfoProps) {
       changeModalDate({
         title: "",
         // text: "You cannot edit this event after the due date",
-        text: d("This event cannot be deleted because some students already made progress for Study activities.").t(
+        text: d("This event cannot be deleted because some students already made progress for this activity.").t(
           "schedule_msg_cannot_delete_study"
         ),
         openStatus: true,
@@ -896,14 +903,16 @@ export default function CustomizeTempalte(props: InfoProps) {
         )}
       {ScheduleViewInfo.review_status === "failed" && (
         <p className={classes.checkPlan}>
-          {d("System failed to generate a review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {
+          {d("There was a problem generating an auto review session on {value}. Please try again.").t("schedule_review_popup_fail_notice", {
             value: timestampToTime(ScheduleViewInfo.due_at as number, true),
           })}
         </p>
       )}
       {ScheduleViewInfo.review_status === "pending" && (
         <p className={classes.checkPlan} style={{ color: "#666666" }}>
-          {d("System is generating adaptive learning lesson plan for each student.").t("schedule_review_popup_pending_notice")}
+          {d(
+            "We are still analyzing data to generate the ‘auto review’ lesson plan for each student. Students will be able to see the new ‘auto review’ session on the calendar once this process is complete."
+          ).t("schedule_review_popup_pending_notice")}
         </p>
       )}
       <div className={classes.customizeContentBox}>
@@ -917,7 +926,7 @@ export default function CustomizeTempalte(props: InfoProps) {
           <span className={classes.row}>{d("Class Type").t("schedule_detail_class_type")}</span>
           <span className={classes.row2}>
             {ScheduleViewInfo.is_review
-              ? d("Review").t("schedule_lable_class_type_review")
+              ? d("Auto Review").t("schedule_lable_class_type_review")
               : t(ScheduleViewInfo.class_type?.name as classTypeLabel)}
           </span>
         </p>
