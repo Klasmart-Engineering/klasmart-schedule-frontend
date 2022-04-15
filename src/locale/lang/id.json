@@ -1098,7 +1098,7 @@
   "schedule_review_dafault_date_range": "2 Minggu Terakhir",
   "schedule_review_review_area": "Area Ulasan",
   "schedule_review_pop_up_all_success": "Menerbitkan ulas otomatis Anda\n\nPelajaran 'Ulas Otomatis' akan muncul di kalender siswa saat platform kami selesai melakukan analisis untuk setiap siswa.",
-  "schedule_review_popup_partical_success": "Catatan: Kami tidak memiliki cukup data untuk siswa berikut dalam rentang waktu yang dipilih – pelajaran acak akan diberikan. Untuk menghindari hal ini di kemudian hari, pastikan siswa telah mengerjakan setidaknya 10 aktivitas sebelum menyetel Ulas Otomatis.",
+  "schedule_review_popup_partial_success": "Catatan: Kami tidak memiliki cukup data untuk siswa berikut dalam rentang waktu yang dipilih – pelajaran acak akan diberikan. Untuk menghindari hal ini di kemudian hari, pastikan siswa telah mengerjakan setidaknya 10 aktivitas sebelum menyetel Ulas Otomatis.",
   "learning_outcome_lable_threshold": "Ambang Skor",
   "assessment_summary_label_attendance_unknown": "Tidak dikenal",
   "learning_outcome_threshold_blank_alert": "Ambang batas skor harus dimasukkan",
