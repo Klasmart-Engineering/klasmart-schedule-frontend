@@ -101,7 +101,7 @@ export default function ScheduleReviewTemplate(props: InfoProps) {
           <p>
             {d(
               "Please note that we do not have enough data for the following students during the time range selected – they will each be given a random lesson. To avoid this in future, please ensure that students have worked on at least 10 activities before setting an Auto review."
-            ).t("schedule_review_popup_partical_success")}
+            ).t("schedule_review_popup_partial_success")}
           </p>
         </>
       )}

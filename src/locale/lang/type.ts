@@ -1731,7 +1731,7 @@ A new ‘Auto review’ lesson will appear on students’ calendar once our plat
       values: undefined;
     }
   | {
-      id: "schedule_review_popup_partical_success";
+      id: "schedule_review_popup_partial_success";
       description: `Please note that we do not have enough data for the following students during the time range selected – they will each be given a random lesson. To avoid this in future, please ensure that students have worked on at least 10 activities before setting an Auto review.`;
       values: undefined;
     }
