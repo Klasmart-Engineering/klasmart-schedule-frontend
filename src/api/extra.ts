@@ -38,7 +38,7 @@ import {
   GetStudentNameByIdQueryVariables,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
-  SchoolsClassesQueryVariables,
+  SchoolsClassesQueryVariables
 } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
@@ -277,6 +277,8 @@ export function getIsEnableNewGql() {
   return process.env.REACT_APP_USE_LEGACY_GQL === "0";
 }
 export const enableNewGql = getIsEnableNewGql();
+
+export const enableReviewClass = process.env.REACT_APP_ENABLE_REVIEW_CLASS === "1";
 
 export async function apiSkillsListByIds(skillIds: string[]) {
   const skillsQuery = skillIds

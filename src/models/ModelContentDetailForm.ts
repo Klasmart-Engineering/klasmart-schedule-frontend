@@ -58,6 +58,18 @@ export function formattedTime(value: number | undefined): string {
   }
   return "";
 }
+export function formattedDate(value: number | undefined): string {
+  if (value) {
+    let date = new Date(Number(value) * 1000);
+    let y = date.getFullYear();
+    let MM = date.getMonth() + 1;
+    const MMs = MM < 10 ? `0${MM}` : MM;
+    let d = date.getDate();
+    const ds = d < 10 ? `0${d}` : d;
+    return `${y}/${MMs}/${ds}`;
+  }
+  return "";
+}
 export const setQuery = (search: string, hash: Record<string, string | number | boolean>): string => {
   const query = new URLSearchParams(search);
   Object.keys(hash).forEach((key) => query.set(key, String(hash[key])));
