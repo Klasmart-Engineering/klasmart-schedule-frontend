@@ -1098,7 +1098,7 @@
   "schedule_review_dafault_date_range": "2 tuần qua",
   "schedule_review_review_area": "Khu vực ôn tập",
   "schedule_review_pop_up_all_success": "Công khai phần ôn tập tự động của bạn\n\nBài Ôn tập tự động' mới sẽ xuất hiện trên lịch của học sinh sau khi nền tảng của chúng tôi đã hoàn thành phân tích cho mỗi học sinh.",
-  "schedule_review_popup_partical_success": "Xin lưu ý rằng chúng tôi không có đủ dữ liệu cho học sinh sau đây trong khoảng thời gian được chọn - mỗi người sẽ được cung cấp một bài học ngẫu nhiên. Để tránh điều này trong tương lai, vui lòng đảm bảo rằng học sinh đã làm ít nhất 10 hoạt động trước khi thiết lập ôn tập tự động.",
+  "schedule_review_popup_partial_success": "Xin lưu ý rằng chúng tôi không có đủ dữ liệu cho học sinh sau đây trong khoảng thời gian được chọn - mỗi người sẽ được cung cấp một bài học ngẫu nhiên. Để tránh điều này trong tương lai, vui lòng đảm bảo rằng học sinh đã làm ít nhất 10 hoạt động trước khi thiết lập ôn tập tự động.",
   "learning_outcome_lable_threshold": "Ngưỡng điểm",
   "assessment_summary_label_attendance_unknown": "Không xác định",
   "learning_outcome_threshold_blank_alert": "Một ngưỡng điểm phải được nhập",
