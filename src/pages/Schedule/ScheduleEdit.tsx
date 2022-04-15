@@ -17,12 +17,14 @@ import {
   ExpandMoreOutlined,
   FileCopyOutlined,
   PermIdentity,
-  VisibilityOff,
+  VisibilityOff
 } from "@material-ui/icons";
+import CloseIcon from "@material-ui/icons/Close";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import ScheduleLessonPlan from "@pages/Schedule/ScheduleLessonPlan";
+import { getStudentUserNamesById } from "@reducers/schedule";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
@@ -37,16 +39,16 @@ import {
   GetProgramsQuery,
   GetSchoolsFilterListQuery,
   GetUserQuery,
-  ParticipantsByClassQuery,
+  ParticipantsByClassQuery
 } from "../../api/api-ko.auto";
 import {
   EntityContentInfoWithDetails,
   EntityLessonPlanForSchedule,
   EntityScheduleAddView,
   EntityScheduleDetailsView,
-  EntityScheduleShortInfo,
+  EntityScheduleShortInfo
 } from "../../api/api.auto";
-import { MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
+import { enableReviewClass, MockOptionsItem, MockOptionsOptionsItem } from "../../api/extra";
 import PermissionType from "../../api/PermissionType";
 import { usePermission } from "../../hooks/usePermission";
 import { initialState, useRepeatSchedule } from "../../hooks/useRepeatSchedule";
@@ -56,8 +58,8 @@ import { RootState } from "../../reducers";
 import { actError, actSuccess } from "../../reducers/notify";
 import {
   actOutcomeList,
-  changeParticipants,
-  getProgramChild,
+  changeParticipants, checkScheduleReview, getLessonPlansBySchedule,
+  getLessonPlansByScheduleLoadingPage, getProgramChild,
   // getScheduleLiveToken,
   getScheduleMockOptionsResponse,
   getScheduleParticipant,
@@ -73,10 +75,7 @@ import {
   saveScheduleData,
   saveScheduleDataReview,
   ScheduleFilterPrograms,
-  scheduleShowOption,
-  getLessonPlansBySchedule,
-  getLessonPlansByScheduleLoadingPage,
-  checkScheduleReview,
+  scheduleShowOption
 } from "../../reducers/schedule";
 import theme from "../../theme";
 import {
@@ -95,7 +94,7 @@ import {
   ParticipantString,
   ParticipantValue,
   repeatOptionsType,
-  timestampType,
+  timestampType
 } from "../../types/scheduleTypes";
 import AddParticipantsTemplate from "./AddParticipantsTemplate";
 import { AddParticipantsTemplateMb, useAddParticipant } from "./AddParticipantsTemplateMb";
@@ -106,10 +105,8 @@ import ScheduleAttachment from "./ScheduleAttachment";
 import ScheduleButton from "./ScheduleButton";
 import ScheduleFeedback from "./ScheduleFeedback";
 import ScheduleFilter from "./ScheduleFilter";
-import TimeConflictsTemplate from "./TimeConflictsTemplate";
-import CloseIcon from "@material-ui/icons/Close";
 import ScheduleReviewTemplate from "./ScheduleReviewTemplate";
-import { getStudentUserNamesById } from "@reducers/schedule";
+import TimeConflictsTemplate from "./TimeConflictsTemplate";
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldset: {
@@ -2132,7 +2129,7 @@ function EditBox(props: CalendarStateProps) {
                 control={<Checkbox name="homeFunCheck" color="primary" checked={checkedStatus.homeFunCheck} onChange={handleCheck} />}
                 label={d("Home Fun").t("schedule_checkbox_home_fun")}
               />
-              {!scheduleId && process.env.REACT_APP_BASE_DOMAIN === "https://cms.alpha.kidsloop.net" && (
+              {!scheduleId && enableReviewClass && (
                 <FormControlLabel
                   disabled={isScheduleExpired() || isLimit()}
                   control={<Checkbox name="reviewCheck" color="primary" checked={checkedStatus.reviewCheck} onChange={handleCheck} />}

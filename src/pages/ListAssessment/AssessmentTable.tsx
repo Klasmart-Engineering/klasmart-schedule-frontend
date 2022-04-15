@@ -1,12 +1,12 @@
 import { AssessmentTypeValues } from "@components/AssessmentType";
-import { createStyles, makeStyles, Table, TableBody, TableCell, TableContainer, TableRow } from "@material-ui/core";
+import { createStyles, makeStyles, Table, TableBody, TableCell, TableContainer, TableRow, Tooltip } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import clsx from "clsx";
 import React, { useMemo } from "react";
 import LayoutBox from "../../components/LayoutBox";
 import { PLTableHeader } from "../../components/PLTable";
 import { d } from "../../locale/LocaleManager";
-import { formattedTime } from "../../models/ModelContentDetailForm";
+import { formattedDate, formattedTime } from "../../models/ModelContentDetailForm";
 import { assessmentHeader } from "./computed";
 import { AssessmentListResult, AssessmentQueryCondition, AssessmentStatus } from "./types";
 
@@ -27,13 +27,22 @@ const useStyles = makeStyles((theme) =>
     nameListCell: {
       maxWidth: 300,
     },
+    statusCell: {
+      width: 115,
+      minWidth: 104,
+      maxWidth: 115,
+    },
     statusCon: {
       color: "#fff",
       borderRadius: "15px",
       height: 26,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
+      lineHeight: "26px",
+      textAlign: "center",
+      width: "100%",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      padding: "0 5px",
     },
     completeColor: {
       backgroundColor: "#1aa21e",
@@ -53,6 +62,17 @@ function AssessmentRow(props: AssessmentProps) {
   const css = useStyles();
   const { assessment, onClickAssessment, assessmentType } = props;
   const isComplete = assessment.status === AssessmentStatus.complete;
+  const statusText = isComplete ? d("Complete").t("assess_filter_complete") : d("Incomplete").t("assess_filter_in_progress");
+  const isLong = useMemo(() => {
+    if(statusText.length > 16) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [statusText.length]);
+  const statusCom = <div className={clsx(css.statusCon, isComplete ? css.completeColor : css.inCompleteColor)}>
+    {statusText}
+  </div>
   const isClassAndLive = useMemo(() => {
     return assessmentType === AssessmentTypeValues.class || assessmentType === AssessmentTypeValues.live;
   }, [assessmentType]);
@@ -73,10 +93,8 @@ function AssessmentRow(props: AssessmentProps) {
         <>
           <TableCell align="center">{assessment.subjects?.map((v) => v.name).join(", ")}</TableCell>
           <TableCell align="center">{assessment.program?.name}</TableCell>
-          <TableCell align="center" className={css.tableCell}>
-            <div className={clsx(css.statusCon, isComplete ? css.completeColor : css.inCompleteColor)}>
-              {isComplete ? d("Complete").t("assess_filter_complete") : d("Incomplete").t("assess_filter_in_progress")}
-            </div>
+          <TableCell align="center" className={css.statusCell}>
+            {isLong ? <Tooltip title={statusText} placement="top">{statusCom}</Tooltip> : statusCom}
           </TableCell>
         </>
       )}
@@ -84,16 +102,14 @@ function AssessmentRow(props: AssessmentProps) {
       {isClassAndLive && <TableCell align="center">{formattedTime(assessment.class_end_at)}</TableCell>}
       {!isClassAndLive && <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell>}
       {isHomefun && 
-        <TableCell align="center" className={css.tableCell}>
-          <div className={clsx(css.statusCon, isComplete ? css.completeColor : css.inCompleteColor)}>
-            {isComplete ? d("Complete").t("assess_filter_complete") : d("Incomplete").t("assess_filter_in_progress")}
-          </div>
+        <TableCell align="center" className={css.statusCell}>
+          {isLong ? <Tooltip title={statusText} placement="top">{statusCom}</Tooltip> : statusCom}
         </TableCell>}
       {!isClassAndLive && (
         <>
           {/* <TableCell align="center">{assessment.class_info?.name ?? d("N/A").t("assess_column_n_a")}</TableCell> */}
           <TableCell align="center">
-            {formattedTime(assessment.due_at) ? formattedTime(assessment.due_at) : d("N/A").t("assess_column_n_a")}
+            {formattedTime(assessment.due_at) ? formattedDate(assessment.due_at) : d("N/A").t("assess_column_n_a")}
           </TableCell>
           <TableCell align="center">
             {assessment?.complete_rate ? `${Math.round(assessment?.complete_rate * 100)}%` : d("N/A").t("assess_column_n_a")}

@@ -4,7 +4,6 @@ import React from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
 import { SearchListForm, SearchListFormKey } from "./types";
-// import { SearchListForm, SearchListFormKey } from "../../pages/StudyAssessmentList/types";
 
 const useStyles = makeStyles((theme) => ({
   searchText: {

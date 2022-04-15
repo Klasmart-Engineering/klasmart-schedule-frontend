@@ -1,3 +1,4 @@
+import { enableReviewClass } from "@api/extra";
 import { MenuItem, TextField } from "@material-ui/core";
 import React, { ChangeEvent } from "react";
 import { d } from "../../locale/LocaleManager";
@@ -13,7 +14,7 @@ export interface options {
   value?: string;
 }
 export const assessmentTypes = () => {
-  if (process.env.REACT_APP_BASE_DOMAIN === "https://cms.alpha.kidsloop.net") {
+  if (enableReviewClass) {
     return [
       { label: d("Class").t("schedule_detail_offline_class"), value: AssessmentTypeValues.class },
       { label: d("Live").t("schedule_detail_online_class"), value: AssessmentTypeValues.live },
