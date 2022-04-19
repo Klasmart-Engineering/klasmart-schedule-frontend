@@ -1,0 +1,57 @@
+name: Deploy to Alpha Dev
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  install:
+    uses: KL-Engineering/github-action-workflows/.github/workflows/npm-ci.yml@v3.1.0
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+#   test-unit:
+#     needs: [install]
+#     uses: KL-Engineering/github-action-workflows/.github/workflows/npm-test-jest.yml@v3.1.0
+
+  lint:
+    needs: [install]
+    uses: KL-Engineering/github-action-workflows/.github/workflows/npm-lint.yml@v3.1.0
+
+  build:
+    needs: [install]
+    uses: KL-Engineering/github-action-workflows/.github/workflows/npm-lint.yml@v3.1.0
+    with:
+      environment: alpha
+      region: alpha
+      upload: true
+
+  confirm-deployment:
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: alpha-dev
+    steps:
+      - name: Debug message
+        run: echo Deployment confirmed
+
+  deploy:
+    needs: [confirm-deployment]
+    uses: KL-Engineering/github-action-workflows/.github/workflows/deploy-aws-s3-cloudfront.yml@v3.1.0
+    with:
+      environment: alpha
+      region: alpha
+      aws-region: ap-northeast-2
+      aws-s3-bucket: kidsloop-alpha-schedule-tbd
+      aws-cloudfront-distribution-id: tbd
+      # TODO: update the bucket name & aws-cloudfront-distribution-id
+    secrets:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_ALPHA_DEV }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_ALPHA_DEV }}
