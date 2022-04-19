@@ -28,7 +28,7 @@ jobs:
 
   build:
     needs: [install]
-    uses: KL-Engineering/github-action-workflows/.github/workflows/npm-lint.yml@v3.1.0
+    uses: KL-Engineering/github-action-workflows/.github/workflows/npm-build-upload-fe.yml@v3.1.0
     with:
       environment: alpha
       region: alpha
