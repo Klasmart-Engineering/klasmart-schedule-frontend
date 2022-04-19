@@ -157,8 +157,8 @@ msg "${GREEN}Read parameters:${NOFORMAT}"
 msg "- env: ${env}"
 msg "- region: ${region}"
 
-msg "copy config file to .env.production"
-cp ./deploy/config/${region}/.env.${env} ./.env.production
+msg "copy config file to .env"
+cp ./deploy/config/${region}/.env.${env} ./.env
 msg "npm install and audit"
 npm ci
 msg "----------------------"
