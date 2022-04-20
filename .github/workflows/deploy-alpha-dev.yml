@@ -35,7 +35,7 @@ jobs:
       upload: true
 
   confirm-deployment:
-    needs: [build]
+    needs: [lint,build]
     runs-on: ubuntu-latest
     environment: alpha-dev
     steps:
@@ -49,7 +49,7 @@ jobs:
       environment: alpha
       region: alpha
       aws-region: ap-northeast-2
-      aws-s3-bucket: kidsloop-alpha-schedule-tbd
+      aws-s3-bucket: kidsloop-alpha-schedule-seth-test
       aws-cloudfront-distribution-id: tbd
       # TODO: update the bucket name & aws-cloudfront-distribution-id
     secrets:
