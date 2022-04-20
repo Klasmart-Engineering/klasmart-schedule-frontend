@@ -1,4 +1,4 @@
-require('dotenv').config({path: './.env.production'})
+require('dotenv').config({path: './.env'})
 const publishSourcemap = require("@newrelic/publish-sourcemap").publishSourcemap;
 const listSourcemaps = require("@newrelic/publish-sourcemap").listSourcemaps;
 const deleteSourcemap = require('@newrelic/publish-sourcemap').deleteSourcemap;
@@ -28,6 +28,8 @@ const splits = (i) => i.split(".");
 const optionConfigAssembly = [];
 
 function readFileList(dirs, optionConfigAssembly = []) {
+  console.log("BASE_URL_PATH===")
+  console.log(BASE_URL_PATH);
   const sources = fs.readdirSync(dirs);
   sources.forEach((dir, key) => {
     if (splits(dir).pop() === "js") optionConfigAssembly.push({
