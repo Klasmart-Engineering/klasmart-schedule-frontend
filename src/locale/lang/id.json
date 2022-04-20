@@ -375,7 +375,7 @@
   "assess_msg_unlocked_milestone": "Konten ini sudah diterbitkan kembali dengan versi baru, silakan muat kembali.",
   "assess_approved_successfully": "Berhasil Disetujui",
   "schedule_tab_schedule": "Jadwal",
-  "schedue_button_schedule_class": "Jadwal kelas",
+  "schedule_button_schedule_class": "Jadwal kelas",
   "schedule_button_search": "Cari",
   "schedule_text_search_teacher": "Cari guru",
   "schedule_button_today": "Hari Ini",
@@ -1090,7 +1090,7 @@
   "app2web_badanamu_activities": "Badanamu Activities",
   "app2web_please_enter_the_link": "Silakan masukkan tautan",
   "app2web_badanamu_activities_link": "Badanamu Activities Link",
-  "schedule_lable_class_type_review": "Ulas Otomatis",
+  "schedule_label_class_type_review": "Ulas Otomatis",
   "schedule_due_date_info": "Tanggal kumpul hanya bisa sehari setelah hari ini untuk memberikan siwa kesempatan mengerjakan.",
   "schedule_review_date_range_info": "Saya ingin konten diulas yang mencakup:",
   "schedule_review_start_date": "Tanggal Mulai",
@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "Area Ulasan",
   "schedule_review_pop_up_all_success": "Menerbitkan ulas otomatis Anda\n\nPelajaran 'Ulas Otomatis' akan muncul di kalender siswa saat platform kami selesai melakukan analisis untuk setiap siswa.",
   "schedule_review_popup_partial_success": "Catatan: Kami tidak memiliki cukup data untuk siswa berikut dalam rentang waktu yang dipilih – pelajaran acak akan diberikan. Untuk menghindari hal ini di kemudian hari, pastikan siswa telah mengerjakan setidaknya 10 aktivitas sebelum menyetel Ulas Otomatis.",
-  "learning_outcome_lable_threshold": "Ambang Skor",
+  "learning_outcome_label_threshold": "Ambang Skor",
   "assessment_summary_label_attendance_unknown": "Tidak dikenal",
   "learning_outcome_threshold_blank_alert": "Ambang batas skor harus dimasukkan",
   "learning_outcome_threshold_error_toast": "Harap masukkan bilangan bulat dari 1 hingga 100",
@@ -1141,5 +1141,8 @@
   "assessment_hfs_view_drawing_feedback": "Lihat Masukan Gambar",
   "assessment_hfs_no_teacher_feedback": "Tidak ada umpan balik yang diberikan untuk file ini.",
   "assessment_hfs_student_assessment": "Penilaian",
-  "assessment_hfs_student_feedback": "Masukan"
+  "assessment_hfs_student_feedback": "Masukan",
+  "assessment_detail_screenshot_results": "Results",
+  "assessment_detail_screenshot_result_screen": "Results Screen",
+  "assessment_detail_total_score": "Total Score"
 }

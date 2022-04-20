@@ -12,8 +12,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React from "react";
 import * as Types from "../../api/api-ko-schema.auto";
-import { ConnectionDirection } from "../../api/api-ko-schema.auto";
-import { d } from "../../locale/LocaleManager";
+import { ConnectionDirection } from "@api/api-ko-schema.auto";
+import { d } from "@locale/LocaleManager";
 import { FilterSchoolInfo } from "../../types/scheduleTypes";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: "nowrap",
       overflowWrap: "break-word",
     },
-    maxlabel: {
+    maxLabel: {
       fontWeight: "inherit",
       height: "18px",
       padding: "10px 0px 10px 8px;",
@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: "16px",
       overflowWrap: "break-word",
     },
-    fliterRouter: {
+    filterRouter: {
       width: "94%",
       margin: "0 auto",
       borderTop: "1px solid #eeeeee",
@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme: Theme) =>
     abbreviation: {
       width: "56%",
     },
-    abbreviationLable: {
+    abbreviationLabel: {
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
@@ -246,7 +246,7 @@ function FilterOverall(props: FilterTreeProps) {
     total,
     pageInfo,
     getClassesConnection,
-    getUesrOfUndefined,
+    getUserOfUndefined,
     type,
   } = props;
   // const total = classDataBySchool.classes.length;
@@ -255,7 +255,7 @@ function FilterOverall(props: FilterTreeProps) {
   const [checkMine, setCheckMine] = React.useState(false);
   const handleChange = async (cursor: string, direction: ConnectionDirection.Forward | ConnectionDirection.Backward, page: number) => {
     if (type === "user") {
-      getUesrOfUndefined && (await getUesrOfUndefined(cursor, true, direction));
+      getUserOfUndefined && (await getUserOfUndefined(cursor, true, direction));
     } else {
       getClassesConnection && (await getClassesConnection(cursor, classDataBySchool.school_id, true, direction));
     }
@@ -295,7 +295,7 @@ function FilterOverall(props: FilterTreeProps) {
     return data;
   };
   const handleChangeClassId = (id: string, checked: boolean) => {
-    let data: string[] = [];
+    let data: string[];
     if (checked) {
       if (["Mine", "All"].includes(id)) {
         data = getCLassData(id);
@@ -463,7 +463,7 @@ interface FilterTreeProps {
     loading: boolean,
     direction: ConnectionDirection.Forward | ConnectionDirection.Backward
   ) => void;
-  getUesrOfUndefined?: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
+  getUserOfUndefined?: (cursor: string, loading: boolean, direction: ConnectionDirection.Forward | ConnectionDirection.Backward) => void;
   pageInfo?: Types.Maybe<
     { __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor">
   >;
@@ -481,7 +481,7 @@ export default function FilterTree(props: FilterTreeProps) {
     getClassesConnection,
     type,
     pageInfo,
-    getUesrOfUndefined,
+    getUserOfUndefined,
   } = props;
   return (
     <FilterOverall
@@ -495,7 +495,7 @@ export default function FilterTree(props: FilterTreeProps) {
       getClassesConnection={getClassesConnection}
       pageInfo={pageInfo}
       type={type}
-      getUesrOfUndefined={getUesrOfUndefined}
+      getUserOfUndefined={getUserOfUndefined}
     />
   );
 }

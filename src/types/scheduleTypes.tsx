@@ -4,8 +4,8 @@ import {
   EntityScheduleListView,
   EntityScheduleViewDetail,
   ModelOutcomeSetCreateView,
-} from "../api/api.auto";
-import { MockOptionsItem } from "../api/extra";
+} from "@api/api.auto";
+import { MockOptionsItem } from "@api/extra";
 
 export type timestampType = {
   start: number;
@@ -290,7 +290,7 @@ export interface LearningContentListForm {
 export interface LearningComesFilterQuery {
   programs: string[];
   subjects: string[];
-  categorys: string[];
+  category: string[];
   subs: string[];
   ages: string[];
   grades: string[];
@@ -311,7 +311,7 @@ export type ParticipantRoleId = {
 export interface LessonPlanFilterQuery {
   programs: string[];
   subjects: string[];
-  categorys: string[];
+  category: string[];
   subs: string[];
   ages: string[];
   grades: string[];

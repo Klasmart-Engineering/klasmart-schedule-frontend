@@ -375,7 +375,7 @@
   "assess_msg_unlocked_milestone": "이 콘텐츠는 업데이트되었습니다. 새로고침하여 신규 버전을 확인하세요.",
   "assess_approved_successfully": "성공적으로 승인이 완료되었습니다.",
   "schedule_tab_schedule": "시간표",
-  "schedue_button_schedule_class": "수업 등록하기",
+  "schedule_button_schedule_class": "수업 등록하기",
   "schedule_button_search": "검색",
   "schedule_text_search_teacher": "교사 검색",
   "schedule_button_today": "오늘",
@@ -1090,7 +1090,7 @@
   "app2web_badanamu_activities": "바다나무 액티비티",
   "app2web_please_enter_the_link": "링크를 입력해주세요",
   "app2web_badanamu_activities_link": "바다나무 액티비티 링크",
-  "schedule_lable_class_type_review": "자동 복습",
+  "schedule_label_class_type_review": "자동 복습",
   "schedule_due_date_info": "마감일은 학생들이 완료할 시간을 확보할 수 잇도록 오늘부터 1일 후로만 설정할 수 있습니다.",
   "schedule_review_date_range_info": "다음과 같은 내용을 검토하고 싶습니다.",
   "schedule_review_start_date": "시작일",
@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "복습할 영역",
   "schedule_review_pop_up_all_success": "자동 복습 생성 \n\n시스템에서 각 학생에 대한 분석을 마치면 새로운 '자동 복습' 수업이 학생 캘린더에 표시됩니다.",
   "schedule_review_popup_partial_success": "선택한 기간 동안 다음 학생에 대한 데이터가 충분하지 않아, 각 학생에게는 임의로 구성된 복습이 제공됩니다. 향후 이와 같은 상황을 방지하려면 자동 복습을 설정하기 전에 학생들이 10개 이상의 활동을 수행할 수 있도록 해 주십시오.",
-  "learning_outcome_lable_threshold": "점수 임계값",
+  "learning_outcome_label_threshold": "점수 임계값",
   "assessment_summary_label_attendance_unknown": "알려지지 않은",
   "learning_outcome_threshold_blank_alert": "점수 임계값을 입력해야 합니다.",
   "learning_outcome_threshold_error_toast": "1에서 100 사이의 정수를 입력하세요.",
@@ -1141,5 +1141,8 @@
   "assessment_hfs_view_drawing_feedback": "이미지 피드백 보기",
   "assessment_hfs_no_teacher_feedback": "아직 이 파일에 대한 피드백이 제공되지 않았습니다.",
   "assessment_hfs_student_assessment": "평가",
-  "assessment_hfs_student_feedback": "피드백"
+  "assessment_hfs_student_feedback": "피드백",
+  "assessment_detail_screenshot_results": "Results",
+  "assessment_detail_screenshot_result_screen": "Results Screen",
+  "assessment_detail_total_score": "Total Score"
 }

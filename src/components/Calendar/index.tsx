@@ -28,11 +28,11 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { EntityScheduleTimeView, EntityScheduleViewDetail } from "../../api/api.auto";
-import { d, localeManager } from "../../locale/LocaleManager";
-import ConfilctTestTemplate from "../../pages/Schedule/ConfilctTestTemplate";
-import CustomizeTempalte from "../../pages/Schedule/CustomizeTempalte";
-import { getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "../../reducers/schedule";
+import { EntityScheduleTimeView, EntityScheduleViewDetail } from "@api/api.auto";
+import { d, localeManager } from "@locale/LocaleManager";
+import ConflictTestTemplate from "@pages/Conflicts/ConflictTestTemplate";
+import CustomizeTemplate from "@pages/Templates/CustomizeTemplate";
+import { getScheduleTimeViewData, removeSchedule, resetScheduleTimeViewData } from "@reducers/schedule";
 import { memberType, modeViewType, repeatOptionsType, scheduleInfoViewProps, timestampType } from "../../types/scheduleTypes";
 import YearCalendar from "./YearView";
 
@@ -284,7 +284,7 @@ function MyCalendar(props: CalendarProps) {
   moment.locale(lang[localeManager.getLocale()!]);
   const localizer = momentLocalizer(moment);
 
-  const deleteScheduleByid = useCallback(
+  const deleteScheduleById = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoViewProps) => {
       await dispatch(removeSchedule({ schedule_id: scheduleInfo.id, repeat_edit_options: { repeat_edit_options: repeat_edit_options } }));
       const { payload } = (await dispatch(
@@ -525,9 +525,9 @@ function MyCalendar(props: CalendarProps) {
           openStatus: true,
           enableCustomization: true,
           customizeTemplate: (
-            <ConfilctTestTemplate
+            <ConflictTestTemplate
               handleDelete={(repeat_edit_options: repeatOptionsType = "only_current") => {
-                deleteScheduleByid(repeat_edit_options, scheduleInfo);
+                deleteScheduleById(repeat_edit_options, scheduleInfo);
               }}
               handleClose={() => {
                 changeModalDate({ openStatus: false, enableCustomization: false });
@@ -551,14 +551,14 @@ function MyCalendar(props: CalendarProps) {
             {
               label: d("DELETE").t("general_button_DELETE"),
               event: () => {
-                deleteScheduleByid("only_current", scheduleInfo);
+                deleteScheduleById("only_current", scheduleInfo);
               },
             },
           ],
         });
       }
     },
-    [changeModalDate, deleteScheduleByid]
+    [changeModalDate, deleteScheduleById]
   );
 
   /**
@@ -578,7 +578,7 @@ function MyCalendar(props: CalendarProps) {
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
-        <CustomizeTempalte
+        <CustomizeTemplate
           handleDelete={() => {
             handleDelete(event);
           }}

@@ -375,7 +375,7 @@
   "assess_msg_unlocked_milestone": "Nội dung này đã được công bố lại với phiên bản mới, vui lòng làm mới.",
   "assess_approved_successfully": "Phê duyệt thành công",
   "schedule_tab_schedule": "Thời Khóa Biểu",
-  "schedue_button_schedule_class": "Thời Khóa Biểu",
+  "schedule_button_schedule_class": "Thời Khóa Biểu",
   "schedule_button_search": "Tìm Kiếm",
   "schedule_text_search_teacher": "Tìm kiếm giáo viên",
   "schedule_button_today": "Hôm Nay",
@@ -1090,7 +1090,7 @@
   "app2web_badanamu_activities": "Hoạt động Badanamu",
   "app2web_please_enter_the_link": "Vui lòng nhập liên kết",
   "app2web_badanamu_activities_link": "Liên kết hoạt động Badanamu",
-  "schedule_lable_class_type_review": "Ôn tập tự động",
+  "schedule_label_class_type_review": "Ôn tập tự động",
   "schedule_due_date_info": "Ngày đến hạn chỉ có thể được đặt sau +1 ngày kể từ hôm nay để cho phép thời gian học sinh hoàn thành.",
   "schedule_review_date_range_info": "Tôi muốn nội dung đã đề cập được ôn tập:",
   "schedule_review_start_date": "Ngày bắt đầu",
@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "Khu vực ôn tập",
   "schedule_review_pop_up_all_success": "Công khai phần ôn tập tự động của bạn\n\nBài Ôn tập tự động' mới sẽ xuất hiện trên lịch của học sinh sau khi nền tảng của chúng tôi đã hoàn thành phân tích cho mỗi học sinh.",
   "schedule_review_popup_partial_success": "Xin lưu ý rằng chúng tôi không có đủ dữ liệu cho học sinh sau đây trong khoảng thời gian được chọn - mỗi người sẽ được cung cấp một bài học ngẫu nhiên. Để tránh điều này trong tương lai, vui lòng đảm bảo rằng học sinh đã làm ít nhất 10 hoạt động trước khi thiết lập ôn tập tự động.",
-  "learning_outcome_lable_threshold": "Ngưỡng điểm",
+  "learning_outcome_label_threshold": "Ngưỡng điểm",
   "assessment_summary_label_attendance_unknown": "Không xác định",
   "learning_outcome_threshold_blank_alert": "Một ngưỡng điểm phải được nhập",
   "learning_outcome_threshold_error_toast": "Vui lòng nhập số nguyên từ 1 đến 100",
@@ -1141,5 +1141,8 @@
   "assessment_hfs_view_drawing_feedback": "Xem bản vẽ phản hồi",
   "assessment_hfs_no_teacher_feedback": "Không có phản hồi nào được cung cấp cho tệp này.",
   "assessment_hfs_student_assessment": "Đánh giá",
-  "assessment_hfs_student_feedback": "Nhận xét"
+  "assessment_hfs_student_feedback": "Nhận xét",
+  "assessment_detail_screenshot_results": "Results",
+  "assessment_detail_screenshot_result_screen": "Results Screen",
+  "assessment_detail_total_score": "Total Score"
 }

@@ -375,7 +375,7 @@
   "assess_msg_unlocked_milestone": "เนื้อหานี้ได้รับการตีพิมพ์ซ้ำด้วยเวอร์ชันใหม่ โปรดรีเฟรช",
   "assess_approved_successfully": "อนุมัติเรียบร้อย",
   "schedule_tab_schedule": "กำหนดการ",
-  "schedue_button_schedule_class": "ตารางเรียน",
+  "schedule_button_schedule_class": "ตารางเรียน",
   "schedule_button_search": "ค้นหา",
   "schedule_text_search_teacher": "ค้นหาครู",
   "schedule_button_today": "วันนี้",
@@ -1090,7 +1090,7 @@
   "app2web_badanamu_activities": "กิจกรรมบาดานามู",
   "app2web_please_enter_the_link": "กรุณาใส่ลิงค์",
   "app2web_badanamu_activities_link": "ลิงค์กิจกรรมบาดานามู",
-  "schedule_lable_class_type_review": "ทบทวน",
+  "schedule_label_class_type_review": "ทบทวน",
   "schedule_due_date_info": "วันครบกำหนดสามารถตั้งค่าได้หลังจาก +1 วันนับจากวันนี้เท่านั้น เพื่อให้นักเรียนมีเวลาดำเนินการ",
   "schedule_review_date_range_info": "ฉันต้องการตรวจสอบเนื้อหาที่ครอบคลุม:",
   "schedule_review_start_date": "วันที่เริ่มต้น",
@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "พื้นที่ตรวจสอบ",
   "schedule_review_pop_up_all_success": "เผยแพร่การตรวจทานอัตโนมัติของคุณ \n\n บทเรียน 'การตรวจสอบอัตโนมัติ' ใหม่จะปรากฏในปฏิทินของนักเรียน เมื่อแพลตฟอร์มของเราวิเคราะห์นักเรียนแต่ละคนเสร็จแล้ว",
   "schedule_review_popup_partial_success": "โปรดทราบว่าเรามีข้อมูลไม่เพียงพอสำหรับนักเรียนต่อไปนี้ในช่วงเวลาที่เลือก - พวกเขาแต่ละคนจะได้รับบทเรียนแบบสุ่ม เพื่อหลีกเลี่ยงปัญหานี้ในอนาคต โปรดตรวจสอบให้แน่ใจว่านักเรียนได้ทำกิจกรรมอย่างน้อย 10 กิจกรรมก่อนที่จะตั้งค่าการตรวจทานอัตโนมัติ",
-  "learning_outcome_lable_threshold": "เกณฑ์คะแนน",
+  "learning_outcome_label_threshold": "เกณฑ์คะแนน",
   "assessment_summary_label_attendance_unknown": "ไม่รู้จัก",
   "learning_outcome_threshold_blank_alert": "ต้องป้อนเกณฑ์คะแนน",
   "learning_outcome_threshold_error_toast": "โปรดป้อนจำนวนเต็มตั้งแต่ 1 ถึง 100",
@@ -1141,5 +1141,8 @@
   "assessment_hfs_view_drawing_feedback": "ดูคำติชมการวาดภาพ",
   "assessment_hfs_no_teacher_feedback": "ไม่มีการให้คำติชมกับไฟล์นี้",
   "assessment_hfs_student_assessment": "การประเมิน",
-  "assessment_hfs_student_feedback": "ข้อเสนอแนะ"
+  "assessment_hfs_student_feedback": "ข้อเสนอแนะ",
+  "assessment_detail_screenshot_results": "Results",
+  "assessment_detail_screenshot_result_screen": "Results Screen",
+  "assessment_detail_total_score": "Total Score"
 }
