@@ -375,7 +375,7 @@
   "assess_msg_unlocked_milestone": "请刷新查看该阶段成果的最新版本。",
   "assess_approved_successfully": "审批通过",
   "schedule_tab_schedule": "课表",
-  "schedue_button_schedule_class": "排课",
+  "schedule_button_schedule_class": "排课",
   "schedule_button_search": "搜索",
   "schedule_text_search_teacher": "搜索老师",
   "schedule_button_today": "今天",
@@ -1090,7 +1090,7 @@
   "app2web_badanamu_activities": "Badanamu内容",
   "app2web_please_enter_the_link": "请输入链接地址",
   "app2web_badanamu_activities_link": "Badanamu内容链接",
-  "schedule_lable_class_type_review": "适应性复习课",
+  "schedule_label_class_type_review": "适应性复习课",
   "schedule_due_date_info": "截止日期只能设置为从今天起 +1 天及以后，以便学生有时间完成。",
   "schedule_review_date_range_info": "希望复习内容涵盖以下时间段",
   "schedule_review_start_date": "开始日期",
@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "复习领域",
   "schedule_review_pop_up_all_success": "正在发布您安排的适应性学习课程\n\n在我们的平台完成对每个学生的分析之后，新的“适应性复习”课程将出现在学生的日历上。",
   "schedule_review_popup_partial_success": "请注意，在选定的时间范围内，我们没有足够的数据供以下学生使用——他们将被随机分配一个学习课件。为避免将来出现这种情况，请确保学生在安排适应性复习课程之前至少完成了 10 项活动。",
-  "learning_outcome_lable_threshold": "分数阈值",
+  "learning_outcome_label_threshold": "分数阈值",
   "assessment_summary_label_attendance_unknown": "未知用户",
   "learning_outcome_threshold_blank_alert": "必须输入分数阈值",
   "learning_outcome_threshold_error_toast": "请输入1-100之间的整数",
@@ -1141,5 +1141,8 @@
   "assessment_hfs_view_drawing_feedback": "查看绘图反馈",
   "assessment_hfs_no_teacher_feedback": "老师未对此文件提供任何反馈。",
   "assessment_hfs_student_assessment": "评估",
-  "assessment_hfs_student_feedback": "反馈"
+  "assessment_hfs_student_feedback": "反馈",
+  "assessment_detail_screenshot_results": "成果",
+  "assessment_detail_screenshot_result_screen": "成果截图",
+  "assessment_detail_total_score": "总分"
 }

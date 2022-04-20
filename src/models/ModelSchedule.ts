@@ -2,9 +2,9 @@
 import { d } from "@locale/LocaleManager";
 import { LinkedMockOptionsItem } from "@reducers/contentEdit/programsHandler";
 import { getScheduleParticipantsMockOptionsResponse } from "@reducers/schedule";
-import { Status } from "../api/api-ko-schema.auto";
-import { GetClassFilterListQuery, GetProgramsQuery, GetUserQuery, ParticipantsByClassQuery } from "../api/api-ko.auto";
-import { EntityContentInfoWithDetails, ModelPublishedOutcomeView } from "../api/api.auto";
+import { Status } from "@api/api-ko-schema.auto";
+import { GetClassFilterListQuery, GetProgramsQuery, GetUserQuery, ParticipantsByClassQuery } from "@api/api-ko.auto";
+import { EntityContentInfoWithDetails, ModelPublishedOutcomeView } from "@api/api.auto";
 import {
   ClassOptionsItem,
   EntityScheduleFilterClass,
@@ -196,13 +196,7 @@ export class modelSchedule {
     } as ParticipantsData;
   }
 
-  static classDataConversion(
-    userId: string,
-    schoolId: string,
-    schools: EntityScheduleSchoolInfo[],
-    role: boolean,
-    classesConnection?: GetClassFilterListQuery
-  ) {
+  static classDataConversion(userId: string, schoolId: string, schools: EntityScheduleSchoolInfo[], role: boolean) {
     const data: { class_id: string; class_name: string; showIcon: boolean }[] = [];
     let school_name = "";
     let school_id = "";
@@ -245,11 +239,11 @@ export class modelSchedule {
 
   static learningOutcomeFilerGroup(filterQuery?: LearningComesFilterQuery, programChildInfo?: GetProgramsQuery[]) {
     const initValue = { id: "1", name: d("Select All").t("schedule_detail_select_all") };
-    const assembly = { subjects: [], categorys: [], subs: [], ages: [], grades: [] };
+    const assembly = { subjects: [], category: [], subs: [], ages: [], grades: [] };
     const query = {
       programs: [],
       subjects: [],
-      categorys: [],
+      category: [],
       subs: [],
       ages: filterQuery?.ages as string[],
       grades: filterQuery?.grades as string[],
@@ -271,9 +265,9 @@ export class modelSchedule {
         if (!filterQuery?.subjects.includes(subject.id as string) && !filterQuery?.subjects.includes("1")) return;
         query.subjects.push(subject.id as never);
         subject.categories?.map((category) => {
-          if (is_active(category.status)) assembly.categorys.push({ id: category.id, name: category.name } as never);
-          if (!filterQuery?.categorys.includes(category.id as string) && !filterQuery?.categorys.includes("1")) return;
-          query.categorys.push(category.id as never);
+          if (is_active(category.status)) assembly.category.push({ id: category.id, name: category.name } as never);
+          if (!filterQuery?.category.includes(category.id as string) && !filterQuery?.category.includes("1")) return;
+          query.category.push(category.id as never);
           category.subcategories?.map((sub) => {
             if (is_active(sub.status)) assembly.subs.push({ id: sub.id, name: sub.name } as never);
             if (!filterQuery?.subs.includes(sub.id as string) && !filterQuery?.subs.includes("1")) return;
@@ -283,19 +277,19 @@ export class modelSchedule {
       });
     });
     Object.keys(assembly).forEach((key) => {
-      if (assembly[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].length > 1) {
+      if (assembly[key as "subjects" | "category" | "subs" | "ages" | "grades"].length > 1) {
         if (
-          assembly[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].length ===
-          query[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].length
+          assembly[key as "subjects" | "category" | "subs" | "ages" | "grades"].length ===
+          query[key as "subjects" | "category" | "subs" | "ages" | "grades"].length
         )
-          query[key as "programs" | "subjects" | "categorys" | "subs" | "ages" | "grades"].unshift("1" as never);
-        assembly[key as "subjects" | "categorys" | "subs" | "ages" | "grades"].unshift(initValue as never);
+          query[key as "programs" | "subjects" | "category" | "subs" | "ages" | "grades"].unshift("1" as never);
+        assembly[key as "subjects" | "category" | "subs" | "ages" | "grades"].unshift(initValue as never);
       }
     });
     query.programs = filterQuery?.programs as never;
     return { query, assembly };
   }
-  static getLearingOutcomeCategory(list: LinkedMockOptionsItem[], ids: string[]) {
+  static getLearningOutcomeCategory(list: LinkedMockOptionsItem[], ids: string[]) {
     return list.filter((item) => ids.includes(item.id as string));
   }
 }

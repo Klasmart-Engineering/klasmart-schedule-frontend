@@ -375,7 +375,7 @@
   "assess_msg_unlocked_milestone": "Este contenido se ha vuelto a publicar con una nueva versión, por favor actualice.",
   "assess_approved_successfully": "Aprobado con éxito",
   "schedule_tab_schedule": "Calendario",
-  "schedue_button_schedule_class": "Programar clase",
+  "schedule_button_schedule_class": "Programar clase",
   "schedule_button_search": "Buscar",
   "schedule_text_search_teacher": "Buscar profesor",
   "schedule_button_today": "Hoy",
@@ -1090,7 +1090,7 @@
   "app2web_badanamu_activities": "Actividades de Badanamu",
   "app2web_please_enter_the_link": "Por favor, introduzca el enlace",
   "app2web_badanamu_activities_link": "Enlace de actividades de Badanamu",
-  "schedule_lable_class_type_review": "Revisión automática",
+  "schedule_label_class_type_review": "Revisión automática",
   "schedule_due_date_info": "La fecha de vencimiento solo se puede establecer después de +1 días a partir de hoy para dar tiempo a que los estudiantes completen.",
   "schedule_review_date_range_info": "Me gustaría que se revisara el contenido que se cubrió:",
   "schedule_review_start_date": "Fecha de inicio",
@@ -1099,7 +1099,7 @@
   "schedule_review_review_area": "Área de Revisión",
   "schedule_review_pop_up_all_success": "Publicación de su revisión automática \n\n Una nueva lección de 'Revisión automática' aparecerá en el calendario de los estudiantes una vez que nuestra plataforma haya terminado un análisis para cada estudiante.",
   "schedule_review_popup_partial_success": "Tenga en cuenta que no tenemos suficientes datos para los siguientes estudiantes durante el intervalo de tiempo seleccionado; a cada uno se le dará una lección aleatoria. Para evitar esto en el futuro, asegúrese de que los estudiantes hayan trabajado en al menos 10 actividades antes de configurar una revisión automática.",
-  "learning_outcome_lable_threshold": "Umbral de puntuación",
+  "learning_outcome_label_threshold": "Umbral de puntuación",
   "assessment_summary_label_attendance_unknown": "Desconocido",
   "learning_outcome_threshold_blank_alert": "Se debe introducir un umbral de puntuación",
   "learning_outcome_threshold_error_toast": "Introduzca un entero de 1 a 100",
@@ -1141,5 +1141,8 @@
   "assessment_hfs_view_drawing_feedback": "Ver comentarios sobre el dibujo",
   "assessment_hfs_no_teacher_feedback": "No se han proporcionado comentarios a este archivo.",
   "assessment_hfs_student_assessment": "Evaluación",
-  "assessment_hfs_student_feedback": "Comentarios"
+  "assessment_hfs_student_feedback": "Comentarios",
+  "assessment_detail_screenshot_results": "Results",
+  "assessment_detail_screenshot_result_screen": "Results Screen",
+  "assessment_detail_total_score": "Total Score"
 }

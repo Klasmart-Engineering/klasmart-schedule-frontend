@@ -8,7 +8,7 @@ import {
   UserFilter,
   UuidExclusiveOperator,
   UuidOperator,
-} from "../api/api-ko-schema.auto";
+} from "@api/api-ko-schema.auto";
 import {
   ClassesByOrganizationDocument,
   ClassesByOrganizationQuery,
@@ -47,7 +47,7 @@ import {
   QueryMyUserDocument,
   QueryMyUserQuery,
   QueryMyUserQueryVariables,
-} from "../api/api-ko.auto";
+} from "@api/api-ko.auto";
 import {
   ApiSuccessRequestResponse,
   EntityLessonPlanForSchedule,
@@ -61,8 +61,8 @@ import {
   EntityScheduleTimeView,
   EntityScheduleViewDetail,
   ModelPublishedOutcomeView,
-} from "../api/api.auto";
-import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions, recursiveGetSchoolMemberships } from "../api/extra";
+} from "@api/api.auto";
+import { apiGetMockOptions, apiWaitForOrganizationOfPage, MockOptions, recursiveGetSchoolMemberships } from "@api/extra";
 import {
   ChangeParticipants,
   ClassesData,
@@ -95,7 +95,7 @@ export interface ScheduleState {
   total: number;
   searchScheduleList: EntityScheduleSearchView[];
   saveResult: number;
-  scheduleDetial: EntityScheduleDetailsView;
+  scheduleDetail: EntityScheduleDetailsView;
   scheduleTimeViewData: EntityScheduleTimeView[];
   scheduleTimeViewTotal: number;
   scheduleAnyTimeViewData: EntityScheduleListView[];
@@ -138,7 +138,7 @@ interface Rootstate {
   schedule: ScheduleState;
 }
 
-export const initScheduleDetial: EntityScheduleDetailsView = {
+export const initscheduleDetail: EntityScheduleDetailsView = {
   id: "",
   title: "",
   class: {},
@@ -164,7 +164,7 @@ const initialState: ScheduleState = {
   saveResult: 1,
   total: 0,
   searchScheduleList: [],
-  scheduleDetial: initScheduleDetial,
+  scheduleDetail: initscheduleDetail,
   scheduleTimeViewData: [],
   scheduleTimeViewTotal: 0,
   scheduleAnyTimeViewData: [],
@@ -339,7 +339,7 @@ export const saveScheduleData = createAsyncThunk<
   async ({ payload, is_new_schedule }, { getState }) => {
     let {
       schedule: {
-        scheduleDetial: { id },
+        scheduleDetail: { id },
       },
     } = getState();
     if (!id || is_new_schedule) {
@@ -368,7 +368,7 @@ export const saveScheduleDataReview = createAsyncThunk<
 >(
   "scheduleReview/save",
   // @ts-ignore
-  async ({ payload, is_new_schedule }, { getState }) => {
+  async ({ payload }) => {
     return await api.schedules.addSchedule(payload).catch((err) => Promise.reject(err.label));
   }
 );
@@ -554,7 +554,7 @@ export const getParticipantsData = createAsyncThunk<ParticipantsData, participan
       schedule: { ParticipantsData },
     } = getState();
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
-    let filterQuery = {};
+    let filterQuery: {};
     if (is_org) {
       filterQuery = { organizationId: { operator: UuidExclusiveOperator.Eq, value: organization_id } };
     } else {
@@ -731,14 +731,14 @@ type deleteSchedulesParams = {
 type deleteSchedulesResult = ReturnType<typeof api.schedules.deleteSchedule>;
 export const removeSchedule = createAsyncThunk<deleteSchedulesResult, deleteSchedulesParams>(
   "schedule/delete",
-  ({ schedule_id, repeat_edit_options }, query) => {
+  ({ schedule_id, repeat_edit_options }) => {
     return api.schedules.deleteSchedule(schedule_id, repeat_edit_options);
   }
 );
 
 type infoSchedulesParams = Parameters<typeof api.schedules.getScheduleById>[0];
 type infoSchedulesResult = ReturnType<typeof api.schedules.getScheduleById>;
-export const getScheduleInfo = createAsyncThunk<infoSchedulesResult, infoSchedulesParams>("schedule/info", (schedule_id, query) => {
+export const getScheduleInfo = createAsyncThunk<infoSchedulesResult, infoSchedulesParams>("schedule/info", (schedule_id) => {
   return api.schedules.getScheduleById(schedule_id);
 });
 
@@ -778,7 +778,7 @@ export const saveScheduleFeedback = createAsyncThunk<
   ApiSuccessRequestResponse,
   EntityScheduleFeedbackAddInput & LoadingMetaPayload,
   { state: Rootstate }
->("schedules_feedbacks", async (payload, { getState }) => {
+>("schedules_feedbacks", async (payload) => {
   return api.schedulesFeedbacks.addScheduleFeedback(payload);
 });
 
@@ -1053,8 +1053,8 @@ const { actions, reducer } = createSlice({
   name: "schedule",
   initialState,
   reducers: {
-    resetScheduleDetial: (state, { payload }: PayloadAction<ScheduleState["scheduleDetial"]>) => {
-      state.scheduleDetial = payload;
+    resetscheduleDetail: (state, { payload }: PayloadAction<ScheduleState["scheduleDetail"]>) => {
+      state.scheduleDetail = payload;
     },
     resetParticipantList: (state) => {
       state.participantMockOptions = {
@@ -1106,7 +1106,7 @@ const { actions, reducer } = createSlice({
       state.total = payload.total;
     },
     [saveScheduleData.fulfilled.type]: (state, { payload }: any) => {
-      if (payload.label !== "schedule_msg_users_conflict") state.scheduleDetial = payload;
+      if (payload.label !== "schedule_msg_users_conflict") state.scheduleDetail = payload;
     },
     [saveScheduleData.rejected.type]: (state, { error }: any) => {
       state.errorLable = error.message;
@@ -1118,14 +1118,14 @@ const { actions, reducer } = createSlice({
     [getScheduleTimeViewDataByYear.fulfilled.type]: (state, { payload }: any) => {
       state.scheduleTimeViewYearData = payload;
     },
-    [removeSchedule.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleDetial = initScheduleDetial;
+    [removeSchedule.fulfilled.type]: (state) => {
+      state.scheduleDetail = initscheduleDetail;
     },
     [removeSchedule.rejected.type]: (state, { error }: any) => {
       state.errorLable = error.message;
     },
     [getScheduleInfo.fulfilled.type]: (state, { payload }: any) => {
-      state.scheduleDetial = payload;
+      state.scheduleDetail = payload;
     },
     [getContentResourceUploadPath.fulfilled.type]: (state, { payload }: any) => {
       state.attachment_path = payload.path;
@@ -1134,7 +1134,7 @@ const { actions, reducer } = createSlice({
     [getScheduleLiveToken.fulfilled.type]: (state, { payload }: any) => {
       state.liveToken = payload.token;
     },
-    [getScheduleLiveToken.rejected.type]: (state, { error }: any) => {
+    [getScheduleLiveToken.rejected.type]: (state) => {
       state.liveToken = "";
     },
     [getMockOptions.fulfilled.type]: (state, { payload }: any) => {
@@ -1235,7 +1235,7 @@ const { actions, reducer } = createSlice({
   },
 });
 export const {
-  resetScheduleDetial,
+  resetscheduleDetail,
   resetParticipantList,
   changeParticipants,
   resetScheduleTimeViewData,
