@@ -5,6 +5,7 @@
   "dependencies": {
     "@apollo/client": "^3.2.5",
     "@apollo/react-hooks": "^4.0.0",
+    "@babel/runtime": "^7.5.1",
     "@date-io/date-fns": "1.x",
     "@dnd-kit/accessibility": "^3.0.0",
     "@dnd-kit/core": "^3.0.3",
