@@ -7,9 +7,6 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 const path = require('path');
 
 function myOverrides(config) {
-  config.output = {
-    path: path.resolve('./dist'),
-  }
   config.plugins = (config.plugins || []).concat([
     new ModuleFederationPlugin({
       "name": "schedule",
