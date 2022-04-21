@@ -36,6 +36,10 @@ function myOverrides(config) {
     crypto: require.resolve("crypto-browserify"),
     stream: require.resolve("stream-browserify")
   }
+  const scopePluginIndex = config.resolve.plugins.findIndex(
+    ({ constructor }) => constructor && constructor.name === "ModuleScopePlugin"
+  );
+  config.resolve.plugins.splice(scopePluginIndex, 1);
   return  alias(aliasMap)(config)
 }
 
