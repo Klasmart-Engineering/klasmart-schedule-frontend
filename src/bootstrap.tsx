@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { RecoilRoot } from "recoil";
 import App from "./App";
 import { apiEmitter, ApiErrorEventData, ApiEvent, ApiInfoEventData, GraphQLErrorEventData } from "@api/emitter";
@@ -7,8 +6,7 @@ import { localeManager, t } from "@locale/LocaleManager";
 import { LangRecordId, shouldBeLangName } from "@locale/lang/type";
 import { store } from "@reducers/index";
 import { actError, actInfo } from "@reducers/notify";
-import { apiAddOrganizationToPageUrl, subscribeLocaleInCookie } from "@api/extra";
-import { subscribeIframeMessage } from "@api/iframeMessage";
+import { setOrganizationId } from "@reducers/common";
 
 apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
   if (!e) return;
@@ -33,17 +31,14 @@ apiEmitter.on<GraphQLErrorEventData>(ApiEvent.GraphQLError, (e) => {
   if (message) store.dispatch(actError(message));
 });
 
-subscribeLocaleInCookie((locale) => localeManager.toggle(shouldBeLangName(locale.slice(0, 2))));
-subscribeIframeMessage("changeOrganization", apiAddOrganizationToPageUrl);
-
-function main() {
-  const div = document.getElementById(`root`);
-  ReactDOM.render(
+export default function Main(props: { organization_id?: string; lang?: string }) {
+  React.useEffect(() => {
+    if (props.lang) localeManager.toggle(shouldBeLangName(props.lang.slice(0, 2) || "en"));
+    if (props.organization_id) store.dispatch(setOrganizationId(props.organization_id));
+  }, [props]);
+  return (
     <RecoilRoot>
       <App />
-    </RecoilRoot>,
-    div
+    </RecoilRoot>
   );
 }
-
-main();
