@@ -178,5 +178,6 @@
     "react-styleguidist": "^11.1.6",
     "swagger-typescript-api": "^1.12.0",
     "unzipper": "^0.10.11"
-  }
+  },
+  "homepage": "https://github.com/KL-Engineering/kidsloop-schedule-frontend#readme"
 }

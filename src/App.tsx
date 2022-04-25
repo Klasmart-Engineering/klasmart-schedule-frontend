@@ -1,7 +1,7 @@
 import { ApolloProvider } from "@apollo/client";
 import { ThemeProvider } from "@material-ui/core";
 import { SnackbarProvider } from "notistack";
-import React, { useEffect } from "react";
+import React from "react";
 import { Provider } from "react-redux";
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import { gqlapi } from "./api";
@@ -12,18 +12,8 @@ import { Notification } from "@components/Notification";
 import Schedule from "@pages/index";
 import { store } from "./reducers";
 import theme from "./theme";
-import { useRecoilState } from "recoil";
-import { localeState } from "./store/states";
-import { localeManager } from "@locale/LocaleManager";
-import { shouldBeLangName } from "@locale/lang/type";
 
 function App() {
-  const [globalLocale] = useRecoilState(localeState);
-  useEffect(() => {
-    localeManager.toggle(shouldBeLangName(globalLocale.slice(0, 2))).then((r) => {
-      console.log(r);
-    });
-  }, [globalLocale]);
   return (
     <ApolloProvider client={gqlapi}>
       <ThemeProvider theme={theme}>

@@ -5,6 +5,7 @@ import loading, { actSetLoading } from "./loading";
 import { createLoadingMiddleware } from "./middleware/loadingMiddleware";
 import notify from "./notify";
 import schedule from "./schedule";
+import common from "./common";
 
 const loadingMiddleware = createLoadingMiddleware({
   enableLoadingPayload: { type: actSetLoading.type, payload: true },
@@ -18,6 +19,7 @@ export const store = configureStore({
     notify,
     content,
     schedule,
+    common,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loadingMiddleware),
 });
