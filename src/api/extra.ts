@@ -5,8 +5,8 @@ import Cookies from "js-cookie";
 import uniq from "lodash/uniq";
 import api, { gqlapi } from ".";
 // import requireContentType from "../../scripts/contentType.macro";
-import { LangRecordId } from "../locale/lang/type";
-import { ICacheData } from "../services/permissionCahceService";
+import { LangRecordId } from "@locale/lang/type";
+import { ICacheData } from "@services/permissionCahceService";
 import { UsersConnectionEdge, UsersConnectionResponse, UuidFilter } from "./api-ko-schema.auto";
 import {
   ClassesBySchoolIdDocument,
@@ -38,10 +38,11 @@ import {
   GetStudentNameByIdQueryVariables,
   SchoolsClassesDocument,
   SchoolsClassesQuery,
-  SchoolsClassesQueryVariables
+  SchoolsClassesQueryVariables,
 } from "./api-ko.auto";
 import { EntityFolderItemInfo } from "./api.auto";
 import { apiEmitter, ApiErrorEventData, ApiEvent } from "./emitter";
+import { store } from "@reducers/index";
 
 // 每个接口都有塞给后端的参数 以及前端 url 上的参数名
 export const ORG_ID_KEY = "org_id";
@@ -174,13 +175,12 @@ export const apiFetchClassByTeacher = (mockOptions: MockOptions, teacher_id: str
 export const apiDownloadPageUrl = (href?: string, fileName?: string) => {
   if (!href) return;
   const { origin } = new URL(href);
-  const downloadUrl = `${origin}/download.html?download=${encodeURIComponent(fileName ?? "")}&href=${encodeURIComponent(href)}`;
-  return downloadUrl;
+  return `${origin}/download.html?download=${encodeURIComponent(fileName ?? "")}&href=${encodeURIComponent(href)}`;
 };
 
 export const apiOrganizationOfPage = () => {
   const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get(ORG_ID_KEY);
+  return store.getState().common.organization_id || searchParams.get(ORG_ID_KEY);
 };
 
 export const getDocumentUrl = (router: string) => {
@@ -292,7 +292,7 @@ export async function apiSkillsListByIds(skillIds: string[]) {
     `
     )
     .join("");
-  const skillsResult = skillIds.length
+  return skillIds.length
     ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
         query: gql`
     query skillsListByIds {
@@ -301,7 +301,6 @@ export async function apiSkillsListByIds(skillIds: string[]) {
     `,
       })
     : { data: {} };
-  return skillsResult;
 }
 
 export async function apiDevelopmentalListIds(developmental: string[]) {
@@ -316,7 +315,7 @@ export async function apiDevelopmentalListIds(developmental: string[]) {
     `
     )
     .join("");
-  const developmentalResult = developmental.length
+  return developmental.length
     ? await gqlapi.query<{ [key: string]: LinkedMockOptionsItem }, {}>({
         query: gql`
     query developmentalListByIds {
@@ -325,7 +324,6 @@ export async function apiDevelopmentalListIds(developmental: string[]) {
     `,
       })
     : { data: {} };
-  return developmentalResult;
 }
 export interface IApiGetPartPermissionResp {
   error: boolean;
@@ -446,21 +444,17 @@ export async function apiGetUserNameByUserId(userIds: string[]): Promise<Map<str
 }
 
 export async function getUserIdAndOrgId() {
-  const organizationId = ((await apiWaitForOrganizationOfPage()) as string) || "";
-
-  return organizationId;
+  return ((await apiWaitForOrganizationOfPage()) as string) || "";
 }
 
 export const refreshToken = async () => {
-  const resp = await fetch(`${process.env.REACT_APP_AUTH_API}/refresh`, { credentials: "include" })
+  return await fetch(`${process.env.REACT_APP_AUTH_API}/refresh`, { credentials: "include" })
     .then((resp) => resp.json())
     .then((data) => data);
-  return resp;
 };
 
 export const uploadFile = async (path: string, body: any) => {
-  const resp = await fetch(path, { method: "PUT", body }).then((resp) => resp.json);
-  return resp;
+  return await fetch(path, { method: "PUT", body }).then((resp) => resp.json);
 };
 
 export interface GetSchoolMembershipProps {
