@@ -7,6 +7,7 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 const path = require('path');
 
 function myOverrides(config) {
+  const dependencies = process.env.NODE_ENV !== 'development' ? pkg.dependencies : [];
   config.output = {
     path: path.resolve(process.env.BUILD_PATH || 'build'),
   }
@@ -17,7 +18,7 @@ function myOverrides(config) {
         "./Schedule": "./src/bootstrap.tsx",
       },
       shared: {
-        ...pkg.dependencies,
+        ...dependencies,
         react: {
           eager: true,
           singleton: true,

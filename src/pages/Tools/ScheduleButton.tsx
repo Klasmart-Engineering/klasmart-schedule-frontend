@@ -7,6 +7,7 @@ import {
   EntityScheduleListViewExtend,
   EntityScheduleViewDetailExtend,
 } from "../../types/scheduleTypes";
+import { apiOrganizationOfPage } from "../../../src/api/extra";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -73,9 +74,12 @@ function RouterButton(props: ButtonProps) {
           boxShadow: "none",
         }}
         onClick={() => {
-          document.documentElement.style.overflow = "auto";
+          window.open(
+            `https://${process.env.REACT_APP_BASE_DOMAIN}/?org_id=${apiOrganizationOfPage()}#/library/content-preview/tab/details?id=${
+              scheduleInfo.lesson_plan_id
+            }&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`
+          );
         }}
-        href={`#?id=${scheduleInfo.lesson_plan_id}&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`}
       >
         {d("Preview").t("schedule_button_preview")}
       </Button>
