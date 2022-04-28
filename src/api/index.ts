@@ -73,7 +73,7 @@ class Api extends AutoApi {
 }
 
 export default new Api({
-  baseUrl: process.env.REACT_APP_BASE_API,
+  baseUrl: `${process.env.REACT_APP_BASE_DOMAIN}${process.env.REACT_APP_BASE_API}`,
 });
 
 const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
