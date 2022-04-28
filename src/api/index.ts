@@ -74,6 +74,14 @@ class Api extends AutoApi {
 
 export default new Api({
   baseUrl: `${process.env.REACT_APP_BASE_DOMAIN}${process.env.REACT_APP_BASE_API}`,
+  baseApiParams: {
+    credentials: `include`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  },
 });
 
 const retry = async (count: number, operation: Operation, error: ServerError): Promise<boolean> => {
