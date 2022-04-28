@@ -2579,6 +2579,7 @@ class HttpClient<SecurityDataType> {
     secureByDefault?: boolean
   ): Promise<T> =>
     fetch(`${this.baseUrl}${path}`, {
+      credentials: "include",
       // @ts-ignore
       ...this.mergeRequestOptions(params, (secureByDefault || secure) && this.securityWorker(this.securityData)),
       method,
