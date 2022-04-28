@@ -1,44 +1,21 @@
+import { livePolyfill } from "./setupPolyfill";
+import * as serviceWorker from "./serviceWorker";
+import "./index.css";
+import ReactDOM from "react-dom";
 import React from "react";
-import { RecoilRoot } from "recoil";
-import App from "./App";
-import { apiEmitter, ApiErrorEventData, ApiEvent, ApiInfoEventData, GraphQLErrorEventData } from "@api/emitter";
-import { localeManager, t } from "@locale/LocaleManager";
-import { LangRecordId, shouldBeLangName } from "@locale/lang/type";
-import { store } from "@reducers/index";
-import { actError, actInfo } from "@reducers/notify";
-import { setOrganizationId } from "@reducers/common";
+import Main from "./main";
 
-apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
-  if (!e) return;
-  const { label, msg, data, onError } = e;
-  // 韩国方面说： 他们会在容器外部处理未登录， 不需要通知
-  // if (label === UNAUTHORIZED_LABEL) sendIframeMessage({ type: 'unauthorized', payload: null });
-  const message = String(t(label as LangRecordId, data || undefined) || msg || "");
-  if (message) onError ? onError(message) : store.dispatch(actError(message));
-});
+livePolyfill();
+// const UNAUTHORIZED_LABEL = 'general_error_unauthorized';
 
-apiEmitter.on<ApiInfoEventData>(ApiEvent.Info, (e) => {
-  if (!e) return;
-  const { label } = e;
-  const message = String(t(label as LangRecordId) || "");
-  if (message) store.dispatch(actInfo(message));
-});
+// if (process.env.NODE_ENV === 'development') {
+//   const { worker } = require('./mocks/browser')
+//   worker.start()
+// }
 
-apiEmitter.on<GraphQLErrorEventData>(ApiEvent.GraphQLError, (e) => {
-  if (!e) return;
-  const { label, msg } = e;
-  const message = String(t(label as LangRecordId) || msg || "");
-  if (message) store.dispatch(actError(message));
-});
+ReactDOM.render(<Main />, document.getElementById(`root`));
 
-export default function Main(props: { organization_id?: string; lang?: string }) {
-  React.useEffect(() => {
-    if (props.lang) localeManager.toggle(shouldBeLangName(props.lang.slice(0, 2) || "en"));
-    if (props.organization_id) store.dispatch(setOrganizationId(props.organization_id));
-  }, [props]);
-  return (
-    <RecoilRoot>
-      <App />
-    </RecoilRoot>
-  );
-}
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();

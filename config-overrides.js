@@ -15,7 +15,7 @@ function myOverrides(config) {
     new ModuleFederationPlugin({
       "name": "schedule",
       exposes: {
-        "./Schedule": "./src/bootstrap.tsx",
+        "./Schedule": "./src/main.tsx",
       },
       shared: {
         ...dependencies,
