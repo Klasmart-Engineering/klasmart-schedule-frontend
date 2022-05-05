@@ -11,9 +11,9 @@ const BASE_URL_PATH = `${process.env.REACT_APP_BASE_DOMAIN}/static/js/`;
 const YOUR_NEW_RELIC_APP_ID = "322535870";
 const YOUR_NEW_RELIC_USER_API_KEY = "NRAK-Z0REBBZKUM8SXY5NQHP2DTYQJ9P";
 const SOURCE_MAP_UPLOAD_HOST = "https://sourcemaps.service.eu.newrelic.com";
-const BASE_INDEX_PATH = "./build/index.html"
+const BASE_INDEX_PATH = "./dist/index.html"
 
-const sourceMapDir = path.resolve(__dirname, "../build/static/js/");
+const sourceMapDir = path.resolve(__dirname, "../dist/static/js/");
 
 const optionConfig = {
   applicationId: YOUR_NEW_RELIC_APP_ID,
