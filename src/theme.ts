@@ -22,6 +22,7 @@ export default createTheme({
     button: {
       textTransform: "none",
     },
+    fontFamily: `"Source Han Sans SC", -apple-system, "Segoe UI", Helvetica, sans-serif`,
   },
   props: {
     MuiTextField: {

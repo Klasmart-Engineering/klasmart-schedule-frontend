@@ -1,6 +1,5 @@
 import { livePolyfill } from "./setupPolyfill";
 import * as serviceWorker from "./serviceWorker";
-import "./index.css";
 import ReactDOM from "react-dom";
 import React from "react";
 import Main from "./main";

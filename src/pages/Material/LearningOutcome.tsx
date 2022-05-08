@@ -22,7 +22,7 @@ import { getProgramChild } from "@reducers/schedule";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import React, { ReactNode, useMemo } from "react";
-import { Controller, UseFormMethods } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { EntityScheduleDetailsView } from "@api/api.auto";
 import { d } from "@locale/LocaleManager";
@@ -340,7 +340,7 @@ interface filterGroupProps {
 }
 
 interface InfoProps extends filterGroupProps {
-  conditionFormMethods: UseFormMethods<LearningContentListForm>;
+  conditionFormMethods: UseFormReturn<LearningContentListForm>;
   saveOutcomesList: (value: string[]) => void;
   learningOutcomeData: LearningContentListForm;
   handleClose: () => void;
@@ -604,19 +604,16 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
       </div>
       <div style={{ textAlign: "center" }}>
         <Controller
-          style={{
-            borderLeft: 0,
-            width: "640px",
-          }}
           defaultValue={searchName}
           name="search_value"
           control={control}
-          size="small"
-          className={classes.searchText}
-          placeholder={d("Search").t("library_label_search")}
           render={() => (
             <TextField
               id="outlined-start-adornment"
+              style={{
+                borderLeft: 0,
+                width: "640px",
+              }}
               placeholder={"Search for Learning outcome"}
               InputProps={{
                 startAdornment: <SearchIcon />,
@@ -636,7 +633,7 @@ function ScheduleLessonPlanMb(props: ScheduleLessonPlanMbProps) {
                 setValueAll(e.target.value);
               }}
               size="small"
-              className={classes.mobileSearch}
+              className={clsx(classes.mobileSearch, classes.searchText)}
             />
           )}
         />
@@ -824,7 +821,7 @@ export default function LearningOutcome(props: InfoProps) {
   };
 
   const getSelectStatus = (index: number, item: LearningContentList) => {
-    setValue(`content_list[${index}]`, { ...item, select: !item.select });
+    setValue(`content_list.${index}`, { ...item, select: !item.select });
     if (!item.select) {
       const data = [...selectIds, item.id];
       setSelectIds(data);
@@ -846,7 +843,7 @@ export default function LearningOutcome(props: InfoProps) {
     setFilterQuery({ programs: [], subjects: [], category: [], subs: [], ages: [], grades: [] });
     setValue(`search_type`, "all");
     setValue(`search_value`, "");
-    setValue(`is_assumed`, -1);
+    setValue(`is_assumed`, false);
     setValue(`page`, 1);
     setCheckAssumed(false);
     setSelectIds(outComeIds);
@@ -943,39 +940,38 @@ export default function LearningOutcome(props: InfoProps) {
         >
           <div className={classes.searchCon}>
             <Controller
-              style={{
-                borderLeft: 0,
-                width: "180px",
-                display: "none",
-              }}
-              as={TextField}
               defaultValue={learningOutcomeData.page}
               name="page"
               control={control}
+              render={(props) => <TextField {...props.field} style={{ display: "none" }} />}
             />
             <div style={{ position: "relative", width: "100%" }}>
               <Controller
-                style={{
-                  borderLeft: 0,
-                  width: "90%",
-                }}
-                as={TextField}
                 defaultValue={learningOutcomeData.search_value}
                 name="search_value"
                 control={control}
-                size="small"
-                InputProps={{
-                  startAdornment: <SearchIcon />,
-                }}
-                onKeyDown={(e: any) => {
-                  const code = e.keyCode || e.which || e.charCode;
-                  if (code === 13) {
-                    setSearchValuePc(getValues().search_value);
-                    searchVal();
-                  }
-                }}
-                className={classes.searchText}
-                placeholder={d("Search").t("library_label_search")}
+                render={(props) => (
+                  <TextField
+                    {...props.field}
+                    style={{
+                      borderLeft: 0,
+                      width: "90%",
+                    }}
+                    size="small"
+                    InputProps={{
+                      startAdornment: <SearchIcon />,
+                    }}
+                    onKeyDown={(e: any) => {
+                      const code = e.keyCode || e.which || e.charCode;
+                      if (code === 13) {
+                        setSearchValuePc(getValues().search_value);
+                        searchVal();
+                      }
+                    }}
+                    className={classes.searchText}
+                    placeholder={d("Search").t("library_label_search")}
+                  />
+                )}
               />
               <CancelOutlinedIcon
                 style={{
@@ -1031,22 +1027,22 @@ export default function LearningOutcome(props: InfoProps) {
               {content_lists.map((item, index) => (
                 <Controller
                   key={item.id + item.select}
-                  name={`content_list[${index}]`}
+                  name={`content_list.${index}`}
                   control={control}
                   defaultValue={item}
-                  render={(props: { value: LearningContentList }) => (
+                  render={(props) => (
                     <TableRow
-                      key={props.value.id}
+                      key={item.id}
                       onClick={() => {
-                        handleGoOutcomeDetail(props.value.id);
+                        handleGoOutcomeDetail(item.id);
                       }}
-                      selected={selectIds.includes(props.value.id)}
+                      selected={selectIds.includes(item.id)}
                     >
                       <TableCell align="center">
                         <Checkbox
-                          checked={props.value.select}
+                          checked={item.select}
                           onChange={() => {
-                            getSelectStatus(index, props.value);
+                            getSelectStatus(index, item);
                           }}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -1058,25 +1054,25 @@ export default function LearningOutcome(props: InfoProps) {
                         />
                       </TableCell>
                       <TableCell align="center">
-                        <Tooltip title={props.value.name as string} placement="top-start">
+                        <Tooltip title={item.name as string} placement="top-start">
                           <span
                             style={{
                               wordBreak: "break-word",
-                              textAlign: props.value.name.length > 40 ? "left" : "center",
+                              textAlign: item.name.length > 40 ? "left" : "center",
                               display: "block",
                               maxWidth: "300px",
                               margin: "auto",
                             }}
                           >
-                            {props.value.name}
+                            {item.name}
                           </span>
                         </Tooltip>
                       </TableCell>
                       <TableCell align="center" style={{ width: "160px" }}>
-                        {getLearningFiled(props.value.category_ids)}
+                        {getLearningFiled(item.category_ids)}
                       </TableCell>
                       <TableCell align="center" style={{ width: "160px" }}>
-                        {getLearningFiled(props.value.sub_category_ids)}
+                        {getLearningFiled(item.sub_category_ids)}
                       </TableCell>
                     </TableRow>
                   )}

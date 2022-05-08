@@ -1,20 +1,21 @@
 import {
   Box,
-  Button, FormControlLabel,
+  Button,
+  FormControlLabel,
   makeStyles,
   MenuItem,
   Radio,
   RadioGroup,
   TextField,
   TextFieldProps,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { d } from "../../locale/LocaleManager";
-const useStyles = makeStyles(({ breakpoints,shadows, palette }) => ({
+const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
   searchField: {
     flexGrow: 1,
     marginLeft: 24,
@@ -110,7 +111,7 @@ export interface SearchItems extends ISearchOptions {
   exactSerch?: string;
   assumed?: boolean;
   isShare?: string;
-  page?:number;
+  page?: number;
 }
 
 export interface SearchcmsListProps extends SearchItems {
@@ -119,7 +120,7 @@ export interface SearchcmsListProps extends SearchItems {
 }
 export const SearchcmsList = (props: SearchcmsListProps) => {
   const css = useStyles(props);
-  const { lesson, onSearch, exactSerch = "all", value,isShare } = props;
+  const { lesson, onSearch, exactSerch = "all", value, isShare } = props;
   const { getValues, control } = useForm<SearchItems>();
   const handleClickSearch = useCallback(() => {
     onSearch(getValues());
@@ -135,9 +136,9 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
       defaultValue={isShare || "org"}
       render={(isShareProps) => (
         <RadioGroup
-          value={isShareProps.value}
+          value={isShareProps.field.value}
           onChange={(e) => {
-            isShareProps.onChange(e.target.value);
+            isShareProps.field.onChange(e.target.value);
             handleClickSearch();
           }}
           className={css.radioGroup}
@@ -171,9 +172,9 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
               render={(exactSerchProps) => (
                 <div className={clsx(css.fieldset, css.searchField, css.searchCon)}>
                   <TextField
-                    defaultValue={exactSerchProps.value}
+                    defaultValue={exactSerchProps.field.value}
                     onChange={(e) => {
-                      exactSerchProps.onChange(e.target.value);
+                      exactSerchProps.field.onChange(e.target.value);
                       handleClickSearch();
                     }}
                     select
@@ -212,4 +213,3 @@ export const SearchcmsList = (props: SearchcmsListProps) => {
     </Box>
   );
 };
-

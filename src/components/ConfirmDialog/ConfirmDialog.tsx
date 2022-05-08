@@ -46,7 +46,13 @@ export function ConfirmDialog() {
   const { open, title, content, type, label, confirmText, cancelText, rules, placeholder, defaultValue, hideConfirm, hideCancel } =
     useSelector<RootState, RootState["confirm"]>((state) => state.confirm);
   const dispatch = useDispatch();
-  const { control, setError, errors, watch, handleSubmit } = useForm({
+  const {
+    control,
+    setError,
+    formState: { errors },
+    watch,
+    handleSubmit,
+  } = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
@@ -117,12 +123,11 @@ export function ConfirmDialog() {
               rules={{
                 required: true,
               }}
-              error={"Please Select"}
-              render={({ ref, ...props }) => (
+              render={({ ...props }) => (
                 <CheckboxGroup
-                  {...props}
+                  {...props.field}
                   render={(selectedContentGroupContext) => (
-                    <div {...{ ref }}>
+                    <div>
                       {REJECT_REASON_VALUES().map((item) => (
                         <FormControlLabel
                           style={{
@@ -150,7 +155,11 @@ export function ConfirmDialog() {
                             name={OTHER_REASON}
                             control={control}
                             render={(props) => (
-                              <Checkbox checked={props.value} onChange={(e) => props.onChange(e.target.checked)} color="primary" />
+                              <Checkbox
+                                checked={props.field.value}
+                                onChange={(e) => props.field.onChange(e.target.checked)}
+                                color="primary"
+                              />
                             )}
                           />
                         }
@@ -163,40 +172,48 @@ export function ConfirmDialog() {
             />
             <Controller
               name={INPUT_NAME}
-              as={TextField}
-              variant="standard"
+              render={(props) => (
+                <TextField
+                  {...props.field}
+                  helperText={errors[INPUT_NAME]?.message}
+                  error={!!errors[INPUT_NAME]}
+                  variant="standard"
+                  autoFocus={true}
+                  fullWidth
+                  label={label}
+                  placeholder={placeholder || d("Reason").t("library_label_reason")}
+                />
+              )}
               defaultValue={""}
-              autoFocus={true}
-              fullWidth
-              label={label}
-              placeholder={placeholder || d("Reason").t("library_label_reason")}
               rules={{
                 required: !!values[OTHER_REASON],
                 ...rules,
               }}
               control={control}
-              error={!!errors[INPUT_NAME]}
-              helperText={errors[INPUT_NAME]?.message}
             />
           </>
         )}
         {type === ConfirmDialogType.onlyInput && (
           <Controller
             name={INPUT_NAME}
-            as={TextField}
-            variant="standard"
+            render={(props) => (
+              <TextField
+                {...props.field}
+                variant="standard"
+                autoFocus={true}
+                fullWidth
+                label={label}
+                error={!!errors[INPUT_NAME]}
+                helperText={errors[INPUT_NAME]?.message}
+                placeholder={placeholder}
+              />
+            )}
             defaultValue={defaultValue}
-            autoFocus={true}
-            fullWidth
-            label={label}
-            placeholder={placeholder}
             rules={{
               required: d("Server request failed").t("general_error_unknown"),
               ...rules,
             }}
             control={control}
-            error={!!errors[INPUT_NAME]}
-            helperText={errors[INPUT_NAME]?.message}
           />
         )}
       </DialogContent>
