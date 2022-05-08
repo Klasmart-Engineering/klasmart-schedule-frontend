@@ -7,6 +7,7 @@ import { LangRecordId, shouldBeLangName } from "@locale/lang/type";
 import { store } from "@reducers/index";
 import { actError, actInfo } from "@reducers/notify";
 import { setOrganizationId } from "@reducers/common";
+import "./index.css";
 
 apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
   if (!e) return;
