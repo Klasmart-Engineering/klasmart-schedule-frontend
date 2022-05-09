@@ -43,6 +43,17 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       padding: "0px 6px 0px 6px",
     },
+    filterContent: {
+      "&  *": {
+        boxSizing: "content-box",
+        "&::before": {
+          boxSizing: "content-box",
+        },
+        "&::after": {
+          boxSizing: "content-box",
+        },
+      },
+    },
     containerRoot: {
       flexGrow: 1,
       padding: "0px 10px 20px 10px;",
@@ -984,7 +995,7 @@ function FilterTemplate(props: FilterProps) {
   };
 
   return (
-    <>
+    <div className={css.filterContent}>
       <SchoolTemplate
         openClassMenu={openClassMenu}
         schoolsConnection={schoolsConnection}
@@ -1043,7 +1054,7 @@ function FilterTemplate(props: FilterProps) {
           getUserOfUndefined={getUserOfUndefined}
         />
       )}
-    </>
+    </div>
   );
 }
 
