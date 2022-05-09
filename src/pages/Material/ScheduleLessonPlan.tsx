@@ -32,6 +32,7 @@ import clsx from "clsx";
 const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   previewContainer: {
     width: "960px",
+    boxSizing: "content-box",
     [breakpoints.down(650)]: {
       paddingLeft: "99%",
     },
