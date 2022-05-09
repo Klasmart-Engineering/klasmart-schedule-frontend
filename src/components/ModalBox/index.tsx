@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
   dialogContainer: {
     "& .MuiPaper-root": {
       padding: "30px 40px 20px 40px",
+      boxSizing: "content-box",
       position: "relative",
       [theme.breakpoints.down("sm")]: {
         padding: "20px 0px 20px 10px",
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogContainer1: {
     "& .MuiDialog-paperWidthSm": {
+      boxSizing: "content-box",
       maxWidth: "1000px",
     },
   },

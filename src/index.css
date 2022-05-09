@@ -78,9 +78,8 @@ code {
   display: flex;
   justify-content: space-around;
 }
-
 *,
 *::before,
 *::after {
-  box-sizing: content-box;
+  box-sizing: inherit;
 }
