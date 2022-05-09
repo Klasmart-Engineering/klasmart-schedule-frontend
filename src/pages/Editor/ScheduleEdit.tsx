@@ -133,6 +133,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     padding: "10px 10px 20px 10px",
     boxShadow: shadows[3],
     position: "relative",
+    boxSizing: "content-box",
   },
   toolset: {
     fontSize: "20px",
