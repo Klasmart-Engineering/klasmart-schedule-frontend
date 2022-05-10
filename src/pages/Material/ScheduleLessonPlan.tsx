@@ -79,10 +79,10 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   fieldset: {
     width: "230px",
-    "& .MuiInputBase-root": {
+    "& .schedule-MuiInputBase-root": {
       borderRadius: "10px",
     },
-    "& .MuiChip-deleteIcon": {
+    "& .schedule-MuiChip-deleteIcon": {
       display: "none",
     },
   },
@@ -142,7 +142,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   },
   mobileSearch: {
     width: "80%",
-    "& .MuiInputBase-root": {
+    "& .schedule-MuiInputBase-root": {
       borderRadius: "27px",
     },
   },
@@ -154,25 +154,25 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     marginTop: 3,
   },
   activeSelect: {
-    "& .MuiInputBase-root": {
+    "& .schedule-MuiInputBase-root": {
       backgroundColor: "#0E78D5",
     },
-    "& .MuiInputBase-input , .MuiIconButton-label": {
+    "& .schedule-MuiInputBase-input , .schedule-MuiIconButton-label": {
       color: "white",
     },
-    "& .MuiAutocomplete-tag": {
+    "& .schedule-MuiAutocomplete-tag": {
       color: "white",
       marginLeft: "12px",
       display: "none",
     },
-    "& .MuiAutocomplete-tag:first-of-type": {
+    "& .schedule-MuiAutocomplete-tag:first-of-type": {
       display: "inline-flex",
     },
-    "& .MuiChip-deletable": {
+    "& .schedule-MuiChip-deletable": {
       backgroundColor: "#0E78D5",
       color: "white",
       marginLeft: "0px",
-      "& .MuiChip-deleteIcon": {
+      "& .schedule-MuiChip-deleteIcon": {
         color: "white",
       },
       width: "78%",
@@ -253,7 +253,7 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     },
   },
   tableRow: {
-    "& .MuiTableRow-root.Mui-selected": {
+    "& .schedule-MuiTableRow-root.schedule-Mui-selected": {
       background: "#E4F1FF",
     },
   },

@@ -15,6 +15,7 @@ import theme from "./theme";
 
 const generateClassName = createGenerateClassName({
   productionPrefix: "schedule",
+  seed: "schedule",
 });
 
 function App() {

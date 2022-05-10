@@ -118,7 +118,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldsetDisabled: {
     marginTop: 20,
     width: "100%",
-    "& .Mui-disabled": {
+    "& .schedule-Mui-disabled": {
       color: "rgba(0, 0, 0, 0.54)",
     },
   },
