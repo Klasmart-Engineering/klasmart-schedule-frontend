@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
       // flexDirection: 'initial',
       flexWrap: "wrap",
     },
-    "& .MuiFormControlLabel-label": {
+    "& .schedule-MuiFormControlLabel-label": {
       [theme.breakpoints.down("sm")]: {
         fontSize: "14px",
         marginLeft: "8px",

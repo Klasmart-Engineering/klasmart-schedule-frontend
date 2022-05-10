@@ -57,13 +57,13 @@ const useStyles = makeStyles(({ breakpoints, shadows, palette }) => ({
     height: 40,
     boxSizing: "border-box",
     background: "#F0F0F0",
-    "& .MuiOutlinedInput-notchedOutline": {
+    "& .schedule-MuiOutlinedInput-notchedOutline": {
       border: 0,
     },
   },
   searchText: {
     flex: 1,
-    "& .MuiOutlinedInput-notchedOutline": {
+    "& .schedule-MuiOutlinedInput-notchedOutline": {
       border: 0,
     },
   },

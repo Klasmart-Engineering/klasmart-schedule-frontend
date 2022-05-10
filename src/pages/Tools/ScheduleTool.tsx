@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) =>
       cursor: "pointer",
     },
     selectControl: {
-      "& .MuiNativeSelect-icon": {
+      "& .schedule-MuiNativeSelect-icon": {
         right: "10px",
       },
     },

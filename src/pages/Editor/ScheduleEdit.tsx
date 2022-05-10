@@ -118,7 +118,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldsetDisabled: {
     marginTop: 20,
     width: "100%",
-    "& .Mui-disabled": {
+    "& .schedule-Mui-disabled": {
       color: "rgba(0, 0, 0, 0.54)",
     },
   },
@@ -133,6 +133,7 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     padding: "10px 10px 20px 10px",
     boxShadow: shadows[3],
     position: "relative",
+    boxSizing: "content-box",
   },
   toolset: {
     fontSize: "20px",

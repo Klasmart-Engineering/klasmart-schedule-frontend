@@ -26,7 +26,7 @@ const useStyles = makeStyles(({ breakpoints }) =>
       width: "350px",
       padding: "0 20px 30px 20px",
       boxSizing: "border-box",
-      "& .MuiInputBase-root": {
+      "& .schedule-MuiInputBase-root": {
         height: "40px",
       },
       fontSize: "14px",

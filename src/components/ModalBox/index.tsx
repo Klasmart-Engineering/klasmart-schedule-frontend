@@ -12,7 +12,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import React from "react";
 const useStyles = makeStyles((theme) => ({
   dialogContainer: {
-    "& .MuiPaper-root": {
+    "& .schedule-MuiPaper-root": {
       padding: "30px 40px 20px 40px",
       boxSizing: "content-box",
       position: "relative",
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   dialogContainer1: {
-    "& .MuiDialog-paperWidthSm": {
+    "& .schedule-MuiDialog-paperWidthSm": {
       boxSizing: "content-box",
       maxWidth: "1000px",
     },
