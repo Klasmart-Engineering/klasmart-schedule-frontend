@@ -1,5 +1,4 @@
 import React from "react";
-import { RecoilRoot } from "recoil";
 import App from "./App";
 import { apiEmitter, ApiErrorEventData, ApiEvent, ApiInfoEventData, GraphQLErrorEventData } from "@api/emitter";
 import { localeManager, t } from "@locale/LocaleManager";
@@ -8,6 +7,7 @@ import { store } from "@reducers/index";
 import { actError, actInfo } from "@reducers/notify";
 import { setOrganizationId } from "@reducers/common";
 import "./index.css";
+import { localeState, useGlobalStateValue } from "@kl-engineering/frontend-state";
 
 apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
   if (!e) return;
@@ -32,14 +32,11 @@ apiEmitter.on<GraphQLErrorEventData>(ApiEvent.GraphQLError, (e) => {
   if (message) store.dispatch(actError(message));
 });
 
-export default function Main(props: { organization_id?: string; lang?: string }) {
+export default function Main(props: { organization_id?: string }) {
+  const locale = useGlobalStateValue(localeState);
   React.useEffect(() => {
-    if (props.lang) localeManager.toggle(shouldBeLangName(props.lang.slice(0, 2) || "en"));
+    if (locale) localeManager.toggle(shouldBeLangName(locale.slice(0, 2) || "en"));
     if (props.organization_id) store.dispatch(setOrganizationId(props.organization_id));
-  }, [props]);
-  return (
-    <RecoilRoot>
-      <App />
-    </RecoilRoot>
-  );
+  }, [props, locale]);
+  return <App />;
 }
