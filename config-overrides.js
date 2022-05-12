@@ -14,6 +14,7 @@ function myOverrides(config) {
   config.plugins = (config.plugins || []).concat([
     new ModuleFederationPlugin({
       "name": "schedule",
+      filename: `remoteEntry.js`,
       exposes: {
         "./Schedule": "./src/main.tsx",
       },
