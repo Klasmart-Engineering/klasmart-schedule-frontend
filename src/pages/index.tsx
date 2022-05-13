@@ -8,7 +8,7 @@ import { RootState } from "@reducers/index";
 import { actError } from "@reducers/notify";
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { ConnectionDirection, StringOperator, UuidExclusiveOperator } from "@api/api-ko-schema.auto";
@@ -63,6 +63,7 @@ import ScheduleAnyTime from "./Templates/ScheduleAnyTime";
 import ScheduleEdit from "./Editor/ScheduleEdit";
 import ScheduleTool from "./Tools/ScheduleTool";
 import SearchList from "./Templates/SearchList";
+import { useResizeDetector } from "react-resize-detector";
 
 const useQuery = () => {
   const { search } = useLocation();
@@ -492,10 +493,16 @@ function ScheduleContent() {
 
   const sm = useMediaQuery(breakpoints.down(325));
 
+  const { width, ref } = useResizeDetector();
+
+  const calendarWidth = useMemo(() => {
+    return width && width > 1000 ? width - 335 : `100%`;
+  }, [width]);
+
   return (
-    <>
+    <div>
       <LayoutBox holderMin={sm ? 0 : 10} holderBase={80} mainBase={1920}>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} innerRef={ref}>
           <Grid item xs={12}>
             <ScheduleTool
               includeList={includeList}
@@ -507,7 +514,7 @@ function ScheduleContent() {
               modelYear={modelYear}
             />
           </Grid>
-          <Grid item xs={12} sm={12} md={4} lg={3}>
+          <Grid item style={{ margin: "0 auto" }}>
             <ScheduleEdit
               getClassesWithoutSchool={getClassesWithoutSchool}
               getUserOfUndefined={getUserOfUndefined}
@@ -571,7 +578,7 @@ function ScheduleContent() {
               />
             </Grid>
           )}
-          <Grid item xs={12} sm={12} md={8} lg={9} style={{ position: "relative" }}>
+          <Grid item style={{ width: calendarWidth, position: "relative" }}>
             <Zoom in={isShowAnyTime}>
               <Paper elevation={4}>
                 <ScheduleAnyTime
@@ -611,7 +618,7 @@ function ScheduleContent() {
         </Grid>
       </LayoutBox>
       <ModalBox modalDate={modalDate} />
-    </>
+    </div>
   );
 }
 

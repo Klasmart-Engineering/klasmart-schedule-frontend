@@ -377,7 +377,14 @@ function SmallCalendar(props: CalendarStateProps) {
     <Box className={css.smallCalendarBox} style={{ width: sm ? "310px" : "310px" }}>
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
         <Grid container justifyContent="space-around">
-          <DatePicker autoOk variant="static" openTo="date" value={new Date(timesTamp.start * 1000)} onChange={handleDateChange} />
+          <DatePicker
+            orientation="portrait"
+            autoOk
+            variant="static"
+            openTo="date"
+            value={new Date(timesTamp.start * 1000)}
+            onChange={handleDateChange}
+          />
         </Grid>
         <ScheduleFilter
           getClassesWithoutSchool={getClassesWithoutSchool}

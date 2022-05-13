@@ -68,6 +68,13 @@ const useStyles = makeStyles((theme: Theme) =>
       cursor: "pointer",
     },
     selectControl: {
+      width: 230,
+      [theme.breakpoints.down(1100)]: {
+        width: 198,
+      },
+      [theme.breakpoints.down(600)]: {
+        width: "68%",
+      },
       "& .schedule-MuiNativeSelect-icon": {
         right: "10px",
       },
@@ -191,7 +198,7 @@ function Tool(props: ToolProps) {
             </Grid>
             {!includeList && !mobile && (
               <Grid item xs={12} sm={12} md={5} lg={5} style={{ textAlign: mobile ? "center" : "right" }}>
-                <FormControl className={css.selectControl} style={{ width: mobile ? "68%" : "230px" }}>
+                <FormControl className={css.selectControl}>
                   <NativeSelect
                     id="demo-customized-select-native"
                     value={modelYear ? "year" : modelView}
