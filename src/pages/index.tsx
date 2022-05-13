@@ -88,6 +88,12 @@ interface ParamTypes {
   rightside: "scheduleTable" | "scheduleList";
 }
 
+const modelWidth = {
+  leftSideMax: 445,
+  leftSideMin: 325,
+  factor: 0.28,
+};
+
 function ScheduleContent() {
   const { model, rightside } = useParams<ParamTypes>();
   const { includeTable, includeList } = parseRightside(rightside);
@@ -495,12 +501,16 @@ function ScheduleContent() {
 
   const { width, ref } = useResizeDetector();
 
-  const calendarWidth = useMemo(() => {
-    return width && width > 1000 ? width - 445 : `100%`;
+  const { calendarWidth, rightSideWidth } = useMemo(() => {
+    let rightSideWidth =
+      width && width * modelWidth.factor > modelWidth.leftSideMax ? modelWidth.leftSideMax : width && width * modelWidth.factor;
+    rightSideWidth = rightSideWidth && rightSideWidth < modelWidth.leftSideMin ? modelWidth.leftSideMin : rightSideWidth;
+    const calendarWidth = width && rightSideWidth && width > 960 ? width - rightSideWidth : `100%`;
+    return { calendarWidth, rightSideWidth };
   }, [width]);
 
   return (
-    <div>
+    <>
       <LayoutBox holderMin={sm ? 0 : 10} holderBase={80} mainBase={1920}>
         <Grid container spacing={2} innerRef={ref}>
           <Grid item xs={12}>
@@ -514,7 +524,7 @@ function ScheduleContent() {
               modelYear={modelYear}
             />
           </Grid>
-          <Grid item style={{ margin: "0 auto" }}>
+          <Grid item style={{ margin: "0 auto", width: width && width > 960 ? rightSideWidth : 445 }}>
             <ScheduleEdit
               getClassesWithoutSchool={getClassesWithoutSchool}
               getUserOfUndefined={getUserOfUndefined}
@@ -618,7 +628,7 @@ function ScheduleContent() {
         </Grid>
       </LayoutBox>
       <ModalBox modalDate={modalDate} />
-    </div>
+    </>
   );
 }
 
