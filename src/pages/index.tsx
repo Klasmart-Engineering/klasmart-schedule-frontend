@@ -496,7 +496,7 @@ function ScheduleContent() {
   const { width, ref } = useResizeDetector();
 
   const calendarWidth = useMemo(() => {
-    return width && width > 1000 ? width - 335 : `100%`;
+    return width && width > 1000 ? width - 440 : `100%`;
   }, [width]);
 
   return (
