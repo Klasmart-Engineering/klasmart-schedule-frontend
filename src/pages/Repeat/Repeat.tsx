@@ -589,7 +589,7 @@ function EndRepeat(props: ExtendsProps) {
                   disabled={end.type !== "after_count"}
                 />
               </FormControl>
-              <span className={classes.positionText} style={{ top: "75px" }}>
+              <span className={classes.positionText} style={{ top: "60px" }}>
                 {d("Occurrence(s)").t("schedule_repeat_occurrence(s)")}
               </span>
             </Grid>

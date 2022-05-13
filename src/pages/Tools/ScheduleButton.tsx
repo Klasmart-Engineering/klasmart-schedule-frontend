@@ -75,7 +75,7 @@ function RouterButton(props: ButtonProps) {
         }}
         onClick={() => {
           window.open(
-            `https://${process.env.REACT_APP_BASE_DOMAIN}/?org_id=${apiOrganizationOfPage()}#/library/content-preview/tab/details?id=${
+            `${process.env.REACT_APP_BASE_DOMAIN}/?org_id=${apiOrganizationOfPage()}#/library/content-preview/tab/details?id=${
               scheduleInfo.lesson_plan_id
             }&sid=${scheduleInfo.id}&class_id=${scheduleInfo.class_id}`
           );
