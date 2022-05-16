@@ -11,6 +11,7 @@ function myOverrides(config) {
   config.output = {
     ...config.output,
     path: path.resolve(process.env.BUILD_PATH || 'build'),
+    publicPath: "https://schedule.alpha.kidsloop.net/",
   }
   config.plugins = (config.plugins || []).concat([
     new ModuleFederationPlugin({
