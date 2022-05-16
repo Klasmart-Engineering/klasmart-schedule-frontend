@@ -9,6 +9,7 @@ const path = require('path');
 function myOverrides(config) {
   const dependencies = process.env.NODE_ENV !== 'development' ? pkg.dependencies : [];
   config.output = {
+    ...config.output,
     path: path.resolve(process.env.BUILD_PATH || 'build'),
   }
   config.plugins = (config.plugins || []).concat([
