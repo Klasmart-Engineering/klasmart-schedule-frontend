@@ -352,6 +352,11 @@ function CustomizeTemplateMb(props: InfoMbProps) {
             onClick={() => {
               handleEditSchedule(ScheduleViewInfo);
               document.body.scrollTop = document.documentElement.scrollTop = 0;
+              const appDom = document.getElementById("app");
+              const childDom: any = appDom && appDom.firstChild;
+              if (childDom) {
+                childDom.scrollTop = 0;
+              }
             }}
           />
         )}
