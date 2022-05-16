@@ -51,7 +51,7 @@ import {
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
-import { enAU, es, id, ko, th, vi, zhCN } from "date-fns/esm/locale";
+import { es, id, ko, th, vi, zhCN, enUS } from "date-fns/esm/locale";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -368,7 +368,7 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
-  const lang = { en: enAU, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th, zh_CN: zhCN };
+  const lang = { en: enUS, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th, zh_CN: zhCN };
 
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down(320));
