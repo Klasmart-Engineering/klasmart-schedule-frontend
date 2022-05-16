@@ -114,6 +114,11 @@ function Tool(props: ToolProps) {
                         onClick={() => {
                           toolRouter("create");
                           document.body.scrollTop = document.documentElement.scrollTop = 0;
+                          const appDom = document.getElementById("app");
+                          const childDom: any = appDom && appDom.firstChild;
+                          if (childDom) {
+                            childDom.scrollTop = 0;
+                          }
                         }}
                       >
                         <span style={{ fontSize: "1.2rem", marginRight: "1rem" }}>+</span>{" "}
