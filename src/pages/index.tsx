@@ -524,7 +524,7 @@ function ScheduleContent() {
               modelYear={modelYear}
             />
           </Grid>
-          <Grid item style={{ margin: "0 auto", width: width && width > 960 ? rightSideWidth : 445 }}>
+          <Grid item style={{ margin: "0 auto", width: width && width > 960 ? rightSideWidth : "100%" }}>
             <ScheduleEdit
               getClassesWithoutSchool={getClassesWithoutSchool}
               getUserOfUndefined={getUserOfUndefined}
