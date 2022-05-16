@@ -251,12 +251,12 @@ function CustomizeTemplateMb(props: InfoMbProps) {
     const offset = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     if (offset) {
       if (window.screen.height < 700) {
-        return `${window.screen.height - 450}px`;
+        return `${window.screen.height - 400}px`;
       } else if (window.screen.height < 750) {
-        return `${window.screen.height - 480}px`;
+        return `${window.screen.height - 430}px`;
       }
     }
-    return `${offset ? window.screen.height - 540 : window.screen.height - 445}px`;
+    return `${offset ? window.screen.height - 490 : window.screen.height - 445}px`;
   };
 
   const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Spt", "Oct", "Nov", "Dec"];
