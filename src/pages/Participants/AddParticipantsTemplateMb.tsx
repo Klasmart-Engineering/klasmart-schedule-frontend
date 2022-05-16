@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) =>
     },
     dialogActionRoot: {
       justifyContent: "center",
-      marginBottom: 120,
+      marginBottom: 60,
     },
     okBtn: {
       width: 160,
