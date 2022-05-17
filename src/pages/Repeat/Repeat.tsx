@@ -512,7 +512,7 @@ function EndRepeat(props: ExtendsProps) {
   const timestampToTime = (timestamp: Number | null) => {
     const date = new Date(Number(timestamp) * 1000);
     const dateNumFun = (num: number) => (num < 10 ? `0${num}` : num);
-    const [Y, M, D, h, m] = [
+    const [Y, M, D] = [
       date.getFullYear(),
       dateNumFun(date.getMonth() + 1),
       dateNumFun(date.getDate()),
@@ -520,7 +520,7 @@ function EndRepeat(props: ExtendsProps) {
       dateNumFun(date.getMinutes()),
       dateNumFun(date.getSeconds()),
     ];
-    return `${Y}-${M}-${D}T${h}:${m}`;
+    return `${Y}-${M}-${D}`;
   };
 
   const timeToTimestamp = (time: string) => {
@@ -563,9 +563,9 @@ function EndRepeat(props: ExtendsProps) {
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={`${classes.repeatItem} ${classes.lastRepeat}`}>
               <TextField
                 fullWidth
-                id="datetime-local"
+                id="date"
                 label={null}
-                type="datetime-local"
+                type="date"
                 InputLabelProps={{
                   shrink: true,
                 }}
