@@ -1,4 +1,4 @@
-import DateFnsUtils from "@date-io/date-fns";
+import MomentUtils from "@date-io/moment";
 import { Box, Button, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import Collapse from "@material-ui/core/Collapse";
@@ -24,6 +24,7 @@ import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import ScheduleLessonPlan from "@pages/Material/ScheduleLessonPlan";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import {
   actOutcomeList,
   changeParticipants,
@@ -51,7 +52,7 @@ import {
 import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
-import { es, id, ko, th, vi, zhCN, enUS } from "date-fns/esm/locale";
+import moment from "moment";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -109,6 +110,7 @@ import ScheduleFeedback from "../Attachments/ScheduleFeedback";
 import ScheduleFilter from "../Filter/ScheduleFilter";
 import ScheduleReviewTemplate from "../Templates/ScheduleReviewTemplate";
 import TimeConflictsTemplate from "../Conflicts/TimeConflictsTemplate";
+moment.locale("en"); // it is required to select default locale manually
 
 const useStyles = makeStyles(({ shadows, breakpoints }) => ({
   fieldset: {
@@ -344,10 +346,10 @@ function SmallCalendar(props: CalendarStateProps) {
   const dispatch = useDispatch();
   const getTimestamp = (date: any | null) => new Date(date).getTime() / 1000;
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date: MaterialUiPickersDate) => {
     changeTimesTamp({
-      start: getTimestamp(date),
-      end: getTimestamp(date),
+      start: getTimestamp(date?.toDate()),
+      end: getTimestamp(date?.toDate()),
     });
   };
 
@@ -368,14 +370,12 @@ function SmallCalendar(props: CalendarStateProps) {
 
   const css = useStyles();
 
-  const lang = { en: enUS, zh: zhCN, vi: vi, ko: ko, id: id, es: es, th: th, zh_CN: zhCN };
-
   const { breakpoints } = useTheme();
   const sm = useMediaQuery(breakpoints.down(320));
 
   return (
     <Box className={css.smallCalendarBox} style={{ width: sm ? "310px" : "310px" }}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={lang[localeManager.getLocale()!]}>
+      <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils} locale={localeManager.getLocale()}>
         <Grid container justifyContent="space-around">
           <DatePicker
             orientation="portrait"
@@ -1510,7 +1510,8 @@ function EditBox(props: CalendarStateProps) {
     mobile && event.target.name === "repeatCheck" && showRepeatMbHandle(event.target.checked);
   };
 
-  const handleDueDateChange = (date: Date | null) => {
+  const handleDueDateChange = (value: MaterialUiPickersDate | null) => {
+    const date = value?.toDate() as Date;
     if ((timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000 < new Date().getTime()) return;
     setSelectedDate(date);
   };
@@ -2152,11 +2153,11 @@ function EditBox(props: CalendarStateProps) {
         )}
         {checkedStatus.reviewCheck && (
           <Box className={css.fieldBox}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
               <KeyboardDatePicker
                 disableToolbar
                 variant="inline"
-                format="MM/dd/yyyy"
+                format="MM/DD/yyyy"
                 margin="normal"
                 id="date-picker-inline"
                 label="Due Date"
@@ -2195,11 +2196,11 @@ function EditBox(props: CalendarStateProps) {
                 {d("I would like content to be reviewed that was covered:").t("schedule_review_date_range_info")}
               </span>
             )}
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
               <KeyboardDatePicker
                 disableToolbar
                 variant="inline"
-                format="MM/dd/yyyy"
+                format="MM/DD/yyyy"
                 margin="normal"
                 id="date-picker-inline"
                 label={d("Start Time").t("schedule_detail_start_time")}
@@ -2213,11 +2214,11 @@ function EditBox(props: CalendarStateProps) {
                 onChange={handleDueDateChange}
               />
             </MuiPickersUtilsProvider>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
               <KeyboardDatePicker
                 disableToolbar
                 variant="inline"
-                format="MM/dd/yyyy"
+                format="MM/DD/yyyy"
                 margin="normal"
                 id="date-picker-inline"
                 label={d("End Time").t("schedule_detail_end_time")}
@@ -2235,7 +2236,7 @@ function EditBox(props: CalendarStateProps) {
         )}
         {scheduleList.class_type !== "Homework" && (
           <Box>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
               <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item xs={12}>
                   <TextField
@@ -2309,7 +2310,7 @@ function EditBox(props: CalendarStateProps) {
                 : "none",
           }}
         >
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
             <Grid container justifyContent="space-between" alignItems="center">
               <Grid item xs={5}>
                 <FormControlLabel
@@ -2322,7 +2323,7 @@ function EditBox(props: CalendarStateProps) {
                 <KeyboardDatePicker
                   disableToolbar
                   variant="inline"
-                  format="MM/dd/yyyy"
+                  format="MM/DD/yyyy"
                   margin="normal"
                   id="date-picker-inline"
                   label={d("Pick Time").t("schedule_detail_pick_time")}
