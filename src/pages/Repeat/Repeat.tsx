@@ -500,7 +500,7 @@ function EndRepeat(props: ExtendsProps) {
   };
 
   const handleAfterTime = (event: React.ChangeEvent<{ value: string }>) => {
-    let _date = timeToTimestamp(event.target.value);
+    let _date = timeToTimestamp(event.target.value) + 86399;
     if (_date > Date.now() / 1000 + 2 * 365 * 24 * 60 * 60) {
       setOpenStatus(true);
       return;
