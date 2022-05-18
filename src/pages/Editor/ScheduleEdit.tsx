@@ -459,6 +459,7 @@ function EditBox(props: CalendarStateProps) {
     mobile,
     checkFileExist,
   } = props;
+  const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const { classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
@@ -469,6 +470,10 @@ function EditBox(props: CalendarStateProps) {
   const [attachmentName, setAttachmentName] = React.useState<string>("");
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
   const [scheduleRestNum, setScheduleRestNum] = React.useState(0);
+  const [autoReviewTimesTamp, setAutoReviewTimesTamp] = React.useState<timestampType>({
+    start: timestampInt(new Date().getTime() / 1000),
+    end: timestampInt(new Date().getTime() / 1000),
+  });
 
   const perm = usePermission([
     PermissionType.attend_live_class_as_a_teacher_186,
@@ -479,8 +484,6 @@ function EditBox(props: CalendarStateProps) {
   ]);
 
   const permissionShowPreview = perm.attend_live_class_as_a_teacher_186;
-
-  const timestampInt = (timestamp: number) => Math.floor(timestamp);
 
   const rosterSelectAll = () => {
     const participant: ParticipantsByClassQuery = participantMockOptions.participantList;
@@ -582,7 +585,7 @@ function EditBox(props: CalendarStateProps) {
       dueDateCheck: false,
       homeFunCheck: false,
       reviewCheck: false,
-      past2: true,
+      past2: false,
     });
     const newData: any = {
       attachment_path: "",
@@ -641,7 +644,7 @@ function EditBox(props: CalendarStateProps) {
         dueDateCheck: !!newData.due_at,
         homeFunCheck: !!newData.is_home_fun,
         reviewCheck: false,
-        past2: true,
+        past2: false,
       });
       if (scheduleDetail.class) setClassItem(scheduleDetail.class);
       setLessonPlan(scheduleDetail.lesson_plan);
@@ -1027,14 +1030,8 @@ function EditBox(props: CalendarStateProps) {
     };
 
     if (checkedStatus.reviewCheck) {
-      addData["content_start_at"] = timestampToTime(
-        new Date(new Date().setHours(new Date().getHours() - 14 * 24)).getTime() / 1000,
-        "all_day_start"
-      );
-      addData["content_end_at"] = timestampToTime(
-        new Date(new Date().setHours(new Date().getHours() - 24)).getTime() / 1000,
-        "all_day_end"
-      );
+      addData["content_start_at"] = timestampToTime(autoReviewTimesTamp.start, "all_day_start");
+      addData["content_end_at"] = timestampToTime(autoReviewTimesTamp.end, "all_day_end");
       addData["due_at"] = dueDateTimestamp;
       addData["title"] = `${d("Auto Review").t("schedule_label_class_type_review")}: ${classItem?.name ?? ""} ${timestampToTimeReviewTitle(
         addData["content_start_at"] as number
@@ -1482,7 +1479,7 @@ function EditBox(props: CalendarStateProps) {
     dueDateCheck: false,
     homeFunCheck: false,
     reviewCheck: false,
-    past2: true,
+    past2: false,
   });
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1514,6 +1511,16 @@ function EditBox(props: CalendarStateProps) {
     const date = value?.toDate() as Date;
     if ((timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000 < new Date().getTime()) return;
     setSelectedDate(date);
+  };
+
+  const handleAutoReviewTimeChange = (value: MaterialUiPickersDate | null, type: string) => {
+    const date = value?.toDate() as Date;
+    const formatTimeEnd = (timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000;
+    const formatTimeStart = (timestampToTime(date?.getTime()! / 1000, "all_day_start") as number) * 1000;
+    const condition = { limitStart: new Date().getTime() - 86400 * 30 * 1000, limitEnd: new Date().getTime() };
+    if (type === "start" && (formatTimeStart < condition.limitStart || formatTimeStart > condition.limitEnd)) return;
+    if (type === "end" && (formatTimeEnd < autoReviewTimesTamp.start * 1000 || formatTimeEnd > condition.limitEnd)) return;
+    setAutoReviewTimesTamp({ ...autoReviewTimesTamp, [type]: date.getTime() / 1000 });
   };
 
   const deleteScheduleById = async (repeat_edit_options: repeatOptionsType = "only_current") => {
@@ -2209,9 +2216,9 @@ function EditBox(props: CalendarStateProps) {
                 }}
                 className={css.fieldset}
                 required
-                value={new Date(new Date().setHours(new Date().getHours() - 14 * 24))}
-                disabled
-                onChange={handleDueDateChange}
+                value={timestampToTime(autoReviewTimesTamp.start)}
+                disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
+                onChange={(e) => handleAutoReviewTimeChange(e, "start")}
               />
             </MuiPickersUtilsProvider>
             <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
@@ -2227,9 +2234,9 @@ function EditBox(props: CalendarStateProps) {
                 }}
                 className={css.fieldset}
                 required
-                value={new Date(new Date().setHours(new Date().getHours() - 24))}
-                disabled
-                onChange={handleDueDateChange}
+                value={timestampToTime(autoReviewTimesTamp.end)}
+                disabled={isScheduleExpired() || checkedStatus.allDayCheck || isLimit()}
+                onChange={(e) => handleAutoReviewTimeChange(e, "end")}
               />
             </MuiPickersUtilsProvider>
           </Box>
@@ -2273,10 +2280,9 @@ function EditBox(props: CalendarStateProps) {
           </Box>
         )}
         {scheduleList.class_type === "Homework" && checkedStatus.reviewCheck && (
-          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", paddingLeft: "8px" }}>
+          <Box style={{ display: "none", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", paddingLeft: "8px" }}>
             <FormGroup row>
               <FormControlLabel
-                disabled
                 control={<Checkbox name="past2" color="primary" checked={checkedStatus.past2} onChange={handleCheck} />}
                 label="Past 2 week"
               />
