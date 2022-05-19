@@ -1144,5 +1144,6 @@
   "assessment_hfs_student_feedback": "反馈",
   "assessment_detail_screenshot_results": "成果",
   "assessment_detail_screenshot_result_screen": "成果截图",
-  "assessment_detail_total_score": "总分"
+  "assessment_detail_total_score": "总分",
+  "schedule_msg_no_permission_to_be_redirected": "您没有此权限。跳转中..."
 }
