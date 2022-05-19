@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# script to build and deploy AWS based CMS frontends
+# script to build and deploy AWS based schedule frontends
 
 set -Eeuo pipefail
 trap cleanup SIGINT SIGTERM ERR EXIT
@@ -95,59 +95,59 @@ allowed_target_region=("in" "pk" "global" "uk" "lk" "th" "mb")
 
 if [ $env == "prod" ] && [ $region == "in" ]
 then
-  S3_ENDPOINT=s3://klindia-prod-cms
+  S3_ENDPOINT=s3://klindia-prod-schedule
   CLOUDFRONT_ID=E19MBPF4A4BIP
 elif [ $env == "prod" ] && [ $region == "lk"  ]
 then
-  S3_ENDPOINT=s3://kllk-prod-cms
+  S3_ENDPOINT=s3://kllk-prod-schedule
   CLOUDFRONT_ID=E2A48UEY4395EX
 elif [ $env == "prod" ] && [ $region == "pk"  ]
 then
-  S3_ENDPOINT=s3://klpk-prod-cms
+  S3_ENDPOINT=s3://klpk-prod-schedule
   CLOUDFRONT_ID=E3GNXZZ81A650V
 elif [ $env == "prod" ] && [ $region == "uk"  ]
 then
-  S3_ENDPOINT=s3://kluk-prod-cms
+  S3_ENDPOINT=s3://kluk-prod-schedule
   CLOUDFRONT_ID=E3R75DBF733GJG
 elif [ $env == "prod" ] && [ $region == "th"  ]
 then
-  S3_ENDPOINT=s3://klth-prod-cms
+  S3_ENDPOINT=s3://klth-prod-schedule
   CLOUDFRONT_ID=E1FPUJB5P4J1LA
 elif [ $env == "prod" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-prod-cms
+  S3_ENDPOINT=s3://klglobal-prod-schedule
   CLOUDFRONT_ID=E2DJ8D8M02O8BG
 elif [ $env == "stage" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-stage-cms
+  S3_ENDPOINT=s3://klglobal-stage-schedule
   CLOUDFRONT_ID=E2F59COXFMVHPB
 elif [ $env == "sso" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-sso-cms
+  S3_ENDPOINT=s3://klglobal-sso-schedule
   CLOUDFRONT_ID=E1N9AS58TIUFD0
 elif [ $env == "alpha" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-alpha-cms
+  S3_ENDPOINT=s3://klglobal-alpha-schedule
   CLOUDFRONT_ID=E1SZGP6UG9V8DB
 elif [ $env == "research" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-research-cms
+  S3_ENDPOINT=s3://klglobal-research-schedule
   CLOUDFRONT_ID=E200R0IPUQWE6J
 elif [ $env == "nextgen" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-nextgen-cms
+  S3_ENDPOINT=s3://klglobal-nextgen-schedule
   CLOUDFRONT_ID=EX9FMZD08DAH6
 elif [ $env == "uat" ] && [ $region == "mb"  ]
 then
-  S3_ENDPOINT=s3://klmumbai-uat-cms
+  S3_ENDPOINT=s3://klmumbai-uat-schedule
   CLOUDFRONT_ID=E2U8SDIRD49RSG
 elif [ $env == "showroom" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-showroom-cms
+  S3_ENDPOINT=s3://klglobal-showroom-schedule
   CLOUDFRONT_ID=ELXLEE1SIJWPJ
 elif [ $env == "loadtest" ] && [ $region == "global"  ]
 then
-  S3_ENDPOINT=s3://klglobal-loadtest-cms
+  S3_ENDPOINT=s3://klglobal-loadtest-schedule
   CLOUDFRONT_ID=EP5PZQIP6TGO3
 fi
 
