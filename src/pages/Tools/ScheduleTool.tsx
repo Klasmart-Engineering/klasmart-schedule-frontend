@@ -216,7 +216,7 @@ function Tool(props: ToolProps) {
                   size="large"
                   variant="outlined"
                   color="primary"
-                  style={{ margin: "0 0 0 14px", width: "85px" }}
+                  style={{ margin: "0 0 0 14px", minWidth: "85px" }}
                   onClick={selectToday}
                 >
                   {d("Today").t("schedule_button_today")}
