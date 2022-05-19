@@ -6,7 +6,7 @@ set -Eeuo pipefail
 trap cleanup SIGINT SIGTERM ERR EXIT
 
 # CHANGE ALLOWED TARGETS to deploy to a new region/environment combination
-allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding" "nextgen" "research" "showroom" "uat")
+allowed_target_environment=("stage" "prod" "alpha" "sso" "uat")
 allowed_target_region=("in" "pk" "global" "uk" "lk" "th" "mb")
 
 
@@ -90,28 +90,16 @@ parse_params() {
 setup_colors
 parse_params "$@"
 
-allowed_target_environment=("stage" "prod" "alpha" "sso" "loadtest" "onboarding" "nextgen" "research" "showroom" "uat")
-allowed_target_region=("in" "pk" "global" "uk" "lk" "th" "mb")
+allowed_target_environment=("stage" "prod" "alpha" "sso" "uat")
+allowed_target_region=("in" "pk" "global" "mb")
 
 if [ $env == "prod" ] && [ $region == "in" ]
 then
   S3_ENDPOINT=s3://klindia-prod-schedule
   CLOUDFRONT_ID=TBC
-elif [ $env == "prod" ] && [ $region == "lk"  ]
-then
-  S3_ENDPOINT=s3://kllk-prod-schedule
-  CLOUDFRONT_ID=TBC
 elif [ $env == "prod" ] && [ $region == "pk"  ]
 then
   S3_ENDPOINT=s3://klpk-prod-schedule
-  CLOUDFRONT_ID=TBC
-elif [ $env == "prod" ] && [ $region == "uk"  ]
-then
-  S3_ENDPOINT=s3://kluk-prod-schedule
-  CLOUDFRONT_ID=TBC
-elif [ $env == "prod" ] && [ $region == "th"  ]
-then
-  S3_ENDPOINT=s3://klth-prod-schedule
   CLOUDFRONT_ID=TBC
 elif [ $env == "prod" ] && [ $region == "global"  ]
 then
@@ -129,25 +117,9 @@ elif [ $env == "alpha" ] && [ $region == "global"  ]
 then
   S3_ENDPOINT=s3://klglobal-alpha-schedule
   CLOUDFRONT_ID=TBC
-elif [ $env == "research" ] && [ $region == "global"  ]
-then
-  S3_ENDPOINT=s3://klglobal-research-schedule
-  CLOUDFRONT_ID=TBC
-elif [ $env == "nextgen" ] && [ $region == "global"  ]
-then
-  S3_ENDPOINT=s3://klglobal-nextgen-schedule
-  CLOUDFRONT_ID=TBC
 elif [ $env == "uat" ] && [ $region == "mb"  ]
 then
   S3_ENDPOINT=s3://klmumbai-uat-schedule
-  CLOUDFRONT_ID=TBC
-elif [ $env == "showroom" ] && [ $region == "global"  ]
-then
-  S3_ENDPOINT=s3://klglobal-showroom-schedule
-  CLOUDFRONT_ID=TBC
-elif [ $env == "loadtest" ] && [ $region == "global"  ]
-then
-  S3_ENDPOINT=s3://klglobal-loadtest-schedule
   CLOUDFRONT_ID=TBC
 fi
 
