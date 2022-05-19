@@ -1515,11 +1515,10 @@ function EditBox(props: CalendarStateProps) {
 
   const handleAutoReviewTimeChange = (value: MaterialUiPickersDate | null, type: string) => {
     const date = value?.toDate() as Date;
-    const formatTimeEnd = (timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000;
-    const formatTimeStart = (timestampToTime(date?.getTime()! / 1000, "all_day_start") as number) * 1000;
-    const condition = { limitStart: new Date().getTime() - 86400 * 30 * 1000, limitEnd: new Date().getTime() };
-    if (type === "start" && (formatTimeStart < condition.limitStart || formatTimeStart > condition.limitEnd)) return;
-    if (type === "end" && (formatTimeEnd < autoReviewTimesTamp.start * 1000 || formatTimeEnd > condition.limitEnd)) return;
+    const formatTime = (timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000;
+    const condition = { limitStart: new Date().getTime() - 86400 * 31 * 1000, limitEnd: new Date().getTime() + 86400 * 1000 };
+    if (type === "start" && (formatTime < condition.limitStart || formatTime > condition.limitEnd)) return;
+    if (type === "end" && (formatTime < autoReviewTimesTamp.start * 1000 || formatTime > condition.limitEnd)) return;
     setAutoReviewTimesTamp({ ...autoReviewTimesTamp, [type]: date.getTime() / 1000 });
   };
 
