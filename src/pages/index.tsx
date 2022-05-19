@@ -22,6 +22,7 @@ import { useRepeatSchedule } from "@hooks/useRepeatSchedule";
 import { d } from "@locale/LocaleManager";
 import { ModelLessonPlan, Segment } from "@models/ModelLessonPlan";
 import { modelSchedule } from "@models/ModelSchedule";
+import { useHistory } from "react-router-dom";
 import {
   actOutcomeListLoading,
   changeParticipants,
@@ -132,6 +133,7 @@ function ScheduleContent() {
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
   const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
   const [stateFlag, setStateFlag] = React.useState<boolean>(true);
+  const history = useHistory();
 
   const handleChangeOnlyMine = (data: string[]) => {
     setStateOnlyMine(data);
@@ -478,10 +480,12 @@ function ScheduleContent() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (scheduleId) {
-      dispatch(getScheduleInfo(scheduleId));
-      setStateMaterialArr([]);
-    }
+    const getScheduleResult = async (scheduleId: string) => {
+      let scheduleInfo: any = (await dispatch(getScheduleInfo(scheduleId))) as unknown as PayloadAction<
+        AsyncTrunkReturned<typeof getScheduleInfo>
+      >;
+      return scheduleInfo;
+    };
     setModalDate({
       handleChange: function (p1: number) {},
       radioValue: 0,
@@ -494,7 +498,14 @@ function ScheduleContent() {
       buttons: [],
       handleClose: () => {},
     });
-  }, [scheduleId, setModalDate, dispatch]);
+    if (scheduleId) {
+      getScheduleResult(scheduleId).then((item) => {
+        setStateMaterialArr([]);
+        if (item.error.name === "schedule_msg_no_permission_to_be_redirected")
+          history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+      });
+    }
+  }, [scheduleId, setModalDate, dispatch, history]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
   const sm = useMediaQuery(breakpoints.down(325));
