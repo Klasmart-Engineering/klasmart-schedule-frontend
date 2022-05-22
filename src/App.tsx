@@ -29,14 +29,17 @@ function App() {
                 <Loading />
                 <SnackbarProvider>
                   <Switch>
+                    <Route path={Schedule.routeMatchPathMost}>
+                      <Schedule />
+                    </Route>
                     <Route path={Schedule.routeMatchPath}>
                       <Schedule />
                     </Route>
                     <Route path={Schedule.routeBasePath}>
-                      <Redirect to={Schedule.routeRedirectDefault} />
+                      <Schedule />
                     </Route>
                     <Route path="/">
-                      <Redirect to={Schedule.routeRedirectDefault} />
+                      <Redirect to={Schedule.routeBasePath} />
                     </Route>
                   </Switch>
                   <Notification />

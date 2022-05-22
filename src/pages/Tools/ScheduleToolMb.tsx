@@ -89,7 +89,7 @@ function Tool(props: ToolProps) {
   const toolRouter = (place: string = "create"): void => {
     if (place === "create") {
       if (scheduleId) selectToday();
-      history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
+      history.push("/schedule/edit");
     } else {
       history.goBack();
     }

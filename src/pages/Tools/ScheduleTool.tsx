@@ -107,10 +107,10 @@ function Tool(props: ToolProps) {
   const toolRouter = (place: string = "create"): void => {
     if (place === "create") {
       if (scheduleId) selectToday();
-      history.push("/schedule/calendar/rightside/scheduleTable/model/edit");
+      history.push("/schedule/edit");
     } else if (place === "search") {
       if (!teacherName) return;
-      history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
+      history.push(`/schedule/list?name=${teacherName}`);
     } else {
       history.goBack();
     }
@@ -118,7 +118,7 @@ function Tool(props: ToolProps) {
 
   const handleKeyDown = (event: any) => {
     if (event.keyCode === 13 && event.target.value.trim()) {
-      history.push(`/schedule/calendar/rightside/scheduleList/model/preview?name=${teacherName}`);
+      history.push(`/schedule/list?name=${teacherName}`);
     }
   };
 
@@ -167,7 +167,7 @@ function Tool(props: ToolProps) {
                         <ArrowBackIosOutlined
                           className={css.arrowLeft}
                           onClick={() => {
-                            toolRouter("create");
+                            toolRouter("back");
                           }}
                         />
                       )}

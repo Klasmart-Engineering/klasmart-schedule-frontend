@@ -601,7 +601,7 @@ export default function CustomizeTemplate(props: InfoProps) {
       }
     }
     handleClose();
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${ScheduleViewInfo.id}`);
+    history.push(`/schedule/edit?schedule_id=${ScheduleViewInfo.id}`);
   };
 
   const handleGoLive = async () => {

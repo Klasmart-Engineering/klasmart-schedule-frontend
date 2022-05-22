@@ -300,7 +300,7 @@ function MyCalendar(props: CalendarProps) {
             time_zone_offset: -new Date().getTimezoneOffset() * 60,
           })
         );
-        history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+        history.push("/schedule");
       }
     },
     [changeModalDate, dispatch, history, modelView, timesTamp]
@@ -614,7 +614,7 @@ function MyCalendar(props: CalendarProps) {
     if (getTimestamp(e.start) + 86400 < currentTime || !perm.create_schedule_page_501) return;
     changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
     setSpecificStatus(false);
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit`);
+    history.push(`/schedule/edit`);
   };
 
   const eventColor = [

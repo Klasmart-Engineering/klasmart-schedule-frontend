@@ -252,7 +252,7 @@ function AnyTimeSchedule(props: SearchListProps) {
           })
         );
         await handleChangeShowAnyTime(true, anyTimeName, stateCurrentCid);
-        history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+        history.push("/schedule");
       }
     },
     [handleChangeShowAnyTime, anyTimeName, stateCurrentCid, changeModalDate, dispatch, history, modelView, timesTamp]
@@ -423,7 +423,7 @@ function AnyTimeSchedule(props: SearchListProps) {
         return;
       }
     }
-    history.push(`/schedule/calendar/rightside/scheduleTable/model/edit?schedule_id=${scheduleInfo.id}`);
+    history.push(`/schedule/edit?schedule_id=${scheduleInfo.id}`);
   };
 
   const deleteHandle = (scheduleInfo: EntityScheduleListView) => {
