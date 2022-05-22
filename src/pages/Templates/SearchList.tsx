@@ -164,7 +164,7 @@ export default function SearchList(props: SearchListProps) {
     return flag;
   }
   const previewSchedule = (id: number) => {
-    history.push(`/schedule/calendar/rightside/scheduleList/model/edit/?name=${name}&schedule_id=${id}`);
+    history.push(`/schedule/list/edit/?name=${name}&schedule_id=${id}`);
     document.documentElement.scrollTop = 0;
   };
 

@@ -56,7 +56,6 @@ import {
   modeViewType,
   ParticipantsShortInfo,
   ParticipantString,
-  RouteParams,
   timestampType,
 } from "../types/scheduleTypes";
 import ConflictTestTemplate from "./Conflicts/ConflictTestTemplate";
@@ -74,20 +73,20 @@ const useQuery = () => {
   return { scheduleId, teacherName };
 };
 
-const parseRightside = (rightside: RouteParams["rightside"]) => ({
-  includeTable: rightside.includes("scheduleTable"),
-  includeList: rightside.includes("scheduleList"),
-});
-
-const parseModel = (model: RouteParams["model"]) => ({
-  includeEdit: model.includes("edit"),
-  includePreview: model.includes("preview"),
-});
-
 interface ParamTypes {
-  model: "edit" | "preview";
-  rightside: "scheduleTable" | "scheduleList";
+  parameter: "edit" | "list";
+  subParameter: "edit";
 }
+
+const parseRightside = (model: ParamTypes["parameter"]) => ({
+  includeTable: !(model && model.includes("list")),
+  includeList: model && model.includes("list"),
+});
+
+const parseModel = (model: ParamTypes["parameter"], subModel: ParamTypes["subParameter"]) => ({
+  includeEdit: (model && model.includes("edit")) || (subModel && subModel.includes("edit")),
+  includePreview: !((model && model.includes("edit")) || (subModel && subModel.includes("edit"))),
+});
 
 const modelWidth = {
   leftSideMax: 445,
@@ -96,9 +95,9 @@ const modelWidth = {
 };
 
 function ScheduleContent() {
-  const { model, rightside } = useParams<ParamTypes>();
-  const { includeTable, includeList } = parseRightside(rightside);
-  const { includePreview, includeEdit } = parseModel(model);
+  const { parameter, subParameter } = useParams<ParamTypes>();
+  const { includeTable, includeList } = parseRightside(parameter);
+  const { includePreview, includeEdit } = parseModel(parameter, subParameter);
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const {
     mockOptions,
@@ -501,8 +500,7 @@ function ScheduleContent() {
     if (scheduleId) {
       getScheduleResult(scheduleId).then((item) => {
         setStateMaterialArr([]);
-        if (item.error.name === "schedule_msg_no_permission_to_be_redirected")
-          history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+        if (item.error.name === "schedule_msg_no_permission_to_be_redirected") history.push("/schedule");
       });
     }
   }, [scheduleId, setModalDate, dispatch, history]);
@@ -647,6 +645,6 @@ export default function Schedule() {
   return <ScheduleContent />;
 }
 
-Schedule.routeBasePath = "/schedule/calendar";
-Schedule.routeMatchPath = "/schedule/calendar/rightside/:rightside/model/:model";
-Schedule.routeRedirectDefault = "/schedule/calendar/rightside/scheduleTable/model/preview";
+Schedule.routeBasePath = "/schedule";
+Schedule.routeMatchPath = "/schedule/:parameter";
+Schedule.routeMatchPathMost = "/schedule/:parameter/:subParameter";

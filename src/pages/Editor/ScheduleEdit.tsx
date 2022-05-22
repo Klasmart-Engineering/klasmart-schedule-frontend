@@ -471,8 +471,8 @@ function EditBox(props: CalendarStateProps) {
   const [isRepeatSame, setIsRepeatSame] = React.useState(true);
   const [scheduleRestNum, setScheduleRestNum] = React.useState(0);
   const [autoReviewTimesTamp, setAutoReviewTimesTamp] = React.useState<timestampType>({
-    start: timestampInt(new Date().getTime() / 1000),
-    end: timestampInt(new Date().getTime() / 1000),
+    start: timestampInt(new Date().getTime() / 1000 - 86400 * 14),
+    end: timestampInt(new Date().getTime() / 1000 - 86400),
   });
 
   const perm = usePermission([
@@ -1222,9 +1222,9 @@ function EditBox(props: CalendarStateProps) {
       setIsForce(false);
       if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetail.class?.name as string, stateCurrentCid as string);
       if (checkedStatus.reviewCheck) {
-        history.push(`/schedule/calendar/rightside/scheduleTable/model/preview`);
+        history.push(`/schedule`);
       } else {
-        history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+        history.push(`/schedule/${includeTable ? "" : "list"}`);
       }
     } else if (resultInfo.error.message === "schedule_msg_overlap") {
       changeModalDate({
@@ -1545,7 +1545,7 @@ function EditBox(props: CalendarStateProps) {
         openStatus: false,
       });
       if (isShowAnyTime) await handleChangeShowAnyTime(true, scheduleDetail.class?.name as string, stateCurrentCid as string);
-      history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+      history.push("/schedule");
       return;
     }
     changeModalDate({
@@ -1689,7 +1689,7 @@ function EditBox(props: CalendarStateProps) {
         start: currentTime,
         end: currentTime,
       });
-      history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+      history.push("/schedule");
       return;
     }
 
@@ -1719,7 +1719,7 @@ function EditBox(props: CalendarStateProps) {
             dispatch(resetActOutcomeList([]));
             setCondition({ page: 1, exect_search: "all", assumed: -1 });
             setOutcomeIds([]);
-            history.push("/schedule/calendar/rightside/scheduleTable/model/preview");
+            history.push("/schedule");
           },
         },
       ],

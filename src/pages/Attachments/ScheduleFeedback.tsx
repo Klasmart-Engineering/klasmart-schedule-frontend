@@ -332,7 +332,7 @@ function FeedbackTemplate(props: FeedbackProps) {
     >;
     if (resultInfo.payload) {
       dispatch(actSuccess(d("Saved Successfully.").t("assess_msg_save_successfully")));
-      history.push(`/schedule/calendar/rightside/${includeTable ? "scheduleTable" : "scheduleList"}/model/preview`);
+      history.push(`/schedule/${includeTable ? "" : "list"}`);
       changeModalDate({
         openStatus: false,
       });
