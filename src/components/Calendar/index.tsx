@@ -607,6 +607,7 @@ function MyCalendar(props: CalendarProps) {
       openStatus: true,
       handleClose: () => {
         changeModalDate({ openStatus: false });
+        history.push("/schedule");
       },
       showScheduleInfo: true,
     });
@@ -619,7 +620,7 @@ function MyCalendar(props: CalendarProps) {
   const creteSchedule = (e: any) => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
     if (getTimestamp(e.start) + 86400 < currentTime || !perm.create_schedule_page_501) return;
-    changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.end) });
+    changeTimesTamp({ start: getTimestamp(e.start), end: getTimestamp(e.start) });
     setSpecificStatus(false);
     history.push(`/schedule/edit`);
   };
@@ -715,13 +716,7 @@ function MyCalendar(props: CalendarProps) {
             startAccessor="start"
             endAccessor="end"
             toolbar={false}
-            onSelectEvent={(e) => {
-              if (e.id === scheduleId && !includeEdit) {
-                scheduleSelected(e);
-              } else {
-                handleChangeViewInfoId(e.id);
-              }
-            }}
+            onSelectEvent={(e) => handleChangeViewInfoId(e.id)}
             onSelectSlot={(e) => {
               creteSchedule(e);
             }}
