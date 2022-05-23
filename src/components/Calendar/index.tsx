@@ -255,6 +255,9 @@ function MyCalendar(props: CalendarProps) {
     getHandleScheduleViewInfo,
     privilegedMembers,
     checkFileExist,
+    scheduleId,
+    includeEdit,
+    handleChangeViewInfoId,
   } = props;
   const history = useHistory();
   const getTimestamp = (data: string) => new Date(data).getTime() / 1000;
@@ -283,6 +286,10 @@ function MyCalendar(props: CalendarProps) {
   // to the correct localizer.
   moment.locale(lang[localeManager.getLocale()!]);
   const localizer = momentLocalizer(moment);
+
+  React.useEffect(() => {
+    if (scheduleId && !includeEdit) scheduleSelected({ id: scheduleId } as scheduleInfoViewProps); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scheduleId, includeEdit]);
 
   const deleteScheduleById = useCallback(
     async (repeat_edit_options: repeatOptionsType = "only_current", scheduleInfo: scheduleInfoViewProps) => {
@@ -708,7 +715,13 @@ function MyCalendar(props: CalendarProps) {
             startAccessor="start"
             endAccessor="end"
             toolbar={false}
-            onSelectEvent={scheduleSelected}
+            onSelectEvent={(e) => {
+              if (e.id === scheduleId && !includeEdit) {
+                scheduleSelected(e);
+              } else {
+                handleChangeViewInfoId(e.id);
+              }
+            }}
             onSelectSlot={(e) => {
               creteSchedule(e);
             }}
@@ -739,6 +752,9 @@ interface CalendarProps {
   ScheduleViewInfo: EntityScheduleViewDetail;
   privilegedMembers: (member: memberType) => boolean;
   checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
+  scheduleId: string;
+  includeEdit: boolean;
+  handleChangeViewInfoId: (id: string) => void;
 }
 
 export default function KidsCalendar(props: CalendarProps) {
@@ -757,6 +773,9 @@ export default function KidsCalendar(props: CalendarProps) {
     ScheduleViewInfo,
     privilegedMembers,
     checkFileExist,
+    scheduleId,
+    includeEdit,
+    handleChangeViewInfoId,
   } = props;
 
   return (
@@ -775,6 +794,9 @@ export default function KidsCalendar(props: CalendarProps) {
       ScheduleViewInfo={ScheduleViewInfo}
       privilegedMembers={privilegedMembers}
       checkFileExist={checkFileExist}
+      scheduleId={scheduleId}
+      includeEdit={includeEdit}
+      handleChangeViewInfoId={handleChangeViewInfoId}
     />
   );
 }
