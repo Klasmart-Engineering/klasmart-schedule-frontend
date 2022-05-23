@@ -458,6 +458,9 @@ function EditBox(props: CalendarStateProps) {
     lessonPlans,
     mobile,
     checkFileExist,
+    viewInfoId,
+    handleChangeViewInfoId,
+    includeEdit,
   } = props;
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
   const { classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
@@ -560,7 +563,7 @@ function EditBox(props: CalendarStateProps) {
   };
 
   React.useEffect(() => {
-    if (scheduleId) {
+    if (scheduleId && includeEdit) {
       setAttachmentName(scheduleDetail?.attachment?.name as string);
       setAttachmentId(scheduleDetail?.attachment?.id as string);
     } else {
@@ -568,7 +571,7 @@ function EditBox(props: CalendarStateProps) {
       setAttachmentId("");
     }
     dispatch(resetActOutcomeList([]));
-  }, [scheduleDetail, dispatch, scheduleDetail.attachment, scheduleId]);
+  }, [scheduleDetail, dispatch, scheduleDetail.attachment, scheduleId, includeEdit]);
 
   React.useEffect(() => {
     const defaults: EntityScheduleShortInfo = {
@@ -620,7 +623,7 @@ function EditBox(props: CalendarStateProps) {
   }, [dispatch, timesTamp, scheduleRestNum]);
 
   React.useEffect(() => {
-    if (scheduleId && scheduleDetail.id) {
+    if (scheduleId && scheduleDetail.id && includeEdit) {
       const newData: EntityScheduleAddView = {
         attachment: scheduleDetail.attachment,
         class_id: scheduleDetail.class?.id || "",
@@ -700,7 +703,7 @@ function EditBox(props: CalendarStateProps) {
       if (scheduleDetail.participants_students || scheduleDetail.participants_teachers) setParticipantSaveStatus(true);
       setLinkageLessonPlanOpen(false);
     }
-  }, [dispatch, scheduleDetail, scheduleId]);
+  }, [dispatch, scheduleDetail, scheduleId, includeEdit]);
   const [state, dispatchRepeat] = useRepeatSchedule();
   const { type } = state;
   const repeatData = {
@@ -708,12 +711,12 @@ function EditBox(props: CalendarStateProps) {
     [type]: state[type],
   };
   React.useEffect(() => {
-    if (scheduleId && scheduleDetail.repeat) {
+    if (scheduleId && scheduleDetail.repeat && includeEdit) {
       // @ts-ignore
       const isSame = JSON.stringify(state[type]) === JSON.stringify(scheduleDetail.repeat[type]);
       setIsRepeatSame(isSame);
     }
-  }, [scheduleDetail.repeat, scheduleId, state, type]);
+  }, [scheduleDetail.repeat, scheduleId, state, type, includeEdit]);
   React.useEffect(() => {
     if (scheduleDetail?.repeat?.type) {
       const data = scheduleDetail.repeat;
@@ -1673,11 +1676,16 @@ function EditBox(props: CalendarStateProps) {
       });
     }
   };
+
+  React.useEffect(() => {
+    if (viewInfoId) closeEdit(viewInfoId); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewInfoId]);
+
   /**
    * modal type confirm close
    */
 
-  const closeEdit = () => {
+  const closeEdit = (id: string) => {
     changeModalDate({
       enableCustomization: false,
     });
@@ -1689,7 +1697,8 @@ function EditBox(props: CalendarStateProps) {
         start: currentTime,
         end: currentTime,
       });
-      history.push("/schedule");
+      handleChangeViewInfoId("");
+      history.push(`/schedule${id ? `?schedule_id=${id}` : ""}`);
       return;
     }
 
@@ -1719,7 +1728,7 @@ function EditBox(props: CalendarStateProps) {
             dispatch(resetActOutcomeList([]));
             setCondition({ page: 1, exect_search: "all", assumed: -1 });
             setOutcomeIds([]);
-            history.push("/schedule");
+            history.push(`/schedule${id ? `?schedule_id=${id}` : ""}`);
           },
         },
       ],
@@ -2094,7 +2103,9 @@ function EditBox(props: CalendarStateProps) {
                   color: "#666666",
                 }}
                 className={css.toolset}
-                onClick={closeEdit}
+                onClick={() => {
+                  closeEdit("");
+                }}
               />
             </Grid>
             {!isScheduleExpiredMulti() && (
@@ -2900,6 +2911,9 @@ interface CalendarStateProps {
   getClassesWithoutSchool: (cursor: string, value: string, loading: boolean) => any;
   mobile?: boolean;
   checkFileExist: (source_id?: string) => Promise<boolean | undefined>;
+  viewInfoId: string;
+  handleChangeViewInfoId: (id: string) => void;
+  includeEdit: boolean;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -2954,6 +2968,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     getClassesWithoutSchool,
     mobile,
     checkFileExist,
+    viewInfoId,
+    handleChangeViewInfoId,
+    includeEdit,
   } = props;
 
   return (
@@ -3001,6 +3018,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           getUserOfUndefined={getUserOfUndefined}
           mobile={mobile}
           checkFileExist={checkFileExist}
+          viewInfoId={viewInfoId}
+          handleChangeViewInfoId={handleChangeViewInfoId}
+          includeEdit={includeEdit}
         />
       </Box>
       <Box
@@ -3053,6 +3073,9 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           lessonPlans={lessonPlans}
           mobile={mobile}
           checkFileExist={checkFileExist}
+          viewInfoId={viewInfoId}
+          handleChangeViewInfoId={handleChangeViewInfoId}
+          includeEdit={includeEdit}
         />
       </Box>
     </>

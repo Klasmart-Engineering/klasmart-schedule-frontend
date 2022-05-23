@@ -132,6 +132,7 @@ function ScheduleContent() {
   const [stateCurrentCid, setStateCurrentCid] = React.useState<string>("");
   const [stateMaterialArr, setStateMaterialArr] = React.useState<(EntityContentInfoWithDetails | undefined)[]>([]);
   const [stateFlag, setStateFlag] = React.useState<boolean>(true);
+  const [viewInfoId, setViewInfoId] = React.useState<string>("");
   const history = useHistory();
 
   const handleChangeOnlyMine = (data: string[]) => {
@@ -140,6 +141,10 @@ function ScheduleContent() {
 
   const handleChangeHidden = (is_hidden: boolean) => {
     setIsHidden(is_hidden);
+  };
+
+  const handleChangeViewInfoId = (id: string) => {
+    setViewInfoId(id);
   };
 
   const handleChangeProgramId = async (programId: string) => {
@@ -497,13 +502,13 @@ function ScheduleContent() {
       buttons: [],
       handleClose: () => {},
     });
-    if (scheduleId) {
+    if (scheduleId && includeEdit) {
       getScheduleResult(scheduleId).then((item) => {
         setStateMaterialArr([]);
         if (item.error.name === "schedule_msg_no_permission_to_be_redirected") history.push("/schedule");
       });
     }
-  }, [scheduleId, setModalDate, dispatch, history]);
+  }, [scheduleId, setModalDate, dispatch, history, includeEdit]);
   const [specificStatus, setSpecificStatus] = React.useState(true);
 
   const sm = useMediaQuery(breakpoints.down(325));
@@ -581,6 +586,9 @@ function ScheduleContent() {
               lessonPlans={lessonPlans}
               mobile={mobile}
               checkFileExist={checkFileExist}
+              viewInfoId={viewInfoId}
+              handleChangeViewInfoId={handleChangeViewInfoId}
+              includeEdit={includeEdit}
             />
           </Grid>
           {mobile && (
@@ -630,6 +638,9 @@ function ScheduleContent() {
                 ScheduleViewInfo={ScheduleViewInfo}
                 privilegedMembers={privilegedMembers}
                 checkFileExist={checkFileExist}
+                scheduleId={scheduleId}
+                includeEdit={includeEdit}
+                handleChangeViewInfoId={handleChangeViewInfoId}
               />
             )}
             {includeList && <SearchList timesTamp={timesTamp} />}
