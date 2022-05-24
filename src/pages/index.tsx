@@ -273,7 +273,7 @@ function ScheduleContent() {
     resultInfo = (await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleViewInfo>
     >;
-    if (resultInfo.error.name === "schedule_msg_no_permission_to_be_redirected") history.push("/schedule");
+    if (resultInfo.error && resultInfo.error.name === "schedule_msg_no_permission_to_be_redirected") history.push("/schedule");
     return resultInfo.payload as EntityScheduleViewDetail;
   };
 
@@ -506,7 +506,7 @@ function ScheduleContent() {
     if (scheduleId && includeEdit) {
       getScheduleResult(scheduleId).then((item) => {
         setStateMaterialArr([]);
-        if (item.error.name === "schedule_msg_no_permission_to_be_redirected") history.push("/schedule");
+        if (item.error && item.error.name === "schedule_msg_no_permission_to_be_redirected") history.push("/schedule");
       });
     }
   }, [scheduleId, setModalDate, dispatch, history, includeEdit]);
