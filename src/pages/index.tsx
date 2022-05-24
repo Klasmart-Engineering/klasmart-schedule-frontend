@@ -273,6 +273,7 @@ function ScheduleContent() {
     resultInfo = (await dispatch(getScheduleViewInfo({ schedule_id, metaLoading: true }))) as unknown as PayloadAction<
       AsyncTrunkReturned<typeof getScheduleViewInfo>
     >;
+    if (resultInfo.error.name === "schedule_msg_no_permission_to_be_redirected") history.push("/schedule");
     return resultInfo.payload as EntityScheduleViewDetail;
   };
 

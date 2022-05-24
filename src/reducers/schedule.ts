@@ -955,11 +955,18 @@ export const getMockOptions = createAsyncThunk("mock/options", async () => {
 export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables & LoadingMetaPayload>(
   "getSchoolsFilterList",
   // @ts-ignore
-  ({ filter, direction, directionArgs }) => {
+  async ({ filter, direction, directionArgs }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     return gqlapi.query<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>({
       query: GetSchoolsFilterListDocument,
       variables: {
-        filter: filter,
+        filter: {
+          ...filter,
+          organizationId: {
+            operator: UuidOperator.Eq,
+            value: organization_id,
+          },
+        },
         direction: direction,
         directionArgs: directionArgs,
       },
