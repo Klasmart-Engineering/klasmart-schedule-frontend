@@ -1728,6 +1728,7 @@ function EditBox(props: CalendarStateProps) {
             dispatch(resetActOutcomeList([]));
             setCondition({ page: 1, exect_search: "all", assumed: -1 });
             setOutcomeIds([]);
+            handleChangeViewInfoId("");
             history.push(`/schedule${id ? `?schedule_id=${id}` : ""}`);
           },
         },
