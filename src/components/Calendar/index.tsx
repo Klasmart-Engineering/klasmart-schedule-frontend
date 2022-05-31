@@ -500,6 +500,7 @@ function MyCalendar(props: CalendarProps) {
               },
             ],
             handleClose: () => {
+              history.push("/schedule");
               changeModalDate({ openStatus: false, enableCustomization: false });
             },
           });
@@ -521,6 +522,7 @@ function MyCalendar(props: CalendarProps) {
               },
             ],
             handleClose: () => {
+              history.push("/schedule");
               changeModalDate({ openStatus: false, enableCustomization: false });
             },
           });
@@ -537,6 +539,7 @@ function MyCalendar(props: CalendarProps) {
                 deleteScheduleById(repeat_edit_options, scheduleInfo);
               }}
               handleClose={() => {
+                history.push("/schedule");
                 changeModalDate({ openStatus: false, enableCustomization: false });
               }}
               title={d("Delete").t("assess_label_delete")}
@@ -552,6 +555,7 @@ function MyCalendar(props: CalendarProps) {
             {
               label: d("CANCEL").t("general_button_CANCEL"),
               event: () => {
+                history.push("/schedule");
                 changeModalDate({ openStatus: false, enableCustomization: false });
               },
             },
@@ -565,7 +569,7 @@ function MyCalendar(props: CalendarProps) {
         });
       }
     },
-    [changeModalDate, deleteScheduleById]
+    [changeModalDate, deleteScheduleById, history]
   );
 
   /**
