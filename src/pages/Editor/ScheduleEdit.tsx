@@ -1516,6 +1516,12 @@ function EditBox(props: CalendarStateProps) {
     setSelectedDate(date);
   };
 
+  const handleDueDateChangeReview = (value: MaterialUiPickersDate | null) => {
+    const date = value?.toDate() as Date;
+    if ((timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000 < new Date().getTime() + 86400 * 1000) return;
+    setSelectedDate(date);
+  };
+
   const handleAutoReviewTimeChange = (value: MaterialUiPickersDate | null, type: string) => {
     const date = value?.toDate() as Date;
     const formatTime = (timestampToTime(date?.getTime()! / 1000, "all_day_end") as number) * 1000;
@@ -1693,10 +1699,12 @@ function EditBox(props: CalendarStateProps) {
     const scheduleListNew = JSON.stringify(scheduleList);
 
     if (scheduleListNew === scheduleListOld && !checkedStatus.allDayCheck && !checkedStatus.repeatCheck && !checkedStatus.dueDateCheck) {
-      changeTimesTamp({
-        start: currentTime,
-        end: currentTime,
-      });
+      if (!id) {
+        changeTimesTamp({
+          start: currentTime,
+          end: currentTime,
+        });
+      }
       handleChangeViewInfoId("");
       history.push(`/schedule${id ? `?schedule_id=${id}` : ""}`);
       return;
@@ -2186,7 +2194,7 @@ function EditBox(props: CalendarStateProps) {
                 required
                 value={selectedDueDate}
                 disabled={isScheduleExpired() || isLimit()}
-                onChange={handleDueDateChange}
+                onChange={handleDueDateChangeReview}
               />
             </MuiPickersUtilsProvider>
           </Box>

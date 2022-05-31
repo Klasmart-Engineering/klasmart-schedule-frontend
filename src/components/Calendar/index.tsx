@@ -506,7 +506,7 @@ function MyCalendar(props: CalendarProps) {
           return;
         }
       } else {
-        if (scheduleInfo.start.valueOf() - currentTime < 5 * 60 * 1000) {
+        if (scheduleInfo.start_at! * 1000 - currentTime < 5 * 60 * 1000) {
           changeModalDate({
             title: "",
             text: d("You can only delete a class at least 5 minutes before the start time.").t("schedule_msg_delete_minutes"),
@@ -570,9 +570,9 @@ function MyCalendar(props: CalendarProps) {
 
   /**
    * click current schedule
-   * @param event
+   * @param e
    */
-  const scheduleSelected = async (event: scheduleInfoViewProps) => {
+  const scheduleSelected = async (e: scheduleInfoViewProps) => {
     // const currentTime = Math.floor(new Date().getTime());
     // if (
     //   ((event.status === "NotStart" || event.status === "Started") && event.start.valueOf() - currentTime < 5 * 60 * 1000) ||
@@ -580,8 +580,9 @@ function MyCalendar(props: CalendarProps) {
     // ) {
     //   await dispatch(getScheduleLiveToken({ schedule_id: event.id, live_token_type: "live", metaLoading: true }));
     // }
-    const scheduleInfoView = await getHandleScheduleViewInfo(event.id);
+    const scheduleInfoView = await getHandleScheduleViewInfo(e.id);
     if (!scheduleInfoView) return;
+    const event = scheduleInfoView as scheduleInfoViewProps;
     changeModalDate({
       enableCustomization: true,
       customizeTemplate: (
