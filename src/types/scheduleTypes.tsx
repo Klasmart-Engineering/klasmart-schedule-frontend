@@ -213,6 +213,7 @@ export interface scheduleInfoViewProps {
   class_type_label: EntityScheduleShortInfo;
   is_review?: boolean;
   review_status?: string;
+  start_at?: number;
 }
 
 export interface FilterDataItemsProps {
