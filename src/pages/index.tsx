@@ -228,9 +228,11 @@ function ScheduleContent() {
 
   const changeModalDate = useCallback(
     (data: object) => {
-      setModalDate({ ...modalDate, ...data });
+      const Date = { ...modalDate, ...data };
+      setModalDate(Date);
+      if (!Date.openStatus && history.location.pathname && history.location.search) history.push(history.location.pathname);
     },
-    [modalDate]
+    [modalDate, history]
   );
 
   /**

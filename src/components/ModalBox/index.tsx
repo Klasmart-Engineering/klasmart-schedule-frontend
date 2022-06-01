@@ -81,7 +81,6 @@ export default function AlertDialog(props: dateProps) {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        style={{ zIndex: 1000 }}
         className={showScheduleInfo ? classes.dialogContainer1 : classes.dialogContainer}
       >
         {!enableCustomization ? (

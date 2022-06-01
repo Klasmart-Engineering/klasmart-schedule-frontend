@@ -2570,27 +2570,30 @@ function EditBox(props: CalendarStateProps) {
             </Box>
           </Box>
         )}
-        {!privilegedMembers("Student") && arrEmpty(participantsIds?.student) && arrEmpty(participantsIds?.teacher) && (
-          <Box className={css.fieldBox}>
-            <TextField
-              className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
-              multiline
-              label={d("Add Participants").t("schedule_detail_participants")}
-              required
-              disabled
-            />
-            {!(isScheduleExpired() || isLimit()) && (
-              <AddCircleOutlineOutlined
-                onClick={() => {
-                  if (isScheduleExpired() || isLimit()) return;
-                  if (scheduleDetail?.class?.enable !== false) addParticipants();
-                }}
-                className={css.iconField}
-                style={{ top: "46%", cursor: scheduleDetail?.class?.enable !== false ? "pointer" : "no-drop" }}
+        {!privilegedMembers("Student") &&
+          arrEmpty(participantsIds?.student) &&
+          arrEmpty(participantsIds?.teacher) &&
+          !(perm.create_my_schedule_events_521 && !perm.create_event_520 && !perm.create_my_schools_schedule_events_522) && (
+            <Box className={css.fieldBox}>
+              <TextField
+                className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+                multiline
+                label={d("Add Participants").t("schedule_detail_participants")}
+                required
+                disabled
               />
-            )}
-          </Box>
-        )}
+              {!(isScheduleExpired() || isLimit()) && (
+                <AddCircleOutlineOutlined
+                  onClick={() => {
+                    if (isScheduleExpired() || isLimit()) return;
+                    if (scheduleDetail?.class?.enable !== false) addParticipants();
+                  }}
+                  className={css.iconField}
+                  style={{ top: "46%", cursor: scheduleDetail?.class?.enable !== false ? "pointer" : "no-drop" }}
+                />
+              )}
+            </Box>
+          )}
         {scheduleList.class_type !== "Task" &&
           !((checkedStatus.homeFunCheck || checkedStatus.reviewCheck) && scheduleList.class_type === "Homework") && (
             <Box className={css.fieldBox}>
