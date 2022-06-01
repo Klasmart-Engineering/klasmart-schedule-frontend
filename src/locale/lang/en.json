@@ -1098,7 +1098,7 @@
   "schedule_review_dafault_date_range": "Past 2 Weeks",
   "schedule_review_review_area": "Review Area",
   "schedule_review_pop_up_all_success": "Publishing your auto review\n\nA new ‘Auto review’ lesson will appear on students’ calendar once our platform has finished an analysis for each student.",
-  "schedule_review_popup_partial_success": "Please note that we do not have enough data for the following students during the time range selected – they will each be given a random lesson. To avoid this in future, please ensure that students have worked on at least 10 activities before setting an Auto review.",
+  "schedule_review_popup_partial_success": "Please note that we do not have enough data for the following students during the time range selected — they will each be given a random lesson. To avoid this in the future, please ensure that students have worked on at least 5 activities before setting an Auto review.",
   "learning_outcome_label_threshold": "Score Threshold",
   "assessment_summary_label_attendance_unknown": "Unknown",
   "learning_outcome_threshold_blank_alert": "A score threshold must be entered",

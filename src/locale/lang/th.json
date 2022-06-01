@@ -1098,7 +1098,7 @@
   "schedule_review_dafault_date_range": "2 สัปดาห์ที่ผ่านมา",
   "schedule_review_review_area": "พื้นที่ตรวจสอบ",
   "schedule_review_pop_up_all_success": "เผยแพร่การตรวจทานอัตโนมัติของคุณ \n\n บทเรียน 'การตรวจสอบอัตโนมัติ' ใหม่จะปรากฏในปฏิทินของนักเรียน เมื่อแพลตฟอร์มของเราวิเคราะห์นักเรียนแต่ละคนเสร็จแล้ว",
-  "schedule_review_popup_partial_success": "โปรดทราบว่าเรามีข้อมูลไม่เพียงพอสำหรับนักเรียนต่อไปนี้ในช่วงเวลาที่เลือก - พวกเขาแต่ละคนจะได้รับบทเรียนแบบสุ่ม เพื่อหลีกเลี่ยงปัญหานี้ในอนาคต โปรดตรวจสอบให้แน่ใจว่านักเรียนได้ทำกิจกรรมอย่างน้อย 10 กิจกรรมก่อนที่จะตั้งค่าการตรวจทานอัตโนมัติ",
+  "schedule_review_popup_partial_success": "โปรดทราบว่าเรามีข้อมูลไม่เพียงพอสำหรับนักเรียนต่อไปนี้ในช่วงเวลาที่เลือก - พวกเขาแต่ละคนจะได้รับบทเรียนแบบสุ่ม เพื่อหลีกเลี่ยงปัญหานี้ในอนาคต โปรดตรวจสอบให้แน่ใจว่านักเรียนได้ทำกิจกรรมอย่างน้อย 5 กิจกรรมก่อนที่จะตั้งค่าการตรวจทานอัตโนมัติ",
   "learning_outcome_label_threshold": "เกณฑ์คะแนน",
   "assessment_summary_label_attendance_unknown": "ไม่รู้จัก",
   "learning_outcome_threshold_blank_alert": "ต้องป้อนเกณฑ์คะแนน",
@@ -1142,8 +1142,8 @@
   "assessment_hfs_no_teacher_feedback": "ไม่มีการให้คำติชมกับไฟล์นี้",
   "assessment_hfs_student_assessment": "การประเมิน",
   "assessment_hfs_student_feedback": "ข้อเสนอแนะ",
-  "assessment_detail_screenshot_results": "Results",
-  "assessment_detail_screenshot_result_screen": "Results Screen",
+  "assessment_detail_screenshot_results": "ผลลัพธ์",
+  "assessment_detail_screenshot_result_screen": "หน้าจอผลลัพธ์",
   "assessment_detail_total_score": "Total Score",
-  "schedule_msg_no_permission_to_be_redirected": "You do not have permission. Redirecting..."
+  "schedule_msg_no_permission_to_be_redirected": "คุณไม่ได้รับอนุญาต. กำลังเปลี่ยนเส้นทาง..."
 }
