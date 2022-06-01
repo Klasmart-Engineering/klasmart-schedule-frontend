@@ -1144,5 +1144,6 @@
   "assessment_hfs_student_feedback": "Feedback",
   "assessment_detail_screenshot_results": "Results",
   "assessment_detail_screenshot_result_screen": "Results Screen",
-  "assessment_detail_total_score": "Total Score"
+  "assessment_detail_total_score": "Total Score",
+  "schedule_msg_no_permission_to_be_redirected": "You do not have permission. Redirecting..."
 }
