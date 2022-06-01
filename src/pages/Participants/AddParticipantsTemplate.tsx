@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Checkbox,
-  createStyles,
   FormControlLabel,
   FormGroup,
   Grid,
@@ -10,10 +9,8 @@ import {
   makeStyles,
   Radio,
   RadioGroup,
-  Theme,
-  withStyles,
+  TextField,
 } from "@material-ui/core";
-import InputBase from "@material-ui/core/InputBase/InputBase";
 import { Search } from "@material-ui/icons";
 import { modelSchedule } from "@models/ModelSchedule";
 import { cloneDeep } from "lodash";
@@ -24,40 +21,6 @@ import { d } from "@locale/LocaleManager";
 import { RootState } from "@reducers/index";
 import { resetParticipantsData } from "@reducers/schedule";
 import { ParticipantsShortInfo, ParticipantString, ParticipantValue, RolesData } from "../../types/scheduleTypes";
-
-const BootstrapInput = withStyles((theme: Theme) =>
-  createStyles({
-    input: {
-      width: "160px",
-      borderRadius: 6,
-      position: "relative",
-      backgroundColor: theme.palette.background.paper,
-      border: "1px solid #ced4da",
-      fontSize: 16,
-      padding: "10px 26px 10px 12px",
-      marginLeft: "10px",
-      transition: theme.transitions.create(["border-color", "box-shadow"]),
-      // Use the system font instead of the default Roboto font.
-      fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
-        '"Segue UI"',
-        "Roboto",
-        '"Helvetica Neu"',
-        "Arial",
-        "sans-serif",
-        '"Apple Color Emoji"',
-        '"Segue UI Emoji"',
-        '"Segue UI Symbol"',
-      ].join(","),
-      "&:focus": {
-        borderRadius: 6,
-        borderColor: "#80bdff",
-        boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-      },
-    },
-  })
-)(InputBase);
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -120,6 +83,11 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  },
+  searchInputBox: {
+    "& .schedule-MuiInputBase-input": {
+      height: "3px",
+    },
   },
 }));
 
@@ -252,12 +220,13 @@ export default function AddParticipantsTemplate(props: InfoProps) {
     <div style={{ width: "600px" }}>
       <div className={css.title}>{d("Add Participants").t("schedule_detail_participants")}</div>
       <Grid container alignItems="center" className={css.searchPart}>
-        <BootstrapInput
+        <TextField
           id="outlined-basic"
           value={name}
           onChange={handleNameChange}
           onKeyDown={handleKeyDown}
           placeholder={d("Search").t("schedule_button_search")}
+          className={css.searchInputBox}
         />
         <Button
           variant="contained"
