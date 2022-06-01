@@ -94,6 +94,9 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
   customizeContentBox: {
     width: "100%",
     maxHeight: "43vh",
+    [breakpoints.down(1400)]: {
+      maxHeight: "33vh",
+    },
     [breakpoints.down(650)]: {
       maxHeight: "60vh",
     },
@@ -925,7 +928,7 @@ export default function ScheduleLessonPlan(props: LessonPlanProps) {
           setDom(dom);
         }}
         onScrollCapture={() => handleOnScroll()}
-        style={{ margin: "20px 0 20px 0", minHeight: "40vh" }}
+        style={{ margin: "20px 0 20px 0" }}
         className={classes.customizeContentBox}
       >
         <TableContainer component={Paper}>
