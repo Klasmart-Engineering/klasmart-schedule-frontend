@@ -1098,7 +1098,7 @@
   "schedule_review_dafault_date_range": "Últimas 2 semanas",
   "schedule_review_review_area": "Área de Revisión",
   "schedule_review_pop_up_all_success": "Publicación de su revisión automática \n\n Una nueva lección de 'Revisión automática' aparecerá en el calendario de los estudiantes una vez que nuestra plataforma haya terminado un análisis para cada estudiante.",
-  "schedule_review_popup_partial_success": "Tenga en cuenta que no tenemos suficientes datos para los siguientes estudiantes durante el intervalo de tiempo seleccionado; a cada uno se le dará una lección aleatoria. Para evitar esto en el futuro, asegúrese de que los estudiantes hayan trabajado en al menos 10 actividades antes de configurar una revisión automática.",
+  "schedule_review_popup_partial_success": "Tenga en cuenta que no tenemos suficientes datos para los siguientes estudiantes durante el intervalo de tiempo seleccionado; a cada uno se le dará una lección aleatoria. Para evitar esto en el futuro, asegúrese de que los estudiantes hayan trabajado en al menos 5 actividades antes de configurar una revisión automática.",
   "learning_outcome_label_threshold": "Umbral de puntuación",
   "assessment_summary_label_attendance_unknown": "Desconocido",
   "learning_outcome_threshold_blank_alert": "Se debe introducir un umbral de puntuación",
@@ -1142,8 +1142,8 @@
   "assessment_hfs_no_teacher_feedback": "No se han proporcionado comentarios a este archivo.",
   "assessment_hfs_student_assessment": "Evaluación",
   "assessment_hfs_student_feedback": "Comentarios",
-  "assessment_detail_screenshot_results": "Results",
-  "assessment_detail_screenshot_result_screen": "Results Screen",
-  "assessment_detail_total_score": "Total Score",
-  "schedule_msg_no_permission_to_be_redirected": "You do not have permission. Redirecting..."
+  "assessment_detail_screenshot_results": "Resultados",
+  "assessment_detail_screenshot_result_screen": "Pantalla de resultados",
+  "assessment_detail_total_score": "Puntuación Total",
+  "schedule_msg_no_permission_to_be_redirected": "No tiene permiso. Redirigiendo..."
 }

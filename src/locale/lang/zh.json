@@ -1098,7 +1098,7 @@
   "schedule_review_dafault_date_range": "过去 2 周",
   "schedule_review_review_area": "复习领域",
   "schedule_review_pop_up_all_success": "正在发布您安排的适应性学习课程\n\n在我们的平台完成对每个学生的分析之后，新的“适应性复习”课程将出现在学生的日历上。",
-  "schedule_review_popup_partial_success": "请注意，在选定的时间范围内，我们没有足够的数据供以下学生使用——他们将被随机分配一个学习课件。为避免将来出现这种情况，请确保学生在安排适应性复习课程之前至少完成了 10 项活动。",
+  "schedule_review_popup_partial_success": "请注意，在选定的时间范围内，我们没有足够的数据供以下学生使用——他们将被随机分配一个学习课件。为避免将来出现这种情况，请确保学生在安排适应性复习课程之前至少完成了 5 项活动。",
   "learning_outcome_label_threshold": "分数阈值",
   "assessment_summary_label_attendance_unknown": "未知用户",
   "learning_outcome_threshold_blank_alert": "必须输入分数阈值",
