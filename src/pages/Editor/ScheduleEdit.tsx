@@ -1,5 +1,5 @@
 import MomentUtils from "@date-io/moment";
-import { Box, Button, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme } from "@material-ui/core";
+import { Box, Button, MenuItem, TextField, ThemeProvider, useMediaQuery, useTheme, LinearProgress } from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import Collapse from "@material-ui/core/Collapse";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -9,6 +9,9 @@ import Paper from "@material-ui/core/Paper";
 import Radio from "@material-ui/core/Radio";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
+import InfiniteScroll from "react-infinite-scroll-component";
+import ArrowDropDownOutlinedIcon from "@material-ui/icons/ArrowDropDownOutlined";
+import ArrowDropUpOutlinedIcon from "@material-ui/icons/ArrowDropUpOutlined";
 import {
   AddCircleOutlineOutlined,
   Close,
@@ -53,7 +56,7 @@ import { AsyncTrunkReturned } from "@reducers/type";
 import { PayloadAction } from "@reduxjs/toolkit";
 import clsx from "clsx";
 import moment from "moment";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -85,7 +88,6 @@ import {
   ClassOptionsItem,
   classTypeLabel,
   EntityLessonPlanShortInfo,
-  EntityScheduleClassInfo,
   filterOptionItem,
   FilterQueryTypeProps,
   LearningComesFilterQuery,
@@ -312,6 +314,19 @@ const useStyles = makeStyles(({ shadows, breakpoints }) => ({
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  infinite: {
+    "& .schedule-MuiAutocomplete-listbox": {
+      overflow: "hidden",
+      maxHeight: "none",
+    },
+  },
+  scrollItem: {
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.04)",
+    },
+    padding: "6px 16px 6px 16px",
+  },
 }));
 
 const clearNull = (obj: Record<string, any>) => {
@@ -461,9 +476,10 @@ function EditBox(props: CalendarStateProps) {
     viewInfoId,
     handleChangeViewInfoId,
     includeEdit,
+    getClassListConnection,
   } = props;
   const timestampInt = (timestamp: number) => Math.floor(timestamp);
-  const { classOptions, outcomeListInit } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
+  const { outcomeListInit, classesListConnection } = useSelector<RootState, RootState["schedule"]>((state) => state.schedule);
   const [selectedDueDate, setSelectedDate] = React.useState<Date | null>(new Date(new Date().setHours(new Date().getHours())));
   const [classItem, setClassItem] = React.useState<EntityScheduleShortInfo | undefined>(defaults);
   const [lessonPlan, setLessonPlan] = React.useState<EntityLessonPlanShortInfo | undefined>(lessonPlanDefaults);
@@ -477,6 +493,12 @@ function EditBox(props: CalendarStateProps) {
     start: timestampInt(new Date().getTime() / 1000 - 86400 * 14),
     end: timestampInt(new Date().getTime() / 1000 - 86400),
   });
+  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
+  const [searchValue, setSearchValue] = React.useState<string>("");
+  const [edges, setEdges] = React.useState<any>([]);
+  const [scrollLoading, setScrollLoading] = React.useState<boolean>(false);
+  const [openScroll, setOpenScroll] = React.useState<boolean>(false);
+  const [openSubScroll, setOpenSubScroll] = React.useState<boolean>(false);
 
   const perm = usePermission([
     PermissionType.attend_live_class_as_a_teacher_186,
@@ -1334,20 +1356,35 @@ function EditBox(props: CalendarStateProps) {
     });
   };
 
-  const getClassOption = (): EntityScheduleShortInfo[] => {
-    let lists: EntityScheduleClassInfo[];
-    if (perm.create_event_520) {
-      lists = classOptions.classListOrg.organization?.classes as EntityScheduleClassInfo[];
-    } else if (perm.create_my_schools_schedule_events_522) {
-      lists = classOptions.classListSchool.school?.classes as EntityScheduleClassInfo[];
+  const getClassOption = useMemo(() => {
+    const list: EntityScheduleShortInfo[] = [];
+    if (edges.length) {
+      edges?.forEach((item: any, key: number) => {
+        list.push({ id: item?.node?.id, name: item?.node?.name } as EntityScheduleShortInfo);
+      });
     } else {
-      lists = classOptions.classListTeacher.user?.membership?.classesTeaching as EntityScheduleClassInfo[];
+      classesListConnection.classesConnection?.edges?.forEach((item, key: number) => {
+        list.push({ id: item?.node?.id, name: item?.node?.name } as EntityScheduleShortInfo);
+      });
     }
-    const classResult: EntityScheduleShortInfo[] = [];
-    lists?.forEach((item: EntityScheduleClassInfo) => {
-      if (item.status === "active") classResult.push({ id: item.class_id, name: item.class_name });
-    });
-    return classResult;
+    const hasNextPage = classesListConnection.classesConnection?.pageInfo?.hasNextPage;
+    const endCursor = classesListConnection.classesConnection?.pageInfo?.endCursor;
+    const totalCount = classesListConnection.classesConnection?.totalCount;
+    const edgesResult = classesListConnection.classesConnection?.edges;
+    return { list, hasNextPage, endCursor, totalCount, edgesResult };
+  }, [classesListConnection, edges]);
+
+  const getSearcherResult = (value: string) => {
+    if (timer) clearTimeout(timer);
+    const timers = setTimeout(async () => {
+      setOpenSubScroll(false);
+      setScrollLoading(true);
+      await getClassListConnection("", value);
+      setScrollLoading(false);
+      setOpenSubScroll(true);
+      setEdges([]);
+    }, 500);
+    setTimer(timers);
   };
 
   const saveTheTest = () => {
@@ -2363,25 +2400,86 @@ function EditBox(props: CalendarStateProps) {
             </Grid>
           </MuiPickersUtilsProvider>
         </Box>
-        <Autocomplete
-          id="combo-box-demo"
-          options={getClassOption()}
-          getOptionLabel={(option: any) => option.name}
-          onChange={(e: any, newValue) => {
-            autocompleteChange(newValue, "class_id");
-          }}
-          value={classItem}
-          disabled={isScheduleExpired() || scheduleDetail?.class?.enable === false || isLimit()}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className={css.fieldset}
-              label={d("Add Class").t("schedule_detail_add_class")}
-              required
-              variant="outlined"
-            />
+
+        <Box className={css.fieldBox}>
+          <TextField
+            className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
+            value={classItem?.name}
+            multiline
+            label={d("Add Class").t("schedule_detail_add_class")}
+            required
+            InputProps={{ readOnly: true, disableUnderline: true }}
+            onClick={() => {
+              if (openScroll) {
+                setOpenScroll(false);
+              } else {
+                setOpenScroll(true);
+                if (!getClassOption.list.length) getSearcherResult("");
+              }
+            }}
+          />
+          {!(isScheduleExpired() || isLimit()) && (
+            <>
+              {openScroll && <ArrowDropUpOutlinedIcon className={css.iconField} style={{ top: "48%", color: "gray" }} />}
+              {!openScroll && <ArrowDropDownOutlinedIcon className={css.iconField} style={{ top: "48%", color: "gray" }} />}
+            </>
           )}
-        />
+        </Box>
+        <Box
+          style={{
+            border: "1px solid gray",
+            borderRadius: "10px",
+            padding: "6px",
+            marginTop: "4px",
+            display: openScroll ? "block" : "none",
+          }}
+        >
+          <TextField
+            id="standard-password-input"
+            label="Search"
+            autoComplete="current-password"
+            size="small"
+            value={searchValue}
+            style={{ width: "100%", marginTop: 10, marginBottom: 10 }}
+            onChange={(e) => {
+              setSearchValue(e.target.value ?? "");
+              getSearcherResult(e.target.value ?? "");
+            }}
+          />
+          {openSubScroll && getClassOption.list.length > 0 && (
+            <InfiniteScroll
+              height={getClassOption.list.length > 5 ? 200 : getClassOption.list.length * 36}
+              dataLength={getClassOption.list.length ?? 0}
+              next={async () => {
+                const initEdges = edges.length ? [] : (getClassOption.edgesResult as any);
+                const edgesResult = await getClassListConnection(getClassOption.endCursor as string, searchValue);
+                setEdges([...initEdges, ...edges, ...edgesResult]);
+              }}
+              hasMore={!!getClassOption.hasNextPage}
+              loader={<LinearProgress style={{ marginTop: "-5px" }} />}
+            >
+              {getClassOption.list.map((item) => {
+                return (
+                  <div
+                    className={css.scrollItem}
+                    style={{ backgroundColor: item.id === classItem?.id ? "rgba(0, 0, 0, 0.06)" : "" }}
+                    onClick={(e) => {
+                      setOpenScroll(false);
+                      autocompleteChange({ id: item.id, name: item.name }, "class_id");
+                    }}
+                  >
+                    {item.name}
+                  </div>
+                );
+              })}
+            </InfiniteScroll>
+          )}
+          {getClassOption.list.length < 1 && (
+            <p style={{ textAlign: "center", fontSize: "14px", color: "gray" }}>{d("No Data").t("schedule_filter_no_data")}</p>
+          )}
+          {scrollLoading && <LinearProgress style={{ marginTop: "-5px" }} />}
+        </Box>
+
         {!privilegedMembers("Student") &&
           (menuItemListClassKrParticipants("teacher").length > 0 || menuItemListClassKrParticipants("students").length > 0) &&
           !rosterSaveStatus && (
@@ -2926,6 +3024,7 @@ interface CalendarStateProps {
   viewInfoId: string;
   handleChangeViewInfoId: (id: string) => void;
   includeEdit: boolean;
+  getClassListConnection: (cursor?: string, value?: string) => any;
 }
 
 interface ScheduleEditProps extends CalendarStateProps {
@@ -2983,6 +3082,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
     viewInfoId,
     handleChangeViewInfoId,
     includeEdit,
+    getClassListConnection,
   } = props;
 
   return (
@@ -3033,6 +3133,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           viewInfoId={viewInfoId}
           handleChangeViewInfoId={handleChangeViewInfoId}
           includeEdit={includeEdit}
+          getClassListConnection={getClassListConnection}
         />
       </Box>
       <Box
@@ -3088,6 +3189,7 @@ export default function ScheduleEdit(props: ScheduleEditProps) {
           viewInfoId={viewInfoId}
           handleChangeViewInfoId={handleChangeViewInfoId}
           includeEdit={includeEdit}
+          getClassListConnection={getClassListConnection}
         />
       </Box>
     </>

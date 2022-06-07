@@ -126,6 +126,7 @@ export interface ScheduleState {
   skills: LinkedMockOptionsItem[];
   schoolsConnection: GetSchoolsFilterListQuery;
   classesConnection: GetClassFilterListQuery;
+  classesListConnection: GetClassFilterListQuery;
   filterOtherClasses: GetClassFilterListQuery;
   lessonPlans: EntityLessonPlanForSchedule[];
   lessonPlansTotal: number;
@@ -301,6 +302,7 @@ const initialState: ScheduleState = {
   skills: [],
   schoolsConnection: {},
   classesConnection: {},
+  classesListConnection: {},
   lessonPlans: [],
   lessonPlansTotal: 0,
   userInUndefined: {},
@@ -989,6 +991,21 @@ export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetC
   }
 );
 
+export const getClassList = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
+  "getClassList",
+  // @ts-ignore
+  ({ filter, direction, directionArgs }) => {
+    return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
+      query: GetClassFilterListDocument,
+      variables: {
+        filter: filter,
+        direction: direction,
+        directionArgs: directionArgs,
+      },
+    });
+  }
+);
+
 interface GetScheduleViewInfoParams extends LoadingMetaPayload {
   schedule_id: Parameters<typeof api.schedulesView.getSchedulePopupById>[0];
 }
@@ -1221,6 +1238,9 @@ const { actions, reducer } = createSlice({
     },
     [getClassFilterList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.classesConnection = payload.data;
+    },
+    [getClassList.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
+      state.classesListConnection = payload.data;
     },
     [classesWithoutSchool.fulfilled.type]: (state, { payload }: PayloadAction<any>) => {
       state.filterOtherClasses = payload.data;
