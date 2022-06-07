@@ -1743,6 +1743,7 @@ function EditBox(props: CalendarStateProps) {
         });
       }
       handleChangeViewInfoId("");
+      setOpenScroll(false);
       history.push(`/schedule${id ? `?schedule_id=${id}` : ""}`);
       return;
     }
@@ -2401,7 +2402,17 @@ function EditBox(props: CalendarStateProps) {
           </MuiPickersUtilsProvider>
         </Box>
 
-        <Box className={css.fieldBox}>
+        <Box
+          className={css.fieldBox}
+          onClick={() => {
+            if (openScroll) {
+              setOpenScroll(false);
+            } else {
+              setOpenScroll(true);
+              if (!getClassOption.list.length) getSearcherResult("");
+            }
+          }}
+        >
           <TextField
             className={isScheduleExpired() || isLimit() ? css.fieldset : css.fieldsetDisabled}
             value={classItem?.name}
@@ -2409,14 +2420,6 @@ function EditBox(props: CalendarStateProps) {
             label={d("Add Class").t("schedule_detail_add_class")}
             required
             InputProps={{ readOnly: true, disableUnderline: true }}
-            onClick={() => {
-              if (openScroll) {
-                setOpenScroll(false);
-              } else {
-                setOpenScroll(true);
-                if (!getClassOption.list.length) getSearcherResult("");
-              }
-            }}
           />
           {!(isScheduleExpired() || isLimit()) && (
             <>
@@ -2428,7 +2431,7 @@ function EditBox(props: CalendarStateProps) {
         <Box
           style={{
             border: "1px solid gray",
-            borderRadius: "10px",
+            borderRadius: "4px",
             padding: "6px",
             marginTop: "4px",
             display: openScroll ? "block" : "none",
@@ -2436,7 +2439,7 @@ function EditBox(props: CalendarStateProps) {
         >
           <TextField
             id="standard-password-input"
-            label="Search"
+            label={d("Search Class Name").t("schedule_search_class_name")}
             autoComplete="current-password"
             size="small"
             value={searchValue}
