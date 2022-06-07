@@ -33,6 +33,7 @@ import {
   getClassesByStudent,
   getClassesByTeacher,
   getClassFilterList,
+  getClassList,
   getLessonPlansBySchedule,
   getLinkedMockOptions,
   getParticipantsData,
@@ -359,6 +360,21 @@ function ScheduleContent() {
     );
   };
 
+  const getClassListConnection = async (cursor?: string, value?: string) => {
+    let resultInfo: any;
+    resultInfo = await dispatch(
+      getClassList({
+        filter: {
+          name: { operator: StringOperator.Contains, value: value ?? "" },
+          status: { operator: StringOperator.Eq, value: "active" },
+        },
+        direction: ConnectionDirection.Forward,
+        directionArgs: { count: 10, cursor: cursor ?? "" },
+      })
+    );
+    return resultInfo.payload ? resultInfo.payload.data.classesConnection.edges : [];
+  };
+
   const getUserOfUndefined = async (
     cursor: string,
     loading: boolean,
@@ -584,6 +600,7 @@ function ScheduleContent() {
               filterOtherClasses={filterOtherClasses}
               getSchoolsConnection={getSchoolsConnection}
               getClassesConnection={getClassesConnection}
+              getClassListConnection={getClassListConnection}
               classesConnection={classesConnection}
               userInUndefined={userInUndefined}
               lessonPlans={lessonPlans}
