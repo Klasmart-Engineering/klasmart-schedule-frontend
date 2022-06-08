@@ -994,11 +994,12 @@ export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetC
 export const getClassList = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
   "getClassList",
   // @ts-ignore
-  ({ filter, direction, directionArgs }) => {
+  async ({ filter, direction, directionArgs }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
       query: GetClassFilterListDocument,
       variables: {
-        filter: filter,
+        filter: { organizationId: { operator: UuidOperator.Eq, value: organization_id }, ...filter },
         direction: direction,
         directionArgs: directionArgs,
       },
