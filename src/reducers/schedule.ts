@@ -496,7 +496,7 @@ export const getUserInUndefined = createAsyncThunk<GetUserQuery, GetUserQueryVar
 export const classesWithoutSchool = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
   "classesWithoutSchool",
   // @ts-ignore
-  async ({ filter, direction, directionArgs }) => {
+  async ({ filter, direction, directionArgs, sort }) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
       query: GetClassFilterListDocument,
@@ -509,6 +509,7 @@ export const classesWithoutSchool = createAsyncThunk<GetClassFilterListQuery, Ge
         },
         direction: direction,
         directionArgs: directionArgs,
+        sort: sort,
       },
     });
   }
@@ -998,7 +999,7 @@ export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, 
 export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
   "getClassFilterList",
   // @ts-ignore
-  async ({ filter, direction, directionArgs }) => {
+  async ({ filter, direction, directionArgs, sort }) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
       query: GetClassFilterListDocument,
@@ -1006,6 +1007,7 @@ export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetC
         filter: { organizationId: { operator: UuidOperator.Eq, value: organization_id }, ...filter },
         direction: direction,
         directionArgs: directionArgs,
+        sort: sort,
       },
     });
   }
@@ -1014,7 +1016,7 @@ export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetC
 export const getClassList = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
   "getClassList",
   // @ts-ignore
-  async ({ filter, direction, directionArgs }) => {
+  async ({ filter, direction, directionArgs, sort }) => {
     const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
       query: GetClassFilterListDocument,
@@ -1022,6 +1024,7 @@ export const getClassList = createAsyncThunk<GetClassFilterListQuery, GetClassFi
         filter: { organizationId: { operator: UuidOperator.Eq, value: organization_id }, ...filter },
         direction: direction,
         directionArgs: directionArgs,
+        sort: sort,
       },
     });
   }

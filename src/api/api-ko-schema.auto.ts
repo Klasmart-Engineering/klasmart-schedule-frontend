@@ -26,8 +26,42 @@ export type AcademicTermConnectionNode = {
   endDate: Scalars["Date"];
   id: Scalars["ID"];
   name: Scalars["String"];
+  school: SchoolConnectionNode;
   startDate: Scalars["Date"];
   status: Status;
+};
+
+export type AcademicTermFilter = {
+  AND?: Maybe<Array<Maybe<AcademicTermFilter>>>;
+  OR?: Maybe<Array<Maybe<AcademicTermFilter>>>;
+  id?: Maybe<UuidFilter>;
+  name?: Maybe<StringFilter>;
+  status?: Maybe<StringFilter>;
+};
+
+export enum AcademicTermSortBy {
+  EndDate = "endDate",
+  Id = "id",
+  Name = "name",
+  StartDate = "startDate",
+}
+
+export type AcademicTermSortInput = {
+  field: Array<AcademicTermSortBy>;
+  order: SortOrder;
+};
+
+export type AcademicTermsConnectionEdge = IConnectionEdge & {
+  __typename?: "AcademicTermsConnectionEdge";
+  cursor?: Maybe<Scalars["String"]>;
+  node?: Maybe<AcademicTermConnectionNode>;
+};
+
+export type AcademicTermsConnectionResponse = IConnectionResponse & {
+  __typename?: "AcademicTermsConnectionResponse";
+  edges?: Maybe<Array<Maybe<AcademicTermsConnectionEdge>>>;
+  pageInfo?: Maybe<ConnectionPageInfo>;
+  totalCount?: Maybe<Scalars["Int"]>;
 };
 
 export type AcademicTermsMutationResult = {
@@ -35,9 +69,19 @@ export type AcademicTermsMutationResult = {
   academicTerms: Array<AcademicTermConnectionNode>;
 };
 
+export type AddAgeRangesToClassInput = {
+  ageRangeIds: Array<Scalars["ID"]>;
+  classId: Scalars["ID"];
+};
+
 export type AddClassesToSchoolInput = {
   classIds: Array<Scalars["ID"]>;
   schoolId: Scalars["ID"];
+};
+
+export type AddGradesToClassInput = {
+  classId: Scalars["ID"];
+  gradeIds: Array<Scalars["ID"]>;
 };
 
 export type AddOrganizationRolesToUserInput = {
@@ -72,6 +116,11 @@ export type AddSubcategoriesToCategoryInput = {
   subcategoryIds: Array<Scalars["ID"]>;
 };
 
+export type AddSubjectsToClassInput = {
+  classId: Scalars["ID"];
+  subjectIds: Array<Scalars["ID"]>;
+};
+
 export type AddTeachersToClassInput = {
   classId: Scalars["ID"];
   teacherIds: Array<Scalars["ID"]>;
@@ -92,6 +141,7 @@ export type AddUsersToSchoolInput = {
 
 export type AgeRange = {
   __typename?: "AgeRange";
+  /** @deprecated Sunset Date: 30/08/2022 Details: https://calmisland.atlassian.net/l/c/W8zhP5g1 */
   delete?: Maybe<Scalars["Boolean"]>;
   high_value: Scalars["Int"];
   high_value_unit: AgeRangeUnit;
@@ -143,6 +193,8 @@ export type AgeRangeFilter = {
 };
 
 export enum AgeRangeSortBy {
+  HighValue = "highValue",
+  HighValueUnit = "highValueUnit",
   Id = "id",
   LowValue = "lowValue",
   LowValueUnit = "lowValueUnit",
@@ -189,6 +241,11 @@ export type AgeRangesConnectionResponse = IConnectionResponse & {
   edges?: Maybe<Array<Maybe<AgeRangesConnectionEdge>>>;
   pageInfo?: Maybe<ConnectionPageInfo>;
   totalCount?: Maybe<Scalars["Int"]>;
+};
+
+export type AgeRangesMutationResult = {
+  __typename?: "AgeRangesMutationResult";
+  ageRanges: Array<AgeRangeConnectionNode>;
 };
 
 export type BooleanFilter = {
@@ -402,6 +459,7 @@ export type ClassSetArgs = {
 
 export type ClassConnectionNode = {
   __typename?: "ClassConnectionNode";
+  academicTerm?: Maybe<AcademicTermConnectionNode>;
   /** @deprecated Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2473459840 */
   ageRanges?: Maybe<Array<AgeRangeConnectionNode>>;
   ageRangesConnection?: Maybe<AgeRangesConnectionResponse>;
@@ -660,11 +718,23 @@ export type DateFilter = {
   value: Scalars["String"];
 };
 
+export type DeleteAcademicTermInput = {
+  id: Scalars["ID"];
+};
+
+export type DeleteAgeRangeInput = {
+  id: Scalars["ID"];
+};
+
 export type DeleteCategoryInput = {
   id: Scalars["ID"];
 };
 
 export type DeleteClassInput = {
+  id: Scalars["ID"];
+};
+
+export type DeleteGradeInput = {
   id: Scalars["ID"];
 };
 
@@ -717,6 +787,7 @@ export type File = {
 
 export type Grade = {
   __typename?: "Grade";
+  /** @deprecated Sunset Date: 08/30/2022 Details: https://calmisland.atlassian.net/l/c/XopY1izU */
   delete?: Maybe<Scalars["Boolean"]>;
   id: Scalars["ID"];
   name: Scalars["String"];
@@ -792,6 +863,11 @@ export type GradesConnectionResponse = IConnectionResponse & {
   totalCount?: Maybe<Scalars["Int"]>;
 };
 
+export type GradesMutationResult = {
+  __typename?: "GradesMutationResult";
+  grades: Array<GradeConnectionNode>;
+};
+
 export enum LogicalOperator {
   And = "AND",
   Or = "OR",
@@ -818,16 +894,20 @@ export type MoveUsersToClassMutationResult = {
 
 export type Mutation = {
   __typename?: "Mutation";
+  addAgeRangesToClasses?: Maybe<ClassesMutationResult>;
   addClassesToSchools?: Maybe<SchoolsMutationResult>;
+  addGradesToClasses?: Maybe<ClassesMutationResult>;
   addOrganizationRolesToUsers?: Maybe<UsersMutationResult>;
   addProgramsToClasses?: Maybe<ClassesMutationResult>;
   addProgramsToSchools?: Maybe<SchoolsMutationResult>;
   addSchoolRolesToUsers?: Maybe<UsersMutationResult>;
   addStudentsToClasses?: Maybe<ClassesMutationResult>;
   addSubcategoriesToCategories?: Maybe<CategoriesMutationResult>;
+  addSubjectsToClasses?: Maybe<ClassesMutationResult>;
   addTeachersToClasses?: Maybe<ClassesMutationResult>;
   addUsersToOrganizations?: Maybe<OrganizationsMutationResult>;
   addUsersToSchools?: Maybe<SchoolsMutationResult>;
+  /** @deprecated Sunset Date: 30/08/2022 Details: https://calmisland.atlassian.net/l/c/W8zhP5g1 */
   age_range?: Maybe<AgeRange>;
   /** @deprecated Sunset Date: 24/02/2022 Details: [https://calmisland.atlassian.net/l/c/RKcPTt1p, https://calmisland.atlassian.net/l/c/mTni58mA] */
   category?: Maybe<Category>;
@@ -847,10 +927,13 @@ export type Mutation = {
   createSubcategories?: Maybe<SubcategoriesMutationResult>;
   createSubjects?: Maybe<SubjectsMutationResult>;
   createUsers?: Maybe<UsersMutationResult>;
+  deleteAcademicTerms?: Maybe<AcademicTermsMutationResult>;
+  deleteAgeRanges?: Maybe<AgeRangesMutationResult>;
   deleteBrandingColor?: Maybe<Scalars["Boolean"]>;
   deleteBrandingImage?: Maybe<Scalars["Boolean"]>;
   deleteCategories?: Maybe<CategoriesMutationResult>;
   deleteClasses?: Maybe<ClassesMutationResult>;
+  deleteGrades?: Maybe<GradesMutationResult>;
   deletePrograms?: Maybe<ProgramsMutationResult>;
   deleteRoles?: Maybe<RolesMutationResult>;
   deleteSchools?: Maybe<SchoolsMutationResult>;
@@ -869,12 +952,14 @@ export type Mutation = {
    */
   deleteUsersFromSchools?: Maybe<SchoolsMutationResult>;
   grade?: Maybe<Grade>;
+  /** @deprecated Sunset Date: 01/09/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2704867356 */
   me?: Maybe<User>;
   moveStudentsToClass?: Maybe<MoveUsersToClassMutationResult>;
   moveTeachersToClass?: Maybe<MoveUsersToClassMutationResult>;
   /** @deprecated Use the inviteUser() method */
   newUser?: Maybe<User>;
   organization?: Maybe<Organization>;
+  /** @deprecated Sunset Date: 08/08/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2669379612. */
   program?: Maybe<Program>;
   /**
    * Reactivates users for an organization who were inactivated via removeUsersFromOrganizations
@@ -886,6 +971,7 @@ export type Mutation = {
    * They will have the same roles they had at the time of removal.
    */
   reactivateUsersFromSchools?: Maybe<SchoolsMutationResult>;
+  removeAgeRangesFromClasses?: Maybe<ClassesMutationResult>;
   removeClassesFromSchools?: Maybe<SchoolsMutationResult>;
   removeOrganizationRolesFromUsers?: Maybe<UsersMutationResult>;
   removeProgramsFromClasses?: Maybe<ClassesMutationResult>;
@@ -893,6 +979,7 @@ export type Mutation = {
   removeSchoolRolesFromUsers?: Maybe<UsersMutationResult>;
   removeStudentsFromClasses?: Maybe<ClassesMutationResult>;
   removeSubcategoriesFromCategories?: Maybe<CategoriesMutationResult>;
+  removeSubjectsFromClasses?: Maybe<ClassesMutationResult>;
   removeTeachersFromClasses?: Maybe<ClassesMutationResult>;
   /**
    * Inactivates users in an organization. Their membership data
@@ -909,13 +996,16 @@ export type Mutation = {
   renameDuplicateSubjects?: Maybe<Scalars["Boolean"]>;
   replaceRole?: Maybe<Role>;
   role?: Maybe<Role>;
+  /** @deprecated Sunset Date: 09/08/2022 Details: https://calmisland.atlassian.net/l/c/Z7e0ZCzm */
   roles?: Maybe<Array<Maybe<Role>>>;
+  /** @deprecated Sunset Date: 26/08/2022 Details: https://calmisland.atlassian.net/l/c/f00eVp51 */
   school?: Maybe<School>;
   /** Note: A null or undefined academicTermId will remove the AcademicTerm from the class */
   setAcademicTermsOfClasses?: Maybe<ClassesMutationResult>;
   setBranding?: Maybe<Branding>;
   /** @deprecated Sunset Date: 22/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2457174175 */
   subcategory?: Maybe<Subcategory>;
+  /** @deprecated Sunset Date: 25/08/2022 Details: https://calmisland.atlassian.net/l/c/85BxNDPR */
   subject?: Maybe<Subject>;
   /** @deprecated Moved to auth service */
   switch_user?: Maybe<User>;
@@ -938,11 +1028,20 @@ export type Mutation = {
   uploadSubCategoriesFromCSV?: Maybe<File>;
   uploadSubjectsFromCSV?: Maybe<File>;
   uploadUsersFromCSV?: Maybe<File>;
+  /** @deprecated Sunset Date: 01/09/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2704900487 */
   user?: Maybe<User>;
+};
+
+export type MutationAddAgeRangesToClassesArgs = {
+  input: Array<AddAgeRangesToClassInput>;
 };
 
 export type MutationAddClassesToSchoolsArgs = {
   input: Array<AddClassesToSchoolInput>;
+};
+
+export type MutationAddGradesToClassesArgs = {
+  input: Array<AddGradesToClassInput>;
 };
 
 export type MutationAddOrganizationRolesToUsersArgs = {
@@ -967,6 +1066,10 @@ export type MutationAddStudentsToClassesArgs = {
 
 export type MutationAddSubcategoriesToCategoriesArgs = {
   input: Array<AddSubcategoriesToCategoryInput>;
+};
+
+export type MutationAddSubjectsToClassesArgs = {
+  input: Array<AddSubjectsToClassInput>;
 };
 
 export type MutationAddTeachersToClassesArgs = {
@@ -1033,6 +1136,14 @@ export type MutationCreateUsersArgs = {
   input: Array<CreateUserInput>;
 };
 
+export type MutationDeleteAcademicTermsArgs = {
+  input: Array<DeleteAcademicTermInput>;
+};
+
+export type MutationDeleteAgeRangesArgs = {
+  input: Array<DeleteAgeRangeInput>;
+};
+
 export type MutationDeleteBrandingColorArgs = {
   organizationId: Scalars["ID"];
 };
@@ -1048,6 +1159,10 @@ export type MutationDeleteCategoriesArgs = {
 
 export type MutationDeleteClassesArgs = {
   input: Array<DeleteClassInput>;
+};
+
+export type MutationDeleteGradesArgs = {
+  input: Array<DeleteGradeInput>;
 };
 
 export type MutationDeleteProgramsArgs = {
@@ -1122,6 +1237,10 @@ export type MutationReactivateUsersFromSchoolsArgs = {
   input: Array<ReactivateUsersFromSchoolInput>;
 };
 
+export type MutationRemoveAgeRangesFromClassesArgs = {
+  input: Array<RemoveAgeRangesFromClassInput>;
+};
+
 export type MutationRemoveClassesFromSchoolsArgs = {
   input: Array<RemoveClassesFromSchoolInput>;
 };
@@ -1148,6 +1267,10 @@ export type MutationRemoveStudentsFromClassesArgs = {
 
 export type MutationRemoveSubcategoriesFromCategoriesArgs = {
   input: Array<RemoveSubcategoriesFromCategoryInput>;
+};
+
+export type MutationRemoveSubjectsFromClassesArgs = {
+  input: Array<RemoveSubjectsFromClassInput>;
 };
 
 export type MutationRemoveTeachersFromClassesArgs = {
@@ -1862,8 +1985,11 @@ export type Program = {
   age_ranges?: Maybe<Array<AgeRange>>;
   /** @deprecated Sunset Date: 28/04/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q */
   delete?: Maybe<Scalars["Boolean"]>;
+  /** @deprecated Sunset Date: 08/08/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2669346881 */
   editAgeRanges?: Maybe<Array<Maybe<AgeRange>>>;
+  /** @deprecated Sunset Date: 08/08/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2669379603 */
   editGrades?: Maybe<Array<Maybe<Grade>>>;
+  /** @deprecated Sunset Date: 08/08/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2669346890 */
   editSubjects?: Maybe<Array<Maybe<Subject>>>;
   grades?: Maybe<Array<Grade>>;
   id: Scalars["ID"];
@@ -2029,6 +2155,7 @@ export type Query = {
   /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
   role?: Maybe<Role>;
   roleNode?: Maybe<RoleConnectionNode>;
+  /** @deprecated Sunset Date: 09/08/2022 Details: https://calmisland.atlassian.net/l/c/Z7e0ZCzm */
   roles?: Maybe<Array<Maybe<Role>>>;
   rolesConnection?: Maybe<RolesConnectionResponse>;
   /** @deprecated Sunset Date: 08/02/2022 Details: https://calmisland.atlassian.net/wiki/spaces/ATZ/pages/2427683554 */
@@ -2261,6 +2388,11 @@ export type ReactivateUsersFromSchoolInput = {
   userIds: Array<Scalars["ID"]>;
 };
 
+export type RemoveAgeRangesFromClassInput = {
+  ageRangeIds: Array<Scalars["ID"]>;
+  classId: Scalars["ID"];
+};
+
 export type RemoveClassesFromSchoolInput = {
   classIds: Array<Scalars["ID"]>;
   schoolId: Scalars["ID"];
@@ -2298,6 +2430,11 @@ export type RemoveSubcategoriesFromCategoryInput = {
   subcategoryIds: Array<Scalars["ID"]>;
 };
 
+export type RemoveSubjectsFromClassInput = {
+  classId: Scalars["ID"];
+  subjectIds: Array<Scalars["ID"]>;
+};
+
 export type RemoveTeachersFromClassInput = {
   classId: Scalars["ID"];
   teacherIds: Array<Scalars["ID"]>;
@@ -2317,14 +2454,18 @@ export type Role = {
   __typename?: "Role";
   /** @deprecated Sunset Date: 27/03/2022 Details: https://calmisland.atlassian.net/l/c/8d8mpL0Q */
   delete_role?: Maybe<Scalars["Boolean"]>;
+  /** @deprecated Sunset Date: 09/08/2022 Details: https://calmisland.atlassian.net/l/c/Z7e0ZCzm */
   deny?: Maybe<Permission>;
+  /** @deprecated Sunset Date: 26/05/2022 Details: https://calmisland.atlassian.net/l/c/ctBTX0xC */
   edit_permissions?: Maybe<Array<Maybe<Permission>>>;
+  /** @deprecated Sunset Date: 09/08/2022 Details: https://calmisland.atlassian.net/l/c/Z7e0ZCzm */
   grant?: Maybe<Permission>;
   memberships?: Maybe<Array<Maybe<OrganizationMembership>>>;
   organization?: Maybe<Organization>;
   permission?: Maybe<Permission>;
   /** @deprecated Sunset Date: 26/02/2022 Details: https://calmisland.atlassian.net/l/c/1nEk2YHE */
   permissions?: Maybe<Array<Maybe<Permission>>>;
+  /** @deprecated Sunset Date: 09/08/2022 Details: https://calmisland.atlassian.net/l/c/Z7e0ZCzm */
   revoke?: Maybe<Scalars["Boolean"]>;
   role_description: Scalars["String"];
   role_id: Scalars["ID"];
@@ -2441,6 +2582,7 @@ export type ScheduleEntry = {
 
 export type School = {
   __typename?: "School";
+  /** @deprecated Sunset Date: 26/08/2022 Details: https://calmisland.atlassian.net/l/c/f00eVp51 */
   addUser?: Maybe<SchoolMembership>;
   classes?: Maybe<Array<Maybe<Class>>>;
   /** @deprecated Sunset Date: 06/03/2022 Details: https://calmisland.atlassian.net/l/c/av1p2bKY */
@@ -2453,6 +2595,7 @@ export type School = {
   programs?: Maybe<Array<Program>>;
   school_id: Scalars["ID"];
   school_name?: Maybe<Scalars["String"]>;
+  /** @deprecated Sunset Date: 26/08/2022 Details: https://calmisland.atlassian.net/l/c/f00eVp51 */
   set?: Maybe<School>;
   shortcode?: Maybe<Scalars["String"]>;
   status?: Maybe<Status>;
@@ -2481,6 +2624,7 @@ export type SchoolSetArgs = {
 
 export type SchoolConnectionNode = {
   __typename?: "SchoolConnectionNode";
+  academicTermsConnection?: Maybe<AcademicTermsConnectionResponse>;
   classesConnection?: Maybe<ClassesConnectionResponse>;
   id: Scalars["ID"];
   name: Scalars["String"];
@@ -2489,6 +2633,14 @@ export type SchoolConnectionNode = {
   schoolMembershipsConnection?: Maybe<SchoolMembershipsConnectionResponse>;
   shortCode?: Maybe<Scalars["String"]>;
   status: Status;
+};
+
+export type SchoolConnectionNodeAcademicTermsConnectionArgs = {
+  count?: Maybe<Scalars["PageSize"]>;
+  cursor?: Maybe<Scalars["String"]>;
+  direction?: Maybe<ConnectionDirection>;
+  filter?: Maybe<AcademicTermFilter>;
+  sort?: Maybe<AcademicTermSortInput>;
 };
 
 export type SchoolConnectionNodeClassesConnectionArgs = {
@@ -2529,7 +2681,9 @@ export type SchoolFilter = {
 
 export type SchoolMembership = {
   __typename?: "SchoolMembership";
+  /** @deprecated Sunset Date: 26/08/2022 Details: https://calmisland.atlassian.net/l/c/f00eVp51 */
   addRole?: Maybe<Role>;
+  /** @deprecated Sunset Date: 26/08/2022 Details: https://calmisland.atlassian.net/l/c/f00eVp51 */
   addRoles?: Maybe<Array<Maybe<Role>>>;
   checkAllowed?: Maybe<Scalars["Boolean"]>;
   join_timestamp?: Maybe<Scalars["Date"]>;
@@ -2587,6 +2741,7 @@ export type SchoolMembershipConnectionNodeRolesConnectionArgs = {
 export type SchoolMembershipFilter = {
   AND?: Maybe<Array<Maybe<SchoolMembershipFilter>>>;
   OR?: Maybe<Array<Maybe<SchoolMembershipFilter>>>;
+  organizationId?: Maybe<UuidFilter>;
   roleId?: Maybe<UuidFilter>;
   schoolId?: Maybe<UuidFilter>;
   status?: Maybe<StringFilter>;
@@ -2918,6 +3073,7 @@ export type User = {
   __typename?: "User";
   /** @deprecated Sunset Date: 01/02/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2462417870/ */
   addOrganization?: Maybe<OrganizationMembership>;
+  /** @deprecated Sunset Date: 01/09/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2704900507/ */
   addSchool?: Maybe<SchoolMembership>;
   alternate_email?: Maybe<Scalars["String"]>;
   alternate_phone?: Maybe<Scalars["String"]>;
@@ -2934,6 +3090,7 @@ export type User = {
   given_name?: Maybe<Scalars["String"]>;
   membership?: Maybe<OrganizationMembership>;
   memberships?: Maybe<Array<Maybe<OrganizationMembership>>>;
+  /** @deprecated Sunset Date: 01/08/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2665513259/ */
   merge?: Maybe<User>;
   /**
    * 'my_organization' is the Organization that this user has created
@@ -2947,7 +3104,9 @@ export type User = {
   school_membership?: Maybe<SchoolMembership>;
   school_memberships?: Maybe<Array<Maybe<SchoolMembership>>>;
   schoolsWithPermission?: Maybe<Array<Maybe<SchoolMembership>>>;
+  /** @deprecated Sunset Date: 01/09/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2704867347/ */
   set?: Maybe<User>;
+  /** @deprecated Sunset Date: 01/09/22 Details: https://calmisland.atlassian.net/wiki/spaces/UserService/pages/2704900497/ */
   setPrimary?: Maybe<Scalars["Boolean"]>;
   subjectsTeaching?: Maybe<Array<Maybe<Subject>>>;
   user_id: Scalars["ID"];
@@ -3082,6 +3241,7 @@ export type UserFilter = {
   phone?: Maybe<StringFilter>;
   roleId?: Maybe<UuidFilter>;
   schoolId?: Maybe<UuidExclusiveFilter>;
+  schoolMembershipStatus?: Maybe<StringFilter>;
   userId?: Maybe<UuidFilter>;
   userStatus?: Maybe<StringFilter>;
   username?: Maybe<StringFilter>;

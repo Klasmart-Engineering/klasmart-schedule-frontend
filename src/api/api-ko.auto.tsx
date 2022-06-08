@@ -1,7 +1,7 @@
-import * as Apollo from "@apollo/client";
-import { gql } from "@apollo/client";
 import * as Types from "./api-ko-schema.auto";
 
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 const defaultOptions = {};
 export type ClassesByOrganizationQueryVariables = Types.Exact<{
   organization_id: Types.Scalars["ID"];
@@ -442,6 +442,7 @@ export type GetClassFilterListQueryVariables = Types.Exact<{
   filter?: Types.Maybe<Types.ClassFilter>;
   direction: Types.ConnectionDirection;
   directionArgs?: Types.Maybe<Types.ConnectionsDirectionArgs>;
+  sort: Types.ClassSortInput;
 }>;
 
 export type GetClassFilterListQuery = { __typename?: "Query" } & {
@@ -718,92 +719,6 @@ export type ClassNodeQuery = { __typename?: "Query" } & {
       }
   >;
 };
-export type ClassesStudentsConnectionQueryVariables = Types.Exact<{
-  cursor?: Types.Maybe<Types.Scalars["String"]>;
-  filter?: Types.Maybe<Types.ClassFilter>;
-}>;
-
-export type ClassesStudentsConnectionQuery = { __typename?: "Query" } & {
-  classesConnection?: Types.Maybe<
-    { __typename?: "ClassesConnectionResponse" } & Pick<Types.ClassesConnectionResponse, "totalCount"> & {
-        edges?: Types.Maybe<
-          Array<
-            Types.Maybe<
-              { __typename?: "ClassesConnectionEdge" } & {
-                node?: Types.Maybe<
-                  { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name"> & {
-                      studentsConnection?: Types.Maybe<
-                        { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
-                            edges?: Types.Maybe<
-                              Array<
-                                Types.Maybe<
-                                  { __typename?: "UsersConnectionEdge" } & Pick<Types.UsersConnectionEdge, "cursor"> & {
-                                      node?: Types.Maybe<
-                                        { __typename?: "UserConnectionNode" } & Pick<
-                                          Types.UserConnectionNode,
-                                          "id" | "givenName" | "familyName" | "status"
-                                        >
-                                      >;
-                                    }
-                                >
-                              >
-                            >;
-                            pageInfo?: Types.Maybe<
-                              { __typename?: "ConnectionPageInfo" } & Pick<
-                                Types.ConnectionPageInfo,
-                                "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
-                              >
-                            >;
-                          }
-                      >;
-                    }
-                >;
-              }
-            >
-          >
-        >;
-        pageInfo?: Types.Maybe<
-          { __typename?: "ConnectionPageInfo" } & Pick<
-            Types.ConnectionPageInfo,
-            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
-          >
-        >;
-      }
-  >;
-};
-
-export type ClassNodeStudentsQueryVariables = Types.Exact<{
-  classId: Types.Scalars["ID"];
-  studentsCursor?: Types.Maybe<Types.Scalars["String"]>;
-}>;
-
-export type ClassNodeStudentsQuery = { __typename?: "Query" } & {
-  classNode?: Types.Maybe<
-    { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "name"> & {
-        studentsConnection?: Types.Maybe<
-          { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
-              edges?: Types.Maybe<
-                Array<
-                  Types.Maybe<
-                    { __typename?: "UsersConnectionEdge" } & {
-                      node?: Types.Maybe<
-                        { __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "familyName" | "givenName" | "status">
-                      >;
-                    }
-                  >
-                >
-              >;
-              pageInfo?: Types.Maybe<
-                { __typename?: "ConnectionPageInfo" } & Pick<
-                  Types.ConnectionPageInfo,
-                  "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
-                >
-              >;
-            }
-        >;
-      }
-  >;
-};
 
 export type ClassesBySchoolIdQueryVariables = Types.Exact<{
   cursor?: Types.Maybe<Types.Scalars["String"]>;
@@ -893,6 +808,93 @@ export type SchoolsClassesQuery = { __typename?: "Query" } & {
           >
         >;
         pageInfo?: Types.Maybe<{ __typename?: "ConnectionPageInfo" } & Pick<Types.ConnectionPageInfo, "hasNextPage" | "endCursor">>;
+      }
+  >;
+};
+
+export type ClassesStudentsConnectionQueryVariables = Types.Exact<{
+  cursor?: Types.Maybe<Types.Scalars["String"]>;
+  filter?: Types.Maybe<Types.ClassFilter>;
+}>;
+
+export type ClassesStudentsConnectionQuery = { __typename?: "Query" } & {
+  classesConnection?: Types.Maybe<
+    { __typename?: "ClassesConnectionResponse" } & Pick<Types.ClassesConnectionResponse, "totalCount"> & {
+        edges?: Types.Maybe<
+          Array<
+            Types.Maybe<
+              { __typename?: "ClassesConnectionEdge" } & {
+                node?: Types.Maybe<
+                  { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "id" | "name"> & {
+                      studentsConnection?: Types.Maybe<
+                        { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
+                            edges?: Types.Maybe<
+                              Array<
+                                Types.Maybe<
+                                  { __typename?: "UsersConnectionEdge" } & Pick<Types.UsersConnectionEdge, "cursor"> & {
+                                      node?: Types.Maybe<
+                                        { __typename?: "UserConnectionNode" } & Pick<
+                                          Types.UserConnectionNode,
+                                          "id" | "givenName" | "familyName" | "status"
+                                        >
+                                      >;
+                                    }
+                                >
+                              >
+                            >;
+                            pageInfo?: Types.Maybe<
+                              { __typename?: "ConnectionPageInfo" } & Pick<
+                                Types.ConnectionPageInfo,
+                                "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+                              >
+                            >;
+                          }
+                      >;
+                    }
+                >;
+              }
+            >
+          >
+        >;
+        pageInfo?: Types.Maybe<
+          { __typename?: "ConnectionPageInfo" } & Pick<
+            Types.ConnectionPageInfo,
+            "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+          >
+        >;
+      }
+  >;
+};
+
+export type ClassNodeStudentsQueryVariables = Types.Exact<{
+  classId: Types.Scalars["ID"];
+  studentsCursor?: Types.Maybe<Types.Scalars["String"]>;
+}>;
+
+export type ClassNodeStudentsQuery = { __typename?: "Query" } & {
+  classNode?: Types.Maybe<
+    { __typename?: "ClassConnectionNode" } & Pick<Types.ClassConnectionNode, "name"> & {
+        studentsConnection?: Types.Maybe<
+          { __typename?: "UsersConnectionResponse" } & Pick<Types.UsersConnectionResponse, "totalCount"> & {
+              edges?: Types.Maybe<
+                Array<
+                  Types.Maybe<
+                    { __typename?: "UsersConnectionEdge" } & {
+                      node?: Types.Maybe<
+                        { __typename?: "UserConnectionNode" } & Pick<Types.UserConnectionNode, "id" | "familyName" | "givenName" | "status">
+                      >;
+                    }
+                  >
+                >
+              >;
+              pageInfo?: Types.Maybe<
+                { __typename?: "ConnectionPageInfo" } & Pick<
+                  Types.ConnectionPageInfo,
+                  "hasNextPage" | "hasPreviousPage" | "startCursor" | "endCursor"
+                >
+              >;
+            }
+        >;
       }
   >;
 };
@@ -1159,7 +1161,7 @@ export type GetClassesTeachingLazyQueryHookResult = ReturnType<typeof useGetClas
 export type GetClassesTeachingQueryResult = Apollo.QueryResult<GetClassesTeachingQuery, GetClassesTeachingQueryVariables>;
 export const GetStudentNameByIdDocument = gql`
   query getStudentNameById($filter: UserFilter, $directionArgs: ConnectionsDirectionArgs) {
-    usersConnection(filter: $filter, directionArgs: $directionArgs, direction: FORWARD) {
+    usersConnection(filter: $filter, direction: FORWARD, directionArgs: $directionArgs) {
       edges {
         node {
           id
@@ -1188,6 +1190,7 @@ export const GetStudentNameByIdDocument = gql`
  * const { data, loading, error } = useGetStudentNameByIdQuery({
  *   variables: {
  *      filter: // value for 'filter'
+ *      directionArgs: // value for 'directionArgs'
  *   },
  * });
  */
@@ -1794,8 +1797,13 @@ export type GetSchoolsFilterListQueryHookResult = ReturnType<typeof useGetSchool
 export type GetSchoolsFilterListLazyQueryHookResult = ReturnType<typeof useGetSchoolsFilterListLazyQuery>;
 export type GetSchoolsFilterListQueryResult = Apollo.QueryResult<GetSchoolsFilterListQuery, GetSchoolsFilterListQueryVariables>;
 export const GetClassFilterListDocument = gql`
-  query getClassFilterList($filter: ClassFilter, $direction: ConnectionDirection!, $directionArgs: ConnectionsDirectionArgs) {
-    classesConnection(filter: $filter, direction: $direction, directionArgs: $directionArgs) {
+  query getClassFilterList(
+    $filter: ClassFilter
+    $direction: ConnectionDirection!
+    $directionArgs: ConnectionsDirectionArgs
+    $sort: ClassSortInput!
+  ) {
+    classesConnection(filter: $filter, direction: $direction, directionArgs: $directionArgs, sort: $sort) {
       totalCount
       edges {
         cursor
@@ -1829,6 +1837,7 @@ export const GetClassFilterListDocument = gql`
  *      filter: // value for 'filter'
  *      direction: // value for 'direction'
  *      directionArgs: // value for 'directionArgs'
+ *      sort: // value for 'sort'
  *   },
  * });
  */
@@ -2172,67 +2181,6 @@ export type ClassesTeachersConnectionQueryResult = Apollo.QueryResult<
   ClassesTeachersConnectionQuery,
   ClassesTeachersConnectionQueryVariables
 >;
-export const ClassesStudentsConnectionDocument = gql`
-  query classesStudentsConnection($cursor: String, $filter: ClassFilter) {
-    classesConnection(filter: $filter, directionArgs: { cursor: $cursor }, direction: FORWARD, sort: { order: ASC, field: name }) {
-      totalCount
-      edges {
-        node {
-          id
-          name
-          studentsConnection(direction: FORWARD) {
-            totalCount
-            edges {
-              cursor
-              node {
-                id
-                givenName
-                familyName
-                status
-              }
-            }
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-              startCursor
-              endCursor
-            }
-          }
-        }
-      }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-    }
-  }
-`;
-export const ClassNodeStudentsDocument = gql`
-  query classNode($classId: ID!, $studentsCursor: String) {
-    classNode(id: $classId) {
-      name
-      studentsConnection(cursor: $studentsCursor) {
-        totalCount
-        edges {
-          node {
-            id
-            familyName
-            givenName
-            status
-          }
-        }
-        pageInfo {
-          hasNextPage
-          hasPreviousPage
-          startCursor
-          endCursor
-        }
-      }
-    }
-  }
-`;
 export const ClassNodeDocument = gql`
   query classNode($classId: ID!, $teacherCursor: String) {
     classNode(id: $classId) {
@@ -2443,3 +2391,137 @@ export function useSchoolsClassesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type SchoolsClassesQueryHookResult = ReturnType<typeof useSchoolsClassesQuery>;
 export type SchoolsClassesLazyQueryHookResult = ReturnType<typeof useSchoolsClassesLazyQuery>;
 export type SchoolsClassesQueryResult = Apollo.QueryResult<SchoolsClassesQuery, SchoolsClassesQueryVariables>;
+export const ClassesStudentsConnectionDocument = gql`
+  query classesStudentsConnection($cursor: String, $filter: ClassFilter) {
+    classesConnection(filter: $filter, directionArgs: { cursor: $cursor }, direction: FORWARD, sort: { order: ASC, field: name }) {
+      totalCount
+      edges {
+        node {
+          id
+          name
+          studentsConnection(direction: FORWARD) {
+            totalCount
+            edges {
+              cursor
+              node {
+                id
+                givenName
+                familyName
+                status
+              }
+            }
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+              startCursor
+              endCursor
+            }
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
+
+/**
+ * __useClassesStudentsConnectionQuery__
+ *
+ * To run a query within a React component, call `useClassesStudentsConnectionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClassesStudentsConnectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClassesStudentsConnectionQuery({
+ *   variables: {
+ *      cursor: // value for 'cursor'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useClassesStudentsConnectionQuery(
+  baseOptions?: Apollo.QueryHookOptions<ClassesStudentsConnectionQuery, ClassesStudentsConnectionQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ClassesStudentsConnectionQuery, ClassesStudentsConnectionQueryVariables>(
+    ClassesStudentsConnectionDocument,
+    options
+  );
+}
+export function useClassesStudentsConnectionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ClassesStudentsConnectionQuery, ClassesStudentsConnectionQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ClassesStudentsConnectionQuery, ClassesStudentsConnectionQueryVariables>(
+    ClassesStudentsConnectionDocument,
+    options
+  );
+}
+export type ClassesStudentsConnectionQueryHookResult = ReturnType<typeof useClassesStudentsConnectionQuery>;
+export type ClassesStudentsConnectionLazyQueryHookResult = ReturnType<typeof useClassesStudentsConnectionLazyQuery>;
+export type ClassesStudentsConnectionQueryResult = Apollo.QueryResult<
+  ClassesStudentsConnectionQuery,
+  ClassesStudentsConnectionQueryVariables
+>;
+export const ClassNodeStudentsDocument = gql`
+  query classNodeStudents($classId: ID!, $studentsCursor: String) {
+    classNode(id: $classId) {
+      name
+      studentsConnection(cursor: $studentsCursor) {
+        totalCount
+        edges {
+          node {
+            id
+            familyName
+            givenName
+            status
+          }
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useClassNodeStudentsQuery__
+ *
+ * To run a query within a React component, call `useClassNodeStudentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClassNodeStudentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClassNodeStudentsQuery({
+ *   variables: {
+ *      classId: // value for 'classId'
+ *      studentsCursor: // value for 'studentsCursor'
+ *   },
+ * });
+ */
+export function useClassNodeStudentsQuery(baseOptions: Apollo.QueryHookOptions<ClassNodeStudentsQuery, ClassNodeStudentsQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ClassNodeStudentsQuery, ClassNodeStudentsQueryVariables>(ClassNodeStudentsDocument, options);
+}
+export function useClassNodeStudentsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ClassNodeStudentsQuery, ClassNodeStudentsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ClassNodeStudentsQuery, ClassNodeStudentsQueryVariables>(ClassNodeStudentsDocument, options);
+}
+export type ClassNodeStudentsQueryHookResult = ReturnType<typeof useClassNodeStudentsQuery>;
+export type ClassNodeStudentsLazyQueryHookResult = ReturnType<typeof useClassNodeStudentsLazyQuery>;
+export type ClassNodeStudentsQueryResult = Apollo.QueryResult<ClassNodeStudentsQuery, ClassNodeStudentsQueryVariables>;

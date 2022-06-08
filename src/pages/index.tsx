@@ -11,7 +11,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
-import { ConnectionDirection, StringOperator, UuidExclusiveOperator } from "@api/api-ko-schema.auto";
+import { ClassSortBy, ConnectionDirection, SortOrder, StringOperator, UuidExclusiveOperator } from "@api/api-ko-schema.auto";
 import { EntityContentInfoWithDetails, EntityScheduleViewDetail } from "@api/api.auto";
 import PermissionType from "@api/PermissionType";
 import KidsCalendar from "@components/Calendar";
@@ -352,6 +352,7 @@ function ScheduleContent() {
         },
         direction: direction,
         directionArgs: { count: 5, cursor: cursor ?? "" },
+        sort: { field: ClassSortBy.Name, order: SortOrder.Asc },
         metaLoading: loading,
       })
     );
@@ -365,6 +366,7 @@ function ScheduleContent() {
           name: { operator: StringOperator.Contains, value: value ?? "", caseInsensitive: true },
           status: { operator: StringOperator.Eq, value: "active" },
         },
+        sort: { field: ClassSortBy.Name, order: SortOrder.Asc },
         direction: ConnectionDirection.Forward,
         directionArgs: { count: 10, cursor: cursor ?? "" },
       })
@@ -415,6 +417,7 @@ function ScheduleContent() {
         direction: ConnectionDirection.Forward,
         directionArgs: { count: 5, cursor: cursor ?? "" },
         metaLoading: loading,
+        sort: { field: ClassSortBy.Name, order: SortOrder.Asc },
       })
     );
     return resultInfo.payload ? resultInfo.payload.data.classesConnection.edges : [];
@@ -485,6 +488,7 @@ function ScheduleContent() {
       classesWithoutSchool({
         direction: ConnectionDirection.Forward,
         directionArgs: { count: 5 },
+        sort: { field: ClassSortBy.Name, order: SortOrder.Asc },
       })
     );
   }, [dispatch]);
