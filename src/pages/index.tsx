@@ -365,7 +365,7 @@ function ScheduleContent() {
     resultInfo = await dispatch(
       getClassList({
         filter: {
-          name: { operator: StringOperator.Contains, value: value ?? "" },
+          name: { operator: StringOperator.Contains, value: value ?? "", caseInsensitive: true },
           status: { operator: StringOperator.Eq, value: "active" },
         },
         direction: ConnectionDirection.Forward,
