@@ -28,10 +28,6 @@ import {
   changeParticipants,
   checkResourceExist,
   classesWithoutSchool,
-  getClassesByOrg,
-  getClassesBySchool,
-  getClassesByStudent,
-  getClassesByTeacher,
   getClassFilterList,
   getClassList,
   getLessonPlansBySchedule,
@@ -428,16 +424,6 @@ function ScheduleContent() {
       // get content
       if (privilegedMembers("Student") !== undefined && !privilegedMembers("Student")) {
         dispatch(actOutcomeListLoading({ page_size: -1, assumed: -1 }));
-      }
-      // get class by role
-      if (privilegedMembers("Admin")) {
-        dispatch(getClassesByOrg());
-      } else if (privilegedMembers("School")) {
-        dispatch(getClassesBySchool());
-      } else if (privilegedMembers("Teacher")) {
-        dispatch(getClassesByTeacher());
-      } else if (privilegedMembers("Student")) {
-        dispatch(getClassesByStudent());
       }
       // get materials
       dispatch(
