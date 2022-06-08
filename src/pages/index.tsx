@@ -231,7 +231,8 @@ function ScheduleContent() {
     (data: object) => {
       const Date = { ...modalDate, ...data };
       setModalDate(Date);
-      if (!Date.openStatus && history.location.pathname && history.location.search) history.push(history.location.pathname);
+      if (!Date.openStatus && history.location.pathname !== "/schedule/edit" && history.location.search)
+        history.push(history.location.pathname);
     },
     [modalDate, history]
   );

@@ -875,13 +875,32 @@ export const getScheduleParticipant = createAsyncThunk<getScheduleParticipantsMo
     let teachersConnection: any[] = [];
 
     const getClassRoster = async (studentCursor: string, teacherCursor: string) => {
+      const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
       const { data } = await gqlapi.query<GetClassByInfoQuery, GetClassByInfoQueryVariables>({
         query: GetClassByInfoDocument,
         variables: {
-          filter: { id: { operator: UuidOperator.Eq, value: class_id } },
+          filter: {
+            id: { operator: UuidOperator.Eq, value: class_id },
+            organizationId: {
+              operator: UuidOperator.Eq,
+              value: organization_id,
+            },
+          },
           direction: ConnectionDirection.Forward,
-          studentFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
-          teacherFilter: { organizationUserStatus: { operator: StringOperator.Eq, value: "active" } },
+          studentFilter: {
+            organizationUserStatus: { operator: StringOperator.Eq, value: "active" },
+            organizationId: {
+              operator: UuidOperator.Eq,
+              value: organization_id,
+            },
+          },
+          teacherFilter: {
+            organizationUserStatus: { operator: StringOperator.Eq, value: "active" },
+            organizationId: {
+              operator: UuidOperator.Eq,
+              value: organization_id,
+            },
+          },
           studentCursor: studentCursor,
           teacherCursor: teacherCursor,
         },
@@ -979,11 +998,12 @@ export const getSchoolsFilterList = createAsyncThunk<GetSchoolsFilterListQuery, 
 export const getClassFilterList = createAsyncThunk<GetClassFilterListQuery, GetClassFilterListQueryVariables & LoadingMetaPayload>(
   "getClassFilterList",
   // @ts-ignore
-  ({ filter, direction, directionArgs }) => {
+  async ({ filter, direction, directionArgs }) => {
+    const organization_id = ((await apiWaitForOrganizationOfPage()) as string) || "";
     return gqlapi.query<GetClassFilterListQuery, GetClassFilterListQueryVariables>({
       query: GetClassFilterListDocument,
       variables: {
-        filter: filter,
+        filter: { organizationId: { operator: UuidOperator.Eq, value: organization_id }, ...filter },
         direction: direction,
         directionArgs: directionArgs,
       },
