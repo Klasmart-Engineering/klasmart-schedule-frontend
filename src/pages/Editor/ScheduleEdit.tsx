@@ -2409,8 +2409,7 @@ function EditBox(props: CalendarStateProps) {
               setOpenScroll(false);
             } else {
               setOpenScroll(true);
-              setOpenSubScroll(true);
-              if (!getClassOption.list.length) getSearcherResult("");
+              if (!edges.length) getSearcherResult("");
             }
           }}
         >
