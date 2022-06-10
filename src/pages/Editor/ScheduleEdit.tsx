@@ -1362,10 +1362,6 @@ function EditBox(props: CalendarStateProps) {
       edges?.forEach((item: any, key: number) => {
         list.push({ id: item?.node?.id, name: item?.node?.name } as EntityScheduleShortInfo);
       });
-    } else {
-      classesListConnection.classesConnection?.edges?.forEach((item, key: number) => {
-        list.push({ id: item?.node?.id, name: item?.node?.name } as EntityScheduleShortInfo);
-      });
     }
     const hasNextPage = classesListConnection.classesConnection?.pageInfo?.hasNextPage;
     const endCursor = classesListConnection.classesConnection?.pageInfo?.endCursor;
@@ -1379,10 +1375,10 @@ function EditBox(props: CalendarStateProps) {
     const timers = setTimeout(async () => {
       setOpenSubScroll(false);
       setScrollLoading(true);
-      await getClassListConnection("", value);
+      const edgesResult = await getClassListConnection("", value);
+      setEdges([...edgesResult]);
       setScrollLoading(false);
       setOpenSubScroll(true);
-      setEdges([]);
     }, 500);
     setTimer(timers);
   };
@@ -2454,9 +2450,8 @@ function EditBox(props: CalendarStateProps) {
               height={getClassOption.list.length > 5 ? 200 : getClassOption.list.length * 36}
               dataLength={getClassOption.list.length ?? 0}
               next={async () => {
-                const initEdges = edges.length ? [] : (getClassOption.edgesResult as any);
                 const edgesResult = await getClassListConnection(getClassOption.endCursor as string, searchValue);
-                setEdges([...initEdges, ...edges, ...edgesResult]);
+                setEdges([...edges, ...edgesResult]);
               }}
               hasMore={!!getClassOption.hasNextPage}
               loader={<LinearProgress style={{ marginTop: "-5px" }} />}
