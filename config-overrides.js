@@ -22,6 +22,10 @@ function myOverrides(config) {
       },
       shared: {
         ...dependencies,
+        '@kl-engineering/frontend-state': {
+          singleton: true,
+          requiredVersion: pkg.dependencies[`@kl-engineering/frontend-state`],
+        },
         react: {
           eager: true,
           singleton: true,
