@@ -11,7 +11,9 @@
       "@services/*": ["./src/services/*"],
       "@components/*": ["./src/components/*"],
       "@locale/*": ["./src/locale/*"],
-      "@assets/*": ["./src/assets/*"]
+      "@assets/*": ["./src/assets/*"],
+      "@config/*": ["./src/config/*"],
+      "@types/*": ["./src/types/*"]
     }
   }
 }
