@@ -7,6 +7,7 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 const path = require('path');
 
 function myOverrides(config) {
+  const dependencies = process.env.NODE_ENV !== 'development' ? pkg.dependencies : [];
   config.output = {
     ...config.output,
     path: path.resolve(process.env.BUILD_PATH || 'build'),
@@ -20,14 +21,7 @@ function myOverrides(config) {
         "./Schedule": "./src/main.tsx",
       },
       shared: {
-        '@kl-engineering/frontend-state': {
-          singleton: true,
-          requiredVersion: pkg.dependencies['@kl-engineering/frontend-state'],
-        },
-        'fetch-intercept': {
-          singleton: true,
-          requiredVersion: pkg.dependencies['fetch-intercept'],
-        },
+        ...dependencies,
         react: {
           eager: true,
           singleton: true,
