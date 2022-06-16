@@ -7,7 +7,7 @@ import { store } from "@reducers/index";
 import { actError, actInfo } from "@reducers/notify";
 import { setOrganizationId } from "@reducers/common";
 import "./index.css";
-import { localeState, useGlobalStateValue } from "@kl-engineering/frontend-state";
+import { localeState, useGlobalStateValue, currentOrganizationState } from "@kl-engineering/frontend-state";
 
 apiEmitter.on<ApiErrorEventData>(ApiEvent.ResponseError, (e) => {
   if (!e) return;
@@ -32,11 +32,13 @@ apiEmitter.on<GraphQLErrorEventData>(ApiEvent.GraphQLError, (e) => {
   if (message) store.dispatch(actError(message));
 });
 
-export default function Main(props: { organization_id?: string }) {
+export default function Main() {
   const locale = useGlobalStateValue(localeState);
+  const currentOrganization = useGlobalStateValue(currentOrganizationState);
+  const organizationId = currentOrganization.id ?? ``;
   React.useEffect(() => {
     if (locale) localeManager.toggle(shouldBeLangName(locale.slice(0, 2) || "en"));
-    if (props.organization_id) store.dispatch(setOrganizationId(props.organization_id));
-  }, [props, locale]);
+    if (organizationId) store.dispatch(setOrganizationId(organizationId));
+  }, [organizationId, locale]);
   return <App />;
 }
