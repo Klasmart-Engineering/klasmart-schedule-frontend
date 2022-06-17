@@ -8,12 +8,12 @@ import { SchedulePayload } from "../../../../types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import VideoCallIcon from "@material-ui/icons/VideoCall";
-import { apiOrganizationOfPage } from "@api/extra";
 import { Box, darken, Divider, Fab, Grid, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import { FormattedDate, FormattedMessage, FormattedRelativeTime, FormattedTime, useIntl } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
+import { useCurrentOrganization } from "@store/organizationMemberships";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -126,7 +126,8 @@ export default function NextClass() {
   const [nextClass, setNextClass] = useState<SchedulePayload>();
   const [maxTeachers] = useState(2);
   const [timeBeforeClass, setTimeBeforeClass] = useState(Number.MAX_SAFE_INTEGER);
-  const organizationId = apiOrganizationOfPage() ?? ``;
+  const currentOrganization = useCurrentOrganization();
+  const organizationId = currentOrganization.id ?? ``;
 
   const secondsBeforeClassCanStart = 900;
 

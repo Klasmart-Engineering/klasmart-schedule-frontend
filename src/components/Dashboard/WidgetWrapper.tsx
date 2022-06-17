@@ -2,11 +2,11 @@ import { WidgetType } from "./models/widget.model";
 import WidgetContext from "./WidgetManagement/widgetCustomisation/widgetContext";
 import WidgetWrapperError from "./WidgetManagement/WidgetWrapperError";
 import WidgetWrapperNoData from "./WidgetManagement/WidgetWrapperNoData";
-import { Cancel } from "@mui/icons-material";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { Box, Card, CircularProgress, IconButton, Link, Typography } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import { ClassNameMap, createStyles, makeStyles } from "@mui/styles";
+import { Cancel } from "@material-ui/icons";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import { Box, Card, CircularProgress, IconButton, Link, Typography } from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { ClassNameMap } from "@material-ui/styles/withStyles";
 import React, { useContext } from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -112,7 +112,6 @@ export default function WidgetWrapper(props: BaseWidgetProps) {
                   m: `auto`,
                   display: `flex`,
                   alignItems: `center`,
-                  pointerEvents: `none`,
                 }
               : {
                   height: `100%`,
