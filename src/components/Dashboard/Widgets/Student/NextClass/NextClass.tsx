@@ -9,7 +9,7 @@ import { useCurrentOrganization } from "@store/organizationMemberships";
 import { PublishedContentPayload, SchedulePayload } from "../../../../../types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
-import { LiveTv as LiveTvIcon } from "@mui/icons-material";
+import { LiveTv as LiveTvIcon } from "@material-ui/icons";
 import { Box, Chip, darken, Divider, Fab, Grid, Theme, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";

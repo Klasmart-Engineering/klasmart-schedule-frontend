@@ -1,7 +1,7 @@
-import { Theme } from "@mui/material";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { createStyles, makeStyles } from "@mui/styles";
+import { Theme } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>

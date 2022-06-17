@@ -1,5 +1,5 @@
-import { Box, Dialog, Divider, Theme, Typography, useTheme } from "@mui/material";
-import { createStyles, makeStyles } from "@mui/styles";
+import { Box, Dialog, Divider, Theme, Typography, useTheme } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Button } from "@kl-engineering/kidsloop-px";
 import React from "react";
 import { useIntl } from "react-intl";

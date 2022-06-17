@@ -1,6 +1,6 @@
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { styled, Theme } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { styled, Theme } from "@material-ui/core";
+import { blue } from "@material-ui/core/colors";
 import { Calendar } from "react-big-calendar";
 
 interface Props {

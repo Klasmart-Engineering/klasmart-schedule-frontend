@@ -4,7 +4,7 @@ import WidgetWrapperError from "./WidgetManagement/WidgetWrapperError";
 import WidgetWrapperNoData from "./WidgetManagement/WidgetWrapperNoData";
 import { Cancel } from "@material-ui/icons";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import { Box, Card, CircularProgress, IconButton, Link, Typography } from "@material-ui/core";
+import { Box, Card, CircularProgress, createGenerateClassName, StylesProvider, IconButton, Link, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { ClassNameMap } from "@material-ui/styles/withStyles";
 import React, { useContext } from "react";
@@ -95,6 +95,11 @@ export type BaseWidgetProps = {
   id: WidgetType;
 };
 
+const generateClassName = createGenerateClassName({
+  productionPrefix: "schedule",
+  seed: "schedule",
+});
+
 export default function WidgetWrapper(props: BaseWidgetProps) {
   const classes = useStyles();
   const { children, label, link, overrideLink, loading, error, noData, noBackground, editable = true, reload, id } = props;
@@ -102,34 +107,36 @@ export default function WidgetWrapper(props: BaseWidgetProps) {
   const { editing } = useContext(WidgetContext);
 
   return (
-    <Box className={`${classes.cardWrapper} ${editing && editable && classes.editContainer}`}>
-      <CardAnnotation editable={editable} classes={classes} label={label} link={link} overrideLink={overrideLink} id={id} />
-      <Card className={`${classes.card} ${noBackground && classes.cardNoBackground} ${editing && editable && classes.pointerNone}`}>
-        <Box
-          sx={
-            loading
-              ? {
-                  m: `auto`,
-                  display: `flex`,
-                  alignItems: `center`,
-                }
-              : {
-                  height: `100%`,
-                }
-          }
-        >
-          {loading ? (
-            <CircularProgress color="primary" />
-          ) : error ? (
-            <WidgetWrapperError reload={reload} />
-          ) : noData ? (
-            <WidgetWrapperNoData />
-          ) : (
-            children
-          )}
-        </Box>
-      </Card>
-    </Box>
+    <StylesProvider generateClassName={generateClassName}>
+      <Box className={`${classes.cardWrapper} ${editing && editable && classes.editContainer}`}>
+        <CardAnnotation editable={editable} classes={classes} label={label} link={link} overrideLink={overrideLink} id={id} />
+        <Card className={`${classes.card} ${noBackground && classes.cardNoBackground} ${editing && editable && classes.pointerNone}`}>
+          <Box
+            sx={
+              loading
+                ? {
+                    m: `auto`,
+                    display: `flex`,
+                    alignItems: `center`,
+                  }
+                : {
+                    height: `100%`,
+                  }
+            }
+          >
+            {loading ? (
+              <CircularProgress color="primary" />
+            ) : error ? (
+              <WidgetWrapperError reload={reload} />
+            ) : noData ? (
+              <WidgetWrapperNoData />
+            ) : (
+              children
+            )}
+          </Box>
+        </Card>
+      </Box>
+    </StylesProvider>
   );
 }
 
