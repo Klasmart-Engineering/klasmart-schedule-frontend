@@ -20,3 +20,5 @@ declare module "iframe-resizer/js/iframeResizer" {
 }
 
 declare module "react-sketch-master";
+
+declare module "react-intl-formatted-duration";

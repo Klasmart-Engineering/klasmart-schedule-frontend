@@ -19,6 +19,10 @@ function myOverrides(config) {
       filename: `remoteEntry.js`,
       exposes: {
         "./Schedule": "./src/main.tsx",
+        "./NextClassWidget": "./src/components/Dashboard/Widgets/NextClass/index.tsx",
+        "./TodaysScheduleWidget": "./src/components/Dashboard/Widgets/TodaysSchedule/index.tsx",
+        "./StudentNextClass": "./src/components/Dashboard/Widgets/Student/NextClass/index.tsx",
+        "./StudentSchedule": "./src/components/Dashboard/Widgets/Student/Schedule/index.tsx"
       },
       shared: {
         ...dependencies,
