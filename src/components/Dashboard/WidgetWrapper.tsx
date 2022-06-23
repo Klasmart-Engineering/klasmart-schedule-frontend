@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) =>
       display: `flex`,
       flexFlow: `column`,
       height: `100%`,
+      "& *": {
+        fontFamily: '"Source Sans Pro", -apple-system, "Segoe UI", Helvetica, sans-serif !important',
+      },
     },
     card: {
       display: `flex`,
