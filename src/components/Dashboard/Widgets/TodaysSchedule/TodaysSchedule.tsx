@@ -2,7 +2,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { WidgetType } from "../../models/widget.model";
 import DailyCalendar from "@components/Dashboard/Widgets/TodaysSchedule/Calendar/DailyCalendar/DailyCalendar";
 import { DailyCalendarEvent } from "@components/Dashboard/Widgets/TodaysSchedule/Calendar/DailyCalendar/DailyCalenderHelper";
-import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
+// import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
 import { retrieveClassTypeIdentityOrDefault } from "@config/classTypes";
 import { WIDGET_SCHEDULE_ORIENTATION_SWITCH_WIDTH } from "@config/index";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
@@ -11,13 +11,22 @@ import { Box } from "@material-ui/core";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
+import { HomeScreenWidgetWrapper } from "@kl-engineering/kidsloop-px";
+import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
+import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
 
 // event unix dates are in seconds, we need to multiply by seconds
 const MILLISECONDS_IN_A_SECOND = 1000;
 const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 
-export default function TodaysSchedule() {
+interface Props {
+  widgetContext: any;
+}
+export default function TodaysSchedule(props: Props) {
+  const { editing = false, removeWidget, layouts, widgets } = props.widgetContext;
+  const onRemove = () => removeWidget(WidgetType.SCHEDULE, widgets, layouts);
+
   const intl = useIntl();
   const [events, setEvents] = useState<DailyCalendarEvent[]>([]);
   const unixStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
@@ -68,13 +77,14 @@ export default function TodaysSchedule() {
   }, [schedulesData, unixEndOfDay, unixStartOfDay]);
 
   return (
-    <WidgetWrapper
+    <HomeScreenWidgetWrapper
       label={intl.formatMessage({
         id: `home.schedule.containerTitleLabel`,
       })}
-      error={isScheduleError}
+      error={isScheduleError as boolean}
+      errorScreen={<WidgetWrapperError reload={refetch} />}
       noData={false}
-      reload={refetch}
+      noDataScreen={<WidgetWrapperNoData />}
       loading={isSchedulesFetching}
       link={{
         url: `schedule`,
@@ -82,7 +92,8 @@ export default function TodaysSchedule() {
           id: `home.schedule.containerUrlLabel`,
         }),
       }}
-      id={WidgetType.SCHEDULE}
+      onRemove={onRemove}
+      editing={editing}
     >
       <Box display="flex" height="100%" paddingBottom="2" paddingTop="3">
         <ParentSize>
@@ -93,6 +104,6 @@ export default function TodaysSchedule() {
           }}
         </ParentSize>
       </Box>
-    </WidgetWrapper>
+    </HomeScreenWidgetWrapper>
   );
 }
