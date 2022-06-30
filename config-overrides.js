@@ -8,6 +8,7 @@ const path = require('path');
 
 function myOverrides(config) {
   const dependencies = process.env.NODE_ENV !== 'development' ? pkg.dependencies : [];
+  // const dependencies = process.env.NODE_ENV === 'development' ? pkg.dependencies : [];  // when development use this line
   config.output = {
     ...config.output,
     path: path.resolve(process.env.BUILD_PATH || 'build'),
@@ -35,6 +36,9 @@ function myOverrides(config) {
           eager: true,
           singleton: true,
           requiredVersion: pkg.dependencies['react-dom'],
+        },
+        '@mui/styles': {
+          singleton: true,
         }
       },
     }),
