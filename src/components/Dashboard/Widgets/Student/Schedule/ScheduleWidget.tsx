@@ -1,7 +1,7 @@
 import scheduleSvg from "@assets/img/schedule.svg";
 import { WidgetType } from "@components/Dashboard/models/widget.model";
 import ScheduleItem from "@components/Dashboard/Widgets/Student/Schedule/ScheduleItem";
-import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
+// import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
 import { useCurrentOrganization } from "@store/organizationMemberships";
 import { SchedulePayload } from "../../../../../types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
@@ -9,6 +9,9 @@ import { Box, Theme, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import { FormattedDate, FormattedMessage, useIntl } from "react-intl";
+import { HomeScreenWidgetWrapper } from "@kl-engineering/kidsloop-px";
+import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
+import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,7 +35,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ScheduleWidget() {
+interface Props {
+  widgetContext: any;
+}
+export default function ScheduleWidget(props: Props) {
+  const { editing = false, removeWidget, layouts, widgets } = props.widgetContext;
+  const onRemove = () => removeWidget(WidgetType.STUDENTSCHEDULE, widgets, layouts);
+
   const [schedule, setSchedule] = useState<SchedulePayload[]>([]);
   const intl = useIntl();
   const classes = useStyles();
@@ -94,11 +103,12 @@ export default function ScheduleWidget() {
       return global.includes(current.start_at_date) ? global : global.concat(current.start_at_date);
     }, []);
   return (
-    <WidgetWrapper
+    <HomeScreenWidgetWrapper
       loading={isSchedulesFetching}
       error={isError}
+      errorScreen={<WidgetWrapperError reload={refetch} />}
       noData={false}
-      reload={refetch}
+      noDataScreen={<WidgetWrapperNoData />}
       label={intl.formatMessage({
         id: `home.schedule.containerTitleLabel`,
       })}
@@ -108,7 +118,8 @@ export default function ScheduleWidget() {
           id: `home.schedule.containerUrlLabel`,
         }),
       }}
-      id={WidgetType.STUDENTSCHEDULE}
+      onRemove={onRemove}
+      editing={editing}
     >
       <div className={classes.scrollContainer}>
         {scheduledClass?.length > 0 ? (
@@ -150,7 +161,7 @@ export default function ScheduleWidget() {
           </div>
         )}
       </div>
-    </WidgetWrapper>
+    </HomeScreenWidgetWrapper>
   );
 }
 

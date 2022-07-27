@@ -2,13 +2,13 @@ import { useGetClassNodeRoster } from "@api/classRoster";
 import { useRestAPI } from "@api/restapi";
 import NextClassThumb from "@assets/img/next_class_thumb.png";
 import { WidgetType } from "@components/Dashboard/models/widget.model";
-import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
+// import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
 import { getCmsApiEndpoint, getLiveEndpoint } from "../../../../../config";
 import { THEME_COLOR_CLASS_TYPE_LIVE } from "@config/index";
 import { useCurrentOrganization } from "@store/organizationMemberships";
 import { PublishedContentPayload, SchedulePayload } from "../../../../../types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
-import { UserAvatar } from "@kl-engineering/kidsloop-px";
+import { HomeScreenWidgetWrapper, UserAvatar } from "@kl-engineering/kidsloop-px";
 import { LiveTv as LiveTvIcon } from "@material-ui/icons";
 import { Box, Chip, darken, Divider, Fab, Grid, Theme, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
@@ -18,6 +18,8 @@ import { FormattedDate, FormattedMessage, FormattedRelativeTime, useIntl } from 
 import FormattedDuration from "react-intl-formatted-duration";
 import { useResizeDetector } from "react-resize-detector";
 import { ReactResizeDetectorDimensions } from "react-resize-detector/build/ResizeDetector";
+import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
+import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
 
 export interface StyleProps {
   isVerticalMode: boolean;
@@ -138,9 +140,14 @@ const LARGE_TEXT_BREAKPOINT = 900;
 const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 const maxDays = 14;
-interface Props extends ReactResizeDetectorDimensions {}
+interface Props extends ReactResizeDetectorDimensions {
+  widgetContext: any;
+}
 
 function StudentNextClass(props: Props) {
+  const { editing = false, removeWidget, layouts, widgets } = props.widgetContext;
+  const onRemove = () => removeWidget(WidgetType.STUDENTNEXTCLASS, widgets, layouts);
+
   const { width, ref } = useResizeDetector();
   const isVerticalMode = width ? width < VERTICAL_MODE_BREAKPOINT : false;
   const smallTextInHorizontal = width ? !isVerticalMode && width < LARGE_TEXT_BREAKPOINT : false;
@@ -265,22 +272,27 @@ function StudentNextClass(props: Props) {
   }, [timeBeforeClass, nextClass, organizationId, restApi]);
 
   return (
-    <WidgetWrapper
-      noBackground={!isError}
+    <HomeScreenWidgetWrapper
+      background={isError ? `white` : `transparent`}
       label={intl.formatMessage({
         id: `home.nextClass.containerTitleLabel`,
       })}
       loading={isLoading}
-      error={isError}
-      reload={refetch}
+      error={isError as boolean}
+      errorScreen={<WidgetWrapperError reload={refetch} />}
+      noData={false}
+      noDataScreen={<WidgetWrapperNoData />}
+      isPersistent={true}
       link={{
         url: `schedule`,
         label: intl.formatMessage({
           id: `home.nextClass.containerUrlLabel`,
         }),
       }}
-      editable={false}
-      id={WidgetType.STUDENTNEXTCLASS}
+      editing={editing}
+      onRemove={onRemove}
+      // editing={false}
+      // onRemove={()=>{}}
     >
       <div className={classes.root} ref={ref}>
         {nextClass ? (
@@ -402,7 +414,7 @@ function StudentNextClass(props: Props) {
           )
         )}
       </div>
-    </WidgetWrapper>
+    </HomeScreenWidgetWrapper>
   );
 }
 

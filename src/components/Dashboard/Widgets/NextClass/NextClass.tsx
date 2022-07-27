@@ -2,11 +2,11 @@ import { WidgetType } from "../../models/widget.model";
 import { useGetClassNodeRoster } from "@api/classRoster";
 import { useRestAPI } from "@api/restapi";
 import scheduleSvg from "@assets/img/schedule.svg";
-import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
+// import WidgetWrapper from "@components/Dashboard/WidgetWrapper";
 import { getLiveEndpoint } from "../../../../config";
 import { SchedulePayload } from "../../../../types/objectTypes";
 import { usePostSchedulesTimeViewList } from "@kl-engineering/cms-api-client";
-import { UserAvatar } from "@kl-engineering/kidsloop-px";
+import { HomeScreenWidgetWrapper, UserAvatar } from "@kl-engineering/kidsloop-px";
 import VideoCallIcon from "@material-ui/icons/VideoCall";
 import { Box, darken, Divider, Fab, Grid, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
@@ -14,6 +14,8 @@ import React, { useEffect, useState } from "react";
 import { FormattedDate, FormattedMessage, FormattedRelativeTime, FormattedTime, useIntl } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 import { useCurrentOrganization } from "@store/organizationMemberships";
+import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
+import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -117,7 +119,13 @@ const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 const maxDays = 14;
 
-export default function NextClass() {
+interface Props {
+  widgetContext: any;
+}
+export default function NextClass(props: Props) {
+  const { editing = false, removeWidget, layouts, widgets } = props.widgetContext;
+  const onRemove = () => removeWidget(WidgetType.NEXTCLASS, widgets, layouts);
+
   const intl = useIntl();
   const classes = useStyles();
   const restApi = useRestAPI();
@@ -222,21 +230,21 @@ export default function NextClass() {
   }, [nextClass, organizationId, restApi, timeBeforeClass]);
 
   return (
-    <WidgetWrapper
-      label={intl.formatMessage({
-        id: `home.nextClass.containerTitleLabel`,
-      })}
+    <HomeScreenWidgetWrapper
+      label={intl.formatMessage({ id: `home.nextClass.containerTitleLabel` })}
       loading={isSchedulesFetching}
-      error={isScheduleError}
+      error={isScheduleError as boolean}
+      errorScreen={<WidgetWrapperError reload={refetch} />}
       noData={false}
-      reload={refetch}
+      noDataScreen={<WidgetWrapperNoData />}
       link={{
         url: `schedule`,
         label: intl.formatMessage({
           id: `home.nextClass.containerUrlLabel`,
         }),
       }}
-      id={WidgetType.NEXTCLASS}
+      onRemove={onRemove}
+      editing={editing}
     >
       <Box className={classes.nextClassCard}>
         {nextClass ? (
@@ -367,6 +375,6 @@ export default function NextClass() {
           </div>
         )}
       </Box>
-    </WidgetWrapper>
+    </HomeScreenWidgetWrapper>
   );
 }
