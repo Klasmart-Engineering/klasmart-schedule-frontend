@@ -14,11 +14,49 @@ import { useIntl } from "react-intl";
 import { HomeScreenWidgetWrapper } from "@kl-engineering/kidsloop-px";
 import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
 import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
+import NoDataMask from "@components/Dashboard/WidgetManagement/NoDataMask";
+import { d } from "@locale/LocaleManager";
 
 // event unix dates are in seconds, we need to multiply by seconds
 const MILLISECONDS_IN_A_SECOND = 1000;
 const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
+
+const MockData: DailyCalendarEvent[] = [
+  {
+    allDay: false,
+    title: "Butterfly A-3 class",
+    // subtitle: 'Butterfly A-3 class',
+    start: new Date(`${new Date().toLocaleDateString()} 8:00`),
+    end: new Date(`${new Date().toLocaleDateString()} 9:00`),
+    icon: retrieveClassTypeIdentityOrDefault("OnlineClass").icon,
+    backgroundColor: retrieveClassTypeIdentityOrDefault("OnlineClass").color,
+  },
+  {
+    allDay: false,
+    title: "Butterfly A-3 class",
+    start: new Date(`${new Date().toLocaleDateString()} 9:00`),
+    end: new Date(`${new Date().toLocaleDateString()} 10:00`),
+    icon: retrieveClassTypeIdentityOrDefault("OfflineClass").icon,
+    backgroundColor: retrieveClassTypeIdentityOrDefault("OfflineClass").color,
+  },
+  {
+    allDay: false,
+    title: "Creating 'Bada STEM' contents",
+    start: new Date(`${new Date().toLocaleDateString()} 10:00`),
+    end: new Date(`${new Date().toLocaleDateString()} 12:00`),
+    icon: retrieveClassTypeIdentityOrDefault("Homework").icon,
+    backgroundColor: retrieveClassTypeIdentityOrDefault("Homework").color,
+  },
+  {
+    allDay: false,
+    title: "Meeting for New curriculumn",
+    start: new Date(`${new Date().toLocaleDateString()} 13:00`),
+    end: new Date(`${new Date().toLocaleDateString()} 15:50`),
+    icon: retrieveClassTypeIdentityOrDefault("OfflineClass").icon,
+    backgroundColor: retrieveClassTypeIdentityOrDefault("OfflineClass").color,
+  },
+];
 
 interface Props {
   widgetContext: any;
@@ -72,6 +110,10 @@ export default function TodaysSchedule(props: Props) {
       };
     });
 
+    if (!schedulesData?.data?.length) {
+      setEvents(MockData);
+      return;
+    }
     if (!eventSchedule) return;
     setEvents(eventSchedule);
   }, [schedulesData, unixEndOfDay, unixStartOfDay]);
@@ -94,6 +136,8 @@ export default function TodaysSchedule(props: Props) {
       }}
       onRemove={onRemove}
       editing={editing}
+      // onRemove={()=>{}}
+      // editing={false}
     >
       <Box display="flex" height="100%" paddingBottom="2" paddingTop="3">
         <ParentSize>
@@ -104,6 +148,16 @@ export default function TodaysSchedule(props: Props) {
           }}
         </ParentSize>
       </Box>
+      {!schedulesData?.data.length && (
+        <NoDataMask
+          noDataStyle={{ height: 125 }}
+          text={d("Create a new schedule item to view it on your calendar widget.").t("widget_teacher_schedule_today_no_data_tip")}
+          btnText={d("Create a new schedule").t("widget_teacher_schedule_today_create_schedule")}
+          onClickBtn={() => {
+            window.location.href = `${window.location.origin}#${window.location.pathname}schedule`;
+          }}
+        />
+      )}
     </HomeScreenWidgetWrapper>
   );
 }

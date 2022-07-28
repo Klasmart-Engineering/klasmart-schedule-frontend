@@ -6,16 +6,17 @@ import { SchedulePayload } from "../../../../../types/objectTypes";
 import { UserAvatar } from "@kl-engineering/kidsloop-px";
 import { Box, Chip, darken, Divider, Grid, SvgIcon, Theme, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import React from "react";
+import React, { useMemo } from "react";
 import { FormattedDate } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 import { withResizeDetector } from "react-resize-detector";
 import { ReactResizeDetectorDimensions } from "react-resize-detector/build/ResizeDetector";
+import { MockDataTag, MockDataTeacher, mockSchedulePayload } from "@components/Dashboard/Widgets/Student/Schedule/mockDataClasses";
 
 const SHOW_IMAGE_BREAKPOINT = 500;
 
 interface Props extends ReactResizeDetectorDimensions {
-  item: SchedulePayload;
+  item: mockSchedulePayload;
   active: boolean;
 }
 
@@ -40,7 +41,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       color: theme.palette.common.white,
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
-      "& .MuiSvgIcon-root": {
+      "& .MuiSvgIcon-root,& svg": {
         color: theme.palette.common.white,
       },
     },
@@ -49,6 +50,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       maxWidth: `125px`,
       borderRadius: `10px`,
       overflow: `hidden`,
+      marginRight: 10,
     },
     image: {
       width: `100%`,
@@ -102,12 +104,16 @@ function ScheduleItem(props: Props) {
     skip: !item?.class_id,
   });
 
+  const rosterDataDisplay = useMemo(() => {
+    return item.lesson_plan_id === MockDataTag ? MockDataTeacher : rosterData;
+  }, [rosterData, item]);
+
   return (
     <Box className={classes.root}>
       <Grid container alignItems="stretch" wrap="nowrap">
         {showImage && (
           <Grid item xs={3} className={classes.imageContainer}>
-            <img alt="" className={classes.image} src={NextClassThumb} />
+            <img alt="" className={classes.image} src={item?.img ?? NextClassThumb} />
           </Grid>
         )}
         <Grid container direction="column" justifyContent="space-between">
@@ -128,10 +134,10 @@ function ScheduleItem(props: Props) {
               <div className={classes.teacherList}>
                 <Box paddingTop={1}>
                   <Grid container alignItems="baseline">
-                    {rosterData?.classNode.teachersConnection?.edges?.map((edge, i) => {
+                    {rosterDataDisplay?.classNode.teachersConnection?.edges?.map((edge, i) => {
                       return (
                         <Grid key={edge?.node?.id} item className={classes.teacher}>
-                          {(rosterData?.classNode?.teachersConnection?.totalCount ?? 0) <= maxTeachers && (
+                          {(rosterDataDisplay?.classNode?.teachersConnection?.totalCount ?? 0) <= maxTeachers && (
                             <Box display="flex" flexDirection="row" alignItems="center" className="singleTeacher">
                               <UserAvatar
                                 name={`${edge?.node?.givenName} ${edge?.node?.familyName}`}
@@ -145,11 +151,11 @@ function ScheduleItem(props: Props) {
                                   paddingRight: `0.5em`,
                                 }}
                               >
-                                {edge?.node?.givenName} {edge?.node?.familyName}
+                                {edge?.node?.givenName}
                               </span>
                             </Box>
                           )}
-                          {(rosterData?.classNode?.teachersConnection?.totalCount ?? 0) > maxTeachers && (
+                          {(rosterDataDisplay?.classNode?.teachersConnection?.totalCount ?? 0) > maxTeachers && (
                             <Box display="flex" flexDirection="row" paddingRight="1em" paddingBottom="1em">
                               <UserAvatar
                                 name={`${edge?.node?.givenName} ${edge?.node?.familyName}`}
@@ -166,7 +172,7 @@ function ScheduleItem(props: Props) {
                                     }}
                                   >
                                     {" "}
-                                    + {rosterData?.classNode?.teachersConnection?.totalCount! - maxTeachers}
+                                    + {rosterDataDisplay?.classNode?.teachersConnection?.totalCount! - maxTeachers}
                                   </span>
                                 </Typography>
                               )}

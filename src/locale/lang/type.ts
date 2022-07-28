@@ -1804,7 +1804,27 @@ A new ‘Auto review’ lesson will appear on students’ calendar once our plat
   | { id: "assessment_hfs_student_feedback"; description: `Feedback`; values: undefined }
   | { id: "assessment_detail_screenshot_results"; description: `Results`; values: undefined }
   | { id: "assessment_detail_screenshot_result_screen"; description: `Results Screen`; values: undefined }
-  | { id: "assessment_detail_total_score"; description: `Total Score`; values: undefined };
+  | { id: "assessment_detail_total_score"; description: `Total Score`; values: undefined }
+  | {
+      id: "widget_student_next_class_no_data_tip";
+      description: `After a teacher schedules classes, you can join your next class from here.`;
+      values: undefined;
+    }
+  | { id: "widget_student_next_class_view_schedule"; description: `View schedule`; values: undefined }
+  | {
+      id: "widget_student_schedule_no_data_tip";
+      description: `After a teacher schedules classes, you can view your upcoming classes from here.`;
+      values: undefined;
+    }
+  | { id: "widget_student_schedule_view_schedule"; description: `View schedule`; values: undefined }
+  | { id: "widget_teacher_next_class_no_data_tip"; description: `Schedule classes to start your next class from here.`; values: undefined }
+  | { id: "widget_teacher_next_class_create_schedule"; description: `Create a class schedule`; values: undefined }
+  | {
+      id: "widget_teacher_schedule_today_no_data_tip";
+      description: `Create a new schedule item to view it on your calendar widget.`;
+      values: undefined;
+    }
+  | { id: "widget_teacher_schedule_today_create_schedule"; description: `Create a new schedule`; values: undefined };
 
 export type LangRecordId = LangRecord["id"];
 export type LangRecodeDescription = LangRecord["description"];

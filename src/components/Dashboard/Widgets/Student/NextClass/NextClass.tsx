@@ -13,13 +13,15 @@ import { LiveTv as LiveTvIcon } from "@material-ui/icons";
 import { Box, Chip, darken, Divider, Fab, Grid, Theme, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FormattedDate, FormattedMessage, FormattedRelativeTime, useIntl } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 import { useResizeDetector } from "react-resize-detector";
 import { ReactResizeDetectorDimensions } from "react-resize-detector/build/ResizeDetector";
 import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
 import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
+import NoDataMask from "@components/Dashboard/WidgetManagement/NoDataMask";
+import { d } from "@locale/LocaleManager";
 
 export interface StyleProps {
   isVerticalMode: boolean;
@@ -32,6 +34,15 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       backgroundColor: THEME_COLOR_CLASS_TYPE_LIVE,
       borderRadius: `30px 10px 30px 30px`,
       padding: theme.spacing(2),
+      position: "relative",
+      "& .no_data_mask": {
+        boxShadow: "none",
+        borderRadius: "40px 0px 26px 0",
+        width: ({ isVerticalMode }) => (isVerticalMode ? `259px` : `408px`),
+        height: 163,
+        paddingTop: 38,
+        paddingBottom: 33,
+      },
     },
     imageContainer: {
       position: `relative`,
@@ -140,10 +151,52 @@ const LARGE_TEXT_BREAKPOINT = 900;
 const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 const maxDays = 14;
+
+const MockDataTag = "";
+const MockDataSchedule: SchedulePayload[] = [
+  {
+    class_id: MockDataTag,
+    class_type: "OnlineClass",
+    end_at: new Date().getTime() / 1000 + 3 * 60 * 60,
+    id: MockDataTag,
+    is_repeat: false,
+    lesson_plan_id: MockDataTag,
+    start_at: new Date().getTime() / 1000 + 2 * 60 * 60,
+    status: "NotStart",
+    title: "A Christmas Safari",
+    is_home_fun: false,
+    is_review: false,
+  },
+];
+const MockDataTeacher = {
+  classNode: {
+    teachersConnection: {
+      totalCount: 2,
+      edges: [
+        {
+          node: {
+            id: `${MockDataTag}_1`,
+            givenName: "Christina",
+            familyName: "Oliver",
+            avatar: "",
+          },
+        },
+        {
+          node: {
+            id: `${MockDataTag}_2`,
+            givenName: "Miichael",
+            familyName: "Jin",
+            avatar: "",
+          },
+        },
+      ],
+    },
+  },
+};
+
 interface Props extends ReactResizeDetectorDimensions {
   widgetContext: any;
 }
-
 function StudentNextClass(props: Props) {
   const { editing = false, removeWidget, layouts, widgets } = props.widgetContext;
   const onRemove = () => removeWidget(WidgetType.STUDENTNEXTCLASS, widgets, layouts);
@@ -209,6 +262,9 @@ function StudentNextClass(props: Props) {
     variables,
     skip: !nextClass?.class_id,
   });
+  const rosterDataDisplay = useMemo(() => {
+    return !schedulesData?.data.length ? MockDataTeacher : rosterData;
+  }, [rosterData, schedulesData?.data]);
 
   function goLive() {
     const liveLink = `${getLiveEndpoint()}?token=${liveToken}`;
@@ -223,6 +279,11 @@ function StudentNextClass(props: Props) {
 
     if (!scheduledClass) return;
     setNextClass(scheduledClass[0]);
+    if (!schedulesData?.data.length) {
+      // use mock data
+      setThumbnail(NextClassThumb);
+      return;
+    }
     if (!!scheduledClass.length) {
       restApi
         .getContentsById({
@@ -236,7 +297,7 @@ function StudentNextClass(props: Props) {
         })
         .catch(() => setThumbnail(NextClassThumb));
     }
-  }, [schedule, organizationId, restApi]);
+  }, [schedule, organizationId, restApi, schedulesData?.data.length]);
 
   useEffect(() => {
     if (!nextClass) return;
@@ -245,7 +306,8 @@ function StudentNextClass(props: Props) {
 
   useEffect(() => {
     if (!schedulesData?.data.length) {
-      setSchedule([]);
+      // setSchedule([]);
+      setSchedule(MockDataSchedule);
       return;
     }
     schedulesData.data.sort((a, b) => {
@@ -257,7 +319,7 @@ function StudentNextClass(props: Props) {
   }, [schedulesData]);
 
   useEffect(() => {
-    if (timeBeforeClass > secondsBeforeClassCanStart || !nextClass) return;
+    if (timeBeforeClass > secondsBeforeClassCanStart || !nextClass || !schedulesData?.data.length) return;
     (async () => {
       const json = await restApi.getLiveTokenByClassId({
         classId: nextClass.id,
@@ -269,7 +331,7 @@ function StudentNextClass(props: Props) {
       }
       setLiveToken(json.token);
     })();
-  }, [timeBeforeClass, nextClass, organizationId, restApi]);
+  }, [timeBeforeClass, nextClass, organizationId, restApi, schedulesData?.data.length]);
 
   return (
     <HomeScreenWidgetWrapper
@@ -328,7 +390,7 @@ function StudentNextClass(props: Props) {
                 </div>
                 <Divider className={classes.divider} />
                 <Box>
-                  {rosterData?.classNode.teachersConnection?.totalCount !== 0 && (
+                  {rosterDataDisplay?.classNode.teachersConnection?.totalCount !== 0 && (
                     <Box className={classes.classDetails}>
                       <div className={classes.teacherList}>
                         <Chip
@@ -338,13 +400,13 @@ function StudentNextClass(props: Props) {
                               id: `home.nextClass.teachersTitle`,
                             },
                             {
-                              count: rosterData?.classNode.teachersConnection?.totalCount || 0,
+                              count: rosterDataDisplay?.classNode.teachersConnection?.totalCount || 0,
                             }
                           )}
                         />
                         <Box paddingTop={1}>
                           <Grid container>
-                            {rosterData?.classNode?.teachersConnection?.edges?.map(({ node }: any, i) => (
+                            {rosterDataDisplay?.classNode?.teachersConnection?.edges?.map(({ node }: any, i) => (
                               <Grid key={`teacher-${i}`} item className={classes.teacher}>
                                 <Box display="flex" flexDirection="row" alignItems="center" className="singleTeacher">
                                   <UserAvatar
@@ -412,6 +474,18 @@ function StudentNextClass(props: Props) {
               <FormattedMessage id="home.nextClass.noClass" />
             </Typography>
           )
+        )}
+        {!schedulesData?.data.length && (
+          <NoDataMask
+            noDataClassName={"no_data_mask"}
+            text={d("After a teacher schedules classes, you can join your next class from here.").t(
+              "widget_student_next_class_no_data_tip"
+            )}
+            btnText={d("View schedule").t("widget_student_next_class_view_schedule")}
+            onClickBtn={() => {
+              window.location.href = `${window.location.origin}#${window.location.pathname}schedule`;
+            }}
+          />
         )}
       </div>
     </HomeScreenWidgetWrapper>

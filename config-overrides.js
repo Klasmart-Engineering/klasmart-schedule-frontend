@@ -7,8 +7,8 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 const path = require('path');
 
 function myOverrides(config) {
-  const dependencies = process.env.NODE_ENV !== 'development' ? pkg.dependencies : [];
-  // const dependencies = process.env.NODE_ENV === 'development' ? pkg.dependencies : [];  // when development use this line
+  // const dependencies = process.env.NODE_ENV !== 'development' ? pkg.dependencies : [];
+  const dependencies = process.env.NODE_ENV === 'development' ? pkg.dependencies : [];  // when development use this line
   config.output = {
     ...config.output,
     path: path.resolve(process.env.BUILD_PATH || 'build'),

@@ -12,8 +12,17 @@ import { FormattedDate, FormattedMessage, useIntl } from "react-intl";
 import { HomeScreenWidgetWrapper } from "@kl-engineering/kidsloop-px";
 import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
 import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
+import { MockDataSchedule } from "@components/Dashboard/Widgets/Student/Schedule/mockDataClasses";
+import NoDataMask from "@components/Dashboard/WidgetManagement/NoDataMask";
+import { d } from "@locale/LocaleManager";
+import { useResizeDetector } from "react-resize-detector";
 
-const useStyles = makeStyles((theme: Theme) =>
+const SHOW_IMAGE_BREAKPOINT = 500;
+
+export interface StyleProps {
+  isShowImgMode: boolean;
+}
+const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
     dayTitle: {
       color: theme.palette.grey[700],
@@ -21,6 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
     scrollContainer: {
       height: `100%`,
       overflowY: `auto`,
+      "& .no_data_mask": {
+        width: ({ isShowImgMode }) => (isShowImgMode ? `390px` : `290px`),
+        height: 135,
+      },
     },
     noClass: {
       display: `flex`,
@@ -44,7 +57,13 @@ export default function ScheduleWidget(props: Props) {
 
   const [schedule, setSchedule] = useState<SchedulePayload[]>([]);
   const intl = useIntl();
-  const classes = useStyles();
+
+  const { width, ref } = useResizeDetector();
+  const isShowImgMode = width ? width > SHOW_IMAGE_BREAKPOINT : false;
+  const classes = useStyles({
+    isShowImgMode,
+  });
+
   const currentOrganization = useCurrentOrganization();
   const organizationId = currentOrganization?.id ?? ``;
   const now = new Date();
@@ -76,7 +95,10 @@ export default function ScheduleWidget(props: Props) {
   );
 
   useEffect(() => {
-    if (!currentOrganization || !schedulesData?.data.length) return;
+    if (!currentOrganization || !schedulesData?.data.length) {
+      setSchedule([...MockDataSchedule]);
+      return;
+    }
     schedulesData.data.sort((a, b) => {
       const startDiff = a.start_at - b.start_at;
       if (startDiff === 0) return a.title.localeCompare(b.title);
@@ -120,8 +142,10 @@ export default function ScheduleWidget(props: Props) {
       }}
       onRemove={onRemove}
       editing={editing}
+      // onRemove={()=>{}}
+      // editing={false}
     >
-      <div className={classes.scrollContainer}>
+      <div className={classes.scrollContainer} ref={ref}>
         {scheduledClass?.length > 0 ? (
           <>
             {daysWithClass?.map((dayWithClass) => {
@@ -159,6 +183,19 @@ export default function ScheduleWidget(props: Props) {
               <FormattedMessage id="home.common.noData.schedule.title" />
             </Typography>
           </div>
+        )}
+
+        {!schedulesData?.data.length && (
+          <NoDataMask
+            noDataClassName={"no_data_mask"}
+            text={d("After a teacher schedules classes, you can view your upcoming classes from here.").t(
+              "widget_student_schedule_no_data_tip"
+            )}
+            btnText={d("View schedule").t("widget_student_schedule_view_schedule")}
+            onClickBtn={() => {
+              window.location.href = `${window.location.origin}#${window.location.pathname}schedule`;
+            }}
+          />
         )}
       </div>
     </HomeScreenWidgetWrapper>

@@ -10,12 +10,15 @@ import { HomeScreenWidgetWrapper, UserAvatar } from "@kl-engineering/kidsloop-px
 import VideoCallIcon from "@material-ui/icons/VideoCall";
 import { Box, darken, Divider, Fab, Grid, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FormattedDate, FormattedMessage, FormattedRelativeTime, FormattedTime, useIntl } from "react-intl";
 import FormattedDuration from "react-intl-formatted-duration";
 import { useCurrentOrganization } from "@store/organizationMemberships";
 import WidgetWrapperError from "@components/Dashboard/WidgetManagement/WidgetWrapperError";
 import WidgetWrapperNoData from "@components/Dashboard/WidgetManagement/WidgetWrapperNoData";
+import { THEME_COLOR_CLASS_TYPE_LIVE } from "@config/index";
+import NoDataMask from "@components/Dashboard/WidgetManagement/NoDataMask";
+import { d } from "@locale/LocaleManager";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -48,7 +51,7 @@ const useStyles = makeStyles((theme) =>
     },
     nextClassIcon: {
       fill: theme.palette.getContrastText(theme.palette.text.primary),
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: THEME_COLOR_CLASS_TYPE_LIVE,
       borderRadius: `100%`,
       padding: `0.1em`,
       marginRight: `0.3em`,
@@ -61,7 +64,7 @@ const useStyles = makeStyles((theme) =>
       display: `flex`,
       alignItems: `center`,
       fontSize: `1.5em`,
-      color: theme.palette.primary.main,
+      color: THEME_COLOR_CLASS_TYPE_LIVE,
       marginTop: 5,
       lineHeight: `1.2`,
       marginBottom: theme.spacing(2),
@@ -118,6 +121,48 @@ const useStyles = makeStyles((theme) =>
 const now = new Date();
 const timeZoneOffset = now.getTimezoneOffset() * 60 * -1; // to make seconds
 const maxDays = 14;
+
+const MockDataTag = "";
+const MockDataSchedule: SchedulePayload[] = [
+  {
+    class_id: MockDataTag,
+    class_type: "OnlineClass",
+    end_at: new Date().getTime() / 1000 + 3 * 60 * 60,
+    id: MockDataTag,
+    is_repeat: false,
+    lesson_plan_id: MockDataTag,
+    start_at: new Date().getTime() / 1000 + 2 * 60 * 60,
+    status: "NotStart",
+    title: "Butterfly A-3 class",
+    is_home_fun: false,
+    is_review: false,
+  },
+];
+const MockDataTeacher = {
+  classNode: {
+    teachersConnection: {
+      totalCount: 2,
+      edges: [
+        {
+          node: {
+            id: `${MockDataTag}_1`,
+            givenName: "Christina",
+            familyName: "Oliver",
+            avatar: "",
+          },
+        },
+        {
+          node: {
+            id: `${MockDataTag}_2`,
+            givenName: "Miichael",
+            familyName: "Jin",
+            avatar: "",
+          },
+        },
+      ],
+    },
+  },
+};
 
 interface Props {
   widgetContext: any;
@@ -178,6 +223,9 @@ export default function NextClass(props: Props) {
     },
     skip: !nextClass?.class_id,
   });
+  const rosterDataDisplay = useMemo(() => {
+    return !schedulesData?.data.length ? MockDataTeacher : rosterData;
+  }, [rosterData, schedulesData?.data]);
 
   function goLive() {
     const liveLink = `${getLiveEndpoint()}?token=${liveToken}`;
@@ -201,7 +249,8 @@ export default function NextClass(props: Props) {
 
   useEffect(() => {
     if (!schedulesData?.data.length) {
-      setSchedule([]);
+      // setSchedule([]);
+      setSchedule(MockDataSchedule);
       return;
     }
 
@@ -245,6 +294,8 @@ export default function NextClass(props: Props) {
       }}
       onRemove={onRemove}
       editing={editing}
+      // onRemove={()=>{}}
+      // editing={false}
     >
       <Box className={classes.nextClassCard}>
         {nextClass ? (
@@ -308,56 +359,58 @@ export default function NextClass(props: Props) {
               </Grid>
             </Grid>
 
-            {rosterData?.classNode.teachersConnection?.totalCount !== 0 && (
+            {rosterDataDisplay?.classNode.teachersConnection?.totalCount !== 0 && (
               <Grid item xs={12}>
                 <Box>
                   <Typography className={classes.teachersTitle}>
                     <FormattedMessage
                       id="home.nextClass.teachersTitle"
                       values={{
-                        count: rosterData?.classNode.teachersConnection?.totalCount || 0,
+                        count: rosterDataDisplay?.classNode.teachersConnection?.totalCount || 0,
                       }}
                     />
                   </Typography>
                   <Grid container alignItems="baseline">
-                    {rosterData?.classNode.teachersConnection?.edges!.map((edge, i) => {
+                    {rosterDataDisplay?.classNode.teachersConnection?.edges!.map((edge, i) => {
                       return (
                         <Grid key={edge?.node?.id} item className={classes.teacher}>
-                          {rosterData?.classNode.teachersConnection && rosterData?.classNode.teachersConnection.totalCount! <= maxTeachers && (
-                            <Box display="flex" flexDirection="row" alignItems="center" className="singleTeacher">
-                              <UserAvatar
-                                name={`${edge?.node?.givenName} ${edge?.node?.familyName}`}
-                                className={classes.avatar}
-                                size="small"
-                              />
-                              <span>
-                                {edge?.node?.givenName} {edge?.node?.familyName}
-                              </span>
-                            </Box>
-                          )}
-                          {rosterData?.classNode.teachersConnection && rosterData.classNode.teachersConnection.totalCount! > maxTeachers && (
-                            <Box display="flex" flexDirection="row" paddingRight="1em" paddingBottom="1em">
-                              <UserAvatar
-                                name={`${edge?.node?.givenName} ${edge?.node?.familyName}`}
-                                className={classes.avatar}
-                                size="small"
-                              />
-                              <Typography variant="caption">{edge?.node?.givenName}</Typography>
-                              {i === maxTeachers - 1 && (
-                                <Typography variant="caption">
-                                  <span
-                                    style={{
-                                      display: `inline-block`,
-                                      paddingLeft: `1em`,
-                                    }}
-                                  >
-                                    {" "}
-                                    + {rosterData.classNode.teachersConnection.totalCount! - maxTeachers}
-                                  </span>
-                                </Typography>
-                              )}
-                            </Box>
-                          )}
+                          {rosterDataDisplay?.classNode.teachersConnection &&
+                            rosterDataDisplay?.classNode.teachersConnection.totalCount! <= maxTeachers && (
+                              <Box display="flex" flexDirection="row" alignItems="center" className="singleTeacher">
+                                <UserAvatar
+                                  name={`${edge?.node?.givenName} ${edge?.node?.familyName}`}
+                                  className={classes.avatar}
+                                  size="small"
+                                />
+                                <span>
+                                  {edge?.node?.givenName} {edge?.node?.familyName}
+                                </span>
+                              </Box>
+                            )}
+                          {rosterDataDisplay?.classNode.teachersConnection &&
+                            rosterDataDisplay.classNode.teachersConnection.totalCount! > maxTeachers && (
+                              <Box display="flex" flexDirection="row" paddingRight="1em" paddingBottom="1em">
+                                <UserAvatar
+                                  name={`${edge?.node?.givenName} ${edge?.node?.familyName}`}
+                                  className={classes.avatar}
+                                  size="small"
+                                />
+                                <Typography variant="caption">{edge?.node?.givenName}</Typography>
+                                {i === maxTeachers - 1 && (
+                                  <Typography variant="caption">
+                                    <span
+                                      style={{
+                                        display: `inline-block`,
+                                        paddingLeft: `1em`,
+                                      }}
+                                    >
+                                      {" "}
+                                      + {rosterDataDisplay.classNode.teachersConnection.totalCount! - maxTeachers}
+                                    </span>
+                                  </Typography>
+                                )}
+                              </Box>
+                            )}
                         </Grid>
                       );
                     })}
@@ -373,6 +426,16 @@ export default function NextClass(props: Props) {
               <FormattedMessage id="home.common.noData.schedule.title" />
             </Typography>
           </div>
+        )}
+        {!schedulesData?.data.length && (
+          <NoDataMask
+            noDataStyle={{ height: 140 }}
+            text={d("Schedule classes to start your next class from here.").t("widget_teacher_next_class_no_data_tip")}
+            btnText={d("Create a class schedule").t("widget_teacher_next_class_create_schedule")}
+            onClickBtn={() => {
+              window.location.href = `${window.location.origin}#${window.location.pathname}schedule`;
+            }}
+          />
         )}
       </Box>
     </HomeScreenWidgetWrapper>
